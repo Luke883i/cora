@@ -21,7 +21,7 @@ audit scans working-tree files without executing project code. Create a cora.pro
 - deterministic output for a fixed, unchanged working tree and tool version;
 - file inventory with positive content hashes and declared product attribution;
 - fail-closed on duplicate/missing entrypoints, overlapping product roots, symlinks;
-- reproducible 1,000,000-case synthetic model-level mutation stress with independent human-curated fixture expectations;
+- reproducible 1,000,000-case synthetic model-level mutation stress with predeclared fixture expectation labels;
 - no destructive transformations, no runtime claims, no silent claim of R5 parity.
 
 **Compatibility:** R5 source is a prior experimental artifact; PR-01 does not yet transplant its adaptive adapters or R4 transform API. A capability register in docs/ADR-PR01.md tracks these as gated follow-up PRs.

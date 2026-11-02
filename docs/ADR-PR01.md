@@ -6,7 +6,7 @@
 
 **Semantic commits:** bootstrap main (necessary for initially empty GitHub repo); build(package) creates canonical package; feat(inventory) defines read-only baseline; test(stress) adds deterministic adverse mutation harness; docs(gates) records DoD and limits.
 
-**DoD-01 pass:** installed cora resolves to cora.cli:main; no competing entrypoint; test suite green; run 1M model mutation evaluations; zero mismatches against independently curated category expectations; result digest stable on rerun.
+**DoD-01 pass:** installed cora resolves to cora.cli:main; no competing entrypoint; test suite green; run 1M model mutation evaluations; zero mismatches against predeclared category expectations (not independent runtime ground truth); result digest stable on rerun.
 
 **Not demonstrated:** complete R5 capability migration; independent 1M repository mutations; runtime reachability or deletion equivalence; full Python/JS/Go/etc dependency graphs; historical Git snapshot; production readiness.
 
