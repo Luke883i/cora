@@ -14,13 +14,14 @@
     "PASS_SCOPED": 27062,
     "REFUTED": 371193
   },
-  "pr05_tests": 21,
+  "pr05_tests": 24,
   "replayed_twice_byte_identical": true,
   "schema": "cora-pr05-verification/1",
   "scope": "synthetic 20-axis model plus independent committed-Git fixtures",
   "seed": 883,
   "stream_sha256": "a19cfe01c7b0546de3cff39d9a85534f7a5858c1e7ebe2794891fdd2ccf7fe5a",
   "stress_cases": 1000000,
-  "tests_passed": 68,
-  "tests_total": 68
+  "tests_passed": 71,
+  "tests_total": 71,
+  "local_refinement": "Three independent tests: existing safe-delete blocked, nonexistent refuted, forged positive certificate rejected"
 }

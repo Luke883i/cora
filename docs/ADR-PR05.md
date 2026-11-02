@@ -17,7 +17,7 @@ Certifying an observation does not imply future validity, proof of runtime use, 
 | C05-L3 | Strict provenance and revalidation | corrupted / re-signed receipt rejected against Git |
 | C05-L4 | Cross-PR evidence convergence on same immutable commit | ontology / graph / adapter / ledger fixture |
 | C05-L5 | Fail closed for dynamic / ambiguous / unobserved claims | dynamic import, missing dependency, symlink tests |
-| C05-L6 | Safe deletion can never pass in PR-05 | unconditional unsupported obligations fixture |
+| C05-L6 | Safe deletion can never pass in PR-05 (existing file blocked; missing file refuted) | unconditional unsupported obligations fixture |
 | C05-I1 | Independent Git oracle | real two-product Git repository with hand-authored expected outcomes |
 | C05-I2 | Independent model decision oracle | bit-spec decision check + witness reconciliation |
 | C05-I3 | Seeded one-million adversarial scenarios | 24 families, 20 toggled evidence axes, 1M unique vectors |
