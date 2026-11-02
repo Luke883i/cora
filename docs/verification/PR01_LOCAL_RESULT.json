@@ -1,0 +1,22 @@
+{
+  "schema": "cora-pr01-verification/1",
+  "status": "LOCAL_VERIFIED_GITHUB_CI_PENDING",
+  "environment": "Python 3.13.5 linux (local); GitHub Actions targets Python 3.11",
+  "commands": [
+    "python -m unittest discover -s tests -v",
+    "python -m pip wheel --no-build-isolation --no-deps --wheel-dir /tmp/cora-pr01-wheel .",
+    "cora stress --cases 1000000 --seed 883 --output reports/stress_one_million.json",
+    "repeat identical command, compare JSON bytewise"
+  ],
+  "tests_passed": 10,
+  "tests_failed": 0,
+  "mutation_cases": 1000000,
+  "seed": 883,
+  "families": 20,
+  "mismatches": 0,
+  "stream_sha256": "a88a70e787ff0ea078962460985a06ea92768cdb6158b61d8fa44e14bb9b7b14",
+  "report_sha256": "bbdbd9f0a4e39daad99e03c859a56bd1ff1844e7fb5ada9046dc9cae79678eb7",
+  "repeat_identical": true,
+  "interpretation": "One million seeded in-memory topology mutants, not 1M physical repositories, and no deletion safety proof.",
+  "release_gate": "PR01_LOCAL_PASS_REMOTE_CI_UNVERIFIED"
+}
