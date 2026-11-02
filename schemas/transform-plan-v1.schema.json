@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CORA PR06 scoped document rename plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "kind",
+    "commit",
+    "old",
+    "new",
+    "edits",
+    "scope",
+    "authorization",
+    "prohibited_claim",
+    "plan_digest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "cora-transform-plan/1"
+    },
+    "kind": {
+      "const": "rename_scoped_document"
+    },
+    "commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"
+    },
+    "old": {
+      "type": "string"
+    },
+    "new": {
+      "type": "string"
+    },
+    "edits": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "result_path",
+          "before_sha256",
+          "after_sha256",
+          "reference_occurrences"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "result_path": {
+            "type": "string"
+          },
+          "before_sha256": {
+            "type": "string"
+          },
+          "after_sha256": {
+            "type": "string"
+          },
+          "reference_occurrences": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "scope": {
+      "type": "string"
+    },
+    "authorization": {
+      "type": "string"
+    },
+    "prohibited_claim": {
+      "type": "string"
+    },
+    "plan_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "description": "Structural companion only; apply always recomputes entire plan against clean Git checkout."
+}

@@ -17,6 +17,11 @@ from .adapters import adapter_audit, verify_adapter_report
 from .adapter_stress import stress_adapters
 from .closure import closure, verify_certificate
 from .closure_stress import stress_closure
+from .transform import plan_rename_docs, apply_rename_docs
+from .transform_stress import stress_transform
+from .guard import install_guard
+from .guard_runtime import verify as verify_local_guard
+import shlex
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -79,6 +84,29 @@ def main(argv: list[str] | None = None) -> int:
     cs.add_argument('--seed', type=int, default=883)
     cs.add_argument('--cases', type=int, default=1000000)
     cs.add_argument('--output', type=Path)
+    plan = sub.add_parser('plan-rename-doc',help='Read-only plan for exact tracked-doc path rename')
+    plan.add_argument('repo',type=Path)
+    plan.add_argument('--old',required=True)
+    plan.add_argument('--new',required=True)
+    plan.add_argument('--output',type=Path)
+    apply = sub.add_parser('apply-rename-doc',help='Approved scoped doc rename with tests and compensating rollback')
+    apply.add_argument('repo',type=Path)
+    apply.add_argument('--plan',required=True,type=Path)
+    apply.add_argument('--approve',required=True)
+    apply.add_argument('--test-command',required=True)
+    apply.add_argument('--output',type=Path)
+    gi = sub.add_parser('guard-install',help='Materialize standalone local guard')
+    gi.add_argument('repo',type=Path)
+    gi.add_argument('--product',action='append',required=True,help='id=relative/root=python.module_prefix')
+    gi.add_argument('--output',type=Path)
+    gc = sub.add_parser('guard-check',help='Run deterministic local architecture guard')
+    gc.add_argument('repo',type=Path)
+    gc.add_argument('--base')
+    gc.add_argument('--output',type=Path)
+    ts = sub.add_parser('stress-transform')
+    ts.add_argument('--seed',type=int,default=883)
+    ts.add_argument('--cases',type=int,default=1000000)
+    ts.add_argument('--output',type=Path)
     g = sub.add_parser('snapshot')
     g.add_argument('repo', type=Path)
     g.add_argument('--revision', default='HEAD')
@@ -135,6 +163,22 @@ def main(argv: list[str] | None = None) -> int:
             code = 0
         elif args.cmd == 'stress-closure':
             result = stress_closure(seed=args.seed,cases=args.cases)
+            code = 2 if result['mismatches'] else 0
+        elif args.cmd == 'plan-rename-doc':
+            result = plan_rename_docs(args.repo,args.old,args.new)
+            code = 0
+        elif args.cmd == 'apply-rename-doc':
+            result = apply_rename_docs(args.repo,json.loads(args.plan.read_text(encoding='utf-8')),
+                                       approval=args.approve,test_command=shlex.split(args.test_command))
+            code = 0
+        elif args.cmd == 'guard-install':
+            result = install_guard(args.repo,args.product)
+            code = 0
+        elif args.cmd == 'guard-check':
+            result = verify_local_guard(args.repo,args.base)
+            code = 0 if result['status']=='PASS_SCOPED' else 2
+        elif args.cmd == 'stress-transform':
+            result = stress_transform(seed=args.seed,cases=args.cases)
             code = 2 if result['mismatches'] else 0
         elif args.cmd == 'snapshot':
             result = snapshot(args.repo, args.revision)
