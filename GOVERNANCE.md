@@ -33,3 +33,9 @@ Two distinct human reviewer identities are required for a quarantine, archive, b
 ## Change and release controls
 
 Require PR template, CODEOWNERS review routing, CI regression evidence, security review for trust boundary changes, risk register, backward-compatibility note and an explicit rollback/restore plan. Set required non-author approval, branch rulesets and protected required CI checks in GitHub settings. **Their availability/enforcement is outside source code and currently unverified; a private-plan feature restriction may block rulesets.** Do not use AI-produced confidence as a merge condition. Release authorization requires a human release owner, signed provenance and an external pilot before production-grade claims.
+
+## v1.experimental: semantic artifact and transformation governance
+
+The **product owner** is accountable for product scope and retention tradeoffs; the **software maintainer** maintains implementation and evidence contracts; the **repository steward** owns CI, workflow and protected branch settings; the **security/independent reviewer** challenges trust boundaries and high-risk changes; the **release manager** checks reproducible artifacts and publication permissions. These are functions requiring actual named accountable humans in a deployment, not automatic identities granted by CORA.
+
+Any artifact can combine implementation/test/contract/workflow roles. The committed role registry is a reviewable assertion; changing it requires a maintainer and a different reviewer. **No AI suggestion, maintainer label, self-hash or `PASS_SCOPED` is an approval.** Quarantine/archive/rename remain proposals until separate scope closure and non-regression evidence support them. Destructive deletion is unsupported. An actual administrator must protect branch settings and required checks; this repository does not attest that protection.

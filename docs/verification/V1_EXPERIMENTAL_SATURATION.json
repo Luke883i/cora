@@ -1,0 +1,24 @@
+{
+  "finite_semantic_classes": 12288,
+  "interpretation": "EXHAUSTIVE_ONLY_WITHIN_PREDECLARED_FINITE_ONTOLOGY",
+  "last_new_class_zero_based": 12287,
+  "limits": [
+    "Not 11M distinct semantic concepts or repositories",
+    "Only 12288 predefined role/uncertainty/context classes",
+    "No evidence of real runtime non-use, calibrated probabilities or safe deletion"
+  ],
+  "minimum_cases_M": 1000000,
+  "mismatches": 0,
+  "new_classes_after_M": 0,
+  "no_novelty_after_M": 10000000,
+  "outcomes": {
+    "INVESTIGATE_UNKNOWN": 1332057,
+    "OBSERVE_ONLY": 42970,
+    "PROTECTED_REVIEW_REQUIRED": 9624973
+  },
+  "schema": "cora-artifact-saturation/1",
+  "seed": 883,
+  "semantic_classes_observed": 12288,
+  "stream_sha256": "523cdad1ebd659071a645aedc567de1ceeb65ee5fd0d356c8f17c0c4f5e9844f",
+  "total_cases": 11000000
+}

@@ -12,3 +12,7 @@ PR review is not a substitute for independently required GitHub checks or protec
 ## Forensic and AI contributions
 
 Any new dependency relation or runtime adapter must define a bounded claim schema, provenance, explicit unknowns, independent Git-fixture oracles and privacy/threat tests. AI text must remain a hypothesis, not an authenticated fact. High-risk changes require the human roles in [GOVERNANCE.md](GOVERNANCE.md) and independently protected review; source-controlled CODEOWNERS alone does not enforce separation of duties.
+
+## v1.experimental artifact-role discipline
+
+When adding or changing files, update `cora.artifact-roles.json` to preserve all independently justified roles, including combinations of software, test, contract, fixture or workflow. Use `cora artifact-audit`, `cora verify-artifacts` and `python tools/verify_artifact_roles.py` on the committed branch. Role declaration means accountable intent, **not** demonstrated test execution or absence of consumers. Cite [v1 experimental DoD](docs/DOD_V1_EXPERIMENTAL.md) and require an independent reviewer for governance, release, security, retention, destructive workflows or contract changes.
