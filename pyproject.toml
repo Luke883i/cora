@@ -1,14 +1,15 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "cora-audit"
-version = "0.6.0a1"
+version = "0.7.0a1"
 description = "CORA: scoped, reproducible software repository evidence"
 readme = "README.md"
 requires-python = ">=3.11"
-license = { text = "MIT" }
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [{name = "CORA contributors"}]
 keywords = ["software-audit", "architecture", "repository", "evidence"]
 dependencies = []
