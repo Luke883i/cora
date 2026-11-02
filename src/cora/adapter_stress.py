@@ -31,7 +31,7 @@ def fixture(case: int, salt: int) -> tuple[str, bytes, set[tuple[str,str,str]], 
         elif variant == 'optional':
             raw = f'{{"devDependencies":{{"{n}":"~{v}"}}}}';dep.add((n,'~'+v,'devDependencies'))
         elif variant == 'unresolved':
-            raw = f'{{"dependencies":{{"{n}":"{v}"}}, "workspaces":["packages/*"]}}';dep.add((n,v,'dependencies'))
+            raw = f'{{"dependencies":{{"{n}":"{v}"}},"workspaces":["packages/*"]}}';dep.add((n,v,'dependencies'))
         else: raw = '{"dependencies":' + n
     elif fmt == 'pyproject.toml':
         if variant == 'runtime':
