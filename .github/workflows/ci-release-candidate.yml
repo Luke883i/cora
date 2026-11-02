@@ -42,15 +42,19 @@ jobs:
           python tools/release_stress.py --seed 883 --cases 1000000 --output dist/stress-b.json
           cmp dist/stress-a.json dist/stress-b.json
           python -c 'import json; x=json.load(open("dist/stress-a.json")); assert x["mismatches"]==0 and x["distinct_risk_vectors"]==1000000 and x["families"]==24 and x["stream_sha256"]=="7038de9caeb53ac2449c5259319aa29e3d82938fdc3d2184d924fe29b0d982a8"'
+      - name: Create unpublished v1 experimental review bundle
+        run: |
+          python tools/make_experimental_bundle.py --source . --dist dist --output dist/cora-v1-experimental-review.zip
       - name: Upload pre-release candidate artifacts for review only
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: cora-pr07-python-${{ matrix.python-version }}-unpublished
+          name: cora-v1-experimental-python-${{ matrix.python-version }}-unpublished
           path: |
             dist/cora_audit-$CORA_VERSION-py3-none-any.whl
             dist/cora_audit-$CORA_VERSION.tar.gz
             dist/*validation.json
             dist/*verification.json
             dist/stress-a.json
+            dist/cora-v1-experimental-review.zip
           if-no-files-found: error
           retention-days: 7

@@ -57,3 +57,14 @@ jobs:
           cora stress-file-lab --seed 883 --cases 1000000 --output /tmp/file-lab-b.json
           cmp /tmp/file-lab-a.json /tmp/file-lab-b.json
           python -c 'import json; x=json.load(open("/tmp/file-lab-a.json")); assert x["cases"]==1000000 and x["distinct_risk_vectors"]==1000000 and x["mismatches"]==0 and x["families"]==24 and x["digest"]=="90525c7ef2419c72b7a2ec7dab268d189de84387edf3551264a241e62e792610"'
+
+      - name: Verify v1.experimental repository identity and role saturation
+        run: |
+          python tools/verify_repository_contract.py --repo .
+          python tools/verify_artifact_roles.py --repo . --output /tmp/cora-self-v1.json
+          cora artifact-audit . --revision HEAD --output /tmp/cora-artifacts.json
+          cora verify-artifacts /tmp/cora-artifacts.json --repo .
+          cora file-lab . --path tests/test_pr10_artifact_roles.py --revision HEAD --output /tmp/cora-role-lab.json
+          cora verify-file-lab /tmp/cora-role-lab.json --repo .
+          cora stress-artifact-semantics --seed 883 --minimum-cases 1000000 --no-novelty 10000000 --output /tmp/cora-saturation.json
+          python -c 'import json; a=json.load(open("/tmp/cora-saturation.json")); assert a["total_cases"]==11000000 and a["semantic_classes_observed"]==12288 and a["new_classes_after_M"]==0 and a["mismatches"]==0 and a["stream_sha256"]=="523cdad1ebd659071a645aedc567de1ceeb65ee5fd0d356c8f17c0c4f5e9844f"'
