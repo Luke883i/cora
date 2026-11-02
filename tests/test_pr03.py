@@ -1,11 +1,13 @@
+import copy
 import json
 import subprocess
 import tempfile
 import unittest
 from pathlib import Path
-from cora.graph import graph_from_commit, explain_path, modules_for
+from cora.graph import graph_from_commit, explain_path, modules_for, verify_graph_against_git
 from cora.graph_stress import stress_graph, FAMILIES
 from cora.ontology import validate_ontology
+from cora.evidence import domain_hash
 
 
 def git(repo,*args):
@@ -59,6 +61,14 @@ class GraphTests(unittest.TestCase):
     def test_graph_mutations_all(self):
         self.assertEqual(len(FAMILIES),24)
         self.assertEqual(stress_graph(seed=883,cases=5000)['mismatches'],0)
+    def test_verified_graph_against_git(self):
+        g=graph_from_commit(self.repo)
+        self.assertTrue(verify_graph_against_git(self.repo,g))
+    def test_reforged_graph_rejected(self):
+        g=copy.deepcopy(graph_from_commit(self.repo))
+        g['edges'].append({'source':'product:api','target':'file:fictional.py','kind':'static_import_candidate','evidence':'forged'})
+        g['graph_digest']=domain_hash('CORA:graph:1',{k:v for k,v in g.items() if k!='graph_digest'})
+        with self.assertRaises(ValueError):verify_graph_against_git(self.repo,g)
     def test_repeat_deterministic(self):
         self.assertEqual(stress_graph(seed=88,cases=1200),stress_graph(seed=88,cases=1200))
 

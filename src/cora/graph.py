@@ -134,3 +134,20 @@ def explain_path(graph:dict, source:str, target:str) -> dict:
             cur=prev_node
         path.reverse()
     return {'schema':'cora-explanation/1','source':source,'target':target,'reachable_in_declared_graph':target in prev,'edges':path,'caveat':'Graph reachability is not runtime use, non-reachability is not safe deletion.'}
+
+
+def verify_graph_against_git(repo: Path, graph: dict) -> bool:
+    """Require an exact reproduction from Git, not just a self-recomputed digest."""
+    if not isinstance(graph, dict) or graph.get('schema') != 'cora-graph/1':
+        raise ValueError('invalid graph schema')
+    commit = graph.get('commit')
+    source = graph.get('ontology_source')
+    if not isinstance(commit, str) or not isinstance(source, str) or not source.startswith(commit+':'):
+        raise ValueError('invalid graph provenance')
+    digest = graph.get('graph_digest')
+    if digest != domain_hash('CORA:graph:1', {k:v for k,v in graph.items() if k!='graph_digest'}):
+        raise ValueError('invalid graph digest')
+    actual = graph_from_commit(repo, commit, source[len(commit)+1:])
+    if actual != graph:
+        raise ValueError('graph differs from committed Git evidence')
+    return True

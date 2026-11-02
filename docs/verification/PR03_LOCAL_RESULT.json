@@ -1,11 +1,11 @@
 {
   "schema": "cora-pr03-verification/1",
   "local_python": "3.13.5",
-  "tests_total": 32,
-  "tests_passed": 32,
+  "tests_total": 34,
+  "tests_passed": 34,
   "tests_failed": 0,
   "unit_regressions": 23,
-  "new_tests": 9,
+  "new_tests": 11,
   "stress_cases": 1000000,
   "stress_replays": 2,
   "seed": 883,
@@ -19,5 +19,6 @@
     "Non-reachability is not safe deletion",
     "Python imports are partial static candidates",
     "No semantic equivalence proof"
-  ]
+  ],
+  "security_refinement": "Forged graph with recomputed self-hash rejected against committed Git source"
 }

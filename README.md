@@ -46,7 +46,7 @@ The `cora graph` command requires a `cora.ontology.json` **committed in the same
 
 ```bash
 cora graph /path/to/repo --revision HEAD --ontology cora.ontology.json --output /tmp/cora-graph.json
-cora explain /tmp/cora-graph.json --source product:api --target file:src/shared/util.py
+cora explain /tmp/cora-graph.json --repo /path/to/repo --source product:api --target file:src/shared/util.py
 cora stress-graph --seed 883 --cases 1000000 --output /tmp/graph-stress.json
 ```
 

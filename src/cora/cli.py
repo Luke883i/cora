@@ -11,7 +11,7 @@ from .mutations import stress
 from .mutation_evidence import stress_evidence
 from .evidence import validate_ledger
 from .git_snapshot import snapshot
-from .graph import graph_from_commit, explain_path
+from .graph import graph_from_commit, explain_path, verify_graph_against_git
 from .graph_stress import stress_graph
 
 
@@ -38,6 +38,7 @@ def main(argv: list[str] | None = None) -> int:
     gg.add_argument('--output', type=Path)
     xx = sub.add_parser('explain')
     xx.add_argument('graph_json', type=Path)
+    xx.add_argument('--repo', required=True, type=Path)
     xx.add_argument('--source', required=True)
     xx.add_argument('--target', required=True)
     xx.add_argument('--output', type=Path)
@@ -74,7 +75,9 @@ def main(argv: list[str] | None = None) -> int:
             result = graph_from_commit(args.repo,args.revision,args.ontology)
             code = 0
         elif args.cmd == 'explain':
-            result = explain_path(json.loads(args.graph_json.read_text(encoding='utf-8')),args.source,args.target)
+            gdata = json.loads(args.graph_json.read_text(encoding='utf-8'))
+            verify_graph_against_git(args.repo, gdata)
+            result = explain_path(gdata,args.source,args.target)
             code = 0
         elif args.cmd == 'snapshot':
             result = snapshot(args.repo, args.revision)

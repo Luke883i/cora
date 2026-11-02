@@ -33,3 +33,7 @@ A Python static import is only a `static_import_candidate`; direct file mapping 
 ## Release policy
 
 Do not merge while CI, independent review or the DoD are unresolved. The merged source on `main`, not the experimental seed ZIPs, is authoritative.
+
+### Additional falsification refinement
+
+A graph JSON with a forged edge and a freshly calculated self-digest MUST be rejected by `cora explain --repo`. The implementation recomputes the graph from the recorded Git commit and requires exact equality. This limits explanation to source-verifiable graphs, not user-authored structures.
