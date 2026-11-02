@@ -23,6 +23,8 @@ from .guard import install_guard
 from .guard_runtime import verify as verify_local_guard
 from .file_lab import examine_file, verify_lab, ai_prompt, record_human_decision
 from .file_lab_stress import stress_file_lab
+from .artifact_roles import artifact_audit, verify_artifact_report
+from .artifact_saturation import saturate
 import shlex
 
 
@@ -135,6 +137,19 @@ def main(argv: list[str] | None = None) -> int:
     fls.add_argument('--seed',type=int,default=883)
     fls.add_argument('--cases',type=int,default=1000000)
     fls.add_argument('--output',type=Path)
+    ar = sub.add_parser('artifact-audit',help='Multi-role declaration audit at immutable Git commit')
+    ar.add_argument('repo',type=Path)
+    ar.add_argument('--revision',default='HEAD')
+    ar.add_argument('--output',type=Path)
+    vr = sub.add_parser('verify-artifacts',help='Recompute artifact report against committed Git')
+    vr.add_argument('report',type=Path)
+    vr.add_argument('--repo',required=True,type=Path)
+    vr.add_argument('--output',type=Path)
+    sat = sub.add_parser('stress-artifact-semantics',help='Finite-role semantics saturation; synthetic only')
+    sat.add_argument('--seed',type=int,default=883)
+    sat.add_argument('--minimum-cases',type=int,default=1000000)
+    sat.add_argument('--no-novelty',type=int,default=10000000)
+    sat.add_argument('--output',type=Path)
     g = sub.add_parser('snapshot')
     g.add_argument('repo', type=Path)
     g.add_argument('--revision', default='HEAD')
@@ -229,6 +244,18 @@ def main(argv: list[str] | None = None) -> int:
         elif args.cmd == 'stress-file-lab':
             result=stress_file_lab(seed=args.seed,cases=args.cases)
             code=2 if result['mismatches'] else 0
+        elif args.cmd == 'artifact-audit':
+            result = artifact_audit(args.repo,args.revision)
+            code = 2 if result['summary']['unclassified'] or result['summary']['stale_rules'] else 0
+        elif args.cmd == 'verify-artifacts':
+            report = json.loads(args.report.read_text(encoding='utf-8'))
+            verify_artifact_report(args.repo,report)
+            result = {'schema':'cora-artifact-verification/1','status':'VERIFIED_SCOPED',
+                      'report_digest':report['report_digest'],'commit':report['commit']}
+            code = 0
+        elif args.cmd == 'stress-artifact-semantics':
+            result = saturate(seed=args.seed,minimum_cases=args.minimum_cases,no_novelty=args.no_novelty)
+            code = 2 if result['mismatches'] else 0
         elif args.cmd == 'snapshot':
             result = snapshot(args.repo, args.revision)
             code = 0
