@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cora-audit"
+version = "0.1.0a1"
+description = "CORA: scoped, reproducible software repository evidence"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{name = "CORA contributors"}]
+keywords = ["software-audit", "architecture", "repository", "evidence"]
+dependencies = []
+
+[project.scripts]
+cora = "cora.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
