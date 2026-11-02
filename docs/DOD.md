@@ -31,3 +31,8 @@ Select **one engineer who has not worked on CORA**. Give only the repository roo
 - **H05:** All 108 historical regression tests, new DoD/hardening tests, and PR-07 packaging CI must pass on the **same PR head SHA**.
 
 **G0 presently cannot be signed off solely by CI.** Human first-read and external administration/protection evidence remain necessary. Track actual outcomes in [audit](AUDIT_PR01_PR07.md); do not encode "PASS" for absent evidence.
+
+
+## Extension: per-file forensic AI governance
+
+The additional DoD lattice and unresolved hosting/runtime/AI calibration gates are in [STANDARDS_MAINTENANCE_AUDIT.md](STANDARDS_MAINTENANCE_AUDIT.md). In particular, a positive result from `file-lab` is a **narrow observation**, not a removal permit. The human decision artifact records intent but cannot authenticate its signatories or enact operations. Independent CI review, runtime provenance and external labeled accuracy remain BLOCKED.

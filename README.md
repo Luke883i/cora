@@ -2,7 +2,7 @@
 
 **CORA** is an offline-first command-line tool for understanding a repository's architecture, checking *what the evidence actually supports*, and performing narrowly controlled maintenance. It aims to help engineers converge toward the **minimum justifiable architecture**, not merely the smallest apparent set of files.
 
-**Status:** experimental Python alpha `0.7.0a1`; installable from this source tree. **Not** a universal dead-code detector, automatic repository cleaner, runtime-equivalence prover, production-certified tool, or public package release.
+**Status:** experimental Python alpha `0.8.0a1`; installable from this source tree. **Not** a universal dead-code detector, automatic repository cleaner, runtime-equivalence prover, production-certified tool, or public package release.
 
 | Identity | What it means here |
 | --- | --- |
@@ -64,3 +64,18 @@ Start here: [architecture and contract](docs/ARCHITECTURE.md) → [definition of
 cora version
 
 **Historical lineage:** PR-01–07 ADRs live in `docs/ADR-PR01.md` … `docs/ADR-PR07.md`; they document design decisions, not present-day release certification. See [hardening debt and acceptance](docs/AUDIT_PR01_PR07.md). Licensed under [MIT](LICENSE).
+
+## Per-file forensic laboratory and human governance (experimental)
+
+The **multi-scale bird's-eye forensic lens** (`cora file-lab`) creates a read-only dossier for **one tracked file at a pinned Git commit**: incoming/outgoing candidate imports, declared software/product ownership, manifest declarations, operational unknowns, a qualified *dead-code investigation candidate*, and explicit quarantine/archive/rename options that **do not execute**. A file with no visible static inbound edge is **not proven dead**.
+
+```bash
+cora file-lab . --path src/cora/graph.py --revision HEAD \
+  --output /tmp/file-lab.json --prompt-output /tmp/ai-review-request.json
+cora verify-file-lab /tmp/file-lab.json --repo .
+cora file-decision /tmp/file-lab.json --actor engineer-id --role MAINTAINER \
+  --action INVESTIGATE --rationale 'Verify runtime and external consumers before changes' \
+  --output /tmp/human-decision.json
+```
+
+Optional `--runtime-events` imports **unverified caller-provided** commit-bound runtime observations; optional `--ai-hypotheses` imports AI suggestions as untrusted hypotheses with **uncalibrated**, non-probabilistic ranges. No repository code is executed and no AI provider is contacted automatically. For the evidence matrix and sample schemas see [file-lab](docs/FILE_LAB.md); for accountable human roles and separation of duties see [governance](GOVERNANCE.md); for the security, maintenance and standards audit see [hardening audit](docs/STANDARDS_MAINTENANCE_AUDIT.md). This feature does not enable general dead-code deletion.
