@@ -1,0 +1,27 @@
+{
+  "schema": "cora-pr04-verification/1",
+  "scope": "Local executed fixture on committed Git objects; synthetic in-memory manifest inputs",
+  "tests_total": 47,
+  "tests_passed": 47,
+  "tests_failed": 0,
+  "stress_cases": 1000000,
+  "stress_replays": 2,
+  "seed": 883,
+  "families": 24,
+  "mismatches": 0,
+  "distinct_input_fingerprints": 1000000,
+  "stream_sha256": "9c35a7451c083577045ba7bfa1627c38d14a6ba76e9869d84fe33e482f05d08b",
+  "outcomes": {
+    "malformed": 166383,
+    "parsed": 499654,
+    "unresolved": 333963
+  },
+  "byte_identical": true,
+  "limitations": [
+    "No runtime use or safe deletion",
+    "Manifest dependency declarations only; partial parsers",
+    "Fixture-template oracles are not independent operational ground truth",
+    "Distinct serializations do not imply distinct computational paths"
+  ],
+  "status": "LOCAL_PASS_REMOTE_CI_PENDING"
+}
