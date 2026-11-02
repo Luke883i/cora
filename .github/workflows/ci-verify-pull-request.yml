@@ -60,3 +60,11 @@ jobs:
           cora stress-closure --seed 883 --cases 1000000 --output /tmp/closure-b.json
           cmp /tmp/closure-a.json /tmp/closure-b.json
           python -c 'import json; x=json.load(open("/tmp/closure-a.json")); assert x["cases"]==1000000 and x["families"]==24 and x["distinct_evidence_vectors"]==1000000 and x["mismatches"]==0 and x["stream_sha256"]=="a19cfe01c7b0546de3cff39d9a85534f7a5858c1e7ebe2794891fdd2ccf7fe5a"'
+
+      - name: PR06 transactional guard fixtures and 1M risk mutations twice
+        run: |
+          python -m unittest discover -s tests -p test_pr06.py -v
+          cora stress-transform --seed 883 --cases 1000000 --output /tmp/transform-a.json
+          cora stress-transform --seed 883 --cases 1000000 --output /tmp/transform-b.json
+          cmp /tmp/transform-a.json /tmp/transform-b.json
+          python -c 'import json; x=json.load(open("/tmp/transform-a.json")); assert x["cases"]==1000000 and x["families"]==24 and x["distinct_risk_vectors"]==1000000 and x["mismatches"]==0 and x["stream_sha256"]=="06994c2a0047a72ba4c160e8542a1ee7ade08348852dbd99427694bac02d3d5f"'

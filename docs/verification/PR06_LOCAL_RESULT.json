@@ -1,0 +1,28 @@
+{
+  "schema": "cora-pr06-verification/1",
+  "scope": "local Python 3.13.5, actual Git fixtures and 1M seeded finite policy vectors",
+  "tests_passed": 102,
+  "tests_total": 102,
+  "prior_regressions": 71,
+  "new_tests": 31,
+  "stress_seed": 883,
+  "stress_cases": 1000000,
+  "stress_replays": 2,
+  "stress_families": 24,
+  "distinct_risk_vectors": 1000000,
+  "mismatches": 0,
+  "outcomes": {
+    "BLOCKED": 622408,
+    "UNKNOWN": 262275,
+    "CANDIDATE_SCOPED": 115317
+  },
+  "stream_sha256": "06994c2a0047a72ba4c160e8542a1ee7ade08348852dbd99427694bac02d3d5f",
+  "double_replay_byte_identical": true,
+  "limitations": [
+    "Synthetic risk-state vectors, not physical Git refactors",
+    "Only exact tracked documentation path rename, not arbitrary code/workflow/directory rename",
+    "Compensating rollback for owned document files, not test-command external side effects",
+    "Independent protected CI required for anti-bypass guard control",
+    "No universally proven deletion or behavior equivalence"
+  ]
+}

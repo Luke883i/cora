@@ -85,3 +85,29 @@ cora stress-closure --seed 883 --cases 1000000 --output /tmp/cora-closure-stress
 ```
 
 The three latter observational claims require ontologies or adapters from earlier PRs. `safe_deletion` can **never produce PASS_SCOPED** in PR-05; it is BLOCKED for an existing file and REFUTED for a nonexistent file because runtime, build, deployment, retention and external consumer obligations have no authoritative proofs. A missing blob is `REFUTED` only *within the specified immutable Git commit*; it says nothing about untracked files or other repositories. An agent cannot supply arbitrary fact assertions to `cora closure`. The signed-looking SHA-256 digest is **not a cryptographic signature**; `verify-certificate` must independently recompute from Git. See `docs/ADR-PR05.md`.
+
+
+## PR-06 — Controlled transformations and local architecture guard (experimental)
+
+CORA now offers a deliberately narrow **tracked-document rename** in addition to read-only audit. A plan does **not** authorize deletion or arbitrary code refactoring. Prepare a clean Git checkout and keep the plan and receipt **outside the repository** to preserve the clean-worktree precondition.
+
+```bash
+cora plan-rename-doc /path/to/repo --old docs/old.md --new docs/new.md --output /tmp/cora-plan.json
+# Inspect the plan and its plan_digest before approving.
+cora apply-rename-doc /path/to/repo --plan /tmp/cora-plan.json \
+  --approve '<exact-plan-digest>' --test-command 'python -m unittest discover -s tests' \
+  --output /tmp/cora-receipt.json
+```
+
+The scoped transform scans all tracked files up to 2 MiB; it updates **exact old-path references in supported documents** and refuses references in code or unsupported file types. It requires an explicit non-shell verifier and re-checks postimage content. On failure it attempts a *compensating rollback of files owned by the transformation*; side effects of arbitrary verification commands, untracked external consumers and external services are **not rolled back**. No general Python module, workflow, folder or deployment rename is claimed.
+
+The local guard can be installed onto a *separate* repository after its product ownership is explicitly declared:
+
+```bash
+cora guard-install /path/to/repo --product 'api=apps/api=apps.api' --product 'worker=apps/worker=apps.worker'
+# Commit .cora/ and .github/workflows/cora-architecture-guard.yml, then:
+cora guard-check /path/to/repo --base HEAD~1
+# CI uses the standalone .cora/verify.py with GitHub PR base SHA.
+```
+
+**Important:** the guard checks changed Git paths and specific explicit/dynamic Python AST imports. It is not an anti-tampering boundary unless branch-protection rules require an independently trusted status check. There is no cross-repository/runtime completeness. `cora stress-transform --seed 883 --cases 1000000` tests a finite **in-memory risk policy**, not one million real repository transformations. See `docs/ADR-PR06.md`.
