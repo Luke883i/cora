@@ -1,130 +1,66 @@
-# CORA — PR-01 canonical package baseline
+# CORA — scoped software architecture evidence
 
-CORA is a tool for scoped, explainable repository evidence and architecture convergence. **This is the minimal PR-01 baseline, not a universal dead-code detector.** No automatic deletion is available. This first package intentionally has exactly one installed entrypoint (`cora`).
+**CORA** is an offline-first command-line tool for understanding a repository's architecture, checking *what the evidence actually supports*, and performing narrowly controlled maintenance. It aims to help engineers converge toward the **minimum justifiable architecture**, not merely the smallest apparent set of files.
 
-## Install
+**Status:** experimental Python alpha `0.7.0a1`; installable from this source tree. **Not** a universal dead-code detector, automatic repository cleaner, runtime-equivalence prover, production-certified tool, or public package release.
 
-Python 3.11+:
+| Identity | What it means here |
+| --- | --- |
+| **Product — CORA** | The user-facing audit, evidence, explanation, limited transformation, and local-guard capability. Its contract and roadmap are broader than any one parser. |
+| **Software — `cora-audit`** | One Python 3.11+ distribution providing the `cora` CLI, evidence and graph kernels, partial manifest adapters, certificate rules, a restricted document renamer, and a vendorable guard. |
+| **Repository — `Luke883i/cora`** | This Git change/provenance boundary: sources, tests, release tools, CI, schemas and documentation. A repository is not itself a product or a deployed runtime. |
+
+## First five minutes
 
 ```bash
+# Python 3.11+; inside a checkout of this repository
+python -m venv .venv
+. .venv/bin/activate                 # Windows: .venv\Scripts\activate
 python -m pip install .
+cora --help
 cora version
-cora audit . --output /tmp/cora-audit.json
-cora stress --cases 1000000 --seed 883 --output /tmp/cora-stress.json
-```
-
-`audit` scans working-tree files without executing project code. Create a `cora.products.json` containing declared products with `id`, `root`, and `entrypoints`. With no declaration file, CORA inventories paths but **cannot infer the product ontology**. The inventory reports unknown runtime, dynamic imports, historical Git provenance and external consumers; it is **not** a proof that files are unused.
-
-## PR-01 acceptance
-
-- single CLI via packaging; installable in clean Python 3.11+ environment;
-- deterministic output for a fixed, unchanged working tree and tool version;
-- file inventory with positive content hashes and declared product attribution;
-- fail-closed on duplicate/missing entrypoints, overlapping product roots, symlinks;
-- reproducible 1,000,000-case synthetic model-level mutation stress with predeclared fixture expectation labels;
-- no destructive transformations, no runtime claims, no silent claim of R5 parity.
-
-**Compatibility:** R5 source is a prior experimental artifact; PR-01 does not yet transplant its adaptive adapters or R4 transform API. A capability register in `docs/ADR-PR01.md` tracks these as gated follow-up PRs.
-
-## PR-02 — committed evidence ledger and provenance
-
-The **single `cora` CLI** now also provides immutable snapshot and verification workflows:
-
-```bash
+cora audit . --output /tmp/cora-inventory.json
 cora snapshot . --revision HEAD --output /tmp/cora-ledger.json
 cora verify-ledger /tmp/cora-ledger.json --repo .
-cora stress-evidence --seed 883 --cases 1000000 --output /tmp/cora-pr02-mutations.json
 ```
 
-Snapshot reads **committed Git blob content**, not the working tree. Every regular file within the configured bound carries an independent SHA-256, Git object ID, commit, mode and path. Symlinks, submodules, Git LFS pointers and out-of-bound blobs stay explicitly `unresolved`. `verify-ledger` recomputes the complete ledger from the original commit; an internally self-consistent but forged ledger does not pass merely because it has a recalculated digest. This does **not** make Git a trusted remote attestation service or prove the file is used by the product.
+`audit` examines the working tree; `snapshot` examines an **immutable Git commit**. Their claims are different. Keep generated outputs outside the target repository. For a first self-audit with an explicit committed ontology: `cora graph . --output /tmp/cora-graph.json`. For a **different** repository, commit a `cora.ontology.json` before graph analysis; without it CORA does not invent product boundaries.
 
-The new stress corpus consists of **24 named, preseeded evidence mutation families** and 1 million in-memory variations. It verifies integrity rules and traceability consistency—not independent physical repo mutations, automatic deletion or behavioral preservation. See `docs/ADR-PR02.md`.
+## What works (PR-01–07)
 
-## PR-03: committed ontology and explainable graph (alpha)
+| Capability | Commands | What is proven / what remains unknown |
+| --- | --- | --- |
+| Inventory and ownership (01) | `audit` | Working-tree file hashes and **declared** product roots; no automatic ownership inference. |
+| Immutable provenance (02) | `snapshot`, `verify-ledger` | Git-commit-bound blob evidence; symlinks, LFS, gitlinks and oversized blobs can remain unresolved. |
+| Ontology and graph (03) | `graph`, `explain` | Distinct product/software/file nodes and explainable **candidate** static Python edges; not runtime execution or complete reachability. |
+| Partial ecosystem adapters (04) | `adapter-audit`, `verify-adapters` | Declared dependencies in `package.json`, `pyproject.toml`, `requirements.txt`, `Cargo.toml`, `go.mod`, `pom.xml`; no resolved build/runtime graph. |
+| Evidence closure (05) | `closure`, `verify-certificate` | Git-revalidated `PASS_SCOPED` / `BLOCKED` / `REFUTED` for narrow observations; **no deletion authorization**. |
+| Local maintenance (06) | `plan-rename-doc`, `apply-rename-doc`, `guard-install`, `guard-check` | Explicitly approved `.md/.txt/.rst` path rename with exact local references, checks and **owned-file** rollback; a partial Python/Git boundary guard. |
+| Candidate packaging (07) | `tools/build_candidate.py`, `tools/release_verify.py`, `tools/external_validate.py` | Wheel/sdist parity, local reproducible build and installation on two **synthetic Git fixtures**; no signed supply-chain attestation. |
 
-The `cora graph` command requires a `cora.ontology.json` **committed in the same Git revision** as the source tree. Products are owner-declared capabilities; software is separately declared, and a directory name is never proof of product identity. No ontology supplied means the graph command fails, not that products are inferred.
+The CLI also has seeded stress commands (`stress`, `stress-evidence`, `stress-graph`, `stress-adapters`, `stress-closure`, `stress-transform`) and `tools/release_stress.py`. Their million-case tests use **synthetic model mutations**, not a million real repositories, equivalence proofs or deletion safety certificates.
 
-```bash
-cora graph /path/to/repo --revision HEAD --ontology cora.ontology.json --output /tmp/cora-graph.json
-cora explain /tmp/cora-graph.json --repo /path/to/repo --source product:api --target file:src/shared/util.py
-cora stress-graph --seed 883 --cases 1000000 --output /tmp/graph-stress.json
-```
+## Operating boundaries
 
-Example ontology:
-```json
-{"schema":"cora-ontology/1","products":[{"id":"api","roots":["apps/api"],"entrypoints":["apps/api/main.py"]}],"software":[{"id":"app","roots":["apps/api"],"product_ids":["api"]}]}
-```
+- **Observation is not obligation closure.** A file not found in an incomplete graph is not safe to delete. A manifest dependency is declared, not necessarily installed or executed.
+- **No general deletion or code/workflow rename.** `safe_deletion` never receives a positive certificate; document renames are limited to exact references in supported tracked files and may be blocked by unknown consumers.
+- **Rollback is scoped.** Verification commands run with the user's privileges and are **not sandboxed**; CORA can restore its transaction-owned document files, not arbitrary external side effects.
+- **Local guard is not a trust boundary by itself.** Bootstrap and changes to protected files require independent approval; required CI checks and repository rules must be configured by an administrator. The tool does not manage or attest those settings.
+- **Privacy and security:** no mandatory network service or LLM; repository content is processed locally, but user-supplied verifier commands may themselves have side effects. Treat untrusted repositories and tools accordingly.
 
-Evidence: typed and versioned repository/product/software/file nodes, ledger-backed declarations and candidate Python imports with graph path witnesses. Missing, dynamic, relative, ambiguous or external imports remain unresolved. **An unreachable file is NOT certified deletable.** Coverage for runtime, deployment and external consumers remains unsupported. See `docs/ADR-PR03.md`.
+## Engineering map and contribution path
 
-## PR-04 — Versioned manifest adapters and explicit coverage
+| Where | Responsibility |
+| --- | --- |
+| `src/cora/` | Single package and CLI; see [module map](docs/ARCHITECTURE.md). |
+| `cora.ontology.json` | **Committed self-description** of CORA's own product and software boundaries. |
+| `schemas/` | Data contracts for selected records and policies; code-level validators can impose additional checks. |
+| `tests/` | Unit, adversarial and temporary-Git fixture oracles; tests are **not** external production validation. |
+| `tools/` | Unpublished reproducible candidate builds, archive checks and external **fixture** installation. |
+| `.github/workflows/` | Test and candidate build CI; workflows do **not** publish releases. |
+| `docs/` | Architecture, [global/intermediate/local DoD](docs/DOD.md), [PR-01–07 audit](docs/AUDIT_PR01_PR07.md) and versioned ADRs. |
 
-Six bounded, read-only partial adapters are available for `package.json`, `pyproject.toml`, `requirements.txt`, `Cargo.toml`, `go.mod` and `pom.xml`. No scripts, build instructions, application code or third-party plugins are executed. Dockerfiles, GitHub Actions and `.csproj` are explicitly `unsupported`; malformed, symlink and oversized content are `unresolved`.
+Start here: [architecture and contract](docs/ARCHITECTURE.md) → [definition of done](docs/DOD.md) → [contributing](CONTRIBUTING.md) → [security and reporting](SECURITY.md). Run `python -m unittest discover -s tests -v` before proposing changes; run `python tools/verify_repository_contract.py` to check the first-read, links, CLI and ontology contracts. The exact available commands are discoverable via `cora --help`; evidence and unsupported areas are recorded alongside each output.
+cora version
 
-```bash
-cora adapter-audit /path/to/repo --revision HEAD --output /tmp/adapters.json
-cora verify-adapters /tmp/adapters.json --repo /path/to/repo
-cora stress-adapters --seed 883 --cases 1000000 --output /tmp/stress-adapters.json
-```
-
-Results carry a versioned adapter identity and provenance to PR-02 Git blob evidence. Dependency entries are **declared only**, never interpreted as proven installed, imported or used at runtime. This does not complete language-wide import resolution, build pipelines or software product boundaries. See `docs/ADR-PR04.md`.
-
-## PR-05 — Scoped Evidence Closure (alpha)
-
-`cora closure` issues a **Git-source-rechecked, observational-only** claim with
-`PASS_SCOPED`, `BLOCKED`, or `REFUTED`; it never licenses file deletion.
-
-```bash
-cora closure /path/to/repo --claim committed_blob --path src/service.py --output /tmp/cert.json
-cora verify-certificate /tmp/cert.json --repo /path/to/repo
-cora closure /path/to/repo --claim declared_product_membership --path apps/api/main.py --selector api
-cora closure /path/to/repo --claim declared_manifest_dependency --path package.json --selector react
-cora closure /path/to/repo --claim static_import_candidate --path apps/api/main.py --selector src/shared/util.py
-cora closure /path/to/repo --claim safe_deletion --path legacy/file.py
-cora stress-closure --seed 883 --cases 1000000 --output /tmp/cora-closure-stress.json
-```
-
-The three latter observational claims require ontologies or adapters from earlier PRs. `safe_deletion` can **never produce PASS_SCOPED** in PR-05; it is BLOCKED for an existing file and REFUTED for a nonexistent file because runtime, build, deployment, retention and external consumer obligations have no authoritative proofs. A missing blob is `REFUTED` only *within the specified immutable Git commit*; it says nothing about untracked files or other repositories. An agent cannot supply arbitrary fact assertions to `cora closure`. The signed-looking SHA-256 digest is **not a cryptographic signature**; `verify-certificate` must independently recompute from Git. See `docs/ADR-PR05.md`.
-
-
-## PR-06 — Controlled transformations and local architecture guard (experimental)
-
-CORA now offers a deliberately narrow **tracked-document rename** in addition to read-only audit. A plan does **not** authorize deletion or arbitrary code refactoring. Prepare a clean Git checkout and keep the plan and receipt **outside the repository** to preserve the clean-worktree precondition.
-
-```bash
-cora plan-rename-doc /path/to/repo --old docs/old.md --new docs/new.md --output /tmp/cora-plan.json
-# Inspect the plan and its plan_digest before approving.
-cora apply-rename-doc /path/to/repo --plan /tmp/cora-plan.json \
-  --approve '<exact-plan-digest>' --test-command 'python -m unittest discover -s tests' \
-  --output /tmp/cora-receipt.json
-```
-
-The scoped transform scans all tracked files up to 2 MiB; it updates **exact old-path references in supported documents** and refuses references in code or unsupported file types. It requires an explicit non-shell verifier and re-checks postimage content. On failure it attempts a *compensating rollback of files owned by the transformation*; side effects of arbitrary verification commands, untracked external consumers and external services are **not rolled back**. No general Python module, workflow, folder or deployment rename is claimed.
-
-The local guard can be installed onto a *separate* repository after its product ownership is explicitly declared:
-
-```bash
-cora guard-install /path/to/repo --product 'api=apps/api=apps.api' --product 'worker=apps/worker=apps.worker'
-# Commit .cora/ and .github/workflows/cora-architecture-guard.yml, then:
-cora guard-check /path/to/repo --base HEAD~1
-# CI uses the standalone .cora/verify.py with GitHub PR base SHA.
-```
-
-**Important:** the guard checks changed Git paths and specific explicit/dynamic Python AST imports. It is not an anti-tampering boundary unless branch-protection rules require an independently trusted status check. There is no cross-repository/runtime completeness. `cora stress-transform --seed 883 --cases 1000000` tests a finite **in-memory risk policy**, not one million real repository transformations. See `docs/ADR-PR06.md`.
-
-## PR-07 — Unpublished release candidate validation
-
-PR-07 introduces packaging and external-fixture gates for `cora-audit 0.7.0a1`. This alpha is **not published** to a public registry, nor certified as safe for general code deletion. Build the wheel and sdist locally using an installed setuptools >=77 + wheel toolchain:
-
-```bash
-python tools/build_candidate.py --source . --outdir /tmp/cora-dist
-python tools/release_verify.py --source . \
-  --wheel /tmp/cora-dist/cora_audit-0.7.0a1-py3-none-any.whl \
-  --sdist /tmp/cora-dist/cora_audit-0.7.0a1.tar.gz
-python tools/external_validate.py \
-  --wheel /tmp/cora-dist/cora_audit-0.7.0a1-py3-none-any.whl \
-  --sdist /tmp/cora-dist/cora_audit-0.7.0a1.tar.gz
-python tools/release_stress.py --seed 883 --cases 1000000
-```
-
-The release verifier compares Git-derived source package files and distribution metadata; it does not cryptographically attest the publisher. The external validator installs wheel and sdist in separate environments and exercises two **pre-seeded independent Git fixtures**, not production sites. The one-million-case stress is an **in-memory risk-model falsifier**; 24 **real distribution archive mutants** are tested separately. The PR workflow uploads review-only CI artifacts; it never publishes to PyPI or creates a release. See `docs/ADR-PR07.md`.
+**Historical lineage:** PR-01–07 ADRs live in `docs/ADR-PR01.md` … `docs/ADR-PR07.md`; they document design decisions, not present-day release certification. See [hardening debt and acceptance](docs/AUDIT_PR01_PR07.md). Licensed under [MIT](LICENSE).
