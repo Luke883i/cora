@@ -1,0 +1,109 @@
+{
+  "ci_remote": "PENDING",
+  "distribution_forms": [
+    "wheel",
+    "sdist"
+  ],
+  "external_validation": {
+    "distribution_forms": {
+      "sdist": {
+        "polyglot_fixture": {
+          "commit": "c9326320ec3329802723dcde40dbc046ec8a6e61",
+          "declared_dependencies": 2,
+          "unknown_workspaces": "PASS",
+          "unsupported_docker": "PASS"
+        },
+        "python_fixture": {
+          "closure_oracle": "PASS",
+          "commit": "a34cac67a4337e17e35da716a1e0e13025014709",
+          "files": 4,
+          "graph_oracle": "PASS"
+        }
+      },
+      "wheel": {
+        "polyglot_fixture": {
+          "commit": "1d10e2469c00b5013e7b46a71cf4b4eaccb7127a",
+          "declared_dependencies": 2,
+          "unknown_workspaces": "PASS",
+          "unsupported_docker": "PASS"
+        },
+        "python_fixture": {
+          "closure_oracle": "PASS",
+          "commit": "90bbd417ae1d9759b1b9e058dc38d677928b9c1d",
+          "files": 4,
+          "graph_oracle": "PASS"
+        }
+      }
+    },
+    "limitations": [
+      "both independent repositories are pre-seeded synthetic Git fixtures, not external production projects",
+      "sdist venv explicitly exposes local preinstalled setuptools build backend for offline build; not hermetic",
+      "no external services, deployments or runtime use tested"
+    ],
+    "offline_index": "disabled",
+    "python": "3.13.5",
+    "schema": "cora-external-validation/1",
+    "status": "SCOPED_FIXTURES_PASS"
+  },
+  "local_python": "3.13.5",
+  "pr07_tests": 6,
+  "real_mutated_archives": 24,
+  "real_mutated_archives_rejected": 24,
+  "regression_tests": 102,
+  "release_publish": "NOT_AUTHORIZED",
+  "release_verification": {
+    "distribution": "cora-audit",
+    "entrypoint": "cora=cora.cli:main",
+    "limitations": [
+      "no artifact signing or remote provenance attestation",
+      "source/wheel/sdist parity does not prove runtime behavioral correctness",
+      "non-Python integrations and external consumers not closed"
+    ],
+    "python_payload_sha256": "7e1fc68bd251ed4b86db3587bddf52131a557bf03810560263b76e718ce2163e",
+    "schema": "cora-release-verification/1",
+    "sdist_sha256": "a6510d2313e1fc5f16f92a09077f6cbe587f68e7dfa49901e6543f72c37723d7",
+    "source_modules": 18,
+    "source_modules_sha256": {
+      "__init__.py": "c0ce58073dc1381d4988304f7c4ada67b4c5b6c03f08fdd4ec6a02a7711c02fd",
+      "adapter_stress.py": "f4688d19721ea74034757160f85f0ef0362cce479792d2f79c697f9f46c414ac",
+      "adapters.py": "47fa7b7051588ca92e533f1fc7d0665468e5b769eb955e7a55dd79f0a5344469",
+      "audit.py": "4b881d57215e72c9ed620a48a6c14c982e5420df05a449a8067da8b0b64ff6b0",
+      "cli.py": "a6b2e7ae84f0cc949ee896e4298ab5cda8811e8de88c3e1695d064ff5040d5ef",
+      "closure.py": "55fa93837af2924fc2fcca9118a2f4cede8144297740e81eb15c4b60e142cdca",
+      "closure_stress.py": "d6d0a7d0c9042509c841bce10af4e2029904afbc1068de914be7f7ff0b42ddfd",
+      "evidence.py": "c8baa5722b19b329e4155985d14bd6ef28aeac8766567e52f406504e82883f02",
+      "git_snapshot.py": "c8174d9b80e656de1256ad0743a06cd8a921d7466e9e19ec569a77f883d1b2be",
+      "graph.py": "795348acfa5ff86ea510ad7d392f87b5f7c13235f3e18668d02df3b6d0379314",
+      "graph_stress.py": "e5c4c22042338bbc1b81a0205d9b567bf50a1d54a850a5a22c251c16e5287be1",
+      "guard.py": "93e9dde56334d8797aa14d50854c842ec63ee26e9363e45e339325d189651534",
+      "guard_runtime.py": "05ebdf71f03e1b94a1841803ecca1cd8d51eea52127d528228a14976fa123a0f",
+      "mutation_evidence.py": "4cf10ec558a391f35796344f20a0f9fa695f8831f5edf8d2be03bca556262035",
+      "mutations.py": "3f669638c5ef6ee8ad795dde97e7930209d3ae224cb3109760b9c07404b6546d",
+      "ontology.py": "bf3ce602f42267baca1fd197d263b80dcd490dd809d5e34d3ef7595916152b4e",
+      "transform.py": "def6d58f0f42205a1a912e64268a357f07a0f09cfa77feef45c7d9c38413fb83",
+      "transform_stress.py": "937efaf9dccbb8a62eaee2a69e5eed9ffaa93adc66963bd669d4d7b8cd2313e6"
+    },
+    "status": "VERIFIED_SCOPED",
+    "version": "0.7.0a1",
+    "wheel_files": 24,
+    "wheel_sha256": "9ef43975367033cb2d15d4e39a26f6d47004da80a9c3a269ab5ec304a581fc0d"
+  },
+  "schema": "cora-pr07-local-release/1",
+  "stress": {
+    "cases": 1000000,
+    "distinct_risk_vectors": 1000000,
+    "families": 24,
+    "mismatches": 0,
+    "outcomes": {
+      "CANDIDATE_SCOPED": 120300,
+      "HELD": 136268,
+      "REJECTED": 743432
+    },
+    "seed": 883,
+    "stream_sha256": "7038de9caeb53ac2449c5259319aa29e3d82938fdc3d2184d924fe29b0d982a8"
+  },
+  "stress_identical_replay": true,
+  "tests_passed": 108,
+  "two_distinct_git_fixtures_per_distribution": true,
+  "wheel_and_sdist_byte_identical_rebuild": true
+}

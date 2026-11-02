@@ -111,3 +111,20 @@ cora guard-check /path/to/repo --base HEAD~1
 ```
 
 **Important:** the guard checks changed Git paths and specific explicit/dynamic Python AST imports. It is not an anti-tampering boundary unless branch-protection rules require an independently trusted status check. There is no cross-repository/runtime completeness. `cora stress-transform --seed 883 --cases 1000000` tests a finite **in-memory risk policy**, not one million real repository transformations. See `docs/ADR-PR06.md`.
+
+## PR-07 — Unpublished release candidate validation
+
+PR-07 introduces packaging and external-fixture gates for `cora-audit 0.7.0a1`. This alpha is **not published** to a public registry, nor certified as safe for general code deletion. Build the wheel and sdist locally using an installed setuptools >=77 + wheel toolchain:
+
+```bash
+python tools/build_candidate.py --source . --outdir /tmp/cora-dist
+python tools/release_verify.py --source . \
+  --wheel /tmp/cora-dist/cora_audit-0.7.0a1-py3-none-any.whl \
+  --sdist /tmp/cora-dist/cora_audit-0.7.0a1.tar.gz
+python tools/external_validate.py \
+  --wheel /tmp/cora-dist/cora_audit-0.7.0a1-py3-none-any.whl \
+  --sdist /tmp/cora-dist/cora_audit-0.7.0a1.tar.gz
+python tools/release_stress.py --seed 883 --cases 1000000
+```
+
+The release verifier compares Git-derived source package files and distribution metadata; it does not cryptographically attest the publisher. The external validator installs wheel and sdist in separate environments and exercises two **pre-seeded independent Git fixtures**, not production sites. The one-million-case stress is an **in-memory risk-model falsifier**; 24 **real distribution archive mutants** are tested separately. The PR workflow uploads review-only CI artifacts; it never publishes to PyPI or creates a release. See `docs/ADR-PR07.md`.
