@@ -68,3 +68,12 @@ jobs:
           cora stress-transform --seed 883 --cases 1000000 --output /tmp/transform-b.json
           cmp /tmp/transform-a.json /tmp/transform-b.json
           python -c 'import json; x=json.load(open("/tmp/transform-a.json")); assert x["cases"]==1000000 and x["families"]==24 and x["distinct_risk_vectors"]==1000000 and x["mismatches"]==0 and x["stream_sha256"]=="06994c2a0047a72ba4c160e8542a1ee7ade08348852dbd99427694bac02d3d5f"'
+
+      - name: Verify PR08 newcomer contract, guard hardening and CORA self-graph
+        run: |
+          python tools/verify_repository_contract.py --repo .
+          python -m unittest discover -s tests -p test_pr08_repository.py -v
+          cora graph . --revision HEAD --output /tmp/cora-self-graph.json
+          python -c 'import json,subprocess; g=json.load(open("/tmp/cora-self-graph.json")); ids={(n["kind"],n["id"]) for n in g["nodes"]}; assert ("product","product:cora-cli") in ids; assert ("software","software:cora-core") in ids; assert ("software","software:cora-release-verification") in ids; assert g["commit"]==subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip()'
+          cora closure . --claim committed_blob --path src/cora/cli.py --output /tmp/cora-self-closure.json
+          python -c 'import json; x=json.load(open("/tmp/cora-self-closure.json")); assert x["status"]=="PASS_SCOPED" and x["effect"]=="OBSERVATIONAL_ONLY"'
