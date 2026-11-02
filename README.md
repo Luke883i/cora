@@ -68,3 +68,20 @@ cora stress-adapters --seed 883 --cases 1000000 --output /tmp/stress-adapters.js
 ```
 
 Results carry a versioned adapter identity and provenance to PR-02 Git blob evidence. Dependency entries are **declared only**, never interpreted as proven installed, imported or used at runtime. This does not complete language-wide import resolution, build pipelines or software product boundaries. See `docs/ADR-PR04.md`.
+
+## PR-05 — Scoped Evidence Closure (alpha)
+
+`cora closure` issues a **Git-source-rechecked, observational-only** claim with
+`PASS_SCOPED`, `BLOCKED`, or `REFUTED`; it never licenses file deletion.
+
+```bash
+cora closure /path/to/repo --claim committed_blob --path src/service.py --output /tmp/cert.json
+cora verify-certificate /tmp/cert.json --repo /path/to/repo
+cora closure /path/to/repo --claim declared_product_membership --path apps/api/main.py --selector api
+cora closure /path/to/repo --claim declared_manifest_dependency --path package.json --selector react
+cora closure /path/to/repo --claim static_import_candidate --path apps/api/main.py --selector src/shared/util.py
+cora closure /path/to/repo --claim safe_deletion --path legacy/file.py
+cora stress-closure --seed 883 --cases 1000000 --output /tmp/cora-closure-stress.json
+```
+
+The three latter observational claims require ontologies or adapters from earlier PRs. `safe_deletion` is **always blocked** in PR-05 because runtime, build, deployment, retention and external consumer obligations have no authoritative proofs. A missing blob is `REFUTED` only *within the specified immutable Git commit*; it says nothing about untracked files or other repositories. An agent cannot supply arbitrary fact assertions to `cora closure`. The signed-looking SHA-256 digest is **not a cryptographic signature**; `verify-certificate` must independently recompute from Git. See `docs/ADR-PR05.md`.
