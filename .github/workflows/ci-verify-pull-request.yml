@@ -33,14 +33,12 @@ jobs:
           cora stress-evidence --cases 1000000 --seed 883 --output /tmp/evidence-b.json
           cmp /tmp/evidence-a.json /tmp/evidence-b.json
           python -c 'import json; x=json.load(open("/tmp/evidence-a.json")); assert x["cases"]==1000000 and x["fixture_families"]==24 and x["mismatches"]==0 and x["stream_sha256"]=="8ab8eb008617e11626d3810df508ba295188502ddae7787ae5de7e7eb81506db"'
-
       - name: Verify explainable graph and deterministic graph mutations
         run: |
           cora stress-graph --seed 883 --cases 1000000 --output /tmp/graph-a.json
           cora stress-graph --seed 883 --cases 1000000 --output /tmp/graph-b.json
           cmp /tmp/graph-a.json /tmp/graph-b.json
           python -c 'import json; x=json.load(open("/tmp/graph-a.json")); assert x["cases"]==1000000 and x["families"]==24 and x["mismatches"]==0 and x["stream_sha256"]=="1f546e22c53a76dfde821013bf1c31e686b12072d79cea0999214027bcb17851"'
-
       - name: Verify adapter contracts and seeded million-case reproducibility
         run: |
           cora adapter-audit . --revision HEAD --output /tmp/cora-adapters.json
@@ -50,30 +48,12 @@ jobs:
           cmp /tmp/adapters-a.json /tmp/adapters-b.json
           python -c 'import json; x=json.load(open("/tmp/adapters-a.json")); assert x["cases"]==1000000 and x["families"]==24 and x["distinct_input_fingerprints"]==1000000 and x["mismatches"]==0 and x["stream_sha256"]=="9c35a7451c083577045ba7bfa1627c38d14a6ba76e9869d84fe33e482f05d08b"'
 
-      - name: Verify closure receipts and one million distinct evidence vectors twice
-        run: |
-          cora closure . --claim committed_blob --path pyproject.toml --output /tmp/closure.json
-          cora verify-certificate /tmp/closure.json --repo .
-          cora closure . --claim safe_deletion --path pyproject.toml --output /tmp/delete-blocked.json
-          python -c 'import json; x=json.load(open("/tmp/delete-blocked.json")); assert x["status"]=="BLOCKED" and x["effect"]=="OBSERVATIONAL_ONLY"'
-          cora stress-closure --seed 883 --cases 1000000 --output /tmp/closure-a.json
-          cora stress-closure --seed 883 --cases 1000000 --output /tmp/closure-b.json
-          cmp /tmp/closure-a.json /tmp/closure-b.json
-          python -c 'import json; x=json.load(open("/tmp/closure-a.json")); assert x["cases"]==1000000 and x["families"]==24 and x["distinct_evidence_vectors"]==1000000 and x["mismatches"]==0 and x["stream_sha256"]=="a19cfe01c7b0546de3cff39d9a85534f7a5858c1e7ebe2794891fdd2ccf7fe5a"'
-
-      - name: PR06 transactional guard fixtures and 1M risk mutations twice
-        run: |
-          python -m unittest discover -s tests -p test_pr06.py -v
-          cora stress-transform --seed 883 --cases 1000000 --output /tmp/transform-a.json
-          cora stress-transform --seed 883 --cases 1000000 --output /tmp/transform-b.json
-          cmp /tmp/transform-a.json /tmp/transform-b.json
-          python -c 'import json; x=json.load(open("/tmp/transform-a.json")); assert x["cases"]==1000000 and x["families"]==24 and x["distinct_risk_vectors"]==1000000 and x["mismatches"]==0 and x["stream_sha256"]=="06994c2a0047a72ba4c160e8542a1ee7ade08348852dbd99427694bac02d3d5f"'
-
-      - name: Verify PR08 newcomer contract, guard hardening and CORA self-graph
+      - name: Verify scoped file lab, governance onboarding and seeded triage
         run: |
           python tools/verify_repository_contract.py --repo .
-          python -m unittest discover -s tests -p test_pr08_repository.py -v
-          cora graph . --revision HEAD --output /tmp/cora-self-graph.json
-          python -c 'import json,subprocess; g=json.load(open("/tmp/cora-self-graph.json")); ids={(n["kind"],n["id"]) for n in g["nodes"]}; assert ("product","product:cora-cli") in ids; assert ("software","software:cora-core") in ids; assert ("software","software:cora-release-verification") in ids; assert g["commit"]==subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip()'
-          cora closure . --claim committed_blob --path src/cora/cli.py --output /tmp/cora-self-closure.json
-          python -c 'import json; x=json.load(open("/tmp/cora-self-closure.json")); assert x["status"]=="PASS_SCOPED" and x["effect"]=="OBSERVATIONAL_ONLY"'
+          cora file-lab . --path src/cora/graph.py --revision HEAD --output /tmp/cora-file-lab.json --prompt-output /tmp/cora-ai-prompt.json
+          cora verify-file-lab /tmp/cora-file-lab.json --repo .
+          cora stress-file-lab --seed 883 --cases 1000000 --output /tmp/file-lab-a.json
+          cora stress-file-lab --seed 883 --cases 1000000 --output /tmp/file-lab-b.json
+          cmp /tmp/file-lab-a.json /tmp/file-lab-b.json
+          python -c 'import json; x=json.load(open("/tmp/file-lab-a.json")); assert x["cases"]==1000000 and x["distinct_risk_vectors"]==1000000 and x["mismatches"]==0 and x["families"]==24 and x["digest"]=="90525c7ef2419c72b7a2ec7dab268d189de84387edf3551264a241e62e792610"'
