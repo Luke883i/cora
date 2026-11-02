@@ -33,3 +33,10 @@ jobs:
           cora stress-evidence --cases 1000000 --seed 883 --output /tmp/evidence-b.json
           cmp /tmp/evidence-a.json /tmp/evidence-b.json
           python -c 'import json; x=json.load(open("/tmp/evidence-a.json")); assert x["cases"]==1000000 and x["fixture_families"]==24 and x["mismatches"]==0 and x["stream_sha256"]=="8ab8eb008617e11626d3810df508ba295188502ddae7787ae5de7e7eb81506db"'
+
+      - name: Verify explainable graph and deterministic graph mutations
+        run: |
+          cora stress-graph --seed 883 --cases 1000000 --output /tmp/graph-a.json
+          cora stress-graph --seed 883 --cases 1000000 --output /tmp/graph-b.json
+          cmp /tmp/graph-a.json /tmp/graph-b.json
+          python -c 'import json; x=json.load(open("/tmp/graph-a.json")); assert x["cases"]==1000000 and x["families"]==24 and x["mismatches"]==0 and x["stream_sha256"]=="1f546e22c53a76dfde821013bf1c31e686b12072d79cea0999214027bcb17851"'
