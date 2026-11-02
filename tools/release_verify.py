@@ -149,7 +149,7 @@ def verify_release(wheel_path: Path, sdist_path: Path, source: Path) -> dict:
     if project['name'] != 'cora-audit' or project.get('dependencies') != []:
         raise ValueError('unexpected release name or runtime dependencies')
     version = project['version']
-    if not re.fullmatch(r'0\.[0-9]+\.0a[0-9]+', version):
+    if not re.fullmatch(r'(?:0\.[0-9]+\.0|1\.0\.0)a[0-9]+', version):
         raise ValueError('not an authorized CORA alpha candidate')
     if '>=3.11' != project['requires-python']:
         raise ValueError('python version contract changed')

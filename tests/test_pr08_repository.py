@@ -36,7 +36,7 @@ class RepositoryContract(unittest.TestCase):
     def test_committed_self_ontology_is_valid(self):
         self.assertTrue(validate_ontology(json.loads((ROOT / 'cora.ontology.json').read_text('utf-8'))))
     def test_all_commands_accounted_for(self):
-        self.assertEqual(len(COMMANDS), 24)
+        self.assertEqual(len(COMMANDS), 27)
 
 
 class IndependentGitGuardHardening(unittest.TestCase):

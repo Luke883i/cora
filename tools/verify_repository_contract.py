@@ -14,7 +14,7 @@ from pathlib import Path
 CORE_DOCS = [
     'README.md', 'LICENSE', 'SECURITY.md', 'CONTRIBUTING.md',
     'docs/ARCHITECTURE.md', 'docs/DOD.md', 'docs/AUDIT_PR01_PR07.md',
-    'cora.ontology.json', 'pyproject.toml', 'src/cora/cli.py',
+    'cora.ontology.json', 'cora.artifact-roles.json', 'pyproject.toml', 'src/cora/cli.py',
     'GOVERNANCE.md', 'docs/FILE_LAB.md', 'docs/STANDARDS_MAINTENANCE_AUDIT.md',
 ]
 COMMANDS = (
@@ -24,6 +24,7 @@ COMMANDS = (
     'stress', 'stress-evidence', 'stress-graph', 'stress-adapters',
     'stress-closure', 'stress-transform',
     'file-lab', 'verify-file-lab', 'file-decision', 'stress-file-lab',
+    'artifact-audit', 'verify-artifacts', 'stress-artifact-semantics',
 )
 
 
@@ -61,8 +62,8 @@ def audit_contract(root: Path, *, readme_override: str | None = None) -> list[st
         data = json.loads((root / 'cora.ontology.json').read_text('utf-8'))
         # A checked-in declared product and two declared software identities.
         assert data['schema'] == 'cora-ontology/1'
-        assert {x['id'] for x in data['products']} == {'cora-cli'}
-        assert {'cora-core', 'cora-release-verification'} == {x['id'] for x in data['software']}
+        assert {x['id'] for x in data['products']} == {'cora'}
+        assert {'cora-engine', 'cora-release-verification'} == {x['id'] for x in data['software']}
         assert 'src/cora/cli.py' in data['products'][0]['entrypoints']
         for p in data['products'] + data['software']:
             for path in p['roots']:
