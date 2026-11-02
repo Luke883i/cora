@@ -78,8 +78,14 @@ def verify(repo:Path,base:str|None=None) -> dict:
     bootstrap=p.returncode!=0
     violations=[]
     def add(kind,source,detail):violations.append({'kind':kind,'path':source,'detail':detail})
+    # The verifier can never prove that its own initial installation is trusted:
+    # a PR targeting a pre-installation base could replace BOTH the verifier and
+    # its workflow. The first installation requires independent reviewer/check.
+    if bootstrap:
+        add('guard_bootstrap_requires_independent_review', '.cora/policy.json',
+            'base_has_no_guard_policy; local verifier cannot approve its own installation')
     for status,old,new in changes:
-        if (old.startswith(PROTECTED) or new.startswith(PROTECTED)) and not bootstrap:
+        if old.startswith(PROTECTED) or new.startswith(PROTECTED):
             add('guard_or_workflow_changed',new,status)
         a=_owner(old,products);b=_owner(new,products)
         if status[0] in ('R','C') and a!=b:

@@ -1,0 +1,18 @@
+# Security policy — CORA alpha
+
+CORA is an experimental local repository-analysis and scoped-maintenance tool. There is **no supported production release or security-update SLA** at this time. Security claims are scoped to tests and documented code paths, not blanket guarantees.
+
+## Report a vulnerability
+
+For a private repository, use GitHub's private vulnerability reporting feature **if enabled**. Otherwise, contact a repository maintainer through an already established private channel; do not post exploit details or private repository content to a public issue. The project does not yet publish a dedicated security mailbox; do not assume one exists.
+
+Please include affected revision, minimal reproduction, relevant scope, and potential impact. Avoid running unknown build scripts or verifier commands against systems or data you do not control.
+
+## Trust boundaries
+
+- `cora audit`, `snapshot`, `graph`, and adapters are intended as *read-only* analyzers of local content; they are not malware or adversarial repository sandboxes.
+- `apply-rename-doc` runs a **user-provided verifier command** without sandboxing; rollback is limited to files managed by the transformation. Never run untrusted commands with elevated privileges.
+- `.cora/verify.py` installed inside a target repository can be edited by that same repository. Bootstrap and changes to the guard require an **independently enforced GitHub required check / reviewer**; a CI file alone is not evidence of branch protection.
+- Archive SHA-256, Git object hashes, and locally derived certificates are **not provenance signatures**. Independent release identity and protected publishing remain unresolved.
+
+Tracked issues and verification expectations: [PR-01–07 audit](docs/AUDIT_PR01_PR07.md) and [DoD](docs/DOD.md).
