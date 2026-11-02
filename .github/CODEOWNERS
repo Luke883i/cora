@@ -1,0 +1,6 @@
+# Review routing only; actual non-author review requires enforced branch rules.
+/ @Luke883i
+/src/cora/ @Luke883i
+/.github/ @Luke883i
+/GOVERNANCE.md @Luke883i
+/SECURITY.md @Luke883i

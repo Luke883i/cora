@@ -1,6 +1,6 @@
 # Architecture — CORA as product, software and repository
 
-**Scope:** CORA alpha 0.7, built through PR-01–07. The [README](../README.md) is the front door; this document is the engineering explanation. The [committed ontology](../cora.ontology.json) is a *declaration* by project maintainers, not an inference from folder names.
+**Scope:** CORA alpha 0.8, built through PR-01–07. The [README](../README.md) is the front door; this document is the engineering explanation. The [committed ontology](../cora.ontology.json) is a *declaration* by project maintainers, not an inference from folder names.
 
 ## Three non-equivalent boundaries
 
@@ -20,6 +20,7 @@ Deployables: **wheel** and **sdist**, presently review-only, not public releases
 | `ontology.py`, `graph.py` | Validated declared products/software, typed graph, partial Python AST candidate imports, path explanations | No proof of complete imports, reachability or execution |
 | `adapters.py` | Partial manifest readers for Node, Python, Rust, Go and Maven | Declared dependencies, not installed/used dependencies |
 | `closure.py` | Fixed narrow observational obligations and counterexamples; Git-revalidated certificates | `PASS_SCOPED` is **not** authorization to delete |
+| `file_lab.py`, `file_lab_stress.py` | Multi-scale read-only per-file dependency dossier, untrusted AI/runtime annotations, human triage intents, synthetic falsifier | No automatic dead-code proof, calibrated probability, external runtime attestation or deletion |
 | `transform.py` | Exact tracked-document path plan, approval, check, owned-file compensating rollback | Not syntax-aware source refactor; user verifier is untrusted/unsandboxed |
 | `guard.py`, `guard_runtime.py` | Vendored local Git/AST boundary check and workflow | Cannot self-enforce against modification; depends on trusted required checks |
 | `mutations.py`, `mutation_evidence.py`, `graph_stress.py`, `adapter_stress.py`, `closure_stress.py`, `transform_stress.py` | Deterministic synthetic oracles | Independent real-world source truth *not* established by large case count |

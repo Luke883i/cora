@@ -1,0 +1,30 @@
+{
+  "schema": "cora-pr09-local-verification/1",
+  "source_base": "9383b9fb3ae0eff06920da215d401110acefd66a",
+  "scope": "Local Python 3.13.5, source Git fixtures, finite model stress",
+  "unit_tests_total": 138,
+  "unit_tests_passed": 138,
+  "added_git_tests": 20,
+  "distribution": "cora-audit 0.8.0a1",
+  "wheel_and_sdist_verification": "VERIFIED_SCOPED",
+  "risk_vectors": 1000000,
+  "distinct_risk_vectors": 1000000,
+  "replays": 2,
+  "replay_byte_identical": true,
+  "families": 24,
+  "model_mismatches": 0,
+  "model_outcomes": {
+    "RETAIN": 937500,
+    "INVESTIGATE": 62500
+  },
+  "model_sha256": "90525c7ef2419c72b7a2ec7dab268d189de84387edf3551264a241e62e792610",
+  "limitations": [
+    "Synthetic 20-bit policy vectors, not one million independent repositories or analyzed files",
+    "AI integration is provider-neutral import/export, not model execution",
+    "Runtime data are caller-supplied, not authenticated instrumented traces",
+    "Confidence ranges are ordinal, not empirically calibrated",
+    "Human actors are self-asserted and human approval is not independently enforced by code",
+    "No deletion or broad refactoring permissions",
+    "External human review and third-party production pilots absent"
+  ]
+}

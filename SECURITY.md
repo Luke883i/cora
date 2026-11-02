@@ -16,3 +16,8 @@ Please include affected revision, minimal reproduction, relevant scope, and pote
 - Archive SHA-256, Git object hashes, and locally derived certificates are **not provenance signatures**. Independent release identity and protected publishing remain unresolved.
 
 Tracked issues and verification expectations: [PR-01–07 audit](docs/AUDIT_PR01_PR07.md) and [DoD](docs/DOD.md).
+
+
+## Forensic runtime and AI inputs
+
+`file-lab` reads Git objects and optional bounded JSON annotations locally; source code is not sent to a model or executed. Runtime traces supplied by users are **unverified**, may contain sensitive operational identifiers and should be minimized and retained only in an approved location. AI hypotheses are untrusted text and cannot elevate certificate status, change the repository or authorize deletion. Confidence ranges are explicitly uncalibrated. GitHub CODEOWNERS and self-hosted checks are **not** adequate protection against authorized maintainer bypass without independent required reviews.

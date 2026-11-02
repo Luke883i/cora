@@ -15,6 +15,7 @@ CORE_DOCS = [
     'README.md', 'LICENSE', 'SECURITY.md', 'CONTRIBUTING.md',
     'docs/ARCHITECTURE.md', 'docs/DOD.md', 'docs/AUDIT_PR01_PR07.md',
     'cora.ontology.json', 'pyproject.toml', 'src/cora/cli.py',
+    'GOVERNANCE.md', 'docs/FILE_LAB.md', 'docs/STANDARDS_MAINTENANCE_AUDIT.md',
 ]
 COMMANDS = (
     'version', 'audit', 'snapshot', 'verify-ledger', 'graph', 'explain',
@@ -22,6 +23,7 @@ COMMANDS = (
     'plan-rename-doc', 'apply-rename-doc', 'guard-install', 'guard-check',
     'stress', 'stress-evidence', 'stress-graph', 'stress-adapters',
     'stress-closure', 'stress-transform',
+    'file-lab', 'verify-file-lab', 'file-decision', 'stress-file-lab',
 )
 
 

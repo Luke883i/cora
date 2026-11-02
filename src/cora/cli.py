@@ -21,6 +21,8 @@ from .transform import plan_rename_docs, apply_rename_docs
 from .transform_stress import stress_transform
 from .guard import install_guard
 from .guard_runtime import verify as verify_local_guard
+from .file_lab import examine_file, verify_lab, ai_prompt, record_human_decision
+from .file_lab_stress import stress_file_lab
 import shlex
 
 
@@ -107,6 +109,32 @@ def main(argv: list[str] | None = None) -> int:
     ts.add_argument('--seed',type=int,default=883)
     ts.add_argument('--cases',type=int,default=1000000)
     ts.add_argument('--output',type=Path)
+    lab = sub.add_parser('file-lab', help='Per-file read-only multi-scale forensic evidence lab')
+    lab.add_argument('repo', type=Path)
+    lab.add_argument('--path', required=True)
+    lab.add_argument('--revision', default='HEAD')
+    lab.add_argument('--ontology', default='cora.ontology.json')
+    lab.add_argument('--runtime-events', type=Path)
+    lab.add_argument('--ai-hypotheses', type=Path)
+    lab.add_argument('--prompt-output', type=Path, help='Optional offline AI prompt envelope, without source code')
+    lab.add_argument('--output', type=Path)
+    labv = sub.add_parser('verify-file-lab', help='Recompute unannotated lab against Git objects')
+    labv.add_argument('lab', type=Path)
+    labv.add_argument('--repo', required=True, type=Path)
+    labv.add_argument('--ontology', default='cora.ontology.json')
+    labv.add_argument('--output', type=Path)
+    human = sub.add_parser('file-decision', help='Record human triage intent; never changes target repo')
+    human.add_argument('lab', type=Path)
+    human.add_argument('--actor', required=True)
+    human.add_argument('--role', required=True)
+    human.add_argument('--action', required=True)
+    human.add_argument('--rationale', required=True)
+    human.add_argument('--second-reviewer', default='')
+    human.add_argument('--output', type=Path)
+    fls = sub.add_parser('stress-file-lab',help='Deterministic model-level forensic triage falsification')
+    fls.add_argument('--seed',type=int,default=883)
+    fls.add_argument('--cases',type=int,default=1000000)
+    fls.add_argument('--output',type=Path)
     g = sub.add_parser('snapshot')
     g.add_argument('repo', type=Path)
     g.add_argument('--revision', default='HEAD')
@@ -180,6 +208,27 @@ def main(argv: list[str] | None = None) -> int:
         elif args.cmd == 'stress-transform':
             result = stress_transform(seed=args.seed,cases=args.cases)
             code = 2 if result['mismatches'] else 0
+        elif args.cmd == 'file-lab':
+            result = examine_file(args.repo,args.path,revision=args.revision,
+                                  ontology_path=args.ontology,runtime_events=args.runtime_events,
+                                  ai_hypotheses=args.ai_hypotheses)
+            if args.prompt_output:
+                args.prompt_output.write_text(json.dumps(ai_prompt(result),indent=2,sort_keys=True)+'\n',encoding='utf-8')
+            code = 0
+        elif args.cmd == 'verify-file-lab':
+            lab_data=json.loads(args.lab.read_text(encoding='utf-8'))
+            verify_lab(args.repo,lab_data,ontology_path=args.ontology)
+            result={'schema':'cora-file-lab-verification/1','status':'VERIFIED_SCOPED',
+                    'lab_digest':lab_data['lab_digest'],'commit':lab_data['commit']}
+            code=0
+        elif args.cmd == 'file-decision':
+            lab_data=json.loads(args.lab.read_text(encoding='utf-8'))
+            result=record_human_decision(lab_data,actor=args.actor,role=args.role,action=args.action,
+                                         rationale=args.rationale,second_reviewer=args.second_reviewer)
+            code=0
+        elif args.cmd == 'stress-file-lab':
+            result=stress_file_lab(seed=args.seed,cases=args.cases)
+            code=2 if result['mismatches'] else 0
         elif args.cmd == 'snapshot':
             result = snapshot(args.repo, args.revision)
             code = 0
