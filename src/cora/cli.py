@@ -13,6 +13,8 @@ from .evidence import validate_ledger
 from .git_snapshot import snapshot
 from .graph import graph_from_commit, explain_path, verify_graph_against_git
 from .graph_stress import stress_graph
+from .adapters import adapter_audit, verify_adapter_report
+from .adapter_stress import stress_adapters
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -46,6 +48,18 @@ def main(argv: list[str] | None = None) -> int:
     st.add_argument('--seed', type=int, default=883)
     st.add_argument('--cases', type=int, default=1000000)
     st.add_argument('--output', type=Path)
+    ad = sub.add_parser('adapter-audit')
+    ad.add_argument('repo', type=Path)
+    ad.add_argument('--revision', default='HEAD')
+    ad.add_argument('--output', type=Path)
+    av = sub.add_parser('verify-adapters')
+    av.add_argument('report', type=Path)
+    av.add_argument('--repo', required=True, type=Path)
+    av.add_argument('--output', type=Path)
+    asm = sub.add_parser('stress-adapters')
+    asm.add_argument('--seed', type=int, default=883)
+    asm.add_argument('--cases', type=int, default=1000000)
+    asm.add_argument('--output', type=Path)
     g = sub.add_parser('snapshot')
     g.add_argument('repo', type=Path)
     g.add_argument('--revision', default='HEAD')
@@ -79,6 +93,17 @@ def main(argv: list[str] | None = None) -> int:
             verify_graph_against_git(args.repo, gdata)
             result = explain_path(gdata,args.source,args.target)
             code = 0
+        elif args.cmd == 'adapter-audit':
+            result = adapter_audit(args.repo, args.revision)
+            code = 0
+        elif args.cmd == 'verify-adapters':
+            report = json.loads(args.report.read_text(encoding='utf-8'))
+            verify_adapter_report(args.repo, report)
+            result = {'schema':'cora-adapter-verification/1','status':'verified_against_git_objects','commit':report['commit'],'report_digest':report['report_digest']}
+            code = 0
+        elif args.cmd == 'stress-adapters':
+            result = stress_adapters(seed=args.seed,cases=args.cases)
+            code = 2 if result['mismatches'] else 0
         elif args.cmd == 'snapshot':
             result = snapshot(args.repo, args.revision)
             code = 0
