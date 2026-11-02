@@ -1,0 +1,247 @@
+{
+  "schema": "cora-artifact-roles/1",
+  "rules": [
+    {
+      "pattern": "README.md",
+      "roles": [
+        "DOCUMENTATION",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Product value proposition, limitation boundary and quickstart."
+    },
+    {
+      "pattern": "LICENSE",
+      "roles": [
+        "LICENSE"
+      ],
+      "rationale": "License metadata applicable to distributable source."
+    },
+    {
+      "pattern": "SECURITY.md",
+      "roles": [
+        "DOCUMENTATION",
+        "GOVERNANCE",
+        "POLICY"
+      ],
+      "rationale": "Vulnerability reporting and trust boundary declaration."
+    },
+    {
+      "pattern": "CONTRIBUTING.md",
+      "roles": [
+        "DOCUMENTATION",
+        "GOVERNANCE"
+      ],
+      "rationale": "Contribution, review and maintenance instructions."
+    },
+    {
+      "pattern": "GOVERNANCE.md",
+      "roles": [
+        "DOCUMENTATION",
+        "GOVERNANCE",
+        "POLICY"
+      ],
+      "rationale": "Accountability and separation of human duties."
+    },
+    {
+      "pattern": "pyproject.toml",
+      "roles": [
+        "BUILD_METADATA",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Distribution metadata and canonical console entrypoint."
+    },
+    {
+      "pattern": "cora.ontology.json",
+      "roles": [
+        "ARTIFACT_INDEX",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Explicit source-committed product and software identities."
+    },
+    {
+      "pattern": "cora.artifact-roles.json",
+      "roles": [
+        "ARTIFACT_INDEX",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Self-describing artifact role claims and their limitations."
+    },
+    {
+      "pattern": ".gitignore",
+      "roles": [
+        "POLICY"
+      ],
+      "rationale": "Version-control exclusion policy."
+    },
+    {
+      "pattern": ".github/CODEOWNERS",
+      "roles": [
+        "GOVERNANCE",
+        "POLICY"
+      ],
+      "rationale": "Review-routing declaration and ownership documentation."
+    },
+    {
+      "pattern": ".github/PULL_REQUEST_TEMPLATE.md",
+      "roles": [
+        "DOCUMENTATION",
+        "GOVERNANCE"
+      ],
+      "rationale": "Contributor change review template."
+    },
+    {
+      "pattern": ".github/workflows/*.yml",
+      "roles": [
+        "POLICY",
+        "WORKFLOW"
+      ],
+      "rationale": "GitHub CI workflow definition; not proof of enforced required checks."
+    },
+    {
+      "pattern": "docs/*.md",
+      "roles": [
+        "DOCUMENTATION"
+      ],
+      "rationale": "Architecture, DoD, ADR and operational evidence guidance."
+    },
+    {
+      "pattern": "docs/verification/*.json",
+      "roles": [
+        "ARTIFACT_INDEX"
+      ],
+      "rationale": "Historical local result records, not independently signed evidence."
+    },
+    {
+      "pattern": "schemas/*.json",
+      "roles": [
+        "CONTRACT_SCHEMA"
+      ],
+      "rationale": "Machine-readable companion JSON schemas; code validator may impose more constraints."
+    },
+    {
+      "pattern": "src/cora/*.py",
+      "roles": [
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Python package implementation; naming alone does not prove runtime usage."
+    },
+    {
+      "pattern": "src/cora/cli.py",
+      "roles": [
+        "ENTRYPOINT",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Single installed CLI entrypoint, declared in pyproject metadata."
+    },
+    {
+      "pattern": "src/cora/evidence.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Validation and domain-separated evidence contracts."
+    },
+    {
+      "pattern": "src/cora/ontology.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Declared product and software identity validator."
+    },
+    {
+      "pattern": "src/cora/closure.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Scoped certificate obligation enforcement."
+    },
+    {
+      "pattern": "src/cora/artifact_roles.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Committed role contract validation and reproduction."
+    },
+    {
+      "pattern": "src/cora/file_lab.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Forensic dossier and untrusted AI input validator."
+    },
+    {
+      "pattern": "src/cora/guard_runtime.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Vendored local architecture guard validator."
+    },
+    {
+      "pattern": "tests/*.py",
+      "roles": [
+        "TEST"
+      ],
+      "rationale": "Python executable test suite; status remains declared, not proof of passing."
+    },
+    {
+      "pattern": "tests/test_pr09_file_lab.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Tests AI/runtime import contract with independent temporary Git fixtures."
+    },
+    {
+      "pattern": "tests/test_pr10_artifact_roles.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Adversarial role-validation and test fixture oracles."
+    },
+    {
+      "pattern": "tools/*.py",
+      "roles": [
+        "RELEASE_TOOL"
+      ],
+      "rationale": "Build, release verification and repository audit tools."
+    },
+    {
+      "pattern": "tools/verify_repository_contract.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "RELEASE_TOOL"
+      ],
+      "rationale": "Independent repository ontology and README contract verifier."
+    },
+    {
+      "pattern": "tools/verify_artifact_roles.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "RELEASE_TOOL"
+      ],
+      "rationale": "Self-audit gate for committed artifact classification."
+    },
+    {
+      "pattern": "docs/verification/V1_EXPERIMENTAL_SATURATION.json",
+      "roles": [
+        "ARTIFACT_INDEX"
+      ],
+      "rationale": "Finite 11M-case semantic saturation receipt, not real-repository proof"
+    },
+    {
+      "pattern": "tools/make_experimental_bundle.py",
+      "roles": [
+        "RELEASE_TOOL"
+      ],
+      "rationale": "Creates an unpublished reproducible review-only product bundle"
+    }
+  ]
+}
