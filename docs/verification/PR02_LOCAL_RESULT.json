@@ -1,0 +1,20 @@
+{
+  "schema": "cora-pr02-verification/1",
+  "scope": "local Python 3.13 Linux, seeded in-memory contract mutants and independently initialized Git fixture repositories",
+  "pr01_regressions": 10,
+  "new_pr02_tests": 13,
+  "total_tests": 23,
+  "failures": 0,
+  "stress_cases": 1000000,
+  "stress_seed": 883,
+  "stress_families": 24,
+  "mismatches": 0,
+  "stream_sha256": "8ab8eb008617e11626d3810df508ba295188502ddae7787ae5de7e7eb81506db",
+  "repeat_identical": true,
+  "limitations": [
+    "No runtime reachability or safe deletion proof",
+    "Synthetic mutation oracles are predeclared, not independent production truth",
+    "Content digests do not provide signatures or integrity against adversaries controlling source Git objects",
+    "Git symlink, submodule, LFS pointer and oversized data are unresolved"
+  ]
+}
