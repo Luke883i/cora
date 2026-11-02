@@ -50,7 +50,7 @@ def call_json(binpath, *args):return json.loads(run(binpath,*args))
 def validate_one(binpath, home):
     fixtureA=home/'repo-python';commitA=fixture_python(fixtureA)
     fixtureB=home/'repo-polyglot';commitB=fixture_polyglot(fixtureB)
-    if run(binpath,'version').strip()!='0.7.0a1':raise ValueError('incorrect installed version')
+    if run(binpath,'version').strip()!='0.8.0a1':raise ValueError('incorrect installed version')
     ledger=call_json(binpath,'snapshot',fixtureA)
     if ledger['commit']!=commitA or len(ledger['records'])!=4:raise ValueError('Python committed Git snapshot oracle mismatch')
     graph=call_json(binpath,'graph',fixtureA)
@@ -98,10 +98,10 @@ def validate_artifacts(wheel:Path,sdist:Path,*,home:Path|None=None)->dict:
             installation.mkdir()
             results[kind]=validate_one(binpath,installation)
             origin=json.loads(run(py,'-c','import cora,json; print(json.dumps({"version":cora.__version__,"path":cora.__file__}))'))
-            if origin['version']!='0.7.0a1' or not Path(origin['path']).is_relative_to(venv):
+            if origin['version']!='0.8.0a1' or not Path(origin['path']).is_relative_to(venv):
                 raise ValueError('artifact installation unexpectedly imported from outside the venv')
             metadata=run(py,'-m','pip','show','cora-audit')
-            if 'Version: 0.7.0a1' not in metadata:raise ValueError('install metadata mismatch')
+            if 'Version: 0.8.0a1' not in metadata:raise ValueError('install metadata mismatch')
         return {'schema':'cora-external-validation/1','status':'SCOPED_FIXTURES_PASS',
                 'distribution_forms':results,'offline_index':'disabled','python':sys.version.split()[0],
                 'limitations':['both independent repositories are pre-seeded synthetic Git fixtures, not external production projects',

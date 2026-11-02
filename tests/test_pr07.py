@@ -30,10 +30,10 @@ class RealArtifactMutationTests(unittest.TestCase):
     def test_artifact_source_parity(self):
         result=verify_release(self.whl,self.sdist,ROOT)
         self.assertEqual(result['status'],'VERIFIED_SCOPED')
-        self.assertEqual(result['version'],'0.7.0a1')
+        self.assertEqual(result['version'],'0.8.0a1')
         self.assertEqual(result['entrypoint'],'cora=cora.cli:main')
     def test_unrelated_sdist_has_no_false_identity(self):
-        self.assertEqual(len(normalized_wheel_distribution(self.whl)['files']),18)
+        self.assertEqual(len(normalized_wheel_distribution(self.whl)['files']),20)
     def test_stress_oracle_at_edge_bits(self):
         for case in range(24):
             for mask in (0,1,3,7,15,63,255,1023,(1<<20)-1):
@@ -54,7 +54,7 @@ class RealArtifactMutationTests(unittest.TestCase):
         salt=hashlib.sha256(f'PR07:{case}:883'.encode()).hexdigest()[:12]
         if mode==0:files[source]+=f'\n# tamper {salt}\n'.encode()
         elif mode==1:files[source]+=f'\n# re-signed {salt}\n'.encode()
-        elif mode==2:files[info]=files[info].replace(b'Version: 0.7.0a1',b'Version: 9.9.9')
+        elif mode==2:files[info]=files[info].replace(b'Version: 0.8.0a1',b'Version: 9.9.9')
         elif mode==3:files[entry]+=b'cora2 = cora.cli:main\n'
         elif mode==4:files['../escape.txt']=salt.encode()
         elif mode==5:files.pop(record)
@@ -81,7 +81,7 @@ class RealArtifactMutationTests(unittest.TestCase):
     def _edited_sdist(self,case,path):
         with tarfile.open(self.sdist,'r:gz') as t:
             contents={m.name:(m,t.extractfile(m).read()) for m in t.getmembers() if m.isfile()}
-        root='cora_audit-0.7.0a1/'
+        root='cora_audit-0.8.0a1/'
         mode=case%12
         salt=hashlib.sha256(f'PR07:{case}:883'.encode()).hexdigest()[:12].encode()
         if mode==0:contents[root+'src/cora/graph.py']=(None,b'graph tampered '+salt)
@@ -92,7 +92,7 @@ class RealArtifactMutationTests(unittest.TestCase):
         elif mode==5:contents[root+'../escape']=(None,salt)
         elif mode==6:contents.pop(root+'src/cora/__init__.py')
         elif mode==7:contents[root+'LICENSE']=(None,b'BAD LICENSE '+salt)
-        elif mode==8:contents[root+'PKG-INFO']=(None,b'Name: wrong\nVersion: 0.7.0a1\nRequires-Python: >=3.11')
+        elif mode==8:contents[root+'PKG-INFO']=(None,b'Name: wrong\nVersion: 0.8.0a1\nRequires-Python: >=3.11')
         elif mode==9:contents[root+'pyproject.toml']=(None,b'malformed')
         elif mode==10:contents[root+'src/cora/__init__.py']=(None,b'__version__="9.9"\n')
         elif mode==11:contents[root+'README.md']=(None,b'changed no metadata update')
