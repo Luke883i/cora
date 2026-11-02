@@ -11,6 +11,8 @@ from .mutations import stress
 from .mutation_evidence import stress_evidence
 from .evidence import validate_ledger
 from .git_snapshot import snapshot
+from .graph import graph_from_commit, explain_path, verify_graph_against_git
+from .graph_stress import stress_graph
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -29,6 +31,21 @@ def main(argv: list[str] | None = None) -> int:
     e.add_argument('--seed', type=int, default=883)
     e.add_argument('--cases', type=int, default=1_000_000)
     e.add_argument('--output', type=Path)
+    gg = sub.add_parser('graph')
+    gg.add_argument('repo', type=Path)
+    gg.add_argument('--revision', default='HEAD')
+    gg.add_argument('--ontology', default='cora.ontology.json')
+    gg.add_argument('--output', type=Path)
+    xx = sub.add_parser('explain')
+    xx.add_argument('graph_json', type=Path)
+    xx.add_argument('--repo', required=True, type=Path)
+    xx.add_argument('--source', required=True)
+    xx.add_argument('--target', required=True)
+    xx.add_argument('--output', type=Path)
+    st = sub.add_parser('stress-graph')
+    st.add_argument('--seed', type=int, default=883)
+    st.add_argument('--cases', type=int, default=1000000)
+    st.add_argument('--output', type=Path)
     g = sub.add_parser('snapshot')
     g.add_argument('repo', type=Path)
     g.add_argument('--revision', default='HEAD')
@@ -51,6 +68,17 @@ def main(argv: list[str] | None = None) -> int:
         elif args.cmd == 'stress-evidence':
             result = stress_evidence(seed=args.seed, cases=args.cases)
             code = 2 if result['mismatches'] else 0
+        elif args.cmd == 'stress-graph':
+            result = stress_graph(seed=args.seed,cases=args.cases)
+            code = 2 if result['mismatches'] else 0
+        elif args.cmd == 'graph':
+            result = graph_from_commit(args.repo,args.revision,args.ontology)
+            code = 0
+        elif args.cmd == 'explain':
+            gdata = json.loads(args.graph_json.read_text(encoding='utf-8'))
+            verify_graph_against_git(args.repo, gdata)
+            result = explain_path(gdata,args.source,args.target)
+            code = 0
         elif args.cmd == 'snapshot':
             result = snapshot(args.repo, args.revision)
             code = 0

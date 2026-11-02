@@ -1,0 +1,24 @@
+{
+  "schema": "cora-pr03-verification/1",
+  "local_python": "3.13.5",
+  "tests_total": 34,
+  "tests_passed": 34,
+  "tests_failed": 0,
+  "unit_regressions": 23,
+  "new_tests": 11,
+  "stress_cases": 1000000,
+  "stress_replays": 2,
+  "seed": 883,
+  "families": 24,
+  "mismatches": 0,
+  "stream_sha256": "1f546e22c53a76dfde821013bf1c31e686b12072d79cea0999214027bcb17851",
+  "replay_byte_identical": true,
+  "oracle": "independent fixed-point topology; hand-authored Git fixture edges",
+  "limitations": [
+    "No million independent repositories or runtime verification",
+    "Non-reachability is not safe deletion",
+    "Python imports are partial static candidates",
+    "No semantic equivalence proof"
+  ],
+  "security_refinement": "Forged graph with recomputed self-hash rejected against committed Git source"
+}

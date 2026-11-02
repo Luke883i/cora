@@ -39,3 +39,20 @@ cora stress-evidence --seed 883 --cases 1000000 --output /tmp/cora-pr02-mutation
 Snapshot reads **committed Git blob content**, not the working tree. Every regular file within the configured bound carries an independent SHA-256, Git object ID, commit, mode and path. Symlinks, submodules, Git LFS pointers and out-of-bound blobs stay explicitly `unresolved`. `verify-ledger` recomputes the complete ledger from the original commit; an internally self-consistent but forged ledger does not pass merely because it has a recalculated digest. This does **not** make Git a trusted remote attestation service or prove the file is used by the product.
 
 The new stress corpus consists of **24 named, preseeded evidence mutation families** and 1 million in-memory variations. It verifies integrity rules and traceability consistency—not independent physical repo mutations, automatic deletion or behavioral preservation. See `docs/ADR-PR02.md`.
+
+## PR-03: committed ontology and explainable graph (alpha)
+
+The `cora graph` command requires a `cora.ontology.json` **committed in the same Git revision** as the source tree. Products are owner-declared capabilities; software is separately declared, and a directory name is never proof of product identity. No ontology supplied means the graph command fails, not that products are inferred.
+
+```bash
+cora graph /path/to/repo --revision HEAD --ontology cora.ontology.json --output /tmp/cora-graph.json
+cora explain /tmp/cora-graph.json --repo /path/to/repo --source product:api --target file:src/shared/util.py
+cora stress-graph --seed 883 --cases 1000000 --output /tmp/graph-stress.json
+```
+
+Example ontology:
+```json
+{"schema":"cora-ontology/1","products":[{"id":"api","roots":["apps/api"],"entrypoints":["apps/api/main.py"]}],"software":[{"id":"app","roots":["apps/api"],"product_ids":["api"]}]}
+```
+
+Evidence: typed and versioned repository/product/software/file nodes, ledger-backed declarations and candidate Python imports with graph path witnesses. Missing, dynamic, relative, ambiguous or external imports remain unresolved. **An unreachable file is NOT certified deletable.** Coverage for runtime, deployment and external consumers remains unsupported. See `docs/ADR-PR03.md`.
