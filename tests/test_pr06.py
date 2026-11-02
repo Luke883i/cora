@@ -87,6 +87,13 @@ class RealGitTransformFixtures(unittest.TestCase):
         self.assertFalse((self.repo/'docs/new.md').exists())
         # This side effect is intentionally NOT claimed to be rolled back by CORA.
         self.assertTrue((self.repo/'unowned.txt').exists())
+    def test_verifier_modification_of_postimage_is_rejected(self):
+        p=self.plan()
+        with self.assertRaises(ValueError):
+            apply_rename_docs(self.repo,p,approval=p['plan_digest'],
+                test_command=['python','-c',"import pathlib; pathlib.Path('README.md').write_text('tampered')"])
+        self.assertEqual((self.repo/'README.md').read_text(), 'Link docs/old.md and docs/old.md.\n')
+        self.assertTrue((self.repo/'docs/old.md').exists())
     def test_cli_end_to_end(self):
         with tempfile.TemporaryDirectory() as outside:
             p=Path(outside)/'plan.json';r=Path(outside)/'receipt.json'
@@ -139,6 +146,9 @@ class LocalGuardFixtures(unittest.TestCase):
     def test_standalone_guard_executes(self):
         p=subprocess.run(['python',str(self.repo/'.cora/verify.py'),'--repo',str(self.repo),'--base',self.base],capture_output=True)
         self.assertEqual(p.returncode,0,p.stderr)
+    def test_guard_rejects_dirty_worktree(self):
+        (self.repo/'apps/alpha/main.py').write_text('uncommitted')
+        with self.assertRaises(ValueError):verify(self.repo,self.base)
     def test_missing_policy_fails_closed(self):
         (self.repo/'.cora/policy.json').unlink()
         with self.assertRaises(ValueError):verify(self.repo,self.base)
