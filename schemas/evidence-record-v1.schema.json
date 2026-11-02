@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CORA evidence record v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "commit",
+    "path",
+    "git_oid",
+    "mode",
+    "size",
+    "sha256",
+    "status",
+    "digest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "cora-evidence/1"
+    },
+    "commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"
+    },
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Code-level validator enforces safe POSIX path semantics."
+    },
+    "git_oid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"
+    },
+    "mode": {
+      "enum": [
+        "100644",
+        "100755",
+        "120000",
+        "160000"
+      ]
+    },
+    "size": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "sha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "status": {
+      "enum": [
+        "observed_git_blob",
+        "symlink_unresolved",
+        "gitlink_unresolved",
+        "blob_too_large",
+        "lfs_pointer_unresolved"
+      ]
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "description": "Format companion schema. Python validator additionally enforces path safety, status/mode compatibility and digest authenticity."
+}
