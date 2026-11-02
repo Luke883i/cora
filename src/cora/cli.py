@@ -15,6 +15,8 @@ from .graph import graph_from_commit, explain_path, verify_graph_against_git
 from .graph_stress import stress_graph
 from .adapters import adapter_audit, verify_adapter_report
 from .adapter_stress import stress_adapters
+from .closure import closure, verify_certificate
+from .closure_stress import stress_closure
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -60,6 +62,23 @@ def main(argv: list[str] | None = None) -> int:
     asm.add_argument('--seed', type=int, default=883)
     asm.add_argument('--cases', type=int, default=1000000)
     asm.add_argument('--output', type=Path)
+    cl = sub.add_parser('closure', help='Issue scoped observational certificate from Git evidence')
+    cl.add_argument('repo', type=Path)
+    cl.add_argument('--claim', required=True, choices=('committed_blob','declared_product_membership','declared_manifest_dependency','static_import_candidate','safe_deletion'))
+    cl.add_argument('--path', required=True)
+    cl.add_argument('--selector', default='')
+    cl.add_argument('--revision', default='HEAD')
+    cl.add_argument('--ontology', default='cora.ontology.json')
+    cl.add_argument('--output', type=Path)
+    cv = sub.add_parser('verify-certificate', help='Compare scoped certificate against original Git objects')
+    cv.add_argument('certificate', type=Path)
+    cv.add_argument('--repo', required=True, type=Path)
+    cv.add_argument('--ontology', default='cora.ontology.json')
+    cv.add_argument('--output', type=Path)
+    cs = sub.add_parser('stress-closure')
+    cs.add_argument('--seed', type=int, default=883)
+    cs.add_argument('--cases', type=int, default=1000000)
+    cs.add_argument('--output', type=Path)
     g = sub.add_parser('snapshot')
     g.add_argument('repo', type=Path)
     g.add_argument('--revision', default='HEAD')
@@ -103,6 +122,19 @@ def main(argv: list[str] | None = None) -> int:
             code = 0
         elif args.cmd == 'stress-adapters':
             result = stress_adapters(seed=args.seed,cases=args.cases)
+            code = 2 if result['mismatches'] else 0
+        elif args.cmd == 'closure':
+            result = closure(args.repo,args.claim,args.path,selector=args.selector,
+                             revision=args.revision,ontology_path=args.ontology)
+            code = 0
+        elif args.cmd == 'verify-certificate':
+            cert = json.loads(args.certificate.read_text(encoding='utf-8'))
+            verify_certificate(args.repo,cert,ontology_path=args.ontology)
+            result = {'schema':'cora-closure-verification/1','status':'verified_against_git_objects',
+                      'commit':cert['commit'],'certificate_digest':cert['certificate_digest']}
+            code = 0
+        elif args.cmd == 'stress-closure':
+            result = stress_closure(seed=args.seed,cases=args.cases)
             code = 2 if result['mismatches'] else 0
         elif args.cmd == 'snapshot':
             result = snapshot(args.repo, args.revision)
