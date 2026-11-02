@@ -40,3 +40,12 @@ jobs:
           cora stress-graph --seed 883 --cases 1000000 --output /tmp/graph-b.json
           cmp /tmp/graph-a.json /tmp/graph-b.json
           python -c 'import json; x=json.load(open("/tmp/graph-a.json")); assert x["cases"]==1000000 and x["families"]==24 and x["mismatches"]==0 and x["stream_sha256"]=="1f546e22c53a76dfde821013bf1c31e686b12072d79cea0999214027bcb17851"'
+
+      - name: Verify adapter contracts and seeded million-case reproducibility
+        run: |
+          cora adapter-audit . --revision HEAD --output /tmp/cora-adapters.json
+          cora verify-adapters /tmp/cora-adapters.json --repo .
+          cora stress-adapters --seed 883 --cases 1000000 --output /tmp/adapters-a.json
+          cora stress-adapters --seed 883 --cases 1000000 --output /tmp/adapters-b.json
+          cmp /tmp/adapters-a.json /tmp/adapters-b.json
+          python -c 'import json; x=json.load(open("/tmp/adapters-a.json")); assert x["cases"]==1000000 and x["families"]==24 and x["distinct_input_fingerprints"]==1000000 and x["mismatches"]==0 and x["stream_sha256"]=="9c35a7451c083577045ba7bfa1627c38d14a6ba76e9869d84fe33e482f05d08b"'

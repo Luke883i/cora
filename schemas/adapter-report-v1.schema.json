@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CORA Adapter Evidence Report v1 (companion schema)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "commit",
+    "ledger_digest",
+    "observations",
+    "coverage",
+    "adapter_catalog",
+    "report_digest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "cora-adapter-report/1"
+    },
+    "commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"
+    },
+    "ledger_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "observations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "adapter",
+          "adapter_version",
+          "status",
+          "source_record_digest",
+          "dependencies",
+          "unknown"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "coverage": {
+      "type": "object"
+    },
+    "adapter_catalog": {
+      "type": "array"
+    },
+    "report_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "description": "Structural companion. Authoritative validation reruns adapter_audit against the identified Git commit; digest alone is not proof."
+}

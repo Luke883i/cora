@@ -56,3 +56,15 @@ Example ontology:
 ```
 
 Evidence: typed and versioned repository/product/software/file nodes, ledger-backed declarations and candidate Python imports with graph path witnesses. Missing, dynamic, relative, ambiguous or external imports remain unresolved. **An unreachable file is NOT certified deletable.** Coverage for runtime, deployment and external consumers remains unsupported. See `docs/ADR-PR03.md`.
+
+## PR-04 — Versioned manifest adapters and explicit coverage
+
+Six bounded, read-only partial adapters are available for `package.json`, `pyproject.toml`, `requirements.txt`, `Cargo.toml`, `go.mod` and `pom.xml`. No scripts, build instructions, application code or third-party plugins are executed. Dockerfiles, GitHub Actions and `.csproj` are explicitly `unsupported`; malformed, symlink and oversized content are `unresolved`.
+
+```bash
+cora adapter-audit /path/to/repo --revision HEAD --output /tmp/adapters.json
+cora verify-adapters /tmp/adapters.json --repo /path/to/repo
+cora stress-adapters --seed 883 --cases 1000000 --output /tmp/stress-adapters.json
+```
+
+Results carry a versioned adapter identity and provenance to PR-02 Git blob evidence. Dependency entries are **declared only**, never interpreted as proven installed, imported or used at runtime. This does not complete language-wide import resolution, build pipelines or software product boundaries. See `docs/ADR-PR04.md`.
