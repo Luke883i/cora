@@ -6,6 +6,8 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
+import tomllib
 from pathlib import Path
 import zipfile
 
@@ -18,9 +20,13 @@ def bundle(source: Path, dist: Path, output: Path) -> dict:
     files = [source/'README.md',source/'GOVERNANCE.md',source/'docs/DOD_V1_EXPERIMENTAL.md',
              source/'docs/ARTIFACT_SEMANTICS.md',source/'cora.ontology.json',
              source/'cora.artifact-roles.json',source/'docs/verification/V1_EXPERIMENTAL_SATURATION.json']
-    wheel=sorted(dist.glob('cora_audit-1.0.0a1-*.whl'))
-    sdist=sorted(dist.glob('cora_audit-1.0.0a1.tar.gz'))
-    if len(wheel)!=1 or len(sdist)!=1:raise ValueError('wheel and sdist 1.0.0a1 required')
+    project=tomllib.loads((source/'pyproject.toml').read_text(encoding='utf-8'))['project']
+    version=project['version']
+    if project.get('name')!='cora-audit' or not isinstance(version,str) or not re.fullmatch(r'1\.[0-9]+\.[0-9]+a[1-9][0-9]*',version):
+        raise ValueError('v1.experimental requires a declared CORA alpha package identity')
+    wheel=sorted(dist.glob(f'cora_audit-{version}-py3-none-any.whl'))
+    sdist=sorted(dist.glob(f'cora_audit-{version}.tar.gz'))
+    if len(wheel)!=1 or len(sdist)!=1:raise ValueError('wheel/sdist do not match the canonical CORA prerelease')
     files.extend(wheel+sdist)
     for f in files:
         if not f.is_file() or f.is_symlink():raise ValueError('bundle input missing/symlink:'+str(f))
@@ -31,7 +37,7 @@ def bundle(source: Path, dist: Path, output: Path) -> dict:
         entries[arc]=f.read_bytes()
     checksums={p:hashlib.sha256(raw).hexdigest() for p,raw in sorted(entries.items())}
     report={'schema':'cora-v1-experimental-review-bundle/1','status':'UNPUBLISHED_REVIEW_ONLY',
-            'files':checksums,'scope':'same-source and toolchain; no signed provenance or stable release'}
+            'files':checksums,'package_version':version,'scope':'same-source and toolchain; no signed provenance or stable release'}
     entries['MANIFEST.sha256.json']=json.dumps(report,sort_keys=True,indent=2).encode()+b'\n'
     output.parent.mkdir(parents=True,exist_ok=True)
     with zipfile.ZipFile(output,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=9) as z:
