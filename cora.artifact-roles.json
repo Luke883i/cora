@@ -614,17 +614,17 @@
     {
       "pattern": "tests/test_pr21_documentation.py",
       "roles": [
-        "TEST",
         "CONTRACT_VERIFIER",
-        "FIXTURE"
+        "FIXTURE",
+        "TEST"
       ],
       "rationale": "Actual disposable Markdown/JSON negative mutations."
     },
     {
       "pattern": ".github/workflows/ci-documentation.yml",
       "roles": [
-        "WORKFLOW",
-        "CONTRACT_VERIFIER"
+        "CONTRACT_VERIFIER",
+        "WORKFLOW"
       ],
       "rationale": "Exact-head documentation and repo regression checks."
     }
