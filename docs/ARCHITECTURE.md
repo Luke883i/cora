@@ -1,6 +1,6 @@
 # Architecture — CORA as product, software and repository
 
-**Scope:** CORA — Continuous Ontological Repository Assurance, v1.experimental (`1.0.0a4` prerelease candidate), current source integrated through merged PR-21. The PR-22 revision-bound documentation proof extension is a candidate until separately reviewed and merged. This document describes the current architecture; historical ADRs preserve earlier milestone decisions. The [README](../README.md) is the front door; this document is the engineering explanation. The [committed ontology](../cora.ontology.json) is a *declaration* by project maintainers, not an inference from folder names.
+**Scope:** CORA — Continuous Ontological Repository Assurance, v1.experimental (`1.0.0a4` prerelease candidate), current source integrated through merged PR-22. The source-bound documentation proof extension is implemented, while external user acceptance, real maintained-target pilots and independent hosting governance remain unresolved. This document describes the current architecture; historical ADRs preserve earlier milestone decisions. The [README](../README.md) is the front door; this document is the engineering explanation. The [committed ontology](../cora.ontology.json) is a *declaration* by project maintainers, not an inference from folder names.
 
 ## Three non-equivalent boundaries
 
@@ -74,7 +74,7 @@ The PR-19 cross-repository source check is **access-scoped**: public ICTC Git bl
 
 Intent-to-proof in PR-20 is an explicitly supplied, bounded **per-change** statement digested with BASE/HEAD; it is never human approval. For delete/rename/type changes the contextual adapter replays the BASE import graph as well as HEAD, closing an avoidable false-negative on removed Python modules while keeping dynamic import edges unproven. The PR-16 archived evidence-lattice topology also uses the canonical dependency validator; its historical status labels and digests remain unchanged.
 
-## Current documentation topology (post PR-20)
+## Current documentation topology (post PR-22)
 
 The [README](../README.md) is the product entry point. The [documentation index](INDEX.md) connects reader-oriented [onboarding](GETTING_STARTED.md), [AI agent adoption](AGENT_ADOPTION.md), methods, [CLI reference](CLI_REFERENCE.md), DoDs and historical ADR/audit material. The [documentation registry](documentation-registry.json) declares one role/status for every Markdown and retains the original baseline blob identity for historical source. This declaration is checked by `tools/verify_documentation.py` and the [documentation DoD](DOCUMENTATION_DOD.md); it does not establish human comprehension or authenticated reviewer approval.
 

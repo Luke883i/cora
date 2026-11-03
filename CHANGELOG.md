@@ -1,8 +1,11 @@
 # Changelog — CORA
 
-All entries distinguish **merged source**, a **version declared in the repository**, and an actually **published release**. Merged PRs 01–21 do not themselves establish a public package, tagged GitHub Release, signed provenance, or production fitness. Current Python version: `1.0.0a4` (alpha, not published).
+All entries distinguish **merged source**, a **version declared in the repository**, and an actually **published release**. Merged PRs 01–22 do not themselves establish a public package, tagged GitHub Release, signed provenance, or production fitness. Current Python version: `1.0.0a4` (alpha, not published).
 
-## Current merged source — PR-19 to PR-21 (unreleased)
+## Current merged source — PR-19 to PR-22 (unreleased)
+
+**PR-22:** Added revision-bound S01–S18 documentation source proofs, physical Git mutation oracles and CI receipt replay. The README claim/source chain is bounded to named predicates; E01–E03 independent acceptance remains open. The integration is merged source, **not** a published release or verified host approval.
+
 
 **PR-21:** Reorganized README, registered 48 Markdown documents (43 retained), added user/agent onboarding, verified CLI parser reference and source-only documentation AND lattice. The external unfamiliar-engineer, real target-pilot and host-review gates remain open. A subsequent revision-bound claim/proof extension is a separate candidate until merged.
 

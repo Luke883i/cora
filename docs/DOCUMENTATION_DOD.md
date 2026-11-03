@@ -26,7 +26,7 @@ A passing static document verifier is a source-contract observation, **not** pro
 
 Negative fixtures must reject missing files, duplicated identities, broken links, wrong history classification, missing CLI references, incomplete contextual intent, altered DoD prerequisites and claims of release authorization from source checks alone. The test results must be bound to the exact final Git SHA. Synthetic model coverage and local fixtures are not human usability tests.
 
-## Revision-bound claim-to-evidence profile (PR-22 candidate)
+## Revision-bound claim-to-evidence profile (merged PR-22)
 
 The separate [claim/proof profile](../cora.documentation-proofs.json) binds each S01–S18 leaf to one README proposition in its actual section, a named implementation/contract file, an existing test source and a concrete falsifier. The [source verifier](../tools/verify_claim_evidence.py) reads each witness as a Git blob from the **same pinned commit**, checks fixed semantic boundary oracles (including CLI parser, intent digest, declaration IDs, legacy blob identity, source-vs-external DoD and cross-document contradiction patterns), and emits a replayable SHA- and blob-attributed receipt.
 
@@ -40,3 +40,20 @@ python tools/verify_claim_evidence.py --repo . --revision HEAD --verify-report /
 A source receipt means **PASS_SCOPED_SOURCE** for the implemented *finite* predicates and Git provenance only. The checker cannot prove all meanings in natural language or any real runtime behavior. Test-file paths are source-role witnesses, not attestations that the tests executed. The exact final-HEAD GitHub check-runs and independent E01 (novice), E02 (real agent/target pilot), E03 (effective host and non-author reviewer) must be observed separately; `G_DOC_ACCEPTED` remains `BLOCKED_EXTERNAL` and `authorization=NONE`.
 
 Adversarial Git fixtures physically commit contradicting current-doc claims, detached intent wiring, parser drift, DoD edge changes, historical blob rewrites, CI proof omissions and stale receipt forgeries. They exercise falsifier sensitivity rather than assert exhaustive semantic proof. The source-oracle code and its profile are PR-editable and cannot approve changes to themselves.
+
+## Progressive navigation micro-DoD (PR-23 proposal)
+
+No parallel documentation engine is introduced. Reuse the PR-21 source leaves **S01–S18**, the PR-22 revision-bound claim profile and the existing `verify_documentation.py` entrypoint. The following **editorial DoD is a proposed non-compensatory cut**, not a new certificate of human understanding:
+
+| Local cut | Necessary property and source evidence | Falsifier / user |
+| --- | --- | --- |
+| **N1 Identity** | CORA is one evidence-first product, one Python CLI distribution with two declared software identities, and a distinct repository; first-screen README and ontology | Rename one identity while keeping links syntactically valid; newcomer |
+| **N2 Useful first screen** | Value proposition, recommended workflow, concrete user audience, alpha/limitations and existing MIT license are visible before disclosure | Hide license or safety limits in collapsed material; evaluator |
+| **N3 Progressive routes** | Five uniquely identifiable, closed, expandable lenses map product, software, repository, governance and evidence; no JS or competing catalogs | Remove or duplicate a lens, break a closing tag; reader |
+| **N4 Audience path** | Getting started, coding agent, forensics, human product/security/release owner and full index are directly accessible without expanding | Misroute one persona to a wrong/absent task; newcomer/agent |
+| **N5 Evidence and authority** | DoD, actual CLI/source verifiers, revision-bound proof profile, Git/CI and independent decision rights remain distinct | Promote model PASS to approval, claim real runtime or publication; reviewer |
+| **N6 History and minimization** | The 48-item index and 17 historical blobs stay intact; existing CLI/parser/README contracts and first-read limit remain green | Remove index path, silently change historical audit, exceed 180 lines; maintainer |
+
+**G_NAV_SOURCE = N1 ∧ N2 ∧ N3 ∧ N4 ∧ N5 ∧ N6.** This is checked only by finite structural/semantic source predicates, existing PR-21/22 provenance contracts, and actual CI on the reviewed HEAD. **G_NAV_ACCEPTED = G_NAV_SOURCE ∧ E01 ∧ E02 ∧ E03**, so an unfamiliar-human navigation trial, an independent maintained-target agent pilot and host-enforced non-author review remain **BLOCKED_EXTERNAL** without actual witnesses.
+
+The `test_pr23_navigation.py` experiment creates **1,000 reproducible adversarial editorial/reader-target input variants** across ten prespecified mutation families. They are ten classes with 100 distinct text vectors each, *not* 1,000 independent humans, authentic user sessions or independent semantic concepts. Each variant must break an explicit current invariant while an unchanged source must pass; output reports case counts and family-specific survivors. The mutation corpus cannot measure real task completion, calibrated product quality or accessibility in every browser. Human first-read remains the falsifier for those external claims.
