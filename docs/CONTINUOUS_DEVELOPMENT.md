@@ -21,7 +21,7 @@ cora agent-check /tmp/agent-proposal.json --repo . --output /tmp/agent-review.js
 cora stress-continuous --seed 883 --cases 1000000
 ```
 
-Save receipts **outside** the target working tree. `--strict` on the pre/post commands emits exit code 2 for `BLOCKED` or bootstrap; it **never upgrades** any status to authorized. This PR introduces the policy for the first time, so its own BASE does not contain it and the bootstrap cannot be declared independently approved.
+Save receipts **outside** the target working tree. `--strict` on pre/post commands emits exit code 2 for **every outstanding blocker** (including bootstrap and high-risk paths needing independent review), not just a blocked status label; it **never upgrades** a report to authorized. This PR introduces the policy for the first time, so its own BASE does not contain it and the bootstrap cannot be declared independently approved.
 
 ### Agent proposal contract
 

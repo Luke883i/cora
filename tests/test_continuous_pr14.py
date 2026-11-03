@@ -56,6 +56,15 @@ class GitLifecycleFixtures(unittest.TestCase):
         self.assertIn('.cora/continuous-policy.json',x['high_risk_paths'])
         self.assertIn('POLICY_CHANGED_REQUIRES_INDEPENDENT_REVIEW',x['blockers'])
         self.assertIn('INDEPENDENT_SECURITY_REVIEWER',x['required_human_roles'])
+    def test_strict_gate_refuses_review_blockers_even_with_base_policy(self):
+        p=self.repo/'.github/workflows/risk.yml';p.parent.mkdir(parents=True)
+        p.write_text('name: needs review\n')
+        git(self.repo,'add','.');git(self.repo,'commit','-qm','high-risk-workflow')
+        r=evaluate(self.repo,self.base,'HEAD')
+        self.assertEqual(r['status'],'OBSERVED_REVIEW_REQUIRED')
+        self.assertIn('PROTECTED_PATHS_REQUIRE_INDEPENDENT_REVIEW',r['blockers'])
+        self.assertEqual(main(['dev-premerge',str(self.repo),'--base',self.base,'--head','HEAD','--strict']),2)
+
     def test_workflow_change_is_high_risk(self):
         p=self.repo/'.github/workflows/check.yml';p.parent.mkdir(parents=True)
         p.write_text('name: no-protection\n')

@@ -446,10 +446,10 @@ def main(argv: list[str] | None = None) -> int:
             code = 2 if result['mismatches'] else 0
         elif args.cmd == 'dev-premerge':
             result = development_gate(args.repo,args.base,args.head,phase='premerge')
-            code = 2 if args.strict and result['status'] != 'OBSERVED_REVIEW_REQUIRED' else 0
+            code = 2 if args.strict and (result['status'] != 'OBSERVED_REVIEW_REQUIRED' or result['blockers']) else 0
         elif args.cmd == 'dev-postmerge':
             result = development_gate(args.repo,args.previous,args.head,phase='postmerge',with_debt=args.with_debt)
-            code = 2 if args.strict and (result['status'] != 'OBSERVED_REVIEW_REQUIRED' or 'DEBT_COMPARISON_UNAVAILABLE' in result['blockers']) else 0
+            code = 2 if args.strict and (result['status'] != 'OBSERVED_REVIEW_REQUIRED' or result['blockers']) else 0
         elif args.cmd == 'verify-dev-gate':
             item = json.loads(args.report.read_text(encoding='utf-8'))
             verify_gate(args.repo,item)
