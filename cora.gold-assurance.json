@@ -1,0 +1,384 @@
+{
+  "schema": "cora-gold-assurance/1",
+  "identity": "PRODUCT_SOFTWARE_REPOSITORY_DISTINCT",
+  "authority_effect": "NONE",
+  "nodes": [
+    {
+      "id": "L01",
+      "parent": "I_CONTEXT",
+      "kind": "LOCAL",
+      "family": "intent_provenance_missing",
+      "falsifier": "Require explicit human intent and pinned baseline before selection",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "L02",
+      "parent": "I_CONTEXT",
+      "kind": "LOCAL",
+      "family": "ambiguous_or_duplicate_owner",
+      "falsifier": "Detect multiple owner candidates; block unresolved authority",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "L03",
+      "parent": "I_CONTEXT",
+      "kind": "LOCAL",
+      "family": "contextual_dependency_gap",
+      "falsifier": "Reverse-derive owner->source->consumer prerequisites from target paths",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "L04",
+      "parent": "I_PHYSICAL",
+      "kind": "LOCAL",
+      "family": "model_only_mutation",
+      "falsifier": "Demand physical byte changes and an independent mutant oracle",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "L05",
+      "parent": "I_PHYSICAL",
+      "kind": "LOCAL",
+      "family": "mutant_classification_laundered",
+      "falsifier": "Separate killed/survived/timeout/inconclusive/invalid",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "L06",
+      "parent": "I_PHYSICAL",
+      "kind": "LOCAL",
+      "family": "unsafe_unconsented_execution",
+      "falsifier": "Sandbox and explicit opt-in before executing target code",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "L07",
+      "parent": "I_EFFECT",
+      "kind": "LOCAL",
+      "family": "hidden_ci_side_effect",
+      "falsifier": "Discover workflow write/publish/deploy/unknown actions",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "L08",
+      "parent": "I_EFFECT",
+      "kind": "LOCAL",
+      "family": "claimed_effect_without_readback",
+      "falsifier": "Match declared side-effect to target, source SHA and readback",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "L09",
+      "parent": "I_EFFECT",
+      "kind": "LOCAL",
+      "family": "self_attested_action_authority",
+      "falsifier": "Keep hosting permission and independent authorization external",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "L10",
+      "parent": "I_PILOT",
+      "kind": "LOCAL",
+      "family": "single_repo_overfit",
+      "falsifier": "Include pinned ICTC, ikant and aosp1 with distinct gold mechanisms",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "L11",
+      "parent": "I_PILOT",
+      "kind": "LOCAL",
+      "family": "source_drift_or_stale_pin",
+      "falsifier": "Verify source Git blob against expected exact commit",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "L12",
+      "parent": "I_PILOT",
+      "kind": "LOCAL",
+      "family": "pilot_scoped_claim_inflation",
+      "falsifier": "Record source readback, runtime unknowns and observed blockers separately",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "L13",
+      "parent": "I_EXTERNAL",
+      "kind": "LOCAL",
+      "family": "missing_host_branch_protection",
+      "falsifier": "Admin-enforced branch settings from host readback",
+      "scope": "EXTERNAL",
+      "depends_on": []
+    },
+    {
+      "id": "L14",
+      "parent": "I_EXTERNAL",
+      "kind": "LOCAL",
+      "family": "missing_non_author_review",
+      "falsifier": "Independently authenticated human reviewer",
+      "scope": "EXTERNAL",
+      "depends_on": []
+    },
+    {
+      "id": "L15",
+      "parent": "I_EXTERNAL",
+      "kind": "LOCAL",
+      "family": "pilot_runtime_not_executed",
+      "falsifier": "Actual target behavioral oracles and execution provenance",
+      "scope": "EXTERNAL",
+      "depends_on": []
+    },
+    {
+      "id": "L16",
+      "parent": "I_EXTERNAL",
+      "kind": "LOCAL",
+      "family": "rollback_not_attested",
+      "falsifier": "Operator-observed restoration and release decision",
+      "scope": "EXTERNAL",
+      "depends_on": []
+    },
+    {
+      "id": "I_CONTEXT",
+      "kind": "INTERMEDIATE",
+      "scope": "SOURCE",
+      "depends_on": [
+        "L01",
+        "L02",
+        "L03"
+      ]
+    },
+    {
+      "id": "I_PHYSICAL",
+      "kind": "INTERMEDIATE",
+      "scope": "SOURCE",
+      "depends_on": [
+        "L04",
+        "L05",
+        "L06"
+      ]
+    },
+    {
+      "id": "I_EFFECT",
+      "kind": "INTERMEDIATE",
+      "scope": "SOURCE",
+      "depends_on": [
+        "L07",
+        "L08",
+        "L09"
+      ]
+    },
+    {
+      "id": "I_PILOT",
+      "kind": "INTERMEDIATE",
+      "scope": "SOURCE",
+      "depends_on": [
+        "L10",
+        "L11",
+        "L12"
+      ]
+    },
+    {
+      "id": "I_EXTERNAL",
+      "kind": "INTERMEDIATE",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "L13",
+        "L14",
+        "L15",
+        "L16"
+      ]
+    },
+    {
+      "id": "G_GOLD_SOURCE",
+      "kind": "GLOBAL",
+      "scope": "SOURCE",
+      "depends_on": [
+        "I_CONTEXT",
+        "I_PHYSICAL",
+        "I_EFFECT",
+        "I_PILOT"
+      ]
+    },
+    {
+      "id": "G_GOLD_GOVERNED",
+      "kind": "GLOBAL",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "G_GOLD_SOURCE",
+        "I_EXTERNAL"
+      ]
+    }
+  ],
+  "roots": {
+    "source": "G_GOLD_SOURCE",
+    "governed": "G_GOLD_GOVERNED"
+  },
+  "patterns": [
+    {
+      "id": "P01",
+      "name": "intent_to_proof",
+      "origin": "ictc",
+      "gate": "I_CONTEXT"
+    },
+    {
+      "id": "P02",
+      "name": "owner_subsumption",
+      "origin": "ikant/ictc",
+      "gate": "I_CONTEXT"
+    },
+    {
+      "id": "P03",
+      "name": "contextual_reverse_dod",
+      "origin": "ictc/iKant_EDU",
+      "gate": "I_CONTEXT"
+    },
+    {
+      "id": "P04",
+      "name": "minimal_semantic_slice",
+      "origin": "ikant/ictc",
+      "gate": "I_CONTEXT"
+    },
+    {
+      "id": "P05",
+      "name": "physical_mutation_oracle",
+      "origin": "ictc",
+      "gate": "I_PHYSICAL"
+    },
+    {
+      "id": "P06",
+      "name": "adaptive_saturation",
+      "origin": "ictc/ikant",
+      "gate": "I_PHYSICAL"
+    },
+    {
+      "id": "P07",
+      "name": "causal_counterfactual",
+      "origin": "ikant",
+      "gate": "I_PHYSICAL"
+    },
+    {
+      "id": "P08",
+      "name": "persisted_readback",
+      "origin": "aosp1",
+      "gate": "I_EFFECT"
+    },
+    {
+      "id": "P09",
+      "name": "side_effect_ci",
+      "origin": "aosp1",
+      "gate": "I_EFFECT"
+    },
+    {
+      "id": "P10",
+      "name": "graded_runtime_attestation",
+      "origin": "juriscribe/ikant",
+      "gate": "I_EFFECT"
+    },
+    {
+      "id": "P11",
+      "name": "actual_user_path_witness",
+      "origin": "teddy/lumen/CIE",
+      "gate": "I_PILOT"
+    },
+    {
+      "id": "P12",
+      "name": "cross_repo_lineage",
+      "origin": "ROA/academics",
+      "gate": "I_PILOT"
+    }
+  ],
+  "seeded_campaign": {
+    "sessions": 10,
+    "cases_per_session": 1000000,
+    "seeds": [
+      883,
+      1618033,
+      2718281,
+      3141592,
+      20261103,
+      2654435761,
+      2246822507,
+      3266489909,
+      2135587861,
+      462902675
+    ],
+    "fault_families": [
+      "intent_provenance_missing",
+      "ambiguous_or_duplicate_owner",
+      "contextual_dependency_gap",
+      "model_only_mutation",
+      "mutant_classification_laundered",
+      "unsafe_unconsented_execution",
+      "hidden_ci_side_effect",
+      "claimed_effect_without_readback",
+      "self_attested_action_authority",
+      "single_repo_overfit",
+      "source_drift_or_stale_pin",
+      "pilot_scoped_claim_inflation"
+    ],
+    "pair_count": 66,
+    "tail_cases": 100000,
+    "physical_source_mutants_in_10m": 0
+  },
+  "pilots": [
+    {
+      "repo": "Luke883i/ictc",
+      "revision": "56362f1bbbed8c0f62380a4bfed2476afb670c4c",
+      "owner": {
+        "path": "docs/authority-matrix.yaml",
+        "git_blob": "17daacc0347d51ab9c9dc18b6db1afe8d79d4503",
+        "marker": "surfaces:"
+      },
+      "sample": {
+        "path": "v3/release-readiness-e2-product-mutants.mjs",
+        "git_blob": "6180aef120afe2ce601f5d3a02cdf8f20b0dd05e",
+        "marker": "mutate ACTUAL product/runtime source files"
+      }
+    },
+    {
+      "repo": "Luke883i/ikant",
+      "revision": "43ce861a552d44821ffce455f6237905f0994936",
+      "owner": {
+        "path": "CONTROL_PLANE_OWNERSHIP_CONTRACT.json",
+        "git_blob": "092ecac27b03b14ad4d2bf0adc4aaa85cf9c2d23",
+        "marker": "ikant-control-plane-ownership-contract/v1"
+      },
+      "sample": {
+        "path": "ikant/control_plane_ownership.py",
+        "git_blob": "387da78ba6d62ea86d40f7ea10df4738b1e3bf32",
+        "marker": "def derive_control_plane_ownership"
+      }
+    },
+    {
+      "repo": "Luke883i/aosp1",
+      "revision": "8af1c0ccf8804d64ec9a2e5c844e9bcf0b82babd",
+      "owner": {
+        "path": "authority-matrix.yaml",
+        "git_blob": "d758f410d16461e2a16cd1cd8418802079219f84",
+        "marker": "Canonical Authority Matrix"
+      },
+      "sample": {
+        "path": "frontend/src/apps/DataIntake/lib/d1PersistedReadback.ts",
+        "git_blob": "9287b1708f9771f51910c71aef0f4c9658252833",
+        "marker": "readbackD1PersistedStripe"
+      }
+    }
+  ],
+  "epistemic_boundary": {
+    "source": "SCOPED_SOURCE_NOT_PRODUCT_PROOF",
+    "simulations": "FINITE_SEMANTIC_MODEL",
+    "execution": "NOT_EXECUTED_UNLESS_EXPLICIT_DOCKER_OPT_IN",
+    "governed": "BLOCKED_EXTERNAL",
+    "authorization": "NONE"
+  }
+}
