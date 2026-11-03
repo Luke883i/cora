@@ -12,3 +12,11 @@ List affected consumers, unknowns, migration/retention obligations and rollback.
 
 ## Human approvals
 Name product owner, technical maintainer, and independent security/retention/release reviewer when relevant. CODEOWNERS routes review only; GitHub branch rules must enforce it.
+
+## Continuous review evidence (CORA)
+- Base/head SHA and `dev-premerge` receipt digest:
+- Independent tests/CI job + final SHA (not agent-authored assertions):
+- High-risk paths and functional security/product/release reviewers:
+- New unknowns, debt signals and consumer/deployment coverage gaps:
+- Post-merge monitor, rollback trigger, accountable human owner:
+- Required hosting rules verified by an administrator? (if not, mark BLOCKED):

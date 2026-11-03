@@ -1,0 +1,13 @@
+{
+  "schema": "cora-continuous-policy/1",
+  "version": 1,
+  "max_changed_paths": 512,
+  "high_risk_prefixes": [
+    ".cora", ".github/workflows", "schemas", "src/cora/guard_runtime.py", "src/cora/continuous.py", "tools"
+  ],
+  "high_risk_paths": [
+    "AGENTS.md", "GOVERNANCE.md", "SECURITY.md", "pyproject.toml", "cora.ontology.json", "cora.artifact-roles.json", ".github/CODEOWNERS"
+  ],
+  "required_human_roles": ["MAINTAINER", "INDEPENDENT_SECURITY_REVIEWER"],
+  "review_processes": ["source", "history", "architecture", "debt", "verification"]
+}

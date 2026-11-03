@@ -259,6 +259,31 @@
         "TEST"
       ],
       "rationale": "Adversarial Git fixture and selection policy metamorphic oracle."
+    },
+    {
+      "pattern": ".cora/continuous-policy.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Committed baseline policy; first install requires independent review."
+    },
+    {
+      "pattern": "AGENTS.md",
+      "roles": [
+        "DOCUMENTATION",
+        "GOVERNANCE",
+        "POLICY"
+      ],
+      "rationale": "Untrusted coding agent operating rules and trust boundaries."
+    },
+    {
+      "pattern": "src/cora/continuous.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Source-bound lifecycle and human role validation."
     }
   ]
 }
