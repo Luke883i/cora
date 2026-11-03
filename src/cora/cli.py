@@ -55,6 +55,7 @@ def main(argv: list[str] | None = None) -> int:
     zv = sub.add_parser('verify-zip-intake', help='Recompute original ZIP evidence; no Git history claim')
     zv.add_argument('report', type=Path)
     zv.add_argument('--archive', required=True, type=Path)
+    zv.add_argument('--workspace', type=Path, help='Existing extracted workspace to revalidate')
     zv.add_argument('--output', type=Path)
     ro = sub.add_parser('runtime-observe', help='Separate opt-in Docker observation; not an attested sandbox')
     ro.add_argument('archive', type=Path)
@@ -311,7 +312,7 @@ def main(argv: list[str] | None = None) -> int:
             code = 0
         elif args.cmd == 'verify-zip-intake':
             receipt=json.loads(args.report.read_text(encoding='utf-8'))
-            verify_intake(args.archive,receipt)
+            verify_intake(args.archive,receipt,workspace=args.workspace)
             result={'schema':'cora-zip-intake-verification/1','status':'SOURCE_REPLAY_SCOPED',
                     'receipt_digest':receipt['receipt_digest'],'authorization':'NONE'}
             code=0

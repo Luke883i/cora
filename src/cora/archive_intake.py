@@ -105,6 +105,7 @@ def inspect_zip(archive: Path, *, expected_tree: str | None = None,
         raise ValueError('empty source archive')
     # Reject ambiguous case-insensitive directory trees and file-as-parent conflicts.
     hierarchy = {}
+    file_keys = {name.casefold() for name in files}
     for path in files:
         parts = path.split('/')
         for i, part in enumerate(parts):
@@ -113,7 +114,7 @@ def inspect_zip(archive: Path, *, expected_tree: str | None = None,
             if prefix in hierarchy and hierarchy[prefix] != actual:
                 raise ValueError('case-colliding ZIP directory hierarchy')
             hierarchy[prefix] = actual
-        if any('/'.join(parts[:i]).casefold() in {p.casefold() for p in files}
+        if any('/'.join(parts[:i]).casefold() in file_keys
                for i in range(1,len(parts))):
             raise ValueError('ZIP file cannot also be a directory')
     tree = _tree_digest(files)
@@ -148,14 +149,34 @@ def inspect_zip(archive: Path, *, expected_tree: str | None = None,
     return report
 
 
-def verify_intake(archive: Path, report: dict) -> bool:
+def verify_intake(archive: Path, report: dict, *, workspace: Path | None = None) -> bool:
+    """Replay ZIP content; verify extraction only when original workspace is supplied.
+
+    A caller-provided expected tree remains unauthenticated even when equal.
+    The receipt hash is not a signature of user intent or extraction history.
+    """
     if not isinstance(report, dict) or report.get('schema') != 'cora-zip-intake/1':
         raise ValueError('invalid ZIP receipt')
+    if report.get('expected_tree_origin') not in ('NOT_SUPPLIED', 'UNVERIFIED_CALLER_ASSERTION'):
+        raise ValueError('invalid or promoted expected-tree provenance')
+    state = report.get('workspace')
+    if state not in ('NOT_EXTRACTED', 'CREATED_NO_EXECUTION'):
+        raise ValueError('invalid workspace claim')
+    if state == 'CREATED_NO_EXECUTION':
+        if workspace is None:
+            raise ValueError('workspace claim requires independent workspace argument')
+        from .runtime_observation import _workspace_tree
+        if _workspace_tree(Path(workspace).absolute()) != report.get('git_tree_sha1'):
+            raise ValueError('workspace content differs from archive')
+    elif workspace is not None:
+        raise ValueError('workspace supplied but receipt declares no extraction')
     recomputed = inspect_zip(archive)
+    # The caller's expected-tree origin is a type-checked declaration only.
+    # No comparison to a Git commit or external authentication is implied.
     recomputed['expected_tree_origin'] = report['expected_tree_origin']
-    recomputed['workspace'] = report['workspace']
-    recomputed.pop('receipt_digest')
-    recomputed['receipt_digest'] = domain_hash('CORA:zip-intake:1', recomputed)
+    recomputed['workspace'] = state
+    recomputed['receipt_digest'] = domain_hash('CORA:zip-intake:1',
+        {k:v for k,v in recomputed.items() if k != 'receipt_digest'})
     if recomputed != report:
         raise ValueError('ZIP evidence cannot be replayed')
     return True

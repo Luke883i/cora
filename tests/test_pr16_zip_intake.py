@@ -45,6 +45,23 @@ class HostileZip(unittest.TestCase):
         self.assertEqual(r['workspace'],'CREATED_NO_EXECUTION')
         self.assertEqual((out/'sub/beta.py').read_bytes(),b'print(1)\n')
         with self.assertRaises(FileExistsError):inspect_zip(self.path,extract_to=out)
+    def test_workspace_replay_requires_actual_workspace_witness(self):
+        out=self.root/'source-work'
+        receipt=inspect_zip(self.path,extract_to=out)
+        with self.assertRaises(ValueError): verify_intake(self.path,receipt)
+        self.assertTrue(verify_intake(self.path,receipt,workspace=out))
+        (out/'alpha.txt').write_bytes(b'tampered')
+        with self.assertRaises(ValueError): verify_intake(self.path,receipt,workspace=out)
+
+    def test_forbid_promoted_origin_and_workspace_even_with_new_digest(self):
+        from cora.evidence import domain_hash
+        r=inspect_zip(self.path)
+        for key,value in [('workspace','ATTESTED_SAFE'),('expected_tree_origin','AUTHENTICATED_GIT')]:
+            forged={**r,key:value}
+            forged['receipt_digest']=domain_hash('CORA:zip-intake:1',
+                {k:v for k,v in forged.items() if k!='receipt_digest'})
+            with self.assertRaises(ValueError):verify_intake(self.path,forged)
+
     def test_traversal(self): self.fail_member('bundle/../../outside.py')
     def test_absolute_path(self):self.fail_member('/tmp/payload.py')
     def test_backslash(self):self.fail_member('bundle/..\\other.py')

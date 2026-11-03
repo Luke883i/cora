@@ -80,6 +80,24 @@ class RuntimeFusionFalsification(unittest.TestCase):
         self.assertEqual(r['authorization'],'NONE')
         self.assertTrue(verify_runtime_receipt(r))
 
+    def test_runtime_mounts_private_staged_archive_not_caller_workspace(self):
+        observed=[]
+        def fake(command,**kwargs):
+            observed.append(command)
+            self.assertIn('--mount',command)
+            mounted=command[command.index('--mount')+1]
+            self.assertIn('dst=/work,readonly',mounted)
+            self.assertNotIn('src='+str(self.workspace)+',',mounted)
+            self.assertTrue(kwargs.get('preexec_fn'))
+            return subprocess.CompletedProcess(command,0)
+        with patch('cora.runtime_observation.shutil.which',return_value='/usr/bin/docker'), \\
+             patch('cora.runtime_observation.os.getuid',return_value=1001), \\
+             patch('cora.runtime_observation.os.getgid',return_value=1001), \\
+             patch('cora.runtime_observation.subprocess.run',side_effect=fake):
+            receipt=observe_runtime(self.archive,self.workspace,execute=True,image=IMAGE)
+        self.assertEqual(receipt['execution_status'],'RUN_REPORTED_UNATTESTED')
+        self.assertEqual(len(observed),1)
+
     def test_cross_archive_fusion_rejected_even_with_new_digest(self):
         r=observe_runtime(self.archive,self.workspace)
         forged={**r,'archive_sha256':'0'*64}

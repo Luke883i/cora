@@ -24,6 +24,12 @@ TEST_COMMAND = ('python', '-m', 'unittest', 'discover', '-s', 'tests', '-q')
 TIMEOUT_SEC = 180
 MAX_LOG = 1024 * 1024
 
+def _cap_child_output_files() -> None:
+    """Bound Docker CLI writes before completion (Unix process rlimit)."""
+    import resource
+    resource.setrlimit(resource.RLIMIT_FSIZE, (MAX_LOG, MAX_LOG))
+
+
 
 def _workspace_tree(root: Path) -> str:
     if root.is_symlink() or not root.is_dir():
@@ -81,39 +87,52 @@ def observe_runtime(archive: Path, workspace: Path, *, execute: bool = False,
     if execute:
         if not image:
             report['execution_status']='BLOCKED_NO_PINNED_IMAGE'
+        elif docker != 'docker':
+            report['execution_status']='BLOCKED_UNTRUSTED_EXECUTOR_NAME'
+        elif os.name != 'posix' or not hasattr(os, 'getuid'):
+            report['execution_status']='BLOCKED_HOST_PLATFORM_UNSUPPORTED'
         elif not shutil.which(docker):
             report['execution_status']='BLOCKED_EXECUTOR_UNAVAILABLE'
         elif os.getuid() == 0:
             report['execution_status']='BLOCKED_ROOT_HOST_OPERATOR'
         else:
-            # No arbitrary shell, network access, credentials or writable source mount.
-            command = [docker, 'run', '--rm', '--pull', 'never', '--network', 'none',
-                       '--read-only', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges',
-                       '--pids-limit', '64', '--memory', '512m', '--cpus', '1',
-                       '--user', str(os.getuid()) + ':' + str(os.getgid()),
-                       '--tmpfs', '/tmp:rw,nosuid,nodev,size=64m',
-                       '--mount', 'type=bind,src='+str(work)+',dst=/work,readonly',
-                       '--workdir', '/work', '--env', 'PYTHONPATH=/work/src:/work',
-                       '--env', 'PYTHONDONTWRITEBYTECODE=1', image, *TEST_COMMAND]
-            with tempfile.TemporaryFile() as stdout, tempfile.TemporaryFile() as stderr:
-                try:
-                    completed = subprocess.run(command, stdout=stdout, stderr=stderr,
-                                               check=False, timeout=TIMEOUT_SEC)
-                except subprocess.TimeoutExpired:
-                    # A CLI timeout is not an authenticated container teardown.
-                    report['execution_status']='BLOCKED_TIMEOUT_CONTAINER_TEARDOWN_UNVERIFIED'
-                else:
-                    stdout.flush();stderr.flush()
-                    sizes=(stdout.seek(0,2),stderr.seek(0,2))
-                    if sum(sizes) > MAX_LOG:
-                        report['execution_status']='BLOCKED_EXCESSIVE_LOGS'
+            # Materialize a private source copy under our own directory, not a
+            # caller-mutable workspace. Verify it against the original ZIP before mount.
+            with tempfile.TemporaryDirectory(prefix='cora-runtime-') as rootdir:
+                staged = Path(rootdir) / 'source'
+                staged_receipt = inspect_zip(archive, extract_to=staged)
+                if (staged_receipt['archive_sha256'] != a['archive_sha256'] or
+                    staged_receipt['git_tree_sha1'] != a['git_tree_sha1'] or
+                    _workspace_tree(staged) != a['git_tree_sha1']):
+                    raise ValueError('private staged source differs from ZIP')
+                # No arbitrary shell, network access, credentials or writable source mount.
+                command = [docker, 'run', '--rm', '--pull', 'never', '--network', 'none',
+                           '--read-only', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges',
+                           '--pids-limit', '64', '--memory', '512m', '--cpus', '1',
+                           '--user', str(os.getuid()) + ':' + str(os.getgid()),
+                           '--tmpfs', '/tmp:rw,nosuid,nodev,size=64m',
+                           '--mount', 'type=bind,src='+str(work)+',dst=/work,readonly',
+                           '--workdir', '/work', '--env', 'PYTHONPATH=/work/src:/work',
+                           '--env', 'PYTHONDONTWRITEBYTECODE=1', image, *TEST_COMMAND]
+                with tempfile.TemporaryFile() as stdout, tempfile.TemporaryFile() as stderr:
+                    try:
+                        completed = subprocess.run(command, stdout=stdout, stderr=stderr,
+                                                   check=False, timeout=TIMEOUT_SEC, preexec_fn=_cap_child_output_files)
+                    except subprocess.TimeoutExpired:
+                        # A CLI timeout is not an authenticated container teardown.
+                        report['execution_status']='BLOCKED_TIMEOUT_CONTAINER_TEARDOWN_UNVERIFIED'
                     else:
-                        stdout.seek(0);stderr.seek(0)
-                        report['stdout_sha256']=hashlib.sha256(stdout.read()).hexdigest()
-                        report['stderr_sha256']=hashlib.sha256(stderr.read()).hexdigest()
-                        report['log_bytes']=list(sizes)
-                        report['exit_code']=completed.returncode
-                        report['execution_status']='RUN_REPORTED_UNATTESTED' if completed.returncode==0 else 'RUN_FAILED'
+                        stdout.flush();stderr.flush()
+                        sizes=(stdout.seek(0,2),stderr.seek(0,2))
+                        if sum(sizes) > MAX_LOG:
+                            report['execution_status']='BLOCKED_EXCESSIVE_LOGS'
+                        else:
+                            stdout.seek(0);stderr.seek(0)
+                            report['stdout_sha256']=hashlib.sha256(stdout.read()).hexdigest()
+                            report['stderr_sha256']=hashlib.sha256(stderr.read()).hexdigest()
+                            report['log_bytes']=list(sizes)
+                            report['exit_code']=completed.returncode
+                            report['execution_status']='RUN_REPORTED_UNATTESTED' if completed.returncode==0 else 'RUN_FAILED'
     report['receipt_digest']=domain_hash('CORA:runtime-observation:1', report)
     return report
 
