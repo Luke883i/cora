@@ -12,6 +12,7 @@ from pathlib import Path
 NAME = "Continuous Ontological Repository Assurance"
 REQUIRED = (
  "README.md","CHANGELOG.md","AGENTS.md","GOVERNANCE.md",
+ "docs/CONTINUOUS_DEVELOPMENT.md",
  "docs/ARCHITECTURE.md","docs/ADR-PR15.md","docs/AUDIT_PR15_MAIN.md",
  "docs/DOD_RELEASE_READINESS.md","docs/RELEASE.md",
  "pyproject.toml","src/cora/__init__.py","cora.ontology.json",
@@ -48,9 +49,17 @@ def inspect_source(root: Path) -> dict:
     if "**CORA ("+NAME+")**" not in readme:
         errors.append("PRODUCT_FIRST_READ_IDENTITY_MISSING")
     if any(v not in readme for v in ("## First five minutes","## Operating boundaries",
-            "## Release readiness","## Continuous development","product","software",
+            "docs/RELEASE.md","docs/CONTINUOUS_DEVELOPMENT.md","product","software",
             "repository","cora --help")):
         errors.append("README_CONTRACT_INCOMPLETE")
+    # The README is the landing page; procedure and release controls belong
+    # to independently checked, dedicated current source documents.
+    continuous_doc = txt("docs/CONTINUOUS_DEVELOPMENT.md")
+    release_doc = txt("docs/RELEASE.md")
+    if any(token not in continuous_doc for token in ("dev-premerge", "dev-postmerge")):
+        errors.append("CURRENT_CONTINUOUS_METHOD_INCOMPLETE")
+    if any(token not in release_doc for token in ("1.0.0a4", "BLOCKED_EXTERNAL")):
+        errors.append("CURRENT_RELEASE_METHOD_INCOMPLETE")
     if "For this first introduction the base has" in readme:
         errors.append("STALE_BOOTSTRAP_CLAIM")
     if len(readme.splitlines()) > 180:
