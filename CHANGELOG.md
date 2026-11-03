@@ -1,3 +1,7 @@
+## Unreleased — PR-20 canonical reticular convergence (candidate)
+
+Share reverse-DoD kernel across previous agent/Gold profiles; bind contextual pre/postmerge source evidence and selective witness invalidations, with 10×1M preseeded finite failure-class models. Full R1–R4 behavioral, private pilot, host readback and governance claims remain blocked.
+
 ## Unreleased — contextual gold assurance (PR-19 candidate)
 
 CORA adds R1–R4 contextual source/DoD, physical staged mutants, potential-effect audit, SHA-bound pilot contract (CI verifies public ICTC 1/3; private ikant/aosp1 readbacks remain blocked) and 10M finite semantic-model tests under one CLI. Fixed private CI token-access assumption and Docker temporary UID compatibility. External runtime, full private source pilot, independent review and release remain blocked.

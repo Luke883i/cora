@@ -1,0 +1,420 @@
+{
+  "schema": "cora-convergence-dod/1",
+  "intent": "Converge imported ICTC/ikant/aosp1 gold under one CORA core and contextual pre/postmerge pipeline, while demonstrating full R1-R4 obligations without claiming externally absent proof.",
+  "release_authorization": "NONE",
+  "goals": {
+    "source": "G_SOURCE_CONVERGENCE",
+    "complete": "G_R1_R4_COMPLETE",
+    "governed": "G_GOVERNED"
+  },
+  "nodes": [
+    {
+      "id": "S01",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "title": "Canonical shared DoD compiler",
+      "origin": "reticulum",
+      "falsifier": "Source compilation must share dependency semantics across agent/gold profiles"
+    },
+    {
+      "id": "S02",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "title": "Observed owner and product/software graph",
+      "origin": "ontology_graph",
+      "falsifier": "Static file owner/consumer must be derived from committed target ontology and Git"
+    },
+    {
+      "id": "S03",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "title": "Generic repository contextual adapter",
+      "origin": "repo_adapter",
+      "falsifier": "Unrecognized repository must not silently inherit fixed ICTC/ikant/aosp1 identity"
+    },
+    {
+      "id": "S04",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "title": "Selective witness invalidation",
+      "origin": "invalidation",
+      "falsifier": "Changed source and candidate importing consumers must invalidate dependent claims only"
+    },
+    {
+      "id": "S05",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "title": "DevOps pre/postmerge binding",
+      "origin": "continuous",
+      "falsifier": "Both lifecycle phases must bind policy at BASE and exact HEAD"
+    },
+    {
+      "id": "S06",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "title": "Physical behavioral oracle wiring",
+      "origin": "mutator",
+      "falsifier": "Physical source mutations and synthetic masks must have different evidence classes"
+    },
+    {
+      "id": "S07",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "title": "Effect-capability and readback boundary",
+      "origin": "effects",
+      "falsifier": "Potential CI write is not authenticated effect execution"
+    },
+    {
+      "id": "S08",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "title": "Pinned three-repo source pilot",
+      "origin": "pilot",
+      "falsifier": "A 1-of-3 public readback cannot promote private 3-of-3 source acceptance"
+    },
+    {
+      "id": "S09",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "title": "Deterministic adversarial saturation",
+      "origin": "saturation",
+      "falsifier": "Ten seeded million-case model streams must cover actual fault vectors and falsifiers"
+    },
+    {
+      "id": "S10",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "title": "Repository canonical product/software contract",
+      "origin": "repository",
+      "falsifier": "README roles CLI CI and source SHA must remain reconciled"
+    },
+    {
+      "id": "E_R1_OWNER",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "title": "R1 independent authoritative owner verification",
+      "origin": "OUTSIDE_PR",
+      "falsifier": "Reject absent independent witness: R1 independent authoritative owner verification"
+    },
+    {
+      "id": "E_R1_CONSUMER",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "title": "R1 dynamic consumer evidence including non-Python callpaths",
+      "origin": "OUTSIDE_PR",
+      "falsifier": "Reject absent independent witness: R1 dynamic consumer evidence including non-Python callpaths"
+    },
+    {
+      "id": "E_R2_BEHAVIOR",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "title": "R2 real target product behavioral mutator results",
+      "origin": "OUTSIDE_PR",
+      "falsifier": "Reject absent independent witness: R2 real target product behavioral mutator results"
+    },
+    {
+      "id": "E_R2_SANDBOX",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "title": "R2 independently checked runtime confinement",
+      "origin": "OUTSIDE_PR",
+      "falsifier": "Reject absent independent witness: R2 independently checked runtime confinement"
+    },
+    {
+      "id": "E_R3_READBACK",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "title": "R3 attributable actual side-effect target readback",
+      "origin": "OUTSIDE_PR",
+      "falsifier": "Reject absent independent witness: R3 attributable actual side-effect target readback"
+    },
+    {
+      "id": "E_R3_HOST",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "title": "R3 trusted CI hosting permission and authorizations",
+      "origin": "OUTSIDE_PR",
+      "falsifier": "Reject absent independent witness: R3 trusted CI hosting permission and authorizations"
+    },
+    {
+      "id": "E_R4_PRIVATE",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "title": "R4 real three-of-three private/public source readback",
+      "origin": "OUTSIDE_PR",
+      "falsifier": "Reject absent independent witness: R4 real three-of-three private/public source readback"
+    },
+    {
+      "id": "E_R4_PREPOST",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "title": "R4 repeated target premerge postmerge regression with outcomes",
+      "origin": "OUTSIDE_PR",
+      "falsifier": "Reject absent independent witness: R4 repeated target premerge postmerge regression with outcomes"
+    },
+    {
+      "id": "E_R4_E2E",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "title": "R4 real product user path and rollback pilot",
+      "origin": "OUTSIDE_PR",
+      "falsifier": "Reject absent independent witness: R4 real product user path and rollback pilot"
+    },
+    {
+      "id": "E_REVIEW",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "title": "Independent non-author human review and release decision",
+      "origin": "OUTSIDE_PR",
+      "falsifier": "Reject absent independent witness: Independent non-author human review and release decision"
+    },
+    {
+      "id": "I_SOURCE",
+      "kind": "INTERMEDIATE",
+      "scope": "SOURCE",
+      "depends_on": [
+        "S01",
+        "S02",
+        "S03",
+        "S04",
+        "S05",
+        "S06",
+        "S07",
+        "S08",
+        "S09",
+        "S10"
+      ],
+      "title": "I_SOURCE",
+      "origin": "RETICULAR_AND",
+      "falsifier": "All prerequisites required; negative/missing evidence blocks."
+    },
+    {
+      "id": "R1_CONTEXTUAL",
+      "kind": "INTERMEDIATE",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "S01",
+        "S02",
+        "S03",
+        "S04",
+        "E_R1_OWNER",
+        "E_R1_CONSUMER"
+      ],
+      "title": "R1_CONTEXTUAL",
+      "origin": "RETICULAR_AND",
+      "falsifier": "All prerequisites required; negative/missing evidence blocks."
+    },
+    {
+      "id": "R2_PHYSICAL",
+      "kind": "INTERMEDIATE",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "S06",
+        "S09",
+        "E_R2_BEHAVIOR",
+        "E_R2_SANDBOX"
+      ],
+      "title": "R2_PHYSICAL",
+      "origin": "RETICULAR_AND",
+      "falsifier": "All prerequisites required; negative/missing evidence blocks."
+    },
+    {
+      "id": "R3_EFFECTFUL",
+      "kind": "INTERMEDIATE",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "S07",
+        "E_R3_READBACK",
+        "E_R3_HOST"
+      ],
+      "title": "R3_EFFECTFUL",
+      "origin": "RETICULAR_AND",
+      "falsifier": "All prerequisites required; negative/missing evidence blocks."
+    },
+    {
+      "id": "R4_CONTINUOUS",
+      "kind": "INTERMEDIATE",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "S05",
+        "S08",
+        "S10",
+        "E_R4_PRIVATE",
+        "E_R4_PREPOST",
+        "E_R4_E2E"
+      ],
+      "title": "R4_CONTINUOUS",
+      "origin": "RETICULAR_AND",
+      "falsifier": "All prerequisites required; negative/missing evidence blocks."
+    },
+    {
+      "id": "G_SOURCE_CONVERGENCE",
+      "kind": "GLOBAL",
+      "scope": "SOURCE",
+      "depends_on": [
+        "I_SOURCE"
+      ],
+      "title": "G_SOURCE_CONVERGENCE",
+      "origin": "RETICULAR_AND",
+      "falsifier": "All prerequisites required; negative/missing evidence blocks."
+    },
+    {
+      "id": "G_R1_R4_COMPLETE",
+      "kind": "GLOBAL",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "G_SOURCE_CONVERGENCE",
+        "R1_CONTEXTUAL",
+        "R2_PHYSICAL",
+        "R3_EFFECTFUL",
+        "R4_CONTINUOUS"
+      ],
+      "title": "G_R1_R4_COMPLETE",
+      "origin": "RETICULAR_AND",
+      "falsifier": "All prerequisites required; negative/missing evidence blocks."
+    },
+    {
+      "id": "G_GOVERNED",
+      "kind": "GLOBAL",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "G_R1_R4_COMPLETE",
+        "E_REVIEW"
+      ],
+      "title": "G_GOVERNED",
+      "origin": "RETICULAR_AND",
+      "falsifier": "All prerequisites required; negative/missing evidence blocks."
+    }
+  ],
+  "faults": [
+    {
+      "id": "F01",
+      "kind": "source_owner_collision",
+      "gate": "S02"
+    },
+    {
+      "id": "F02",
+      "kind": "consumer_absent_or_dynamic",
+      "gate": "S02"
+    },
+    {
+      "id": "F03",
+      "kind": "self_edited_base_policy",
+      "gate": "S05"
+    },
+    {
+      "id": "F04",
+      "kind": "stale_or_wrong_commit",
+      "gate": "S03"
+    },
+    {
+      "id": "F05",
+      "kind": "changed_path_witness_not_invalidated",
+      "gate": "S04"
+    },
+    {
+      "id": "F06",
+      "kind": "unrelated_witness_promoted",
+      "gate": "S04"
+    },
+    {
+      "id": "F07",
+      "kind": "synthetic_mutant_claimed_physical",
+      "gate": "S06"
+    },
+    {
+      "id": "F08",
+      "kind": "surviving_behavioral_mutant_misclassified",
+      "gate": "S06"
+    },
+    {
+      "id": "F09",
+      "kind": "implicit_target_execution",
+      "gate": "S06"
+    },
+    {
+      "id": "F10",
+      "kind": "workflow_side_effect_not_classified",
+      "gate": "S07"
+    },
+    {
+      "id": "F11",
+      "kind": "untrusted_readback_promoted",
+      "gate": "S07"
+    },
+    {
+      "id": "F12",
+      "kind": "private_pilot_claimed_verified",
+      "gate": "S08"
+    },
+    {
+      "id": "F13",
+      "kind": "premerge_head_mismatch",
+      "gate": "S05"
+    },
+    {
+      "id": "F14",
+      "kind": "postmerge_old_sha_reuse",
+      "gate": "S05"
+    },
+    {
+      "id": "F15",
+      "kind": "external_review_self_signed",
+      "gate": "E_REVIEW"
+    },
+    {
+      "id": "F16",
+      "kind": "missing_rollback_accepted",
+      "gate": "E_R4_E2E"
+    }
+  ],
+  "campaign": {
+    "model_kind": "FINITE_PRESEEDED_REALISTIC_FAULT_CLASSES_NOT_PHYSICAL_SOURCE_MUTANTS",
+    "seeds": [
+      883,
+      1618033,
+      2718281,
+      3141592,
+      20261103,
+      2654435761,
+      2246822507,
+      3266489909,
+      2135587861,
+      462902675
+    ],
+    "sessions": 10,
+    "cases_per_session": 1000000,
+    "forced_singles": 16,
+    "forced_pairs": 120,
+    "tail_cases": 100000,
+    "executed_target_mutants": 0
+  },
+  "evidence": {
+    "source": "GIT_AND_SOURCE_ONLY",
+    "unknown": "NONCOMPENSATORY_BLOCK",
+    "external": "NEVER_SELF_ATTESTED",
+    "effect": "CLAIM_NEEDS_HOST_READBACK",
+    "pilot": "PUBLIC_ICTC_1_OF_3_PRIVATE_BLOCKED",
+    "authorization": "NONE"
+  }
+}

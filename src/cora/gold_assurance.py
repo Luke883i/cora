@@ -6,6 +6,7 @@ import re
 import subprocess
 from pathlib import Path, PurePosixPath
 from .evidence import domain_hash
+from .reticulum import ordered_cut
 
 SCHEMA = "cora-gold-assurance/1"
 HEX = re.compile(r"^[0-9a-f]{40}$")
@@ -97,20 +98,7 @@ def load_gold_contract(path: str | Path) -> dict:
 def retrograde_gold(contract: dict, goal: str = "G_GOLD_SOURCE") -> dict:
     if goal not in CUTS:
         raise ValueError("unknown goal")
-    found = {n["id"]: n for n in contract["nodes"]}
-    order, seen, active = [], set(), set()
-    def walk(key):
-        if key in active:
-            raise ValueError("cycle")
-        if key in seen:
-            return
-        active.add(key)
-        for dep in found[key]["depends_on"]:
-            walk(dep)
-        active.remove(key)
-        seen.add(key)
-        order.append(key)
-    walk(goal)
+    order = ordered_cut(contract["nodes"], goal)
     result = {"schema":"cora-gold-retrograde/1","goal":goal,
               "nodes":order,"local_cut":[x for x in order if x in LOCAL],
               "status":"REQUIREMENTS_DERIVED_NOT_EXECUTED",
@@ -198,4 +186,124 @@ def contextual_gold(contract: dict, intent: str, pilot: dict | None = None, *, r
               "owner_semantics":"UNATTESTED","runtime":"NOT_EXECUTED",
               "governed":"BLOCKED_EXTERNAL","authorization":"NONE"}
     result["digest"]=domain_hash("CORA:gold-contextual:1",result)
+    return result
+
+
+# PR-20 profile validation remains owned here. Shared graph evaluation lives in
+# reticulum.py; profile requirements must not silently change in a candidate PR.
+CONVERGENCE_SCHEMA = "cora-convergence-dod/1"
+SOURCE_LEAVES = tuple("S%02d" % n for n in range(1, 11))
+EXTERNAL_LEAVES = (
+    "E_R1_OWNER", "E_R1_CONSUMER", "E_R2_BEHAVIOR", "E_R2_SANDBOX",
+    "E_R3_READBACK", "E_R3_HOST", "E_R4_PRIVATE", "E_R4_PREPOST",
+    "E_R4_E2E", "E_REVIEW",
+)
+CONVERGENCE_EDGES = {
+    "I_SOURCE": SOURCE_LEAVES,
+    "R1_CONTEXTUAL": ("S01", "S02", "S03", "S04", "E_R1_OWNER", "E_R1_CONSUMER"),
+    "R2_PHYSICAL": ("S06", "S09", "E_R2_BEHAVIOR", "E_R2_SANDBOX"),
+    "R3_EFFECTFUL": ("S07", "E_R3_READBACK", "E_R3_HOST"),
+    "R4_CONTINUOUS": ("S05", "S08", "S10", "E_R4_PRIVATE", "E_R4_PREPOST", "E_R4_E2E"),
+    "G_SOURCE_CONVERGENCE": ("I_SOURCE",),
+    "G_R1_R4_COMPLETE": ("G_SOURCE_CONVERGENCE", "R1_CONTEXTUAL",
+                         "R2_PHYSICAL", "R3_EFFECTFUL", "R4_CONTINUOUS"),
+    "G_GOVERNED": ("G_R1_R4_COMPLETE", "E_REVIEW"),
+}
+FAULT_FAMILIES = (
+    "source_owner_collision", "consumer_absent_or_dynamic",
+    "self_edited_base_policy", "stale_or_wrong_commit",
+    "changed_path_witness_not_invalidated", "unrelated_witness_promoted",
+    "synthetic_mutant_claimed_physical", "surviving_behavioral_mutant_misclassified",
+    "implicit_target_execution", "workflow_side_effect_not_classified",
+    "untrusted_readback_promoted", "private_pilot_claimed_verified",
+    "premerge_head_mismatch", "postmerge_old_sha_reuse",
+    "external_review_self_signed", "missing_rollback_accepted",
+)
+FAULT_GATES = (
+    "S02", "S02", "S05", "S03", "S04", "S04",
+    "S06", "S06", "S06", "S07", "S07", "S08",
+    "S05", "S05", "E_REVIEW", "E_R4_E2E",
+)
+
+
+def load_convergence_contract(path: str | Path) -> dict:
+    """Exact normative AND edges, scopes, family registry and release barrier."""
+    data = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not isinstance(data, dict) or set(data) != {
+        "schema", "intent", "release_authorization", "goals", "nodes",
+        "faults", "campaign", "evidence"
+    } or data["schema"] != CONVERGENCE_SCHEMA or data["release_authorization"] != "NONE":
+        raise ValueError("invalid convergence contract or authority")
+    if not isinstance(data["intent"], str) or len(data["intent"]) < 60:
+        raise ValueError("convergence intent not bound")
+    if data["goals"] != {
+        "source": "G_SOURCE_CONVERGENCE",
+        "complete": "G_R1_R4_COMPLETE",
+        "governed": "G_GOVERNED",
+    }:
+        raise ValueError("noncompensatory global root modified")
+    nodes = data["nodes"]
+    if not isinstance(nodes, list) or len(nodes) != 28:
+        raise ValueError("28 convergence DoD nodes required")
+    ids = [n.get("id") for n in nodes if isinstance(n, dict)]
+    all_ids = set(SOURCE_LEAVES) | set(EXTERNAL_LEAVES) | set(CONVERGENCE_EDGES)
+    if len(ids) != 28 or len(set(ids)) != 28 or set(ids) != all_ids:
+        raise ValueError("missing/duplicate DoD identity")
+    index = {n["id"]: n for n in nodes}
+    for key in SOURCE_LEAVES + EXTERNAL_LEAVES:
+        n = index[key]
+        if (n.get("kind") != "LOCAL" or n.get("depends_on") != [] or
+            n.get("scope") != ("SOURCE" if key in SOURCE_LEAVES else "EXTERNAL") or
+            not isinstance(n.get("falsifier"), str) or len(n["falsifier"]) < 18):
+            raise ValueError("source/external local boundary drift: " + key)
+    for key, deps in CONVERGENCE_EDGES.items():
+        n = index[key]
+        if (n.get("depends_on") != list(deps) or
+            n.get("kind") != ("GLOBAL" if key.startswith("G_") else "INTERMEDIATE") or
+            n.get("scope") != ("SOURCE" if key in ("I_SOURCE", "G_SOURCE_CONVERGENCE")
+                               else "EXTERNAL")):
+            raise ValueError("convergence prerequisite cut drift: " + key)
+    faults = data["faults"]
+    if (not isinstance(faults, list) or len(faults) != 16 or
+        any(not isinstance(f, dict) or f.get("id") != "F%02d" % (i + 1) or
+            f.get("kind") != FAULT_FAMILIES[i] or
+            f.get("gate") != FAULT_GATES[i] for i, f in enumerate(faults))):
+        raise ValueError("realistic fault taxonomy changed")
+    c = data["campaign"]
+    if (not isinstance(c, dict) or c.get("model_kind") !=
+        "FINITE_PRESEEDED_REALISTIC_FAULT_CLASSES_NOT_PHYSICAL_SOURCE_MUTANTS" or
+        c.get("sessions") != 10 or c.get("cases_per_session") != 1_000_000 or
+        c.get("forced_singles") != 16 or c.get("forced_pairs") != 120 or
+        c.get("tail_cases") != 100_000 or c.get("executed_target_mutants") != 0 or
+        not isinstance(c.get("seeds"), list) or len(c["seeds"]) != 10 or
+        len(set(c["seeds"])) != 10 or
+        any(type(s) is not int or not 0 <= s < 2**32 for s in c["seeds"])):
+        raise ValueError("finite model denominator or semantics drift")
+    if data["evidence"] != {
+        "source": "GIT_AND_SOURCE_ONLY", "unknown": "NONCOMPENSATORY_BLOCK",
+        "external": "NEVER_SELF_ATTESTED", "effect": "CLAIM_NEEDS_HOST_READBACK",
+        "pilot": "PUBLIC_ICTC_1_OF_3_PRIVATE_BLOCKED", "authorization": "NONE",
+    }:
+        raise ValueError("source/runtime/governance epistemic drift")
+    for target in data["goals"].values():
+        ordered_cut(nodes, target)
+    return data
+
+
+def convergent_plan(contract: dict, goal: str = "G_R1_R4_COMPLETE") -> dict:
+    """Only derive obligations: no evidence claims and no automatic GO."""
+    if goal not in contract["goals"].values():
+        raise ValueError("unknown global convergence goal")
+    order = ordered_cut(contract["nodes"], goal)
+    leaves = [key for key in order if key in SOURCE_LEAVES + EXTERNAL_LEAVES]
+    result = {
+        "schema": "cora-convergence-plan/1", "goal": goal,
+        "prerequisites": order, "local_cut": leaves,
+        "source_locals": [x for x in leaves if x in SOURCE_LEAVES],
+        "external_locals": [x for x in leaves if x in EXTERNAL_LEAVES],
+        "contract_digest": domain_hash("CORA:convergence-policy:1", contract),
+        "status": "REQUIREMENTS_DERIVED_NOT_EXECUTED",
+        "authorization": "NONE",
+    }
+    result["digest"] = domain_hash("CORA:convergence-plan:1", result)
     return result

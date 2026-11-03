@@ -46,6 +46,9 @@ from .gold_assurance import load_gold_contract, retrograde_gold, pilot_sources, 
 from .gold_mutations import physical_mutants
 from .gold_effects import audit_workflow, reconcile_effect_claim
 from .gold_saturation import gold_saturation
+from .gold_assurance import load_convergence_contract, convergent_plan
+from .gold_saturation import saturate_convergence
+from .continuous import evaluate_contextual, verify_contextual_gate
 import zipfile
 import shlex
 
@@ -106,6 +109,16 @@ def main(argv: list[str] | None = None) -> int:
     gx.add_argument('--cases-per-session', type=int, default=1000000)
     gx.add_argument('--require-full', action='store_true')
     gx.add_argument('--output', type=Path)
+    cp = sub.add_parser('convergence-plan', help='Canonical R1-R4 source/full/external reticular DoD')
+    cp.add_argument('--contract', type=Path, default=Path('cora.convergence-dod.json'))
+    cp.add_argument('--goal', choices=('G_SOURCE_CONVERGENCE','G_R1_R4_COMPLETE','G_GOVERNED'), default='G_R1_R4_COMPLETE')
+    cp.add_argument('--output', type=Path)
+    cs = sub.add_parser('stress-convergence', help='10M preseeded realistic finite fault-class model cases, not physical code mutations')
+    cs.add_argument('--contract', type=Path, default=Path('cora.convergence-dod.json'))
+    cs.add_argument('--sessions', type=int, default=10)
+    cs.add_argument('--cases-per-session', type=int, default=1000000)
+    cs.add_argument('--require-full', action='store_true')
+    cs.add_argument('--output', type=Path)
     za = sub.add_parser('zip-intake', help='Bounded untrusted ZIP preflight: no execution, history unavailable')
     za.add_argument('archive', type=Path)
     za.add_argument('--expected-tree', help='Caller-supplied expected Git SHA-1 tree (not authenticated)')
@@ -350,6 +363,10 @@ def main(argv: list[str] | None = None) -> int:
     gp.add_argument('--base',required=True)
     gp.add_argument('--head',default='HEAD')
     gp.add_argument('--strict',action='store_true',help='Exit 2 on missing base policy or blockers')
+    gp.add_argument('--contextual',action='store_true',help='Compose canonical R1-R4 reticulum, static owner graph and selective witness invalidation')
+    gp.add_argument('--intent',help='Change-specific human intent, claimed not authenticated')
+    gp.add_argument('--convergence-contract',type=Path,default=Path('cora.convergence-dod.json'))
+    gp.add_argument('--witnesses',type=Path,help='Untrusted declared dependency manifest; never authority')
     gp.add_argument('--output',type=Path)
     gm = sub.add_parser('dev-postmerge', help='Post-merge drift and bounded regression obligations')
     gm.add_argument('repo',type=Path)
@@ -357,11 +374,22 @@ def main(argv: list[str] | None = None) -> int:
     gm.add_argument('--head',default='HEAD')
     gm.add_argument('--with-debt',action='store_true')
     gm.add_argument('--strict',action='store_true')
+    gm.add_argument('--contextual',action='store_true',help='Compose R1-R4 source obligations on actual merged HEAD')
+    gm.add_argument('--intent',help='Change-specific human intent, claimed not authenticated')
+    gm.add_argument('--convergence-contract',type=Path,default=Path('cora.convergence-dod.json'))
+    gm.add_argument('--witnesses',type=Path,help='Caller-declared dependencies not attested')
     gm.add_argument('--output',type=Path)
     gv = sub.add_parser('verify-dev-gate', help='Recompute lifecycle evidence from original Git commits')
     gv.add_argument('report',type=Path)
     gv.add_argument('--repo',type=Path,required=True)
     gv.add_argument('--output',type=Path)
+    cv = sub.add_parser('verify-contextual-gate', help='Recompute contextual receipt from exact Git objects and original witnesses')
+    cv.add_argument('report',type=Path)
+    cv.add_argument('--repo',required=True,type=Path)
+    cv.add_argument('--convergence-contract',type=Path,default=Path('cora.convergence-dod.json'))
+    cv.add_argument('--witnesses',type=Path)
+    cv.add_argument('--intent',help='Same exact change intent as original report')
+    cv.add_argument('--output',type=Path)
     ga = sub.add_parser('agent-check', help='Check coding agent proposal against Git; never approve')
     ga.add_argument('proposal',type=Path)
     ga.add_argument('--repo',type=Path,required=True)
@@ -404,6 +432,16 @@ def main(argv: list[str] | None = None) -> int:
                                      cases_per_session=args.cases_per_session)
             code=2 if result['status']=='REFUTED' or (args.require_full and
                 result['status']!='PASS_SCOPED_FINITE_MODEL') else 0
+        elif args.cmd == 'convergence-plan':
+            contract=load_convergence_contract(args.contract)
+            result=convergent_plan(contract,args.goal)
+            code=0
+        elif args.cmd == 'stress-convergence':
+            contract=load_convergence_contract(args.contract)
+            result=saturate_convergence(contract,sessions=args.sessions,
+                                        cases_per_session=args.cases_per_session)
+            code=2 if result['status']=='REFUTED' or (args.require_full and
+                        result['status']!='PASS_SCOPED_FINITE_MODEL') else 0
         elif args.cmd == 'gold-plan':
             c=load_gold_contract(args.contract)
             pilot=json.loads(args.pilot_report.read_text('utf-8')) if args.pilot_report else None
@@ -653,11 +691,37 @@ def main(argv: list[str] | None = None) -> int:
             result = stress_debt(seed=args.seed,cases=args.cases)
             code = 2 if result['mismatches'] else 0
         elif args.cmd == 'dev-premerge':
-            result = development_gate(args.repo,args.base,args.head,phase='premerge')
-            code = 2 if args.strict and (result['status'] != 'OBSERVED_REVIEW_REQUIRED' or result['blockers']) else 0
+            if args.contextual:
+                contract=load_convergence_contract(args.convergence_contract)
+                declared=json.loads(args.witnesses.read_text('utf-8')) if args.witnesses else []
+                result=evaluate_contextual(args.repo,args.base,args.head,contract=contract,
+                                           phase='premerge',witnesses=declared,intent=args.intent)
+                code=2 if args.strict else 0  # Full R1-R4 remains externally blocked.
+            else:
+                result = development_gate(args.repo,args.base,args.head,phase='premerge')
+                code = 2 if args.strict and (result['status'] != 'OBSERVED_REVIEW_REQUIRED' or result['blockers']) else 0
         elif args.cmd == 'dev-postmerge':
-            result = development_gate(args.repo,args.previous,args.head,phase='postmerge',with_debt=args.with_debt)
-            code = 2 if args.strict and (result['status'] != 'OBSERVED_REVIEW_REQUIRED' or result['blockers']) else 0
+            if args.contextual:
+                contract=load_convergence_contract(args.convergence_contract)
+                declared=json.loads(args.witnesses.read_text('utf-8')) if args.witnesses else []
+                result=evaluate_contextual(args.repo,args.previous,args.head,contract=contract,
+                                           phase='postmerge',with_debt=args.with_debt,
+                                           witnesses=declared,intent=args.intent)
+                code=2 if args.strict else 0  # No self-attested product acceptance.
+            else:
+                result = development_gate(args.repo,args.previous,args.head,phase='postmerge',with_debt=args.with_debt)
+                code = 2 if args.strict and (result['status'] != 'OBSERVED_REVIEW_REQUIRED' or result['blockers']) else 0
+        elif args.cmd == 'verify-contextual-gate':
+            contract=load_convergence_contract(args.convergence_contract)
+            declared=json.loads(args.witnesses.read_text('utf-8')) if args.witnesses else []
+            original=json.loads(args.report.read_text('utf-8'))
+            verify_contextual_gate(args.repo,original,contract=contract,witnesses=declared,
+                                   intent=args.intent)
+            result={'schema':'cora-contextual-verification/1',
+                    'status':'REPLAYED_FROM_GIT_NOT_HOST_ATTESTED',
+                    'head_commit':original['head_commit'],
+                    'digest':original['digest'],'authorization':'NONE'}
+            code=0
         elif args.cmd == 'verify-dev-gate':
             item = json.loads(args.report.read_text(encoding='utf-8'))
             verify_gate(args.repo,item)

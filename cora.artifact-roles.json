@@ -498,6 +498,55 @@
         "PRODUCT_CONTRACT"
       ],
       "rationale": "Exact PR-19 failure provenance, restricted private Git source access, scoped DoD and recovery obligations."
+    },
+    {
+      "pattern": "src/cora/reticulum.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Single agent/Gold/DevOps graph compiler, model AND and selective witness invalidation."
+    },
+    {
+      "pattern": "cora.convergence-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Twenty-eight-node R1–R4 source/external non-compensatory semantic DoD profile."
+    },
+    {
+      "pattern": "tests/test_pr20_convergence.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Actual committed Git fixture owners/consumers, 31 policy JSON mutants, negative evidence replay."
+    },
+    {
+      "pattern": ".github/workflows/ci-convergence.yml",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "WORKFLOW"
+      ],
+      "rationale": "Exact candidate Python matrix, legacy regression and twice-replayed preseeded 10M finite model."
+    },
+    {
+      "pattern": "docs/CONVERGENT_ASSURANCE.md",
+      "roles": [
+        "DOCUMENTATION",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Canonical reticular DevOps workflow, source/runtime trust boundaries and operator method."
+    },
+    {
+      "pattern": "docs/DOD_PR20_CONVERGENCE.md",
+      "roles": [
+        "DOCUMENTATION",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Global source and complete R1–R4 AND cut and falsification gates."
     }
   ]
 }

@@ -5,6 +5,7 @@ from pathlib import Path
 from .archive_intake import verify_intake
 from .observation_fusion import fuse_evidence
 from .evidence import domain_hash
+from .reticulum import ordered_cut
 
 
 def lattice_from_evidence(archive: Path, zip_report: dict, *,
@@ -36,6 +37,10 @@ def lattice_from_evidence(archive: Path, zip_report: dict, *,
        'witness':None,
        'unknowns':['PROTECTED_HOST_REVIEW','INDEPENDENT_REVIEWER','REAL_WORLD_PILOT','ROLLBACK']},
     ]
+    # Legacy PR-16 uses a distinct evidence-state vocabulary, but its
+    # dependency topology must obey the same cycle/dangling/duplicate rules
+    # as agent, Gold and PR-20 without rewriting historical witness statuses.
+    ordered_cut(nodes, "G3")
     gates = [
       {'id':'C5','status':'REQUIRES_HEAD_CI','witness':'verify_repository_contract+verify_artifact_roles'},
       {'id':'C6','status':'REQUIRES_HEAD_CI_AND_RUNTIME_EXTERNAL','witness':'PR16_negative_fixtures'},

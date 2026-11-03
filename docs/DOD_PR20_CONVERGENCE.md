@@ -1,0 +1,23 @@
+# PR-20 — Complete R1–R4 semantic reticular DoD
+
+## Backward-derived global contract
+
+User intent: converge imported gold into **one** operational chain from real engineering intent to proof, falsification, pre/postmerge decisions and independently governed PR. Avoid adding duplicate analysis owners. `G_SOURCE_CONVERGENCE = AND(S01..S10)`; `G_R1_R4_COMPLETE = G_SOURCE_CONVERGENCE AND R1_CONTEXTUAL AND R2_PHYSICAL AND R3_EFFECTFUL AND R4_CONTINUOUS`; `G_GOVERNED = G_R1_R4_COMPLETE AND E_REVIEW`. Machine profile: 10 source leaves, 10 externally witnessed leaves, five intermediate cuts and three global roots = **28 nodes**. The COMPLETE cut contains nine external prerequisites; GOVERNED contains ten. No compensatory scoring, self waiver or source-to-runtime promotion.
+
+| Unit | Source implementation obligations | Full-contract independent observations that remain necessary |
+| --- | --- | --- |
+| R1 contextual assurance | S01 shared DAG; S02 committed Git ontology and static consumer graph; S03 generic target adapter; S04 precise declared witness invalidation | E_R1_OWNER verified real owner/authority; E_R1_CONSUMER qualified dynamic and non-Python consumers |
+| R2 physical mutation | S06 actual temporary source byte changes; S09 reproducible adversarial finite model | E_R2_BEHAVIOR real target code mutation with independent behavioral oracle (kill/survive/timeout/inconclusive); E_R2_SANDBOX independently observed isolation |
+| R3 effectful DevOps | S07 potential CI effect inventory with nonpromoting claims | E_R3_READBACK trusted attributable target readback; E_R3_HOST verified effective host permissions/side effects |
+| R4 continuous pilot | S05 actual pre/postmerge BASE/HEAD, S08 real pinned source observations, S10 product/software/repository reconciliation | E_R4_PRIVATE real ICTC/ikant/aosp1 3/3 (candidate CI 1/3); E_R4_PREPOST ongoing cross-product runtime pre/postmerge; E_R4_E2E real user journey and rollback |
+| Governance | All complete R1–R4 | E_REVIEW independent non-author review and authorized release decision |
+
+## Candidate source DoD and falsifiers
+
+**C1 contract:** 28 typed noncompensatory nodes; exact source/external cut and authorization `NONE`; 31 physical JSON policy mutants rejected. **C2 kernel:** `agent_assurance` and `gold_assurance` both delegate to canonical `reticulum.ordered_cut` with legacy outputs unchanged; negative cycle, duplicate and dangling edge cases. **C3 context:** real Git fixture with owner declaration, import consumer, source mutation and potential workflow write; reject owner collisions, missing ontology, untrusted receipts. **C4 invalidation:** changed source invalidates its own and imported consumer dependencies, unrelated witnesses require revalidation, external blocked. **C5 lifecycle:** existing dev-premerge and dev-postmerge opt into `--contextual` without affecting default paths; verify replays against exact source. **C6 mutation/effects:** preserve existing physical `gold-mutate` and potential `gold-effects` boundaries; no implicit tests or deployment. **C7 model:** ten independent seeded 1M-case finite sessions with 16/16 single classes, 120/120 pairs, all 2,517 1–4-way masks, zero mismatches/unsafe promotions/novelty last 100k and two byte-identical full runs. **C8 repo:** README ≤180 lines, canonical roles and CI in Python 3.11/3.13 plus legacy PR17–19 regression and true HEAD. All C1–C8 must pass to report `SOURCE_PASS_SCOPED`.
+
+## Explicitly unclosed global DoD
+
+The existence of code and passing CI does **not** prove complete R1/R2/R3/R4. Real target owner verification, non-Python runtime consumers, behavioral target source mutants, independently attested Docker, trusted side-effect readback, private repositories, full target E2E and rollback all stay `BLOCKED_EXTERNAL` or `NOT_EXECUTED`. The 10M figure describes synthetic typed model cases, **zero real product-source mutants**. A green source-model job cannot close the complete AND root or grant merge/release authority. Postmerge source identity must be revalidated independently on new main.
+
+**Hardening witnesses:** C2 includes legacy PR-16 DAG topology using the shared kernel without rewriting historical statuses. C3 additionally requires an explicit bounded change intent: absent = DEBT_BLOCKED, present = untrusted digest bound to exact BASE/HEAD, replay with altered text refused. C4 checks deleted/renamed Python sources against the BASE **and** HEAD candidate graph; a disappeared module must invalidate pre-change static consumers, and absence of the required BASE graph must block the claim. Full R1 dynamic consumer authority remains external.

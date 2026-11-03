@@ -204,3 +204,183 @@ def agent_check(repo:Path,proposal:dict)->dict:
             'authorization':'NONE'}
     result['check_digest']=domain_hash('CORA:agent-check:1',result)
     return result
+
+
+def evaluate_contextual(repo: Path, base: str, head: str, *,
+                        contract: dict, phase: str = "premerge",
+                        with_debt: bool = False,
+                        witnesses: list[dict] | None = None,
+                        intent: str | None = None) -> dict:
+    """Source-only, generic target adapter over existing lifecycle/ontology.
+
+    Static import edges are possible dependencies, not proven callpaths. No
+    tests, Docker, network or target side effects are implicitly executed.
+    """
+    from collections import deque
+    from .graph import graph_from_commit
+    from .ontology import committed_ontology, members
+    from .reticulum import invalidated_witnesses, assess_cut
+    from .gold_assurance import convergent_plan
+    from .gold_effects import audit_workflow
+
+    if phase not in ("premerge", "postmerge"):
+        raise ValueError("invalid lifecycle phase")
+    if intent is not None and (not isinstance(intent, str) or
+            not 12 <= len(intent.strip()) <= 1024 or chr(0) in intent):
+        raise ValueError("bounded change-specific human intent required")
+    repo = Path(repo).resolve(strict=True)
+    gate = evaluate(repo, base, head, phase=phase, with_debt=with_debt)
+    before, after = gate["base_commit"], gate["head_commit"]
+    intent_digest = (domain_hash("CORA:intent-to-proof:1",
+                     {"base": before, "head": after, "intent": intent.strip()})
+                     if intent is not None else None)
+    changed = sorted({p for row in gate["changed_paths"]
+                      for p in (row["old_path"], row["new_path"])})
+    graph = None
+    declared = None
+    graph_problem = None
+    try:
+        declared = committed_ontology(repo, after)
+        graph = graph_from_commit(repo, after)
+    except (ValueError, OSError, KeyError, TypeError, subprocess.TimeoutExpired) as exc:
+        graph_problem = type(exc).__name__
+    # The HEAD graph cannot resolve imports targeting a removed/renamed file.
+    # Reconstruct the BASE graph for these changes or explicitly block the
+    # impact claim instead of silently dropping pre-change consumers.
+    need_base_graph = any(row["status"][0] in ("D", "R", "T")
+                          for row in gate["changed_paths"])
+    base_graph = None
+    base_graph_problem = None
+    if need_base_graph:
+        try:
+            base_graph = graph_from_commit(repo, before)
+        except (ValueError, OSError, KeyError, TypeError, subprocess.TimeoutExpired) as exc:
+            base_graph_problem = type(exc).__name__
+    consumers = {}
+    imports_unknown = []
+    product_context = []
+    for candidate in (base_graph, graph):
+        if candidate is None:
+            continue
+        for edge in candidate["edges"]:
+            if (edge["kind"] == "static_import_candidate" and
+                edge["source"].startswith("file:") and
+                edge["target"].startswith("file:")):
+                target = edge["target"][5:]
+                source = edge["source"][5:]
+                consumers.setdefault(target, set()).add(source)
+    if graph is not None and declared is not None:
+        for row in graph["findings"]:
+            if row["kind"] in ("dynamic_import_unknown", "relative_import_unresolved",
+                               "ambiguous_import", "import_unresolved",
+                               "from_import_submodule_ambiguous"):
+                imports_unknown.append(row)
+        for item in changed:
+            products = sorted(x["id"] for x in declared["document"]["products"]
+                              if members(item, x["roots"]))
+            software = sorted(x["id"] for x in declared["document"]["software"]
+                              if members(item, x["roots"]))
+            product_context.append({
+                "path": item, "declared_products": products,
+                "declared_software": software,
+                "owner_status": "AMBIGUOUS_DECLARED_OWNER" if len(products) > 1 else
+                ("DECLARED_CANDIDATE_NOT_ATTESTED" if products else
+                 "UNASSIGNED_REPOSITORY_ARTIFACT"),
+            })
+    affected = set(changed)
+    frontier = deque(changed)
+    # Traverse only static Python candidate reverse imports, never conclude
+    # that absence of an edge proves absence of a runtime consumer.
+    while frontier:
+        current = frontier.popleft()
+        for dependent in sorted(consumers.get(current, ())):
+            if dependent not in affected:
+                if len(affected) >= 4096:
+                    raise ValueError("candidate impact graph budget exceeded")
+                affected.add(dependent)
+                frontier.append(dependent)
+    invalidations = invalidated_witnesses(
+        witnesses if witnesses is not None else [], sorted(affected),
+        source_revision=after)
+    effects = []
+    for item in sorted(set(changed)):
+        if not item.startswith(".github/workflows/") or not item.endswith((".yml", ".yaml")):
+            continue
+        try:
+            source = _git(repo, "show", after + ":" + item, limit=256000).decode("utf-8")
+            effects.append(audit_workflow(source, path=item, revision=after))
+        except (ValueError, OSError, UnicodeDecodeError, subprocess.TimeoutExpired):
+            effects.append({"workflow": item, "status": "UNKNOWN_DELETED_OR_UNREADABLE",
+                            "actual_effect": "NOT_OBSERVED", "authorization": "NONE"})
+    plan = convergent_plan(contract, "G_R1_R4_COMPLETE")
+    model = assess_cut(contract["nodes"], "G_R1_R4_COMPLETE", {})
+    if graph is None:
+        next_action = "SUPPLY_COMMITTED_ONTOLOGY_AND_REPRODUCE_GRAPH"
+    elif need_base_graph and base_graph is None:
+        next_action = "REPRODUCE_BASE_GRAPH_FOR_REMOVED_OR_RENAMED_SOURCE"
+    elif gate["status"] == "BLOCKED":
+        next_action = "REPAIR_BASE_PINNED_CONTINUOUS_POLICY"
+    elif any(x["owner_status"] == "AMBIGUOUS_DECLARED_OWNER" for x in product_context):
+        next_action = "QUALIFY_CONFLICTING_PRODUCT_OWNERS"
+    elif intent_digest is None:
+        next_action = "DECLARE_CHANGE_SPECIFIC_HUMAN_INTENT"
+    elif imports_unknown:
+        next_action = "INVESTIGATE_UNRESOLVED_STATIC_OR_DYNAMIC_CONSUMERS"
+    elif any(x["state"] == "INVALIDATED_BY_CHANGED_SOURCE" for x in invalidations["witnesses"]):
+        next_action = "REEXECUTE_AFFECTED_WITNESSES_WITH_INDEPENDENT_ORACLES"
+    elif effects:
+        next_action = "OBTAIN_TRUSTED_WORKFLOW_EFFECT_READBACK"
+    else:
+        next_action = "VALIDATE_BEHAVIORAL_MUTANTS_AND_FULL_R1_R4_PILOTS"
+    result = {
+        "schema": "cora-contextual-devops/1", "phase": phase,
+        "base_commit": before, "head_commit": after,
+        "continuous_gate": gate,
+        "canonical_lattice": {"source_goal": "G_SOURCE_CONVERGENCE",
+                              "complete_goal": "G_R1_R4_COMPLETE",
+                              "source_cut": plan["source_locals"],
+                              "external_cut": plan["external_locals"],
+                              "model_complete_status": model["status"],
+                              "complete_dod": "BLOCKED_EXTERNAL"},
+        "contract_digest": domain_hash("CORA:convergence-policy:1", contract),
+        "contract_authority": "PR_EDITABLE_PROFILE_NOT_BASE_HOST_AUTHORITY",
+        "intent_digest": intent_digest,
+        "intent_status": ("CALLER_SUPPLIED_UNVERIFIED_BOUND_TO_BASE_HEAD"
+                          if intent_digest else "BLOCKED_MISSING_PER_CHANGE_INTENT"),
+        "changed_paths": changed, "candidate_affected_paths": sorted(affected),
+        "owner_candidates": product_context,
+        "candidate_graph_source": graph["graph_digest"] if graph else None,
+        "base_candidate_graph_source": base_graph["graph_digest"] if base_graph else None,
+        "base_candidate_graph_required": need_base_graph,
+        "base_graph_problem": base_graph_problem,
+        "unresolved_imports": imports_unknown,
+        "graph_problem": graph_problem, "invalidation": invalidations,
+        "workflow_effects": effects,
+        "mutations": "NOT_EXECUTED",
+        "target_test_oracle": "NOT_EXECUTED",
+        "private_repositories": "NOT_OBSERVED",
+        "external_approval": "BLOCKED_EXTERNAL",
+        "next_action": next_action,
+        "status": ("DEBT_BLOCKED" if graph is None or gate["status"] == "BLOCKED"
+                   or (need_base_graph and base_graph is None) or intent_digest is None
+                   else "SOURCE_OBSERVED_REVIEW_REQUIRED"),
+        "authorization": "NONE",
+    }
+    result["digest"] = domain_hash("CORA:contextual-devops:1", result)
+    return result
+
+
+def verify_contextual_gate(repo: Path, report: dict, *,
+                           contract: dict, witnesses: list[dict] | None = None,
+                           intent: str | None = None) -> bool:
+    """Replay against actual committed Git objects, not a receipt hash alone."""
+    if not isinstance(report, dict) or report.get("schema") != "cora-contextual-devops/1":
+        raise ValueError("unknown contextual gate format")
+    expected = evaluate_contextual(
+        repo, report["base_commit"], report["head_commit"],
+        contract=contract, phase=report["phase"],
+        with_debt=report["continuous_gate"]["debt_delta"] is not None,
+        witnesses=witnesses, intent=intent)
+    if expected != report:
+        raise ValueError("contextual report differs from actual Git/source policy")
+    return True

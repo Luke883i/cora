@@ -11,6 +11,7 @@ import re
 from pathlib import Path
 
 from .evidence import domain_hash
+from .reticulum import ordered_cut
 
 SCHEMA = "cora-agent-assurance-contract/1"
 REPORT = "cora-agent-dod/1"
@@ -103,25 +104,8 @@ def load_contract(path: Path) -> dict:
 
 
 def _reachable(index: dict[str, dict], target: str) -> list[str]:
-    if target not in index:
-        raise ValueError("unknown DoD target")
-    order, temporary, permanent = [], set(), set()
-
-    def visit(identifier: str) -> None:
-        if identifier in temporary:
-            raise ValueError("DoD cycle")
-        if identifier in permanent:
-            return
-        temporary.add(identifier)
-        for dep in index[identifier]["depends_on"]:
-            if dep not in index:
-                raise ValueError("missing DoD dependency")
-            visit(dep)
-        temporary.remove(identifier)
-        permanent.add(identifier)
-        order.append(identifier)
-    visit(target)
-    return order
+    """Shared canonical reverse derivation; legacy public contract unchanged."""
+    return ordered_cut(list(index.values()), target)
 
 
 def backward_plan(contract: dict, *, goal: str = "G_SOURCE_AGENT") -> dict:
