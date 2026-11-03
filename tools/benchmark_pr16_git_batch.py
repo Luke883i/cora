@@ -24,14 +24,14 @@ def benchmark(count: int = 160) -> dict:
         run(root,'config','user.name','CORA Fixture')
         run(root,'config','user.email','fixture@invalid.example')
         for i in range(count):
-            (root/('blob-%04d.bin'%i)).write_bytes((str(i)+'\\0').encode() * (i%31+1))
+            (root/('blob-%04d.bin'%i)).write_bytes((str(i)+'\0').encode() * (i%31+1))
         run(root,'add','-A')
         run(root,'commit','-qm','deterministic independent Git object oracle')
         sha=run(root,'rev-parse','HEAD').decode().strip()
         listed=run(root,'ls-tree','-rz','--full-tree',sha)
         expected={}
         reference_reads=1
-        for entry in listed.split(b'\\0'):
+        for entry in listed.split(b'\0'):
             if not entry: continue
             header,path=entry.split(b'\\t',1)
             oid=header.split(b' ')[2].decode()
