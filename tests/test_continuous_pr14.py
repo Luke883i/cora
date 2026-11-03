@@ -122,6 +122,12 @@ class GitLifecycleFixtures(unittest.TestCase):
 
 
 class ContractFixtures(unittest.TestCase):
+    def test_self_role_declarations_are_canonical(self):
+        from cora.artifact_roles import validate_declarations
+        path=Path(__file__).resolve().parents[1]/'cora.artifact-roles.json'
+        rules=json.loads(path.read_text(encoding='utf-8'))
+        self.assertEqual(validate_declarations(rules)['schema'],'cora-artifact-roles/1')
+
     def test_model_oracle_exhaustive_first_10000(self):
         for mask in range(10000):self.assertEqual(observed_policy(mask),independent_truth_table(mask))
     def test_small_deterministic_replay(self):

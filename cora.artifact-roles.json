@@ -280,8 +280,8 @@
     {
       "pattern": "src/cora/continuous.py",
       "roles": [
-        "SOFTWARE_SOURCE",
-        "CONTRACT_VERIFIER"
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
       ],
       "rationale": "Source-bound lifecycle and human role validation."
     }
