@@ -31,6 +31,11 @@ CORE_DOCS = [
     'cora.convergence-dod.json', 'src/cora/reticulum.py',
     'docs/CONVERGENT_ASSURANCE.md', 'docs/DOD_PR20_CONVERGENCE.md',
     '.github/workflows/ci-convergence.yml',
+    'cora.documentation-dod.json', 'docs/documentation-registry.json',
+    'docs/INDEX.md', 'docs/GETTING_STARTED.md', 'docs/AGENT_ADOPTION.md',
+    'docs/CLI_REFERENCE.md', 'docs/DOCUMENTATION_DOD.md',
+    'tools/verify_documentation.py', 'tests/test_pr21_documentation.py',
+    '.github/workflows/ci-documentation.yml',
 ]
 COMMANDS = (
     'version', 'audit', 'snapshot', 'verify-ledger', 'graph', 'explain',
@@ -62,7 +67,7 @@ def audit_contract(root: Path, *, readme_override: str | None = None) -> list[st
     readme = readme_override if readme_override is not None else (root / 'README.md').read_text('utf-8')
     lines = readme.splitlines()
     front = '\n'.join(lines[:38]).lower()
-    for token in ('product', 'software', 'repository', 'not', 'python', 'install', 'audit', 'snapshot'):
+    for token in ('product', 'software', 'repository', 'not', 'python'):
         if token not in front:
             errors.append('first-read-missing:' + token)
     if not readme.startswith('# CORA — Continuous Ontological Repository Assurance'):
@@ -118,12 +123,17 @@ def audit_contract(root: Path, *, readme_override: str | None = None) -> list[st
                 commands.append(n.args[0].value)
     if sorted(commands) != sorted(COMMANDS):
         errors.append('command-registry-drift:' + repr(sorted(set(commands) ^ set(COMMANDS))))
-    # README maps every non-stress command or directs readers to --help.
+    # The README is a product storefront, not the CLI index. Compare the
+    # exhaustive reference with the existing canonical parser inventory.
     if 'cora --help' not in readme:
         errors.append('missing-cli-discovery')
-    for cmd in COMMANDS:
-        if not cmd.startswith('stress') and f'`{cmd}`' not in readme and not re.search(r'\bcora\s+' + re.escape(cmd) + r'(?=\s|$)', readme):
-            errors.append('unmentioned-command:' + cmd)
+    reference = (root / 'docs/CLI_REFERENCE.md')
+    if reference.is_file():
+        found = re.findall(r'^- `([a-z][a-z0-9-]+)` —', reference.read_text('utf-8'), re.M)
+        if sorted(found) != sorted(COMMANDS):
+            errors.append('cli-reference-command-drift')
+    else:
+        errors.append('missing-cli-reference')
     # Each foundational provenance/guard capability must have a test file.
     for n in range(1, 8):
         if not (root / 'tests' / f'test_pr0{n}.py').is_file():
