@@ -22,6 +22,7 @@ from cora.reticulum import ordered_cut
 SCHEMA = "cora-documentation-proof-receipt/1"
 PROFILE = "cora.documentation-proofs.json"
 BASELINE = "d8b75df872c1603597550bebfb8c331c565aa7f9"
+DOCUMENT_BASELINE = "ee6da7625dae1e4101e06eb979a348610f39093b"
 PREDICATES = (
     "product-frontdoor", "ontology", "agent-boundary", "first-use",
     "agent-adoption", "nonpromotion", "navigation", "registry",
@@ -72,6 +73,7 @@ class SourceStore:
             raise ValueError("invalid source SHA")
         self.tree = self._tree(self.sha)
         self.baseline_tree = self._tree(BASELINE)
+        self.document_baseline_tree = self._tree(DOCUMENT_BASELINE)
         self.bytes_by_path: dict[str, bytes] = {}
 
     def run(self, *cmd: str, input_data: bytes | None = None) -> bytes:
@@ -287,13 +289,15 @@ def _semantic_oracles(store: SourceStore, errors: list[str]) -> None:
         relative = path[5:] if path.startswith("docs/") else "../" + path
         if "](" + relative + ")" not in index:
             errors.append("S07-S18:index-route-missing:" + path)
+    _ok(docs.get("baseline_sha") == DOCUMENT_BASELINE,
+        errors, "S17:original-register-baseline-drift")
     original = [d for d in registry if d.get("baseline_blob")]
     historical = [d for d in registry if d["status"] == "HISTORICAL"]
     _ok(len(original) == 43 and len(historical) == 17,
         errors, "S10-S17:historical-cardinality-mismatch")
     for item in original:
         path = item["path"]
-        expected = store.baseline_tree.get(path, ("", ""))[1]
+        expected = store.document_baseline_tree.get(path, ("", ""))[1]
         _ok(bool(expected) and item["baseline_blob"] == expected,
             errors, "S17:baseline-object-mismatch:" + path)
         if item["status"] == "HISTORICAL":
