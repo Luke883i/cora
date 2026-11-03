@@ -24,3 +24,9 @@ Run `python -m unittest discover -s tests -q`, `python tools/verify_repository_c
 ## Continuous PR and coding-agent contract
 
 After committing a proposed change, use `cora dev-premerge . --base BASE --head HEAD --output /tmp/pre.json` and `cora verify-dev-gate /tmp/pre.json --repo .`. Every PR must distinguish source-bound facts, tests independently executed, agent assertions, unresolved runtime/consumer questions and human reviewers. An agent may submit a `cora-agent-proposal/1` record for `cora agent-check`; the result is **never** approval or verified test execution. After integration, `cora dev-postmerge` records source drift and optionally compares debt signals. Consult [AGENTS.md](AGENTS.md) and [continuous DoD](docs/DOD_CONTINUOUS.md). Do not assume branch protections exist merely because CI files are present.
+
+## Current documentation and contextual PR requirements
+
+Use the [README](README.md), [documentation index](docs/INDEX.md), [documentation DoD](docs/DOCUMENTATION_DOD.md) and [parser-complete CLI reference](docs/CLI_REFERENCE.md). Register every Markdown in `docs/documentation-registry.json`; preserve historical ADRs and audit text. Run `python tools/verify_documentation.py --repo .` and the regression suite. The README explains product value and is no longer the exhaustive command catalog.
+
+An AI coding PR needs actual BASE/HEAD, a declared `--intent`, a committed target ontology and trusted BASE policy before `dev-premerge --contextual`; replay with `verify-contextual-gate` using the same intent. Independent target tests and protected reviewer decisions remain outside the CORA source receipt. See [agent adoption](docs/AGENT_ADOPTION.md).

@@ -547,6 +547,86 @@
         "PRODUCT_CONTRACT"
       ],
       "rationale": "Global source and complete R1–R4 AND cut and falsification gates."
+    },
+    {
+      "pattern": "cora.documentation-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Source vs external documentation assurance AND reticulum."
+    },
+    {
+      "pattern": "docs/documentation-registry.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Machine inventory of 43 original Markdown witnesses and new documentation."
+    },
+    {
+      "pattern": "docs/INDEX.md",
+      "roles": [
+        "DOCUMENTATION",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "User-first document navigation and complete historical index."
+    },
+    {
+      "pattern": "docs/GETTING_STARTED.md",
+      "roles": [
+        "DOCUMENTATION"
+      ],
+      "rationale": "Runnable first read and source-evidence boundaries."
+    },
+    {
+      "pattern": "docs/AGENT_ADOPTION.md",
+      "roles": [
+        "DOCUMENTATION",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Current AI coding-assistant adoption method with explicit intent."
+    },
+    {
+      "pattern": "docs/CLI_REFERENCE.md",
+      "roles": [
+        "DOCUMENTATION",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Parser-complete CLI command inventory, separated from README."
+    },
+    {
+      "pattern": "docs/DOCUMENTATION_DOD.md",
+      "roles": [
+        "DOCUMENTATION",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Documentation source/governed obligations and honest limitations."
+    },
+    {
+      "pattern": "tools/verify_documentation.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Static checks for source inventory, links, CLI, historical status and DoD."
+    },
+    {
+      "pattern": "tests/test_pr21_documentation.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Actual disposable Markdown/JSON negative mutations."
+    },
+    {
+      "pattern": ".github/workflows/ci-documentation.yml",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "WORKFLOW"
+      ],
+      "rationale": "Exact-head documentation and repo regression checks."
     }
   ]
 }

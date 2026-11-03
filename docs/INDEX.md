@@ -1,0 +1,90 @@
+# CORA documentation — navigate by goal
+
+Start at the [README](../README.md) for the current product promise, an executable first look and the limits of what CORA proves. This index is **navigation**, not a release authority or an independent witness.
+
+## Choose your path
+
+- **New to CORA:** [Getting started](GETTING_STARTED.md) → [Architecture](ARCHITECTURE.md) → [Understanding evidence and limitations](DOD_V1_EXPERIMENTAL.md).
+- **Using an AI coding assistant:** [Agent adoption](AGENT_ADOPTION.md) → [Agent method](AI_CODE_ASSURANCE.md) → [Convergent assurance](CONVERGENT_ASSURANCE.md) → [complete R1–R4 obligations](DOD_PR20_CONVERGENCE.md).
+- **Auditing an existing repository:** [File Lab](FILE_LAB.md) → [Holistic forensics](HOLISTIC_FORENSICS.md) → [Engineering debt](ENGINEERING_DEBT.md).
+- **Reviewing a PR or release:** [Continuous development](CONTINUOUS_DEVELOPMENT.md) → [Governance](../GOVERNANCE.md) → [Release procedure](RELEASE.md).
+- **Looking for syntax and inputs:** [CLI reference](CLI_REFERENCE.md), [committed ontology](../cora.ontology.json), [role registry](../cora.artifact-roles.json).
+
+## Document semantics
+
+**CURRENT** means active source documentation; **SCOPED_CURRENT** is active only in its named domain; **HISTORICAL** records a specific earlier state and must not override current product claims. A DoD is a declared obligation, not evidence that the requirement has been satisfied. A Git SHA or a deterministic replay proves a bounded source relationship, not runtime correctness, review authority or release approval.
+
+Machine inventory: [documentation registry](documentation-registry.json); [documentation DoD](DOCUMENTATION_DOD.md) and [machine lattice](../cora.documentation-dod.json). Historic decision and audit records are retained at their original paths and baselines.
+
+## Complete Markdown inventory
+
+### 00 — Product
+
+- [README](../README.md) — CURRENT · LANDING
+
+### 01 — Identity, governance, contribution, architecture
+
+- [PULL REQUEST TEMPLATE](../.github/PULL_REQUEST_TEMPLATE.md) — CURRENT · METHOD
+- [AGENTS](../AGENTS.md) — CURRENT · GOVERNANCE
+- [CHANGELOG](../CHANGELOG.md) — CURRENT · CHANGELOG
+- [CONTRIBUTING](../CONTRIBUTING.md) — CURRENT · METHOD
+- [GOVERNANCE](../GOVERNANCE.md) — CURRENT · GOVERNANCE
+- [SECURITY](../SECURITY.md) — CURRENT · GOVERNANCE
+- [ARCHITECTURE](ARCHITECTURE.md) — CURRENT · ARCHITECTURE
+
+### 02 — Product DoD and release
+
+- [AUDIT PR15 MAIN](AUDIT_PR15_MAIN.md) — HISTORICAL · AUDIT
+- [DOD](DOD.md) — HISTORICAL · DOD
+- [DOD RELEASE READINESS](DOD_RELEASE_READINESS.md) — CURRENT · DOD
+- [DOD V1 EXPERIMENTAL](DOD_V1_EXPERIMENTAL.md) — CURRENT · DOD
+- [RELEASE](RELEASE.md) — CURRENT · METHOD
+
+### 03 — Forensics, evidence, engineering debt
+
+- [ARTIFACT SEMANTICS](ARTIFACT_SEMANTICS.md) — CURRENT · METHOD
+- [AUDIT PR01 PR07](AUDIT_PR01_PR07.md) — HISTORICAL · AUDIT
+- [DOD ENGINEERING DEBT](DOD_ENGINEERING_DEBT.md) — CURRENT · DOD
+- [DOD HOLISTIC FORENSICS](DOD_HOLISTIC_FORENSICS.md) — CURRENT · DOD
+- [DOD SELECTION](DOD_SELECTION.md) — CURRENT · DOD
+- [ENGINEERING DEBT](ENGINEERING_DEBT.md) — CURRENT · METHOD
+- [FILE LAB](FILE_LAB.md) — CURRENT · METHOD
+- [FORENSIC SELF AUDIT](FORENSIC_SELF_AUDIT.md) — HISTORICAL · AUDIT
+- [HOLISTIC FORENSICS](HOLISTIC_FORENSICS.md) — CURRENT · METHOD
+- [STANDARDS MAINTENANCE AUDIT](STANDARDS_MAINTENANCE_AUDIT.md) — HISTORICAL · AUDIT
+
+### 04 — AI coding assurance and continuous DevOps
+
+- [AI CODE ASSURANCE](AI_CODE_ASSURANCE.md) — CURRENT · METHOD
+- [AUDIT PR18 MAIN](AUDIT_PR18_MAIN.md) — HISTORICAL · AUDIT
+- [CONTINUOUS DEVELOPMENT](CONTINUOUS_DEVELOPMENT.md) — CURRENT · METHOD
+- [DOD CONTINUOUS](DOD_CONTINUOUS.md) — CURRENT · DOD
+- [DOD PR17 AGENT](DOD_PR17_AGENT.md) — HISTORICAL · DOD
+
+### 05 — Reticular gold and convergence
+
+- [AUDIT PR19 CLOSURE](AUDIT_PR19_CLOSURE.md) — HISTORICAL · AUDIT
+- [CONVERGENT ASSURANCE](CONVERGENT_ASSURANCE.md) — CURRENT · METHOD
+- [DOD PR16 SEMANTIC ASSURANCE](DOD_PR16_SEMANTIC_ASSURANCE.md) — HISTORICAL · DOD
+- [DOD PR16 SEMANTIC LATTICE](DOD_PR16_SEMANTIC_LATTICE.md) — SCOPED_CURRENT · DOD
+- [DOD PR19 GOLD](DOD_PR19_GOLD.md) — SCOPED_CURRENT · DOD
+- [DOD PR20 CONVERGENCE](DOD_PR20_CONVERGENCE.md) — SCOPED_CURRENT · DOD
+- [GOLD ASSURANCE](GOLD_ASSURANCE.md) — CURRENT · METHOD
+
+### 06 — Architectural decision records
+
+- [ADR PR01](ADR-PR01.md) — HISTORICAL · ADR
+- [ADR PR02](ADR-PR02.md) — HISTORICAL · ADR
+- [ADR PR03](ADR-PR03.md) — HISTORICAL · ADR
+- [ADR PR04](ADR-PR04.md) — HISTORICAL · ADR
+- [ADR PR05](ADR-PR05.md) — HISTORICAL · ADR
+- [ADR PR06](ADR-PR06.md) — HISTORICAL · ADR
+- [ADR PR07](ADR-PR07.md) — HISTORICAL · ADR
+- [ADR PR15](ADR-PR15.md) — HISTORICAL · ADR
+
+### 07 — Documentation onboarding and reference
+
+- [GETTING STARTED](GETTING_STARTED.md) — CURRENT · METHOD
+- [AGENT ADOPTION](AGENT_ADOPTION.md) — CURRENT · METHOD
+- [CLI REFERENCE](CLI_REFERENCE.md) — CURRENT · REFERENCE
+- [DOCUMENTATION DOD](DOCUMENTATION_DOD.md) — CURRENT · DOD
