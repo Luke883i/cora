@@ -88,6 +88,8 @@ def inspect_source(root: Path) -> dict:
         rules = {v["pattern"]:set(v["roles"]) for v in reg["rules"]}
         if reg["schema"]!="cora-artifact-roles/1":
             errors.append("ARTIFACT_ROLE_SCHEMA_DRIFT")
+        if not {"DOCUMENTATION","PRODUCT_CONTRACT"}.issubset(rules.get("CHANGELOG.md",set())):
+            errors.append("CHANGELOG_ROLE_MISSING")
         if not {"CONTRACT_VERIFIER","RELEASE_TOOL"}.issubset(rules.get("tools/verify_release_readiness.py",set())):
             errors.append("RELEASE_VERIFIER_ROLE_MISSING")
         if not {"FIXTURE","TEST"}.issubset(rules.get("tests/test_pr15_release_readiness.py",set())):

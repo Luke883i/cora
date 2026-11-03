@@ -301,6 +301,14 @@
         "TEST"
       ],
       "rationale": "Negative release-metadata, policy, workflow and role contract falsification."
+    },
+    {
+      "pattern": "CHANGELOG.md",
+      "roles": [
+        "DOCUMENTATION",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Public-facing product version narrative and proposed release history; not publication evidence."
     }
   ]
 }

@@ -62,6 +62,11 @@ class ReadinessTest(unittest.TestCase):
                   '"pattern": "tools/verify_release_readiness.py"',
                   '"pattern": "tools/unknown_verifier.py"')
         self.deny("RELEASE_VERIFIER_ROLE_MISSING")
+    def test_unclassified_changelog_is_refuted(self):
+        self.swap("cora.artifact-roles.json",
+                  '"pattern": "CHANGELOG.md"',
+                  '"pattern": "UNCLASSIFIED_NOT_CHANGELOG.md"')
+        self.deny("CHANGELOG_ROLE_MISSING")
     def test_fingerprint_detects_valid_change(self):
         a=inspect_source(self.repo)
         p=self.repo/"CHANGELOG.md"

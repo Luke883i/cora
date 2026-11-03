@@ -15,6 +15,7 @@ Baseline: merged PR-14 `main@c14a5880f90d2c45d2b7961cbeb4dac0a42716d4`, 2026-11-
 | F07 | Assurance | P1 | Existing source replay verifies reproducibility, not algorithm correctness or runtime and scanner authenticity. | Add negative release-contract fixtures, source scan, independent human+external gates. |
 | F08 | Engineering debt | P2 | AST, bounded history, change coupling, caller SARIF are partial/heuristic; no calibrated real-repo rates. | Follow-on independent pilots and measured precision/recall/coverage. |
 | F09 | Supply chain | P0 | Wheel/sdist can be built and source-compared; no authenticated public tag, signed provenance or release approval established. | Publish only after downstream sign-off and release-object verification. |
+| F11 | Self-audit closure | P1 | The new root CHANGELOG is not covered by generic docs/*.md and initially failed CORA-on-CORA audit. | Explicit overlapping release/product role and mutation test; re-check CI on amended SHA. |
 | F10 | DevOps | P1 | Post-merge debt drift is source-bounded; deployment incidents/SLO/rollback not attested. | Add trusted telemetry adapters in a separate scoped PR. |
 
 ## CORA-on-CORA source analysis
