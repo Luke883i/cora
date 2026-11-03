@@ -1,8 +1,11 @@
 # Changelog — CORA
 
-All entries distinguish **merged source**, a **version declared in the repository**, and an actually **published release**. Merged PRs 01–20 do not themselves establish a public package, tagged GitHub Release, signed provenance, or production fitness. Current Python version: `1.0.0a4` (alpha, not published).
+All entries distinguish **merged source**, a **version declared in the repository**, and an actually **published release**. Merged PRs 01–21 do not themselves establish a public package, tagged GitHub Release, signed provenance, or production fitness. Current Python version: `1.0.0a4` (alpha, not published).
 
-## Current merged source — PR-19 and PR-20 (unreleased)
+## Current merged source — PR-19 to PR-21 (unreleased)
+
+**PR-21:** Reorganized README, registered 48 Markdown documents (43 retained), added user/agent onboarding, verified CLI parser reference and source-only documentation AND lattice. The external unfamiliar-engineer, real target-pilot and host-review gates remain open. A subsequent revision-bound claim/proof extension is a separate candidate until merged.
+
 
 **PR-20:** Share reverse-DoD kernel across previous agent/Gold profiles; bind contextual pre/postmerge source evidence and selective witness invalidations, with 10×1M preseeded finite failure-class models. Full R1–R4 behavioral, private pilot, host readback and governance claims remain blocked.
 

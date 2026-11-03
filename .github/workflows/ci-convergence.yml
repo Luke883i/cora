@@ -47,14 +47,15 @@ jobs:
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          CHANGE_INTENT: ${{ github.event.pull_request.title || github.event.head_commit.message }}
         run: |
           git cat-file -e "$BASE_SHA^{commit}"
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
-            cora dev-premerge . --base "$BASE_SHA" --head "$HEAD_SHA" --contextual --intent "Review bounded R1-R4 convergence source and assert no external approval" --output /tmp/cora-context.json
+            cora dev-premerge . --base "$BASE_SHA" --head "$HEAD_SHA" --contextual --intent "$CHANGE_INTENT" --output /tmp/cora-context.json
           else
-            cora dev-postmerge . --previous "$BASE_SHA" --head "$HEAD_SHA" --contextual --intent "Review bounded R1-R4 convergence source and assert no external approval" --output /tmp/cora-context.json
+            cora dev-postmerge . --previous "$BASE_SHA" --head "$HEAD_SHA" --contextual --intent "$CHANGE_INTENT" --output /tmp/cora-context.json
           fi
-          cora verify-contextual-gate /tmp/cora-context.json --repo . --intent "Review bounded R1-R4 convergence source and assert no external approval"
+          cora verify-contextual-gate /tmp/cora-context.json --repo . --intent "$CHANGE_INTENT"
           python -c 'import json; p=json.load(open("/tmp/cora-context.json")); assert p["head_commit"] and p["authorization"]=="NONE" and p["status"]=="SOURCE_OBSERVED_REVIEW_REQUIRED" and p["continuous_gate"]["base_policy_digest"] and p["candidate_graph_source"] and p["graph_problem"] is None and p["intent_status"]=="CALLER_SUPPLIED_UNVERIFIED_BOUND_TO_BASE_HEAD" and p["intent_digest"] and p["canonical_lattice"]["complete_dod"]=="BLOCKED_EXTERNAL" and p["external_approval"]=="BLOCKED_EXTERNAL" and p["mutations"]=="NOT_EXECUTED" and p["contract_authority"]=="PR_EDITABLE_PROFILE_NOT_BASE_HOST_AUTHORITY"'
   convergent-model-10m:
     name: convergent-model-10m-twice

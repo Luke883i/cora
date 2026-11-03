@@ -25,3 +25,18 @@ A passing static document verifier is a source-contract observation, **not** pro
 ## Falsification requirements
 
 Negative fixtures must reject missing files, duplicated identities, broken links, wrong history classification, missing CLI references, incomplete contextual intent, altered DoD prerequisites and claims of release authorization from source checks alone. The test results must be bound to the exact final Git SHA. Synthetic model coverage and local fixtures are not human usability tests.
+
+## Revision-bound claim-to-evidence profile (PR-22 candidate)
+
+The separate [claim/proof profile](../cora.documentation-proofs.json) binds each S01–S18 leaf to one README proposition in its actual section, a named implementation/contract file, an existing test source and a concrete falsifier. The [source verifier](../tools/verify_claim_evidence.py) reads each witness as a Git blob from the **same pinned commit**, checks fixed semantic boundary oracles (including CLI parser, intent digest, declaration IDs, legacy blob identity, source-vs-external DoD and cross-document contradiction patterns), and emits a replayable SHA- and blob-attributed receipt.
+
+From an authorized checkout, with full Git history including the PR-21 baseline, run:
+
+```sh
+python tools/verify_claim_evidence.py --repo . --revision HEAD --output /tmp/cora-doc-proofs.json
+python tools/verify_claim_evidence.py --repo . --revision HEAD --verify-report /tmp/cora-doc-proofs.json
+```
+
+A source receipt means **PASS_SCOPED_SOURCE** for the implemented *finite* predicates and Git provenance only. The checker cannot prove all meanings in natural language or any real runtime behavior. Test-file paths are source-role witnesses, not attestations that the tests executed. The exact final-HEAD GitHub check-runs and independent E01 (novice), E02 (real agent/target pilot), E03 (effective host and non-author reviewer) must be observed separately; `G_DOC_ACCEPTED` remains `BLOCKED_EXTERNAL` and `authorization=NONE`.
+
+Adversarial Git fixtures physically commit contradicting current-doc claims, detached intent wiring, parser drift, DoD edge changes, historical blob rewrites, CI proof omissions and stale receipt forgeries. They exercise falsifier sensitivity rather than assert exhaustive semantic proof. The source-oracle code and its profile are PR-editable and cannot approve changes to themselves.

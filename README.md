@@ -56,7 +56,7 @@ Keep reports outside the source checkout; `/tmp` is a Unix example. `audit` read
 | **Review changes and follow merges** | BASE-pinned premerge and postmerge, dependency-based invalidation, effect-capability analysis | Report is not reviewer authentication, effective CI permissions or deployment evidence |
 | **Run separately authorized experiments** | Controlled document rename, optional staged source mutations and runtime observation | Explicit authorization, independent oracles and external isolation checks remain necessary |
 
-All current command names, scope details and parameters are in the [parser-checked CLI reference](docs/CLI_REFERENCE.md). For methods and domain-specific DoD, use the [complete documentation index](docs/INDEX.md).
+All current command names, scope details and parameters are in the [parser-checked CLI reference](docs/CLI_REFERENCE.md). For methods and domain-specific DoD, use the [complete documentation index](docs/INDEX.md). The [Git-bound documentation proof profile](cora.documentation-proofs.json) relates critical README statements and S01–S18 to source/test blobs and falsifiers; [replay verification](tools/verify_claim_evidence.py) checks bounded source predicates, not general runtime truth or independent approval.
 
 ## Use CORA with an AI coding assistant
 
