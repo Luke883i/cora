@@ -15,6 +15,8 @@ Start at the [README](README.md), [agent adoption tutorial](docs/AGENT_ADOPTION.
 7. **Governed PR** — link exact final-HEAD CI, changed-path blast radius, unresolved obligations and rollback; require independent reviewer and protected hosting controls for high-risk policy, security, CI, guard, release or retention changes.
 8. **Postmerge** — inspect actual merged main SHA using `dev-postmerge --contextual --intent SAME_INTENT`; rerun relevant regression and invalidated witnesses, never reuse former PR-head evidence without revalidation.
 
+For documentation changes, also run the Git-bound S01–S18 proof verifier against the candidate HEAD and replay the receipt with the same exact Git revision. The profile is a source proposition register, not a substitute for review or the independent E01–E03 acceptance gates. See [documentation DoD](docs/DOCUMENTATION_DOD.md).
+
 ## Stop and boundary rules
 
 - Missing/ambiguous owner, ontology, baseline policy, SHA, change intent, independent behavioral oracle, protected reviewer identity or required host controls remain **BLOCKED** or **BLOCKED_EXTERNAL**. Bootstrap cannot approve itself.

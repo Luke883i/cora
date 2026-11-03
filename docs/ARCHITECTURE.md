@@ -1,6 +1,6 @@
 # Architecture — CORA as product, software and repository
 
-**Scope:** CORA — Continuous Ontological Repository Assurance, v1.experimental (`1.0.0a4` prerelease candidate), current source integrated through merged PR-20. This document describes the current architecture; historical ADRs preserve earlier milestone decisions. The [README](../README.md) is the front door; this document is the engineering explanation. The [committed ontology](../cora.ontology.json) is a *declaration* by project maintainers, not an inference from folder names.
+**Scope:** CORA — Continuous Ontological Repository Assurance, v1.experimental (`1.0.0a4` prerelease candidate), current source integrated through merged PR-21. The PR-22 revision-bound documentation proof extension is a candidate until separately reviewed and merged. This document describes the current architecture; historical ADRs preserve earlier milestone decisions. The [README](../README.md) is the front door; this document is the engineering explanation. The [committed ontology](../cora.ontology.json) is a *declaration* by project maintainers, not an inference from folder names.
 
 ## Three non-equivalent boundaries
 

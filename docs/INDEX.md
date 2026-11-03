@@ -14,7 +14,7 @@ Start at the [README](../README.md) for the current product promise, an executab
 
 **CURRENT** means active source documentation; **SCOPED_CURRENT** is active only in its named domain; **HISTORICAL** records a specific earlier state and must not override current product claims. A DoD is a declared obligation, not evidence that the requirement has been satisfied. A Git SHA or a deterministic replay proves a bounded source relationship, not runtime correctness, review authority or release approval.
 
-Machine inventory: [documentation registry](documentation-registry.json); [documentation DoD](DOCUMENTATION_DOD.md) and [machine lattice](../cora.documentation-dod.json). Historic decision and audit records are retained at their original paths and baselines.
+Machine inventory: [documentation registry](documentation-registry.json); [documentation DoD](DOCUMENTATION_DOD.md) and [machine lattice](../cora.documentation-dod.json). The [README claim/evidence profile](../cora.documentation-proofs.json) and [Git-bound verifier](../tools/verify_claim_evidence.py) add revision-bound, falsifiable source traces for S01–S18 without promoting them to host or runtime attestation. Historic decision and audit records are retained at their original paths and baselines.
 
 ## Complete Markdown inventory
 

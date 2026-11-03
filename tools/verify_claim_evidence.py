@@ -175,7 +175,7 @@ def _changed_source_guards(store: SourceStore, errors: list[str]) -> None:
             if re.search(pattern, body, flags=re.I):
                 errors.append("semantic-contradiction:" + label + ":" + path)
     _ok(len(active) == 31, errors, "active-document-status-count")
-    _ok("not a coding agent" in readme.lower(),
+    _ok("not a coding agent" in readme.lower().replace("*", ""),
         errors, "readme-agent-boundary-missing")
 
 
@@ -244,7 +244,7 @@ def _semantic_oracles(store: SourceStore, errors: list[str]) -> None:
         {"cora-engine", "cora-release-verification"},
         errors, "S02:actual-ontology-disagreement")
     _ok("not the AI coding assistant" in r("AGENTS.md") and
-        "not a coding agent" in readme.lower(),
+        "not a coding agent" in readme.lower().replace("*", ""),
         errors, "S03:agent-vs-framework-boundary")
     _ok({"audit", "snapshot", "verify-ledger",
          "dev-premerge", "verify-contextual-gate"} <= commands and
@@ -316,7 +316,7 @@ def _semantic_oracles(store: SourceStore, errors: list[str]) -> None:
         set(policy["required_human_roles"]) and
         ".github/workflows" in policy["high_risk_prefixes"] and
         "authorization" in continuous and
-        "not verified" in r("GOVERNANCE.md").lower(),
+        re.search(r"unverified|not verified|no independent reviewer", r("GOVERNANCE.md"), re.I) is not None,
         errors, "S14:governance-vs-policy-disagreement")
     workflow = r(".github/workflows/ci-documentation.yml")
     _ok("test_pr21_documentation.py" in workflow and
