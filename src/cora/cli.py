@@ -42,6 +42,10 @@ from .observation_fusion import fuse_evidence, verify_fusion
 from .semantic_lattice import lattice_from_evidence, verify_lattice
 from .agent_assurance import load_contract, backward_plan, assess_claims, verify_assessment, STAGES
 from .agent_saturation import saturate_agent_dod
+from .gold_assurance import load_gold_contract, retrograde_gold, pilot_sources, contextual_gold
+from .gold_mutations import physical_mutants
+from .gold_effects import audit_workflow, reconcile_effect_claim
+from .gold_saturation import gold_saturation
 import zipfile
 import shlex
 
@@ -72,6 +76,33 @@ def main(argv: list[str] | None = None) -> int:
     ds.add_argument('--cases-per-session', type=int, default=1_000_000)
     ds.add_argument('--require-full', action='store_true')
     ds.add_argument('--output', type=Path)
+    gg = sub.add_parser('gold-plan', help='R1: reverse-derive contextual R1-R4/P01-P12 obligations')
+    gg.add_argument('--contract', type=Path, default=Path('cora.gold-assurance.json'))
+    gg.add_argument('--intent', required=True)
+    gg.add_argument('--pilot-report', type=Path)
+    gg.add_argument('--output', type=Path)
+    gt = sub.add_parser('gold-pilot', help='R4: source-only SHA-bound checkouts; does not run target code')
+    gt.add_argument('--contract', type=Path, default=Path('cora.gold-assurance.json'))
+    gt.add_argument('--ictc-root', type=Path)
+    gt.add_argument('--ikant-root', type=Path)
+    gt.add_argument('--aosp1-root', type=Path)
+    gt.add_argument('--output', type=Path)
+    gm = sub.add_parser('gold-mutate', help='R2: bounded physical source mutants; Docker opt-in')
+    gm.add_argument('source', type=Path)
+    gm.add_argument('plan', type=Path)
+    gm.add_argument('--authorize-docker', action='store_true')
+    gm.add_argument('--output', type=Path)
+    ge = sub.add_parser('gold-effects', help='R3: conservative potential workflow effects')
+    ge.add_argument('workflow', type=Path)
+    ge.add_argument('--revision', required=True)
+    ge.add_argument('--claimed-receipt', type=Path)
+    ge.add_argument('--output', type=Path)
+    gx = sub.add_parser('stress-gold', help='10M finite realistic fault-class scenarios, not real source mutants')
+    gx.add_argument('--contract', type=Path, default=Path('cora.gold-assurance.json'))
+    gx.add_argument('--sessions', type=int, default=10)
+    gx.add_argument('--cases-per-session', type=int, default=1000000)
+    gx.add_argument('--require-full', action='store_true')
+    gx.add_argument('--output', type=Path)
     za = sub.add_parser('zip-intake', help='Bounded untrusted ZIP preflight: no execution, history unavailable')
     za.add_argument('archive', type=Path)
     za.add_argument('--expected-tree', help='Caller-supplied expected Git SHA-1 tree (not authenticated)')
@@ -370,6 +401,39 @@ def main(argv: list[str] | None = None) -> int:
                                      cases_per_session=args.cases_per_session)
             code=2 if result['status']=='REFUTED' or (args.require_full and
                 result['status']!='PASS_SCOPED_FINITE_MODEL') else 0
+        elif args.cmd == 'gold-plan':
+            c=load_gold_contract(args.contract)
+            pilot=json.loads(args.pilot_report.read_text('utf-8')) if args.pilot_report else None
+            result=contextual_gold(c,args.intent,pilot)
+            code=0
+        elif args.cmd == 'gold-pilot':
+            c=load_gold_contract(args.contract)
+            roots={}
+            for n,pth in (('ictc',args.ictc_root),('ikant',args.ikant_root),
+                          ('aosp1',args.aosp1_root)):
+                if pth:
+                    roots['Luke883i/'+n]=pth
+            result=pilot_sources(c,roots)
+            code=0 if result['state']=='SOURCE_READBACK_3_OF_3' else 2
+        elif args.cmd == 'gold-mutate':
+            plan=json.loads(args.plan.read_text('utf-8'))
+            result=physical_mutants(args.source,plan,authorize_docker=args.authorize_docker)
+            code=0 if result['status']=='SCOPED_ORACLE_KILLED_ALL' else 2
+        elif args.cmd == 'gold-effects':
+            actual=audit_workflow(args.workflow.read_text('utf-8'),
+                path=str(args.workflow),revision=args.revision)
+            if args.claimed_receipt:
+                claim=json.loads(args.claimed_receipt.read_text('utf-8'))
+                result={'inventory':actual,'claim_reconciliation':reconcile_effect_claim(actual,claim)}
+            else:
+                result=actual
+            code=0
+        elif args.cmd == 'stress-gold':
+            c=load_gold_contract(args.contract)
+            result=gold_saturation(c,sessions=args.sessions,
+                                   cases_per_session=args.cases_per_session)
+            code=2 if result['status']=='REFUTED' or (args.require_full and
+                       result['status']!='PASS_SCOPED_FINITE_MODEL') else 0
         elif args.cmd == 'zip-intake':
             result = inspect_zip(args.archive, expected_tree=args.expected_tree,
                                  extract_to=args.extract_to)
