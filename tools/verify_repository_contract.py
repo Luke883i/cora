@@ -36,6 +36,7 @@ COMMANDS = (
     'debt-scan', 'verify-debt', 'debt-diff', 'process-list', 'process-run', 'verify-process', 'stress-debt',
     'dev-premerge', 'dev-postmerge', 'verify-dev-gate', 'agent-check', 'stress-continuous',
     'zip-intake', 'verify-zip-intake', 'runtime-observe', 'fuse-evidence', 'verify-fusion',
+    'lattice-audit', 'verify-lattice',
 )
 
 

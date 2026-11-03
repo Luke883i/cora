@@ -342,6 +342,14 @@
         "TEST"
       ],
       "rationale": "PR-16 negative and contract fixtures; role declaration is not passing-test proof."
+    },
+    {
+      "pattern": "src/cora/semantic_lattice.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Typed obligations and source-replay; no CI, sandbox or approval self-attestation."
     }
   ]
 }

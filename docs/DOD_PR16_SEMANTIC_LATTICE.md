@@ -23,3 +23,7 @@ DoD proof objects must record method, input commitment, status, unknowns, contra
 ## Acceptance and falsification
 
 A candidate source-DoD PASS is justified only when complete GitHub actions (not just their YAML), exact commit SHAs, full regression, negative fixtures, role and source contracts, a bounded Git performance oracle and receipt-lattice tests are observed. Record each run URL, job conclusion and skipped conditions; skipped is not passing a required check. All claims of independent host enforcement, real-world operational performance and governed release remain **DEBT_BLOCKED** unless proven separately.
+
+## C7 implemented obligation-node contract
+
+`cora lattice-audit ARCHIVE --zip-report ZIP.json` emits `cora-semantic-lattice/1`. `G0` is a source-replayed claim about bytes, `G1` cannot exceed `EXECUTION_REPORTED_UNATTESTED`, `G2` reconciles typed digest dependencies without source-process ancestry authentication, and `G3` is permanently `BLOCKED_EXTERNAL` inside this offline report. C5–C9 remain `REQUIRES_HEAD_CI`/external until verified on GitHub; `verify-lattice` recomputes against original inputs and rejects changed reports. Explicit `NOT_OBSERVED` is a valid source-only outcome, never a surrogate PASS for runtime.

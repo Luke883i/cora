@@ -39,6 +39,7 @@ from .continuous_stress import stress_continuous
 from .archive_intake import inspect_zip, verify_intake
 from .runtime_observation import observe_runtime
 from .observation_fusion import fuse_evidence, verify_fusion
+from .semantic_lattice import lattice_from_evidence, verify_lattice
 import zipfile
 import shlex
 
@@ -74,6 +75,21 @@ def main(argv: list[str] | None = None) -> int:
     fv.add_argument('--runtime-report', type=Path)
     fv.add_argument('--source-process', type=Path)
     fv.add_argument('--output', type=Path)
+    la = sub.add_parser('lattice-audit', help='Reconcile ZIP/runtime obligations; not approval')
+    la.add_argument('archive', type=Path)
+    la.add_argument('--zip-report', required=True, type=Path)
+    la.add_argument('--runtime-report', type=Path)
+    la.add_argument('--source-process', type=Path)
+    la.add_argument('--workspace', type=Path)
+    la.add_argument('--output', type=Path)
+    lv = sub.add_parser('verify-lattice', help='Replay lattice against original ZIP')
+    lv.add_argument('lattice_report', type=Path)
+    lv.add_argument('--archive', required=True, type=Path)
+    lv.add_argument('--zip-report', required=True, type=Path)
+    lv.add_argument('--runtime-report', type=Path)
+    lv.add_argument('--source-process', type=Path)
+    lv.add_argument('--workspace', type=Path)
+    lv.add_argument('--output', type=Path)
     a = sub.add_parser('audit')
     a.add_argument('repo', type=Path)
     a.add_argument('--declarations', default='cora.products.json')
@@ -333,6 +349,20 @@ def main(argv: list[str] | None = None) -> int:
             verify_fusion(z,f,r,src)
             result={'schema':'cora-fusion-verification/1','status':'REPLAY_SCOPED',
                     'fusion_digest':f['fusion_digest'],'authorization':'NONE'}
+            code=0
+        elif args.cmd in ('lattice-audit','verify-lattice'):
+            z=json.loads(args.zip_report.read_text(encoding='utf-8'))
+            rt=json.loads(args.runtime_report.read_text(encoding='utf-8')) if args.runtime_report else None
+            src=json.loads(args.source_process.read_text(encoding='utf-8')) if args.source_process else None
+            if args.cmd == 'lattice-audit':
+                result=lattice_from_evidence(args.archive,z,runtime_report=rt,
+                    source_process=src,workspace=args.workspace)
+            else:
+                receipt=json.loads(args.lattice_report.read_text(encoding='utf-8'))
+                verify_lattice(args.archive,receipt,zip_report=z,runtime_report=rt,
+                    source_process=src,workspace=args.workspace)
+                result={'schema':'cora-lattice-verification/1','status':'SOURCE_REPLAY_SCOPED',
+                        'lattice_digest':receipt['lattice_digest'],'authorization':'NONE'}
             code=0
         elif args.cmd == 'version':
             print(__version__)

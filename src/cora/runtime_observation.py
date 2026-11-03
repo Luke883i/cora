@@ -142,6 +142,47 @@ def verify_runtime_receipt(report: dict) -> bool:
         raise ValueError('invalid runtime receipt')
     if report.get('authorization')!='NONE' or report.get('sandbox_assurance')!='NOT_INDEPENDENTLY_ATTESTED':
         raise ValueError('runtime cannot self-authorize or attest external isolation')
+    states = {'NOT_REQUESTED', 'BLOCKED_NO_PINNED_IMAGE', 'BLOCKED_EXECUTOR_UNAVAILABLE',
+              'BLOCKED_ROOT_HOST_OPERATOR', 'BLOCKED_HOST_PLATFORM_UNSUPPORTED',
+              'BLOCKED_UNTRUSTED_EXECUTOR_NAME', 'BLOCKED_TIMEOUT_CONTAINER_TEARDOWN_UNVERIFIED',
+              'BLOCKED_EXCESSIVE_LOGS', 'RUN_REPORTED_UNATTESTED', 'RUN_FAILED'}
+    state = report.get('execution_status')
+    if state not in states or type(report.get('execution_requested')) is not bool:
+        raise ValueError('runtime status or opt-in malformed')
+    if report.get('command') != list(TEST_COMMAND) or report.get('git_history') != 'UNAVAILABLE_NOT_IN_ZIP':
+        raise ValueError('runtime command or source provenance forged')
+    if (report.get('runtime_coverage') != 'NOT_ATTESTED' or
+        report.get('network') != 'REQUESTED_NONE_IF_EXECUTED' or
+        report.get('source_mount') != 'REQUESTED_READ_ONLY_IF_EXECUTED'):
+        raise ValueError('unsupported runtime assurance promotion')
+    if (not isinstance(report.get('archive_sha256'),str) or
+        not re.fullmatch(r'[0-9a-f]{64}',report['archive_sha256']) or
+        not isinstance(report.get('git_tree_sha1'),str) or
+        not re.fullmatch(r'[0-9a-f]{40}',report['git_tree_sha1'])):
+        raise ValueError('invalid source identity')
+    image=report.get('image')
+    if image is not None and (not isinstance(image,str) or not IMAGE.fullmatch(image)):
+        raise ValueError('invalid image identity')
+    if not report['execution_requested'] and state != 'NOT_REQUESTED':
+        raise ValueError('runtime execution claimed without opt-in')
+    if report['execution_requested'] and state == 'NOT_REQUESTED':
+        raise ValueError('requested runtime cannot be NOT_REQUESTED')
+    completed = state in ('RUN_REPORTED_UNATTESTED','RUN_FAILED')
+    if completed:
+        code=report.get('exit_code')
+        logs=report.get('log_bytes')
+        if (not report['execution_requested'] or image is None or
+            type(code) is not int or (code == 0) != (state == 'RUN_REPORTED_UNATTESTED') or
+            not isinstance(logs,list) or len(logs)!=2 or
+            any(type(n) is not int or n<0 or n>MAX_LOG for n in logs) or
+            sum(logs)>MAX_LOG):
+            raise ValueError('invalid completed runtime evidence')
+        for field in ('stdout_sha256','stderr_sha256'):
+            if not isinstance(report.get(field),str) or not re.fullmatch(r'[0-9a-f]{64}', report[field]):
+                raise ValueError('missing log digest')
+    elif (report.get('exit_code') is not None or report.get('stdout_sha256') is not None or
+          report.get('stderr_sha256') is not None or report.get('log_bytes') is not None):
+        raise ValueError('non-completed runtime cannot claim executed output')
     if report.get('receipt_digest') != domain_hash('CORA:runtime-observation:1',
              {k:v for k,v in report.items() if k!='receipt_digest'}):
         raise ValueError('runtime receipt altered')
