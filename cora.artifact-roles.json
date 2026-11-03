@@ -490,6 +490,14 @@
         "PRODUCT_CONTRACT"
       ],
       "rationale": "Global/intermediate/local gold DoD."
+    },
+    {
+      "pattern": "docs/AUDIT_PR19_CLOSURE.md",
+      "roles": [
+        "DOCUMENTATION",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Exact PR-19 failure provenance, restricted private Git source access, scoped DoD and recovery obligations."
     }
   ]
 }

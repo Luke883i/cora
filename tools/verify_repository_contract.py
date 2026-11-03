@@ -27,6 +27,7 @@ CORE_DOCS = [
     'cora.gold-assurance.json', 'src/cora/gold_assurance.py', 'src/cora/gold_mutations.py',
     'src/cora/gold_effects.py', 'src/cora/gold_saturation.py',
     'docs/GOLD_ASSURANCE.md', 'docs/DOD_PR19_GOLD.md', '.github/workflows/ci-gold-assurance.yml',
+    'docs/AUDIT_PR19_CLOSURE.md',
 ]
 COMMANDS = (
     'version', 'audit', 'snapshot', 'verify-ledger', 'graph', 'explain',
