@@ -54,6 +54,12 @@ class HostileZip(unittest.TestCase):
     def test_symlink(self):self.fail_member('bundle/link',b'/etc/passwd',0o120777)
     def test_duplicate(self):self.fail_member('bundle/alpha.txt',b'evil')
     def test_case_collision(self):self.fail_member('bundle/ALPHA.TXT',b'evil')
+    def test_case_colliding_implicit_directories(self):
+        archive(self.path,[('bundle/A/one.py',b'a',0o100644),('bundle/a/two.py',b'b',0o100644)])
+        with self.assertRaises(ValueError):inspect_zip(self.path)
+    def test_file_becoming_directory(self):
+        archive(self.path,[('bundle/a',b'a',0o100644),('bundle/a/child.py',b'b',0o100644)])
+        with self.assertRaises(ValueError):inspect_zip(self.path)
     def test_control_chars(self):self.fail_member('bundle/abc\nfile.py')
     def test_nfd_unicode(self):self.fail_member('bundle/cafe\u0301.py')
     def test_high_ratio_bomb(self):self.fail_member('bundle/bomb.py',b'\0'*1_000_000)

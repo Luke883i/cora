@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import hashlib
-import os
 import re
 import stat
 import unicodedata
@@ -104,6 +103,19 @@ def inspect_zip(archive: Path, *, expected_tree: str | None = None,
             files[normal] = (content, mode)
     if not files:
         raise ValueError('empty source archive')
+    # Reject ambiguous case-insensitive directory trees and file-as-parent conflicts.
+    hierarchy = {}
+    for path in files:
+        parts = path.split('/')
+        for i, part in enumerate(parts):
+            prefix = '/'.join(parts[:i+1]).casefold()
+            actual = '/'.join(parts[:i+1])
+            if prefix in hierarchy and hierarchy[prefix] != actual:
+                raise ValueError('case-colliding ZIP directory hierarchy')
+            hierarchy[prefix] = actual
+        if any('/'.join(parts[:i]).casefold() in {p.casefold() for p in files}
+               for i in range(1,len(parts))):
+            raise ValueError('ZIP file cannot also be a directory')
     tree = _tree_digest(files)
     if expected_tree is not None and tree != expected_tree:
         raise ValueError('source tree differs from caller-provided expected identity')
