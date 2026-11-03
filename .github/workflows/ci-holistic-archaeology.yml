@@ -1,0 +1,38 @@
+name: CI | Holistic source-bound archaeology
+on:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  archaeology:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11','3.13']
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install CORA and run independent Git fixtures
+        run: |
+          python -m pip install .
+          python -m unittest discover -s tests -p 'test_archaeology_pr12.py' -q
+          python tools/verify_repository_contract.py --repo .
+      - name: Apply CORA to CORA at exact Git source revision
+        run: |
+          cora holistic-audit . --revision HEAD --max-commits 64 --focus src/cora/holistic.py --output /tmp/cora-whole.json --ai-request-output /tmp/group-questions.json
+          cora verify-holistic /tmp/cora-whole.json --repo .
+          cora archaeology . --revision HEAD --max-commits 64 --output /tmp/cora-history.json
+          cora verify-archaeology /tmp/cora-history.json --repo .
+          python -c 'import json; d=json.load(open("/tmp/cora-whole.json")); assert d["method_ledger"]["git_archaeology"]=="APPLIED" and all(not f["safe_to_delete"] for f in d["files"]); assert d["history"]["events"]'
+      - name: Falsify one million independent risk-state masks twice
+        run: |
+          cora stress-archaeology --seed 883 --cases 1000000 --output /tmp/stress-a.json
+          cora stress-archaeology --seed 883 --cases 1000000 --output /tmp/stress-b.json
+          cmp /tmp/stress-a.json /tmp/stress-b.json
+          python -c 'import json; d=json.load(open("/tmp/stress-a.json")); assert d["cases"]==1000000 and d["distinct_input_masks"]==1000000 and d["distinct_semantic_output_signatures"]==8 and d["mismatches"]==0 and d["stream_sha256"]=="eabfc62785eac993ffc34449f0c5b26de26172d9d5e25f2b0ef08d8976b759ca"'

@@ -64,6 +64,21 @@ Artifact roles are multi-valued: the **same** file may be a test, executable sou
 
 Human triage can record `RETAIN`, `INVESTIGATE`, `QUARANTINE_CANDIDATE`, `ARCHIVE_CANDIDATE`, `RENAME_CANDIDATE`, or `DELETE_BLOCKED`, but **never applies a change**. A safe-deletion claim cannot be certified by v1.experimental.
 
+## All-in-one holistic archaeology (experimental)
+
+`holistic-audit` combines the safe read-only methods: Git provenance and bounded commit history, product/software ontology, partial import graph, manifest adapters, overlapping roles and development groups. `--focus` uses the per-file selector. A possible scaffold or disconnected gold flag means **human investigation**, not dead-code proof.
+
+```bash
+cora holistic-audit . --max-commits 256 --focus src/cora/graph.py --output /tmp/whole.json
+cora verify-holistic /tmp/whole.json --repo .
+cora archaeology . --output /tmp/history.json
+cora verify-archaeology /tmp/history.json --repo .
+cora annotate-groups /tmp/whole.json --repo . --hypotheses /tmp/ai.json
+cora stress-archaeology --seed 883 --cases 1000000
+```
+
+AI observations are untrusted and uncalibrated; `--pr-index` declarations remain externally unverified. No transformations, remote scans or model calls are executed here. See the [holistic method](docs/HOLISTIC_FORENSICS.md), [DoD lattice](docs/DOD_HOLISTIC_FORENSICS.md), and [self-audit](docs/FORENSIC_SELF_AUDIT.md).
+
 ## Operating boundaries
 
 - **Evidence, inference and authorization are distinct.** Neither a missing static edge nor a role name proves dead code, executed contracts, or safe deletion. `PASS_SCOPED` is scoped observation, not permission.

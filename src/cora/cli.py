@@ -27,6 +27,10 @@ from .artifact_roles import artifact_audit, verify_artifact_report
 from .artifact_saturation import saturate
 from .selection import select_file, verify_selection
 from .selection_stress import stress_selection
+from .archaeology import mine_history, verify_history
+from .holistic import holistic_audit, verify_holistic
+from .group_hypotheses import group_ai_request, annotate_groups
+from .archaeology_stress import stress_archaeology
 import shlex
 
 
@@ -166,6 +170,37 @@ def main(argv: list[str] | None = None) -> int:
     stsel.add_argument('--seed', type=int, default=883)
     stsel.add_argument('--cases', type=int, default=1000000)
     stsel.add_argument('--output', type=Path)
+    ha = sub.add_parser('holistic-audit', help='All-in-one read-only Git history, structure and group archaeology')
+    ha.add_argument('repo',type=Path)
+    ha.add_argument('--revision',default='HEAD')
+    ha.add_argument('--max-commits',type=int,default=256)
+    ha.add_argument('--focus')
+    ha.add_argument('--pr-index',type=Path,help='Optional operator-supplied UNVERIFIED PR-to-commit map')
+    ha.add_argument('--output',type=Path)
+    ha.add_argument('--ai-request-output',type=Path)
+    hv = sub.add_parser('verify-holistic',help='Replay holistic audit from pinned Git objects')
+    hv.add_argument('report',type=Path)
+    hv.add_argument('--repo',type=Path,required=True)
+    hv.add_argument('--output',type=Path)
+    hist = sub.add_parser('archaeology',help='Bounded read-only commit archaeology and cochange')
+    hist.add_argument('repo',type=Path)
+    hist.add_argument('--revision',default='HEAD')
+    hist.add_argument('--max-commits',type=int,default=256)
+    hist.add_argument('--pr-index',type=Path)
+    hist.add_argument('--output',type=Path)
+    vh = sub.add_parser('verify-archaeology',help='Replay source Git commit archaeology')
+    vh.add_argument('report',type=Path)
+    vh.add_argument('--repo',type=Path,required=True)
+    vh.add_argument('--output',type=Path)
+    gh = sub.add_parser('annotate-groups',help='Ingest AI group hypotheses without decision authority')
+    gh.add_argument('report',type=Path)
+    gh.add_argument('--repo',type=Path,required=True)
+    gh.add_argument('--hypotheses',type=Path,required=True)
+    gh.add_argument('--output',type=Path)
+    ah = sub.add_parser('stress-archaeology',help='1M deterministic synthetic archaeology policy cases')
+    ah.add_argument('--seed',type=int,default=883)
+    ah.add_argument('--cases',type=int,default=1000000)
+    ah.add_argument('--output',type=Path)
     g = sub.add_parser('snapshot')
     g.add_argument('repo', type=Path)
     g.add_argument('--revision', default='HEAD')
@@ -286,6 +321,34 @@ def main(argv: list[str] | None = None) -> int:
             code = 0
         elif args.cmd == 'stress-selection':
             result = stress_selection(seed=args.seed,cases=args.cases)
+            code = 2 if result['mismatches'] else 0
+        elif args.cmd == 'holistic-audit':
+            pr_index = json.loads(args.pr_index.read_text(encoding='utf-8')) if args.pr_index else None
+            result = holistic_audit(args.repo,args.revision,max_commits=args.max_commits,focus=args.focus,pr_index=pr_index)
+            if args.ai_request_output:
+                args.ai_request_output.write_text(json.dumps(group_ai_request(result),indent=2,sort_keys=True)+'\n',encoding='utf-8')
+            code = 0
+        elif args.cmd == 'verify-holistic':
+            item = json.loads(args.report.read_text(encoding='utf-8'))
+            verify_holistic(args.repo,item)
+            result = {'schema':'cora-holistic-verification/1','status':'VERIFIED_AGAINST_GIT','commit':item['commit'],'report_digest':item['report_digest']}
+            code = 0
+        elif args.cmd == 'archaeology':
+            pr_index = json.loads(args.pr_index.read_text(encoding='utf-8')) if args.pr_index else None
+            result = mine_history(args.repo,args.revision,max_commits=args.max_commits,pr_index=pr_index)
+            code = 0
+        elif args.cmd == 'verify-archaeology':
+            item = json.loads(args.report.read_text(encoding='utf-8'))
+            verify_history(args.repo,item)
+            result = {'schema':'cora-archaeology-verification/1','status':'VERIFIED_AGAINST_GIT','commit':item['commit'],'digest':item['digest']}
+            code = 0
+        elif args.cmd == 'annotate-groups':
+            report = json.loads(args.report.read_text(encoding='utf-8'))
+            hypotheses = json.loads(args.hypotheses.read_text(encoding='utf-8'))
+            result = annotate_groups(args.repo,report,hypotheses)
+            code = 0
+        elif args.cmd == 'stress-archaeology':
+            result = stress_archaeology(seed=args.seed,cases=args.cases)
             code = 2 if result['mismatches'] else 0
         elif args.cmd == 'snapshot':
             result = snapshot(args.repo, args.revision)
