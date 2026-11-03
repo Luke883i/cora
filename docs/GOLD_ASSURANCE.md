@@ -23,3 +23,7 @@ INTENT → OBSERVE → QUALIFY → SLICE → MATERIALIZE → WITNESS → CLOSE �
 ICTC `56362f1b`: `docs/authority-matrix.yaml` plus `v3/release-readiness-e2-product-mutants.mjs`. ikant `43ce861a`: `CONTROL_PLANE_OWNERSHIP_CONTRACT.json` plus `ikant/control_plane_ownership.py`. aosp1 `8af1c0cc`: `authority-matrix.yaml` plus `frontend/src/apps/DataIntake/lib/d1PersistedReadback.ts`. Full 40-digit source revisions and Git blob hashes are in `cora.gold-assurance.json`. This sample is read-only source lineage, *not* an independent audit of their running products or current HEADs.
 
 Remaining unknowns: genuine owner/consumer equivalence, real external behavioral mutators, trusted host CI effect readback, sandbox attestation, actual target runtime, reviewer identity, rollback and release authority. **All remain BLOCKED_EXTERNAL or NOT_EXECUTED, never inferred from model success.**
+
+## PR-19 receipt and image-pinning hardening
+
+A supplied `--pilot-report` is a claim, **never** authenticated source observation. `gold-plan --ictc-root ... --ikant-root ... --aosp1-root ...` performs a fresh Git-object readback in the same operation and marks owner semantics still unverified. Explicit Docker execution requires a **preloaded digest-pinned image** of form `python@sha256:HEX64` or `node@sha256:HEX64`, with no image pull, network or privileged capabilities. This reduces source/image substitution risk but does not provide independently certified sandbox isolation.

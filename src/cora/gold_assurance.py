@@ -164,14 +164,23 @@ def pilot_sources(contract: dict, roots: dict[str, Path]) -> dict:
     result["digest"] = domain_hash("CORA:gold-pilot:1",result)
     return result
 
-def contextual_gold(contract: dict, intent: str, pilot: dict | None = None) -> dict:
+def contextual_gold(contract: dict, intent: str, pilot: dict | None = None, *, roots: dict | None = None) -> dict:
     if not isinstance(intent,str) or len(intent.strip()) < 12:
         raise ValueError("human product intent required")
     r = retrograde_gold(contract)
-    observed = {x["repo"]:x["state"] for x in (pilot or {}).get("pilots", [])}
-    leaf = "L02" if len(observed)==3 and all(x=="SOURCE_READBACK_SCOPED" for x in observed.values()) else "L01"
+    if pilot is not None and roots is not None:
+        raise ValueError("choose source reread or untrusted authored pilot report")
+    if roots is not None:
+        observed = {x["repo"]:x["state"] for x in pilot_sources(contract,roots)["pilots"]}
+        provenance = "FRESH_GIT_BLOB_REPLAY_NOT_OWNER_SEMANTIC_VALIDATION"
+    else:
+        observed = {x["repo"]:"UNVERIFIED_IMPORTED_REPORT" for x in (pilot or {}).get("pilots", [])}
+        provenance = "UNTRUSTED_CLAIM_NOT_SOURCE_REPLAY" if pilot is not None else "NOT_OBSERVED"
+    leaf = "L02" if roots is not None and len(observed)==3 and all(
+        x=="SOURCE_READBACK_SCOPED" for x in observed.values()) else "L01"
     result = {"schema":"cora-gold-contextual/1","intent_sha256":hashlib.sha256(intent.encode()).hexdigest(),
               "goal":r["goal"],"nodes":r["nodes"],"local_cut":r["local_cut"],
+              "pilot_provenance":provenance,
               "contextual_bindings":[{"repo":p["repo"],"revision":p["revision"],
                 "owner":p["owner"]["path"],"source":p["sample"]["path"],
                 "observed":observed.get(p["repo"],"NOT_OBSERVED")} for p in contract["pilots"]],

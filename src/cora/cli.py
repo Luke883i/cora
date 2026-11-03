@@ -80,6 +80,9 @@ def main(argv: list[str] | None = None) -> int:
     gg.add_argument('--contract', type=Path, default=Path('cora.gold-assurance.json'))
     gg.add_argument('--intent', required=True)
     gg.add_argument('--pilot-report', type=Path)
+    gg.add_argument('--ictc-root', type=Path)
+    gg.add_argument('--ikant-root', type=Path)
+    gg.add_argument('--aosp1-root', type=Path)
     gg.add_argument('--output', type=Path)
     gt = sub.add_parser('gold-pilot', help='R4: source-only SHA-bound checkouts; does not run target code')
     gt.add_argument('--contract', type=Path, default=Path('cora.gold-assurance.json'))
@@ -404,7 +407,11 @@ def main(argv: list[str] | None = None) -> int:
         elif args.cmd == 'gold-plan':
             c=load_gold_contract(args.contract)
             pilot=json.loads(args.pilot_report.read_text('utf-8')) if args.pilot_report else None
-            result=contextual_gold(c,args.intent,pilot)
+            roots={}
+            for n,pth in (('ictc',args.ictc_root),('ikant',args.ikant_root),('aosp1',args.aosp1_root)):
+                if pth:
+                    roots['Luke883i/'+n]=pth
+            result=contextual_gold(c,args.intent,pilot,roots=roots if roots else None)
             code=0
         elif args.cmd == 'gold-pilot':
             c=load_gold_contract(args.contract)

@@ -8,6 +8,7 @@ from __future__ import annotations
 import ast
 import hashlib
 import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -16,7 +17,7 @@ from pathlib import Path, PurePosixPath
 SCHEMA = "cora-physical-mutants/1"
 MAX_BYTES = 8 * 1024 * 1024
 MAX_FILES = 512
-IMAGES = {"python:3.11-slim": "python", "node:22-bookworm-slim": "node"}
+IMAGES = {"python": "python", "node": "node"}
 
 def _path(rel):
     return isinstance(rel,str) and 0 < len(rel) <= 240 and not rel.startswith(("/", "-")) and "\\" not in rel and "\x00" not in rel and all(v not in ("", ".", "..") for v in rel.split("/")) and str(PurePosixPath(rel)) == rel
@@ -59,8 +60,11 @@ def _oracle(stage: Path, oracle: dict, *, authorized: bool) -> str:
         return "INCONCLUSIVE"
     image=oracle.get("image")
     command=oracle.get("command")
-    if (image not in IMAGES or not isinstance(command,list) or not 2 <= len(command) <= 12
-        or command[0] != IMAGES[image] or
+    image_family = image.split("@",1)[0] if isinstance(image,str) else ""
+    if (not isinstance(image,str) or not re.fullmatch(
+        r"(?:python|node)@sha256:[a-f0-9]{64}",image) or
+        image_family not in IMAGES or not isinstance(command,list) or not 2 <= len(command) <= 12
+        or command[0] != IMAGES[image_family] or
         any(not isinstance(x,str) or not 1 <= len(x) <= 160 or "\x00" in x for x in command)):
         raise ValueError("sandbox command not allowlisted")
     # This is an explicit, local, bounded test execution, NOT a proof of
