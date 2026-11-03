@@ -91,6 +91,7 @@ def saturate_agent_dod(contract: dict, *, sessions: int = 10,
         observed_pairs = set()
         mismatches = unsafe = source_eligible = 0
         novelty_tail = 0
+        preregistered_mismatches = 0
         # Four finite semantic layers: LOCAL/INTERMEDIATE/GLOBAL/EXTERNAL.
         exposed_levels = set()
         for i in range(cases_per_session):
@@ -105,11 +106,26 @@ def saturate_agent_dod(contract: dict, *, sessions: int = 10,
                 unsafe += 1
             if actual_source == MODEL_LABEL:
                 source_eligible += 1
+            # Audit the ACTUAL generated mask, not the loop counter. The
+            # historical PR17 counter incremented even if _scenario was broken.
             if i < 24:
-                exposures.add(i)
-                exposed_levels.add(("LOCAL", "INTERMEDIATE", "GLOBAL", "EXTERNAL")[i // 6])
-            if 24 <= i < 300:
-                observed_pairs.add(PAIRS[i - 24])
+                if mask == (1 << i):
+                    exposures.add(i)
+                    exposed_levels.add(("LOCAL", "INTERMEDIATE", "GLOBAL", "EXTERNAL")[i // 6])
+                else:
+                    preregistered_mismatches += 1
+            elif i < 300:
+                a, b = PAIRS[i - 24]
+                if mask == ((1 << a) | (1 << b)):
+                    observed_pairs.add((a, b))
+                else:
+                    preregistered_mismatches += 1
+            elif i == 300 and mask != 0:
+                preregistered_mismatches += 1
+            elif 301 <= i < 307 and mask != (1 << (18 + i - 301)):
+                preregistered_mismatches += 1
+            if mask.bit_count() > 3:
+                preregistered_mismatches += 1
             # Full normalized signature space is finite: empty, 24 singles,
             # 276 pairs, and up to 2,024 unordered triples (if all indices differ).
             if mask not in unique_signatures:
@@ -117,9 +133,15 @@ def saturate_agent_dod(contract: dict, *, sessions: int = 10,
                 if i >= cases_per_session - min(100_000, cases_per_session // 10):
                     novelty_tail += 1
             stream.update(mask.to_bytes(3, "big") + bytes((actual_source == MODEL_LABEL,)))
+        # A long run must exercise richer fault mixtures beyond the
+        # 301 forced empty/single/pair signatures, not just repeat them.
+        diversified = len(unique_signatures) > 301
         if (len(exposures) != 24 or len(observed_pairs) != 276 or
-            len(exposed_levels) != 4 or source_eligible == 0):
+            len(exposed_levels) != 4 or source_eligible == 0 or
+            not diversified or
+            (cases_per_session == 1_000_000 and len(unique_signatures) < 1_000)):
             unsafe += 1
+        mismatches += preregistered_mismatches
         digest = stream.hexdigest()
         row = {
             "session": session + 1, "seed": seed,
@@ -132,6 +154,8 @@ def saturate_agent_dod(contract: dict, *, sessions: int = 10,
             "new_signatures_in_tail": novelty_tail,
             "source_model_eligible_unattested": source_eligible,
             "oracle_mismatches": mismatches,
+            "preregistered_sequence_mismatches": preregistered_mismatches,
+            "scenario_diversity_validated": diversified,
             "unsafe_promotions": unsafe,
             "stream_sha256": digest,
         }
