@@ -20,3 +20,7 @@ Treat ZIP paths and source bytes as untrusted, including inside Docker. Never in
 ## PR-17 agent delivery (CORA as framework, not coding agent)
 
 Before coding derive prerequisite cuts: `cora dod-plan --stage intake` then `cora dod-plan --stage implementation`. Before PR use `cora dod-plan --stage premerge`, `cora dod-assess`, `cora verify-dod`, and the existing `dev-premerge`. Run `cora stress-agent-dod --require-full` for model/contract changes; use real target-code mutants and executed regression separately. Postmerge: `dev-postmerge` on merged main; release: `dod-plan --stage release` with external review. Do not self-attest missing runtime/hosting witnesses or introduce a new product owner. Full rules: [AI assistant method](docs/AI_CODE_ASSURANCE.md).
+
+## PR-18 historical anti-regression
+
+Always derive source-model coverage from actual generated fault masks, not iteration positions. Use negative tests against physically changed CORA implementation, distinguish JSON policy mutants from source-code mutants and real third-party product tests. Explain the first unresolved prerequisite and re-pin merged main. See [severe audit](docs/AUDIT_PR18_MAIN.md).

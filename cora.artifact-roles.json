@@ -408,6 +408,15 @@
         "TEST"
       ],
       "rationale": "Physical JSON mutants, anti-promotion and CLI regression."
+    },
+    {
+      "pattern": "tests/test_pr18_agent_hardening.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Actual CORA source-model mutants, falsified index-based scenario coverage and epistemic anti-promotion."
     }
   ]
 }

@@ -7,7 +7,6 @@ permissions:
   contents: read
 jobs:
   agent-model:
-    timeout-minutes: 35
     strategy:
       fail-fast: false
       matrix:
@@ -27,9 +26,22 @@ jobs:
           EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
       - run: python -m pip install -e .
-      - run: python -m unittest discover -s tests -p 'test_pr17_*.py' -v
+      - run: python -m unittest discover -s tests -p 'test_pr1[78]_*.py' -v
       - run: python tools/verify_repository_contract.py --repo .
       - run: python tools/verify_artifact_roles.py --repo .
       - run: cora stress-agent-dod --require-full --output /tmp/cora-10m-a.json
       - run: cora stress-agent-dod --require-full --output /tmp/cora-10m-b.json
       - run: cmp /tmp/cora-10m-a.json /tmp/cora-10m-b.json
+      - name: Verify actual mask coverage and no self-authorization
+        run: |
+          python -c 'import json; x=json.load(open("/tmp/cora-10m-a.json")); assert x["status"]=="PASS_SCOPED_FINITE_MODEL" and x["cases"]==10000000 and x["model_mismatches"]==0 and x["unsafe_promotions"]==0 and x["authorization"]=="NONE"; assert len(x["sessions_receipts"])==10 and all(r["observed_single_faults"]==24 and r["observed_all_pairs"]==276 and r["preregistered_sequence_mismatches"]==0 and r["scenario_diversity_validated"] and r["new_signatures_in_tail"]==0 for r in x["sessions_receipts"])'
+      - name: Keep finite-model receipts distinct from runtime proof
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: cora-agent-finite-model-python-${{ matrix.python-version }}
+          path: |
+            /tmp/cora-10m-a.json
+            /tmp/cora-10m-b.json
+          if-no-files-found: warn
+          retention-days: 14

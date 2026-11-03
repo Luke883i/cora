@@ -44,3 +44,7 @@ The negative unittest writes and rejects 34 physical mutated contract JSON files
 ## Fail-closed stop criteria
 
 STOP/BLOCKED on ambiguous product intent, missing canonical owner, inability to reproduce the pinned source, no independent behavioral oracle for a claimed runtime fix, missing required CI on the final HEAD, an uncovered critical family, an unsafe promotion, or an unauthenticated external reviewer. Use the current CORA AGENTS.md, GOVERNANCE.md, continuous policy and PR-16 source/runtime boundary. Release governance must remain external, and main protection must be checked in GitHub rather than inferred from repository source files.
+
+## PR-18 historical correction
+
+PR-17 counted the first 24 individual faults and 276 pairs by index even when a mutated `_scenario` could return the wrong mask. PR-18 counts only actual prespecified masks, asserts scenario diversity and includes six physical Python source mutants of CORA's finite model. `dod-assess` now identifies `next_unresolved_falsifier`, refuses whitespace-only witnesses and never treats L19–L24 caller claims as independently authenticated. This is better source-model falsification, **not** real target-repository semantic validity; see [the historiographic audit](AUDIT_PR18_MAIN.md).

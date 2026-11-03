@@ -172,10 +172,15 @@ def assess_claims(contract: dict, observations: dict, *,
                 status = "BLOCKED"
             elif (obj.get("revision") != sha or
                   not isinstance(obj.get("witness"), str) or
-                  not 8 <= len(obj["witness"]) <= 512):
+                  not 8 <= len(obj["witness"]) <= 512 or
+                  not obj["witness"].strip()):
                 status = "BLOCKED_WRONG_OR_MISSING_WITNESS"
             else:
                 status = "CLAIMED_PRESENT_UNVERIFIED"
+            # External witnesses cannot be certified by caller-supplied text,
+            # even if their revision/digest formatting is consistent.
+            if identifier in LOCAL_IDS[18:] and status == "CLAIMED_PRESENT_UNVERIFIED":
+                status = "BLOCKED_EXTERNAL"
         else:
             predecessors = [derived[d] for d in n["depends_on"]]
             if identifier in ("I_EXTERNAL", "G_GOVERNED_AGENT"):
@@ -190,6 +195,13 @@ def assess_claims(contract: dict, observations: dict, *,
         derived[identifier] = status
         if identifier in LOCAL_IDS and status != "CLAIMED_PRESENT_UNVERIFIED":
             blockers.append(identifier)
+    next_blocker = blockers[0] if blockers else None
+    next_falsifier = ({
+        "id": next_blocker,
+        "status": derived[next_blocker],
+        "method": index[next_blocker]["falsifier"],
+        "scope": index[next_blocker]["scope"],
+    } if next_blocker else None)
     result = {
         "schema": REPORT,
         "mode": "UNTRUSTED_AGENT_CLAIMS_RECONCILED",
@@ -199,6 +211,7 @@ def assess_claims(contract: dict, observations: dict, *,
         "claims_digest": domain_hash("CORA:agent-claims:1", observations),
         "states": derived,
         "blocked_locals": blockers,
+        "next_unresolved_falsifier": next_falsifier,
         "goal_status": derived[goal],
         "authority": "UNVERIFIED_CLAIM_NO_EXTERNAL_ATTESTATION",
         "authorization": "NONE",
