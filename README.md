@@ -1,6 +1,6 @@
 # CORA — software architecture evidence and forensic maintenance
 
-**CORA** is an offline-first, Python 3.11+ command-line **product** for investigating heterogeneous repositories, explaining evidence about software and files, and planning *strictly bounded* changes. **v1.experimental (`1.0.0a1`) is a prerelease candidate, not stable 1.0.0 or a public release.** CORA is **not** a universal dead-code detector, runtime-equivalence prover, or automatic code deleter.
+**CORA** is an offline-first, Python 3.11+ command-line **product** for investigating heterogeneous repositories, explaining evidence about software and files, and planning *strictly bounded* changes. **v1.experimental (`1.0.0a2`) is a prerelease candidate, not stable 1.0.0 or a public release.** CORA is **not** a universal dead-code detector, runtime-equivalence prover, or automatic code deleter.
 
 | Identity | What it is | Where its truth lives |
 | --- | --- | --- |
@@ -79,6 +79,36 @@ cora stress-archaeology --seed 883 --cases 1000000
 
 AI observations are untrusted and uncalibrated; `--pr-index` declarations remain externally unverified. No transformations, remote scans or model calls are executed here. See the [holistic method](docs/HOLISTIC_FORENSICS.md), [DoD lattice](docs/DOD_HOLISTIC_FORENSICS.md), and [self-audit](docs/FORENSIC_SELF_AUDIT.md).
 
+## Engineering debt and process modes (experimental)
+
+`debt-scan` derives source-bound **debt signals** from bounded Git change pressure,
+partial Python AST structure, declared product/role boundaries and optional
+**untrusted** SARIF 2.1.0. Findings carry a finite debt category, evidence,
+review priority, suggested validation/remediation strategy and human owner role.
+They are neither proved defects nor measured costs, and **no command authorizes
+remediation or deletion**. Missing scanner/runtime/test/CI provenance remains
+explicit unknown, never a zero-debt assertion.
+
+```bash
+cora process-list
+cora process-run . --process source --output /tmp/cora-source.json
+cora process-run . --process debt --max-commits 12 --output /tmp/cora-debt-process.json
+cora process-run . --process full --max-commits 12 --focus src/cora/graph.py --output /tmp/cora-full.json
+cora verify-process /tmp/cora-full.json --repo .
+cora debt-scan . --max-commits 12 --output /tmp/cora-debt.json
+cora verify-debt /tmp/cora-debt.json --repo .
+cora debt-diff . --base HEAD~1 --head HEAD --output /tmp/cora-trend.json
+cora stress-debt --seed 883 --cases 1000000
+```
+
+`process-run` supports `source`, `history`, `architecture`, `forensics`, `debt`,
+`verification`, `full`. **`full` is only the union of safe read-only Git-backed
+methods**, not LLM invocation, third-party scanner execution, target tests,
+archiving or transformations. External SARIF requires the original input bytes
+again for `verify-debt`. A trend shows newly detected vs no-longer-detected
+signals; it does **not** prove a debt was remediated. See [methods](docs/ENGINEERING_DEBT.md)
+and [backward DoD](docs/DOD_ENGINEERING_DEBT.md).
+
 ## Operating boundaries
 
 - **Evidence, inference and authorization are distinct.** Neither a missing static edge nor a role name proves dead code, executed contracts, or safe deletion. `PASS_SCOPED` is scoped observation, not permission.
@@ -95,6 +125,6 @@ Before any PR: `python -m unittest discover -s tests -v`, then the repository an
 
 ## Status and release identity
 
-**CORA v1.experimental = package `1.0.0a1`**, a PEP 440/SemVer-style *pre-release identity*, not a stable API promise. The PR candidate is reviewed with checksums and GitHub CI artifacts; no public PyPI package, signed SLSA provenance or GitHub Release is implied. The [DoD](docs/DOD_V1_EXPERIMENTAL.md) distinguishes automated scoped PASS from still-open human and external validation gates.
+**CORA v1.experimental = package `1.0.0a2`**, a PEP 440/SemVer-style *pre-release identity*, not a stable API promise. The PR candidate is reviewed with checksums and GitHub CI artifacts; no public PyPI package, signed SLSA provenance or GitHub Release is implied. The [DoD](docs/DOD_V1_EXPERIMENTAL.md) distinguishes automated scoped PASS from still-open human and external validation gates.
 
 [License](LICENSE) · [Security reporting](SECURITY.md) · [Source/decision history](docs/ARCHITECTURE.md).
