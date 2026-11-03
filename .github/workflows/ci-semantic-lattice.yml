@@ -28,6 +28,9 @@ jobs:
         run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
       - name: Install candidate and scoped coverage oracle
         run: |
+          # PR07 nested wheel/sdist oracle imports setuptools.build_meta in
+          # a fresh interpreter; Python 3.13 does not bundle setuptools.
+          python -m pip install 'setuptools>=77' 'wheel>=0.45'
           python -m pip install -e .
           python -m pip install 'coverage==7.10.7'
       - name: C5 source, ontology, roles and replay
@@ -124,6 +127,9 @@ jobs:
           python-version: '3.13'
       - name: Install exactly the PR16 semantic test environment
         run: |
+          # PR07 nested wheel/sdist oracle imports setuptools.build_meta in
+          # a fresh interpreter; Python 3.13 does not bundle setuptools.
+          python -m pip install 'setuptools>=77' 'wheel>=0.45'
           python -m pip install -e .
           python -m pip install 'coverage==7.10.7'
       - id: extract
