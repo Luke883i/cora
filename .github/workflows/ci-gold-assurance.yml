@@ -1,0 +1,129 @@
+name: CI | Gold contextual assurance R1-R4
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  gold-unit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.13']
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Exact candidate
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - run: python -m pip install -e .
+      - name: Contextual DoD, real Git and mutant negative tests
+        run: python -m unittest discover -s tests -p 'test_pr19_*.py' -v
+      - name: Repository/role contracts
+        run: |
+          python tools/verify_repository_contract.py --repo .
+          python tools/verify_artifact_roles.py --repo .
+      - name: Plan on actual candidate source
+        run: |
+          cora gold-plan --intent 'Integrate factual cross-repo assurance without self-attested release' --output /tmp/gold-plan.json
+          python -c 'import json; r=json.load(open("/tmp/gold-plan.json")); assert len(r["local_cut"])==12 and r["state"]=="BLOCKED_MATERIAL_PRODUCT_PROOF" and r["authorization"]=="NONE"'
+  gold-model-10m:
+    needs: [gold-unit]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.13'
+      - name: Exact candidate
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - run: python -m pip install -e .
+      - name: Ten million typed scenarios
+        run: cora stress-gold --require-full --output /tmp/gold-10m-a.json
+      - name: Second full deterministic replay
+        run: |
+          cora stress-gold --require-full --output /tmp/gold-10m-b.json
+          cmp /tmp/gold-10m-a.json /tmp/gold-10m-b.json
+      - name: Verify all forced faults and no novelty tail
+        run: |
+          python -c 'import json; r=json.load(open("/tmp/gold-10m-a.json")); assert r["status"]=="PASS_SCOPED_FINITE_MODEL" and r["cases"]==10000000 and r["mismatches"]==0 and r["unsafe_promotions"]==0 and r["real_source_mutations"]==0 and len(r["receipts"])==10 and all(x["observed_singles"]==12 and x["observed_pairs"]==66 and x["preregistered_mismatches"]==0 and x["new_signatures_tail"]==0 for x in r["receipts"])'
+      - name: Finite-model receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cora-pr19-finite-model-only
+          path: |
+            /tmp/gold-10m-a.json
+            /tmp/gold-10m-b.json
+          if-no-files-found: warn
+          retention-days: 14
+  gold-three-repo-source:
+    needs: [gold-unit]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: cora
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: Luke883i/ictc
+          ref: 56362f1bbbed8c0f62380a4bfed2476afb670c4c
+          path: pilot-ictc
+          sparse-checkout: |
+            docs/authority-matrix.yaml
+            v3/release-readiness-e2-product-mutants.mjs
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: Luke883i/ikant
+          ref: 43ce861a552d44821ffce455f6237905f0994936
+          path: pilot-ikant
+          sparse-checkout: |
+            CONTROL_PLANE_OWNERSHIP_CONTRACT.json
+            ikant/control_plane_ownership.py
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: Luke883i/aosp1
+          ref: 8af1c0ccf8804d64ec9a2e5c844e9bcf0b82babd
+          path: pilot-aosp1
+          sparse-checkout: |
+            authority-matrix.yaml
+            frontend/src/apps/DataIntake/lib/d1PersistedReadback.ts
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.11'
+      - name: Verify frozen pilot revisions and source bytes
+        run: |
+          python -m pip install -e ./cora
+          cd cora
+          cora gold-pilot --ictc-root ../pilot-ictc --ikant-root ../pilot-ikant --aosp1-root ../pilot-aosp1 --output /tmp/gold-three-source.json
+          python -c 'import json; r=json.load(open("/tmp/gold-three-source.json")); assert r["state"]=="SOURCE_READBACK_3_OF_3" and len(r["pilots"])==3 and r["runtime"]=="NOT_EXECUTED" and r["authorization"]=="NONE"'
+      - name: Source-only pilot receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cora-pr19-three-git-readbacks-source-only
+          path: /tmp/gold-three-source.json
+          if-no-files-found: warn
+          retention-days: 14
