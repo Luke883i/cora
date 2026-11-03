@@ -40,6 +40,8 @@ from .archive_intake import inspect_zip, verify_intake
 from .runtime_observation import observe_runtime
 from .observation_fusion import fuse_evidence, verify_fusion
 from .semantic_lattice import lattice_from_evidence, verify_lattice
+from .agent_assurance import load_contract, backward_plan, assess_claims, verify_assessment, STAGES
+from .agent_saturation import saturate_agent_dod
 import zipfile
 import shlex
 
@@ -48,6 +50,28 @@ def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog='cora', description='Scoped, read-only repository evidence')
     sub = p.add_subparsers(dest='cmd', required=True)
     sub.add_parser('version')
+    dp = sub.add_parser('dod-plan', help='Reverse-derive AI agent obligations, not execution or approval')
+    dp.add_argument('--contract', type=Path, default=Path('cora.agent-dod.json'))
+    dp.add_argument('--stage', choices=tuple(STAGES), default='premerge')
+    dp.add_argument('--goal', choices=('G_SOURCE_AGENT', 'G_GOVERNED_AGENT'))
+    dp.add_argument('--output', type=Path)
+    da = sub.add_parser('dod-assess', help='Reconcile untrusted local agent claims without authorization')
+    da.add_argument('observations', type=Path)
+    da.add_argument('--contract', type=Path, default=Path('cora.agent-dod.json'))
+    da.add_argument('--stage', choices=tuple(STAGES), default='premerge')
+    da.add_argument('--goal', choices=('G_SOURCE_AGENT', 'G_GOVERNED_AGENT'))
+    da.add_argument('--output', type=Path)
+    dv = sub.add_parser('verify-dod', help='Replay a DoD assessment against original source and claims')
+    dv.add_argument('report', type=Path)
+    dv.add_argument('--observations', required=True, type=Path)
+    dv.add_argument('--contract', type=Path, default=Path('cora.agent-dod.json'))
+    dv.add_argument('--output', type=Path)
+    ds = sub.add_parser('stress-agent-dod', help='10M preseeded finite semantic model tests; not 10M source mutants')
+    ds.add_argument('--contract', type=Path, default=Path('cora.agent-dod.json'))
+    ds.add_argument('--sessions', type=int, default=10)
+    ds.add_argument('--cases-per-session', type=int, default=1_000_000)
+    ds.add_argument('--require-full', action='store_true')
+    ds.add_argument('--output', type=Path)
     za = sub.add_parser('zip-intake', help='Bounded untrusted ZIP preflight: no execution, history unavailable')
     za.add_argument('archive', type=Path)
     za.add_argument('--expected-tree', help='Caller-supplied expected Git SHA-1 tree (not authenticated)')
@@ -322,7 +346,31 @@ def main(argv: list[str] | None = None) -> int:
     v.add_argument('--output', type=Path)
     args = p.parse_args(argv)
     try:
-        if args.cmd == 'zip-intake':
+        if args.cmd == 'dod-plan':
+            contract=load_contract(args.contract)
+            result=backward_plan(contract,goal=args.goal or STAGES[args.stage])
+            code=0
+        elif args.cmd == 'dod-assess':
+            contract=load_contract(args.contract)
+            claims=json.loads(args.observations.read_text(encoding='utf-8'))
+            result=assess_claims(contract,claims,goal=args.goal or STAGES[args.stage])
+            code=0 if result['goal_status']=='MODEL_ELIGIBLE_UNATTESTED' else 2
+        elif args.cmd == 'verify-dod':
+            contract=load_contract(args.contract)
+            claims=json.loads(args.observations.read_text(encoding='utf-8'))
+            receipt=json.loads(args.report.read_text(encoding='utf-8'))
+            verify_assessment(contract,claims,receipt)
+            result={'schema':'cora-agent-dod-verification/1',
+                    'status':'MODEL_REPLAY_ONLY','report_digest':receipt['report_digest'],
+                    'authorization':'NONE'}
+            code=0
+        elif args.cmd == 'stress-agent-dod':
+            contract=load_contract(args.contract)
+            result=saturate_agent_dod(contract,sessions=args.sessions,
+                                     cases_per_session=args.cases_per_session)
+            code=2 if result['status']=='REFUTED' or (args.require_full and
+                result['status']!='PASS_SCOPED_FINITE_MODEL') else 0
+        elif args.cmd == 'zip-intake':
             result = inspect_zip(args.archive, expected_tree=args.expected_tree,
                                  extract_to=args.extract_to)
             code = 0
