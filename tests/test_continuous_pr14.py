@@ -89,6 +89,14 @@ class GitLifecycleFixtures(unittest.TestCase):
         prev=evaluate(self.repo,self.base,self.head)
         (self.repo/'src/a.py').write_text('uncommitted\n')
         self.assertEqual(prev,evaluate(self.repo,self.base,self.head))
+    def test_postmerge_debt_drift_is_replayed_not_declared_resolved(self):
+        report=evaluate(self.repo,self.base,self.head,phase='postmerge',with_debt=True)
+        self.assertNotIn('DEBT_COMPARISON_UNAVAILABLE',report['blockers'])
+        self.assertEqual(report['debt_delta']['base_commit'],self.base)
+        self.assertEqual(report['debt_delta']['head_commit'],self.head)
+        self.assertEqual(report['authorization'],'NONE')
+        self.assertTrue(verify_gate(self.repo,report))
+
     def test_postmerge_proves_only_git_delta(self):
         report=evaluate(self.repo,self.base,self.head,phase='postmerge')
         self.assertEqual(report['phase'],'postmerge')
