@@ -25,6 +25,8 @@ from .file_lab import examine_file, verify_lab, ai_prompt, record_human_decision
 from .file_lab_stress import stress_file_lab
 from .artifact_roles import artifact_audit, verify_artifact_report
 from .artifact_saturation import saturate
+from .selection import select_file, verify_selection
+from .selection_stress import stress_selection
 import shlex
 
 
@@ -150,6 +152,20 @@ def main(argv: list[str] | None = None) -> int:
     sat.add_argument('--minimum-cases',type=int,default=1000000)
     sat.add_argument('--no-novelty',type=int,default=10000000)
     sat.add_argument('--output',type=Path)
+    sf = sub.add_parser('select-file', help='Git-backed conservative single-file investigation selection')
+    sf.add_argument('repo', type=Path)
+    sf.add_argument('--path', required=True)
+    sf.add_argument('--revision', default='HEAD')
+    sf.add_argument('--ontology', default='cora.ontology.json')
+    sf.add_argument('--output', type=Path)
+    sv = sub.add_parser('verify-selection', help='Reconstruct source-only selection against Git objects')
+    sv.add_argument('selection_json', type=Path)
+    sv.add_argument('--repo', required=True, type=Path)
+    sv.add_argument('--output', type=Path)
+    stsel = sub.add_parser('stress-selection', help='Replay finite synthetic semantic selection mutations')
+    stsel.add_argument('--seed', type=int, default=883)
+    stsel.add_argument('--cases', type=int, default=1000000)
+    stsel.add_argument('--output', type=Path)
     g = sub.add_parser('snapshot')
     g.add_argument('repo', type=Path)
     g.add_argument('--revision', default='HEAD')
@@ -255,6 +271,21 @@ def main(argv: list[str] | None = None) -> int:
             code = 0
         elif args.cmd == 'stress-artifact-semantics':
             result = saturate(seed=args.seed,minimum_cases=args.minimum_cases,no_novelty=args.no_novelty)
+            code = 2 if result['mismatches'] else 0
+        elif args.cmd == 'select-file':
+            result = select_file(args.repo, args.path, revision=args.revision,
+                                 ontology_path=args.ontology)
+            code = 0
+        elif args.cmd == 'verify-selection':
+            candidate = json.loads(args.selection_json.read_text(encoding='utf-8'))
+            verify_selection(args.repo, candidate)
+            result = {'schema':'cora-selection-verification/1',
+                      'status':'VERIFIED_SCOPED', 'commit':candidate['commit'],
+                      'selection_digest':candidate['selection_digest'],
+                      'authorized_action':'NONE'}
+            code = 0
+        elif args.cmd == 'stress-selection':
+            result = stress_selection(seed=args.seed,cases=args.cases)
             code = 2 if result['mismatches'] else 0
         elif args.cmd == 'snapshot':
             result = snapshot(args.repo, args.revision)
