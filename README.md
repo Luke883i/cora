@@ -154,4 +154,4 @@ Before any PR: `python -m unittest discover -s tests -v`, then the repository an
 
 **CORA v1.experimental = package `1.0.0a4`**, a PEP 440/SemVer-style *pre-release identity*, not a stable API promise. The PR candidate is reviewed with checksums and GitHub CI artifacts; no public PyPI package, signed SLSA provenance or GitHub Release is implied. The [DoD](docs/DOD_V1_EXPERIMENTAL.md) distinguishes automated scoped PASS from still-open human and external validation gates.
 
-[License](LICENSE) · [Security reporting](SECURITY.md) · [Source/decision history](docs/ARCHITECTURE.md).
+[License](LICENSE) · [Changelog](CHANGELOG.md) · [Security reporting](SECURITY.md) · [Source/decision history](docs/ARCHITECTURE.md).

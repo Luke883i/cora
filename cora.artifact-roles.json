@@ -284,6 +284,23 @@
         "SOFTWARE_SOURCE"
       ],
       "rationale": "Source-bound lifecycle and human role validation."
+    },
+    {
+      "pattern": "tools/verify_release_readiness.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "RELEASE_TOOL"
+      ],
+      "rationale": "Independent source-only release contract verifier; external authorization blocked."
+    },
+    {
+      "pattern": "tests/test_pr15_release_readiness.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Negative release-metadata, policy, workflow and role contract falsification."
     }
   ]
 }

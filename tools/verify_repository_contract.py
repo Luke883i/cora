@@ -18,6 +18,9 @@ CORE_DOCS = [
     'docs/HOLISTIC_FORENSICS.md', 'docs/DOD_HOLISTIC_FORENSICS.md',
     'docs/ENGINEERING_DEBT.md', 'docs/DOD_ENGINEERING_DEBT.md',
     'AGENTS.md', 'docs/CONTINUOUS_DEVELOPMENT.md', 'docs/DOD_CONTINUOUS.md',
+    'CHANGELOG.md', 'docs/ADR-PR15.md', 'docs/AUDIT_PR15_MAIN.md',
+    'docs/DOD_RELEASE_READINESS.md', 'docs/RELEASE.md',
+    'tools/verify_release_readiness.py', '.github/workflows/ci-release-readiness.yml',
     'GOVERNANCE.md', 'docs/DOD_SELECTION.md', 'docs/FILE_LAB.md', 'docs/STANDARDS_MAINTENANCE_AUDIT.md',
 ]
 COMMANDS = (
@@ -49,6 +52,10 @@ def audit_contract(root: Path, *, readme_override: str | None = None) -> list[st
     for token in ('product', 'software', 'repository', 'not', 'python', 'install', 'audit', 'snapshot'):
         if token not in front:
             errors.append('first-read-missing:' + token)
+    if not readme.startswith('# CORA — Continuous Ontological Repository Assurance'):
+        errors.append('full-product-name-missing')
+    if '**CORA (Continuous Ontological Repository Assurance)**' not in readme:
+        errors.append('first-read-acronym-expansion-missing')
     if not readme.startswith('# CORA'):
         errors.append('missing-title')
     for heading in ('## First five minutes', '## What works', '## Operating boundaries', '## Engineering map'):
@@ -80,6 +87,10 @@ def audit_contract(root: Path, *, readme_override: str | None = None) -> list[st
     try:
         import tomllib
         project = tomllib.loads((root / 'pyproject.toml').read_text('utf-8'))
+        declared_version=project['project']['version']
+        init_source=(root/'src/cora/__init__.py').read_text('utf-8')
+        if f'__version__ = "{declared_version}"' not in init_source or declared_version not in readme:
+            errors.append('release-version-drift')
         assert project['project']['name'] == 'cora-audit'
         assert project['project']['scripts'] == {'cora': 'cora.cli:main'}
         assert project['project']['dependencies'] == []
