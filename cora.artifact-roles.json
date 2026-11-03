@@ -417,6 +417,79 @@
         "TEST"
       ],
       "rationale": "Actual CORA source-model mutants, falsified index-based scenario coverage and epistemic anti-promotion."
+    },
+    {
+      "pattern": "cora.gold-assurance.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Machine-readable R1-R4 reticular DoD and 12 portable gold patterns."
+    },
+    {
+      "pattern": "src/cora/gold_assurance.py",
+      "roles": [
+        "SOFTWARE_SOURCE",
+        "CONTRACT_VERIFIER"
+      ],
+      "rationale": "Pinned Git-blob source pilot and contextual reverse derivation."
+    },
+    {
+      "pattern": "src/cora/gold_mutations.py",
+      "roles": [
+        "SOFTWARE_SOURCE",
+        "CONTRACT_VERIFIER"
+      ],
+      "rationale": "Physical source staging with classified oracle results."
+    },
+    {
+      "pattern": "src/cora/gold_effects.py",
+      "roles": [
+        "SOFTWARE_SOURCE",
+        "CONTRACT_VERIFIER"
+      ],
+      "rationale": "Conservative side-effect inventory without host authority."
+    },
+    {
+      "pattern": "src/cora/gold_saturation.py",
+      "roles": [
+        "SOFTWARE_SOURCE",
+        "CONTRACT_VERIFIER"
+      ],
+      "rationale": "Preseeded 10M bounded fault models."
+    },
+    {
+      "pattern": "tests/test_pr19_gold_assurance.py",
+      "roles": [
+        "TEST",
+        "FIXTURE",
+        "CONTRACT_VERIFIER"
+      ],
+      "rationale": "Physical mutations, actual Git readback and anti-promotion."
+    },
+    {
+      "pattern": ".github/workflows/ci-gold-assurance.yml",
+      "roles": [
+        "WORKFLOW",
+        "CONTRACT_VERIFIER"
+      ],
+      "rationale": "Exact-head model and source-only pilot CI."
+    },
+    {
+      "pattern": "docs/GOLD_ASSURANCE.md",
+      "roles": [
+        "DOCUMENTATION",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Portable pattern migration and limits."
+    },
+    {
+      "pattern": "docs/DOD_PR19_GOLD.md",
+      "roles": [
+        "DOCUMENTATION",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Global/intermediate/local gold DoD."
     }
   ]
 }

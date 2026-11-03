@@ -24,6 +24,9 @@ CORE_DOCS = [
     'GOVERNANCE.md', 'docs/DOD_SELECTION.md', 'docs/FILE_LAB.md', 'docs/STANDARDS_MAINTENANCE_AUDIT.md',
     'cora.agent-dod.json', 'docs/AI_CODE_ASSURANCE.md', 'docs/DOD_PR17_AGENT.md',
     'src/cora/agent_assurance.py', 'src/cora/agent_saturation.py',
+    'cora.gold-assurance.json', 'src/cora/gold_assurance.py', 'src/cora/gold_mutations.py',
+    'src/cora/gold_effects.py', 'src/cora/gold_saturation.py',
+    'docs/GOLD_ASSURANCE.md', 'docs/DOD_PR19_GOLD.md', '.github/workflows/ci-gold-assurance.yml',
 ]
 COMMANDS = (
     'version', 'audit', 'snapshot', 'verify-ledger', 'graph', 'explain',
@@ -39,6 +42,7 @@ COMMANDS = (
     'dev-premerge', 'dev-postmerge', 'verify-dev-gate', 'agent-check', 'stress-continuous',
     'zip-intake', 'verify-zip-intake', 'runtime-observe', 'fuse-evidence', 'verify-fusion',
     'lattice-audit', 'verify-lattice', 'dod-plan', 'dod-assess', 'verify-dod', 'stress-agent-dod',
+    'gold-plan', 'gold-pilot', 'gold-mutate', 'gold-effects', 'stress-gold',
 )
 
 

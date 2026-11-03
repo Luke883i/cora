@@ -61,3 +61,7 @@ See [semantic lattice DoD](DOD_PR16_SEMANTIC_LATTICE.md). Product/readiness docu
 ## PR-17 AI coding agent semantic DoD control plane
 
 The new cora.agent-dod.json declares 24 fault families, four intermediate cuts, two global goals and ten deterministic seeds. src/cora/agent_assurance.py compiles a reverse-derived proof plan and reconciles untrusted agent claims; src/cora/agent_saturation.py challenges its finite model with a separate oracle. Both remain subordinate to the single CORA engine and its source/runtime boundary. No delegated merge or release authority. See AI_CODE_ASSURANCE.md.
+
+## PR-19 gold assimilation without parallel software identities
+
+The **product** remains CORA, with one engine (`cora-engine`) and one independent release verification software identity. The existing `cora` CLI gains five bounded methods: `gold_assurance.py` (contextual R1/DoD/Git readback and R4 pilot), `gold_mutations.py` (physical temp-file mutants, optional consented Docker oracle), `gold_effects.py` (R3 potential side effects, untrusted claims), and `gold_saturation.py` (10M finite typed fault model). The **repository** registers `cora.gold-assurance.json`, 3 actual pinned source pilot pairs, CI/test/roles, the gold method and a scoped DoD. No new coding agent, writer, roadmap or release authority is created.

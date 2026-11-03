@@ -124,11 +124,11 @@ cora verify-lattice /tmp/cora-lattice.json --archive source.zip --zip-report /tm
 
 The [PR-16 source CI](.github/workflows/ci-semantic-lattice.yml) runs complete unit regression with line/branch coverage floors and an independently compared Git batch-subprocess fixture; neither is a production benchmark or sandbox attestation. These capabilities were merged in PR-16, but do not certify Docker isolation or release readiness. The Docker executor is not a safe default for hostile code: independent sandbox, resource and host authorization remain external. See [PR-16 DoD lattice](docs/DOD_PR16_SEMANTIC_LATTICE.md).
 
-## AI coding-agent DoD: retrograde, realistic source mutants and model limits
+## AI coding-agent and contextual gold assurance (PR-17–PR-19)
 
-PR-17 built `dod-plan` (retrograde prerequisites), `dod-assess` (untrusted agent claims), `verify-dod` (replay), and `stress-agent-dod` (10 preseeded × 1M **finite-model** scenarios). PR-18 falsifies and hardens actual fault-mask coverage, mandatory pairs, scenario diversity, the first unresolved falsifier, blank witnesses and external-claim non-promotion. **Six physical CORA model-source mutants** complement 34 earlier policy JSON mutants; none is a real target-repository product test.
+PR-17/18 introduced reverse-derived generic DoD, 10M finite-model scenarios, physical CORA model mutants and non-promoting receipts. PR-19 absorbs 12 gold patterns and R1–R4 through `gold-plan` (contextual DoD), `gold-pilot` (six pinned Git blobs from ICTC/ikant/aosp1), `gold-mutate` (bounded private physical source mutants), `gold-effects` (potential CI effects) and `stress-gold` (10 preseeded × 1M *synthetic* typed faults). No Git source readback alone proves canonical owner correctness, no syntax mutant proves target behavior, and no scanner or CI artifact authenticates hosting/release authority.
 
-Use `cora dod-plan --stage premerge` before coding review and `cora stress-agent-dod --require-full` when changing the assurance model; at release external review is mandatory. See [DevOps method](docs/AI_CODE_ASSURANCE.md), [reticular DoD](docs/DOD_PR17_AGENT.md) and [severe PR-17 historical audit](docs/AUDIT_PR18_MAIN.md).
+Run `cora gold-plan --intent 'Deliver a testable repository change'`, `cora gold-pilot --ictc-root ../ictc --ikant-root ../ikant --aosp1-root ../aosp1` on exact pinned checkouts, and `cora stress-gold --require-full` for changed model policy. Docker target execution is never implicit. Details: [Gold method](docs/GOLD_ASSURANCE.md), [reticular DoD](docs/DOD_PR19_GOLD.md), [PR-17](docs/DOD_PR17_AGENT.md) and [PR-18](docs/AUDIT_PR18_MAIN.md).
 
 ## Continuous development: coding agents must respect CORA
 
