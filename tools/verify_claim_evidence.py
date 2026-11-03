@@ -53,6 +53,7 @@ REQUIRED = (
     "docs/CONVERGENT_ASSURANCE.md", "docs/ARCHITECTURE.md",
     "docs/RELEASE.md", "CHANGELOG.md", "GOVERNANCE.md", "AGENTS.md",
     ".cora/continuous-policy.json", ".github/workflows/ci-documentation.yml",
+    ".github/workflows/ci-convergence.yml",
     "src/cora/cli.py", "src/cora/continuous.py", "src/cora/reticulum.py",
     "src/cora/__init__.py", "tools/verify_documentation.py",
     "cora.ontology.json", "cora.documentation-dod.json", "pyproject.toml",
@@ -318,6 +319,12 @@ def _semantic_oracles(store: SourceStore, errors: list[str]) -> None:
         "authorization" in continuous and
         re.search(r"unverified|not verified|no independent reviewer", r("GOVERNANCE.md"), re.I) is not None,
         errors, "S14:governance-vs-policy-disagreement")
+    convergence_ci = r(".github/workflows/ci-convergence.yml")
+    _ok("CHANGE_INTENT:" in convergence_ci and
+        "github.event.pull_request.title" in convergence_ci and
+        "github.event.head_commit.message" in convergence_ci and
+        convergence_ci.count('--intent "$CHANGE_INTENT"') >= 3,
+        errors, "H3:change-specific-intent-not-replayed")
     workflow = r(".github/workflows/ci-documentation.yml")
     _ok("test_pr21_documentation.py" in workflow and
         "test_pr22_documentation_proofs.py" in workflow and

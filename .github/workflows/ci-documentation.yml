@@ -33,6 +33,13 @@ jobs:
         run: python tools/verify_documentation.py --repo .
       - name: Falsify real disposable Markdown and JSON contract mutations
         run: python -m unittest discover -s tests -p 'test_pr21_documentation.py' -v
+      - name: Bound S01-S18 README claims to exact Git source and replay proof
+        run: |
+          python tools/verify_claim_evidence.py --repo . --revision HEAD --output /tmp/cora-doc-proofs.json
+          python tools/verify_claim_evidence.py --repo . --revision HEAD --verify-report /tmp/cora-doc-proofs.json
+          python -c 'import json; p=json.load(open("/tmp/cora-doc-proofs.json")); assert p["source_status"]=="PASS_SCOPED_SOURCE" and p["source_claim_count"]==18 and p["governed_status"]=="BLOCKED_EXTERNAL" and p["authorization"]=="NONE" and not p["host_review_attested"]'
+      - name: Falsify physical Git-committed semantic, source, DoD and CI mutants
+        run: python -m unittest discover -s tests -p 'test_pr22_documentation_proofs.py' -v
       - name: Product / software / repository contracts and roles
         run: |
           python tools/verify_repository_contract.py --repo .

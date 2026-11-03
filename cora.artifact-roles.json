@@ -627,6 +627,31 @@
         "WORKFLOW"
       ],
       "rationale": "Exact-head documentation and repo regression checks."
+    },
+    {
+      "pattern": "cora.documentation-proofs.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Readme/S01-S18 claimant-to-implementation/test Git proof bindings and falsifiers; no external authority."
+    },
+    {
+      "pattern": "tools/verify_claim_evidence.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Git-blob replay and bounded semantic source counterexamples with revision-bound receipts."
+    },
+    {
+      "pattern": "tests/test_pr22_documentation_proofs.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Physical disposable Git-commit semantic/source/CI mutants and source receipt replay."
     }
   ]
 }
