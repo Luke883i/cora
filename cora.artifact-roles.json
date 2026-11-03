@@ -429,49 +429,49 @@
     {
       "pattern": "src/cora/gold_assurance.py",
       "roles": [
-        "SOFTWARE_SOURCE",
-        "CONTRACT_VERIFIER"
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
       ],
       "rationale": "Pinned Git-blob source pilot and contextual reverse derivation."
     },
     {
       "pattern": "src/cora/gold_mutations.py",
       "roles": [
-        "SOFTWARE_SOURCE",
-        "CONTRACT_VERIFIER"
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
       ],
       "rationale": "Physical source staging with classified oracle results."
     },
     {
       "pattern": "src/cora/gold_effects.py",
       "roles": [
-        "SOFTWARE_SOURCE",
-        "CONTRACT_VERIFIER"
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
       ],
       "rationale": "Conservative side-effect inventory without host authority."
     },
     {
       "pattern": "src/cora/gold_saturation.py",
       "roles": [
-        "SOFTWARE_SOURCE",
-        "CONTRACT_VERIFIER"
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
       ],
       "rationale": "Preseeded 10M bounded fault models."
     },
     {
       "pattern": "tests/test_pr19_gold_assurance.py",
       "roles": [
-        "TEST",
+        "CONTRACT_VERIFIER",
         "FIXTURE",
-        "CONTRACT_VERIFIER"
+        "TEST"
       ],
       "rationale": "Physical mutations, actual Git readback and anti-promotion."
     },
     {
       "pattern": ".github/workflows/ci-gold-assurance.yml",
       "roles": [
-        "WORKFLOW",
-        "CONTRACT_VERIFIER"
+        "CONTRACT_VERIFIER",
+        "WORKFLOW"
       ],
       "rationale": "Exact-head model and source-only pilot CI."
     },
