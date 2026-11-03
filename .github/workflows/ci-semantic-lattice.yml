@@ -32,9 +32,10 @@ jobs:
           cora verify-artifacts /tmp/cora-artifacts.json --repo .
           cora snapshot . --revision HEAD --output /tmp/cora-snapshot.json
           cora verify-ledger /tmp/cora-snapshot.json --repo .
-      - name: C6-C7 negative fixtures and full regression with branch coverage
+      - name: C6-C7 full unit regression with measured branch coverage
+        run: coverage run --branch -m unittest discover -s tests -q
+      - name: C8 independent critical coverage floor
         run: |
-          coverage run --branch -m unittest discover -s tests -q
           coverage json -o /tmp/cora-coverage.json
           python tools/verify_pr16_coverage.py /tmp/cora-coverage.json --output /tmp/cora-coverage-floor.json
       - name: C8 independent Git performance oracle
