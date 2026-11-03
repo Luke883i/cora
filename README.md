@@ -124,9 +124,11 @@ cora verify-lattice /tmp/cora-lattice.json --archive source.zip --zip-report /tm
 
 The [PR-16 source CI](.github/workflows/ci-semantic-lattice.yml) runs complete unit regression with line/branch coverage floors and an independently compared Git batch-subprocess fixture; neither is a production benchmark or sandbox attestation. These capabilities were merged in PR-16, but do not certify Docker isolation or release readiness. The Docker executor is not a safe default for hostile code: independent sandbox, resource and host authorization remain external. See [PR-16 DoD lattice](docs/DOD_PR16_SEMANTIC_LATTICE.md).
 
-## AI coding-agent DoD: retrograde and seeded semantic assurance
+## AI coding-agent DoD: retrograde, realistic source mutants and model limits
 
-Use `dod-plan` at intake/premerge, `dod-assess` for untrusted agent claims, and `verify-dod` to replay original evidence. `stress-agent-dod` executes 10 preseeded 1M-case model sessions, **not** 10M source mutants, test executions or release approvals. Commands: `cora dod-plan --stage premerge` and `cora stress-agent-dod --require-full`. See [AI assistant DevOps method](docs/AI_CODE_ASSURANCE.md) and [reticular DoD](docs/DOD_PR17_AGENT.md).
+PR-17 built `dod-plan` (retrograde prerequisites), `dod-assess` (untrusted agent claims), `verify-dod` (replay), and `stress-agent-dod` (10 preseeded × 1M **finite-model** scenarios). PR-18 falsifies and hardens actual fault-mask coverage, mandatory pairs, scenario diversity, the first unresolved falsifier, blank witnesses and external-claim non-promotion. **Six physical CORA model-source mutants** complement 34 earlier policy JSON mutants; none is a real target-repository product test.
+
+Use `cora dod-plan --stage premerge` before coding review and `cora stress-agent-dod --require-full` when changing the assurance model; at release external review is mandatory. See [DevOps method](docs/AI_CODE_ASSURANCE.md), [reticular DoD](docs/DOD_PR17_AGENT.md) and [severe PR-17 historical audit](docs/AUDIT_PR18_MAIN.md).
 
 ## Continuous development: coding agents must respect CORA
 
