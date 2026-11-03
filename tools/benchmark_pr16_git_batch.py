@@ -33,7 +33,7 @@ def benchmark(count: int = 160) -> dict:
         reference_reads=1
         for entry in listed.split(b'\0'):
             if not entry: continue
-            header,path=entry.split(b'\\t',1)
+            header,path=entry.split(b'\t',1)
             oid=header.split(b' ')[2].decode()
             raw=run(root,'cat-file','blob',oid)
             reference_reads+=1
