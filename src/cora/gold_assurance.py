@@ -144,6 +144,7 @@ def pilot_sources(contract: dict, roots: dict[str, Path]) -> dict:
             row = {"slot":slot,"path":spec["path"],"expected_blob":spec["git_blob"]}
             if repo not in roots:
                 row["state"] = "NOT_OBSERVED"
+                row["reason"] = "NO_EXPLICIT_PINNED_CHECKOUT"
             else:
                 try:
                     data = _git_file(Path(roots[repo]), revision, spec["path"])
@@ -158,8 +159,15 @@ def pilot_sources(contract: dict, roots: dict[str, Path]) -> dict:
         rows.append({"repo":repo,"revision":revision,"state":state,
                      "owner_semantics":"DECLARED_NOT_INDEPENDENTLY_ATTESTED",
                      "files":items})
+    verified = sum(x["state"] == "SOURCE_READBACK_SCOPED" for x in rows)
+    unresolved = [x["repo"] for x in rows if x["state"] != "SOURCE_READBACK_SCOPED"]
     result = {"schema":"cora-gold-pilot/1","pilots":rows,
-              "state":"SOURCE_READBACK_3_OF_3" if all(x["state"]=="SOURCE_READBACK_SCOPED" for x in rows) else "BLOCKED_INCOMPLETE",
+              "state":"SOURCE_READBACK_3_OF_3" if verified == 3 else "BLOCKED_INCOMPLETE",
+              "source_readbacks_verified":verified,
+              "source_readbacks_required":3,
+              "unresolved_repositories":unresolved,
+              "access_provenance":"EXPLICIT_PINNED_LOCAL_GIT_ONLY",
+              "private_repo_access":"NOT_INFERRED_FROM_CORA_GITHUB_TOKEN",
               "runtime":"NOT_EXECUTED","external":"BLOCKED_EXTERNAL","authorization":"NONE"}
     result["digest"] = domain_hash("CORA:gold-pilot:1",result)
     return result
