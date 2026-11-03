@@ -99,9 +99,17 @@ class ConvergenceTest(unittest.TestCase):
         self.assertEqual(len(full["external_locals"]), 9)
         self.assertEqual(len(governed["external_locals"]), 10)
         self.assertEqual(len(governed["prerequisites"]), 28)
-        claimed = {x: MODEL for x in SOURCE_LEAVES + EXTERNAL_LEAVES}
-        s = assess_cut(self.profile["nodes"], "G_SOURCE_CONVERGENCE", claimed)
-        f = assess_cut(self.profile["nodes"], "G_R1_R4_COMPLETE", claimed)
+        source_claims = {x: MODEL for x in SOURCE_LEAVES}
+        full_claims = {x: MODEL for x in SOURCE_LEAVES + EXTERNAL_LEAVES
+                       if x != "E_REVIEW"}
+        s = assess_cut(self.profile["nodes"], "G_SOURCE_CONVERGENCE",
+                       source_claims)
+        f = assess_cut(self.profile["nodes"], "G_R1_R4_COMPLETE", full_claims)
+        # Caller-supplied assertions outside the selected reverse cut must
+        # not be silently accepted by a more permissive implementation.
+        with self.assertRaises(ValueError):
+            assess_cut(self.profile["nodes"], "G_R1_R4_COMPLETE",
+                       {**full_claims, "E_REVIEW": MODEL})
         self.assertEqual(s["status"], "MODEL_ELIGIBLE_UNATTESTED")
         self.assertEqual(f["status"], "BLOCKED_EXTERNAL")
         self.assertEqual(f["states"]["E_R4_PRIVATE"], "BLOCKED_EXTERNAL")
