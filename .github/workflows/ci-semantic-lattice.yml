@@ -1,0 +1,155 @@
+name: CI | PR16 semantic assurance lattice
+on:
+  pull_request:
+  push:
+    branches: [main, feat/pr-16-semantic-assurance-lattice]
+permissions:
+  contents: read
+jobs:
+  semantic-lattice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.13']
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          # PR default is an ephemeral merge commit; our evidence is for the actual head.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Assert exact candidate HEAD (not an implicit PR merge commit)
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - name: Install candidate and scoped coverage oracle
+        run: |
+          # PR07 nested wheel/sdist oracle imports setuptools.build_meta in
+          # a fresh interpreter; Python 3.13 does not bundle setuptools.
+          python -m pip install 'setuptools>=77' 'wheel>=0.45'
+          python -m pip install -e .
+          python -m pip install 'coverage==7.10.7'
+      - name: C5 source, ontology, roles and replay
+        run: |
+          python tools/verify_repository_contract.py --repo . | tee /tmp/cora-repo-contract.json
+          python tools/verify_artifact_roles.py --repo . --output /tmp/cora-roles.json
+          cora artifact-audit . --revision HEAD --output /tmp/cora-artifacts.json
+          cora verify-artifacts /tmp/cora-artifacts.json --repo .
+          cora snapshot . --revision HEAD --output /tmp/cora-snapshot.json
+          cora verify-ledger /tmp/cora-snapshot.json --repo .
+      - name: C6-C7 full unit regression with measured branch coverage
+        run: coverage run --branch --source=src/cora -m unittest discover -s tests -q
+      - name: C8 independent critical coverage floor
+        run: |
+          coverage json -o /tmp/cora-coverage.json
+          python tools/verify_pr16_coverage.py /tmp/cora-coverage.json --output /tmp/cora-coverage-floor.json
+      - name: C8 independent Git performance oracle
+        run: |
+          python tools/benchmark_pr16_git_batch.py --files 160 --output /tmp/cora-git-benchmark.json
+          python -c 'import json; x=json.load(open("/tmp/cora-git-benchmark.json")); assert x["status"]=="PASS_SCOPED" and x["oracle_matches_batch"] and x["batch_git_subprocesses"]<=5'
+      - name: C7 real-CLI ZIP to lattice source-only replay
+        run: |
+          python -c 'import zipfile; z=zipfile.ZipFile("/tmp/cora-pr16-fixture.zip","w"); z.writestr("source/sample.py","pass\n"); z.close()'
+          cora zip-intake /tmp/cora-pr16-fixture.zip --output /tmp/cora-zip.json
+          cora verify-zip-intake /tmp/cora-zip.json --archive /tmp/cora-pr16-fixture.zip
+          cora lattice-audit /tmp/cora-pr16-fixture.zip --zip-report /tmp/cora-zip.json --output /tmp/cora-lattice.json
+          cora verify-lattice /tmp/cora-lattice.json --archive /tmp/cora-pr16-fixture.zip --zip-report /tmp/cora-zip.json
+          python -c 'import json; x=json.load(open("/tmp/cora-lattice.json")); assert x["authorization"]=="NONE" and x["governed_DoD"]=="BLOCKED_EXTERNAL" and x["nodes"][1]["status"]=="NOT_OBSERVED"'
+      - name: Archive evidence with explicit limitations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: cora-pr16-python-${{ matrix.python-version }}-source-evidence-only
+          path: |
+            /tmp/cora-repo-contract.json
+            /tmp/cora-roles.json
+            /tmp/cora-artifacts.json
+            /tmp/cora-snapshot.json
+            /tmp/cora-coverage.json
+            /tmp/cora-coverage-floor.json
+            /tmp/cora-git-benchmark.json
+            /tmp/cora-zip.json
+            /tmp/cora-lattice.json
+          if-no-files-found: warn
+          retention-days: 14
+  diagnostic-unit-discovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      headline: ${{ steps.extract.outputs.headline }}
+      test_status: ${{ steps.extract.outputs.test_status }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.11'
+      - name: Install
+        run: python -m pip install .
+      - id: extract
+        name: Reproduce and classify first unit regression without credentials
+        shell: bash
+        run: |
+          set +e
+          python -m unittest discover -s tests -q > /tmp/cora-unit-diagnostic.txt 2>&1
+          result=$?
+          set -e
+          headline=$(grep -E '^(ERROR: |FAIL: |FAILED|Ran [0-9]+ tests|SyntaxError:|ModuleNotFoundError:|ValueError:)' /tmp/cora-unit-diagnostic.txt | head -n 3 | tr '\n' '_' | cut -c 1-190 || true)
+          if [[ -z "$headline" ]]; then headline="no-standard-unittest-error-line"; fi
+          echo "headline=$headline" >> "$GITHUB_OUTPUT"
+          echo "test_status=$result" >> "$GITHUB_OUTPUT"
+  diagnostic-unit-visible:
+    needs: [diagnostic-unit-discovery]
+    name: "${{ format('Diagnostic unit [{0}]: {1}', needs.diagnostic-unit-discovery.outputs.test_status, needs.diagnostic-unit-discovery.outputs.headline) }}"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Keep untrusted test failure visible without promoting PASS
+        env:
+          TEST_STATUS: ${{ needs.diagnostic-unit-discovery.outputs.test_status }}
+        run: test "$TEST_STATUS" -eq 0
+
+  diagnostic-unit-discovery-313:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      headline: ${{ steps.extract.outputs.headline }}
+      test_status: ${{ steps.extract.outputs.test_status }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.13'
+      - name: Install exactly the PR16 semantic test environment
+        run: |
+          # PR07 nested wheel/sdist oracle imports setuptools.build_meta in
+          # a fresh interpreter; Python 3.13 does not bundle setuptools.
+          python -m pip install 'setuptools>=77' 'wheel>=0.45'
+          python -m pip install -e .
+          python -m pip install 'coverage==7.10.7'
+      - id: extract
+        name: Capture diagnostic summary for Python 3.13 without marking failure PASS
+        shell: bash
+        run: |
+          set +e
+          coverage run --branch --source=src/cora -m unittest discover -s tests -q > /tmp/cora-unit-diagnostic-313.txt 2>&1
+          result=$?
+          set -e
+          headline=$(grep -E '^(ERROR: |FAIL: |FAILED|Ran [0-9]+ tests|AssertionError:|SyntaxError:|ModuleNotFoundError:|TypeError:|ValueError:)' /tmp/cora-unit-diagnostic-313.txt | head -n 4 | tr '\n' '_' | cut -c 1-190 || true)
+          if [[ -z "$headline" ]]; then headline="no-standard-unittest-error-line"; fi
+          echo "headline=$headline" >> "$GITHUB_OUTPUT"
+          echo "test_status=$result" >> "$GITHUB_OUTPUT"
+  diagnostic-unit-visible-313:
+    needs: [diagnostic-unit-discovery-313]
+    name: "${{ format('Diagnostic Python 3.13 [{0}]: {1}', needs.diagnostic-unit-discovery-313.outputs.test_status, needs.diagnostic-unit-discovery-313.outputs.headline) }}"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Preserve failure as failure
+        env:
+          TEST_STATUS: ${{ needs.diagnostic-unit-discovery-313.outputs.test_status }}
+        run: test "$TEST_STATUS" -eq 0

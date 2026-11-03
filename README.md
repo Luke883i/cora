@@ -109,6 +109,21 @@ again for `verify-debt`. A trend shows newly detected vs no-longer-detected
 signals; it does **not** prove a debt was remediated. See [methods](docs/ENGINEERING_DEBT.md)
 and [backward DoD](docs/DOD_ENGINEERING_DEBT.md).
 
+## ZIP intake and optional runtime observation (PR-16 candidate)
+
+`zip-intake` rejects malformed or hostile ZIP paths and classifies a content tree, **not** Git history. `verify-zip-intake` replays that source receipt. `runtime-observe` is separate, explicit opt-in: it requests restrictive Docker flags but does **not** independently attest host isolation or arbitrary target test coverage. `fuse-evidence` reconciles report digests without turning them into authenticated runtime proof; `verify-fusion` replays the reconciliation. `lattice-audit` builds the typed DoD obligation DAG, and `verify-lattice` recomputes it from the original ZIP; neither authorizes release.
+
+```bash
+cora zip-intake source.zip --output /tmp/cora-zip.json
+cora verify-zip-intake /tmp/cora-zip.json --archive source.zip
+cora fuse-evidence /tmp/cora-zip.json --output /tmp/cora-fusion.json
+cora verify-fusion /tmp/cora-fusion.json --zip-report /tmp/cora-zip.json
+cora lattice-audit source.zip --zip-report /tmp/cora-zip.json --output /tmp/cora-lattice.json
+cora verify-lattice /tmp/cora-lattice.json --archive source.zip --zip-report /tmp/cora-zip.json
+```
+
+The [PR-16 source CI](.github/workflows/ci-semantic-lattice.yml) runs complete unit regression with line/branch coverage floors and an independently compared Git batch-subprocess fixture; neither is a production benchmark or sandbox attestation. These are candidate capabilities in `feat/pr-16-semantic-assurance-lattice`, **not** merged or published features. The Docker executor is not a safe default for hostile code: independent sandbox, resource and host authorization remain external. See [PR-16 DoD lattice](docs/DOD_PR16_SEMANTIC_LATTICE.md).
+
 ## Continuous development: coding agents must respect CORA
 
 CORA is a **framework the coding agent must satisfy, not an agent that writes or approves code**. Three additional source-bound checks distinguish PR changes, post-merge monitoring and untrusted agent proposals:

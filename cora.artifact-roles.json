@@ -309,6 +309,72 @@
         "PRODUCT_CONTRACT"
       ],
       "rationale": "Public-facing product version narrative and proposed release history; not publication evidence."
+    },
+    {
+      "pattern": "src/cora/archive_intake.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Bounded source archive contract; not runtime or Git ancestry attestation."
+    },
+    {
+      "pattern": "src/cora/runtime_observation.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Explicit opt-in execution request and untrusted runtime receipt; sandbox not independently attested."
+    },
+    {
+      "pattern": "src/cora/observation_fusion.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Cross-domain evidence reconciliation with mandatory unknown/authorization boundaries."
+    },
+    {
+      "pattern": "tests/test_pr16_*.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "PR-16 negative and contract fixtures; role declaration is not passing-test proof."
+    },
+    {
+      "pattern": "src/cora/semantic_lattice.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Typed obligations and source-replay; no CI, sandbox or approval self-attestation."
+    },
+    {
+      "pattern": "tools/benchmark_pr16_git_batch.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "RELEASE_TOOL"
+      ],
+      "rationale": "Independent Git object oracle and bounded process-count fixture."
+    },
+    {
+      "pattern": "tools/verify_pr16_coverage.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "RELEASE_TOOL"
+      ],
+      "rationale": "Fail-closed branch coverage floor for named critical modules."
+    },
+    {
+      "pattern": "tests/test_pr16_benchmark_contract.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Negative coverage and positive performance fixture, not real-repo calibration."
     }
   ]
 }
