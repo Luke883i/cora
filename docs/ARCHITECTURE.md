@@ -1,6 +1,6 @@
 # Architecture — CORA as product, software and repository
 
-**Scope:** CORA v1.experimental (1.0.0a1 prerelease), built through PR-01–07. The [README](../README.md) is the front door; this document is the engineering explanation. The [committed ontology](../cora.ontology.json) is a *declaration* by project maintainers, not an inference from folder names.
+**Scope:** CORA — Continuous Ontological Repository Assurance, v1.experimental (`1.0.0a4` prerelease candidate), implementation built through merged PR-14. This document describes the current architecture; historical ADRs preserve earlier milestone decisions. The [README](../README.md) is the front door; this document is the engineering explanation. The [committed ontology](../cora.ontology.json) is a *declaration* by project maintainers, not an inference from folder names.
 
 ## Three non-equivalent boundaries
 
@@ -21,6 +21,9 @@ Deployables: **wheel** and **sdist**, presently review-only, not public releases
 | `adapters.py` | Partial manifest readers for Node, Python, Rust, Go and Maven | Declared dependencies, not installed/used dependencies |
 | `closure.py` | Fixed narrow observational obligations and counterexamples; Git-revalidated certificates | `PASS_SCOPED` is **not** authorization to delete |
 | `file_lab.py`, `artifact_roles.py`, `file_lab_stress.py` | Multi-scale read-only per-file dependency dossier, untrusted AI/runtime annotations, human triage intents, synthetic falsifier | No automatic dead-code proof, calibrated probability, external runtime attestation or deletion |
+| `archaeology.py`, `holistic.py`, `group_hypotheses.py` | Commit-bounded development archaeology, co-change groups and AI hypotheses | Historical association is not a runtime dependency or PR-authenticated event |
+| `debt.py`, `process_suite.py` | Multi-scale debt signals and seven bounded read-only process modes | Heuristic debt signals; no calibrated defect rate or executed target test/scanner |
+| `continuous.py`, `continuous_stress.py` | Base-anchored pre/post-merge receipts, agent-claim reconciliation and finite policy falsification | Review routing is not hosting enforcement, verified reviewer identity or deployment truth |
 | `transform.py` | Exact tracked-document path plan, approval, check, owned-file compensating rollback | Not syntax-aware source refactor; user verifier is untrusted/unsandboxed |
 | `guard.py`, `guard_runtime.py` | Vendored local Git/AST boundary check and workflow | Cannot self-enforce against modification; depends on trusted required checks |
 | `mutations.py`, `mutation_evidence.py`, `graph_stress.py`, `adapter_stress.py`, `closure_stress.py`, `transform_stress.py` | Deterministic synthetic oracles | Independent real-world source truth *not* established by large case count |
@@ -36,6 +39,8 @@ Git commit -> snapshot/ledger -> declared ontology + partial adapters
 ```
 
 A single recorded evidence digest *traces a claim*, not a cryptographic attestation of an external reality. Graph edges are typed as declarations/candidates, not generic "usage". `REFUTED` is relative to a claim and a named commit. An empty graph path is not a deletion certificate.
+
+The **continuous lifecycle** path is a distinct observational route: committed BASE policy -> proposed HEAD changed paths -> replayed pre-merge receipt -> independently protected CI and human review outside CORA -> committed merge -> post-merge source/debt delta. The receipts always carry `authorization=NONE`. A green workflow can mean correct detection of an unapproved bootstrap; it cannot authenticate an approver. See [continuous development](CONTINUOUS_DEVELOPMENT.md), [release DoD](DOD_RELEASE_READINESS.md) and [standard release procedure](RELEASE.md).
 
 The optional **maintenance** path is deliberately separate: clean Git worktree -> read-only document rename plan -> explicit digest approval -> controlled owned-file changes -> user-specified test command -> owned-file hash validation -> receipt or compensating rollback. The local guard monitors selected Git/AST changes and must be protected by an independent required check in the hosting platform.
 

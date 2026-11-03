@@ -1,6 +1,6 @@
-# CORA — software architecture evidence and forensic maintenance
+# CORA — Continuous Ontological Repository Assurance
 
-**CORA** is an offline-first, Python 3.11+ command-line **product** for investigating heterogeneous repositories, explaining evidence about software and files, and planning *strictly bounded* changes. **v1.experimental (`1.0.0a3`) is a prerelease candidate, not stable 1.0.0 or a public release.** CORA is **not** a universal dead-code detector, runtime-equivalence prover, or automatic code deleter.
+**CORA (Continuous Ontological Repository Assurance)** is an offline-first, Python 3.11+ command-line **product** for investigating heterogeneous repositories, explaining evidence about software and files, and planning *strictly bounded* changes. **v1.experimental (`1.0.0a4`) is a prerelease candidate, not stable 1.0.0 or a public release.** CORA is **not** a universal dead-code detector, runtime-equivalence prover, or automatic code deleter.
 
 | Identity | What it is | Where its truth lives |
 | --- | --- | --- |
@@ -122,7 +122,19 @@ cora agent-check /tmp/agent-proposal.json --repo .
 cora stress-continuous --seed 883 --cases 1000000
 ```
 
-The pre-merge policy is always read from the **BASE commit**; changing the policy in a PR cannot change how that PR is classified. For this first introduction the base has **no** continuous policy, so CORA returns `BOOTSTRAP_REVIEW_REQUIRED`, **not** independent approval. Review roles are proposed, **not authenticated**, and GitHub required checks/branch protections still need an administrator. A post-merge debt delta is a trend of *signals*, not proven defects or production outcome. Every report has `authorization=NONE`. See [agent instructions](AGENTS.md), [method](docs/CONTINUOUS_DEVELOPMENT.md), [DoD](docs/DOD_CONTINUOUS.md) and [governance](GOVERNANCE.md).
+The pre-merge policy is always read from the **BASE commit**; changing it in a PR cannot change the trusted-base classification. For a new target repository with no base policy, CORA returns `BOOTSTRAP_REVIEW_REQUIRED`; on CORA main the policy was introduced by PR-14. Neither state is independent approval. Review roles are proposed, **not authenticated**, and GitHub required checks/branch protections still need an administrator. A post-merge debt delta is a trend of *signals*, not proven defects or production outcome. Every report has `authorization=NONE`. See [agent instructions](AGENTS.md), [method](docs/CONTINUOUS_DEVELOPMENT.md), [DoD](docs/DOD_CONTINUOUS.md) and [governance](GOVERNANCE.md).
+
+## Release readiness — source checks are not release authorization
+
+Run the independent source-contract check and the CORA-on-CORA methods before preparing a GitHub Release:
+
+```bash
+python tools/verify_release_readiness.py --repo . --output /tmp/cora-release-readiness.json
+cora process-run . --process full --revision HEAD --max-commits 12 --output /tmp/cora-full.json
+cora verify-process /tmp/cora-full.json --repo .
+```
+
+A **source-contract PASS** confirms local metadata/documentation/policy consistency only. A governed release requires independently observed CI at the exact commit, non-author review, enforced branch protection, built and independently checked wheel/sdist, provenance and a release decision. **Current release authority is BLOCKED until external controls are attested.** Follow the [release procedure](docs/RELEASE.md), [DoD lattice](docs/DOD_RELEASE_READINESS.md) and [main self-audit](docs/AUDIT_PR15_MAIN.md). The name expansion was adopted as a present-day product definition; no earlier historical expansion is asserted.
 
 ## Operating boundaries
 
@@ -140,6 +152,6 @@ Before any PR: `python -m unittest discover -s tests -v`, then the repository an
 
 ## Status and release identity
 
-**CORA v1.experimental = package `1.0.0a3`**, a PEP 440/SemVer-style *pre-release identity*, not a stable API promise. The PR candidate is reviewed with checksums and GitHub CI artifacts; no public PyPI package, signed SLSA provenance or GitHub Release is implied. The [DoD](docs/DOD_V1_EXPERIMENTAL.md) distinguishes automated scoped PASS from still-open human and external validation gates.
+**CORA v1.experimental = package `1.0.0a4`**, a PEP 440/SemVer-style *pre-release identity*, not a stable API promise. The PR candidate is reviewed with checksums and GitHub CI artifacts; no public PyPI package, signed SLSA provenance or GitHub Release is implied. The [DoD](docs/DOD_V1_EXPERIMENTAL.md) distinguishes automated scoped PASS from still-open human and external validation gates.
 
 [License](LICENSE) · [Security reporting](SECURITY.md) · [Source/decision history](docs/ARCHITECTURE.md).
