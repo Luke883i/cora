@@ -27,3 +27,9 @@ A candidate source-DoD PASS is justified only when complete GitHub actions (not 
 ## C7 implemented obligation-node contract
 
 `cora lattice-audit ARCHIVE --zip-report ZIP.json` emits `cora-semantic-lattice/1`. `G0` is a source-replayed claim about bytes, `G1` cannot exceed `EXECUTION_REPORTED_UNATTESTED`, `G2` reconciles typed digest dependencies without source-process ancestry authentication, and `G3` is permanently `BLOCKED_EXTERNAL` inside this offline report. C5–C9 remain `REQUIRES_HEAD_CI`/external until verified on GitHub; `verify-lattice` recomputes against original inputs and rejects changed reports. Explicit `NOT_OBSERVED` is a valid source-only outcome, never a surrogate PASS for runtime.
+
+## C8 measurable performance and minimum coverage
+
+`tools/benchmark_pr16_git_batch.py` runs a **fresh temporary Git fixture** with at least 40 objects, reads committed objects individually through an independent Git CLI oracle and compares the digest map to CORA's batched ledger. A scoped PASS requires equality, at most five Git subprocesses (two `cat-file` batches) and no source drift. This is **process-count evidence**, not a claim of a measured production speedup.
+
+`tools/verify_pr16_coverage.py` requires JSON from `coverage run --branch -m unittest discover -s tests -q`, total statement+branch coverage ≥80% and each named critical module ≥70% in that run. No suite count or coverage number derived from synthetic mutation runs may substitute for this execution. The CI records per-Python-version receipts and retains them as expiring artifacts; coverage remains bounded to the exercised tests.

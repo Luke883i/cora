@@ -350,6 +350,31 @@
         "SOFTWARE_SOURCE"
       ],
       "rationale": "Typed obligations and source-replay; no CI, sandbox or approval self-attestation."
+    },
+    {
+      "pattern": "tools/benchmark_pr16_git_batch.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "RELEASE_TOOL"
+      ],
+      "rationale": "Independent Git object oracle and bounded process-count fixture."
+    },
+    {
+      "pattern": "tools/verify_pr16_coverage.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "RELEASE_TOOL"
+      ],
+      "rationale": "Fail-closed branch coverage floor for named critical modules."
+    },
+    {
+      "pattern": "tests/test_pr16_benchmark_contract.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Negative coverage and positive performance fixture, not real-repo calibration."
     }
   ]
 }

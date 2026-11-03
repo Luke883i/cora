@@ -122,7 +122,7 @@ cora lattice-audit source.zip --zip-report /tmp/cora-zip.json --output /tmp/cora
 cora verify-lattice /tmp/cora-lattice.json --archive source.zip --zip-report /tmp/cora-zip.json
 ```
 
-These are candidate capabilities in `feat/pr-16-semantic-assurance-lattice`, **not** merged or published features. The Docker executor is not a safe default for hostile code: independent sandbox, resource and host authorization remain external. See [PR-16 DoD lattice](docs/DOD_PR16_SEMANTIC_LATTICE.md).
+The [PR-16 source CI](.github/workflows/ci-semantic-lattice.yml) runs complete unit regression with line/branch coverage floors and an independently compared Git batch-subprocess fixture; neither is a production benchmark or sandbox attestation. These are candidate capabilities in `feat/pr-16-semantic-assurance-lattice`, **not** merged or published features. The Docker executor is not a safe default for hostile code: independent sandbox, resource and host authorization remain external. See [PR-16 DoD lattice](docs/DOD_PR16_SEMANTIC_LATTICE.md).
 
 ## Continuous development: coding agents must respect CORA
 
