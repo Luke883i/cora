@@ -1,0 +1,23 @@
+{
+  "schema": "cora-pr12-local-receipt/1",
+  "local_basis": "Reconstructed current source snapshot from prior release and PR artifacts; NOT authenticated main Git ancestry",
+  "local_new_fixture_tests": 31,
+  "local_fixture_outcome": "PASS",
+  "stress_cases": 1000000,
+  "stress_replays": 2,
+  "seed": 883,
+  "stress_unique_masks": 1000000,
+  "semantic_output_signatures": 8,
+  "mismatches": 0,
+  "stream_sha256": "eabfc62785eac993ffc34449f0c5b26de26172d9d5e25f2b0ef08d8976b759ca",
+  "real_git_fixtures": true,
+  "real_independently_maintained_production_repositories": false,
+  "source_of_main_history": "GitHub PR#1-11 changed-file records, not source-bound atomic Git replay; remote CI to execute actual Git replay",
+  "not_claimed": [
+    "complete PR provenance",
+    "runtime equivalence",
+    "actual dead-code proof",
+    "automated archive, quarantine or deletion",
+    "AI calibration"
+  ]
+}
