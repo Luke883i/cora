@@ -111,7 +111,7 @@ def observe_runtime(archive: Path, workspace: Path, *, execute: bool = False,
                            '--pids-limit', '64', '--memory', '512m', '--cpus', '1',
                            '--user', str(os.getuid()) + ':' + str(os.getgid()),
                            '--tmpfs', '/tmp:rw,nosuid,nodev,size=64m',
-                           '--mount', 'type=bind,src='+str(work)+',dst=/work,readonly',
+                           '--mount', 'type=bind,src='+str(staged)+',dst=/work,readonly',
                            '--workdir', '/work', '--env', 'PYTHONPATH=/work/src:/work',
                            '--env', 'PYTHONDONTWRITEBYTECODE=1', image, *TEST_COMMAND]
                 with tempfile.TemporaryFile() as stdout, tempfile.TemporaryFile() as stderr:

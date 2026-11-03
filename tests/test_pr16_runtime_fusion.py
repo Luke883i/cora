@@ -73,6 +73,12 @@ class RuntimeFusionFalsification(unittest.TestCase):
         self.assertEqual(r['sandbox_assurance'],'NOT_INDEPENDENTLY_ATTESTED')
         self.assertEqual(r['exit_code'],0)
         cmd=calls[0]
+        # The executed mount must use the independently reconstructed private
+        # archive content, never the mutable caller workspace (TOCTOU guard).
+        mounts=[x for x in cmd if isinstance(x,str) and x.startswith('type=bind,src=')]
+        self.assertEqual(len(mounts),1)
+        self.assertNotIn('src='+str(self.workspace)+',',mounts[0])
+        self.assertIn('cora-runtime-',mounts[0])
         for x in ('--network','none','--read-only','--cap-drop','ALL','--pids-limit','--memory','--cpus','--pull','never','--user'):
             self.assertIn(x,cmd)
         self.assertEqual(cmd[-6:],['python','-m','unittest','discover','-s','tests','-q'][-6:])
