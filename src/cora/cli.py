@@ -34,6 +34,8 @@ from .archaeology_stress import stress_archaeology
 from .debt import debt_scan, verify_debt, compare_debt
 from .debt_stress import stress_debt
 from .process_suite import process_catalog, run_suite, verify_suite, PROCESSES
+from .continuous import evaluate as development_gate, verify_gate, agent_check
+from .continuous_stress import stress_continuous
 import shlex
 
 
@@ -238,6 +240,31 @@ def main(argv: list[str] | None = None) -> int:
     dsx.add_argument('--seed',type=int,default=883)
     dsx.add_argument('--cases',type=int,default=1000000)
     dsx.add_argument('--output',type=Path)
+    gp = sub.add_parser('dev-premerge', help='Git-bound pre-merge risk and reviewer obligations')
+    gp.add_argument('repo',type=Path)
+    gp.add_argument('--base',required=True)
+    gp.add_argument('--head',default='HEAD')
+    gp.add_argument('--strict',action='store_true',help='Exit 2 on missing base policy or blockers')
+    gp.add_argument('--output',type=Path)
+    gm = sub.add_parser('dev-postmerge', help='Post-merge drift and bounded regression obligations')
+    gm.add_argument('repo',type=Path)
+    gm.add_argument('--previous',required=True)
+    gm.add_argument('--head',default='HEAD')
+    gm.add_argument('--with-debt',action='store_true')
+    gm.add_argument('--strict',action='store_true')
+    gm.add_argument('--output',type=Path)
+    gv = sub.add_parser('verify-dev-gate', help='Recompute lifecycle evidence from original Git commits')
+    gv.add_argument('report',type=Path)
+    gv.add_argument('--repo',type=Path,required=True)
+    gv.add_argument('--output',type=Path)
+    ga = sub.add_parser('agent-check', help='Check coding agent proposal against Git; never approve')
+    ga.add_argument('proposal',type=Path)
+    ga.add_argument('--repo',type=Path,required=True)
+    ga.add_argument('--output',type=Path)
+    gs = sub.add_parser('stress-continuous', help='Finite deterministic CI governance model replay')
+    gs.add_argument('--seed',type=int,default=883)
+    gs.add_argument('--cases',type=int,default=1000000)
+    gs.add_argument('--output',type=Path)
     g = sub.add_parser('snapshot')
     g.add_argument('repo', type=Path)
     g.add_argument('--revision', default='HEAD')
@@ -417,6 +444,26 @@ def main(argv: list[str] | None = None) -> int:
         elif args.cmd == 'stress-debt':
             result = stress_debt(seed=args.seed,cases=args.cases)
             code = 2 if result['mismatches'] else 0
+        elif args.cmd == 'dev-premerge':
+            result = development_gate(args.repo,args.base,args.head,phase='premerge')
+            code = 2 if args.strict and result['status'] != 'OBSERVED_REVIEW_REQUIRED' else 0
+        elif args.cmd == 'dev-postmerge':
+            result = development_gate(args.repo,args.previous,args.head,phase='postmerge',with_debt=args.with_debt)
+            code = 2 if args.strict and (result['status'] != 'OBSERVED_REVIEW_REQUIRED' or 'DEBT_COMPARISON_UNAVAILABLE' in result['blockers']) else 0
+        elif args.cmd == 'verify-dev-gate':
+            item = json.loads(args.report.read_text(encoding='utf-8'))
+            verify_gate(args.repo,item)
+            result = {'schema':'cora-continuous-verification/1','status':'SOURCE_REPLAY_VERIFIED',
+                      'base_commit':item['base_commit'],'head_commit':item['head_commit'],
+                      'receipt_digest':item['receipt_digest'],'authorization':'NONE'}
+            code=0
+        elif args.cmd == 'agent-check':
+            item=json.loads(args.proposal.read_text(encoding='utf-8'))
+            result=agent_check(args.repo,item)
+            code=0
+        elif args.cmd == 'stress-continuous':
+            result=stress_continuous(seed=args.seed,cases=args.cases)
+            code=2 if result['mismatches'] else 0
         elif args.cmd == 'snapshot':
             result = snapshot(args.repo, args.revision)
             code = 0

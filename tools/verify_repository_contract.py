@@ -17,6 +17,7 @@ CORE_DOCS = [
     'cora.ontology.json', 'cora.artifact-roles.json', 'pyproject.toml', 'src/cora/cli.py',
     'docs/HOLISTIC_FORENSICS.md', 'docs/DOD_HOLISTIC_FORENSICS.md',
     'docs/ENGINEERING_DEBT.md', 'docs/DOD_ENGINEERING_DEBT.md',
+    'AGENTS.md', 'docs/CONTINUOUS_DEVELOPMENT.md', 'docs/DOD_CONTINUOUS.md',
     'GOVERNANCE.md', 'docs/DOD_SELECTION.md', 'docs/FILE_LAB.md', 'docs/STANDARDS_MAINTENANCE_AUDIT.md',
 ]
 COMMANDS = (
@@ -30,6 +31,7 @@ COMMANDS = (
     'select-file', 'verify-selection', 'stress-selection',
     'holistic-audit', 'verify-holistic', 'archaeology', 'verify-archaeology', 'annotate-groups', 'stress-archaeology',
     'debt-scan', 'verify-debt', 'debt-diff', 'process-list', 'process-run', 'verify-process', 'stress-debt',
+    'dev-premerge', 'dev-postmerge', 'verify-dev-gate', 'agent-check', 'stress-continuous',
 )
 
 
