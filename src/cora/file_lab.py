@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Any
 
 from .adapters import adapter_audit
+from .artifact_roles import committed_rules, roles_for
 from .evidence import domain_hash, valid_path
 from .git_snapshot import snapshot
 from .graph import graph_from_commit
@@ -160,6 +161,18 @@ def examine_file(repo: Path, path: str, *, revision: str = 'HEAD',
         adapter_problem = type(exc).__name__ + ': adapter report unavailable'
     if adapter:
         adapter = {key: adapter[key] for key in ('adapter', 'adapter_version', 'status', 'dependencies', 'unknown', 'source_record_digest')}
+    role_report = {'status': 'UNDECLARED', 'roles': [], 'rules': [],
+                   'source': None, 'manifest_digest': None,
+                   'authority': 'DECLARATION_ONLY_NOT_EXECUTION_PROOF'}
+    try:
+        role_doc = committed_rules(repo, commit)
+    except (ValueError, OSError, KeyError, TypeError):
+        role_doc = None
+    if role_doc:
+        matched = roles_for(path, role_doc['document']['rules'])
+        role_report = {**matched, 'source': role_doc['source'],
+                       'manifest_digest': role_doc['digest'],
+                       'authority': 'DECLARATION_ONLY_NOT_EXECUTION_PROOF'}
     imported_runtime = _runtime(_json_file(runtime_events), commit, path) if runtime_events else None
     static_inbound = [e for e in incoming if e['kind'] == 'static_import_candidate']
     static_outbound = [e for e in outgoing if e['kind'] == 'static_import_candidate']
@@ -171,6 +184,8 @@ def examine_file(repo: Path, path: str, *, revision: str = 'HEAD',
         {'id': 'semantic_equivalence', 'reason': 'no behavioral or contract equivalence proof'},
         {'id': 'retention_legal', 'reason': 'migration, legal, compliance, historical and restoration holds not validated'},
     ]
+    if role_report['status'] in ('UNDECLARED', 'UNCLASSIFIED'):
+        unknown.append({'id': 'artifact_roles', 'reason': 'no committed role declaration for artifact'})
     if graph_problem:
         unknown.append({'id': 'graph', 'reason': graph_problem})
     if adapter_problem:
@@ -209,7 +224,7 @@ def examine_file(repo: Path, path: str, *, revision: str = 'HEAD',
         evidence_ids.add('runtime-claim:' + imported_runtime['digest'])
     imported_ai = _ai(_json_file(ai_hypotheses), commit, path, evidence_ids) if ai_hypotheses else None
     payload = {
-        'schema': SCHEMA, 'commit': commit, 'path': path, 'blob_record': record,
+        'schema': SCHEMA, 'commit': commit, 'path': path, 'blob_record': record, 'artifact_roles': role_report,
         'ledger_digest': ledger['ledger_digest'], 'graph_digest': graph['graph_digest'] if graph else None,
         'levels': {
             'L0_artifact': {'file': path, 'status': record['status']},
@@ -234,7 +249,7 @@ def examine_file(repo: Path, path: str, *, revision: str = 'HEAD',
                    'decision_authority': 'HUMAN_ONLY', 'automatic_change_authorized': False},
         'ai': imported_ai or {'status': 'NOT_SUPPLIED', 'policy': 'AI hypothesis is not evidence'},
         'evidence_ids': sorted(evidence_ids),
-        'scope': 'read_only_single_file; immutable_git; static_python_partial; runtime_user_claims_only',
+                'scope': 'read_only_single_file; immutable_git; static_python_partial; runtime_user_claims_only',
     }
     payload['lab_digest'] = domain_hash('CORA:file-lab:1', payload)
     return payload

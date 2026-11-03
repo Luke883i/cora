@@ -36,3 +36,5 @@ Select **one engineer who has not worked on CORA**. Give only the repository roo
 ## Extension: per-file forensic AI governance
 
 The additional DoD lattice and unresolved hosting/runtime/AI calibration gates are in [STANDARDS_MAINTENANCE_AUDIT.md](STANDARDS_MAINTENANCE_AUDIT.md). In particular, a positive result from `file-lab` is a **narrow observation**, not a removal permit. The human decision artifact records intent but cannot authenticate its signatories or enact operations. Independent CI review, runtime provenance and external labeled accuracy remain BLOCKED.
+
+**v1.experimental update:** the current release-candidate contract, multi-role artifact policy and expanded DoD lattice are at [DOD_V1_EXPERIMENTAL.md](DOD_V1_EXPERIMENTAL.md). The earlier G0 definition remains historical and does not substitute for the current human/hosting/independent pilot gates.

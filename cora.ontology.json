@@ -2,21 +2,34 @@
   "schema": "cora-ontology/1",
   "products": [
     {
-      "id": "cora-cli",
-      "roots": ["src/cora", "tools"],
-      "entrypoints": ["src/cora/cli.py"]
+      "id": "cora",
+      "roots": [
+        "src/cora",
+        "tools"
+      ],
+      "entrypoints": [
+        "src/cora/cli.py"
+      ]
     }
   ],
   "software": [
     {
-      "id": "cora-core",
-      "roots": ["src/cora"],
-      "product_ids": ["cora-cli"]
+      "id": "cora-engine",
+      "roots": [
+        "src/cora"
+      ],
+      "product_ids": [
+        "cora"
+      ]
     },
     {
       "id": "cora-release-verification",
-      "roots": ["tools"],
-      "product_ids": ["cora-cli"]
+      "roots": [
+        "tools"
+      ],
+      "product_ids": [
+        "cora"
+      ]
     }
   ]
 }
