@@ -364,6 +364,7 @@ def main(argv: list[str] | None = None) -> int:
     gp.add_argument('--head',default='HEAD')
     gp.add_argument('--strict',action='store_true',help='Exit 2 on missing base policy or blockers')
     gp.add_argument('--contextual',action='store_true',help='Compose canonical R1-R4 reticulum, static owner graph and selective witness invalidation')
+    gp.add_argument('--intent',help='Change-specific human intent, claimed not authenticated')
     gp.add_argument('--convergence-contract',type=Path,default=Path('cora.convergence-dod.json'))
     gp.add_argument('--witnesses',type=Path,help='Untrusted declared dependency manifest; never authority')
     gp.add_argument('--output',type=Path)
@@ -374,6 +375,7 @@ def main(argv: list[str] | None = None) -> int:
     gm.add_argument('--with-debt',action='store_true')
     gm.add_argument('--strict',action='store_true')
     gm.add_argument('--contextual',action='store_true',help='Compose R1-R4 source obligations on actual merged HEAD')
+    gm.add_argument('--intent',help='Change-specific human intent, claimed not authenticated')
     gm.add_argument('--convergence-contract',type=Path,default=Path('cora.convergence-dod.json'))
     gm.add_argument('--witnesses',type=Path,help='Caller-declared dependencies not attested')
     gm.add_argument('--output',type=Path)
@@ -386,6 +388,7 @@ def main(argv: list[str] | None = None) -> int:
     cv.add_argument('--repo',required=True,type=Path)
     cv.add_argument('--convergence-contract',type=Path,default=Path('cora.convergence-dod.json'))
     cv.add_argument('--witnesses',type=Path)
+    cv.add_argument('--intent',help='Same exact change intent as original report')
     cv.add_argument('--output',type=Path)
     ga = sub.add_parser('agent-check', help='Check coding agent proposal against Git; never approve')
     ga.add_argument('proposal',type=Path)
@@ -692,7 +695,7 @@ def main(argv: list[str] | None = None) -> int:
                 contract=load_convergence_contract(args.convergence_contract)
                 declared=json.loads(args.witnesses.read_text('utf-8')) if args.witnesses else []
                 result=evaluate_contextual(args.repo,args.base,args.head,contract=contract,
-                                           phase='premerge',witnesses=declared)
+                                           phase='premerge',witnesses=declared,intent=args.intent)
                 code=2 if args.strict else 0  # Full R1-R4 remains externally blocked.
             else:
                 result = development_gate(args.repo,args.base,args.head,phase='premerge')
@@ -703,7 +706,7 @@ def main(argv: list[str] | None = None) -> int:
                 declared=json.loads(args.witnesses.read_text('utf-8')) if args.witnesses else []
                 result=evaluate_contextual(args.repo,args.previous,args.head,contract=contract,
                                            phase='postmerge',with_debt=args.with_debt,
-                                           witnesses=declared)
+                                           witnesses=declared,intent=args.intent)
                 code=2 if args.strict else 0  # No self-attested product acceptance.
             else:
                 result = development_gate(args.repo,args.previous,args.head,phase='postmerge',with_debt=args.with_debt)
@@ -712,7 +715,8 @@ def main(argv: list[str] | None = None) -> int:
             contract=load_convergence_contract(args.convergence_contract)
             declared=json.loads(args.witnesses.read_text('utf-8')) if args.witnesses else []
             original=json.loads(args.report.read_text('utf-8'))
-            verify_contextual_gate(args.repo,original,contract=contract,witnesses=declared)
+            verify_contextual_gate(args.repo,original,contract=contract,witnesses=declared,
+                                   intent=args.intent)
             result={'schema':'cora-contextual-verification/1',
                     'status':'REPLAYED_FROM_GIT_NOT_HOST_ATTESTED',
                     'head_commit':original['head_commit'],

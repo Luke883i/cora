@@ -209,7 +209,8 @@ def agent_check(repo:Path,proposal:dict)->dict:
 def evaluate_contextual(repo: Path, base: str, head: str, *,
                         contract: dict, phase: str = "premerge",
                         with_debt: bool = False,
-                        witnesses: list[dict] | None = None) -> dict:
+                        witnesses: list[dict] | None = None,
+                        intent: str | None = None) -> dict:
     """Source-only, generic target adapter over existing lifecycle/ontology.
 
     Static import edges are possible dependencies, not proven callpaths. No
@@ -224,9 +225,15 @@ def evaluate_contextual(repo: Path, base: str, head: str, *,
 
     if phase not in ("premerge", "postmerge"):
         raise ValueError("invalid lifecycle phase")
+    if intent is not None and (not isinstance(intent, str) or
+            not 12 <= len(intent.strip()) <= 1024 or "\\x00" in intent):
+        raise ValueError("bounded change-specific human intent required")
     repo = Path(repo).resolve(strict=True)
     gate = evaluate(repo, base, head, phase=phase, with_debt=with_debt)
     before, after = gate["base_commit"], gate["head_commit"]
+    intent_digest = (domain_hash("CORA:intent-to-proof:1",
+                     {"base": before, "head": after, "intent": intent.strip()})
+                     if intent is not None else None)
     changed = sorted({p for row in gate["changed_paths"]
                       for p in (row["old_path"], row["new_path"])})
     graph = None
@@ -315,6 +322,8 @@ def evaluate_contextual(repo: Path, base: str, head: str, *,
         next_action = "REPAIR_BASE_PINNED_CONTINUOUS_POLICY"
     elif any(x["owner_status"] == "AMBIGUOUS_DECLARED_OWNER" for x in product_context):
         next_action = "QUALIFY_CONFLICTING_PRODUCT_OWNERS"
+    elif intent_digest is None:
+        next_action = "DECLARE_CHANGE_SPECIFIC_HUMAN_INTENT"
     elif imports_unknown:
         next_action = "INVESTIGATE_UNRESOLVED_STATIC_OR_DYNAMIC_CONSUMERS"
     elif any(x["state"] == "INVALIDATED_BY_CHANGED_SOURCE" for x in invalidations["witnesses"]):
@@ -335,6 +344,9 @@ def evaluate_contextual(repo: Path, base: str, head: str, *,
                               "complete_dod": "BLOCKED_EXTERNAL"},
         "contract_digest": domain_hash("CORA:convergence-policy:1", contract),
         "contract_authority": "PR_EDITABLE_PROFILE_NOT_BASE_HOST_AUTHORITY",
+        "intent_digest": intent_digest,
+        "intent_status": ("CALLER_SUPPLIED_UNVERIFIED_BOUND_TO_BASE_HEAD"
+                          if intent_digest else "BLOCKED_MISSING_PER_CHANGE_INTENT"),
         "changed_paths": changed, "candidate_affected_paths": sorted(affected),
         "owner_candidates": product_context,
         "candidate_graph_source": graph["graph_digest"] if graph else None,
@@ -350,7 +362,7 @@ def evaluate_contextual(repo: Path, base: str, head: str, *,
         "external_approval": "BLOCKED_EXTERNAL",
         "next_action": next_action,
         "status": ("DEBT_BLOCKED" if graph is None or gate["status"] == "BLOCKED"
-                   or (need_base_graph and base_graph is None)
+                   or (need_base_graph and base_graph is None) or intent_digest is None
                    else "SOURCE_OBSERVED_REVIEW_REQUIRED"),
         "authorization": "NONE",
     }
@@ -359,7 +371,8 @@ def evaluate_contextual(repo: Path, base: str, head: str, *,
 
 
 def verify_contextual_gate(repo: Path, report: dict, *,
-                           contract: dict, witnesses: list[dict] | None = None) -> bool:
+                           contract: dict, witnesses: list[dict] | None = None,
+                           intent: str | None = None) -> bool:
     """Replay against actual committed Git objects, not a receipt hash alone."""
     if not isinstance(report, dict) or report.get("schema") != "cora-contextual-devops/1":
         raise ValueError("unknown contextual gate format")
@@ -367,7 +380,7 @@ def verify_contextual_gate(repo: Path, report: dict, *,
         repo, report["base_commit"], report["head_commit"],
         contract=contract, phase=report["phase"],
         with_debt=report["continuous_gate"]["debt_delta"] is not None,
-        witnesses=witnesses)
+        witnesses=witnesses, intent=intent)
     if expected != report:
         raise ValueError("contextual report differs from actual Git/source policy")
     return True

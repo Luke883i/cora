@@ -309,8 +309,24 @@ class ConvergenceTest(unittest.TestCase):
                                    "--output", str(out)]), 0)
             report = json.loads(out.read_text())
             self.assertEqual(report["authorization"], "NONE")
+            self.assertEqual(report["intent_status"], "BLOCKED_MISSING_PER_CHANGE_INTENT")
+            self.assertEqual(report["status"], "DEBT_BLOCKED")
             self.assertEqual(main(["verify-contextual-gate", str(out), "--repo", str(repo),
                                    "--convergence-contract", str(CONTRACT)]), 0)
+            intent = "Deliver answer=2 preserving independently testable behavior"
+            self.assertEqual(main(["dev-premerge", str(repo), "--base", base, "--head", head,
+                                   "--contextual", "--intent", intent,
+                                   "--convergence-contract", str(CONTRACT),
+                                   "--output", str(out)]), 0)
+            intent_report = json.loads(out.read_text())
+            self.assertEqual(intent_report["intent_status"],
+                             "CALLER_SUPPLIED_UNVERIFIED_BOUND_TO_BASE_HEAD")
+            self.assertIsNotNone(intent_report["intent_digest"])
+            self.assertEqual(main(["verify-contextual-gate", str(out), "--repo", str(repo),
+                                   "--intent", intent, "--convergence-contract", str(CONTRACT)]), 0)
+            self.assertEqual(main(["verify-contextual-gate", str(out), "--repo", str(repo),
+                                   "--intent", "Contradictory spoofed intent",
+                                   "--convergence-contract", str(CONTRACT)]), 3)
             self.assertEqual(main(["dev-postmerge", str(repo), "--previous", base, "--head", head,
                                    "--contextual", "--convergence-contract", str(CONTRACT),
                                    "--strict", "--output", str(out)]), 2)
