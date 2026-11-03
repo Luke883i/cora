@@ -31,6 +31,9 @@ from .archaeology import mine_history, verify_history
 from .holistic import holistic_audit, verify_holistic
 from .group_hypotheses import group_ai_request, annotate_groups
 from .archaeology_stress import stress_archaeology
+from .debt import debt_scan, verify_debt, compare_debt
+from .debt_stress import stress_debt
+from .process_suite import process_catalog, run_suite, verify_suite, PROCESSES
 import shlex
 
 
@@ -201,6 +204,40 @@ def main(argv: list[str] | None = None) -> int:
     ah.add_argument('--seed',type=int,default=883)
     ah.add_argument('--cases',type=int,default=1000000)
     ah.add_argument('--output',type=Path)
+    ds = sub.add_parser('debt-scan',help='Git-backed multiscale maintenance risk signals')
+    ds.add_argument('repo',type=Path)
+    ds.add_argument('--revision',default='HEAD')
+    ds.add_argument('--max-commits',type=int,default=64)
+    ds.add_argument('--sarif',type=Path,help='Optional UNTRUSTED external SARIF 2.1.0')
+    ds.add_argument('--output',type=Path)
+    dv = sub.add_parser('verify-debt',help='Re-run debt scan against original Git objects')
+    dv.add_argument('report',type=Path)
+    dv.add_argument('--repo',required=True,type=Path)
+    dv.add_argument('--sarif',type=Path,help='Same original untrusted SARIF bytes')
+    dv.add_argument('--output',type=Path)
+    dd = sub.add_parser('debt-diff',help='Compare source-bound debt signals across two commits')
+    dd.add_argument('repo',type=Path)
+    dd.add_argument('--base',required=True)
+    dd.add_argument('--head',default='HEAD')
+    dd.add_argument('--max-commits',type=int,default=64)
+    dd.add_argument('--output',type=Path)
+    pc = sub.add_parser('process-list',help='List safe independent CORA processes')
+    pc.add_argument('--output',type=Path)
+    pr = sub.add_parser('process-run',help='Run one bounded process or full source-only suite')
+    pr.add_argument('repo',type=Path)
+    pr.add_argument('--revision',default='HEAD')
+    pr.add_argument('--process',choices=PROCESSES,default='full')
+    pr.add_argument('--max-commits',type=int,default=64)
+    pr.add_argument('--focus')
+    pr.add_argument('--output',type=Path)
+    pv = sub.add_parser('verify-process',help='Source revalidation of process receipt')
+    pv.add_argument('report',type=Path)
+    pv.add_argument('--repo',required=True,type=Path)
+    pv.add_argument('--output',type=Path)
+    dsx = sub.add_parser('stress-debt',help='1M seeded debt-policy model mutations')
+    dsx.add_argument('--seed',type=int,default=883)
+    dsx.add_argument('--cases',type=int,default=1000000)
+    dsx.add_argument('--output',type=Path)
     g = sub.add_parser('snapshot')
     g.add_argument('repo', type=Path)
     g.add_argument('--revision', default='HEAD')
@@ -349,6 +386,36 @@ def main(argv: list[str] | None = None) -> int:
             code = 0
         elif args.cmd == 'stress-archaeology':
             result = stress_archaeology(seed=args.seed,cases=args.cases)
+            code = 2 if result['mismatches'] else 0
+        elif args.cmd == 'debt-scan':
+            raw = args.sarif.read_bytes() if args.sarif else None
+            result = debt_scan(args.repo,args.revision,max_commits=args.max_commits,sarif_bytes=raw)
+            code = 0
+        elif args.cmd == 'verify-debt':
+            item = json.loads(args.report.read_text(encoding='utf-8'))
+            raw = args.sarif.read_bytes() if args.sarif else None
+            verify_debt(args.repo,item,sarif_bytes=raw)
+            result = {'schema':'cora-debt-verification/1','status':'REPLAYED_FROM_GIT_WITH_OPTIONAL_UNTRUSTED_SARIF',
+                      'commit':item['commit'],'report_digest':item['report_digest']}
+            code = 0
+        elif args.cmd == 'debt-diff':
+            result = compare_debt(args.repo,args.base,args.head,max_commits=args.max_commits)
+            code = 0
+        elif args.cmd == 'process-list':
+            result = process_catalog()
+            code = 0
+        elif args.cmd == 'process-run':
+            result = run_suite(args.repo,args.revision,process=args.process,
+                               max_commits=args.max_commits,focus=args.focus)
+            code = 0 if result['status']!='DEBT_BLOCKED' else 2
+        elif args.cmd == 'verify-process':
+            item = json.loads(args.report.read_text(encoding='utf-8'))
+            verify_suite(args.repo,item)
+            result = {'schema':'cora-process-verification/1','status':'SOURCE_REPLAY_VERIFIED',
+                      'run_digest':item['run_digest'],'commit':item['commit']}
+            code = 0
+        elif args.cmd == 'stress-debt':
+            result = stress_debt(seed=args.seed,cases=args.cases)
             code = 2 if result['mismatches'] else 0
         elif args.cmd == 'snapshot':
             result = snapshot(args.repo, args.revision)
