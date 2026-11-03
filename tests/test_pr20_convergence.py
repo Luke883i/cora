@@ -217,6 +217,36 @@ class ConvergenceTest(unittest.TestCase):
                 verify_contextual_gate(repo, forged, contract=self.profile,
                                        witnesses=manifests)
 
+    def test_deleted_module_recovers_prechange_consumers(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo, base, head = fixture(Path(td) / "delete-source")
+            git(repo, "rm", "src/pkg/a.py")
+            git(repo, "commit", "-qm", "remove imported source module")
+            removed_head = git(repo, "rev-parse", "HEAD")
+            report = evaluate_contextual(repo, head, removed_head,
+                                         contract=self.profile, witnesses=[
+                {"id": "consumer", "dependencies": ["src/pkg/b.py"],
+                 "revision": head, "scope": "SOURCE"},
+                {"id": "independent", "dependencies": ["docs/nothing.md"],
+                 "revision": head, "scope": "SOURCE"},
+            ])
+            self.assertTrue(report["base_candidate_graph_required"])
+            self.assertIsNotNone(report["base_candidate_graph_source"])
+            self.assertIn("src/pkg/a.py", report["changed_paths"])
+            self.assertIn("src/pkg/b.py", report["candidate_affected_paths"])
+            self.assertEqual(report["invalidation"]["witnesses"][0]["state"],
+                             "INVALIDATED_BY_CHANGED_SOURCE")
+            self.assertEqual(report["invalidation"]["witnesses"][1]["state"],
+                             "NOT_INVALIDATED_REQUIRES_REVALIDATION")
+            self.assertEqual(report["authorization"], "NONE")
+            self.assertTrue(verify_contextual_gate(repo, report, contract=self.profile,
+                                                  witnesses=[
+                {"id": "consumer", "dependencies": ["src/pkg/b.py"],
+                 "revision": head, "scope": "SOURCE"},
+                {"id": "independent", "dependencies": ["docs/nothing.md"],
+                 "revision": head, "scope": "SOURCE"},
+            ]))
+
     def test_owner_collision_and_missing_ontology_never_pass(self):
         with tempfile.TemporaryDirectory() as td:
             repo, base, head = fixture(Path(td) / "overlap", ambiguous=True)

@@ -237,17 +237,32 @@ def evaluate_contextual(repo: Path, base: str, head: str, *,
         graph = graph_from_commit(repo, after)
     except (ValueError, OSError, KeyError, TypeError, subprocess.TimeoutExpired) as exc:
         graph_problem = type(exc).__name__
+    # The HEAD graph cannot resolve imports targeting a removed/renamed file.
+    # Reconstruct the BASE graph for these changes or explicitly block the
+    # impact claim instead of silently dropping pre-change consumers.
+    need_base_graph = any(row["status"][0] in ("D", "R", "T")
+                          for row in gate["changed_paths"])
+    base_graph = None
+    base_graph_problem = None
+    if need_base_graph:
+        try:
+            base_graph = graph_from_commit(repo, before)
+        except (ValueError, OSError, KeyError, TypeError, subprocess.TimeoutExpired) as exc:
+            base_graph_problem = type(exc).__name__
     consumers = {}
     imports_unknown = []
     product_context = []
-    if graph is not None and declared is not None:
-        for edge in graph["edges"]:
+    for candidate in (base_graph, graph):
+        if candidate is None:
+            continue
+        for edge in candidate["edges"]:
             if (edge["kind"] == "static_import_candidate" and
                 edge["source"].startswith("file:") and
                 edge["target"].startswith("file:")):
                 target = edge["target"][5:]
                 source = edge["source"][5:]
                 consumers.setdefault(target, set()).add(source)
+    if graph is not None and declared is not None:
         for row in graph["findings"]:
             if row["kind"] in ("dynamic_import_unknown", "relative_import_unresolved",
                                "ambiguous_import", "import_unresolved",
@@ -294,6 +309,8 @@ def evaluate_contextual(repo: Path, base: str, head: str, *,
     model = assess_cut(contract["nodes"], "G_R1_R4_COMPLETE", {})
     if graph is None:
         next_action = "SUPPLY_COMMITTED_ONTOLOGY_AND_REPRODUCE_GRAPH"
+    elif need_base_graph and base_graph is None:
+        next_action = "REPRODUCE_BASE_GRAPH_FOR_REMOVED_OR_RENAMED_SOURCE"
     elif gate["status"] == "BLOCKED":
         next_action = "REPAIR_BASE_PINNED_CONTINUOUS_POLICY"
     elif any(x["owner_status"] == "AMBIGUOUS_DECLARED_OWNER" for x in product_context):
@@ -321,6 +338,9 @@ def evaluate_contextual(repo: Path, base: str, head: str, *,
         "changed_paths": changed, "candidate_affected_paths": sorted(affected),
         "owner_candidates": product_context,
         "candidate_graph_source": graph["graph_digest"] if graph else None,
+        "base_candidate_graph_source": base_graph["graph_digest"] if base_graph else None,
+        "base_candidate_graph_required": need_base_graph,
+        "base_graph_problem": base_graph_problem,
         "unresolved_imports": imports_unknown,
         "graph_problem": graph_problem, "invalidation": invalidations,
         "workflow_effects": effects,
@@ -330,6 +350,7 @@ def evaluate_contextual(repo: Path, base: str, head: str, *,
         "external_approval": "BLOCKED_EXTERNAL",
         "next_action": next_action,
         "status": ("DEBT_BLOCKED" if graph is None or gate["status"] == "BLOCKED"
+                   or (need_base_graph and base_graph is None)
                    else "SOURCE_OBSERVED_REVIEW_REQUIRED"),
         "authorization": "NONE",
     }
