@@ -94,7 +94,7 @@ jobs:
           echo "test_status=$result" >> "$GITHUB_OUTPUT"
   diagnostic-unit-visible:
     needs: [diagnostic-unit-discovery]
-    name: ${{ format('Diagnostic unit [{0}]: {1}', needs.diagnostic-unit-discovery.outputs.test_status, needs.diagnostic-unit-discovery.outputs.headline) }}
+    name: "${{ format('Diagnostic unit [{0}]: {1}', needs.diagnostic-unit-discovery.outputs.test_status, needs.diagnostic-unit-discovery.outputs.headline) }}"
     runs-on: ubuntu-latest
     steps:
       - name: Keep untrusted test failure visible without promoting PASS
