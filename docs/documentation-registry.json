@@ -1,0 +1,393 @@
+{
+  "schema": "cora-documentation-registry/1",
+  "baseline_sha": "ee6da7625dae1e4101e06eb979a348610f39093b",
+  "baseline_markdown_count": 43,
+  "files_expected": 48,
+  "authority": "MAINTAINER_DECLARATION_NOT_INDEPENDENT_ATTESTATION",
+  "documents": [
+    {
+      "path": ".github/PULL_REQUEST_TEMPLATE.md",
+      "group": "01",
+      "kind": "METHOD",
+      "status": "CURRENT",
+      "authority": "DOCUMENTED_SOURCE_SCOPE",
+      "baseline_blob": "89f423514941709a9b3d463873eb7328130620c0"
+    },
+    {
+      "path": "AGENTS.md",
+      "group": "01",
+      "kind": "GOVERNANCE",
+      "status": "CURRENT",
+      "authority": "POLICY_STATEMENT",
+      "baseline_blob": "44df85fc203827dc45bbdedf8e7eee68a14eb3f7"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "group": "01",
+      "kind": "CHANGELOG",
+      "status": "CURRENT",
+      "authority": "DOCUMENTED_SOURCE_SCOPE",
+      "baseline_blob": "80f67139a264eb1a076cb9c85fbf6c20e584891d"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "group": "01",
+      "kind": "METHOD",
+      "status": "CURRENT",
+      "authority": "DOCUMENTED_SOURCE_SCOPE",
+      "baseline_blob": "3b0d9d3f5fc3330e1f528eeee5fa7821c793f5de"
+    },
+    {
+      "path": "GOVERNANCE.md",
+      "group": "01",
+      "kind": "GOVERNANCE",
+      "status": "CURRENT",
+      "authority": "POLICY_STATEMENT",
+      "baseline_blob": "35c829205fae05f00a2044e676e8b42b2d7c2d7d"
+    },
+    {
+      "path": "README.md",
+      "group": "00",
+      "kind": "LANDING",
+      "status": "CURRENT",
+      "authority": "DOCUMENTED_SOURCE_SCOPE",
+      "baseline_blob": "8d52f4509b4789ab675c2895a3d95b5443e8a035"
+    },
+    {
+      "path": "SECURITY.md",
+      "group": "01",
+      "kind": "GOVERNANCE",
+      "status": "CURRENT",
+      "authority": "POLICY_STATEMENT",
+      "baseline_blob": "c4866574c97a845970b2e56776f237d684351551"
+    },
+    {
+      "path": "docs/ADR-PR01.md",
+      "group": "06",
+      "kind": "ADR",
+      "status": "HISTORICAL",
+      "authority": "HISTORICAL_RECORD",
+      "baseline_blob": "96dfedaf7a0f63136e5bd5015b525e1118c72d77"
+    },
+    {
+      "path": "docs/ADR-PR02.md",
+      "group": "06",
+      "kind": "ADR",
+      "status": "HISTORICAL",
+      "authority": "HISTORICAL_RECORD",
+      "baseline_blob": "3944a68c6baf23587a4e24a0736b72d5c256ac82"
+    },
+    {
+      "path": "docs/ADR-PR03.md",
+      "group": "06",
+      "kind": "ADR",
+      "status": "HISTORICAL",
+      "authority": "HISTORICAL_RECORD",
+      "baseline_blob": "8e691b98587b5f3a2deba26b74c68b7bb7b70411"
+    },
+    {
+      "path": "docs/ADR-PR04.md",
+      "group": "06",
+      "kind": "ADR",
+      "status": "HISTORICAL",
+      "authority": "HISTORICAL_RECORD",
+      "baseline_blob": "5e7881c5ee80070c4abbe65b53b4ff85986c18a6"
+    },
+    {
+      "path": "docs/ADR-PR05.md",
+      "group": "06",
+      "kind": "ADR",
+      "status": "HISTORICAL",
+      "authority": "HISTORICAL_RECORD",
+      "baseline_blob": "bc1bdd0f1875dd3514fc2c410f66674e7097a8d1"
+    },
+    {
+      "path": "docs/ADR-PR06.md",
+      "group": "06",
+      "kind": "ADR",
+      "status": "HISTORICAL",
+      "authority": "HISTORICAL_RECORD",
+      "baseline_blob": "a48221021cd7f7a7ab69e24869f8e60f7d40d7b2"
+    },
+    {
+      "path": "docs/ADR-PR07.md",
+      "group": "06",
+      "kind": "ADR",
+      "status": "HISTORICAL",
+      "authority": "HISTORICAL_RECORD",
+      "baseline_blob": "b8252f1c3169172a6e854a83c7761f30dc382b0c"
+    },
+    {
+      "path": "docs/ADR-PR15.md",
+      "group": "06",
+      "kind": "ADR",
+      "status": "HISTORICAL",
+      "authority": "HISTORICAL_RECORD",
+      "baseline_blob": "1ef97dc94b115e7761a2f8da42a9dcc8e048dc7e"
+    },
+    {
+      "path": "docs/AI_CODE_ASSURANCE.md",
+      "group": "04",
+      "kind": "METHOD",
+      "status": "CURRENT",
+      "authority": "DOCUMENTED_SOURCE_SCOPE",
+      "baseline_blob": "0dd7d29d2dd51d98bdefdaeaf629e1db63b5c13c"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "group": "01",
+      "kind": "ARCHITECTURE",
+      "status": "CURRENT",
+      "authority": "DOCUMENTED_SOURCE_SCOPE",
+      "baseline_blob": "4d5300ea435db5e043c970d207386f210862a0c0"
+    },
+    {
+      "path": "docs/ARTIFACT_SEMANTICS.md",
+      "group": "03",
+      "kind": "METHOD",
+      "status": "CURRENT",
+      "authority": "DOCUMENTED_SOURCE_SCOPE",
+      "baseline_blob": "dc87bb6a5e40dc498a23a62ca38f4b803e4f6de6"
+    },
+    {
+      "path": "docs/AUDIT_PR01_PR07.md",
+      "group": "03",
+      "kind": "AUDIT",
+      "status": "HISTORICAL",
+      "authority": "HISTORICAL_RECORD",
+      "baseline_blob": "f4b3ddf3eef9ee189fe529be2465dd781454d62d"
+    },
+    {
+      "path": "docs/AUDIT_PR15_MAIN.md",
+      "group": "02",
+      "kind": "AUDIT",
+      "status": "HISTORICAL",
+      "authority": "HISTORICAL_RECORD",
+      "baseline_blob": "94a0f171286c2b2812d04bbf04a64123698f1a28"
+    },
+    {
+      "path": "docs/AUDIT_PR18_MAIN.md",
+      "group": "04",
+      "kind": "AUDIT",
+      "status": "HISTORICAL",
+      "authority": "HISTORICAL_RECORD",
+      "baseline_blob": "faabef6fb8874ccdd58bda654dbaf853f3d90ea4"
+    },
+    {
+      "path": "docs/AUDIT_PR19_CLOSURE.md",
+      "group": "05",
+      "kind": "AUDIT",
+      "status": "HISTORICAL",
+      "authority": "HISTORICAL_RECORD",
+      "baseline_blob": "50fcf2621c0b65a958b41f5f4bbb43e9e802af6c"
+    },
+    {
+      "path": "docs/CONTINUOUS_DEVELOPMENT.md",
+      "group": "04",
+      "kind": "METHOD",
+      "status": "CURRENT",
+      "authority": "DOCUMENTED_SOURCE_SCOPE",
+      "baseline_blob": "1b46c3c191c62a9cff5fd97a9705cfe543549ff0"
+    },
+    {
+      "path": "docs/CONVERGENT_ASSURANCE.md",
+      "group": "05",
+      "kind": "METHOD",
+      "status": "CURRENT",
+      "authority": "DOCUMENTED_SOURCE_SCOPE",
+      "baseline_blob": "e5ec06f0704c448292a20ae3cfb844bc3c745ed1"
+    },
+    {
+      "path": "docs/DOD.md",
+      "group": "02",
+      "kind": "DOD",
+      "status": "HISTORICAL",
+      "authority": "HISTORICAL_RECORD",
+      "baseline_blob": "98027d36ecd7c3c95fbcc3acd87569abf032e9d4"
+    },
+    {
+      "path": "docs/DOD_CONTINUOUS.md",
+      "group": "04",
+      "kind": "DOD",
+      "status": "CURRENT",
+      "authority": "DECLARED_DOD",
+      "baseline_blob": "8a387a7501c4dfff385cb5f55644074bb7ae9202"
+    },
+    {
+      "path": "docs/DOD_ENGINEERING_DEBT.md",
+      "group": "03",
+      "kind": "DOD",
+      "status": "CURRENT",
+      "authority": "DECLARED_DOD",
+      "baseline_blob": "ee50e7bba74a85c60418a0d8f92bc006e5b4e5c2"
+    },
+    {
+      "path": "docs/DOD_HOLISTIC_FORENSICS.md",
+      "group": "03",
+      "kind": "DOD",
+      "status": "CURRENT",
+      "authority": "DECLARED_DOD",
+      "baseline_blob": "88c894a44144a57164ee5e8dc31bb4bf5f6a5353"
+    },
+    {
+      "path": "docs/DOD_PR16_SEMANTIC_ASSURANCE.md",
+      "group": "05",
+      "kind": "DOD",
+      "status": "HISTORICAL",
+      "authority": "HISTORICAL_RECORD",
+      "baseline_blob": "b44cbb4cbb669106b9579d5ec7e0288713d5c12a"
+    },
+    {
+      "path": "docs/DOD_PR16_SEMANTIC_LATTICE.md",
+      "group": "05",
+      "kind": "DOD",
+      "status": "SCOPED_CURRENT",
+      "authority": "DECLARED_DOD",
+      "baseline_blob": "0939250b64d2554c894c5ebd5898b21e2019d03c"
+    },
+    {
+      "path": "docs/DOD_PR17_AGENT.md",
+      "group": "04",
+      "kind": "DOD",
+      "status": "HISTORICAL",
+      "authority": "HISTORICAL_RECORD",
+      "baseline_blob": "0d168f366171fe0d81018af78ce7b9c440d20995"
+    },
+    {
+      "path": "docs/DOD_PR19_GOLD.md",
+      "group": "05",
+      "kind": "DOD",
+      "status": "SCOPED_CURRENT",
+      "authority": "DECLARED_DOD",
+      "baseline_blob": "cee53781e64faffbaab8a1beca132e684dc5ad8f"
+    },
+    {
+      "path": "docs/DOD_PR20_CONVERGENCE.md",
+      "group": "05",
+      "kind": "DOD",
+      "status": "SCOPED_CURRENT",
+      "authority": "DECLARED_DOD",
+      "baseline_blob": "4ae80741cd42430ef471c125ccb51099d7af6c94"
+    },
+    {
+      "path": "docs/DOD_RELEASE_READINESS.md",
+      "group": "02",
+      "kind": "DOD",
+      "status": "CURRENT",
+      "authority": "DECLARED_DOD",
+      "baseline_blob": "7faa62d0757b1628101eb0667cd071484df4eb8c"
+    },
+    {
+      "path": "docs/DOD_SELECTION.md",
+      "group": "03",
+      "kind": "DOD",
+      "status": "CURRENT",
+      "authority": "DECLARED_DOD",
+      "baseline_blob": "3ca6c5e026d0a18de6e17ebdeb4a2fae2c664df4"
+    },
+    {
+      "path": "docs/DOD_V1_EXPERIMENTAL.md",
+      "group": "02",
+      "kind": "DOD",
+      "status": "CURRENT",
+      "authority": "DECLARED_DOD",
+      "baseline_blob": "742d257669c47697be208de724cd8141894f2cdc"
+    },
+    {
+      "path": "docs/ENGINEERING_DEBT.md",
+      "group": "03",
+      "kind": "METHOD",
+      "status": "CURRENT",
+      "authority": "DOCUMENTED_SOURCE_SCOPE",
+      "baseline_blob": "0bc4bd8726a2a25f8e87d780ae80bf07fe2fa244"
+    },
+    {
+      "path": "docs/FILE_LAB.md",
+      "group": "03",
+      "kind": "METHOD",
+      "status": "CURRENT",
+      "authority": "DOCUMENTED_SOURCE_SCOPE",
+      "baseline_blob": "6331d3aa14e0b70e8c608a247b05a27d541eec0a"
+    },
+    {
+      "path": "docs/FORENSIC_SELF_AUDIT.md",
+      "group": "03",
+      "kind": "AUDIT",
+      "status": "HISTORICAL",
+      "authority": "HISTORICAL_RECORD",
+      "baseline_blob": "6556b56897d40b525d80bd88431208eecc03b45f"
+    },
+    {
+      "path": "docs/GOLD_ASSURANCE.md",
+      "group": "05",
+      "kind": "METHOD",
+      "status": "CURRENT",
+      "authority": "DOCUMENTED_SOURCE_SCOPE",
+      "baseline_blob": "6674e7192424fb9f6533e39fce96bdeaf41c2461"
+    },
+    {
+      "path": "docs/HOLISTIC_FORENSICS.md",
+      "group": "03",
+      "kind": "METHOD",
+      "status": "CURRENT",
+      "authority": "DOCUMENTED_SOURCE_SCOPE",
+      "baseline_blob": "efc80a71d984574757ce4b23a82ef29c8433424f"
+    },
+    {
+      "path": "docs/RELEASE.md",
+      "group": "02",
+      "kind": "METHOD",
+      "status": "CURRENT",
+      "authority": "DOCUMENTED_SOURCE_SCOPE",
+      "baseline_blob": "9c7ce30fea7498ac85de6b3c5065fe8e9077d6af"
+    },
+    {
+      "path": "docs/STANDARDS_MAINTENANCE_AUDIT.md",
+      "group": "03",
+      "kind": "AUDIT",
+      "status": "HISTORICAL",
+      "authority": "HISTORICAL_RECORD",
+      "baseline_blob": "c41d9b14ce3bdff815d447618e0a1737592c70fd"
+    },
+    {
+      "path": "docs/INDEX.md",
+      "group": "07",
+      "kind": "INDEX",
+      "status": "CURRENT",
+      "authority": "DOCUMENTED_SOURCE_SCOPE",
+      "baseline_blob": null
+    },
+    {
+      "path": "docs/GETTING_STARTED.md",
+      "group": "07",
+      "kind": "METHOD",
+      "status": "CURRENT",
+      "authority": "DOCUMENTED_SOURCE_SCOPE",
+      "baseline_blob": null
+    },
+    {
+      "path": "docs/AGENT_ADOPTION.md",
+      "group": "07",
+      "kind": "METHOD",
+      "status": "CURRENT",
+      "authority": "DOCUMENTED_SOURCE_SCOPE",
+      "baseline_blob": null
+    },
+    {
+      "path": "docs/CLI_REFERENCE.md",
+      "group": "07",
+      "kind": "REFERENCE",
+      "status": "CURRENT",
+      "authority": "DOCUMENTED_SOURCE_SCOPE",
+      "baseline_blob": null
+    },
+    {
+      "path": "docs/DOCUMENTATION_DOD.md",
+      "group": "07",
+      "kind": "DOD",
+      "status": "CURRENT",
+      "authority": "DECLARED_DOD",
+      "baseline_blob": null
+    }
+  ]
+}
