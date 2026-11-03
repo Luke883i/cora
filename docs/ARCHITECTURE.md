@@ -52,12 +52,18 @@ Starting at the root, an engineer should find answers without prior PR history: 
 
 `cora.artifact-roles.json` declares overlapping artifact roles for the immutable Git tree. A file may simultaneously be implementation, executable test, contract verifier, fixture and governance mechanism. The role declaration is not proof that the test passes, that a contract is enforced in CI, or that runtime consumers have been observed. The `artifact-audit` command reports unclassified files and unused rules; `verify-artifacts` independently recomputes the report from Git. An incomplete role registry is **not** a deletion oracle.
 
-## PR-16 candidate: source archives and optional observations
+## PR-16 integrated source archives and optional observations
 
-The candidate branch adds `archive_intake.py` (bounded ZIP inspection and source tree identity), `runtime_observation.py` (separately requested Docker unittest invocation), and `observation_fusion.py` (receipt reconciliation without authenticity elevation). The `git_snapshot.py` source reader uses bounded Git cat-file batches. These components do not add a daemon, trusted sandbox, authenticated human reviewer or release authority. A ZIP tree cannot recover Git history; an exit code is not code coverage; a digest is not a signature. `process-run full` remains read-only and does not trigger Docker.
+The integrated PR-16 adds `archive_intake.py` (bounded ZIP inspection and source tree identity), `runtime_observation.py` (separately requested Docker unittest invocation), and `observation_fusion.py` (receipt reconciliation without authenticity elevation). The `git_snapshot.py` source reader uses bounded Git cat-file batches. These components do not add a daemon, trusted sandbox, authenticated human reviewer or release authority. A ZIP tree cannot recover Git history; an exit code is not code coverage; a digest is not a signature. `process-run full` remains read-only and does not trigger Docker.
 
 See [semantic lattice DoD](DOD_PR16_SEMANTIC_LATTICE.md). Product/readiness documentation describes candidate source only until a PR is validated on its exact HEAD and merged by independently governed hosting controls.
 
 ## PR-17 AI coding agent semantic DoD control plane
 
 The new cora.agent-dod.json declares 24 fault families, four intermediate cuts, two global goals and ten deterministic seeds. src/cora/agent_assurance.py compiles a reverse-derived proof plan and reconciles untrusted agent claims; src/cora/agent_saturation.py challenges its finite model with a separate oracle. Both remain subordinate to the single CORA engine and its source/runtime boundary. No delegated merge or release authority. See AI_CODE_ASSURANCE.md.
+
+## PR-19 gold assimilation without parallel software identities
+
+The **product** remains CORA, with one engine (`cora-engine`) and one independent release verification software identity. The existing `cora` CLI gains five bounded methods: `gold_assurance.py` (contextual R1/DoD/Git readback and R4 pilot), `gold_mutations.py` (physical temp-file mutants, optional consented Docker oracle), `gold_effects.py` (R3 potential side effects, untrusted claims), and `gold_saturation.py` (10M finite typed fault model). The **repository** registers `cora.gold-assurance.json`, 3 actual pinned source pilot pairs, CI/test/roles, the gold method and a scoped DoD. No new coding agent, writer, roadmap or release authority is created.
+
+The PR-19 cross-repository source check is **access-scoped**: public ICTC Git blob replay can run on a normal candidate PR; private ikant and aosp1 readbacks remain blocked without independently authorized local checkouts. The CI proves that it refuses to promote 1/3 source evidence into 3/3 and produces a machine-readable blocker. The optional Docker oracle refuses root-host execution and uses the invoking UID/GID so private temporary files remain private. Neither CI-green nor these controls prove product runtime, protected hosting or human release authority.

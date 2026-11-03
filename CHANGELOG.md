@@ -1,3 +1,7 @@
+## Unreleased — contextual gold assurance (PR-19 candidate)
+
+CORA adds R1–R4 contextual source/DoD, physical staged mutants, potential-effect audit, SHA-bound pilot contract (CI verifies public ICTC 1/3; private ikant/aosp1 readbacks remain blocked) and 10M finite semantic-model tests under one CLI. Fixed private CI token-access assumption and Docker temporary UID compatibility. External runtime, full private source pilot, independent review and release remain blocked.
+
 # Changelog — CORA
 
 All entries refer to proposed or merged source changes; a merge is not a published GitHub Release. Python versions use PEP 440.

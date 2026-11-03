@@ -24,3 +24,11 @@ Before coding derive prerequisite cuts: `cora dod-plan --stage intake` then `cor
 ## PR-18 historical anti-regression
 
 Always derive source-model coverage from actual generated fault masks, not iteration positions. Use negative tests against physically changed CORA implementation, distinguish JSON policy mutants from source-code mutants and real third-party product tests. Explain the first unresolved prerequisite and re-pin merged main. See [severe audit](docs/AUDIT_PR18_MAIN.md).
+
+## PR-19 gold source and model governance
+
+An agent must derive intent, owner/subsumption, source dependencies, minimal material slice and independent falsifier before changing software. Use the existing CORA CLI: `gold-plan`, `gold-pilot`, `gold-mutate`, `gold-effects`, `stress-gold`. Pilot checkouts must be at exact pinned HEAD; their Git blobs prove bytes, not behavioral correctness. Physical mutation is in private disposable copies; executing the target requires explicit opt-in to a preinstalled bounded Docker test and does not attest isolation. AST mutation checks are syntax-only. Effect classification and self-issued receipts are not host authority. Ten million synthetic cases are not ten million target mutants. Follow [gold method](docs/GOLD_ASSURANCE.md) and [DoD](docs/DOD_PR19_GOLD.md), preserve BASE policy and human review.
+
+## PR-19: private cross-repository readback is not inherited authority
+
+Never put broad private repository tokens into a CI workflow editable by a candidate PR. A green `gold-public-source-boundary` is evidence that public ICTC source (1/3) was actually read while private ikant/aosp1 were blocked: it is NOT a source readback PASS for all three. Run full private source readback only from separately trusted local checkouts and with independent review of access. The Docker oracle uses calling non-root host UID/GID for private temporary staging; no root host execution or world-readable staging to defeat 0700. Preserve source, runtime and human authority as distinct proof types. See [PR-19 causal audit](docs/AUDIT_PR19_CLOSURE.md).

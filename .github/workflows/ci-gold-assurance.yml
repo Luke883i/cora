@@ -1,0 +1,120 @@
+name: CI | Gold contextual assurance R1-R4
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  gold-unit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.13']
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Exact candidate
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - run: python -m pip install -e .
+      - name: Contextual DoD, real Git and mutant negative tests
+        run: python -m unittest discover -s tests -p 'test_pr19_*.py' -v
+      - name: Repository/role contracts
+        run: |
+          python tools/verify_repository_contract.py --repo .
+          python tools/verify_artifact_roles.py --repo .
+      - name: Plan on actual candidate source
+        run: |
+          cora gold-plan --intent 'Integrate factual cross-repo assurance without self-attested release' --output /tmp/gold-plan.json
+          python -c 'import json; r=json.load(open("/tmp/gold-plan.json")); assert len(r["local_cut"])==12 and r["state"]=="BLOCKED_MATERIAL_PRODUCT_PROOF" and r["authorization"]=="NONE"'
+  gold-model-10m:
+    needs: [gold-unit]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.13'
+      - name: Exact candidate
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - run: python -m pip install -e .
+      - name: Ten million typed scenarios
+        run: cora stress-gold --require-full --output /tmp/gold-10m-a.json
+      - name: Second full deterministic replay
+        run: |
+          cora stress-gold --require-full --output /tmp/gold-10m-b.json
+          cmp /tmp/gold-10m-a.json /tmp/gold-10m-b.json
+      - name: Verify all forced faults and no novelty tail
+        run: |
+          python -c 'import json; r=json.load(open("/tmp/gold-10m-a.json")); assert r["status"]=="PASS_SCOPED_FINITE_MODEL" and r["cases"]==10000000 and r["mismatches"]==0 and r["unsafe_promotions"]==0 and r["real_source_mutations"]==0 and len(r["receipts"])==10 and all(x["observed_singles"]==12 and x["observed_pairs"]==66 and x["preregistered_mismatches"]==0 and x["new_signatures_tail"]==0 for x in r["receipts"])'
+      - name: Finite-model receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cora-pr19-finite-model-only
+          path: |
+            /tmp/gold-10m-a.json
+            /tmp/gold-10m-b.json
+          if-no-files-found: warn
+          retention-days: 14
+  gold-public-source-boundary:
+    name: gold-public-source-boundary (1 verified; 2 private blocked)
+    needs: [gold-unit]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: cora
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: Luke883i/ictc
+          ref: 56362f1bbbed8c0f62380a4bfed2476afb670c4c
+          path: pilot-ictc
+          sparse-checkout: |
+            docs/authority-matrix.yaml
+            v3/release-readiness-e2-product-mutants.mjs
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.11'
+      - name: Verify bounded public source plus fail-closed private access
+        run: |
+          python -m pip install -e ./cora
+          cd cora
+          set +e
+          cora gold-pilot --ictc-root ../pilot-ictc --output /tmp/gold-source-boundary.json
+          status=$?
+          set -e
+          test "$status" -eq 2
+          python -c 'import json; x=json.load(open("/tmp/gold-source-boundary.json")); assert x["state"]=="BLOCKED_INCOMPLETE" and x["source_readbacks_verified"]==1 and x["source_readbacks_required"]==3 and x["unresolved_repositories"]==["Luke883i/ikant","Luke883i/aosp1"] and x["pilots"][0]["state"]=="SOURCE_READBACK_SCOPED" and all(r["state"]=="BLOCKED" and all(f["state"]=="NOT_OBSERVED" and f["reason"]=="NO_EXPLICIT_PINNED_CHECKOUT" for f in r["files"]) for r in x["pilots"][1:]) and x["runtime"]=="NOT_EXECUTED" and x["external"]=="BLOCKED_EXTERNAL" and x["authorization"]=="NONE"'
+      - name: Explicit unresolved access requirement in job summary
+        if: always()
+        run: |
+          echo 'CORA source pilot: ICTC public Git blob readback verified; ikant and aosp1 private checkouts NOT observed.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'This green job verifies **fail-closed 1/3 source evidence**, NOT a 3/3 pilot. Run private readbacks separately in an approved trusted environment; never pass private tokens to PR-controlled workflows.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Preserve private-access blocker and verified public blob receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: cora-pr19-one-public-two-private-blocked
+          path: /tmp/gold-source-boundary.json
+          if-no-files-found: error
+          retention-days: 14
