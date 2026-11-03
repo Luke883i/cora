@@ -58,3 +58,7 @@ Official references: https://csrc.nist.gov/pubs/sp/800/218/final · https://base
 The policy and code live in the same repository that an agent can edit. Until protected GitHub branch rules, independent reviewer permissions and required trusted checks are configured by an administrator, **CORA cannot guarantee** a user or agent cannot bypass them. GitHub ruleset inspection on this private repository currently returns HTTP 403 due to account/plan restrictions, which is an **unverified control**, not proof of enforcement or non-enforcement. This first PR is a **bootstrap** and needs human administrator acceptance.
 
 Post-merge without real CI/deployment telemetry is not an end-to-end operational health gate. Any result that says `OBSERVED_REVIEW_REQUIRED` is an audit signal, not a merge authorization. No automated deletion, code rewrite, release or deployment is performed by these new tools.
+
+### Review artifact retention
+
+The PR workflow uploads only JSON review receipts and deterministic model reports for **14 days**; the post-merge job uploads its JSON drift receipt for **30 days**. These are expiring review artefacts, not authoritative durable records, signatures, SLSA attestations or a replacement for an approved record system. Output paths and CI artifacts can still disclose repository metadata, so use repository-appropriate access controls. The workflow never includes source files in these uploads.

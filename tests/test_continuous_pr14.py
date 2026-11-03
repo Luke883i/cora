@@ -136,6 +136,14 @@ class ContractFixtures(unittest.TestCase):
         rules=json.loads(path.read_text(encoding='utf-8'))
         self.assertEqual(validate_declarations(rules)['schema'],'cora-artifact-roles/1')
 
+    def test_workflow_persists_review_receipts_without_privileged_event(self):
+        workflow=(Path(__file__).resolve().parents[1]/'.github/workflows/ci-continuous-development.yml').read_text()
+        self.assertNotIn('pull_request_target:',workflow)
+        self.assertIn('contents: read',workflow)
+        self.assertEqual(workflow.count('upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02'),2)
+        self.assertIn('retention-days: 14',workflow)
+        self.assertIn('retention-days: 30',workflow)
+
     def test_model_oracle_exhaustive_first_10000(self):
         for mask in range(10000):self.assertEqual(observed_policy(mask),independent_truth_table(mask))
     def test_small_deterministic_replay(self):

@@ -40,6 +40,17 @@ jobs:
           cora stress-continuous --seed 883 --cases 1000000 --output /tmp/gov-b.json
           cmp /tmp/gov-a.json /tmp/gov-b.json
           python -c 'import json; x=json.load(open("/tmp/gov-a.json")); assert x["cases"]==1000000 and x["mismatches"]==0 and x["distinct_input_masks"]==1000000'
+      - name: Preserve premerge receipt and seed reproducibility samples
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: cora-premerge-python-${{ matrix.python-version }}-review-only
+          path: |
+            /tmp/premerge.json
+            /tmp/gov-a.json
+            /tmp/gov-b.json
+          if-no-files-found: warn
+          retention-days: 14
   postmerge:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -61,3 +72,11 @@ jobs:
           cora dev-postmerge . --previous "$PREVIOUS_SHA" --head HEAD --with-debt --output /tmp/postmerge.json
           cora verify-dev-gate /tmp/postmerge.json --repo .
           python -c 'import json; x=json.load(open("/tmp/postmerge.json")); assert x["authorization"]=="NONE" and x["phase"]=="postmerge"; assert "DEBT_COMPARISON_UNAVAILABLE" not in x["blockers"]'
+      - name: Preserve postmerge debt and source review receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: cora-postmerge-review-only
+          path: /tmp/postmerge.json
+          if-no-files-found: warn
+          retention-days: 30
