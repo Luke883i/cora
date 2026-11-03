@@ -43,23 +43,23 @@ def adversarial_case(readme: str, family: int, variant: int) -> tuple[str, str]:
         return mutation(readme, "</details>",
                         f"</incorrect-fold-{suffix}>"), "navigation-disclosure-unbalanced"
     if family == 5:
-        return mutation(readme,
+        return (mutation(readme,
                         "**First-time user:** [Getting started](docs/GETTING_STARTED.md)",
                         f"**First-time user:** [wrong journey](docs/NONEXISTENT-{suffix}.md)"),
-                        "navigation-reader-route:First-time user"
+                        "navigation-reader-route:First-time user")
     if family == 6:
-        return mutation(readme,
+        return (mutation(readme,
                         "**Coding assistant or reviewer:** [Agent adoption](docs/AGENT_ADOPTION.md)",
                         f"**Coding assistant or reviewer:** [wrong agent guide](docs/NONEXISTENT-{suffix}.md)"),
-                        "navigation-reader-route:Coding assistant or reviewer"
+                        "navigation-reader-route:Coding assistant or reviewer")
     if family == 7:
-        return mutation(readme, "engine [\x60src/cora/\x60](src/cora/)",
+        return (mutation(readme, "engine [\x60src/cora/\x60](src/cora/)",
                         f"engine [\x60unrelated-{suffix}\x60](src/not-a-cora-package-{suffix}/)"),
-                        "navigation-lens-target:Software:src/cora/"
+                        "navigation-lens-target:Software:src/cora/")
     if family == 8:
-        return mutation(readme, "**Decision rights are external:**",
+        return (mutation(readme, "**Decision rights are external:**",
                         f"**Self-issued authority {suffix}:**"),
-                        "navigation-critical-boundary:**Decision rights are external:**"
+                        "navigation-critical-boundary:**Decision rights are external:**")
     if family == 9:
         return (readme + f"\nCORA automatically approves merges for {suffix}.\n",
                 "navigation-authority-promotion")
