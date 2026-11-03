@@ -28,6 +28,9 @@ CORE_DOCS = [
     'src/cora/gold_effects.py', 'src/cora/gold_saturation.py',
     'docs/GOLD_ASSURANCE.md', 'docs/DOD_PR19_GOLD.md', '.github/workflows/ci-gold-assurance.yml',
     'docs/AUDIT_PR19_CLOSURE.md',
+    'cora.convergence-dod.json', 'src/cora/reticulum.py',
+    'docs/CONVERGENT_ASSURANCE.md', 'docs/DOD_PR20_CONVERGENCE.md',
+    '.github/workflows/ci-convergence.yml',
 ]
 COMMANDS = (
     'version', 'audit', 'snapshot', 'verify-ledger', 'graph', 'explain',
@@ -44,6 +47,7 @@ COMMANDS = (
     'zip-intake', 'verify-zip-intake', 'runtime-observe', 'fuse-evidence', 'verify-fusion',
     'lattice-audit', 'verify-lattice', 'dod-plan', 'dod-assess', 'verify-dod', 'stress-agent-dod',
     'gold-plan', 'gold-pilot', 'gold-mutate', 'gold-effects', 'stress-gold',
+    'convergence-plan', 'verify-contextual-gate', 'stress-convergence',
 )
 
 
