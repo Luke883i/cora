@@ -226,7 +226,7 @@ def evaluate_contextual(repo: Path, base: str, head: str, *,
     if phase not in ("premerge", "postmerge"):
         raise ValueError("invalid lifecycle phase")
     if intent is not None and (not isinstance(intent, str) or
-            not 12 <= len(intent.strip()) <= 1024 or "\\x00" in intent):
+            not 12 <= len(intent.strip()) <= 1024 or chr(0) in intent):
         raise ValueError("bounded change-specific human intent required")
     repo = Path(repo).resolve(strict=True)
     gate = evaluate(repo, base, head, phase=phase, with_debt=with_debt)

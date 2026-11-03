@@ -274,6 +274,29 @@ class ConvergenceTest(unittest.TestCase):
             self.assertNotEqual(source["digest"], post["digest"])
             self.assertTrue(verify_contextual_gate(repo, post, contract=self.profile))
 
+    def test_intent_validation_and_base_head_digest_is_stable(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo, base, head = fixture(Path(td) / "intent")
+            intent = "Human requests a reversible behavior delta with a test oracle"
+            first = evaluate_contextual(repo, base, head, contract=self.profile,
+                                        intent=intent)
+            second = evaluate_contextual(repo, base, head, contract=self.profile,
+                                         intent=intent)
+            self.assertEqual(first["intent_digest"], second["intent_digest"])
+            self.assertEqual(first["intent_status"],
+                             "CALLER_SUPPLIED_UNVERIFIED_BOUND_TO_BASE_HEAD")
+            self.assertTrue(verify_contextual_gate(repo, first,
+                                                   contract=self.profile, intent=intent))
+            with self.assertRaises(ValueError):
+                verify_contextual_gate(repo, first, contract=self.profile,
+                                       intent="Different stated outcome, same source")
+            with self.assertRaises(ValueError):
+                evaluate_contextual(repo, base, head, contract=self.profile,
+                                    intent="embedded" + chr(0) + "nul is illegal in intent")
+            no_intent = evaluate_contextual(repo, base, head, contract=self.profile)
+            self.assertEqual(no_intent["status"], "DEBT_BLOCKED")
+            self.assertEqual(no_intent["intent_digest"], None)
+
     def test_preseeded_model_replay_and_falsified_generator(self):
         r = saturate_convergence(self.profile, sessions=1, cases_per_session=3000)
         self.assertEqual(r, saturate_convergence(self.profile, sessions=1, cases_per_session=3000))
