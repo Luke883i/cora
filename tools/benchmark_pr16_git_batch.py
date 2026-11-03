@@ -63,7 +63,7 @@ def main() -> int:
     p.add_argument('--output',type=Path)
     a=p.parse_args()
     result=benchmark(a.files)
-    data=json.dumps(result,indent=2,sort_keys=True)+'\\n'
+    data=json.dumps(result,indent=2,sort_keys=True)+'\n'
     if a.output:a.output.write_text(data,encoding='utf-8')
     else:print(data)
     return 0 if result['status']=='PASS_SCOPED' else 2

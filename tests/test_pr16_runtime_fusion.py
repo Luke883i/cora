@@ -96,9 +96,9 @@ class RuntimeFusionFalsification(unittest.TestCase):
             self.assertNotIn('src='+str(self.workspace)+',',mounted)
             self.assertTrue(kwargs.get('preexec_fn'))
             return subprocess.CompletedProcess(command,0)
-        with patch('cora.runtime_observation.shutil.which',return_value='/usr/bin/docker'), \\
-             patch('cora.runtime_observation.os.getuid',return_value=1001), \\
-             patch('cora.runtime_observation.os.getgid',return_value=1001), \\
+        with patch('cora.runtime_observation.shutil.which',return_value='/usr/bin/docker'), \
+             patch('cora.runtime_observation.os.getuid',return_value=1001), \
+             patch('cora.runtime_observation.os.getgid',return_value=1001), \
              patch('cora.runtime_observation.subprocess.run',side_effect=fake):
             receipt=observe_runtime(self.archive,self.workspace,execute=True,image=IMAGE)
         self.assertEqual(receipt['execution_status'],'RUN_REPORTED_UNATTESTED')

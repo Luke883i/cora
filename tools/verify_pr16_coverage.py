@@ -37,7 +37,7 @@ def main() -> int:
     p.add_argument('--output',type=Path)
     a=p.parse_args()
     report=verify(a.coverage_json)
-    data=json.dumps(report,indent=2,sort_keys=True)+'\\n'
+    data=json.dumps(report,indent=2,sort_keys=True)+'\n'
     if a.output:a.output.write_text(data,encoding='utf-8')
     else:print(data)
     return 0 if report['status']=='PASS_SCOPED' else 2
