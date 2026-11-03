@@ -55,7 +55,7 @@ jobs:
             cora dev-postmerge . --previous "$BASE_SHA" --head "$HEAD_SHA" --contextual --intent "Review bounded R1-R4 convergence source and assert no external approval" --output /tmp/cora-context.json
           fi
           cora verify-contextual-gate /tmp/cora-context.json --repo . --intent "Review bounded R1-R4 convergence source and assert no external approval"
-          python -c 'import json; p=json.load(open("/tmp/cora-context.json")); assert p["head_commit"] and p["authorization"]=="NONE" and p["canonical_lattice"]["complete_dod"]=="BLOCKED_EXTERNAL" and p["mutations"]=="NOT_EXECUTED" and p["contract_authority"]=="PR_EDITABLE_PROFILE_NOT_BASE_HOST_AUTHORITY"'
+          python -c 'import json; p=json.load(open("/tmp/cora-context.json")); assert p["head_commit"] and p["authorization"]=="NONE" and p["status"]=="SOURCE_OBSERVED_REVIEW_REQUIRED" and p["continuous_gate"]["base_policy_digest"] and p["candidate_graph_source"] and p["graph_problem"] is None and p["intent_status"]=="CALLER_SUPPLIED_UNVERIFIED_BOUND_TO_BASE_HEAD" and p["intent_digest"] and p["canonical_lattice"]["complete_dod"]=="BLOCKED_EXTERNAL" and p["external_approval"]=="BLOCKED_EXTERNAL" and p["mutations"]=="NOT_EXECUTED" and p["contract_authority"]=="PR_EDITABLE_PROFILE_NOT_BASE_HOST_AUTHORITY"'
   convergent-model-10m:
     name: convergent-model-10m-twice
     needs: [convergent-unit]
