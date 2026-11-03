@@ -121,6 +121,81 @@ def validate_dod(root: Path, errors: list[str]) -> None:
         errors.append("documentation-dod-invalid:" + type(exc).__name__)
 
 
+# PR-23: bounded editorial/navigation predicates, not a second authority.
+# All paths remain checked for existence and reachability by verify().
+NAVIGATION_LENSES = {
+    "Product": ("docs/GETTING_STARTED.md", "docs/DOD_V1_EXPERIMENTAL.md", "docs/RELEASE.md"),
+    "Software": ("src/cora/", "tools/", "docs/ARCHITECTURE.md", "docs/CLI_REFERENCE.md"),
+    "Repository": ("tests/", ".github/workflows/", "cora.ontology.json",
+                   "docs/INDEX.md", "CHANGELOG.md"),
+    "Governance": ("GOVERNANCE.md", "SECURITY.md", "CONTRIBUTING.md",
+                   ".github/PULL_REQUEST_TEMPLATE.md", "LICENSE"),
+    "Evidence and DoD": ("docs/CONTINUOUS_DEVELOPMENT.md",
+                         "docs/CONVERGENT_ASSURANCE.md", "docs/DOCUMENTATION_DOD.md",
+                         "cora.documentation-proofs.json", "tools/verify_claim_evidence.py"),
+}
+NAVIGATION_READERS = {
+    "First-time user": ("docs/GETTING_STARTED.md", "docs/ARCHITECTURE.md"),
+    "Coding assistant or reviewer": ("docs/AGENT_ADOPTION.md",
+                                     "AGENTS.md", "docs/CONTINUOUS_DEVELOPMENT.md"),
+    "Forensic investigator": ("docs/FILE_LAB.md", "docs/HOLISTIC_FORENSICS.md",
+                              "docs/ENGINEERING_DEBT.md"),
+    "Product or release owner": ("GOVERNANCE.md", "SECURITY.md", "docs/RELEASE.md"),
+    "Full documentation, history and contracts": ("docs/INDEX.md",
+                                                 "docs/DOCUMENTATION_DOD.md"),
+}
+
+
+def verify_progressive_readme(readme: str) -> list[str]:
+    """Verify finite source navigation; not human usability or semantic completeness."""
+    errors: list[str] = []
+    front = readme.split("## How CORA works", 1)[0]
+    for visible in ("**Current status:**", "**Recommended use:**",
+                    "**Audience and conditions:**", "**Open source license:**",
+                    "[MIT](LICENSE)", "Python 3.11+", "1.0.0a4", "not a stable API"):
+        if visible not in front:
+            errors.append("navigation-first-screen:" + visible)
+    if "not a coding agent" not in front.lower().replace("*", ""):
+        errors.append("navigation-first-screen:agent-boundary")
+    try:
+        section = readme.split("## Documentation by goal\n", 1)[1].split(
+            "\n## Operating boundaries", 1)[0]
+    except IndexError:
+        return sorted(set(errors + ["navigation-section-missing"]))
+    prefix = section.split("<details>", 1)[0]
+    for reader, destinations in NAVIGATION_READERS.items():
+        label = "**" + reader + ":**"
+        candidate = next((line for line in prefix.splitlines() if label in line), "")
+        if not candidate or any(dest not in candidate for dest in destinations):
+            errors.append("navigation-reader-route:" + reader)
+    blocks = re.findall(r"<details>\s*<summary>([^<\n]+)</summary>(.*?)</details>",
+                        section, flags=re.DOTALL)
+    if (section.count("<details>") != len(NAVIGATION_LENSES) or
+        section.count("</details>") != len(NAVIGATION_LENSES) or
+        section.count("<summary>") != len(NAVIGATION_LENSES) or
+        len(blocks) != len(NAVIGATION_LENSES) or "<details open" in section):
+        errors.append("navigation-disclosure-unbalanced")
+    names = [m[0].split(" | ", 1)[0] for m in blocks]
+    if names != list(NAVIGATION_LENSES):
+        errors.append("navigation-lenses-duplicated-or-reordered")
+    for (name, body), expected in zip(blocks, NAVIGATION_LENSES):
+        if name.split(" | ", 1)[0] != expected:
+            continue
+        for target in NAVIGATION_LENSES[expected]:
+            if target not in body:
+                errors.append("navigation-lens-target:" + expected + ":" + target)
+    for term in ("**Decision rights are external:**", "**Source of record:**",
+                 "**Why:**", "**Runtime:**", "**Read in order:**"):
+        if term not in section:
+            errors.append("navigation-critical-boundary:" + term)
+    if re.search(r"\bCORA (?:automatically approves merges|publishes releases automatically"
+                 r"|independently certifies reviewers)\b", readme, re.I):
+        errors.append("navigation-authority-promotion")
+    if re.search(r"<(?:script|iframe|object|embed)\b", section, re.I):
+        errors.append("navigation-unsupported-interaction")
+    return sorted(set(errors))
+
+
 def verify(root: Path) -> list[str]:
     root = root.resolve()
     errors: list[str] = []
@@ -213,6 +288,9 @@ def verify(root: Path) -> list[str]:
     except (OSError, SyntaxError):
         errors.append("cli-reference-unreadable")
     readme = (root / "README.md").read_text("utf-8")
+    errors.extend(verify_progressive_readme(readme))
+    if not (root / "LICENSE").is_file() or not (root / "LICENSE").read_text("utf-8").startswith("MIT License"):
+        errors.append("navigation-mit-license-file-drift")
     required = ("# CORA — Continuous Ontological Repository Assurance",
                 "**CORA (Continuous Ontological Repository Assurance)**",
                 "## First five minutes", "## What works today",
