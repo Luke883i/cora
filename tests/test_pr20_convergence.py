@@ -189,7 +189,8 @@ class ConvergenceTest(unittest.TestCase):
             self.assertIn("src/pkg/b.py", r["candidate_affected_paths"])
             self.assertEqual(r["candidate_affected_paths"],
                              sorted(r["candidate_affected_paths"]))
-            self.assertEqual(r["owner_candidates"][0]["declared_products"], ["demo"])
+            owned = next(x for x in r["owner_candidates"] if x["path"] == "src/pkg/a.py")
+            self.assertEqual(owned["declared_products"], ["demo"])
             self.assertEqual([x["state"] for x in r["invalidation"]["witnesses"]],
                              ["INVALIDATED_BY_CHANGED_SOURCE",
                               "INVALIDATED_BY_CHANGED_SOURCE",
