@@ -20,3 +20,7 @@ When adding or changing files, update `cora.artifact-roles.json` to preserve all
 ## Debt and process DoD
 
 Run `python -m unittest discover -s tests -q`, `python tools/verify_repository_contract.py --repo .`, and the dedicated `test_pr13_debt_governance.py` fixture suite before requesting review. For a new debt rule, document its AST/Git/third-party provenance, uncertainty, false-positive counterexamples, review category, owner role and a non-destructive remediation hypothesis. The `full` process must never execute repository scripts, AI models, or automatically remediate findings. CI must pass on the exact reviewed commit; branch protection must be separately configured and verified.
+
+## Continuous PR and coding-agent contract
+
+After committing a proposed change, use `cora dev-premerge . --base BASE --head HEAD --output /tmp/pre.json` and `cora verify-dev-gate /tmp/pre.json --repo .`. Every PR must distinguish source-bound facts, tests independently executed, agent assertions, unresolved runtime/consumer questions and human reviewers. An agent may submit a `cora-agent-proposal/1` record for `cora agent-check`; the result is **never** approval or verified test execution. After integration, `cora dev-postmerge` records source drift and optionally compares debt signals. Consult [AGENTS.md](AGENTS.md) and [continuous DoD](docs/DOD_CONTINUOUS.md). Do not assume branch protections exist merely because CI files are present.

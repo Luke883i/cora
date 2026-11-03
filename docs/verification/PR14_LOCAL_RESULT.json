@@ -1,0 +1,25 @@
+{
+  "schema": "cora-pr14-local-receipt/1",
+  "scope": "locally reconstructed PR-13 source snapshot; actual GitHub main ancestry must be verified by remote CI",
+  "new_tests_passed": 17,
+  "new_tests_failed": 0,
+  "repository_contract": "PASS_SCOPED",
+  "candidate_version": "1.0.0a3",
+  "wheel_sdist_built": true,
+  "stress_cases": 1000000,
+  "seed": 883,
+  "stress_families": 24,
+  "stress_replays": 2,
+  "distinct_input_masks": 1000000,
+  "distinct_semantic_decisions": 3,
+  "mismatches": 0,
+  "stream_sha256": "bb51185fb4941d5d3078f3e998c5aaa1cb51b071d444f87e977e78e209fb6626",
+  "historical_regression_suite": "NOT_ATTESTED_LOCALLY: reconstructed commit graph differs from canonical remote source history",
+  "external_controls": "NOT_ATTESTED: Github rulesets endpoint HTTP 403 for this private repository",
+  "limitations": [
+    "No agent reviewer authentication or protected-branch enforcement",
+    "Finite synthetic policy oracle, not a million independent real pull requests",
+    "No executed target code, tests, deployment or LLM in lifecycle evaluator",
+    "No guarantee of regression-free arbitrary software, runtime completeness or safe deletion"
+  ]
+}

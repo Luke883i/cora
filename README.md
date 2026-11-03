@@ -1,6 +1,6 @@
 # CORA — software architecture evidence and forensic maintenance
 
-**CORA** is an offline-first, Python 3.11+ command-line **product** for investigating heterogeneous repositories, explaining evidence about software and files, and planning *strictly bounded* changes. **v1.experimental (`1.0.0a2`) is a prerelease candidate, not stable 1.0.0 or a public release.** CORA is **not** a universal dead-code detector, runtime-equivalence prover, or automatic code deleter.
+**CORA** is an offline-first, Python 3.11+ command-line **product** for investigating heterogeneous repositories, explaining evidence about software and files, and planning *strictly bounded* changes. **v1.experimental (`1.0.0a3`) is a prerelease candidate, not stable 1.0.0 or a public release.** CORA is **not** a universal dead-code detector, runtime-equivalence prover, or automatic code deleter.
 
 | Identity | What it is | Where its truth lives |
 | --- | --- | --- |
@@ -109,6 +109,21 @@ again for `verify-debt`. A trend shows newly detected vs no-longer-detected
 signals; it does **not** prove a debt was remediated. See [methods](docs/ENGINEERING_DEBT.md)
 and [backward DoD](docs/DOD_ENGINEERING_DEBT.md).
 
+## Continuous development: coding agents must respect CORA
+
+CORA is a **framework the coding agent must satisfy, not an agent that writes or approves code**. Three additional source-bound checks distinguish PR changes, post-merge monitoring and untrusted agent proposals:
+
+```bash
+cora dev-premerge . --base HEAD~1 --head HEAD --output /tmp/premerge.json
+cora verify-dev-gate /tmp/premerge.json --repo .
+cora dev-postmerge . --previous HEAD~1 --head HEAD --with-debt --output /tmp/postmerge.json
+cora verify-dev-gate /tmp/postmerge.json --repo .
+cora agent-check /tmp/agent-proposal.json --repo .
+cora stress-continuous --seed 883 --cases 1000000
+```
+
+The pre-merge policy is always read from the **BASE commit**; changing the policy in a PR cannot change how that PR is classified. For this first introduction the base has **no** continuous policy, so CORA returns `BOOTSTRAP_REVIEW_REQUIRED`, **not** independent approval. Review roles are proposed, **not authenticated**, and GitHub required checks/branch protections still need an administrator. A post-merge debt delta is a trend of *signals*, not proven defects or production outcome. Every report has `authorization=NONE`. See [agent instructions](AGENTS.md), [method](docs/CONTINUOUS_DEVELOPMENT.md), [DoD](docs/DOD_CONTINUOUS.md) and [governance](GOVERNANCE.md).
+
 ## Operating boundaries
 
 - **Evidence, inference and authorization are distinct.** Neither a missing static edge nor a role name proves dead code, executed contracts, or safe deletion. `PASS_SCOPED` is scoped observation, not permission.
@@ -125,6 +140,6 @@ Before any PR: `python -m unittest discover -s tests -v`, then the repository an
 
 ## Status and release identity
 
-**CORA v1.experimental = package `1.0.0a2`**, a PEP 440/SemVer-style *pre-release identity*, not a stable API promise. The PR candidate is reviewed with checksums and GitHub CI artifacts; no public PyPI package, signed SLSA provenance or GitHub Release is implied. The [DoD](docs/DOD_V1_EXPERIMENTAL.md) distinguishes automated scoped PASS from still-open human and external validation gates.
+**CORA v1.experimental = package `1.0.0a3`**, a PEP 440/SemVer-style *pre-release identity*, not a stable API promise. The PR candidate is reviewed with checksums and GitHub CI artifacts; no public PyPI package, signed SLSA provenance or GitHub Release is implied. The [DoD](docs/DOD_V1_EXPERIMENTAL.md) distinguishes automated scoped PASS from still-open human and external validation gates.
 
 [License](LICENSE) · [Security reporting](SECURITY.md) · [Source/decision history](docs/ARCHITECTURE.md).
