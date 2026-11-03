@@ -36,6 +36,10 @@ from .debt_stress import stress_debt
 from .process_suite import process_catalog, run_suite, verify_suite, PROCESSES
 from .continuous import evaluate as development_gate, verify_gate, agent_check
 from .continuous_stress import stress_continuous
+from .archive_intake import inspect_zip, verify_intake
+from .runtime_observation import observe_runtime
+from .observation_fusion import fuse_evidence, verify_fusion
+import zipfile
 import shlex
 
 
@@ -43,6 +47,32 @@ def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog='cora', description='Scoped, read-only repository evidence')
     sub = p.add_subparsers(dest='cmd', required=True)
     sub.add_parser('version')
+    za = sub.add_parser('zip-intake', help='Bounded untrusted ZIP preflight: no execution, history unavailable')
+    za.add_argument('archive', type=Path)
+    za.add_argument('--expected-tree', help='Caller-supplied expected Git SHA-1 tree (not authenticated)')
+    za.add_argument('--extract-to', type=Path, help='Explicit new empty directory; never execute')
+    za.add_argument('--output', type=Path)
+    zv = sub.add_parser('verify-zip-intake', help='Recompute original ZIP evidence; no Git history claim')
+    zv.add_argument('report', type=Path)
+    zv.add_argument('--archive', required=True, type=Path)
+    zv.add_argument('--output', type=Path)
+    ro = sub.add_parser('runtime-observe', help='Separate opt-in Docker observation; not an attested sandbox')
+    ro.add_argument('archive', type=Path)
+    ro.add_argument('--workspace', required=True, type=Path)
+    ro.add_argument('--image', help='Preloaded pinned image of form NAME@sha256:DIGEST')
+    ro.add_argument('--execute', action='store_true', help='Explicitly opt in to test execution in Docker')
+    ro.add_argument('--output', type=Path)
+    fu = sub.add_parser('fuse-evidence', help='Source/optional runtime report reconciliation without authorization')
+    fu.add_argument('zip_report', type=Path)
+    fu.add_argument('--runtime-report', type=Path)
+    fu.add_argument('--source-process', type=Path)
+    fu.add_argument('--output', type=Path)
+    fv = sub.add_parser('verify-fusion', help='Rebuild fusion from original receipts')
+    fv.add_argument('fusion_report', type=Path)
+    fv.add_argument('--zip-report', type=Path, required=True)
+    fv.add_argument('--runtime-report', type=Path)
+    fv.add_argument('--source-process', type=Path)
+    fv.add_argument('--output', type=Path)
     a = sub.add_parser('audit')
     a.add_argument('repo', type=Path)
     a.add_argument('--declarations', default='cora.products.json')
@@ -275,10 +305,38 @@ def main(argv: list[str] | None = None) -> int:
     v.add_argument('--output', type=Path)
     args = p.parse_args(argv)
     try:
-        if args.cmd == 'version':
+        if args.cmd == 'zip-intake':
+            result = inspect_zip(args.archive, expected_tree=args.expected_tree,
+                                 extract_to=args.extract_to)
+            code = 0
+        elif args.cmd == 'verify-zip-intake':
+            receipt=json.loads(args.report.read_text(encoding='utf-8'))
+            verify_intake(args.archive,receipt)
+            result={'schema':'cora-zip-intake-verification/1','status':'SOURCE_REPLAY_SCOPED',
+                    'receipt_digest':receipt['receipt_digest'],'authorization':'NONE'}
+            code=0
+        elif args.cmd == 'runtime-observe':
+            result=observe_runtime(args.archive,args.workspace,execute=args.execute,image=args.image)
+            code=0 if result['execution_status'] in ('NOT_REQUESTED','RUN_REPORTED_UNATTESTED') else 2
+        elif args.cmd == 'fuse-evidence':
+            z=json.loads(args.zip_report.read_text(encoding='utf-8'))
+            r=json.loads(args.runtime_report.read_text(encoding='utf-8')) if args.runtime_report else None
+            src=json.loads(args.source_process.read_text(encoding='utf-8')) if args.source_process else None
+            result=fuse_evidence(z,r,src)
+            code=0
+        elif args.cmd == 'verify-fusion':
+            z=json.loads(args.zip_report.read_text(encoding='utf-8'))
+            r=json.loads(args.runtime_report.read_text(encoding='utf-8')) if args.runtime_report else None
+            src=json.loads(args.source_process.read_text(encoding='utf-8')) if args.source_process else None
+            f=json.loads(args.fusion_report.read_text(encoding='utf-8'))
+            verify_fusion(z,f,r,src)
+            result={'schema':'cora-fusion-verification/1','status':'REPLAY_SCOPED',
+                    'fusion_digest':f['fusion_digest'],'authorization':'NONE'}
+            code=0
+        elif args.cmd == 'version':
             print(__version__)
             return 0
-        if args.cmd == 'audit':
+        elif args.cmd == 'audit':
             result = audit(args.repo, read_declarations(args.repo, args.declarations))
             code = 2 if result['findings'] else 0
         elif args.cmd == 'stress':
@@ -481,7 +539,7 @@ def main(argv: list[str] | None = None) -> int:
         else:
             sys.stdout.write(rendered)
         return code
-    except (ValueError, OSError, json.JSONDecodeError, KeyError, TypeError, subprocess.TimeoutExpired) as exc:
+    except (ValueError, OSError, json.JSONDecodeError, KeyError, TypeError, subprocess.TimeoutExpired, zipfile.BadZipFile) as exc:
         print(f'CORA error: {exc}', file=sys.stderr)
         return 3
 
