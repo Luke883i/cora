@@ -67,11 +67,20 @@ def _oracle(stage: Path, oracle: dict, *, authorized: bool) -> str:
         or command[0] != IMAGES[image_family] or
         any(not isinstance(x,str) or not 1 <= len(x) <= 160 or "\x00" in x for x in command)):
         raise ValueError("sandbox command not allowlisted")
-    # This is an explicit, local, bounded test execution, NOT a proof of
-    # independently audited container confinement. No inherited host secrets.
+    # The TemporaryDirectory root is mode 0700: unprivileged uid 65534
+    # cannot traverse it, even when /workspace is bind-mounted read-only.
+    # Use the calling non-root uid/gid and refuse Docker from a root host
+    # process. Do not chmod the private root world-readable to 'fix' this.
+    if not hasattr(os,"getuid") or not hasattr(os,"getgid"):
+        raise ValueError("Docker oracle requires a POSIX user identity")
+    uid,gid=os.getuid(),os.getgid()
+    if uid == 0:
+        raise ValueError("Docker oracle refuses root-host execution")
+    # This is still a local, explicitly requested observation, NOT evidence
+    # of independently audited container isolation or external authority.
     args = ["docker","run","--rm","--pull=never","--network=none","--read-only",
             "--cap-drop=ALL","--security-opt=no-new-privileges",
-            "--pids-limit=64","--memory=512m","--cpus=1","--user=65534:65534",
+            "--pids-limit=64","--memory=512m","--cpus=1",f"--user={uid}:{gid}",
             "--tmpfs=/tmp:rw,noexec,nosuid,size=32m",
             "-v",str(stage.resolve())+":/workspace:ro","-w","/workspace",
             "-e","PYTHONDONTWRITEBYTECODE=1",image,*command]

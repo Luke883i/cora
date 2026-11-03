@@ -6,7 +6,7 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 from cora.gold_assurance import load_gold_contract, retrograde_gold, pilot_sources, contextual_gold, blob_sha
 from cora.gold_mutations import physical_mutants
@@ -162,6 +162,35 @@ class GoldReticularAdversarial(unittest.TestCase):
             (root/"out").symlink_to(root/"target.py")
             with self.assertRaises(ValueError):
                 physical_mutants(root,plan)
+
+    def test_explicit_docker_uses_private_temp_owner_and_pinned_no_network_image(self):
+        from cora.gold_mutations import _oracle
+        with tempfile.TemporaryDirectory() as td:
+            oracle={"kind":"DOCKER_TEST","image":"python@sha256:"+("a"*64),
+                    "command":["python","-m","unittest","discover"]}
+            with patch("cora.gold_mutations.os.getuid",return_value=1001), \
+                 patch("cora.gold_mutations.os.getgid",return_value=1002), \
+                 patch("cora.gold_mutations.subprocess.run",
+                       return_value=Mock(returncode=0)) as run:
+                self.assertEqual(_oracle(Path(td),oracle,authorized=True),"PASS")
+                args=run.call_args.args[0]
+                self.assertIn("--user=1001:1002",args)
+                self.assertIn("--network=none",args)
+                self.assertIn("--read-only",args)
+                self.assertIn("--pull=never",args)
+                self.assertIn("python@sha256:"+("a"*64),args)
+                self.assertNotIn("--user=65534:65534",args)
+            with patch("cora.gold_mutations.os.getuid",return_value=0), \
+                 patch("cora.gold_mutations.subprocess.run") as run:
+                with self.assertRaises(ValueError):
+                    _oracle(Path(td),oracle,authorized=True)
+                run.assert_not_called()
+            with patch("cora.gold_mutations.subprocess.run") as run:
+                self.assertEqual(_oracle(Path(td),oracle,authorized=False),"INCONCLUSIVE")
+                run.assert_not_called()
+            oracle["image"]="python:3.11-slim"
+            with self.assertRaises(ValueError):
+                _oracle(Path(td),oracle,authorized=True)
 
     def test_workflow_effects_are_potential_not_executed(self):
         sha="b"*40
