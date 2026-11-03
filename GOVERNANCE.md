@@ -50,3 +50,7 @@ A proposed quarantine or archive requires its own non-destructive experiment rec
 ## Historical groups and AI governance
 
 Development groups are **review subjects**. Maintainer validates Git history; product owner verifies capability; software/runtime owner reviews tests, deployment and consumers; independent approver controls subsequent transformation under a separate contract. Roles are functions, not confirmed personnel. Cochange, an absent import or self-reported AI confidence never authorizes archive, quarantine, rename or deletion. External operational closure and independently protected GitHub checks remain required.
+
+## Engineering-debt triage and process governance
+
+`debt-scan` and `process-run` are source-bound **review instruments**, not authority to repair, delete or change repository policy. The engineering owner validates structural/historical signals; the product owner evaluates capability impact; QA supplies real test/coverage evidence; security independently challenges untrusted SARIF; the platform/release owner validates build, deployment and required checks. An independent human approver reviews any future transformation. Review priority is an ordinal queue, not confidence, business impact or money. Weekly inspect P1 signals and evidence gaps; monthly compare source-bound trends without interpreting disappearance as proven resolution. No CLI field authenticates personnel or branch protection.

@@ -16,6 +16,7 @@ from tools.release_verify import verify_release, normalized_wheel_distribution, 
 from tools.release_stress import stress, classify_model, independent_oracle, FAMILIES
 
 ROOT=Path(__file__).resolve().parents[1]
+VERSION=__import__('tomllib').loads((ROOT/'pyproject.toml').read_text(encoding='utf-8'))['project']['version']
 
 
 class RealArtifactMutationTests(unittest.TestCase):
@@ -54,7 +55,7 @@ class RealArtifactMutationTests(unittest.TestCase):
         salt=hashlib.sha256(f'PR07:{case}:883'.encode()).hexdigest()[:12]
         if mode==0:files[source]+=f'\n# tamper {salt}\n'.encode()
         elif mode==1:files[source]+=f'\n# re-signed {salt}\n'.encode()
-        elif mode==2:files[info]=files[info].replace(b'Version: 1.0.0a1',b'Version: 9.9.9')
+        elif mode==2:files[info]=files[info].replace(('Version: '+VERSION).encode(),b'Version: 9.9.9')
         elif mode==3:files[entry]+=b'cora2 = cora.cli:main\n'
         elif mode==4:files['../escape.txt']=salt.encode()
         elif mode==5:files.pop(record)
@@ -81,7 +82,7 @@ class RealArtifactMutationTests(unittest.TestCase):
     def _edited_sdist(self,case,path):
         with tarfile.open(self.sdist,'r:gz') as t:
             contents={m.name:(m,t.extractfile(m).read()) for m in t.getmembers() if m.isfile()}
-        root='cora_audit-1.0.0a1/'
+        root=f'cora_audit-{VERSION}/'
         mode=case%12
         salt=hashlib.sha256(f'PR07:{case}:883'.encode()).hexdigest()[:12].encode()
         if mode==0:contents[root+'src/cora/graph.py']=(None,b'graph tampered '+salt)
@@ -92,7 +93,7 @@ class RealArtifactMutationTests(unittest.TestCase):
         elif mode==5:contents[root+'../escape']=(None,salt)
         elif mode==6:contents.pop(root+'src/cora/__init__.py')
         elif mode==7:contents[root+'LICENSE']=(None,b'BAD LICENSE '+salt)
-        elif mode==8:contents[root+'PKG-INFO']=(None,b'Name: wrong\nVersion: 1.0.0a1\nRequires-Python: >=3.11')
+        elif mode==8:contents[root+'PKG-INFO']=(None,('Name: wrong\nVersion: '+VERSION+'\nRequires-Python: >=3.11').encode())
         elif mode==9:contents[root+'pyproject.toml']=(None,b'malformed')
         elif mode==10:contents[root+'src/cora/__init__.py']=(None,b'__version__="9.9"\n')
         elif mode==11:contents[root+'README.md']=(None,b'changed no metadata update')

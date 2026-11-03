@@ -25,3 +25,7 @@ Tracked issues and verification expectations: [PR-01–07 audit](docs/AUDIT_PR01
 ## v1.experimental declaration trust
 
 Artifact roles are versioned owner declarations, not security labels authenticated by GitHub or an attested CI. Do not use a file name, a declared test/contract role, a self-hash or an AI hypothesis as proof of safety for quarantine, archive, rename or deletion. The current private-repository hosting configuration may lack enforceable protected-branch controls; release and merge gates require explicit administrator evidence. See [role contract](docs/ARTIFACT_SEMANTICS.md) and [v1 DoD](docs/DOD_V1_EXPERIMENTAL.md).
+
+## External scanner evidence and process modes
+
+SARIF inputs are untrusted caller-provided bytes, not authenticated alerts. Do not import private source paths, credentials or runtime logs from an unapproved scanner. `verify-debt` demands the same original SARIF input and source commit; this only proves deterministic replay, not tool authenticity, exploitability or closed external consumer paths. `process-run --process full` invokes safe read-only analyzers only. Findings never authorize remediation.

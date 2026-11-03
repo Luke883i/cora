@@ -1,0 +1,33 @@
+{
+  "schema": "cora-pr13-local-verification/1",
+  "baseline_source": "reconstructed local worktree; GitHub main and pull-request head checked separately, not an authenticated local original ancestry",
+  "main_sha_at_branch_creation": "61d18300020038b5d5361b58fb8a23ae1d7da53b",
+  "python_local": "3.13",
+  "tests": {
+    "total": 219,
+    "passed": 219,
+    "failed": 0,
+    "new_debt_and_bundle_tests": 25
+  },
+  "onboarding_contract": "PASS_SCOPED",
+  "release_regressions": "six PR07 artifact mutation tests PASS; three new bundle-version tests PASS",
+  "seeded_model": {
+    "seed": 883,
+    "cases": 1000000,
+    "replays": 2,
+    "distinct_input_masks": 1000000,
+    "semantic_output_signatures": 120,
+    "families": 24,
+    "mismatches": 0,
+    "stream_sha256": "2f105a47627564711abb3a3426d23242aaaa32415e9a46d65d221aff9dd2caf5",
+    "identical_report_sha256": "6dbf3f712f81d23d12e5e8ad9d06cea55540aaa8a528862bc1714d73a552e9fc"
+  },
+  "limits": [
+    "not 1M independently audited physical repositories",
+    "no calibrated precision, recall or false positive rate",
+    "SARIF from external caller is untrusted",
+    "no scanner installation or execution",
+    "no runtime/full consumer closure, financial debt estimate or safe-deletion certificate",
+    "CI on final GitHub commit and human review are separate acceptance gates"
+  ]
+}

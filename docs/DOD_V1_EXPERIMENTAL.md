@@ -1,6 +1,6 @@
 # CORA v1.experimental — global, intermediate and local DoD
 
-**Candidate package:** `1.0.0a1` (pre-release; no stable v1 API or distribution promised). A terminal global PASS is prohibited when an independent human or external hosting proof remains absent. Each gate has a responsible human and a reproducible witness; a large synthetic run never substitutes for source evidence.
+**Candidate package:** the pinned commit's `pyproject.toml` `project.version`, cross-checked against the Python package, wheel, sdist, and unpublished review bundle (pre-release; no stable v1 API or distribution promised). A terminal global PASS is prohibited when an independent human or external hosting proof remains absent. Each gate has a responsible human and a reproducible witness; a large synthetic run never substitutes for source evidence.
 
 ## Global gate G-v1 (AND-composition)
 
