@@ -12,3 +12,7 @@ CORA is **the independent development evidence and governance framework**, not a
 8. Before requesting merge, show exact CI execution SHA, deterministic receipts and unresolved coverage. After merge, produce a post-merge report and investigate new debt signals without treating them as proven defects.
 
 **A CI job controlled by the PR is not an independent approver.** Policy bootstrap, external platform protections and real operational outcomes remain human/external gates.
+
+## PR-16 runtime-intake boundary (candidate)
+
+Treat ZIP paths and source bytes as untrusted, including inside Docker. Never interpret `runtime-observe` success, an output digest, a simulated executor test or `verify-fusion` as proof of sandbox confinement, real target coverage, human approval or an authorized release. Review [the semantic lattice DoD](docs/DOD_PR16_SEMANTIC_LATTICE.md) before proposing execution. Do not run unknown ZIP code merely to satisfy an audit gate: a read-only source result is legitimate and runtime remains NOT_EXECUTED.

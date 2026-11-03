@@ -309,6 +309,39 @@
         "PRODUCT_CONTRACT"
       ],
       "rationale": "Public-facing product version narrative and proposed release history; not publication evidence."
+    },
+    {
+      "pattern": "src/cora/archive_intake.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Bounded source archive contract; not runtime or Git ancestry attestation."
+    },
+    {
+      "pattern": "src/cora/runtime_observation.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Explicit opt-in execution request and untrusted runtime receipt; sandbox not independently attested."
+    },
+    {
+      "pattern": "src/cora/observation_fusion.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Cross-domain evidence reconciliation with mandatory unknown/authorization boundaries."
+    },
+    {
+      "pattern": "tests/test_pr16_*.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "PR-16 negative and contract fixtures; role declaration is not passing-test proof."
     }
   ]
 }
