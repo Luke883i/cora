@@ -1,6 +1,6 @@
 # CORA governed prerelease procedure (GitHub and Python distribution)
 
-Status: **staged, not published**. Product name: CORA — Continuous Ontological Repository Assurance. Package: `cora-audit`; software: `cora-engine` and `cora-release-verification`; repository: `Luke883i/cora`. Current proposed version in PR-15: `1.0.0a4` (PEP 440 *alpha*, not a final release or `rc`).
+Status: **staged, not published**. Product name: CORA — Continuous Ontological Repository Assurance. Package: `cora-audit`; software: `cora-engine` and `cora-release-verification`; repository: `Luke883i/cora`. Current repository version: `1.0.0a4` (PEP 440 *alpha*). PR-20 is merged into source, but there is no independently authenticated public release or published stable 1.0.0. The original PR-15 introduced this version identity; merging later PRs does not attest release readiness.
 
 ## GitHub-native workflow
 1. Create a topic branch at an exact `main` SHA. Author atomic semantic commits with source changes, independent negative tests, build/verification changes, documentation and DoD. The branch is not an approval.
@@ -14,3 +14,7 @@ Status: **staged, not published**. Product name: CORA — Continuous Ontological
 A passing source verifier is a bounded metadata result, not an access-control assertion. A failed or unavailable check leaves the PR Draft and the release unpublished. Existing build scripts produce candidate artifacts but do not create GitHub Releases, publish to PyPI or sign provenance. This release procedure itself cannot configure GitHub branch protections; the first trusted bootstrap must be approved independently.
 
 References: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches ; https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases ; https://packaging.python.org/en/latest/discussions/versioning/ ; https://slsa.dev/
+
+## Documentation and product communication verification
+
+The [README](../README.md) presents current value and limitations, the [documentation index](INDEX.md) locates methods and historic records, and the [documentation DoD](DOCUMENTATION_DOD.md) distinguishes source checks from human usability and external release governance. Successful documentation CI is not a release manager approval or proof of protected hosting. A release must reference the exact approved tag, built artifacts and independently observed permissions.

@@ -29,3 +29,9 @@ Artifact roles are versioned owner declarations, not security labels authenticat
 ## External scanner evidence and process modes
 
 SARIF inputs are untrusted caller-provided bytes, not authenticated alerts. Do not import private source paths, credentials or runtime logs from an unapproved scanner. `verify-debt` demands the same original SARIF input and source commit; this only proves deterministic replay, not tool authenticity, exploitability or closed external consumer paths. `process-run --process full` invokes safe read-only analyzers only. Findings never authorize remediation.
+
+## ZIP, optional runtime and private-source boundary
+
+ZIP intake checks bounded archive structure but does not certify executable archive safety or recover a trustworthy Git history. Optional Docker execution requires explicit opt-in and restrictive flags; this is **not** independent host isolation, runtime coverage or provenance attestation. Caller-provided verification commands can run under the operator's privileges. See [PR-16 source/runtime DoD](docs/DOD_PR16_SEMANTIC_LATTICE.md).
+
+The Gold pilot requires separately authorized private-source access. Candidate PR workflows must not use broad private repository tokens; a public one-of-three frozen source readback does not validate the other repositories or their behavior. Workflow effect scanning observes **potential** effects, not trusted target-side readbacks. A source receipt, Markdown claim or Git digest cannot authenticate reviewer identity or release decisions. See [Gold method](docs/GOLD_ASSURANCE.md) and [agent adoption](docs/AGENT_ADOPTION.md).

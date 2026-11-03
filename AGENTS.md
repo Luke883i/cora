@@ -1,38 +1,30 @@
-# Instructions for coding agents (including iKant)
+# CORA instructions for coding agents
 
-CORA is **the independent development evidence and governance framework**, not a coding assistant. An agent may propose, write and test changes, but cannot certify itself, approve review, merge, release or delete code under CORA authority.
+CORA is the independent **engineering evidence and governance framework**, not the AI coding assistant that implements features. The agent may plan, write, test and propose a PR; it may not certify its own source claims as runtime truth, authenticate reviewers, grant its own authorization, merge, deploy, publish or delete source under CORA authority.
 
-1. Start with `README.md`, `GOVERNANCE.md`, `docs/CONTINUOUS_DEVELOPMENT.md`, and `docs/DOD_CONTINUOUS.md`.
-2. Pin `base` and proposed `head` Git SHAs. Work on a branch; never push to or rewrite protected `main` for the purpose of satisfying a gate.
-3. Run `cora dev-premerge REPO --base BASE --head HEAD`, `cora verify-dev-gate` and relevant `cora process-run` modes. Record blockers and unknowns, not just passing tests.
-4. Use `cora agent-check` to reconcile an optional versioned proposal with exact Git paths. Agent test claims, confidence estimates and reviewer labels are untrusted assertions until independently verified.
-5. For high-risk modifications to `.github/workflows/`, `.cora/`, `src/cora/guard_runtime.py`, security and release controls, require a separate human security reviewer **and independently protected hosting rules**. The source file cannot enforce those permissions.
-6. New functionality requires code, a regression/negative fixture, README/DoD updates and an explicit trust boundary. Keep the single Python package and `cora` entrypoint; do not duplicate engine components.
-7. Never infer absence of consumers or safe deletion from missing static imports or model confidence. No code deletion is authorized by the continuous gate.
-8. Before requesting merge, show exact CI execution SHA, deterministic receipts and unresolved coverage. After merge, produce a post-merge report and investigate new debt signals without treating them as proven defects.
+Start at the [README](README.md), [agent adoption tutorial](docs/AGENT_ADOPTION.md), [continuous method](docs/CONTINUOUS_DEVELOPMENT.md), [convergent assurance](docs/CONVERGENT_ASSURANCE.md), and [governance](GOVERNANCE.md). Existing historic PR-level DoDs and audits remain source-context records, not parallel engines.
 
-**A CI job controlled by the PR is not an independent approver.** Policy bootstrap, external platform protections and real operational outcomes remain human/external gates.
+## Mandatory current workflow
 
-## PR-16 runtime-intake boundary (candidate)
+1. **Intent** — obtain the user's material product outcome, acceptance criteria, target owner, impact and independent test oracle. Treat caller-supplied intent as a claim, not authenticated approval.
+2. **Observe** — inspect actual target main and committed product/software ontology, source roles, Git history and baseline policy. Pin exact BASE and candidate HEAD; never substitute a working-tree observation for committed Git source.
+3. **Retrograde qualification** — derive the global/intermediate/local DoD with `cora convergence-plan` and relevant specialized policies. Select the first unresolved *real* obligation, not the highest synthetic coverage count. Reuse canonical modules; do not introduce another competing compiler.
+4. **Bounded implementation** — materialize a reversible semantic slice, include independent positive and negative oracles, and preserve actual owner/consumer unknowns. No missing static import edge can certify non-use.
+5. **Premerge source verification** — use the existing gate with `--contextual --intent "Specific change with acceptance criteria" --convergence-contract PATH` when the target has a committed ontology and BASE policy. Replay via `verify-contextual-gate` with the **same** intent. Legacy `dev-premerge`, `verify-dev-gate`, `agent-check` and `dod-assess` remain supported; their source claims never self-authorize.
+6. **Actual tests and evidence** — run suitable target tests and, with explicit consent, physical mutations or isolated runtime checks. Capture SHA, environment, commands, outcomes, survivors, inconclusives and missing coverage. A source replay, model receipt or confidence range is not independent behavior.
+7. **Governed PR** — link exact final-HEAD CI, changed-path blast radius, unresolved obligations and rollback; require independent reviewer and protected hosting controls for high-risk policy, security, CI, guard, release or retention changes.
+8. **Postmerge** — inspect actual merged main SHA using `dev-postmerge --contextual --intent SAME_INTENT`; rerun relevant regression and invalidated witnesses, never reuse former PR-head evidence without revalidation.
 
-Treat ZIP paths and source bytes as untrusted, including inside Docker. Never interpret `runtime-observe` success, an output digest, a simulated executor test or `verify-fusion` as proof of sandbox confinement, real target coverage, human approval or an authorized release. Review [the semantic lattice DoD](docs/DOD_PR16_SEMANTIC_LATTICE.md) before proposing execution. Do not run unknown ZIP code merely to satisfy an audit gate: a read-only source result is legitimate and runtime remains NOT_EXECUTED.
+## Stop and boundary rules
 
-## PR-17 agent delivery (CORA as framework, not coding agent)
+- Missing/ambiguous owner, ontology, baseline policy, SHA, change intent, independent behavioral oracle, protected reviewer identity or required host controls remain **BLOCKED** or **BLOCKED_EXTERNAL**. Bootstrap cannot approve itself.
+- A changed source invalidates dependent evidence; a not-invalidated witness still requires revalidation. Partial Python imports and product roles are *candidates/declarations*, not exhaustive runtime truth.
+- Untrusted ZIP files and unknown repository scripts are not safe to execute by implication. Optional Docker test or caller verifier command needs explicit authorization; Docker flags are not independently attested host confinement.
+- `gold-mutate` changes staged disposable bytes; AST-only checks are syntax checks. A survivor is not a kill. `gold-effects` identifies potential CI writes, not authenticated target readback.
+- No private cross-repository token belongs in PR-editable workflows. A public ICTC 1/3 source check does not establish private ikant/aosp1 source or runtime outcomes.
+- Ten-million-case campaigns are finite **synthetic fault-model evaluations**, not independent maintained-repository mutations or calibrated software quality measurements.
+- AI hypotheses and user-provided runtime annotations remain untrusted until separately validated. Source hashes are not digital signatures; a green workflow does not show GitHub-required checks are enforced.
 
-Before coding derive prerequisite cuts: `cora dod-plan --stage intake` then `cora dod-plan --stage implementation`. Before PR use `cora dod-plan --stage premerge`, `cora dod-assess`, `cora verify-dod`, and the existing `dev-premerge`. Run `cora stress-agent-dod --require-full` for model/contract changes; use real target-code mutants and executed regression separately. Postmerge: `dev-postmerge` on merged main; release: `dod-plan --stage release` with external review. Do not self-attest missing runtime/hosting witnesses or introduce a new product owner. Full rules: [AI assistant method](docs/AI_CODE_ASSURANCE.md).
+## Technical and historical references
 
-## PR-18 historical anti-regression
-
-Always derive source-model coverage from actual generated fault masks, not iteration positions. Use negative tests against physically changed CORA implementation, distinguish JSON policy mutants from source-code mutants and real third-party product tests. Explain the first unresolved prerequisite and re-pin merged main. See [severe audit](docs/AUDIT_PR18_MAIN.md).
-
-## PR-19 gold source and model governance
-
-An agent must derive intent, owner/subsumption, source dependencies, minimal material slice and independent falsifier before changing software. Use the existing CORA CLI: `gold-plan`, `gold-pilot`, `gold-mutate`, `gold-effects`, `stress-gold`. Pilot checkouts must be at exact pinned HEAD; their Git blobs prove bytes, not behavioral correctness. Physical mutation is in private disposable copies; executing the target requires explicit opt-in to a preinstalled bounded Docker test and does not attest isolation. AST mutation checks are syntax-only. Effect classification and self-issued receipts are not host authority. Ten million synthetic cases are not ten million target mutants. Follow [gold method](docs/GOLD_ASSURANCE.md) and [DoD](docs/DOD_PR19_GOLD.md), preserve BASE policy and human review.
-
-## PR-19: private cross-repository readback is not inherited authority
-
-Never put broad private repository tokens into a CI workflow editable by a candidate PR. A green `gold-public-source-boundary` is evidence that public ICTC source (1/3) was actually read while private ikant/aosp1 were blocked: it is NOT a source readback PASS for all three. Run full private source readback only from separately trusted local checkouts and with independent review of access. The Docker oracle uses calling non-root host UID/GID for private temporary staging; no root host execution or world-readable staging to defeat 0700. Preserve source, runtime and human authority as distinct proof types. See [PR-19 causal audit](docs/AUDIT_PR19_CLOSURE.md).
-
-## PR-20 shared reticular engine and contextual DevOps
-
-Use one canonical `reticulum.ordered_cut` for agent/Gold/convergence profiles; do not create another parallel owner. Run `convergence-plan` for source and full R1–R4 obligations. Opt in to `dev-premerge --contextual` or `dev-postmerge --contextual` to combine BASE-pinned continuous policy, committed Git ontology, candidate static imports, path dependency invalidation and conservative CI effects; replay with `verify-contextual-gate`. A declared unmodified witness requires revalidation and is never PASS. Missing target ontology and dynamic import consumers stay unknown; private Git access, real behavioral target mutations and independent host readback stay BLOCKED. Never conflate 10M synthetic model cases with physical product mutations or authorize merge/release from candidate source. See [convergence method](docs/CONVERGENT_ASSURANCE.md).
+Use [AI agent method](docs/AI_CODE_ASSURANCE.md), [PR-17 scoped DoD](docs/DOD_PR17_AGENT.md), [PR-18 counterexample](docs/AUDIT_PR18_MAIN.md), [Gold method](docs/GOLD_ASSURANCE.md), [PR-19 DoD](docs/DOD_PR19_GOLD.md), [PR-19 closure audit](docs/AUDIT_PR19_CLOSURE.md), [PR-16 ZIP/runtime DoD](docs/DOD_PR16_SEMANTIC_LATTICE.md) and [R1–R4 convergence DoD](docs/DOD_PR20_CONVERGENCE.md) for domain-specific responsibilities. [Documentation DoD](docs/DOCUMENTATION_DOD.md) governs the separation between current product information and historical source records.
