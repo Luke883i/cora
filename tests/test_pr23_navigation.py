@@ -108,10 +108,10 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         report = {
             "schema": "cora-readme-adversarial-navigation/1",
             "scope": "SOURCE_TEXT_FINITE_EDITORIAL_AND_TARGET_VECTORS_ONLY",
-            "source_commit": os.getenv("GITHUB_SHA", "LOCAL_NOT_ATTESTED"),
+            "source_commit": os.getenv("CORA_SOURCE_SHA", "LOCAL_NOT_ATTESTED"),
             "families": family_totals,
             "vectors": sum(x["vectors"] for x in family_totals.values()),
-            "unique_input_sha256": len(seen),
+            "distinct_input_fingerprints": len(seen),
             "rejected": sum(x["rejected"] for x in family_totals.values()),
             "survivors": survivors,
             "stream_sha256": digest.hexdigest(),
@@ -131,7 +131,7 @@ class ProgressiveDocumentationTests(unittest.TestCase):
                           "survivors": len(survivors),
                           "governed": "BLOCKED_EXTERNAL"}, sort_keys=True))
         self.assertEqual(report["vectors"], 1000)
-        self.assertEqual(report["unique_input_sha256"], 1000)
+        self.assertEqual(report["distinct_input_fingerprints"], 1000)
         self.assertEqual(report["rejected"], 1000, survivors[:5])
         self.assertFalse(survivors)
 
