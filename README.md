@@ -109,7 +109,7 @@ again for `verify-debt`. A trend shows newly detected vs no-longer-detected
 signals; it does **not** prove a debt was remediated. See [methods](docs/ENGINEERING_DEBT.md)
 and [backward DoD](docs/DOD_ENGINEERING_DEBT.md).
 
-## ZIP intake and optional runtime observation (PR-16 candidate)
+## ZIP intake and optional runtime observation (PR-16 integrated)
 
 `zip-intake` rejects malformed or hostile ZIP paths and classifies a content tree, **not** Git history. `verify-zip-intake` replays that source receipt. `runtime-observe` is separate, explicit opt-in: it requests restrictive Docker flags but does **not** independently attest host isolation or arbitrary target test coverage. `fuse-evidence` reconciles report digests without turning them into authenticated runtime proof; `verify-fusion` replays the reconciliation. `lattice-audit` builds the typed DoD obligation DAG, and `verify-lattice` recomputes it from the original ZIP; neither authorizes release.
 
@@ -122,7 +122,11 @@ cora lattice-audit source.zip --zip-report /tmp/cora-zip.json --output /tmp/cora
 cora verify-lattice /tmp/cora-lattice.json --archive source.zip --zip-report /tmp/cora-zip.json
 ```
 
-The [PR-16 source CI](.github/workflows/ci-semantic-lattice.yml) runs complete unit regression with line/branch coverage floors and an independently compared Git batch-subprocess fixture; neither is a production benchmark or sandbox attestation. These are candidate capabilities in `feat/pr-16-semantic-assurance-lattice`, **not** merged or published features. The Docker executor is not a safe default for hostile code: independent sandbox, resource and host authorization remain external. See [PR-16 DoD lattice](docs/DOD_PR16_SEMANTIC_LATTICE.md).
+The [PR-16 source CI](.github/workflows/ci-semantic-lattice.yml) runs complete unit regression with line/branch coverage floors and an independently compared Git batch-subprocess fixture; neither is a production benchmark or sandbox attestation. These capabilities were merged in PR-16, but do not certify Docker isolation or release readiness. The Docker executor is not a safe default for hostile code: independent sandbox, resource and host authorization remain external. See [PR-16 DoD lattice](docs/DOD_PR16_SEMANTIC_LATTICE.md).
+
+## AI coding-agent DoD: retrograde and seeded semantic assurance
+
+Use `dod-plan` at intake/premerge, `dod-assess` for untrusted agent claims, and `verify-dod` to replay original evidence. `stress-agent-dod` executes 10 preseeded 1M-case model sessions, **not** 10M source mutants, test executions or release approvals. Commands: `cora dod-plan --stage premerge` and `cora stress-agent-dod --require-full`. See [AI assistant DevOps method](docs/AI_CODE_ASSURANCE.md) and [reticular DoD](docs/DOD_PR17_AGENT.md).
 
 ## Continuous development: coding agents must respect CORA
 

@@ -1,0 +1,332 @@
+{
+  "schema": "cora-agent-assurance-contract/1",
+  "purpose": "Backward-derived fail-closed DoD for AI coding assistants. Simulation is not runtime proof or approval.",
+  "normative_boundary": "SOURCE_MODEL_NOT_AN_AUTHORITY",
+  "nodes": [
+    {
+      "id": "L01",
+      "kind": "LOCAL",
+      "level": "LOCAL",
+      "scope": "SOURCE",
+      "family": "ambiguous_product_owner",
+      "falsifier": "audit declarations and product ontology",
+      "depends_on": []
+    },
+    {
+      "id": "L02",
+      "kind": "LOCAL",
+      "level": "LOCAL",
+      "scope": "SOURCE",
+      "family": "unbound_source_identity",
+      "falsifier": "cora snapshot and verify-ledger on the base SHA",
+      "depends_on": []
+    },
+    {
+      "id": "L03",
+      "kind": "LOCAL",
+      "level": "LOCAL",
+      "scope": "SOURCE",
+      "family": "unsafe_input_archive",
+      "falsifier": "cora zip-intake plus hostile fixtures",
+      "depends_on": []
+    },
+    {
+      "id": "L04",
+      "kind": "LOCAL",
+      "level": "LOCAL",
+      "scope": "SOURCE",
+      "family": "unmapped_dynamic_consumer",
+      "falsifier": "file-lab and independent runtime consumer evidence",
+      "depends_on": []
+    },
+    {
+      "id": "L05",
+      "kind": "LOCAL",
+      "level": "LOCAL",
+      "scope": "SOURCE",
+      "family": "untestable_behavior_target",
+      "falsifier": "failing behavior regression on target output",
+      "depends_on": []
+    },
+    {
+      "id": "L06",
+      "kind": "LOCAL",
+      "level": "LOCAL",
+      "scope": "SOURCE",
+      "family": "unreviewed_compatibility",
+      "falsifier": "manifest/adapter compatibility regression",
+      "depends_on": []
+    },
+    {
+      "id": "L07",
+      "kind": "LOCAL",
+      "level": "INTERMEDIATE",
+      "scope": "SOURCE",
+      "family": "no_material_code_delta",
+      "falsifier": "compare Git diff to intended capability",
+      "depends_on": []
+    },
+    {
+      "id": "L08",
+      "kind": "LOCAL",
+      "level": "INTERMEDIATE",
+      "scope": "SOURCE",
+      "family": "missing_negative_oracle",
+      "falsifier": "negative fixture that fails against a targeted mutant",
+      "depends_on": []
+    },
+    {
+      "id": "L09",
+      "kind": "LOCAL",
+      "level": "INTERMEDIATE",
+      "scope": "SOURCE",
+      "family": "tautological_test_oracle",
+      "falsifier": "differential / metamorphic independent reference",
+      "depends_on": []
+    },
+    {
+      "id": "L10",
+      "kind": "LOCAL",
+      "level": "INTERMEDIATE",
+      "scope": "SOURCE",
+      "family": "untrusted_runtime_receipt",
+      "falsifier": "external executor provenance and sandbox attestation",
+      "depends_on": []
+    },
+    {
+      "id": "L11",
+      "kind": "LOCAL",
+      "level": "INTERMEDIATE",
+      "scope": "SOURCE",
+      "family": "uncalibrated_stress_volume",
+      "falsifier": "campaign coverage and real source mutants",
+      "depends_on": []
+    },
+    {
+      "id": "L12",
+      "kind": "LOCAL",
+      "level": "INTERMEDIATE",
+      "scope": "SOURCE",
+      "family": "evidence_missing_invalidation",
+      "falsifier": "replay receipts against original input and commit",
+      "depends_on": []
+    },
+    {
+      "id": "L13",
+      "kind": "LOCAL",
+      "level": "GLOBAL",
+      "scope": "SOURCE",
+      "family": "stale_change_base",
+      "falsifier": "dev-premerge pinned to base and candidate HEAD",
+      "depends_on": []
+    },
+    {
+      "id": "L14",
+      "kind": "LOCAL",
+      "level": "GLOBAL",
+      "scope": "SOURCE",
+      "family": "policy_self_override",
+      "falsifier": "BASE policy precedence and protected path review",
+      "depends_on": []
+    },
+    {
+      "id": "L15",
+      "kind": "LOCAL",
+      "level": "GLOBAL",
+      "scope": "SOURCE",
+      "family": "unclosed_dod_dependency",
+      "falsifier": "reverse derive all local prerequisite cuts",
+      "depends_on": []
+    },
+    {
+      "id": "L16",
+      "kind": "LOCAL",
+      "level": "GLOBAL",
+      "scope": "SOURCE",
+      "family": "ci_different_revision",
+      "falsifier": "verify GitHub check runs on exact final HEAD",
+      "depends_on": []
+    },
+    {
+      "id": "L17",
+      "kind": "LOCAL",
+      "level": "GLOBAL",
+      "scope": "SOURCE",
+      "family": "regression_or_coverage_gap",
+      "falsifier": "full unit, critical branch coverage and mutation regression",
+      "depends_on": []
+    },
+    {
+      "id": "L18",
+      "kind": "LOCAL",
+      "level": "GLOBAL",
+      "scope": "SOURCE",
+      "family": "missing_postmerge_continuity",
+      "falsifier": "dev-postmerge and debt drift on merged main",
+      "depends_on": []
+    },
+    {
+      "id": "L19",
+      "kind": "LOCAL",
+      "level": "EXTERNAL",
+      "scope": "EXTERNAL",
+      "family": "branch_not_protected",
+      "falsifier": "GitHub branch protection / ruleset attested by admin",
+      "depends_on": []
+    },
+    {
+      "id": "L20",
+      "kind": "LOCAL",
+      "level": "EXTERNAL",
+      "scope": "EXTERNAL",
+      "family": "no_independent_review",
+      "falsifier": "authenticated non-author human review",
+      "depends_on": []
+    },
+    {
+      "id": "L21",
+      "kind": "LOCAL",
+      "level": "EXTERNAL",
+      "scope": "EXTERNAL",
+      "family": "sandbox_not_attested",
+      "falsifier": "independent host isolation and execution audit",
+      "depends_on": []
+    },
+    {
+      "id": "L22",
+      "kind": "LOCAL",
+      "level": "EXTERNAL",
+      "scope": "EXTERNAL",
+      "family": "real_repositories_unvalidated",
+      "falsifier": "maintainer-owned external repository pilot",
+      "depends_on": []
+    },
+    {
+      "id": "L23",
+      "kind": "LOCAL",
+      "level": "EXTERNAL",
+      "scope": "EXTERNAL",
+      "family": "rollback_unverified",
+      "falsifier": "operational recovery and rollback rehearsal",
+      "depends_on": []
+    },
+    {
+      "id": "L24",
+      "kind": "LOCAL",
+      "level": "EXTERNAL",
+      "scope": "EXTERNAL",
+      "family": "release_authority_missing",
+      "falsifier": "release manager and signed provenance",
+      "depends_on": []
+    },
+    {
+      "id": "I_LOCAL",
+      "kind": "INTERMEDIATE",
+      "level": "SOURCE",
+      "depends_on": [
+        "L01",
+        "L02",
+        "L03",
+        "L04",
+        "L05",
+        "L06"
+      ]
+    },
+    {
+      "id": "I_INTERMEDIATE",
+      "kind": "INTERMEDIATE",
+      "level": "SOURCE",
+      "depends_on": [
+        "L07",
+        "L08",
+        "L09",
+        "L10",
+        "L11",
+        "L12"
+      ]
+    },
+    {
+      "id": "I_GLOBAL",
+      "kind": "INTERMEDIATE",
+      "level": "SOURCE",
+      "depends_on": [
+        "L13",
+        "L14",
+        "L15",
+        "L16",
+        "L17",
+        "L18"
+      ]
+    },
+    {
+      "id": "I_EXTERNAL",
+      "kind": "INTERMEDIATE",
+      "level": "EXTERNAL",
+      "depends_on": [
+        "L19",
+        "L20",
+        "L21",
+        "L22",
+        "L23",
+        "L24"
+      ]
+    },
+    {
+      "id": "G_SOURCE_AGENT",
+      "kind": "GLOBAL",
+      "level": "SOURCE",
+      "depends_on": [
+        "I_LOCAL",
+        "I_INTERMEDIATE",
+        "I_GLOBAL"
+      ]
+    },
+    {
+      "id": "G_GOVERNED_AGENT",
+      "kind": "GLOBAL",
+      "level": "EXTERNAL",
+      "depends_on": [
+        "G_SOURCE_AGENT",
+        "I_EXTERNAL"
+      ]
+    }
+  ],
+  "goals": {
+    "intake": "I_LOCAL",
+    "implementation": "I_INTERMEDIATE",
+    "premerge": "G_SOURCE_AGENT",
+    "postmerge": "I_GLOBAL",
+    "release": "G_GOVERNED_AGENT"
+  },
+  "seeds": [
+    883,
+    1618033,
+    2718281,
+    3141592,
+    20261103,
+    2654435761,
+    2246822507,
+    3266489909,
+    2135587861,
+    461845907
+  ],
+  "prerequisites": {
+    "source": "G_SOURCE_AGENT",
+    "governed": "G_GOVERNED_AGENT"
+  },
+  "mutation_budget": {
+    "sessions": 10,
+    "cases_per_session": 1000000,
+    "tail_cases": 100000,
+    "local_families": 6,
+    "intermediate_families": 6,
+    "global_families": 6,
+    "external_families": 6,
+    "min_pair_signatures": 276
+  },
+  "authorities": {
+    "source": "SELF_REPORTED_NEVER_APPROVED",
+    "runtime": "UNTRUSTED_UNTIL_INDEPENDENTLY_ATTESTED",
+    "governed": "OUTSIDE_CORA"
+  }
+}

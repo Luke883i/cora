@@ -375,6 +375,39 @@
         "TEST"
       ],
       "rationale": "Negative coverage and positive performance fixture, not real-repo calibration."
+    },
+    {
+      "pattern": "cora.agent-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Backward-derived agent DoD, no host authority."
+    },
+    {
+      "pattern": "src/cora/agent_assurance.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Agent DoD compiler and replay of untrusted claims."
+    },
+    {
+      "pattern": "src/cora/agent_saturation.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Finite seeded model and independent reference oracle."
+    },
+    {
+      "pattern": "tests/test_pr17_agent_assurance.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Physical JSON mutants, anti-promotion and CLI regression."
     }
   ]
 }

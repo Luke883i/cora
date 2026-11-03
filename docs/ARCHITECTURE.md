@@ -57,3 +57,7 @@ Starting at the root, an engineer should find answers without prior PR history: 
 The candidate branch adds `archive_intake.py` (bounded ZIP inspection and source tree identity), `runtime_observation.py` (separately requested Docker unittest invocation), and `observation_fusion.py` (receipt reconciliation without authenticity elevation). The `git_snapshot.py` source reader uses bounded Git cat-file batches. These components do not add a daemon, trusted sandbox, authenticated human reviewer or release authority. A ZIP tree cannot recover Git history; an exit code is not code coverage; a digest is not a signature. `process-run full` remains read-only and does not trigger Docker.
 
 See [semantic lattice DoD](DOD_PR16_SEMANTIC_LATTICE.md). Product/readiness documentation describes candidate source only until a PR is validated on its exact HEAD and merged by independently governed hosting controls.
+
+## PR-17 AI coding agent semantic DoD control plane
+
+The new cora.agent-dod.json declares 24 fault families, four intermediate cuts, two global goals and ten deterministic seeds. src/cora/agent_assurance.py compiles a reverse-derived proof plan and reconciles untrusted agent claims; src/cora/agent_saturation.py challenges its finite model with a separate oracle. Both remain subordinate to the single CORA engine and its source/runtime boundary. No delegated merge or release authority. See AI_CODE_ASSURANCE.md.

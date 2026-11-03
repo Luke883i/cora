@@ -16,3 +16,7 @@ CORA is **the independent development evidence and governance framework**, not a
 ## PR-16 runtime-intake boundary (candidate)
 
 Treat ZIP paths and source bytes as untrusted, including inside Docker. Never interpret `runtime-observe` success, an output digest, a simulated executor test or `verify-fusion` as proof of sandbox confinement, real target coverage, human approval or an authorized release. Review [the semantic lattice DoD](docs/DOD_PR16_SEMANTIC_LATTICE.md) before proposing execution. Do not run unknown ZIP code merely to satisfy an audit gate: a read-only source result is legitimate and runtime remains NOT_EXECUTED.
+
+## PR-17 agent delivery (CORA as framework, not coding agent)
+
+Before coding derive prerequisite cuts: `cora dod-plan --stage intake` then `cora dod-plan --stage implementation`. Before PR use `cora dod-plan --stage premerge`, `cora dod-assess`, `cora verify-dod`, and the existing `dev-premerge`. Run `cora stress-agent-dod --require-full` for model/contract changes; use real target-code mutants and executed regression separately. Postmerge: `dev-postmerge` on merged main; release: `dod-plan --stage release` with external review. Do not self-attest missing runtime/hosting witnesses or introduce a new product owner. Full rules: [AI assistant method](docs/AI_CODE_ASSURANCE.md).

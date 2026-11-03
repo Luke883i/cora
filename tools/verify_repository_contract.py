@@ -22,6 +22,8 @@ CORE_DOCS = [
     'docs/DOD_RELEASE_READINESS.md', 'docs/RELEASE.md',
     'tools/verify_release_readiness.py', '.github/workflows/ci-release-readiness.yml',
     'GOVERNANCE.md', 'docs/DOD_SELECTION.md', 'docs/FILE_LAB.md', 'docs/STANDARDS_MAINTENANCE_AUDIT.md',
+    'cora.agent-dod.json', 'docs/AI_CODE_ASSURANCE.md', 'docs/DOD_PR17_AGENT.md',
+    'src/cora/agent_assurance.py', 'src/cora/agent_saturation.py',
 ]
 COMMANDS = (
     'version', 'audit', 'snapshot', 'verify-ledger', 'graph', 'explain',
@@ -36,7 +38,7 @@ COMMANDS = (
     'debt-scan', 'verify-debt', 'debt-diff', 'process-list', 'process-run', 'verify-process', 'stress-debt',
     'dev-premerge', 'dev-postmerge', 'verify-dev-gate', 'agent-check', 'stress-continuous',
     'zip-intake', 'verify-zip-intake', 'runtime-observe', 'fuse-evidence', 'verify-fusion',
-    'lattice-audit', 'verify-lattice',
+    'lattice-audit', 'verify-lattice', 'dod-plan', 'dod-assess', 'verify-dod', 'stress-agent-dod',
 )
 
 
