@@ -114,6 +114,15 @@ class ConvergenceTest(unittest.TestCase):
         self.assertEqual(f["status"], "BLOCKED_EXTERNAL")
         self.assertEqual(f["states"]["E_R4_PRIVATE"], "BLOCKED_EXTERNAL")
         self.assertEqual(f["authorization"], "NONE")
+        # A source counterexample must be preserved across EXTERNAL global
+        # cuts; hiding REFUTED under a generic external debt loses the oracle.
+        from cora.reticulum import REFUTED
+        refuted = assess_cut(self.profile["nodes"], "G_R1_R4_COMPLETE",
+                             {**full_claims, "S06": REFUTED})
+        self.assertEqual(refuted["states"]["R2_PHYSICAL"], "REFUTED")
+        self.assertEqual(refuted["status"], "REFUTED")
+        self.assertEqual(refuted["states"]["E_R2_BEHAVIOR"], "BLOCKED_EXTERNAL")
+        self.assertEqual(refuted["authorization"], "NONE")
 
     def test_mutated_policy_and_edges_are_not_reclassified_as_pass(self):
         with tempfile.TemporaryDirectory() as td:

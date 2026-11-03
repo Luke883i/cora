@@ -63,13 +63,18 @@ def assess_cut(nodes: list[dict], goal: str, observations: dict[str, str]) -> di
     states = {}
     for key in order:
         node = by_id[key]
-        if node.get("scope") == "EXTERNAL":
-            state = EXTERNAL
-        elif key in leaves:
-            state = observations.get(key, BLOCKED)
+        if key in leaves:
+            # A caller cannot certify (or authenticate rejection of) an
+            # external witness by editing local model input.
+            state = (EXTERNAL if node.get("scope") == "EXTERNAL" else
+                     observations.get(key, BLOCKED))
         else:
             inputs = [states[p] for p in node["depends_on"]]
+            # Observed negative model outcomes must remain visible at *every*
+            # abstraction layer, including complete/governed global roots.
+            # Still no positive promotion across any external boundary.
             state = (REFUTED if REFUTED in inputs else
+                     EXTERNAL if node.get("scope") == "EXTERNAL" else
                      MODEL if inputs and all(s == MODEL for s in inputs) else BLOCKED)
         states[key] = state
     blocked = [k for k in order if k in leaves and states[k] != MODEL]
