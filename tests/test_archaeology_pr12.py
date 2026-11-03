@@ -95,6 +95,11 @@ class HistoryFixture(unittest.TestCase):
             out=Path(d)/'full.json'
             self.assertEqual(main(['holistic-audit',str(self.repo),'--max-commits','20','--output',str(out)]),0)
             self.assertEqual(main(['verify-holistic',str(out),'--repo',str(self.repo)]),0)
+    def test_truncated_history_cannot_prove_scaffold_age(self):
+        report=holistic_audit(self.repo,max_commits=1)
+        row=next(x for x in report['files'] if x['path']=='src/p/scaffold_v2.py')
+        self.assertIn('HISTORY_WINDOW_TRUNCATED_UNKNOWN_LINEAGE',row['review_flags'])
+        self.assertNotIn('POSSIBLE_SCAFFOLD_WASTE_REVIEW',row['review_flags'])
     def test_focus_paths_cannot_escape(self):
         with self.assertRaises(ValueError):holistic_audit(self.repo,focus='../escape.py')
 
@@ -105,6 +110,12 @@ class GroupPolicyFixture(unittest.TestCase):
           {'p.py':['a','b'],'q.py':['a','b']},{'p.py':('one',),'q.py':('two',)})
         self.assertEqual(len(groups),2)
         self.assertEqual(edges[0]['kind'],'HISTORICAL_ASSOCIATION_NOT_RUNTIME_EDGE')
+    def test_unowned_bridge_cannot_merge_distinct_products(self):
+        groups,_=_coupling_groups(['a.py','bridge.py','b.py'],
+          [{'a':'a.py','b':'bridge.py','count':2},{'a':'bridge.py','b':'b.py','count':2}],
+          {'a.py':['1','2'],'bridge.py':['1','2'],'b.py':['1','2']},
+          {'a.py':('p',),'bridge.py':(),'b.py':('q',)})
+        self.assertEqual(len(groups),2)
     def test_same_product_can_cluster(self):
         groups,_=_coupling_groups(['a.py','b.py'],[{'a':'a.py','b':'b.py','count':2}],
           {'a.py':['c','d'],'b.py':['c','d']},{'a.py':('p',),'b.py':('p',)})

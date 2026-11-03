@@ -15,3 +15,5 @@
 | I7 usability | L18 one CLI / README; L19 independent real Git fixtures; L20 1M synthetic model cases twice + CI |
 
 The million cases exercise a finite Boolean model; distinct input vectors are **not** a million independent repositories or a million distinct semantic output classes. Human and external-production validation are still open.
+
+**Hardening addendum:** L7 also checks transitive ownership through undeclared bridges, and L3 ensures truncated history never qualifies an artifact as a short-lived scaffold. Independent negative Git fixtures must cover both counterexamples.

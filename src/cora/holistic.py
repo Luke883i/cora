@@ -25,6 +25,8 @@ def _coupling_groups(paths:list[str], pair_rows:list[dict], by_path:dict, owners
     """Deterministic bounded union-find; never merge cross-product owner groups."""
     parent={p:p for p in paths}
     sizes={p:1 for p in paths}
+    # Track ownership at group-level; unowned bridges cannot join distinct products.
+    known={p:set(ownership.get(p, ())) for p in paths}
     def root(p):
         while parent[p]!=p:
             p=parent[p]
@@ -46,8 +48,10 @@ def _coupling_groups(paths:list[str], pair_rows:list[dict], by_path:dict, owners
             continue
         a=root(x['a']);b=root(x['b'])
         if a!=b and sizes[a]+sizes[b] <= 24:
+            if len(known[a])>1 or len(known[b])>1 or (known[a] and known[b] and known[a]!=known[b]):
+                continue
             if a>b:a,b=b,a
-            parent[b]=a;sizes[a]+=sizes[b]
+            parent[b]=a;sizes[a]+=sizes[b];known[a] |= known[b]
     buckets:dict[str,list[str]] = defaultdict(list)
     for p in paths:buckets[root(p)].append(p)
     return sorted((sorted(v) for v in buckets.values()), key=lambda g:(g[0],len(g))), candidates
@@ -95,8 +99,9 @@ def holistic_audit(repo:Path, revision:str='HEAD', *, max_commits:int=256,
         if len(owner[p])>1:flags.append('PRODUCT_BOUNDARY_AMBIGUOUS')
         if rs and PROTECTED.intersection(rs) and incoming[p]==0:
             flags.append('POSSIBLE_UNCONNECTED_GOLD_REVIEW')
-        if not rs and incoming[p]==0 and hits<=1:
+        if not rs and incoming[p]==0 and hits<=1 and not history['history_truncated']:
             flags.append('POSSIBLE_SCAFFOLD_WASTE_REVIEW')
+        if history['history_truncated']:flags.append('HISTORY_WINDOW_TRUNCATED_UNKNOWN_LINEAGE')
         if hits==0:flags.append('HISTORY_WINDOW_NO_TOUCH_OBSERVED')
         if graph is None:flags.append('GRAPH_NOT_AVAILABLE')
         selected.append({'path':p,'blob_record_digest':r['digest'],'declared_roles':rs,
