@@ -6,6 +6,7 @@ import re
 import subprocess
 from pathlib import Path, PurePosixPath
 from .evidence import domain_hash
+from .reticulum import ordered_cut
 
 SCHEMA = "cora-gold-assurance/1"
 HEX = re.compile(r"^[0-9a-f]{40}$")
@@ -97,20 +98,7 @@ def load_gold_contract(path: str | Path) -> dict:
 def retrograde_gold(contract: dict, goal: str = "G_GOLD_SOURCE") -> dict:
     if goal not in CUTS:
         raise ValueError("unknown goal")
-    found = {n["id"]: n for n in contract["nodes"]}
-    order, seen, active = [], set(), set()
-    def walk(key):
-        if key in active:
-            raise ValueError("cycle")
-        if key in seen:
-            return
-        active.add(key)
-        for dep in found[key]["depends_on"]:
-            walk(dep)
-        active.remove(key)
-        seen.add(key)
-        order.append(key)
-    walk(goal)
+    order = ordered_cut(contract["nodes"], goal)
     result = {"schema":"cora-gold-retrograde/1","goal":goal,
               "nodes":order,"local_cut":[x for x in order if x in LOCAL],
               "status":"REQUIREMENTS_DERIVED_NOT_EXECUTED",
