@@ -1,0 +1,244 @@
+{
+  "schema": "cora-documentation-dod/1",
+  "baseline_sha": "ee6da7625dae1e4101e06eb979a348610f39093b",
+  "baseline_markdown_count": 43,
+  "intent": "Introduce a clear product storefront and complete governed documentation while retaining original technical obligations, historic records, and proof distinctions.",
+  "goals": {
+    "source": "G_DOC_SOURCE",
+    "accepted": "G_DOC_ACCEPTED"
+  },
+  "nodes": [
+    {
+      "id": "S01",
+      "title": "README product value proposition",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "S02",
+      "title": "Product software repository distinctions",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "S03",
+      "title": "User audience and tasks",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "S04",
+      "title": "Runnable first use",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "S05",
+      "title": "AI agent adoption",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "S06",
+      "title": "Evidence boundaries",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "S07",
+      "title": "All documents reachable",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "S08",
+      "title": "Complete document registry",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "S09",
+      "title": "DoD precedence",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "S10",
+      "title": "Historical truth retained",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "S11",
+      "title": "CLI command coverage",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "S12",
+      "title": "Procedures include change intent",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "S13",
+      "title": "Source-based documentation verifier",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "S14",
+      "title": "Governance/architecture consistency",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "S15",
+      "title": "Negative fixture and CI",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "S16",
+      "title": "Correct release identity",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "S17",
+      "title": "Preserve 43 legacy Markdown files",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "S18",
+      "title": "Reader-oriented navigation",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": []
+    },
+    {
+      "id": "E01",
+      "title": "Unfamiliar engineer pilot",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": []
+    },
+    {
+      "id": "E02",
+      "title": "Independent AI coding agent pilot",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": []
+    },
+    {
+      "id": "E03",
+      "title": "Host-controlled independent review",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": []
+    },
+    {
+      "id": "I_VALUE",
+      "title": "I_VALUE",
+      "kind": "INTERMEDIATE",
+      "scope": "SOURCE",
+      "depends_on": [
+        "S01",
+        "S02",
+        "S03",
+        "S06"
+      ]
+    },
+    {
+      "id": "I_ACCESS",
+      "title": "I_ACCESS",
+      "kind": "INTERMEDIATE",
+      "scope": "SOURCE",
+      "depends_on": [
+        "S04",
+        "S05",
+        "S07",
+        "S08",
+        "S18"
+      ]
+    },
+    {
+      "id": "I_CONSISTENCY",
+      "title": "I_CONSISTENCY",
+      "kind": "INTERMEDIATE",
+      "scope": "SOURCE",
+      "depends_on": [
+        "S09",
+        "S10",
+        "S12",
+        "S16",
+        "S17"
+      ]
+    },
+    {
+      "id": "I_OPERATION",
+      "title": "I_OPERATION",
+      "kind": "INTERMEDIATE",
+      "scope": "SOURCE",
+      "depends_on": [
+        "S11",
+        "S13",
+        "S14"
+      ]
+    },
+    {
+      "id": "I_EVIDENCE",
+      "title": "I_EVIDENCE",
+      "kind": "INTERMEDIATE",
+      "scope": "SOURCE",
+      "depends_on": [
+        "S15"
+      ]
+    },
+    {
+      "id": "G_DOC_SOURCE",
+      "title": "G_DOC_SOURCE",
+      "kind": "GLOBAL",
+      "scope": "SOURCE",
+      "depends_on": [
+        "I_VALUE",
+        "I_ACCESS",
+        "I_CONSISTENCY",
+        "I_OPERATION",
+        "I_EVIDENCE"
+      ]
+    },
+    {
+      "id": "G_DOC_ACCEPTED",
+      "title": "G_DOC_ACCEPTED",
+      "kind": "GLOBAL",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "G_DOC_SOURCE",
+        "E01",
+        "E02",
+        "E03"
+      ]
+    }
+  ],
+  "authority": "NONE",
+  "external_status": "BLOCKED_EXTERNAL"
+}
