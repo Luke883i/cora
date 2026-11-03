@@ -15,6 +15,7 @@ CORE_DOCS = [
     'README.md', 'LICENSE', 'SECURITY.md', 'CONTRIBUTING.md',
     'docs/ARCHITECTURE.md', 'docs/DOD.md', 'docs/AUDIT_PR01_PR07.md',
     'cora.ontology.json', 'cora.artifact-roles.json', 'pyproject.toml', 'src/cora/cli.py',
+    'docs/HOLISTIC_FORENSICS.md', 'docs/DOD_HOLISTIC_FORENSICS.md',
     'GOVERNANCE.md', 'docs/DOD_SELECTION.md', 'docs/FILE_LAB.md', 'docs/STANDARDS_MAINTENANCE_AUDIT.md',
 ]
 COMMANDS = (
@@ -26,6 +27,7 @@ COMMANDS = (
     'file-lab', 'verify-file-lab', 'file-decision', 'stress-file-lab',
     'artifact-audit', 'verify-artifacts', 'stress-artifact-semantics',
     'select-file', 'verify-selection', 'stress-selection',
+    'holistic-audit', 'verify-holistic', 'archaeology', 'verify-archaeology', 'annotate-groups', 'stress-archaeology',
 )
 
 
