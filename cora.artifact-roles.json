@@ -242,6 +242,23 @@
         "RELEASE_TOOL"
       ],
       "rationale": "Creates an unpublished reproducible review-only product bundle"
+    },
+    {
+      "pattern": "src/cora/selection.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Read-only selection policy and immutable Git revalidation contract."
+    },
+    {
+      "pattern": "tests/test_selection.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Adversarial Git fixture and selection policy metamorphic oracle."
     }
   ]
 }

@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CORA read-only Git-backed selection contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "policy", "commit", "path", "ontology_path", "lab_digest", "ledger_digest", "graph_digest", "blob_record_digest", "artifact_role_manifest_digest", "selection", "effect", "epistemic_boundary", "selection_digest"],
+  "properties": {
+    "schema": {"const": "cora-file-selection/1"},
+    "policy": {"const": "cora-selection-policy/1"},
+    "commit": {"type":"string", "pattern":"^[0-9a-f]{40}([0-9a-f]{24})?$"},
+    "path": {"type":"string", "minLength":1},
+    "ontology_path": {"type":"string", "minLength":1},
+    "lab_digest": {"type":"string", "pattern":"^[0-9a-f]{64}$"},
+    "ledger_digest": {"type":"string", "pattern":"^[0-9a-f]{64}$"},
+    "graph_digest": {"type":["string", "null"]},
+    "blob_record_digest": {"type":"string", "pattern":"^[0-9a-f]{64}$"},
+    "artifact_role_manifest_digest": {"type":["string", "null"]},
+    "selection": {
+      "type":"object", "additionalProperties":false,
+      "required": ["state", "positive_triggers", "unclosed_obligations", "selected_for_investigation", "dead_code_proven", "safe_deletion_proven", "authorized_action", "reason"],
+      "properties": {
+        "state": {"enum":["RETAIN_EVIDENCED", "INVESTIGATE", "DEBT_BLOCKED"]},
+        "positive_triggers": {"type":"array", "items":{"type":"string"}},
+        "unclosed_obligations": {"type":"array", "items":{"type":"string"}},
+        "selected_for_investigation": {"type":"boolean"},
+        "dead_code_proven": {"const":false},
+        "safe_deletion_proven": {"const":false},
+        "authorized_action": {"const":"NONE"},
+        "reason": {"type":"string"}
+      }
+    },
+    "effect": {"const":"READ_ONLY_HUMAN_REVIEW_QUEUE"},
+    "epistemic_boundary": {"const":"absence_in_partial_graph_is_not_proof_of_nonuse"},
+    "selection_digest": {"type":"string", "pattern":"^[0-9a-f]{64}$"}
+  },
+  "description": "Companion only. Authority requires code validation plus reconstruction against the pinned Git source; a rehashed JSON alone is not trusted."
+}

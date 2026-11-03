@@ -39,8 +39,9 @@ Keep output files **outside** the repository. `audit` reads the working tree, wh
 | Candidate packaging (PR-07) | `tools/build_candidate.py`, `tools/release_verify.py`, `tools/external_validate.py` | Wheel/sdist, local reproducibility, synthetic Git fixture installs; no signed/published release |
 | Per-file forensic lab (PR-09) | `file-lab`, `verify-file-lab`, `file-decision` | Source/ontology/graph + untrusted AI/runtime annotations; human intent, **not** execution |
 | Multi-role artifact evidence (v1) | `artifact-audit`, `verify-artifacts` | Explicitly declared **overlapping** software/test/contract/workflow roles at a commit; unknowns remain unknown |
+| Conservative selection (v1.experimental) | `select-file`, `verify-selection` | Git-verified `RETAIN_EVIDENCED`, `INVESTIGATE` or `DEBT_BLOCKED`; **no automatic deletion** |
 
-The CLI also offers `stress`, `stress-evidence`, `stress-graph`, `stress-adapters`, `stress-closure`, `stress-transform`, `stress-file-lab`, and `stress-artifact-semantics`. Large numbers refer to **synthetic fixtures or finite policy states**, never independent validation on a million actual repositories.
+The CLI also offers `stress`, `stress-evidence`, `stress-graph`, `stress-adapters`, `stress-closure`, `stress-transform`, `stress-file-lab`, `stress-artifact-semantics`, and `stress-selection`. Large numbers refer to **synthetic fixtures or finite policy states**, never independent validation on a million actual repositories.
 
 ## Investigate one file — and run CORA on CORA
 
@@ -51,11 +52,15 @@ cora verify-artifacts /tmp/cora-roles.json --repo .
 cora file-lab . --path src/cora/graph.py --revision HEAD \
   --output /tmp/file-lab.json --prompt-output /tmp/ai-request.json
 cora verify-file-lab /tmp/file-lab.json --repo .
+cora select-file . --path src/cora/graph.py --revision HEAD --output /tmp/selection.json
+cora verify-selection /tmp/selection.json --repo .
 python tools/verify_repository_contract.py --repo .
 python tools/verify_artifact_roles.py --repo .
 ```
 
 Artifact roles are multi-valued: the **same** file may be a test, executable source, contract verifier and fixture. The lab shows incoming/outgoing candidate imports, declared software and products, evidence gaps, treatment hypotheses and optional caller-supplied runtime/AI assertions. It **cannot** conclude that no external, dynamic, migration, deployment or runtime consumer exists. An AI confidence range is **uncalibrated**, not a probability. For contracts and examples: [file lab](docs/FILE_LAB.md), [artifact semantics](docs/ARTIFACT_SEMANTICS.md).
+
+**Selection states:** `RETAIN_EVIDENCED` means a positive static/declaration reason to keep; `INVESTIGATE` means no positive usage observed but unknowns remain; `DEBT_BLOCKED` means required Git/ontology/role evidence is missing. All three have `authorized_action=NONE`. See the [selection DoD and its impossibility boundary](docs/DOD_SELECTION.md) for the global vs scoped distinction. The million-case selector corpus is finite and synthetic.
 
 Human triage can record `RETAIN`, `INVESTIGATE`, `QUARANTINE_CANDIDATE`, `ARCHIVE_CANDIDATE`, `RENAME_CANDIDATE`, or `DELETE_BLOCKED`, but **never applies a change**. A safe-deletion claim cannot be certified by v1.experimental.
 
