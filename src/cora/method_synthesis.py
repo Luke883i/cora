@@ -9,7 +9,7 @@ from .workflow_rationalization import audit_workflows, verify_workflows
 from .process_suite import process_catalog, verify_suite
 from .ontology import committed_ontology, members
 from .git_snapshot import git
-from .reticulum import MODEL, assess_cut, ordered_cut
+from .reticulum import MODEL, BLOCKED, REFUTED, assess_cut, ordered_cut
 from .evidence import domain_hash
 
 SCHEMA = 'cora-method-synthesis/1'
@@ -174,8 +174,18 @@ def synthesize(repo: Path, revision='HEAD', *, artifacts=None, workflows=None,
                                  'state':'OBSERVED_SOURCE_GAP'})
     valid = refs | {'artifact:' + x for x in rows}
     ai = _ground_hypotheses(hypotheses, sha, valid)
-    assessment = assess_cut(dod['nodes'], 'G_GOVERNED',
-                            {'L'+str(n):MODEL for n in range(1,8)})
+    # These are finite source predicates, NOT test execution receipts.
+    # L7 always needs independently observed test results. Contradiction
+    # propagates through the canonical AND lattice rather than being hidden.
+    model = {'L'+str(n):MODEL for n in range(1,7)}
+    model['L7'] = BLOCKED
+    if any(row['state'] == 'SOURCE_CONTRADICTION' for row in findings):
+        model['L4'] = REFUTED
+    elif workflows['source_status'] != 'PASS_SCOPED_SOURCE':
+        model['L4'] = BLOCKED
+    if process is not None and process['status'] == 'DEBT_BLOCKED':
+        model['L5'] = BLOCKED
+    assessment = assess_cut(dod['nodes'], 'G_GOVERNED', model)
     report = {'schema':SCHEMA,'commit':sha,'source_status':'SOURCE_JOIN_REPLAYED_NARROW',
               'product_id':atlas['product'],'software_methods':assigned,
               'reference_count':len(atlas['references']),

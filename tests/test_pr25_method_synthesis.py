@@ -47,6 +47,7 @@ class MethodSynthesisTests(unittest.TestCase):
         self.assertEqual(len(result['method_reference_edges']),28)
         self.assertEqual(result['workflow_count'],12)
         self.assertEqual(result['authorization'],'NONE')
+        self.assertEqual(result['source_model'],'BLOCKED_UNOBSERVED')
         self.assertEqual(result['governed_model'],'BLOCKED_EXTERNAL')
         self.assertEqual(result['process_state'],'NOT_SUPPLIED')
         self.assertEqual(len(result['external_gaps']),4)
@@ -115,6 +116,8 @@ class MethodSynthesisTests(unittest.TestCase):
             mismatches=[x for x in result['findings'] if x['id']=='ROLE_MISMATCH']
             self.assertTrue(mismatches)
             self.assertEqual(result['authorization'],'NONE')
+            self.assertEqual(result['source_model'],'REFUTED')
+            self.assertEqual(result['governed_model'],'REFUTED')
             self.assertTrue(verify_synthesis(local,result))
 
     def test_source_readback_differs_from_dirty_worktree(self):
