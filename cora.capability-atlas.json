@@ -630,7 +630,8 @@
       "tools/verify_documentation.py",
       "tools/verify_pr16_coverage.py",
       "tools/verify_release_readiness.py",
-      "tools/verify_repository_contract.py"
+      "tools/verify_repository_contract.py",
+      "tools/verify_type_assurance.py"
     ],
     "github_workflows": [
       ".github/workflows/ci-agent-assurance.yml",
@@ -658,6 +659,7 @@
       "cora.method-atlas.json",
       "cora.method-synthesis-dod.json",
       "cora.ontology.json",
+      "cora.type-assurance-profile.json",
       "cora.workflow-dod.json"
     ],
     "markdown": [
@@ -742,6 +744,7 @@
       "tests/test_pr24_workflow_rationalization.py",
       "tests/test_pr25_method_synthesis.py",
       "tests/test_pr26_capability_atlas.py",
+      "tests/test_pr27_type_assurance.py",
       "tests/test_selection.py"
     ]
   },
