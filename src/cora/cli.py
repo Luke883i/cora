@@ -45,6 +45,7 @@ from .agent_saturation import saturate_agent_dod
 from .gold_assurance import load_gold_contract, retrograde_gold, pilot_sources, contextual_gold
 from .gold_mutations import physical_mutants
 from .gold_effects import audit_workflow, reconcile_effect_claim
+from .workflow_rationalization import audit_workflows, verify_workflows
 from .gold_saturation import gold_saturation
 from .gold_assurance import load_convergence_contract, convergent_plan
 from .gold_saturation import saturate_convergence
@@ -398,6 +399,15 @@ def main(argv: list[str] | None = None) -> int:
     gs.add_argument('--seed',type=int,default=883)
     gs.add_argument('--cases',type=int,default=1000000)
     gs.add_argument('--output',type=Path)
+    wa = sub.add_parser('workflow-audit', help='Pinned CI workflow discovery and review-only minimization candidates')
+    wa.add_argument('repo', type=Path)
+    wa.add_argument('--revision', default='HEAD')
+    wa.add_argument('--base', help='Optional original revision for added/removed/modified comparison')
+    wa.add_argument('--output', type=Path)
+    wv = sub.add_parser('verify-workflows', help='Replay CI workflow report from exact Git objects')
+    wv.add_argument('report', type=Path)
+    wv.add_argument('--repo', required=True, type=Path)
+    wv.add_argument('--output', type=Path)
     g = sub.add_parser('snapshot')
     g.add_argument('repo', type=Path)
     g.add_argument('--revision', default='HEAD')
@@ -736,6 +746,18 @@ def main(argv: list[str] | None = None) -> int:
         elif args.cmd == 'stress-continuous':
             result=stress_continuous(seed=args.seed,cases=args.cases)
             code=2 if result['mismatches'] else 0
+        elif args.cmd == 'workflow-audit':
+            result = audit_workflows(args.repo, args.revision, base=args.base)
+            code = 0 if result['source_status'] == 'PASS_SCOPED_SOURCE' else 2
+        elif args.cmd == 'verify-workflows':
+            candidate = json.loads(args.report.read_text('utf-8'))
+            verify_workflows(args.repo, candidate)
+            result = {'schema': 'cora-workflow-rationalization-verification/1',
+                      'commit': candidate['commit'],
+                      'receipt_sha256': candidate['receipt_sha256'],
+                      'status': 'REPLAYED_SOURCE_NOT_GOVERNED',
+                      'authorization': 'NONE'}
+            code = 0
         elif args.cmd == 'snapshot':
             result = snapshot(args.repo, args.revision)
             code = 0

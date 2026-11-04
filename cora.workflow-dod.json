@@ -1,0 +1,131 @@
+{
+  "schema": "cora-workflow-rationalization-dod/1",
+  "baseline": "1cf37f243b3b1517bb527d2b55715390cf42f827",
+  "authority": "NONE",
+  "goals": {
+    "source": "G_WORKFLOW_SOURCE",
+    "governed": "G_WORKFLOW_GOVERNED"
+  },
+  "nodes": [
+    {
+      "id": "W01",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Committed inventory and Git object provenance"
+    },
+    {
+      "id": "W02",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Conservative GitHub Actions syntax and unknown classification"
+    },
+    {
+      "id": "W03",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "In-repository callers and unobserved external consumers"
+    },
+    {
+      "id": "W04",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Sensitivity of release and privilege-bearing workflows"
+    },
+    {
+      "id": "W05",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Evidence-bounded minimization and comparison"
+    },
+    {
+      "id": "W06",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "BASE HEAD differences and receipt replay"
+    },
+    {
+      "id": "W07",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Physical negative tests, CLI documentation and CI integration"
+    },
+    {
+      "id": "E01",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "Independent acceptance evidence"
+    },
+    {
+      "id": "E02",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "Independent acceptance evidence"
+    },
+    {
+      "id": "E03",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "Independent acceptance evidence"
+    },
+    {
+      "id": "E04",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "Independent acceptance evidence"
+    },
+    {
+      "id": "I_DISCOVERY",
+      "kind": "INTERMEDIATE",
+      "scope": "SOURCE",
+      "depends_on": [
+        "W01",
+        "W02",
+        "W03",
+        "W04"
+      ]
+    },
+    {
+      "id": "I_MINIMIZATION",
+      "kind": "INTERMEDIATE",
+      "scope": "SOURCE",
+      "depends_on": [
+        "W05",
+        "W06",
+        "W07"
+      ]
+    },
+    {
+      "id": "G_WORKFLOW_SOURCE",
+      "kind": "GLOBAL",
+      "scope": "SOURCE",
+      "depends_on": [
+        "I_DISCOVERY",
+        "I_MINIMIZATION"
+      ]
+    },
+    {
+      "id": "G_WORKFLOW_GOVERNED",
+      "kind": "GLOBAL",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "G_WORKFLOW_SOURCE",
+        "E01",
+        "E02",
+        "E03",
+        "E04"
+      ]
+    }
+  ],
+  "external_status": "BLOCKED_EXTERNAL"
+}
