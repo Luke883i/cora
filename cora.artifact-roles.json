@@ -661,6 +661,31 @@
         "TEST"
       ],
       "rationale": "One thousand finite negative editorial/reader-target inputs with honest source-only counterexample scope."
+    },
+    {
+      "pattern": "cora.workflow-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Reticular CI workflow source and external DoD."
+    },
+    {
+      "pattern": "src/cora/workflow_rationalization.py",
+      "roles": [
+        "SOFTWARE_SOURCE",
+        "CONTRACT_VERIFIER"
+      ],
+      "rationale": "Git-bound workflow inventory, review-only plans and replay."
+    },
+    {
+      "pattern": "tests/test_pr24_workflow_rationalization.py",
+      "roles": [
+        "TEST",
+        "FIXTURE",
+        "CONTRACT_VERIFIER"
+      ],
+      "rationale": "Physical workflow source mutants and bounded parser counterexamples."
     }
   ]
 }
