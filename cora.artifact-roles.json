@@ -673,17 +673,17 @@
     {
       "pattern": "src/cora/workflow_rationalization.py",
       "roles": [
-        "SOFTWARE_SOURCE",
-        "CONTRACT_VERIFIER"
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
       ],
       "rationale": "Git-bound workflow inventory, review-only plans and replay."
     },
     {
       "pattern": "tests/test_pr24_workflow_rationalization.py",
       "roles": [
-        "TEST",
+        "CONTRACT_VERIFIER",
         "FIXTURE",
-        "CONTRACT_VERIFIER"
+        "TEST"
       ],
       "rationale": "Physical workflow source mutants and bounded parser counterexamples."
     }
