@@ -27,6 +27,12 @@ jobs:
           python -m unittest discover -s tests -p 'test_continuous_pr14.py' -q
           python tools/verify_repository_contract.py --repo .
           python tools/verify_artifact_roles.py --repo .
+      - name: Source-only CI workflow discovery and physical regression
+        run: |
+          python -m unittest discover -s tests -p 'test_pr24_workflow_rationalization.py' -v
+          cora workflow-audit . --revision HEAD --output /tmp/cora-workflow-plan.json
+          cora verify-workflows /tmp/cora-workflow-plan.json --repo .
+          python -c 'import json; p=json.load(open("/tmp/cora-workflow-plan.json")); assert p["workflow_count"]>=12 and p["authorization"]=="NONE" and p["governed_status"]=="BLOCKED_EXTERNAL" and all(not x["retirement_authorized"] for x in p["workflows"])'
       - name: Inspect PR merge revision against exact base commit
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
@@ -47,6 +53,7 @@ jobs:
           name: cora-premerge-python-${{ matrix.python-version }}-review-only
           path: |
             /tmp/premerge.json
+            /tmp/cora-workflow-plan.json
             /tmp/gov-a.json
             /tmp/gov-b.json
           if-no-files-found: warn
