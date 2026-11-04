@@ -1,0 +1,121 @@
+{
+  "schema": "cora-capability-dod/1",
+  "source_goal": "G_CAP_SOURCE",
+  "accepted_goal": "G_CAP_ACCEPTED",
+  "nodes": [
+    {
+      "id": "C01",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Source-bound product, software and repository identity"
+    },
+    {
+      "id": "C02",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "All parser commands classified with implementation, method and test witnesses"
+    },
+    {
+      "id": "C03",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Explicit effects and evidence scopes without authority promotion"
+    },
+    {
+      "id": "C04",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "All tracked source modules, tools, workflows, contracts and docs inventoried"
+    },
+    {
+      "id": "C05",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Current README, architecture, changelog and DoD do not contradict verified source"
+    },
+    {
+      "id": "C06",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "SHA- and blob-bound receipts with deterministic replay and negative falsification"
+    },
+    {
+      "id": "C07",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Actual CI on exact candidate SHA independently observed, not inferred from test files"
+    },
+    {
+      "id": "E01",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "First-time developer task and comprehension"
+    },
+    {
+      "id": "E02",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "Independent maintained-target behavioral tests and false positive analysis"
+    },
+    {
+      "id": "E03",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "Host-enforced protected checks and independent reviewer"
+    },
+    {
+      "id": "I_IDENTITY",
+      "kind": "INTERMEDIATE",
+      "scope": "SOURCE",
+      "depends_on": [
+        "C01",
+        "C02",
+        "C03",
+        "C04"
+      ]
+    },
+    {
+      "id": "I_ASSURANCE",
+      "kind": "INTERMEDIATE",
+      "scope": "SOURCE",
+      "depends_on": [
+        "C05",
+        "C06",
+        "C07"
+      ]
+    },
+    {
+      "id": "G_CAP_SOURCE",
+      "kind": "GLOBAL",
+      "scope": "SOURCE",
+      "depends_on": [
+        "I_IDENTITY",
+        "I_ASSURANCE"
+      ]
+    },
+    {
+      "id": "G_CAP_ACCEPTED",
+      "kind": "GLOBAL",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "G_CAP_SOURCE",
+        "E01",
+        "E02",
+        "E03"
+      ]
+    }
+  ],
+  "authority": "NONE",
+  "external_status": "BLOCKED_EXTERNAL",
+  "ci_status": "MUST_BE_OBSERVED_EXACT_HEAD"
+}
