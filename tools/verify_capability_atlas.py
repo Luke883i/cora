@@ -75,8 +75,6 @@ def verify_dod(doc):
             or doc.get("ci_status") != "MUST_BE_OBSERVED_EXACT_HEAD"):
         raise ValueError("invalid DoD authority")
     nodes = doc["nodes"]
-    if len(nodes) != 14 or len(ordered_cut(nodes, "G_CAP_ACCEPTED")) != 14:
-        raise ValueError("incomplete reticular DoD")
     expected = {"C%02d" % n for n in range(1, 8)}
     expected |= {"E%02d" % n for n in range(1, 4)}
     expected |= set(EDGES)
@@ -87,6 +85,8 @@ def verify_dod(doc):
             raise ValueError("noncompensatory DoD edge removed")
         if node["id"].startswith("E") and node["scope"] != "EXTERNAL":
             raise ValueError("external DoD was promoted")
+    if len(nodes) != 14 or len(ordered_cut(nodes, "G_CAP_ACCEPTED")) != 14:
+        raise ValueError("incomplete reticular DoD")
 
 
 def check(repo, revision="HEAD"):
