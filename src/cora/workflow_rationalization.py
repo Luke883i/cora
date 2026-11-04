@@ -31,7 +31,7 @@ WRITE_RISK = re.compile(r"(?m)^\s*(?:contents|id-token|packages|actions|"
                         r"pull-requests|issues|deployments):\s*write\b|"
                         r"^\s*permissions:\s*write-all\b", re.I)
 DYNAMIC = re.compile(r"\$\{\{|\b(?:!include|!import)\b|"
-                     r"(?m)^\s*(?:<<:|\S+:?\s*[&*][A-Za-z0-9_-]+)")
+                     r"^\s*(?:<<:|\S+:?\s*[&*][A-Za-z0-9_-]+)", re.M)
 DANGEROUS = re.compile(r"\b(?:deploy|publish|release|upload-release-asset|"
                        r"docker\s+push|npm\s+publish|gh\s+release)\b", re.I)
 USE = re.compile(r"(?m)^\s*(?:-\s*)?uses:\s*([^#\r\n]+)")
@@ -226,6 +226,8 @@ def audit_workflows(repo: Path, revision: str = "HEAD",
             disposition = "REVIEW_CONSOLIDATION_CANDIDATE"
         elif details["flags"] or refs:
             disposition = "RETAIN_UNTIL_CONSUMER_REVIEW"
+        elif details["shared_global_checks"]:
+            disposition = "REVIEW_ADJUST_DUPLICATED_GLOBAL_CHECK"
         else:
             disposition = "INVESTIGATE_POTENTIAL_REDUNDANCY"
         blockers = ["EXTERNAL_CALLERS_AND_REQUIRED_CHECKS_UNKNOWN",
@@ -242,7 +244,8 @@ def audit_workflows(repo: Path, revision: str = "HEAD",
                       "other_literal_references": sorted(source_refs[path]),
                       "exact_content_duplicates": dupe if len(dupe) > 1 else [],
                       "disposition": disposition, "retirement_authorized": False,
-                      "blockers": blockers})
+                      "blockers": blockers,
+                      "proposed_effect": "READ_ONLY_PLAN_NOT_APPLIED"})
     changes = []
     if base is not None:
         base_commit, old = _source(repo, base)

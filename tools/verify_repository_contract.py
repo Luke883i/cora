@@ -53,6 +53,7 @@ COMMANDS = (
     'lattice-audit', 'verify-lattice', 'dod-plan', 'dod-assess', 'verify-dod', 'stress-agent-dod',
     'gold-plan', 'gold-pilot', 'gold-mutate', 'gold-effects', 'stress-gold',
     'convergence-plan', 'verify-contextual-gate', 'stress-convergence',
+    'workflow-audit', 'verify-workflows',
 )
 
 

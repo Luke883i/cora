@@ -17,6 +17,11 @@ This is the complete inventory of the single `cora` CLI from `src/cora/cli.py`, 
 - `closure` — see `cora closure --help` for the supported inputs and scope.
 - `verify-certificate` — see `cora verify-certificate --help` for the supported inputs and scope.
 
+## CI/CD workflow discovery and governance
+
+- `workflow-audit` — source-bound workflow inventory, reusable callers, risks and conservative adjustment/retirement candidates; run `cora workflow-audit REPO --revision HEAD --base BASE_SHA --output /tmp/workflows.json`. Never edits workflow files or attests external consumers.
+- `verify-workflows` — rederive the exact source report: `cora verify-workflows /tmp/workflows.json --repo REPO`. See [continuous development](CONTINUOUS_DEVELOPMENT.md) for the review-only DoD and the host prerequisites.
+
 ## Forensic analysis and debt
 
 - `file-lab` — see `cora file-lab --help` for the supported inputs and scope.
