@@ -1,13 +1,20 @@
 # Changelog — CORA
 
-All entries distinguish **merged source**, a **version declared in the repository**, and an actually **published release**. Merged PRs 01–22 do not themselves establish a public package, tagged GitHub Release, signed provenance, or production fitness. Current Python version: `1.0.0a4` (alpha, not published).
+All entries distinguish **merged source**, a **version declared in the repository**, and an actually **published release**. Merged PRs 01–25 do not themselves establish a public package, tagged GitHub Release, signed provenance, or production fitness. Current Python version: `1.0.0a4` (alpha, not published).
 
-## Current merged source — PR-19 to PR-22 (unreleased)
+## Current merged source — PR-19 to PR-25 (unreleased, verified 4 November 2026)
+
+**PR-25:** Added same-commit cross-method receipt synthesis and untrusted AI case handling. Documentation, CI, mutation tests and source obligations are distinct from independent external acceptance.
+
+**PR-24:** Added read-only Git-backed CI workflow inventory, consumer clues and retirement *candidates*; no automatic dismission, required-check proof or behavioral parity.
+
+**PR-23:** Added progressive README disclosure and reader-route falsifiers while retaining all 48 Markdown records and external E01–E03 acceptance boundaries.
+
 
 **PR-22:** Added revision-bound S01–S18 documentation source proofs, physical Git mutation oracles and CI receipt replay. The README claim/source chain is bounded to named predicates; E01–E03 independent acceptance remains open. The integration is merged source, **not** a published release or verified host approval.
 
 
-**PR-21:** Reorganized README, registered 48 Markdown documents (43 retained), added user/agent onboarding, verified CLI parser reference and source-only documentation AND lattice. The external unfamiliar-engineer, real target-pilot and host-review gates remain open. A subsequent revision-bound claim/proof extension is a separate candidate until merged.
+**PR-21:** Reorganized README, registered 48 Markdown documents (43 retained), added user/agent onboarding, verified CLI parser reference and source-only documentation AND lattice. The external unfamiliar-engineer, real target-pilot and host-review gates remain open. The separate claim/proof extension was subsequently merged in PR-22.
 
 
 **PR-20:** Share reverse-DoD kernel across previous agent/Gold profiles; bind contextual pre/postmerge source evidence and selective witness invalidations, with 10×1M preseeded finite failure-class models. Full R1–R4 behavioral, private pilot, host readback and governance claims remain blocked.

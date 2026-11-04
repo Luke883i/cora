@@ -2,6 +2,8 @@
 
 This is the complete inventory of the single `cora` CLI from `src/cora/cli.py`, maintained against its real `argparse` parser. Use `cora COMMAND --help` for exact flags and inputs; this is not evidence of test execution or a guarantee of behavioral correctness. Start with [Getting started](GETTING_STARTED.md) or [Agent adoption](AGENT_ADOPTION.md).
 
+The [complete capability atlas](../cora.capability-atlas.json) enumerates all **71 parser commands** with eight method families, implementation and test-source paths, classified side effects and non-CLI repository surfaces. This reference explains command entrypoints; the atlas describes source witnesses. Neither proves 71 independently qualified features, executed tests or real-target behavior. See the [capability DoD](../cora.capability-dod.json) for source-versus-external obligations.
+
 ## Git identity and source evidence
 
 - `version` — see `cora version --help` for the supported inputs and scope.

@@ -41,7 +41,7 @@ A source receipt means **PASS_SCOPED_SOURCE** for the implemented *finite* predi
 
 Adversarial Git fixtures physically commit contradicting current-doc claims, detached intent wiring, parser drift, DoD edge changes, historical blob rewrites, CI proof omissions and stale receipt forgeries. They exercise falsifier sensitivity rather than assert exhaustive semantic proof. The source-oracle code and its profile are PR-editable and cannot approve changes to themselves.
 
-## Progressive navigation micro-DoD (PR-23 proposal)
+## Progressive navigation micro-DoD — PR-23 source (merged)
 
 No parallel documentation engine is introduced. Reuse the PR-21 source leaves **S01–S18**, the PR-22 revision-bound claim profile and the existing `verify_documentation.py` entrypoint. The following **editorial DoD is a proposed non-compensatory cut**, not a new certificate of human understanding:
 
@@ -57,3 +57,18 @@ No parallel documentation engine is introduced. Reuse the PR-21 source leaves **
 **G_NAV_SOURCE = N1 ∧ N2 ∧ N3 ∧ N4 ∧ N5 ∧ N6.** This is checked only by finite structural/semantic source predicates, existing PR-21/22 provenance contracts, and actual CI on the reviewed HEAD. **G_NAV_ACCEPTED = G_NAV_SOURCE ∧ E01 ∧ E02 ∧ E03**, so an unfamiliar-human navigation trial, an independent maintained-target agent pilot and host-enforced non-author review remain **BLOCKED_EXTERNAL** without actual witnesses.
 
 The `test_pr23_navigation.py` experiment creates **1,000 reproducible adversarial editorial/reader-target input variants** across ten prespecified mutation families. They are ten classes with 100 distinct text vectors each, *not* 1,000 independent humans, authentic user sessions or independent semantic concepts. Each variant must break an explicit current invariant while an unchanged source must pass; output reports case counts and family-specific survivors. The mutation corpus cannot measure real task completion, calibrated product quality or accessibility in every browser. Human first-read remains the falsifier for those external claims.
+
+## Capability and method completeness — source cut
+
+The [capability atlas](../cora.capability-atlas.json) is the machine census for the `cora` CLI and non-CLI repository surfaces. It records **71 commands / eight method families**, per-command implementation and test-source witnesses, explicitly classified target-side effects, and all tracked modules, operational tools, CI workflows and contract/documentation records. Do not interpret 71 subcommands as 71 separately qualified user-visible product outcomes.
+
+The companion [capability DoD](../cora.capability-dod.json) is a noncompensatory AND lattice: **C01–C07** distinguish identity, complete parser/dispatch documentation, effects, repository inventory, cross-document chronology, Git provenance/replay and actual CI attribution. The Git source verifier can check bounded parts of C01–C06; **C07 cannot become observed CI success merely because its source code or tests exist**. E01–E03 remain independent user, maintained-target and host/reviewer acceptance obligations.
+
+Source replay, from an authorized CORA checkout:
+
+```sh
+python tools/verify_capability_atlas.py --repo . --revision HEAD --output /tmp/cora-capability.json
+python tools/verify_capability_atlas.py --repo . --verify-report /tmp/cora-capability.json
+```
+
+Every generated receipt binds method and test-source Git blob OIDs to a revision. The verifier checks `argparse` entrypoints, source-import/dispatch relationships, test-file syntax/role, current method documentation, repository-surface completeness, sensitive interaction labels, DoD edges and critical README/architecture/changelog consistency. A reported test OID is a **source witness only**: no execution, branch protection, release, reviewer or functional correctness is authenticated. Actual required CI status must be observed on the exact final SHA outside the source receipt; external behavior must be tested separately.
