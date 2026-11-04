@@ -182,7 +182,8 @@ def integrated_case(repo,revision='HEAD',*,artifacts=None,workflows=None,process
             'features':{'available_parser_commands':71,'declared_atlas_commands':71,
                         'families':8,'canonical_parity':True,
                         'all_behaviors_tested':False,'actual_runtime':'NOT_ATTESTED'},
-            'methods':{'count':len(mids),'ids':sorted(mids),'types':len(types['types'])},
+            'methods':{'count':len(mids),'ids':sorted(mids),'types':len(types['types']),
+                       'type_ids':sorted(x['id'] for x in types['types'])},
             'dimensions':[{'id':x,'scope':'SOURCE_RELATION_NEEDS_BEHAVIORAL_WITNESS'} for x in DIMENSIONS],
             'documents':docs,'claim_to_implementation':claims,
             'standards':[{'id':x['id'],'kind':x['kind'],
@@ -210,6 +211,7 @@ def ai_request(report):
     if not isinstance(report,dict) or report.get('schema')!=SCHEMA:
         raise ValueError('invalid integrated AI request source')
     refs={'method:'+x for x in report['methods']['ids']}
+    refs|={'type:'+x for x in report['methods']['type_ids']}
     refs|={'claim:'+x['id'] for x in report['claim_to_implementation']['claims']}
     refs|={'doc:'+x['path'] for x in report['documents']['docs']}
     return {'schema':'cora-integrated-ai-request/1','source_commit':report['commit'],

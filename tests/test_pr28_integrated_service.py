@@ -77,6 +77,8 @@ class IntegratedServiceTests(unittest.TestCase):
         self.assertFalse(prompt['source_bytes_embedded'])
         self.assertEqual(prompt['authority'],'NONE')
         self.assertIn('claim:S01',prompt['valid_source_refs'])
+        self.assertEqual(len(original['methods']['type_ids']),20)
+        self.assertIn('type:git-revision',prompt['valid_source_refs'])
         result={'schema':AI_SCHEMA,'source_commit':self.sha,
                 'case_digest':original['case_digest'],'items':[{
                     'id':'a1',

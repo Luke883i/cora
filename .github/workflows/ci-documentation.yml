@@ -69,6 +69,8 @@ jobs:
       - name: Ten million bounded reticular semantic fault cases
         run: |
           cora stress-convergence --integrated --require-full --output /tmp/cora-integrated-10m.json
+          cora stress-convergence --integrated --require-full --output /tmp/cora-integrated-10m-replay.json
+          cmp /tmp/cora-integrated-10m.json /tmp/cora-integrated-10m-replay.json
           python -c 'import json; r=json.load(open("/tmp/cora-integrated-10m.json")); assert r["status"]=="PASS_SCOPED_FINITE_MODEL" and r["cases"]==10000000 and len(r["families"])==32 and r["positive"]==625000 and r["negative"]==9375000 and r["mismatches"]==0 and r["unsafe_promotions"]==0 and r["physical_source_mutants"]==0 and r["review"]=="BLOCKED_EXTERNAL" and r["product"]=="BLOCKED_EXTERNAL"'
       - name: Preserve revision-bound source receipts for review only
         if: always()
@@ -83,6 +85,7 @@ jobs:
             /tmp/cora-integrated.json
             /tmp/cora-integrated-ai-request.json
             /tmp/cora-integrated-10m.json
+            /tmp/cora-integrated-10m-replay.json
           if-no-files-found: warn
           retention-days: 14
       - name: Product / software / repository contracts and roles
