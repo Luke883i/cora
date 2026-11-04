@@ -95,9 +95,17 @@ class MethodSynthesisTests(unittest.TestCase):
                 synthesize(local,commit)
             with self.assertRaises(ValueError):
                 verify_synthesis(local,dict(source,commit=commit))
-            mutate(local,'cora.method-atlas.json',
-                   lambda x:x.update(product='invented-product'))
-            with self.assertRaises(ValueError):
+            def wrong_identity(x):
+                x['procedures'][0]['source']='src/cora/git_snapshot.py'
+                x['product']='invented-product'
+            mutate(local,'cora.method-atlas.json',wrong_identity)
+            with self.assertRaisesRegex(ValueError,'product/software identity mismatch'):
+                synthesize(local)
+            def wrong_reference(x):
+                x['product']='cora'
+                x['procedures'][0]['standards']=['UNKNOWN_REFERENCE']
+            mutate(local,'cora.method-atlas.json',wrong_reference)
+            with self.assertRaisesRegex(ValueError,'method reference binding invalid'):
                 synthesize(local)
 
     def test_physical_git_role_conflict_detected_not_approvable(self):
