@@ -176,6 +176,24 @@ def integrated_case(repo,revision='HEAD',*,artifacts=None,workflows=None,process
     lattice=_reticulum(repo,sha)
     refs={'method:'+x for x in mids}|{'type:'+x['id'] for x in types['types']}
     refs|={'doc:'+x['path'] for x in docs['docs']}|{'claim:'+x['id'] for x in claims['claims']}
+    crosswalk=[]
+    for row in types['types']:
+        owner=row['owner_source']
+        if owner not in tracked:
+            raise ValueError('typed method owner missing from original Git source')
+        documentation=sorted(x['path'] for x in docs['docs']
+                             if owner in x['references'])
+        claim_ids=sorted(x['id'] for x in claims['claims']
+                         if any(y['path']==owner for y in x['evidence']))
+        crosswalk.append({'type':row['id'],'plane':row['plane'],
+                          'owner_method':row['existing_method'],
+                          'owner_source':owner,
+                          'standard_refs':sorted(row['standards']),
+                          'quality_axes':sorted(row['quality']),
+                          'documentation_refs':documentation,
+                          'claim_refs':claim_ids,
+                          'state':'DECLARED_SOURCE_RELATION_NOT_STANDARD_CONFORMANCE'})
+    crosswalk.sort(key=lambda x:x['type'])
     report={'schema':SCHEMA,'commit':sha,
             'original_method_receipt':original['receipt_digest'],
             'original_model_status':original['source_model'],
@@ -186,6 +204,7 @@ def integrated_case(repo,revision='HEAD',*,artifacts=None,workflows=None,process
                        'type_ids':sorted(x['id'] for x in types['types'])},
             'dimensions':[{'id':x,'scope':'SOURCE_RELATION_NEEDS_BEHAVIORAL_WITNESS'} for x in DIMENSIONS],
             'documents':docs,'claim_to_implementation':claims,
+            'semantic_crosswalk':crosswalk,
             'standards':[{'id':x['id'],'kind':x['kind'],
                           'authority':'REFERENCE_NOT_CONFORMANCE'} for x in types['standards']],
             'reticulum':lattice,

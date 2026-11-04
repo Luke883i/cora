@@ -40,6 +40,10 @@ class IntegratedServiceTests(unittest.TestCase):
         self.assertEqual(case['methods']['types'],20)
         self.assertEqual(len(case['dimensions']),12)
         self.assertEqual(case['claim_to_implementation']['count'],18)
+        self.assertEqual(len(case['semantic_crosswalk']),20)
+        self.assertTrue(all(x['owner_source'].startswith(('src/','tools/')) for x in case['semantic_crosswalk']))
+        self.assertTrue(all(x['state']=='DECLARED_SOURCE_RELATION_NOT_STANDARD_CONFORMANCE'
+                            for x in case['semantic_crosswalk']))
         self.assertEqual(case['reticulum']['nodes'],17)
         self.assertEqual(case['reticulum']['full_status'],'BLOCKED_EXTERNAL')
         self.assertEqual(case['authorization'],'NONE')

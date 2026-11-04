@@ -65,7 +65,7 @@ jobs:
           cora method-synthesize . --integrated --revision HEAD --output /tmp/cora-integrated.json --ai-request-output /tmp/cora-integrated-ai-request.json
           cora verify-method-synthesis /tmp/cora-integrated.json --repo . --integrated
           python -m unittest discover -s tests -p 'test_pr28_integrated_service.py' -v
-          python -c 'import json; r=json.load(open("/tmp/cora-integrated.json")); q=json.load(open("/tmp/cora-integrated-ai-request.json")); assert r["features"]["available_parser_commands"]==71 and r["methods"]["count"]==14 and len(r["dimensions"])==12 and r["claim_to_implementation"]["count"]==18 and r["reticulum"]["full_status"]=="BLOCKED_EXTERNAL" and not r["features"]["all_behaviors_tested"] and r["authorization"]=="NONE" and q["provider_invoked"] is False and q["authority"]=="NONE"'
+          python -c 'import json; r=json.load(open("/tmp/cora-integrated.json")); q=json.load(open("/tmp/cora-integrated-ai-request.json")); assert r["features"]["available_parser_commands"]==71 and r["methods"]["count"]==14 and len(r["dimensions"])==12 and r["claim_to_implementation"]["count"]==18 and len(r["semantic_crosswalk"])==20 and r["reticulum"]["full_status"]=="BLOCKED_EXTERNAL" and not r["features"]["all_behaviors_tested"] and r["authorization"]=="NONE" and q["provider_invoked"] is False and q["authority"]=="NONE"'
       - name: Ten million bounded reticular semantic fault cases
         run: |
           cora stress-convergence --integrated --require-full --output /tmp/cora-integrated-10m.json
