@@ -19,6 +19,15 @@ QUALITY = frozenset('functional_suitability performance_efficiency compatibility
 STRUCTURAL = frozenset('security reliability performance_efficiency maintainability'.split())
 TYPES = frozenset('git-revision change-set artifact workflow documentation source-module dependency-graph contract-schema verification-oracle change-assurance build-artifact deployment-boundary runtime-instance runtime-receipt product-capability user-journey governance-owner policy-gate source-history evidence-claim'.split())
 DURABILITY = frozenset('identity-epoch api-contract-compatibility state-integrity security-boundary failure-recovery deterministic-replay change-impact regression-negatives supply-chain-identity rollback-ability claim-truth authority-uniqueness'.split())
+EXPECTED_DOD_EDGES = {
+    'L1': [], 'L2': [], 'L3': [], 'L4': [], 'L5': [], 'L6': [], 'L7': [],
+    'E01': [], 'E02': [], 'E03': [], 'E04': [],
+    'I_IDENTITY': ['L1', 'L2'],
+    'I_CORRELATION': ['L3', 'L4', 'L5'],
+    'I_FALSIFIABILITY': ['L6', 'L7'],
+    'G_SOURCE': ['I_IDENTITY', 'I_CORRELATION', 'I_FALSIFIABILITY'],
+    'G_GOVERNED': ['G_SOURCE', 'E01', 'E02', 'E03', 'E04'],
+}
 EXTRA_STANDARD = 'ISO_5055_2021'
 REFERENCE_KINDS = {
     'ISO_25010_2023':'FORMAL_STANDARD',
@@ -113,8 +122,15 @@ def validate(profile: dict, atlas: dict, ontology: dict, dod: dict, witness_read
     if dod.get('schema') != 'cora-method-synthesis-dod/1' or dod.get('authority') != 'NONE' or dod.get('external_status') != 'BLOCKED_EXTERNAL':
         raise ValueError('EXTERNAL_DOD_PROMOTED')
     gates = _unique(dod.get('nodes'),'GATE')
-    if 'G_GOVERNED' not in gates or 'G_SOURCE' not in gates or gates['G_GOVERNED'].get('scope') != 'EXTERNAL':
-        raise ValueError('EXTERNAL_GATE_MISSING')
+    if set(gates) != set(EXPECTED_DOD_EDGES):
+        raise ValueError('METHOD_DOD_UNIVERSE_DRIFT')
+    for node_id, expected_dependencies in EXPECTED_DOD_EDGES.items():
+        actual = gates[node_id]
+        scope = 'EXTERNAL' if node_id in {'E01','E02','E03','E04','G_GOVERNED'} else 'SOURCE'
+        if (set(actual) != {'id','depends_on','scope'} or
+            actual.get('depends_on') != expected_dependencies or
+            actual.get('scope') != scope):
+            raise ValueError('METHOD_DOD_EDGE_OR_SCOPE_DRIFT: ' + node_id)
     q = profile['qualification']
     if q != {'source':'SOURCE_CLASSIFICATION_ONLY','runtime':'BLOCKED_EXTERNAL',
              'review':'BLOCKED_EXTERNAL','host':'BLOCKED_EXTERNAL','product':'BLOCKED_EXTERNAL',
@@ -159,7 +175,7 @@ def validate(profile: dict, atlas: dict, ontology: dict, dod: dict, witness_read
             if not isinstance(data, bytes) or len(data) > 1024*1024:
                 raise ValueError('SOURCE_WITNESS_INVALID: '+path)
             witnesses[path] = ast.parse(data.decode('utf-8'),filename=path)
-        symbols = {node.name for node in ast.walk(witnesses[path])
+        symbols = {node.name for node in witnesses[path].body
                    if isinstance(node,(ast.FunctionDef,ast.AsyncFunctionDef,ast.ClassDef))}
         if row['owner_symbol'] not in symbols:
             raise ValueError('OWNER_SYMBOL_MISSING: '+type_id)

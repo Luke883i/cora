@@ -52,8 +52,9 @@ class TypeAssuranceTests(unittest.TestCase):
             'software':[{'id':'cora-engine'},{'id':'cora-release-verification'}]}
         self.dod={'schema':'cora-method-synthesis-dod/1','authority':'NONE',
                   'external_status':'BLOCKED_EXTERNAL','nodes':[
-                    {'id':'G_SOURCE','scope':'SOURCE'},
-                    {'id':'G_GOVERNED','scope':'EXTERNAL'}]}
+                    {'id':id, 'depends_on':list(edges),
+                     'scope':'EXTERNAL' if id in ('E01','E02','E03','E04','G_GOVERNED') else 'SOURCE'}
+                    for id,edges in checker.EXPECTED_DOD_EDGES.items()]}
         self.sources=fixture_sources(self.profile)
 
     def validate(self,profile=None,atlas=None,sources=None,dod=None):
@@ -75,7 +76,7 @@ class TypeAssuranceTests(unittest.TestCase):
         self.assertEqual(result['authorization'],'NONE')
         self.assertEqual(result['universal_completeness'],'UNSUPPORTED')
 
-    def test_26_typed_mutant_families_fail_closed(self):
+    def test_29_typed_mutant_families_fail_closed(self):
         families=[
             ('type-removed', lambda p,a,s,d:p['types'].pop()),
             ('type-duplicated',lambda p,a,s,d:p['types'].append(copy.deepcopy(p['types'][0]))),
@@ -103,6 +104,9 @@ class TypeAssuranceTests(unittest.TestCase):
             ('qualification-false-pass',lambda p,a,s,d:p['qualification'].update(product='PASS')),
             ('saturation-false-cert',lambda p,a,s,d:p['bounded_saturation']['unsupported'].remove('ISO-conformance')),
             ('source-syntax-break',lambda p,a,s,d:s.update({p['types'][0]['owner_source']:b'def not python!!'})),
+            ('method-dod-edge-removed',lambda p,a,s,d:next(x for x in d['nodes'] if x['id']=='G_GOVERNED')['depends_on'].remove('E01')),
+            ('method-dod-external-promoted',lambda p,a,s,d:next(x for x in d['nodes'] if x['id']=='E01').update(scope='SOURCE')),
+            ('owner-nested-fake-symbol',lambda p,a,s,d:s.update({p['types'][0]['owner_source']:b'def fake():\n    def snapshot():\n        return None\n'})),
         ]
         seen=[]
         for label,mutate in families:
@@ -112,8 +116,8 @@ class TypeAssuranceTests(unittest.TestCase):
                 with self.assertRaises((ValueError,SyntaxError)):
                     self.validate(p,a,s,d)
             seen.append(label)
-        self.assertEqual(len(seen),26)
-        self.assertEqual(len(set(seen)),26)
+        self.assertEqual(len(seen),29)
+        self.assertEqual(len(set(seen)),29)
 
     def test_real_git_commits_are_read_not_worktree(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -157,6 +161,39 @@ class TypeAssuranceTests(unittest.TestCase):
             git(repo,'add','.')
             git(repo,'commit','-qm','physical git stale ancestor mutation')
             with self.assertRaisesRegex(ValueError,'BASE_NOT_ANCESTOR'):
+                checker.verify_repo(repo,'HEAD')
+
+
+    def test_full_original_repo_and_physical_owner_dod_mutants(self):
+        if not (ROOT / '.git').is_dir():
+            self.skipTest('full CORA Git checkout required; synthetic bundle cannot attest original source')
+        baseline = checker.verify_repo(ROOT, 'HEAD')
+        self.assertEqual(baseline['result'], 'PASS_SCOPED_STRUCTURAL_MODEL')
+        self.assertEqual(baseline['external'], 'BLOCKED_EXTERNAL')
+        with tempfile.TemporaryDirectory() as directory:
+            repo = Path(directory) / 'original-source-fixture'
+            subprocess.run(['git','clone','--local','-q',str(ROOT),str(repo)],check=True)
+            git(repo,'config','user.name','source negative witness')
+            git(repo,'config','user.email','negative@example.invalid')
+            git(repo,'checkout','-q',git(ROOT,'rev-parse','HEAD'))
+            before = checker.verify_repo(repo, 'HEAD')
+            self.assertEqual(before['profile_git_blob'],baseline['profile_git_blob'])
+            owner = repo / 'src/cora/git_snapshot.py'
+            text = owner.read_text(encoding='utf-8')
+            self.assertIn('def snapshot(',text)
+            owner.write_text(text.replace('def snapshot(', 'def renamed_snapshot(', 1),encoding='utf-8')
+            git(repo,'add','src/cora/git_snapshot.py')
+            git(repo,'commit','-qm','physical CORA owner-symbol mutant')
+            with self.assertRaisesRegex(ValueError,'OWNER_SYMBOL_MISSING'):
+                checker.verify_repo(repo,'HEAD')
+            git(repo,'checkout','-q',git(ROOT,'rev-parse','HEAD'))
+            dpath=repo/'cora.method-synthesis-dod.json'
+            dod=json.loads(dpath.read_text(encoding='utf-8'))
+            next(x for x in dod['nodes'] if x['id']=='G_GOVERNED')['depends_on'].remove('E01')
+            dpath.write_text(json.dumps(dod,indent=2)+'\n',encoding='utf-8')
+            git(repo,'add','cora.method-synthesis-dod.json')
+            git(repo,'commit','-qm','physical CORA evidence-gate mutant')
+            with self.assertRaisesRegex(ValueError,'METHOD_DOD_EDGE_OR_SCOPE_DRIFT'):
                 checker.verify_repo(repo,'HEAD')
 
     def test_no_target_execution_or_unknown_promotion(self):
