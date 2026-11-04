@@ -68,3 +68,11 @@ The PR workflow uploads only JSON review receipts and deterministic model report
 When the target has its own committed ontology and a trusted BASE-committed `.cora/continuous-policy.json`, pass a bounded `--intent` to `cora dev-premerge TARGET --base BASE --head HEAD --contextual --intent "Specific change with acceptance tests" --convergence-contract PATH --output REPORT`. Verify with `cora verify-contextual-gate REPORT --repo TARGET --intent "Specific change with acceptance tests" --convergence-contract PATH`. Run the equivalent `dev-postmerge --contextual` against the **actual merged** revision, not the former PR SHA. The legacy gate remains available without `--contextual`.
 
 Source candidates and witness invalidations are not authenticated consumer, host or runtime observations. Missing intent yields DEBT_BLOCKED, even if deterministic local source checks can otherwise run. See [agent adoption](AGENT_ADOPTION.md) and [convergent assurance](CONVERGENT_ASSURANCE.md).
+
+## CI workflow rationalization (PR-24 proposal)
+
+CORA adapts the iKant_EDU PR-201/202 inventory, PR-205 historical preservation, and draft PR-215 consolidation proposals. Those observations are engineering precedents, not an authorization to delete workflows.
+
+Run `cora workflow-audit . --revision HEAD --output /tmp/workflows.json` and `cora verify-workflows /tmp/workflows.json --repo .`. Compare with `--base BASE_SHA` to inspect additions, modifications and removals. This read-only analysis identifies partial trigger/job syntax, local workflow callers, source references and duplicate checks; it cannot prove absent external consumers or equivalent runs.
+
+`cora.workflow-dod.json` specifies `G_WORKFLOW_SOURCE` and `G_WORKFLOW_GOVERNED` with external E01-E04 evidence open. A reviewer must establish replacement behavior and actual platform controls before separately approving retirement. A source receipt never executes or modifies target workflows.
