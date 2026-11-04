@@ -108,3 +108,9 @@ Contextual premerge: `cora dev-premerge TARGET --base BASE_SHA --head HEAD_SHA -
 Replay with **the same intent**: `cora verify-contextual-gate REPORT --repo TARGET --intent "The bounded change and acceptance criteria" --convergence-contract /path/to/cora/cora.convergence-dod.json`.
 
 A target must have its own committed ontology and BASE-committed continuous policy for a complete contextual review. An absent intent is debt-blocked. Real tests, security scanners, reviewers and hosting controls remain independently governed. The README intentionally explains product value, rather than listing every command.
+
+## Integrated semantic service (same 71 CLI commands)
+
+`cora method-synthesize . --integrated --revision HEAD --output /tmp/cora-case.json --ai-request-output /tmp/cora-ai-request.json` correlates the **original method-synthesis receipts** with the committed documentation registry, 18 claim/evidence traces, the typed atlas and the reticular source/external gate. Replay using `cora verify-method-synthesis /tmp/cora-case.json --repo . --integrated`. To re-ingest an external AI response, pass `--ai-observations /tmp/response.json` to both synthesis and replay; observations must match the original source commit and case digest and always remain UNVERIFIED. The command does not contact an LLM or export repository bytes to one. Passing `--integrated` does not execute 71 target behaviors.
+
+`cora stress-convergence --integrated --require-full --output /tmp/cora-stress.json` exercises **10 million seeded finite semantic cases** spanning 32 explicitly bounded scenario families and positive controls. It performs zero physical target mutations. The unmodified `stress-convergence` behavior and all existing CLI commands remain available.

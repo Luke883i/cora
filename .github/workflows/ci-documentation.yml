@@ -59,6 +59,17 @@ jobs:
           python tools/verify_type_assurance.py --repo . --revision HEAD > /tmp/cora-type-assurance.json
           python -m unittest discover -s tests -p 'test_pr27_type_assurance.py' -v
           python -c 'import json; r=json.load(open("/tmp/cora-type-assurance.json")); assert r["result"]=="PASS_SCOPED_STRUCTURAL_MODEL" and r["type_count"]==20 and r["plane_count"]==7 and r["upstream_method_count"]==14 and r["reference_count"]==10 and r["code_durability_count"]==12 and r["formal_standard_count"]==3 and r["authorization"]=="NONE" and r["external"]=="BLOCKED_EXTERNAL" and r["universal_completeness"]=="UNSUPPORTED"'
+      - name: Integrated semantic service, real original-source adversarial cases and replay
+        run: |
+          test -d .git
+          cora method-synthesize . --integrated --revision HEAD --output /tmp/cora-integrated.json --ai-request-output /tmp/cora-integrated-ai-request.json
+          cora verify-method-synthesis /tmp/cora-integrated.json --repo . --integrated
+          python -m unittest discover -s tests -p 'test_pr28_integrated_service.py' -v
+          python -c 'import json; r=json.load(open("/tmp/cora-integrated.json")); q=json.load(open("/tmp/cora-integrated-ai-request.json")); assert r["features"]["available_parser_commands"]==71 and r["methods"]["count"]==14 and len(r["dimensions"])==12 and r["claim_to_implementation"]["count"]==18 and r["reticulum"]["full_status"]=="BLOCKED_EXTERNAL" and not r["features"]["all_behaviors_tested"] and r["authorization"]=="NONE" and q["provider_invoked"] is False and q["authority"]=="NONE"'
+      - name: Ten million bounded reticular semantic fault cases
+        run: |
+          cora stress-convergence --integrated --require-full --output /tmp/cora-integrated-10m.json
+          python -c 'import json; r=json.load(open("/tmp/cora-integrated-10m.json")); assert r["status"]=="PASS_SCOPED_FINITE_MODEL" and r["cases"]==10000000 and len(r["families"])==32 and r["positive"]==625000 and r["negative"]==9375000 and r["mismatches"]==0 and r["unsafe_promotions"]==0 and r["physical_source_mutants"]==0 and r["review"]=="BLOCKED_EXTERNAL" and r["product"]=="BLOCKED_EXTERNAL"'
       - name: Preserve revision-bound source receipts for review only
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -69,6 +80,9 @@ jobs:
             /tmp/cora-readme-nav-1000.json
             /tmp/cora-capabilities.json
             /tmp/cora-type-assurance.json
+            /tmp/cora-integrated.json
+            /tmp/cora-integrated-ai-request.json
+            /tmp/cora-integrated-10m.json
           if-no-files-found: warn
           retention-days: 14
       - name: Product / software / repository contracts and roles
