@@ -1,6 +1,6 @@
 # Contributing to CORA
 
-Start with [README](README.md) (what/why/how), [architecture](docs/ARCHITECTURE.md) (components and evidence flow), and [DoD](docs/DOD.md) (acceptance). CORA is a **single Python distribution**; avoid copying experimental R1–R7 ZIP trees or creating a second CLI.
+Start with [README](README.md) (what/why/how), [architecture](docs/ARCHITECTURE.md) (components and evidence flow), and [current product DoD](docs/DOD_V1_EXPERIMENTAL.md) (acceptance). The earlier [DoD](docs/DOD.md) is a historical source record, not current approval. CORA is a **single Python distribution**; avoid copying experimental R1–R7 ZIP trees or creating a second CLI.
 
 Use Python 3.11+, install the current checkout (`python -m pip install -e .`), run `python -m unittest discover -s tests -v`, then `python tools/verify_repository_contract.py`. Keep smoke outputs in `/tmp` (or another directory outside this Git tree). Add explicit independent expected results for new language adapters, graph relations, or transformation behaviors; never treat zero model-oracle mismatches as production proof.
 

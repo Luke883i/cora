@@ -652,6 +652,15 @@
         "TEST"
       ],
       "rationale": "Physical disposable Git-commit semantic/source/CI mutants and source receipt replay."
+    },
+    {
+      "pattern": "tests/test_pr23_navigation.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "One thousand finite negative editorial/reader-target inputs with honest source-only counterexample scope."
     }
   ]
 }

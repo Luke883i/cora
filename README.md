@@ -8,6 +8,12 @@ CORA is an offline-first **Python 3.11+ command-line product** that helps develo
 
 **Current status:** `v1.experimental` / Python package `1.0.0a4`, alpha **source candidate**, not a stable API or verified public release. See [release status](docs/RELEASE.md) and [product DoD](docs/DOD_V1_EXPERIMENTAL.md).
 
+**Recommended use:** an engineer or AI coding assistant proposes a bounded change; CORA organizes Git evidence, falsifiers and review obligations; independent test operators and accountable humans decide acceptance. Start with read-only inspection and exact BASE/HEAD, not automatic remediation.
+
+**Audience and conditions:** suitable for developers, reviewers, maintainers and assurance teams with legitimate access to the target repository. Python 3.11+ and Git are needed for the quickstart; optional runtime execution and verifier commands need separate authorization. No hosted service, production SLA or automatic approval is provided.
+
+**Open source license:** [MIT](LICENSE) applies to CORA's code and documentation. Permissive reuse does **not** grant access to third-party repositories, authenticate findings or remove the need for review. See [security](SECURITY.md) and [contributing](CONTRIBUTING.md).
+
 ## How CORA works
 
 ```text
@@ -92,6 +98,43 @@ The exact vocabulary depends on the report's schema. Ten-million-case campaigns 
 - **Forensic investigator:** [File Lab](docs/FILE_LAB.md) · [Holistic forensics](docs/HOLISTIC_FORENSICS.md) · [Engineering debt](docs/ENGINEERING_DEBT.md)
 - **Product or release owner:** [Governance](GOVERNANCE.md) · [Security](SECURITY.md) · [Release](docs/RELEASE.md)
 - **Full documentation, history and contracts:** [Documentation index](docs/INDEX.md) · [Documentation DoD](docs/DOCUMENTATION_DOD.md)
+
+The five expandable lenses below are a **map, not five competing sources of truth**. The visible summary above is sufficient to choose a path; open only the detail needed.
+
+<details>
+<summary>Product | purpose, users, supported outcomes</summary>
+
+**Why:** review an engineering claim without converting source-only evidence into release authority. **For:** a new engineer, an AI coding operator, a reviewer or a product owner. Start with [Getting started](docs/GETTING_STARTED.md), the [v1.experimental product DoD](docs/DOD_V1_EXPERIMENTAL.md) and [current release scope](docs/RELEASE.md). Product promises are bounded by source coverage; independent usability and real target pilots remain open.
+
+</details>
+
+<details>
+<summary>Software | one CLI, implementation and verification tools</summary>
+
+**Runtime:** local Python package `cora-audit`, CLI `cora`, engine [`src/cora/`](src/cora/) and independent source/release verification [`tools/`](tools/). Read [Architecture](docs/ARCHITECTURE.md), [CLI reference](docs/CLI_REFERENCE.md) and [artifact semantics](docs/ARTIFACT_SEMANTICS.md). Static import edges are candidates, not complete execution paths; optional Docker tests are not an attested sandbox.
+
+</details>
+
+<details>
+<summary>Repository | source, tests, contracts, workflows and history</summary>
+
+**Source of record:** this Git repository and exact commit objects, not the working tree, an AI explanation or a PR description. Find [tests](tests/), [CI workflows](.github/workflows/), [committed ontology](cora.ontology.json), [artifact-role registry](cora.artifact-roles.json) and [change history](CHANGELOG.md). The [complete Markdown index](docs/INDEX.md) preserves all 48 documents, including historical ADRs and audits, with declared authority.
+
+</details>
+
+<details>
+<summary>Governance | authorization, security, contribution and license</summary>
+
+**Decision rights are external:** review requires named accountable humans and host-enforced controls, not `PASS_SCOPED`. Follow [Governance](GOVERNANCE.md), [Security](SECURITY.md), [Contributing](CONTRIBUTING.md), the [PR template](.github/PULL_REQUEST_TEMPLATE.md), [release procedure](docs/RELEASE.md) and [MIT license](LICENSE). The presence of CODEOWNERS or CI source is not evidence that protected checks or independent approvals are enforced.
+
+</details>
+
+<details>
+<summary>Evidence and DoD | methods, falsification, lineage and limitations</summary>
+
+**Read in order:** the [continuous development method](docs/CONTINUOUS_DEVELOPMENT.md), [convergent method](docs/CONVERGENT_ASSURANCE.md), [documentation DoD](docs/DOCUMENTATION_DOD.md), [reticular source contract](cora.documentation-dod.json), [S01–S18 source proof profile](cora.documentation-proofs.json) and [Git replay verifier](tools/verify_claim_evidence.py). For investigation choose [File Lab](docs/FILE_LAB.md), [holistic forensics](docs/HOLISTIC_FORENSICS.md) or [engineering debt](docs/ENGINEERING_DEBT.md). For older decisions and falsified claims consult the [historical ADR/audit index](docs/INDEX.md), not an obsolete DoD as current acceptance authority.
+
+</details>
 
 ## Operating boundaries
 

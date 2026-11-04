@@ -33,6 +33,13 @@ jobs:
         run: python tools/verify_documentation.py --repo .
       - name: Falsify real disposable Markdown and JSON contract mutations
         run: python -m unittest discover -s tests -p 'test_pr21_documentation.py' -v
+      - name: Falsify 1,000 bounded editorial and reader-target vectors
+        env:
+          CORA_NAV_REPORT: /tmp/cora-readme-nav-1000.json
+          CORA_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python -m unittest discover -s tests -p 'test_pr23_navigation.py' -v
+          python -c 'import json; r=json.load(open("/tmp/cora-readme-nav-1000.json")); assert r["vectors"]==1000 and r["rejected"]==1000 and r["distinct_input_fingerprints"]==1000 and not r["survivors"] and r["authority"]=="NONE" and r["governed_status"]=="BLOCKED_EXTERNAL"'
       - name: Bound S01-S18 README claims to exact Git source and replay proof
         run: |
           python tools/verify_claim_evidence.py --repo . --revision HEAD --output /tmp/cora-doc-proofs.json
@@ -45,7 +52,9 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: cora-doc-proof-python-${{ matrix.python-version }}-source-only
-          path: /tmp/cora-doc-proofs.json
+          path: |
+            /tmp/cora-doc-proofs.json
+            /tmp/cora-readme-nav-1000.json
           if-no-files-found: warn
           retention-days: 14
       - name: Product / software / repository contracts and roles
