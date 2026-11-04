@@ -54,6 +54,7 @@ COMMANDS = (
     'gold-plan', 'gold-pilot', 'gold-mutate', 'gold-effects', 'stress-gold',
     'convergence-plan', 'verify-contextual-gate', 'stress-convergence',
     'workflow-audit', 'verify-workflows',
+    'method-synthesize', 'verify-method-synthesis',
 )
 
 

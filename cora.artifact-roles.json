@@ -686,6 +686,39 @@
         "TEST"
       ],
       "rationale": "Physical workflow source mutants and bounded parser counterexamples."
+    },
+    {
+      "pattern": "cora.method-atlas.json",
+      "roles": [
+        "ARTIFACT_INDEX",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Cross-method source correlation with bounded scope and independent review."
+    },
+    {
+      "pattern": "cora.method-synthesis-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Cross-method source correlation with bounded scope and independent review."
+    },
+    {
+      "pattern": "src/cora/method_synthesis.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Cross-method source correlation with bounded scope and independent review."
+    },
+    {
+      "pattern": "tests/test_pr25_method_synthesis.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Cross-method source correlation with bounded scope and independent review."
     }
   ]
 }

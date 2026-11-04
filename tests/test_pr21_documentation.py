@@ -121,8 +121,8 @@ class DocumentationDoDTests(unittest.TestCase):
                         and isinstance(x.args[0], ast.Constant)
                         and isinstance(x.args[0].value, str)}
         names = doc.COMMAND.findall((ROOT / "docs/CLI_REFERENCE.md").read_text("utf-8"))
-        self.assertEqual(len(parser_names), 69)
-        self.assertEqual(len(names), 69)
+        self.assertEqual(len(parser_names), 71)
+        self.assertEqual(len(names), 71)
         self.assertEqual(parser_names, set(names))
 
 

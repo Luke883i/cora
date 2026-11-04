@@ -1,0 +1,107 @@
+{
+  "schema": "cora-method-synthesis-dod/1",
+  "nodes": [
+    {
+      "id": "L1",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "L2",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "L3",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "L4",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "L5",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "L6",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "L7",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "E01",
+      "depends_on": [],
+      "scope": "EXTERNAL"
+    },
+    {
+      "id": "E02",
+      "depends_on": [],
+      "scope": "EXTERNAL"
+    },
+    {
+      "id": "E03",
+      "depends_on": [],
+      "scope": "EXTERNAL"
+    },
+    {
+      "id": "E04",
+      "depends_on": [],
+      "scope": "EXTERNAL"
+    },
+    {
+      "id": "I_IDENTITY",
+      "depends_on": [
+        "L1",
+        "L2"
+      ],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "I_CORRELATION",
+      "depends_on": [
+        "L3",
+        "L4",
+        "L5"
+      ],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "I_FALSIFIABILITY",
+      "depends_on": [
+        "L6",
+        "L7"
+      ],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "G_SOURCE",
+      "depends_on": [
+        "I_IDENTITY",
+        "I_CORRELATION",
+        "I_FALSIFIABILITY"
+      ],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "G_GOVERNED",
+      "depends_on": [
+        "G_SOURCE",
+        "E01",
+        "E02",
+        "E03",
+        "E04"
+      ],
+      "scope": "EXTERNAL"
+    }
+  ],
+  "authority": "NONE",
+  "external_status": "BLOCKED_EXTERNAL"
+}

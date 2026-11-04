@@ -22,6 +22,11 @@ This is the complete inventory of the single `cora` CLI from `src/cora/cli.py`, 
 - `workflow-audit` — source-bound workflow inventory, reusable callers, risks and conservative adjustment/retirement candidates; run `cora workflow-audit REPO --revision HEAD --base BASE_SHA --output /tmp/workflows.json`. Never edits workflow files or attests external consumers.
 - `verify-workflows` — rederive the exact source report: `cora verify-workflows /tmp/workflows.json --repo REPO`. See [continuous development](CONTINUOUS_DEVELOPMENT.md) for the review-only DoD and the host prerequisites.
 
+## Cross-method inference and source case
+
+- `method-synthesize` — correlate source-verifiable role, workflow and optional process receipts on one Git commit. Use `cora method-synthesize REPO --revision HEAD --output /tmp/cora-method-case.json --analyst-request /tmp/cora-questions.json`. Optional `--artifacts`, `--workflows`, `--process` and `--hypotheses` retain original provenance and are revalidated; hypotheses never authorize actions.
+- `verify-method-synthesis` — recompute from source and identical optional original inputs: `cora verify-method-synthesis /tmp/cora-method-case.json --repo REPO`. Replay is a source join, not an independent security/quality certification.
+
 ## Forensic analysis and debt
 
 - `file-lab` — see `cora file-lab --help` for the supported inputs and scope.

@@ -307,7 +307,7 @@ def _semantic_oracles(store: SourceStore, errors: list[str]) -> None:
     q = chr(96)
     documented = re.findall(r"^- " + q + r"([a-z][a-z0-9-]+)" + q + r" —",
                             ref, re.M)
-    _ok(len(commands) == 69 and len(documented) == 69 and
+    _ok(len(commands) == 71 and len(documented) == 71 and
         set(documented) == commands,
         errors, "S11:parser-document-command-mismatch")
     _ok(all("--intent" in r(p) for p in

@@ -46,6 +46,7 @@ from .gold_assurance import load_gold_contract, retrograde_gold, pilot_sources, 
 from .gold_mutations import physical_mutants
 from .gold_effects import audit_workflow, reconcile_effect_claim
 from .workflow_rationalization import audit_workflows, verify_workflows
+from .method_synthesis import synthesize, verify_synthesis, analyst_request
 from .gold_saturation import gold_saturation
 from .gold_assurance import load_convergence_contract, convergent_plan
 from .gold_saturation import saturate_convergence
@@ -408,6 +409,23 @@ def main(argv: list[str] | None = None) -> int:
     wv.add_argument('report', type=Path)
     wv.add_argument('--repo', required=True, type=Path)
     wv.add_argument('--output', type=Path)
+    ms = sub.add_parser('method-synthesize', help='Join same-commit evidence and prepare non-authoritative AI case')
+    ms.add_argument('repo', type=Path)
+    ms.add_argument('--revision', default='HEAD')
+    ms.add_argument('--artifacts', type=Path, help='Optional original artifact-audit receipt, reverified')
+    ms.add_argument('--workflows', type=Path, help='Optional original workflow-audit receipt, reverified')
+    ms.add_argument('--process', type=Path, help='Optional original process-run receipt, reverified')
+    ms.add_argument('--hypotheses', type=Path, help='Optional untrusted AI hypothesis envelope')
+    ms.add_argument('--analyst-request', type=Path, help='Source-free bounded case questions')
+    ms.add_argument('--output', type=Path)
+    mv = sub.add_parser('verify-method-synthesis', help='Exact Git replay of correlation and original inputs')
+    mv.add_argument('report', type=Path)
+    mv.add_argument('--repo', type=Path, required=True)
+    mv.add_argument('--artifacts', type=Path)
+    mv.add_argument('--workflows', type=Path)
+    mv.add_argument('--process', type=Path)
+    mv.add_argument('--hypotheses', type=Path)
+    mv.add_argument('--output', type=Path)
     g = sub.add_parser('snapshot')
     g.add_argument('repo', type=Path)
     g.add_argument('--revision', default='HEAD')
@@ -757,6 +775,28 @@ def main(argv: list[str] | None = None) -> int:
                       'receipt_sha256': candidate['receipt_sha256'],
                       'status': 'REPLAYED_SOURCE_NOT_GOVERNED',
                       'authorization': 'NONE'}
+            code = 0
+        elif args.cmd == 'method-synthesize':
+            loaded = {}
+            for key in ('artifacts','workflows','process','hypotheses'):
+                path = getattr(args, key)
+                loaded[key] = json.loads(path.read_text('utf-8')) if path else None
+            result = synthesize(args.repo,args.revision,**loaded)
+            if args.analyst_request:
+                args.analyst_request.write_text(
+                    json.dumps(analyst_request(result),sort_keys=True,indent=2)+'\n',
+                    encoding='utf-8')
+            code = 0
+        elif args.cmd == 'verify-method-synthesis':
+            original = json.loads(args.report.read_text('utf-8'))
+            loaded = {}
+            for key in ('artifacts','workflows','process','hypotheses'):
+                path = getattr(args, key)
+                loaded[key] = json.loads(path.read_text('utf-8')) if path else None
+            verify_synthesis(args.repo,original,**loaded)
+            result = {'schema':'cora-method-synthesis-replay/1',
+                      'commit':original['commit'],'receipt_digest':original['receipt_digest'],
+                      'status':'REPLAYED_GIT_SOURCE_ONLY','authorization':'NONE'}
             code = 0
         elif args.cmd == 'snapshot':
             result = snapshot(args.repo, args.revision)
