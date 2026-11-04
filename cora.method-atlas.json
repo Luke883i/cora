@@ -1,0 +1,106 @@
+{
+  "schema": "cora-method-atlas/1",
+  "product": "cora",
+  "software": [
+    "cora-engine",
+    "cora-release-verification"
+  ],
+  "references": [
+    "ISO_25010_2023",
+    "ISO_42010_2022",
+    "NIST_800_86",
+    "NIST_SSDF_800_218",
+    "NIST_CA7",
+    "SLSA_1_2",
+    "OWASP_SAMM",
+    "DORA_2026",
+    "OPENSSF_SCORECARD"
+  ],
+  "procedures": [
+    {
+      "id": "git-provenance",
+      "cli": "snapshot",
+      "source": "src/cora/git_snapshot.py",
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+    },
+    {
+      "id": "artifact-semantics",
+      "cli": "artifact-audit",
+      "source": "src/cora/artifact_roles.py",
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+    },
+    {
+      "id": "product-ontology",
+      "cli": "version",
+      "source": "src/cora/ontology.py",
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+    },
+    {
+      "id": "archaeology",
+      "cli": "holistic-audit",
+      "source": "src/cora/holistic.py",
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+    },
+    {
+      "id": "process-catalog",
+      "cli": "process-run",
+      "source": "src/cora/process_suite.py",
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+    },
+    {
+      "id": "debt-forensics",
+      "cli": "debt-scan",
+      "source": "src/cora/debt.py",
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+    },
+    {
+      "id": "agent-assurance",
+      "cli": "dod-plan",
+      "source": "src/cora/agent_assurance.py",
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+    },
+    {
+      "id": "reticular-DoD",
+      "cli": "convergence-plan",
+      "source": "src/cora/reticulum.py",
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+    },
+    {
+      "id": "workflow-intelligence",
+      "cli": "workflow-audit",
+      "source": "src/cora/workflow_rationalization.py",
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+    },
+    {
+      "id": "development-gates",
+      "cli": "dev-premerge",
+      "source": "src/cora/continuous.py",
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+    },
+    {
+      "id": "documentation-assurance",
+      "cli": null,
+      "source": "tools/verify_documentation.py",
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+    },
+    {
+      "id": "runtime-observation",
+      "cli": "runtime-observe",
+      "source": "src/cora/runtime_observation.py",
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+    },
+    {
+      "id": "source-runtime-fusion",
+      "cli": "fuse-evidence",
+      "source": "src/cora/observation_fusion.py",
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+    },
+    {
+      "id": "release-verification",
+      "cli": null,
+      "source": "tools/release_verify.py",
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+    }
+  ],
+  "authority": "NONE"
+}
