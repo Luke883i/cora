@@ -1,757 +1,631 @@
 {
- "schema": "cora-artifact-roles/1",
- "rules": [
-  {
-   "pattern": "README.md",
-   "roles": [
-    "DOCUMENTATION",
-    "PRODUCT_CONTRACT"
-   ],
-   "rationale": "Product value proposition, limitation boundary and quickstart."
-  },
-  {
-   "pattern": "LICENSE",
-   "roles": [
-    "LICENSE"
-   ],
-   "rationale": "License metadata applicable to distributable source."
-  },
-  {
-   "pattern": "SECURITY.md",
-   "roles": [
-    "DOCUMENTATION",
-    "GOVERNANCE",
-    "POLICY"
-   ],
-   "rationale": "Vulnerability reporting and trust boundary declaration."
-  },
-  {
-   "pattern": "CONTRIBUTING.md",
-   "roles": [
-    "DOCUMENTATION",
-    "GOVERNANCE"
-   ],
-   "rationale": "Contribution, review and maintenance instructions."
-  },
-  {
-   "pattern": "GOVERNANCE.md",
-   "roles": [
-    "DOCUMENTATION",
-    "GOVERNANCE",
-    "POLICY"
-   ],
-   "rationale": "Accountability and separation of human duties."
-  },
-  {
-   "pattern": "pyproject.toml",
-   "roles": [
-    "BUILD_METADATA",
-    "PRODUCT_CONTRACT"
-   ],
-   "rationale": "Distribution metadata and canonical console entrypoint."
-  },
-  {
-   "pattern": "cora.ontology.json",
-   "roles": [
-    "ARTIFACT_INDEX",
-    "PRODUCT_CONTRACT"
-   ],
-   "rationale": "Explicit source-committed product and software identities."
-  },
-  {
-   "pattern": "cora.artifact-roles.json",
-   "roles": [
-    "ARTIFACT_INDEX",
-    "PRODUCT_CONTRACT"
-   ],
-   "rationale": "Self-describing artifact role claims and their limitations."
-  },
-  {
-   "pattern": ".gitignore",
-   "roles": [
-    "POLICY"
-   ],
-   "rationale": "Version-control exclusion policy."
-  },
-  {
-   "pattern": ".github/CODEOWNERS",
-   "roles": [
-    "GOVERNANCE",
-    "POLICY"
-   ],
-   "rationale": "Review-routing declaration and ownership documentation."
-  },
-  {
-   "pattern": ".github/PULL_REQUEST_TEMPLATE.md",
-   "roles": [
-    "DOCUMENTATION",
-    "GOVERNANCE"
-   ],
-   "rationale": "Contributor change review template."
-  },
-  {
-   "pattern": ".github/workflows/*.yml",
-   "roles": [
-    "POLICY",
-    "WORKFLOW"
-   ],
-   "rationale": "GitHub CI workflow definition; not proof of enforced required checks."
-  },
-  {
-   "pattern": "docs/*.md",
-   "roles": [
-    "DOCUMENTATION"
-   ],
-   "rationale": "Architecture, DoD, ADR and operational evidence guidance."
-  },
-  {
-   "pattern": "docs/verification/*.json",
-   "roles": [
-    "ARTIFACT_INDEX"
-   ],
-   "rationale": "Historical local result records, not independently signed evidence."
-  },
-  {
-   "pattern": "schemas/*.json",
-   "roles": [
-    "CONTRACT_SCHEMA"
-   ],
-   "rationale": "Machine-readable companion JSON schemas; code validator may impose more constraints."
-  },
-  {
-   "pattern": "src/cora/*.py",
-   "roles": [
-    "SOFTWARE_SOURCE"
-   ],
-   "rationale": "Python package implementation; naming alone does not prove runtime usage."
-  },
-  {
-   "pattern": "src/cora/cli.py",
-   "roles": [
-    "ENTRYPOINT",
-    "SOFTWARE_SOURCE"
-   ],
-   "rationale": "Single installed CLI entrypoint, declared in pyproject metadata."
-  },
-  {
-   "pattern": "src/cora/evidence.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "SOFTWARE_SOURCE"
-   ],
-   "rationale": "Validation and domain-separated evidence contracts."
-  },
-  {
-   "pattern": "src/cora/ontology.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "SOFTWARE_SOURCE"
-   ],
-   "rationale": "Declared product and software identity validator."
-  },
-  {
-   "pattern": "src/cora/closure.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "SOFTWARE_SOURCE"
-   ],
-   "rationale": "Scoped certificate obligation enforcement."
-  },
-  {
-   "pattern": "src/cora/artifact_roles.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "SOFTWARE_SOURCE"
-   ],
-   "rationale": "Committed role contract validation and reproduction."
-  },
-  {
-   "pattern": "src/cora/file_lab.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "SOFTWARE_SOURCE"
-   ],
-   "rationale": "Forensic dossier and untrusted AI input validator."
-  },
-  {
-   "pattern": "src/cora/guard_runtime.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "SOFTWARE_SOURCE"
-   ],
-   "rationale": "Vendored local architecture guard validator."
-  },
-  {
-   "pattern": "tests/*.py",
-   "roles": [
-    "TEST"
-   ],
-   "rationale": "Python executable test suite; status remains declared, not proof of passing."
-  },
-  {
-   "pattern": "tests/test_pr09_file_lab.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "FIXTURE",
-    "TEST"
-   ],
-   "rationale": "Tests AI/runtime import contract with independent temporary Git fixtures."
-  },
-  {
-   "pattern": "tests/test_pr10_artifact_roles.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "FIXTURE",
-    "TEST"
-   ],
-   "rationale": "Adversarial role-validation and test fixture oracles."
-  },
-  {
-   "pattern": "tools/*.py",
-   "roles": [
-    "RELEASE_TOOL"
-   ],
-   "rationale": "Build, release verification and repository audit tools."
-  },
-  {
-   "pattern": "tools/verify_repository_contract.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "RELEASE_TOOL"
-   ],
-   "rationale": "Independent repository ontology and README contract verifier."
-  },
-  {
-   "pattern": "tools/verify_artifact_roles.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "RELEASE_TOOL"
-   ],
-   "rationale": "Self-audit gate for committed artifact classification."
-  },
-  {
-   "pattern": "docs/verification/V1_EXPERIMENTAL_SATURATION.json",
-   "roles": [
-    "ARTIFACT_INDEX"
-   ],
-   "rationale": "Finite 11M-case semantic saturation receipt, not real-repository proof"
-  },
-  {
-   "pattern": "tools/make_experimental_bundle.py",
-   "roles": [
-    "RELEASE_TOOL"
-   ],
-   "rationale": "Creates an unpublished reproducible review-only product bundle"
-  },
-  {
-   "pattern": "src/cora/selection.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "SOFTWARE_SOURCE"
-   ],
-   "rationale": "Read-only selection policy and immutable Git revalidation contract."
-  },
-  {
-   "pattern": "tests/test_selection.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "FIXTURE",
-    "TEST"
-   ],
-   "rationale": "Adversarial Git fixture and selection policy metamorphic oracle."
-  },
-  {
-   "pattern": ".cora/continuous-policy.json",
-   "roles": [
-    "POLICY",
-    "PRODUCT_CONTRACT"
-   ],
-   "rationale": "Committed baseline policy; first install requires independent review."
-  },
-  {
-   "pattern": "AGENTS.md",
-   "roles": [
-    "DOCUMENTATION",
-    "GOVERNANCE",
-    "POLICY"
-   ],
-   "rationale": "Untrusted coding agent operating rules and trust boundaries."
-  },
-  {
-   "pattern": "src/cora/continuous.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "SOFTWARE_SOURCE"
-   ],
-   "rationale": "Source-bound lifecycle and human role validation."
-  },
-  {
-   "pattern": "tools/verify_release_readiness.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "RELEASE_TOOL"
-   ],
-   "rationale": "Independent source-only release contract verifier; external authorization blocked."
-  },
-  {
-   "pattern": "tests/test_pr15_release_readiness.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "FIXTURE",
-    "TEST"
-   ],
-   "rationale": "Negative release-metadata, policy, workflow and role contract falsification."
-  },
-  {
-   "pattern": "CHANGELOG.md",
-   "roles": [
-    "DOCUMENTATION",
-    "PRODUCT_CONTRACT"
-   ],
-   "rationale": "Public-facing product version narrative and proposed release history; not publication evidence."
-  },
-  {
-   "pattern": "src/cora/archive_intake.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "SOFTWARE_SOURCE"
-   ],
-   "rationale": "Bounded source archive contract; not runtime or Git ancestry attestation."
-  },
-  {
-   "pattern": "src/cora/runtime_observation.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "SOFTWARE_SOURCE"
-   ],
-   "rationale": "Explicit opt-in execution request and untrusted runtime receipt; sandbox not independently attested."
-  },
-  {
-   "pattern": "src/cora/observation_fusion.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "SOFTWARE_SOURCE"
-   ],
-   "rationale": "Cross-domain evidence reconciliation with mandatory unknown/authorization boundaries."
-  },
-  {
-   "pattern": "tests/test_pr16_*.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "FIXTURE",
-    "TEST"
-   ],
-   "rationale": "PR-16 negative and contract fixtures; role declaration is not passing-test proof."
-  },
-  {
-   "pattern": "src/cora/semantic_lattice.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "SOFTWARE_SOURCE"
-   ],
-   "rationale": "Typed obligations and source-replay; no CI, sandbox or approval self-attestation."
-  },
-  {
-   "pattern": "tools/benchmark_pr16_git_batch.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "RELEASE_TOOL"
-   ],
-   "rationale": "Independent Git object oracle and bounded process-count fixture."
-  },
-  {
-   "pattern": "tools/verify_pr16_coverage.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "RELEASE_TOOL"
-   ],
-   "rationale": "Fail-closed branch coverage floor for named critical modules."
-  },
-  {
-   "pattern": "tests/test_pr16_benchmark_contract.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "FIXTURE",
-    "TEST"
-   ],
-   "rationale": "Negative coverage and positive performance fixture, not real-repo calibration."
-  },
-  {
-   "pattern": "cora.agent-dod.json",
-   "roles": [
-    "POLICY",
-    "PRODUCT_CONTRACT"
-   ],
-   "rationale": "Backward-derived agent DoD, no host authority."
-  },
-  {
-   "pattern": "src/cora/agent_assurance.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "SOFTWARE_SOURCE"
-   ],
-   "rationale": "Agent DoD compiler and replay of untrusted claims."
-  },
-  {
-   "pattern": "src/cora/agent_saturation.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "SOFTWARE_SOURCE"
-   ],
-   "rationale": "Finite seeded model and independent reference oracle."
-  },
-  {
-   "pattern": "tests/test_pr17_agent_assurance.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "FIXTURE",
-    "TEST"
-   ],
-   "rationale": "Physical JSON mutants, anti-promotion and CLI regression."
-  },
-  {
-   "pattern": "tests/test_pr18_agent_hardening.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "FIXTURE",
-    "TEST"
-   ],
-   "rationale": "Actual CORA source-model mutants, falsified index-based scenario coverage and epistemic anti-promotion."
-  },
-  {
-   "pattern": "cora.gold-assurance.json",
-   "roles": [
-    "POLICY",
-    "PRODUCT_CONTRACT"
-   ],
-   "rationale": "Machine-readable R1-R4 reticular DoD and 12 portable gold patterns."
-  },
-  {
-   "pattern": "src/cora/gold_assurance.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "SOFTWARE_SOURCE"
-   ],
-   "rationale": "Pinned Git-blob source pilot and contextual reverse derivation."
-  },
-  {
-   "pattern": "src/cora/gold_mutations.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "SOFTWARE_SOURCE"
-   ],
-   "rationale": "Physical source staging with classified oracle results."
-  },
-  {
-   "pattern": "src/cora/gold_effects.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "SOFTWARE_SOURCE"
-   ],
-   "rationale": "Conservative side-effect inventory without host authority."
-  },
-  {
-   "pattern": "src/cora/gold_saturation.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "SOFTWARE_SOURCE"
-   ],
-   "rationale": "Preseeded 10M bounded fault models."
-  },
-  {
-   "pattern": "tests/test_pr19_gold_assurance.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "FIXTURE",
-    "TEST"
-   ],
-   "rationale": "Physical mutations, actual Git readback and anti-promotion."
-  },
-  {
-   "pattern": ".github/workflows/ci-gold-assurance.yml",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "WORKFLOW"
-   ],
-   "rationale": "Exact-head model and source-only pilot CI."
-  },
-  {
-   "pattern": "docs/GOLD_ASSURANCE.md",
-   "roles": [
-    "DOCUMENTATION",
-    "PRODUCT_CONTRACT"
-   ],
-   "rationale": "Portable pattern migration and limits."
-  },
-  {
-   "pattern": "docs/DOD_PR19_GOLD.md",
-   "roles": [
-    "DOCUMENTATION",
-    "PRODUCT_CONTRACT"
-   ],
-   "rationale": "Global/intermediate/local gold DoD."
-  },
-  {
-   "pattern": "docs/AUDIT_PR19_CLOSURE.md",
-   "roles": [
-    "DOCUMENTATION",
-    "PRODUCT_CONTRACT"
-   ],
-   "rationale": "Exact PR-19 failure provenance, restricted private Git source access, scoped DoD and recovery obligations."
-  },
-  {
-   "pattern": "src/cora/reticulum.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "SOFTWARE_SOURCE"
-   ],
-   "rationale": "Single agent/Gold/DevOps graph compiler, model AND and selective witness invalidation."
-  },
-  {
-   "pattern": "cora.convergence-dod.json",
-   "roles": [
-    "POLICY",
-    "PRODUCT_CONTRACT"
-   ],
-   "rationale": "Twenty-eight-node R1–R4 source/external non-compensatory semantic DoD profile."
-  },
-  {
-   "pattern": "tests/test_pr20_convergence.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "FIXTURE",
-    "TEST"
-   ],
-   "rationale": "Actual committed Git fixture owners/consumers, 31 policy JSON mutants, negative evidence replay."
-  },
-  {
-   "pattern": ".github/workflows/ci-convergence.yml",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "WORKFLOW"
-   ],
-   "rationale": "Exact candidate Python matrix, legacy regression and twice-replayed preseeded 10M finite model."
-  },
-  {
-   "pattern": "docs/CONVERGENT_ASSURANCE.md",
-   "roles": [
-    "DOCUMENTATION",
-    "PRODUCT_CONTRACT"
-   ],
-   "rationale": "Canonical reticular DevOps workflow, source/runtime trust boundaries and operator method."
-  },
-  {
-   "pattern": "docs/DOD_PR20_CONVERGENCE.md",
-   "roles": [
-    "DOCUMENTATION",
-    "PRODUCT_CONTRACT"
-   ],
-   "rationale": "Global source and complete R1–R4 AND cut and falsification gates."
-  },
-  {
-   "pattern": "cora.documentation-dod.json",
-   "roles": [
-    "POLICY",
-    "PRODUCT_CONTRACT"
-   ],
-   "rationale": "Source vs external documentation assurance AND reticulum."
-  },
-  {
-   "pattern": "docs/documentation-registry.json",
-   "roles": [
-    "POLICY",
-    "PRODUCT_CONTRACT"
-   ],
-   "rationale": "Machine inventory of 43 original Markdown witnesses and new documentation."
-  },
-  {
-   "pattern": "docs/INDEX.md",
-   "roles": [
-    "DOCUMENTATION",
-    "PRODUCT_CONTRACT"
-   ],
-   "rationale": "User-first document navigation and complete historical index."
-  },
-  {
-   "pattern": "docs/GETTING_STARTED.md",
-   "roles": [
-    "DOCUMENTATION"
-   ],
-   "rationale": "Runnable first read and source-evidence boundaries."
-  },
-  {
-   "pattern": "docs/AGENT_ADOPTION.md",
-   "roles": [
-    "DOCUMENTATION",
-    "PRODUCT_CONTRACT"
-   ],
-   "rationale": "Current AI coding-assistant adoption method with explicit intent."
-  },
-  {
-   "pattern": "docs/CLI_REFERENCE.md",
-   "roles": [
-    "DOCUMENTATION",
-    "PRODUCT_CONTRACT"
-   ],
-   "rationale": "Parser-complete CLI command inventory, separated from README."
-  },
-  {
-   "pattern": "docs/DOCUMENTATION_DOD.md",
-   "roles": [
-    "DOCUMENTATION",
-    "PRODUCT_CONTRACT"
-   ],
-   "rationale": "Documentation source/governed obligations and honest limitations."
-  },
-  {
-   "pattern": "tools/verify_documentation.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "SOFTWARE_SOURCE"
-   ],
-   "rationale": "Static checks for source inventory, links, CLI, historical status and DoD."
-  },
-  {
-   "pattern": "tests/test_pr21_documentation.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "FIXTURE",
-    "TEST"
-   ],
-   "rationale": "Actual disposable Markdown/JSON negative mutations."
-  },
-  {
-   "pattern": ".github/workflows/ci-documentation.yml",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "WORKFLOW"
-   ],
-   "rationale": "Exact-head documentation and repo regression checks."
-  },
-  {
-   "pattern": "cora.documentation-proofs.json",
-   "roles": [
-    "POLICY",
-    "PRODUCT_CONTRACT"
-   ],
-   "rationale": "Readme/S01-S18 claimant-to-implementation/test Git proof bindings and falsifiers; no external authority."
-  },
-  {
-   "pattern": "tools/verify_claim_evidence.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "SOFTWARE_SOURCE"
-   ],
-   "rationale": "Git-blob replay and bounded semantic source counterexamples with revision-bound receipts."
-  },
-  {
-   "pattern": "tests/test_pr22_documentation_proofs.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "FIXTURE",
-    "TEST"
-   ],
-   "rationale": "Physical disposable Git-commit semantic/source/CI mutants and source receipt replay."
-  },
-  {
-   "pattern": "tests/test_pr23_navigation.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "FIXTURE",
-    "TEST"
-   ],
-   "rationale": "One thousand finite negative editorial/reader-target inputs with honest source-only counterexample scope."
-  },
-  {
-   "pattern": "cora.workflow-dod.json",
-   "roles": [
-    "POLICY",
-    "PRODUCT_CONTRACT"
-   ],
-   "rationale": "Reticular CI workflow source and external DoD."
-  },
-  {
-   "pattern": "src/cora/workflow_rationalization.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "SOFTWARE_SOURCE"
-   ],
-   "rationale": "Git-bound workflow inventory, review-only plans and replay."
-  },
-  {
-   "pattern": "tests/test_pr24_workflow_rationalization.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "FIXTURE",
-    "TEST"
-   ],
-   "rationale": "Physical workflow source mutants and bounded parser counterexamples."
-  },
-  {
-   "pattern": "cora.method-atlas.json",
-   "roles": [
-    "ARTIFACT_INDEX",
-    "PRODUCT_CONTRACT"
-   ],
-   "rationale": "Cross-method source correlation with bounded scope and independent review."
-  },
-  {
-   "pattern": "cora.method-synthesis-dod.json",
-   "roles": [
-    "POLICY",
-    "PRODUCT_CONTRACT"
-   ],
-   "rationale": "Cross-method source correlation with bounded scope and independent review."
-  },
-  {
-   "pattern": "src/cora/method_synthesis.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "SOFTWARE_SOURCE"
-   ],
-   "rationale": "Cross-method source correlation with bounded scope and independent review."
-  },
-  {
-   "pattern": "tests/test_pr25_method_synthesis.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "FIXTURE",
-    "TEST"
-   ],
-   "rationale": "Cross-method source correlation with bounded scope and independent review."
-  },
-  {
-   "pattern": "cora.capability-atlas.json",
-   "roles": [
-    "ARTIFACT_INDEX",
-    "PRODUCT_CONTRACT"
-   ],
-   "rationale": "Source-bound capability and DoD evidence, not independent runtime or release proof."
-  },
-  {
-   "pattern": "cora.capability-dod.json",
-   "roles": [
-    "POLICY",
-    "PRODUCT_CONTRACT"
-   ],
-   "rationale": "Source-bound capability and DoD evidence, not independent runtime or release proof."
-  },
-  {
-   "pattern": "tools/verify_capability_atlas.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "RELEASE_TOOL"
-   ],
-   "rationale": "Source-bound capability and DoD evidence, not independent runtime or release proof."
-  },
-  {
-   "pattern": "tests/test_pr26_capability_atlas.py",
-   "roles": [
-    "CONTRACT_VERIFIER",
-    "FIXTURE",
-    "TEST"
-   ],
-   "rationale": "Source-bound capability and DoD evidence, not independent runtime or release proof."
-  }
- ]
+  "schema": "cora-artifact-roles/1",
+  "rules": [
+    {
+      "pattern": "README.md",
+      "roles": ["DOCUMENTATION", "PRODUCT_CONTRACT"],
+      "rationale": "Product value proposition, limitation boundary and quickstart."
+    },
+    {
+      "pattern": "LICENSE",
+      "roles": ["LICENSE"],
+      "rationale": "License metadata applicable to distributable source."
+    },
+    {
+      "pattern": "SECURITY.md",
+      "roles": ["DOCUMENTATION", "GOVERNANCE", "POLICY"],
+      "rationale": "Vulnerability reporting and trust boundary declaration."
+    },
+    {
+      "pattern": "CONTRIBUTING.md",
+      "roles": ["DOCUMENTATION", "GOVERNANCE"],
+      "rationale": "Contribution, review and maintenance instructions."
+    },
+    {
+      "pattern": "GOVERNANCE.md",
+      "roles": ["DOCUMENTATION", "GOVERNANCE", "POLICY"],
+      "rationale": "Accountability and separation of human duties."
+    },
+    {
+      "pattern": "pyproject.toml",
+      "roles": ["BUILD_METADATA", "PRODUCT_CONTRACT"],
+      "rationale": "Distribution metadata and canonical console entrypoint."
+    },
+    {
+      "pattern": "cora.ontology.json",
+      "roles": ["ARTIFACT_INDEX", "PRODUCT_CONTRACT"],
+      "rationale": "Explicit source-committed product and software identities."
+    },
+    {
+      "pattern": "cora.artifact-roles.json",
+      "roles": ["ARTIFACT_INDEX", "PRODUCT_CONTRACT"],
+      "rationale": "Self-describing artifact role claims and their limitations."
+    },
+    {
+      "pattern": ".gitignore",
+      "roles": ["POLICY"],
+      "rationale": "Version-control exclusion policy."
+    },
+    {
+      "pattern": ".github/CODEOWNERS",
+      "roles": ["GOVERNANCE", "POLICY"],
+      "rationale": "Review-routing declaration and ownership documentation."
+    },
+    {
+      "pattern": ".github/PULL_REQUEST_TEMPLATE.md",
+      "roles": ["DOCUMENTATION", "GOVERNANCE"],
+      "rationale": "Contributor change review template."
+    },
+    {
+      "pattern": ".github/workflows/*.yml",
+      "roles": ["POLICY", "WORKFLOW"],
+      "rationale": "GitHub CI workflow definition; not proof of enforced required checks."
+    },
+    {
+      "pattern": "docs/*.md",
+      "roles": ["DOCUMENTATION"],
+      "rationale": "Architecture, DoD, ADR and operational evidence guidance."
+    },
+    {
+      "pattern": "docs/verification/*.json",
+      "roles": ["ARTIFACT_INDEX"],
+      "rationale": "Historical local result records, not independently signed evidence."
+    },
+    {
+      "pattern": "schemas/*.json",
+      "roles": ["CONTRACT_SCHEMA"],
+      "rationale": "Machine-readable companion JSON schemas; code validator may impose more constraints."
+    },
+    {
+      "pattern": "src/cora/*.py",
+      "roles": ["SOFTWARE_SOURCE"],
+      "rationale": "Python package implementation; naming alone does not prove runtime usage."
+    },
+    {
+      "pattern": "src/cora/cli.py",
+      "roles": ["ENTRYPOINT", "SOFTWARE_SOURCE"],
+      "rationale": "Single installed CLI entrypoint, declared in pyproject metadata."
+    },
+    {
+      "pattern": "src/cora/evidence.py",
+      "roles": ["CONTRACT_VERIFIER", "SOFTWARE_SOURCE"],
+      "rationale": "Validation and domain-separated evidence contracts."
+    },
+    {
+      "pattern": "src/cora/ontology.py",
+      "roles": ["CONTRACT_VERIFIER", "SOFTWARE_SOURCE"],
+      "rationale": "Declared product and software identity validator."
+    },
+    {
+      "pattern": "src/cora/closure.py",
+      "roles": ["CONTRACT_VERIFIER", "SOFTWARE_SOURCE"],
+      "rationale": "Scoped certificate obligation enforcement."
+    },
+    {
+      "pattern": "src/cora/artifact_roles.py",
+      "roles": ["CONTRACT_VERIFIER", "SOFTWARE_SOURCE"],
+      "rationale": "Committed role contract validation and reproduction."
+    },
+    {
+      "pattern": "src/cora/file_lab.py",
+      "roles": ["CONTRACT_VERIFIER", "SOFTWARE_SOURCE"],
+      "rationale": "Forensic dossier and untrusted AI input validator."
+    },
+    {
+      "pattern": "src/cora/guard_runtime.py",
+      "roles": ["CONTRACT_VERIFIER", "SOFTWARE_SOURCE"],
+      "rationale": "Vendored local architecture guard validator."
+    },
+    {
+      "pattern": "tests/*.py",
+      "roles": ["TEST"],
+      "rationale": "Python executable test suite; status remains declared, not proof of passing."
+    },
+    {
+      "pattern": "tests/test_pr09_file_lab.py",
+      "roles": ["CONTRACT_VERIFIER", "FIXTURE", "TEST"],
+      "rationale": "Tests AI/runtime import contract with independent temporary Git fixtures."
+    },
+    {
+      "pattern": "tests/test_pr10_artifact_roles.py",
+      "roles": ["CONTRACT_VERIFIER", "FIXTURE", "TEST"],
+      "rationale": "Adversarial role-validation and test fixture oracles."
+    },
+    {
+      "pattern": "tools/*.py",
+      "roles": ["RELEASE_TOOL"],
+      "rationale": "Build, release verification and repository audit tools."
+    },
+    {
+      "pattern": "tools/verify_repository_contract.py",
+      "roles": ["CONTRACT_VERIFIER", "RELEASE_TOOL"],
+      "rationale": "Independent repository ontology and README contract verifier."
+    },
+    {
+      "pattern": "tools/verify_artifact_roles.py",
+      "roles": ["CONTRACT_VERIFIER", "RELEASE_TOOL"],
+      "rationale": "Self-audit gate for committed artifact classification."
+    },
+    {
+      "pattern": "docs/verification/V1_EXPERIMENTAL_SATURATION.json",
+      "roles": ["ARTIFACT_INDEX"],
+      "rationale": "Finite 11M-case semantic saturation receipt, not real-repository proof"
+    },
+    {
+      "pattern": "tools/make_experimental_bundle.py",
+      "roles": ["RELEASE_TOOL"],
+      "rationale": "Creates an unpublished reproducible review-only product bundle"
+    },
+    {
+      "pattern": "src/cora/selection.py",
+      "roles": ["CONTRACT_VERIFIER", "SOFTWARE_SOURCE"],
+      "rationale": "Read-only selection policy and immutable Git revalidation contract."
+    },
+    {
+      "pattern": "tests/test_selection.py",
+      "roles": ["CONTRACT_VERIFIER", "FIXTURE", "TEST"],
+      "rationale": "Adversarial Git fixture and selection policy metamorphic oracle."
+    },
+    {
+      "pattern": ".cora/continuous-policy.json",
+      "roles": ["POLICY", "PRODUCT_CONTRACT"],
+      "rationale": "Committed baseline policy; first install requires independent review."
+    },
+    {
+      "pattern": "AGENTS.md",
+      "roles": [
+        "DOCUMENTATION",
+        "GOVERNANCE",
+        "POLICY"
+      ],
+      "rationale": "Untrusted coding agent operating rules and trust boundaries."
+    },
+    {
+      "pattern": "src/cora/continuous.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Source-bound lifecycle and human role validation."
+    },
+    {
+      "pattern": "tools/verify_release_readiness.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "RELEASE_TOOL"
+      ],
+      "rationale": "Independent source-only release contract verifier; external authorization blocked."
+    },
+    {
+      "pattern": "tests/test_pr15_release_readiness.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Negative release-metadata, policy, workflow and role contract falsification."
+    },
+    {
+      "pattern": "CHANGELOG.md",
+      "roles": [
+        "DOCUMENTATION",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Public-facing product version narrative and proposed release history; not publication evidence."
+    },
+    {
+      "pattern": "src/cora/archive_intake.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Bounded source archive contract; not runtime or Git ancestry attestation."
+    },
+    {
+      "pattern": "src/cora/runtime_observation.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Explicit opt-in execution request and untrusted runtime receipt; sandbox not independently attested."
+    },
+    {
+      "pattern": "src/cora/observation_fusion.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Cross-domain evidence reconciliation with mandatory unknown/authorization boundaries."
+    },
+    {
+      "pattern": "tests/test_pr16_*.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "PR-16 negative and contract fixtures; role declaration is not passing-test proof."
+    },
+    {
+      "pattern": "src/cora/semantic_lattice.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Typed obligations and source-replay; no CI, sandbox or approval self-attestation."
+    },
+    {
+      "pattern": "tools/benchmark_pr16_git_batch.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "RELEASE_TOOL"
+      ],
+      "rationale": "Independent Git object oracle and bounded process-count fixture."
+    },
+    {
+      "pattern": "tools/verify_pr16_coverage.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "RELEASE_TOOL"
+      ],
+      "rationale": "Fail-closed branch coverage floor for named critical modules."
+    },
+    {
+      "pattern": "tests/test_pr16_benchmark_contract.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Negative coverage and positive performance fixture, not real-repo calibration."
+    },
+    {
+      "pattern": "cora.agent-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Backward-derived agent DoD, no host authority."
+    },
+    {
+      "pattern": "src/cora/agent_assurance.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Agent DoD compiler and replay of untrusted claims."
+    },
+    {
+      "pattern": "src/cora/agent_saturation.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Finite seeded model and independent reference oracle."
+    },
+    {
+      "pattern": "tests/test_pr17_agent_assurance.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Physical JSON mutants, anti-promotion and CLI regression."
+    },
+    {
+      "pattern": "tests/test_pr18_agent_hardening.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Actual CORA source-model mutants, falsified index-based scenario coverage and epistemic anti-promotion."
+    },
+    {
+      "pattern": "cora.gold-assurance.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Machine-readable R1-R4 reticular DoD and 12 portable gold patterns."
+    },
+    {
+      "pattern": "src/cora/gold_assurance.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Pinned Git-blob source pilot and contextual reverse derivation."
+    },
+    {
+      "pattern": "src/cora/gold_mutations.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Physical source staging with classified oracle results."
+    },
+    {
+      "pattern": "src/cora/gold_effects.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Conservative side-effect inventory without host authority."
+    },
+    {
+      "pattern": "src/cora/gold_saturation.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Preseeded 10M bounded fault models."
+    },
+    {
+      "pattern": "tests/test_pr19_gold_assurance.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Physical mutations, actual Git readback and anti-promotion."
+    },
+    {
+      "pattern": ".github/workflows/ci-gold-assurance.yml",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "WORKFLOW"
+      ],
+      "rationale": "Exact-head model and source-only pilot CI."
+    },
+    {
+      "pattern": "docs/GOLD_ASSURANCE.md",
+      "roles": [
+        "DOCUMENTATION",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Portable pattern migration and limits."
+    },
+    {
+      "pattern": "docs/DOD_PR19_GOLD.md",
+      "roles": [
+        "DOCUMENTATION",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Global/intermediate/local gold DoD."
+    },
+    {
+      "pattern": "docs/AUDIT_PR19_CLOSURE.md",
+      "roles": [
+        "DOCUMENTATION",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Exact PR-19 failure provenance, restricted private Git source access, scoped DoD and recovery obligations."
+    },
+    {
+      "pattern": "src/cora/reticulum.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Single agent/Gold/DevOps graph compiler, model AND and selective witness invalidation."
+    },
+    {
+      "pattern": "cora.convergence-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Twenty-eight-node R1–R4 source/external non-compensatory semantic DoD profile."
+    },
+    {
+      "pattern": "tests/test_pr20_convergence.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Actual committed Git fixture owners/consumers, 31 policy JSON mutants, negative evidence replay."
+    },
+    {
+      "pattern": ".github/workflows/ci-convergence.yml",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "WORKFLOW"
+      ],
+      "rationale": "Exact candidate Python matrix, legacy regression and twice-replayed preseeded 10M finite model."
+    },
+    {
+      "pattern": "docs/CONVERGENT_ASSURANCE.md",
+      "roles": [
+        "DOCUMENTATION",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Canonical reticular DevOps workflow, source/runtime trust boundaries and operator method."
+    },
+    {
+      "pattern": "docs/DOD_PR20_CONVERGENCE.md",
+      "roles": [
+        "DOCUMENTATION",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Global source and complete R1–R4 AND cut and falsification gates."
+    },
+    {
+      "pattern": "cora.documentation-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Source vs external documentation assurance AND reticulum."
+    },
+    {
+      "pattern": "docs/documentation-registry.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Machine inventory of 43 original Markdown witnesses and new documentation."
+    },
+    {
+      "pattern": "docs/INDEX.md",
+      "roles": [
+        "DOCUMENTATION",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "User-first document navigation and complete historical index."
+    },
+    {
+      "pattern": "docs/GETTING_STARTED.md",
+      "roles": [
+        "DOCUMENTATION"
+      ],
+      "rationale": "Runnable first read and source-evidence boundaries."
+    },
+    {
+      "pattern": "docs/AGENT_ADOPTION.md",
+      "roles": [
+        "DOCUMENTATION",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Current AI coding-assistant adoption method with explicit intent."
+    },
+    {
+      "pattern": "docs/CLI_REFERENCE.md",
+      "roles": [
+        "DOCUMENTATION",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Parser-complete CLI command inventory, separated from README."
+    },
+    {
+      "pattern": "docs/DOCUMENTATION_DOD.md",
+      "roles": [
+        "DOCUMENTATION",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Documentation source/governed obligations and honest limitations."
+    },
+    {
+      "pattern": "tools/verify_documentation.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Static checks for source inventory, links, CLI, historical status and DoD."
+    },
+    {
+      "pattern": "tests/test_pr21_documentation.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Actual disposable Markdown/JSON negative mutations."
+    },
+    {
+      "pattern": ".github/workflows/ci-documentation.yml",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "WORKFLOW"
+      ],
+      "rationale": "Exact-head documentation and repo regression checks."
+    },
+    {
+      "pattern": "cora.documentation-proofs.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Readme/S01-S18 claimant-to-implementation/test Git proof bindings and falsifiers; no external authority."
+    },
+    {
+      "pattern": "tools/verify_claim_evidence.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Git-blob replay and bounded semantic source counterexamples with revision-bound receipts."
+    },
+    {
+      "pattern": "tests/test_pr22_documentation_proofs.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Physical disposable Git-commit semantic/source/CI mutants and source receipt replay."
+    },
+    {
+      "pattern": "tests/test_pr23_navigation.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "One thousand finite negative editorial/reader-target inputs with honest source-only counterexample scope."
+    },
+    {
+      "pattern": "cora.workflow-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Reticular CI workflow source and external DoD."
+    },
+    {
+      "pattern": "src/cora/workflow_rationalization.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Git-bound workflow inventory, review-only plans and replay."
+    },
+    {
+      "pattern": "tests/test_pr24_workflow_rationalization.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Physical workflow source mutants and bounded parser counterexamples."
+    },
+    {
+      "pattern": "cora.method-atlas.json",
+      "roles": [
+        "ARTIFACT_INDEX",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Cross-method source correlation with bounded scope and independent review."
+    },
+    {
+      "pattern": "cora.method-synthesis-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Cross-method source correlation with bounded scope and independent review."
+    },
+    {
+      "pattern": "src/cora/method_synthesis.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Cross-method source correlation with bounded scope and independent review."
+    },
+    {
+      "pattern": "tests/test_pr25_method_synthesis.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Cross-method source correlation with bounded scope and independent review."
+    },
+    {"pattern":"cora.capability-atlas.json","roles":["ARTIFACT_INDEX","PRODUCT_CONTRACT"],"rationale":"Scoped capability evidence; not a runtime or release attestation."},
+    {"pattern":"cora.capability-dod.json","roles":["POLICY","PRODUCT_CONTRACT"],"rationale":"Scoped capability evidence; not a runtime or release attestation."},
+    {"pattern":"tools/verify_capability_atlas.py","roles":["CONTRACT_VERIFIER","RELEASE_TOOL"],"rationale":"Scoped capability evidence; not a runtime or release attestation."},
+    {"pattern":"tests/test_pr26_capability_atlas.py","roles":["CONTRACT_VERIFIER","FIXTURE","TEST"],"rationale":"Scoped capability evidence; not a runtime or release attestation."}
+  ]
 }

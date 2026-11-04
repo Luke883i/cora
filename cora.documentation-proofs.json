@@ -1,417 +1,417 @@
 {
- "schema": "cora-documentation-proofs/1",
- "baseline_sha": "d8b75df872c1603597550bebfb8c331c565aa7f9",
- "contract_dod": "cora.documentation-dod.json",
- "authority": "CANDIDATE_SOURCE_REPLAY_NOT_HOST_OR_HUMAN_ATTESTATION",
- "source_goal": "G_DOC_SOURCE",
- "accepted_goal": "G_DOC_ACCEPTED",
- "nodes": [
-  {
-   "id": "S01",
-   "predicate": "product-frontdoor",
-   "readme_section": "ROOT",
-   "readme_phrase": "**Engineering evidence for AI-assisted software changes.**",
-   "evidence": [
+  "schema": "cora-documentation-proofs/1",
+  "baseline_sha": "d8b75df872c1603597550bebfb8c331c565aa7f9",
+  "contract_dod": "cora.documentation-dod.json",
+  "authority": "CANDIDATE_SOURCE_REPLAY_NOT_HOST_OR_HUMAN_ATTESTATION",
+  "source_goal": "G_DOC_SOURCE",
+  "accepted_goal": "G_DOC_ACCEPTED",
+  "nodes": [
     {
-     "path": "README.md",
-     "role": "CLAIM"
+      "id": "S01",
+      "predicate": "product-frontdoor",
+      "readme_section": "ROOT",
+      "readme_phrase": "**Engineering evidence for AI-assisted software changes.**",
+      "evidence": [
+        {
+          "path": "README.md",
+          "role": "CLAIM"
+        },
+        {
+          "path": "pyproject.toml",
+          "role": "IMPLEMENTATION"
+        },
+        {
+          "path": "tests/test_pr08_repository.py",
+          "role": "TEST"
+        }
+      ],
+      "falsifier": "Flip current product or prerelease identity while leaving headings unchanged."
     },
     {
-     "path": "pyproject.toml",
-     "role": "IMPLEMENTATION"
+      "id": "S02",
+      "predicate": "ontology",
+      "readme_section": "## Engineering map",
+      "readme_phrase": "**Product:**",
+      "evidence": [
+        {
+          "path": "README.md",
+          "role": "CLAIM"
+        },
+        {
+          "path": "cora.ontology.json",
+          "role": "IMPLEMENTATION"
+        },
+        {
+          "path": "tests/test_pr03.py",
+          "role": "TEST"
+        }
+      ],
+      "falsifier": "Alter declared product/software identifiers without updating the product map."
     },
     {
-     "path": "tests/test_pr08_repository.py",
-     "role": "TEST"
+      "id": "S03",
+      "predicate": "agent-boundary",
+      "readme_section": "ROOT",
+      "readme_phrase": "helps developers and AI coding assistants inspect a Git repository",
+      "evidence": [
+        {
+          "path": "README.md",
+          "role": "CLAIM"
+        },
+        {
+          "path": "AGENTS.md",
+          "role": "IMPLEMENTATION"
+        },
+        {
+          "path": "tests/test_pr17_agent_assurance.py",
+          "role": "TEST"
+        }
+      ],
+      "falsifier": "Claim CORA is an autonomous coding agent despite the source/evidence boundary."
+    },
+    {
+      "id": "S04",
+      "predicate": "first-use",
+      "readme_section": "## First five minutes",
+      "readme_phrase": "cora verify-ledger /tmp/cora-ledger.json --repo .",
+      "evidence": [
+        {
+          "path": "README.md",
+          "role": "CLAIM"
+        },
+        {
+          "path": "src/cora/cli.py",
+          "role": "IMPLEMENTATION"
+        },
+        {
+          "path": "tests/test_pr02.py",
+          "role": "TEST"
+        }
+      ],
+      "falsifier": "Delete a documented parser subcommand without changing the tutorial."
+    },
+    {
+      "id": "S05",
+      "predicate": "agent-adoption",
+      "readme_section": "## Use CORA with an AI coding assistant",
+      "readme_phrase": "--contextual --intent",
+      "evidence": [
+        {
+          "path": "README.md",
+          "role": "CLAIM"
+        },
+        {
+          "path": "src/cora/continuous.py",
+          "role": "IMPLEMENTATION"
+        },
+        {
+          "path": "tests/test_pr20_convergence.py",
+          "role": "TEST"
+        }
+      ],
+      "falsifier": "Remove the real intent-binding result while keeping the documentation text."
+    },
+    {
+      "id": "S06",
+      "predicate": "nonpromotion",
+      "readme_section": "## How CORA works",
+      "readme_phrase": "A hash can identify committed bytes",
+      "evidence": [
+        {
+          "path": "README.md",
+          "role": "CLAIM"
+        },
+        {
+          "path": "src/cora/reticulum.py",
+          "role": "IMPLEMENTATION"
+        },
+        {
+          "path": "tests/test_pr20_convergence.py",
+          "role": "TEST"
+        }
+      ],
+      "falsifier": "Promote external status or authorization from a finite source model."
+    },
+    {
+      "id": "S07",
+      "predicate": "navigation",
+      "readme_section": "## What works today",
+      "readme_phrase": "[complete documentation index](docs/INDEX.md)",
+      "evidence": [
+        {
+          "path": "README.md",
+          "role": "CLAIM"
+        },
+        {
+          "path": "tools/verify_documentation.py",
+          "role": "IMPLEMENTATION"
+        },
+        {
+          "path": "tests/test_pr21_documentation.py",
+          "role": "TEST"
+        }
+      ],
+      "falsifier": "Break a document link or make a current document unreachable."
+    },
+    {
+      "id": "S08",
+      "predicate": "registry",
+      "readme_section": "## Documentation by goal",
+      "readme_phrase": "**Full documentation, history and contracts:**",
+      "evidence": [
+        {
+          "path": "README.md",
+          "role": "CLAIM"
+        },
+        {
+          "path": "docs/documentation-registry.json",
+          "role": "IMPLEMENTATION"
+        },
+        {
+          "path": "tests/test_pr21_documentation.py",
+          "role": "TEST"
+        }
+      ],
+      "falsifier": "Drop or duplicate a Markdown record and preserve a misleading inventory total."
+    },
+    {
+      "id": "S09",
+      "predicate": "precedence",
+      "readme_section": "## Use CORA with an AI coding assistant",
+      "readme_phrase": "[R1–R4 DoD](docs/DOD_PR20_CONVERGENCE.md)",
+      "evidence": [
+        {
+          "path": "README.md",
+          "role": "CLAIM"
+        },
+        {
+          "path": "cora.documentation-dod.json",
+          "role": "IMPLEMENTATION"
+        },
+        {
+          "path": "tests/test_pr21_documentation.py",
+          "role": "TEST"
+        }
+      ],
+      "falsifier": "Remove an AND edge or promote an external obligation to source."
+    },
+    {
+      "id": "S10",
+      "predicate": "historical-authority",
+      "readme_section": "## Engineering map",
+      "readme_phrase": "historical ADRs",
+      "evidence": [
+        {
+          "path": "README.md",
+          "role": "CLAIM"
+        },
+        {
+          "path": "docs/documentation-registry.json",
+          "role": "IMPLEMENTATION"
+        },
+        {
+          "path": "tests/test_pr21_documentation.py",
+          "role": "TEST"
+        }
+      ],
+      "falsifier": "Rewrite a historical audit blob or upgrade its declared authority."
+    },
+    {
+      "id": "S11",
+      "predicate": "cli-coverage",
+      "readme_section": "## What works today",
+      "readme_phrase": "parser-checked CLI reference",
+      "evidence": [
+        {
+          "path": "README.md",
+          "role": "CLAIM"
+        },
+        {
+          "path": "src/cora/cli.py",
+          "role": "IMPLEMENTATION"
+        },
+        {
+          "path": "tests/test_pr21_documentation.py",
+          "role": "TEST"
+        },
+        {
+          "path": "cora.capability-atlas.json",
+          "role": "IMPLEMENTATION"
+        },
+        {
+          "path": "tools/verify_capability_atlas.py",
+          "role": "IMPLEMENTATION"
+        },
+        {
+          "path": "tests/test_pr26_capability_atlas.py",
+          "role": "TEST"
+        }
+      ],
+      "falsifier": "Remove one CLI dispatch path, misclassify a target-writing command, or replace a test-source witness while leaving the README and parser list unchanged."
+    },
+    {
+      "id": "S12",
+      "predicate": "intent-replay",
+      "readme_section": "## Use CORA with an AI coding assistant",
+      "readme_phrase": "The same intent is required for replay",
+      "evidence": [
+        {
+          "path": "README.md",
+          "role": "CLAIM"
+        },
+        {
+          "path": "src/cora/continuous.py",
+          "role": "IMPLEMENTATION"
+        },
+        {
+          "path": "tests/test_pr20_convergence.py",
+          "role": "TEST"
+        }
+      ],
+      "falsifier": "Drop the intent digest or allow unrelated caller intent on source replay."
+    },
+    {
+      "id": "S13",
+      "predicate": "source-verifier",
+      "readme_section": "ROOT",
+      "readme_phrase": "produce reproducible pre/post-merge review reports",
+      "evidence": [
+        {
+          "path": "README.md",
+          "role": "CLAIM"
+        },
+        {
+          "path": "tools/verify_documentation.py",
+          "role": "IMPLEMENTATION"
+        },
+        {
+          "path": "tests/test_pr21_documentation.py",
+          "role": "TEST"
+        }
+      ],
+      "falsifier": "Remove the source verifier entrypoint while keeping its documentation."
+    },
+    {
+      "id": "S14",
+      "predicate": "governance-truth",
+      "readme_section": "## Operating boundaries",
+      "readme_phrase": "GitHub workflow files alone do not prove",
+      "evidence": [
+        {
+          "path": "README.md",
+          "role": "CLAIM"
+        },
+        {
+          "path": "src/cora/continuous.py",
+          "role": "IMPLEMENTATION"
+        },
+        {
+          "path": "tests/test_continuous_pr14.py",
+          "role": "TEST"
+        }
+      ],
+      "falsifier": "Assert independent host protection from self-controlled workflow source."
+    },
+    {
+      "id": "S15",
+      "predicate": "negative-oracles",
+      "readme_section": "## Use CORA with an AI coding assistant",
+      "readme_phrase": "Run real tests and obtain independent review separately.",
+      "evidence": [
+        {
+          "path": "README.md",
+          "role": "CLAIM"
+        },
+        {
+          "path": ".github/workflows/ci-documentation.yml",
+          "role": "IMPLEMENTATION"
+        },
+        {
+          "path": "tests/test_pr21_documentation.py",
+          "role": "TEST"
+        }
+      ],
+      "falsifier": "Omit the new proof verifier or physical source mutants from candidate CI."
+    },
+    {
+      "id": "S16",
+      "predicate": "alpha-boundary",
+      "readme_section": "ROOT",
+      "readme_phrase": "not a stable API or verified public release",
+      "evidence": [
+        {
+          "path": "README.md",
+          "role": "CLAIM"
+        },
+        {
+          "path": "pyproject.toml",
+          "role": "IMPLEMENTATION"
+        },
+        {
+          "path": "tests/test_pr15_release_readiness.py",
+          "role": "TEST"
+        }
+      ],
+      "falsifier": "Change package version or claim stable publication while retaining old wording."
+    },
+    {
+      "id": "S17",
+      "predicate": "baseline-preserved",
+      "readme_section": "## Documentation by goal",
+      "readme_phrase": "Full documentation, history and contracts:",
+      "evidence": [
+        {
+          "path": "README.md",
+          "role": "CLAIM"
+        },
+        {
+          "path": "docs/documentation-registry.json",
+          "role": "IMPLEMENTATION"
+        },
+        {
+          "path": "tests/test_pr21_documentation.py",
+          "role": "TEST"
+        }
+      ],
+      "falsifier": "Replace a historical baseline Git blob while preserving file paths."
+    },
+    {
+      "id": "S18",
+      "predicate": "reader-route",
+      "readme_section": "## Documentation by goal",
+      "readme_phrase": "**First-time user:**",
+      "evidence": [
+        {
+          "path": "README.md",
+          "role": "CLAIM"
+        },
+        {
+          "path": "docs/INDEX.md",
+          "role": "IMPLEMENTATION"
+        },
+        {
+          "path": "tests/test_pr21_documentation.py",
+          "role": "TEST"
+        }
+      ],
+      "falsifier": "Delete a reader-facing route while the raw files remain present."
     }
-   ],
-   "falsifier": "Flip current product or prerelease identity while leaving headings unchanged."
-  },
-  {
-   "id": "S02",
-   "predicate": "ontology",
-   "readme_section": "## Engineering map",
-   "readme_phrase": "**Product:**",
-   "evidence": [
+  ],
+  "externals": [
     {
-     "path": "README.md",
-     "role": "CLAIM"
+      "id": "E01",
+      "state": "BLOCKED_EXTERNAL",
+      "witness": "Real unfamiliar engineer first-read task"
     },
     {
-     "path": "cora.ontology.json",
-     "role": "IMPLEMENTATION"
+      "id": "E02",
+      "state": "BLOCKED_EXTERNAL",
+      "witness": "Independent external coding-agent adoption on maintained target"
     },
     {
-     "path": "tests/test_pr03.py",
-     "role": "TEST"
+      "id": "E03",
+      "state": "BLOCKED_EXTERNAL",
+      "witness": "Effective protected checks plus non-author review"
     }
-   ],
-   "falsifier": "Alter declared product/software identifiers without updating the product map."
-  },
-  {
-   "id": "S03",
-   "predicate": "agent-boundary",
-   "readme_section": "ROOT",
-   "readme_phrase": "helps developers and AI coding assistants inspect a Git repository",
-   "evidence": [
-    {
-     "path": "README.md",
-     "role": "CLAIM"
-    },
-    {
-     "path": "AGENTS.md",
-     "role": "IMPLEMENTATION"
-    },
-    {
-     "path": "tests/test_pr17_agent_assurance.py",
-     "role": "TEST"
-    }
-   ],
-   "falsifier": "Claim CORA is an autonomous coding agent despite the source/evidence boundary."
-  },
-  {
-   "id": "S04",
-   "predicate": "first-use",
-   "readme_section": "## First five minutes",
-   "readme_phrase": "cora verify-ledger /tmp/cora-ledger.json --repo .",
-   "evidence": [
-    {
-     "path": "README.md",
-     "role": "CLAIM"
-    },
-    {
-     "path": "src/cora/cli.py",
-     "role": "IMPLEMENTATION"
-    },
-    {
-     "path": "tests/test_pr02.py",
-     "role": "TEST"
-    }
-   ],
-   "falsifier": "Delete a documented parser subcommand without changing the tutorial."
-  },
-  {
-   "id": "S05",
-   "predicate": "agent-adoption",
-   "readme_section": "## Use CORA with an AI coding assistant",
-   "readme_phrase": "--contextual --intent",
-   "evidence": [
-    {
-     "path": "README.md",
-     "role": "CLAIM"
-    },
-    {
-     "path": "src/cora/continuous.py",
-     "role": "IMPLEMENTATION"
-    },
-    {
-     "path": "tests/test_pr20_convergence.py",
-     "role": "TEST"
-    }
-   ],
-   "falsifier": "Remove the real intent-binding result while keeping the documentation text."
-  },
-  {
-   "id": "S06",
-   "predicate": "nonpromotion",
-   "readme_section": "## How CORA works",
-   "readme_phrase": "A hash can identify committed bytes",
-   "evidence": [
-    {
-     "path": "README.md",
-     "role": "CLAIM"
-    },
-    {
-     "path": "src/cora/reticulum.py",
-     "role": "IMPLEMENTATION"
-    },
-    {
-     "path": "tests/test_pr20_convergence.py",
-     "role": "TEST"
-    }
-   ],
-   "falsifier": "Promote external status or authorization from a finite source model."
-  },
-  {
-   "id": "S07",
-   "predicate": "navigation",
-   "readme_section": "## What works today",
-   "readme_phrase": "[complete documentation index](docs/INDEX.md)",
-   "evidence": [
-    {
-     "path": "README.md",
-     "role": "CLAIM"
-    },
-    {
-     "path": "tools/verify_documentation.py",
-     "role": "IMPLEMENTATION"
-    },
-    {
-     "path": "tests/test_pr21_documentation.py",
-     "role": "TEST"
-    }
-   ],
-   "falsifier": "Break a document link or make a current document unreachable."
-  },
-  {
-   "id": "S08",
-   "predicate": "registry",
-   "readme_section": "## Documentation by goal",
-   "readme_phrase": "**Full documentation, history and contracts:**",
-   "evidence": [
-    {
-     "path": "README.md",
-     "role": "CLAIM"
-    },
-    {
-     "path": "docs/documentation-registry.json",
-     "role": "IMPLEMENTATION"
-    },
-    {
-     "path": "tests/test_pr21_documentation.py",
-     "role": "TEST"
-    }
-   ],
-   "falsifier": "Drop or duplicate a Markdown record and preserve a misleading inventory total."
-  },
-  {
-   "id": "S09",
-   "predicate": "precedence",
-   "readme_section": "## Use CORA with an AI coding assistant",
-   "readme_phrase": "[R1–R4 DoD](docs/DOD_PR20_CONVERGENCE.md)",
-   "evidence": [
-    {
-     "path": "README.md",
-     "role": "CLAIM"
-    },
-    {
-     "path": "cora.documentation-dod.json",
-     "role": "IMPLEMENTATION"
-    },
-    {
-     "path": "tests/test_pr21_documentation.py",
-     "role": "TEST"
-    }
-   ],
-   "falsifier": "Remove an AND edge or promote an external obligation to source."
-  },
-  {
-   "id": "S10",
-   "predicate": "historical-authority",
-   "readme_section": "## Engineering map",
-   "readme_phrase": "historical ADRs",
-   "evidence": [
-    {
-     "path": "README.md",
-     "role": "CLAIM"
-    },
-    {
-     "path": "docs/documentation-registry.json",
-     "role": "IMPLEMENTATION"
-    },
-    {
-     "path": "tests/test_pr21_documentation.py",
-     "role": "TEST"
-    }
-   ],
-   "falsifier": "Rewrite a historical audit blob or upgrade its declared authority."
-  },
-  {
-   "id": "S11",
-   "predicate": "cli-coverage",
-   "readme_section": "## What works today",
-   "readme_phrase": "parser-checked CLI reference",
-   "evidence": [
-    {
-     "path": "README.md",
-     "role": "CLAIM"
-    },
-    {
-     "path": "src/cora/cli.py",
-     "role": "IMPLEMENTATION"
-    },
-    {
-     "path": "tests/test_pr21_documentation.py",
-     "role": "TEST"
-    },
-    {
-     "path": "cora.capability-atlas.json",
-     "role": "IMPLEMENTATION"
-    },
-    {
-     "path": "tools/verify_capability_atlas.py",
-     "role": "IMPLEMENTATION"
-    },
-    {
-     "path": "tests/test_pr26_capability_atlas.py",
-     "role": "TEST"
-    }
-   ],
-   "falsifier": "Remove one CLI dispatch path, misclassify a target-writing command, or replace a test-source witness while leaving the README and parser list unchanged."
-  },
-  {
-   "id": "S12",
-   "predicate": "intent-replay",
-   "readme_section": "## Use CORA with an AI coding assistant",
-   "readme_phrase": "The same intent is required for replay",
-   "evidence": [
-    {
-     "path": "README.md",
-     "role": "CLAIM"
-    },
-    {
-     "path": "src/cora/continuous.py",
-     "role": "IMPLEMENTATION"
-    },
-    {
-     "path": "tests/test_pr20_convergence.py",
-     "role": "TEST"
-    }
-   ],
-   "falsifier": "Drop the intent digest or allow unrelated caller intent on source replay."
-  },
-  {
-   "id": "S13",
-   "predicate": "source-verifier",
-   "readme_section": "ROOT",
-   "readme_phrase": "produce reproducible pre/post-merge review reports",
-   "evidence": [
-    {
-     "path": "README.md",
-     "role": "CLAIM"
-    },
-    {
-     "path": "tools/verify_documentation.py",
-     "role": "IMPLEMENTATION"
-    },
-    {
-     "path": "tests/test_pr21_documentation.py",
-     "role": "TEST"
-    }
-   ],
-   "falsifier": "Remove the source verifier entrypoint while keeping its documentation."
-  },
-  {
-   "id": "S14",
-   "predicate": "governance-truth",
-   "readme_section": "## Operating boundaries",
-   "readme_phrase": "GitHub workflow files alone do not prove",
-   "evidence": [
-    {
-     "path": "README.md",
-     "role": "CLAIM"
-    },
-    {
-     "path": "src/cora/continuous.py",
-     "role": "IMPLEMENTATION"
-    },
-    {
-     "path": "tests/test_continuous_pr14.py",
-     "role": "TEST"
-    }
-   ],
-   "falsifier": "Assert independent host protection from self-controlled workflow source."
-  },
-  {
-   "id": "S15",
-   "predicate": "negative-oracles",
-   "readme_section": "## Use CORA with an AI coding assistant",
-   "readme_phrase": "Run real tests and obtain independent review separately.",
-   "evidence": [
-    {
-     "path": "README.md",
-     "role": "CLAIM"
-    },
-    {
-     "path": ".github/workflows/ci-documentation.yml",
-     "role": "IMPLEMENTATION"
-    },
-    {
-     "path": "tests/test_pr21_documentation.py",
-     "role": "TEST"
-    }
-   ],
-   "falsifier": "Omit the new proof verifier or physical source mutants from candidate CI."
-  },
-  {
-   "id": "S16",
-   "predicate": "alpha-boundary",
-   "readme_section": "ROOT",
-   "readme_phrase": "not a stable API or verified public release",
-   "evidence": [
-    {
-     "path": "README.md",
-     "role": "CLAIM"
-    },
-    {
-     "path": "pyproject.toml",
-     "role": "IMPLEMENTATION"
-    },
-    {
-     "path": "tests/test_pr15_release_readiness.py",
-     "role": "TEST"
-    }
-   ],
-   "falsifier": "Change package version or claim stable publication while retaining old wording."
-  },
-  {
-   "id": "S17",
-   "predicate": "baseline-preserved",
-   "readme_section": "## Documentation by goal",
-   "readme_phrase": "Full documentation, history and contracts:",
-   "evidence": [
-    {
-     "path": "README.md",
-     "role": "CLAIM"
-    },
-    {
-     "path": "docs/documentation-registry.json",
-     "role": "IMPLEMENTATION"
-    },
-    {
-     "path": "tests/test_pr21_documentation.py",
-     "role": "TEST"
-    }
-   ],
-   "falsifier": "Replace a historical baseline Git blob while preserving file paths."
-  },
-  {
-   "id": "S18",
-   "predicate": "reader-route",
-   "readme_section": "## Documentation by goal",
-   "readme_phrase": "**First-time user:**",
-   "evidence": [
-    {
-     "path": "README.md",
-     "role": "CLAIM"
-    },
-    {
-     "path": "docs/INDEX.md",
-     "role": "IMPLEMENTATION"
-    },
-    {
-     "path": "tests/test_pr21_documentation.py",
-     "role": "TEST"
-    }
-   ],
-   "falsifier": "Delete a reader-facing route while the raw files remain present."
-  }
- ],
- "externals": [
-  {
-   "id": "E01",
-   "state": "BLOCKED_EXTERNAL",
-   "witness": "Real unfamiliar engineer first-read task"
-  },
-  {
-   "id": "E02",
-   "state": "BLOCKED_EXTERNAL",
-   "witness": "Independent external coding-agent adoption on maintained target"
-  },
-  {
-   "id": "E03",
-   "state": "BLOCKED_EXTERNAL",
-   "witness": "Effective protected checks plus non-author review"
-  }
- ]
+  ]
 }
