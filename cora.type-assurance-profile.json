@@ -42,52 +42,62 @@
     {
       "id": "ISO_25010_2023",
       "url": "https://www.iso.org/standard/78176.html",
-      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE"
+      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE",
+      "kind": "FORMAL_STANDARD"
     },
     {
       "id": "ISO_42010_2022",
       "url": "https://www.iso.org/standard/74393.html",
-      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE"
+      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE",
+      "kind": "FORMAL_STANDARD"
     },
     {
       "id": "NIST_800_86",
       "url": "https://csrc.nist.gov/pubs/sp/800/86/final",
-      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE"
+      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE",
+      "kind": "GUIDANCE"
     },
     {
       "id": "NIST_SSDF_800_218",
       "url": "https://csrc.nist.gov/pubs/sp/800/218/final",
-      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE"
+      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE",
+      "kind": "GUIDANCE"
     },
     {
       "id": "NIST_CA7",
       "url": "https://csrc.nist.gov/pubs/sp/800/137/final",
-      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE"
+      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE",
+      "kind": "CONTROL_GUIDANCE"
     },
     {
       "id": "SLSA_1_2",
       "url": "https://slsa.dev/spec/v1.2/",
-      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE"
+      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE",
+      "kind": "SPECIFICATION"
     },
     {
       "id": "OWASP_SAMM",
       "url": "https://owaspsamm.org/model/",
-      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE"
+      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE",
+      "kind": "MATURITY_MODEL"
     },
     {
       "id": "DORA_2026",
       "url": "https://dora.dev/research/",
-      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE"
+      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE",
+      "kind": "INDUSTRY_RESEARCH"
     },
     {
       "id": "OPENSSF_SCORECARD",
       "url": "https://openssf.org/projects/scorecard/",
-      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE"
+      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE",
+      "kind": "ASSESSMENT_TOOL"
     },
     {
       "id": "ISO_5055_2021",
       "url": "https://www.iso.org/standard/80623.html",
-      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE"
+      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE",
+      "kind": "FORMAL_STANDARD"
     }
   ],
   "types": [

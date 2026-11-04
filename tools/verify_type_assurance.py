@@ -20,6 +20,18 @@ STRUCTURAL = frozenset('security reliability performance_efficiency maintainabil
 TYPES = frozenset('git-revision change-set artifact workflow documentation source-module dependency-graph contract-schema verification-oracle change-assurance build-artifact deployment-boundary runtime-instance runtime-receipt product-capability user-journey governance-owner policy-gate source-history evidence-claim'.split())
 DURABILITY = frozenset('identity-epoch api-contract-compatibility state-integrity security-boundary failure-recovery deterministic-replay change-impact regression-negatives supply-chain-identity rollback-ability claim-truth authority-uniqueness'.split())
 EXTRA_STANDARD = 'ISO_5055_2021'
+REFERENCE_KINDS = {
+    'ISO_25010_2023':'FORMAL_STANDARD',
+    'ISO_42010_2022':'FORMAL_STANDARD',
+    'ISO_5055_2021':'FORMAL_STANDARD',
+    'NIST_800_86':'GUIDANCE',
+    'NIST_SSDF_800_218':'GUIDANCE',
+    'NIST_CA7':'CONTROL_GUIDANCE',
+    'SLSA_1_2':'SPECIFICATION',
+    'OWASP_SAMM':'MATURITY_MODEL',
+    'DORA_2026':'INDUSTRY_RESEARCH',
+    'OPENSSF_SCORECARD':'ASSESSMENT_TOOL',
+}
 HEX = re.compile(r'^[0-9a-f]{40}$')
 IDENT = re.compile(r'^[a-z][a-z0-9-]{2,64}$')
 
@@ -92,7 +104,7 @@ def validate(profile: dict, atlas: dict, ontology: dict, dod: dict, witness_read
     standards = _unique(profile['standards'],'STANDARD')
     if set(standards) != refs | {EXTRA_STANDARD}:
         raise ValueError('STANDARD_REFERENCE_GAP')
-    if any(not isinstance(x.get('url'),str) or not x['url'].startswith('https://') or x.get('scope') != 'METHOD_REFERENCE_NOT_COMPLIANCE' for x in standards.values()):
+    if any(not isinstance(x.get('url'),str) or not x['url'].startswith('https://') or (x.get('scope') != 'METHOD_REFERENCE_NOT_COMPLIANCE' or x.get('kind') != REFERENCE_KINDS[x['id']]) for x in standards.values()):
         raise ValueError('STANDARD_SCOPE_OR_URL_INVALID')
     if (ontology.get('schema') != 'cora-ontology/1' or
         not any(x.get('id')=='cora' for x in ontology.get('products',[])) or
@@ -173,7 +185,7 @@ def validate(profile: dict, atlas: dict, ontology: dict, dod: dict, witness_read
             'type_count':len(types),'plane_count':len(used_planes),
             'upstream_method_count':len(used_methods),'reference_count':len(used_standards),
             'quality_axis_count':len(used_quality),'code_durability_count':len(invariants),
-            'source_witnesses':len(witnesses),'authorization':'NONE',
+            'source_witnesses':len(witnesses),'formal_standard_count':sum(x['kind']=='FORMAL_STANDARD' for x in standards.values()),'authorization':'NONE',
             'external':'BLOCKED_EXTERNAL','universal_completeness':'UNSUPPORTED'}
 
 

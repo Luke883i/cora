@@ -70,11 +70,12 @@ class TypeAssuranceTests(unittest.TestCase):
         self.assertEqual((result['type_count'],result['upstream_method_count'],
                           result['reference_count'],result['quality_axis_count'],
                           result['code_durability_count']), (20,14,10,9,12))
+        self.assertEqual(result['formal_standard_count'],3)
         self.assertEqual(result['external'],'BLOCKED_EXTERNAL')
         self.assertEqual(result['authorization'],'NONE')
         self.assertEqual(result['universal_completeness'],'UNSUPPORTED')
 
-    def test_25_typed_mutant_families_fail_closed(self):
+    def test_26_typed_mutant_families_fail_closed(self):
         families=[
             ('type-removed', lambda p,a,s,d:p['types'].pop()),
             ('type-duplicated',lambda p,a,s,d:p['types'].append(copy.deepcopy(p['types'][0]))),
@@ -86,6 +87,7 @@ class TypeAssuranceTests(unittest.TestCase):
             ('standard-removed',lambda p,a,s,d:p['standards'].pop()),
             ('standard-duplicated',lambda p,a,s,d:p['standards'].append(copy.deepcopy(p['standards'][0]))),
             ('standard-false-url',lambda p,a,s,d:p['standards'][0].update(url='http://fake.example')),
+            ('reference-kind-falsified',lambda p,a,s,d:next(x for x in p['standards'] if x['id']=='DORA_2026').update(kind='FORMAL_STANDARD')),
             ('type-standard-removed',lambda p,a,s,d:p['types'][0].update(standards=[])),
             ('method-new-unmapped',lambda p,a,s,d:a['procedures'].append({'id':'missing-mapped','source':'src/cora/a.py','standards':['NIST_CA7']})),
             ('quality-axis-erased',lambda p,a,s,d:p['quality_characteristics'].pop()),
@@ -110,8 +112,8 @@ class TypeAssuranceTests(unittest.TestCase):
                 with self.assertRaises((ValueError,SyntaxError)):
                     self.validate(p,a,s,d)
             seen.append(label)
-        self.assertEqual(len(seen),25)
-        self.assertEqual(len(set(seen)),25)
+        self.assertEqual(len(seen),26)
+        self.assertEqual(len(set(seen)),26)
 
     def test_real_git_commits_are_read_not_worktree(self):
         with tempfile.TemporaryDirectory() as directory:
