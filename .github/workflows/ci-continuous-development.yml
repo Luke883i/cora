@@ -33,6 +33,12 @@ jobs:
           cora workflow-audit . --revision HEAD --output /tmp/cora-workflow-plan.json
           cora verify-workflows /tmp/cora-workflow-plan.json --repo .
           python -c 'import json; p=json.load(open("/tmp/cora-workflow-plan.json")); assert p["workflow_count"]>=12 and p["authorization"]=="NONE" and p["governed_status"]=="BLOCKED_EXTERNAL" and all(not x["retirement_authorized"] for x in p["workflows"])'
+      - name: Synthesize existing method receipts and adversarial source cases
+        run: |
+          python -m unittest discover -s tests -p 'test_pr25_method_synthesis.py' -v
+          cora method-synthesize . --revision HEAD --output /tmp/cora-method-case.json --analyst-request /tmp/cora-method-questions.json
+          cora verify-method-synthesis /tmp/cora-method-case.json --repo .
+          python -c 'import json; x=json.load(open("/tmp/cora-method-case.json")); assert x["reference_count"]==9 and x["procedure_count"]==14 and x["governed_model"]=="BLOCKED_EXTERNAL" and x["authorization"]=="NONE"'
       - name: Inspect PR merge revision against exact base commit
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
@@ -54,6 +60,8 @@ jobs:
           path: |
             /tmp/premerge.json
             /tmp/cora-workflow-plan.json
+            /tmp/cora-method-case.json
+            /tmp/cora-method-questions.json
             /tmp/gov-a.json
             /tmp/gov-b.json
           if-no-files-found: warn

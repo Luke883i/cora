@@ -81,6 +81,7 @@ class MethodSynthesisTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             local = Path(folder)/'cora'
             git(ROOT,'clone','--local','-q',str(ROOT),str(local))
+            git(local,'checkout','-q',self.source)
             git(local,'config','user.name','CI fixture')
             git(local,'config','user.email','ci@example.invalid')
             source = synthesize(local)
@@ -101,6 +102,7 @@ class MethodSynthesisTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             local=Path(folder)/'cora'
             git(ROOT,'clone','--local','-q',str(ROOT),str(local))
+            git(local,'checkout','-q',self.source)
             git(local,'config','user.name','CI fixture')
             git(local,'config','user.email','ci@example.invalid')
             def change(x):
@@ -118,6 +120,7 @@ class MethodSynthesisTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             local=Path(folder)/'cora'
             git(ROOT,'clone','--local','-q',str(ROOT),str(local))
+            git(local,'checkout','-q',self.source)
             expected=synthesize(local)
             (local/'cora.method-atlas.json').write_text('{}\n',encoding='utf-8')
             self.assertEqual(synthesize(local),expected)
