@@ -13,6 +13,7 @@ The [README](../README.md) is the **one public-facing macro-map**: product promi
 - **Auditing an existing repository:** [File Lab](FILE_LAB.md) → [Holistic forensics](HOLISTIC_FORENSICS.md) → [Engineering debt](ENGINEERING_DEBT.md).
 - **Reviewing a PR or release:** [Continuous development](CONTINUOUS_DEVELOPMENT.md) → [Governance](../GOVERNANCE.md) → [Release procedure](RELEASE.md).
 - **Looking for syntax and inputs:** [CLI reference](CLI_REFERENCE.md), [committed ontology](../cora.ontology.json), [role registry](../cora.artifact-roles.json).
+- **Censusing all implemented command surfaces:** [Capability atlas](../cora.capability-atlas.json) → [CLI reference](CLI_REFERENCE.md) → [architecture](ARCHITECTURE.md) → [capability DoD](../cora.capability-dod.json). These are source/test witnesses, not behavior certification.
 
 ## Document semantics
 

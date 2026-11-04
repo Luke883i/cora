@@ -64,6 +64,8 @@ Keep reports outside the source checkout; `/tmp` is a Unix example. `audit` read
 | **Correlate audit methods** | Git-bound ontology, roles and workflow evidence, original receipt replay and bounded AI hypothesis review | A source correlation is not behavioral, causal or human-verified proof |
 | **Run separately authorized experiments** | Controlled document rename, optional staged source mutations and runtime observation | Explicit authorization, independent oracles and external isolation checks remain necessary |
 
+**Complete functional census:** the [capability atlas](cora.capability-atlas.json) enumerates **71 CLI commands** in eight methods with implementation and test-source witnesses: **not 71 independently proven features**. It also maps internal Python modules, release-verification tools, CI, contracts and documentation. The [capability DoD](cora.capability-dod.json) keeps source and external qualification separate. A test file's existence is not evidence that the test ran or passed.
+
 All current command names, scope details and parameters are in the [parser-checked CLI reference](docs/CLI_REFERENCE.md). For methods and domain-specific DoD, use the [complete documentation index](docs/INDEX.md). The [Git-bound documentation proof profile](cora.documentation-proofs.json) relates critical README statements and S01–S18 to source/test blobs and falsifiers; [replay verification](tools/verify_claim_evidence.py) checks bounded source predicates, not general runtime truth or independent approval.
 
 ## Use CORA with an AI coding assistant

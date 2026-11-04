@@ -233,9 +233,21 @@
         {
           "path": "tests/test_pr21_documentation.py",
           "role": "TEST"
+        },
+        {
+          "path": "cora.capability-atlas.json",
+          "role": "IMPLEMENTATION"
+        },
+        {
+          "path": "tools/verify_capability_atlas.py",
+          "role": "IMPLEMENTATION"
+        },
+        {
+          "path": "tests/test_pr26_capability_atlas.py",
+          "role": "TEST"
         }
       ],
-      "falsifier": "Delete an actual CLI command from the reference while keeping a green static index."
+      "falsifier": "Remove one CLI dispatch path, misclassify a target-writing command, or replace a test-source witness while leaving the README and parser list unchanged."
     },
     {
       "id": "S12",

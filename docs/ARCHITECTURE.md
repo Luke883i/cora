@@ -1,6 +1,6 @@
 # Architecture — CORA as product, software and repository
 
-**Scope:** CORA — Continuous Ontological Repository Assurance, v1.experimental (`1.0.0a4` prerelease candidate), current source integrated through merged PR-22. PR-21 established the documentation source map; PR-22 added revision-bound source proof links. Both remain separate from external user acceptance, maintained-target pilots and independent hosting governance, which are unresolved. This document describes the current architecture; historical ADRs preserve earlier milestone decisions. The [README](../README.md) is the front door; this document is the engineering explanation. The [committed ontology](../cora.ontology.json) is a *declaration* by project maintainers, not an inference from folder names.
+**Scope:** CORA — Continuous Ontological Repository Assurance, v1.experimental (`1.0.0a4` prerelease candidate), current source integrated through merged PR-25. PR-21–22 established the documentation source map and Git proofs; PR-23–25 added navigation, workflow review and cross-method correlation. Both remain separate from external user acceptance, maintained-target pilots and independent hosting governance, which are unresolved. This document describes the current architecture; historical ADRs preserve earlier milestone decisions. The [README](../README.md) is the front door; this document is the engineering explanation. The [committed ontology](../cora.ontology.json) is a *declaration* by project maintainers, not an inference from folder names.
 
 ## Three non-equivalent boundaries
 
@@ -23,6 +23,8 @@ Deployables: **wheel** and **sdist**, presently review-only, not public releases
 | `file_lab.py`, `artifact_roles.py`, `file_lab_stress.py` | Multi-scale read-only per-file dependency dossier, untrusted AI/runtime annotations, human triage intents, synthetic falsifier | No automatic dead-code proof, calibrated probability, external runtime attestation or deletion |
 | `archaeology.py`, `holistic.py`, `group_hypotheses.py` | Commit-bounded development archaeology, co-change groups and AI hypotheses | Historical association is not a runtime dependency or PR-authenticated event |
 | `debt.py`, `process_suite.py` | Multi-scale debt signals and seven bounded read-only process modes | Heuristic debt signals; no calibrated defect rate or executed target test/scanner |
+| `workflow_rationalization.py`, `method_synthesis.py` | Git-bound workflow candidate review and same-commit evidence correlation | Neither supplies independent consumers, behavioral equivalence or authenticated AI conclusions |
+| `cora.capability-atlas.json`, `tools/verify_capability_atlas.py` | CLI/method/test-source inventory with Git OIDs and exact revision replay | Source witness and dispatch wiring do not prove test execution or product completeness |
 | `continuous.py`, `continuous_stress.py` | Base-anchored pre/post-merge receipts, agent-claim reconciliation and finite policy falsification | Review routing is not hosting enforcement, verified reviewer identity or deployment truth |
 | `transform.py` | Exact tracked-document path plan, approval, check, owned-file compensating rollback | Not syntax-aware source refactor; user verifier is untrusted/unsandboxed |
 | `guard.py`, `guard_runtime.py` | Vendored local Git/AST boundary check and workflow | Cannot self-enforce against modification; depends on trusted required checks |
@@ -46,7 +48,7 @@ The optional **maintenance** path is deliberately separate: clean Git worktree -
 
 ## Repo navigation / novice engineer challenge
 
-Starting at the root, an engineer should find answers without prior PR history: What is CORA? What is deliberately not supported? How do I install and audit a repo? Which source modules implement the capabilities? What evidence proves the last revision? Where do I run tests and report security issues? The [README](../README.md) answers the first three; this map and `src/cora/` answer the next; [DoD](DOD.md), `tests/`, `.github/workflows/` and [security](../SECURITY.md) answer the rest. Automatic checks validate links and commands; genuine human comprehension requires the independent first-read review described in [DoD](DOD.md).
+Starting at the root, an engineer should find answers without prior PR history: What is CORA? What is deliberately not supported? How do I install and audit a repo? Which source modules implement the capabilities? What evidence proves the last revision? Where do I run tests and report security issues? The [README](../README.md) answers the first three; this map and `src/cora/` answer the next; [current product DoD](DOD_V1_EXPERIMENTAL.md), `tests/`, `.github/workflows/` and [security](../SECURITY.md) answer the rest. Automatic checks validate links and commands; genuine human comprehension requires the independent first-read review described in [DoD](DOD.md).
 
 ## Artifact roles are not file name inference
 
@@ -74,7 +76,7 @@ The PR-19 cross-repository source check is **access-scoped**: public ICTC Git bl
 
 Intent-to-proof in PR-20 is an explicitly supplied, bounded **per-change** statement digested with BASE/HEAD; it is never human approval. For delete/rename/type changes the contextual adapter replays the BASE import graph as well as HEAD, closing an avoidable false-negative on removed Python modules while keeping dynamic import edges unproven. The PR-16 archived evidence-lattice topology also uses the canonical dependency validator; its historical status labels and digests remain unchanged.
 
-## Current documentation topology (post PR-22)
+## Current documentation topology (merged PR-25 baseline)
 
 The [README](../README.md) is the product entry point. The [documentation index](INDEX.md) connects reader-oriented [onboarding](GETTING_STARTED.md), [AI agent adoption](AGENT_ADOPTION.md), methods, [CLI reference](CLI_REFERENCE.md), DoDs and historical ADR/audit material. The [documentation registry](documentation-registry.json) declares one role/status for every Markdown and retains the original baseline blob identity for historical source. This declaration is checked by `tools/verify_documentation.py` and the [documentation DoD](DOCUMENTATION_DOD.md); it does not establish human comprehension or authenticated reviewer approval.
 

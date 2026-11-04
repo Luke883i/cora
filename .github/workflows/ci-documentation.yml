@@ -47,6 +47,12 @@ jobs:
           python -c 'import json; p=json.load(open("/tmp/cora-doc-proofs.json")); assert p["source_status"]=="PASS_SCOPED_SOURCE" and p["source_claim_count"]==18 and p["governed_status"]=="BLOCKED_EXTERNAL" and p["authorization"]=="NONE" and not p["host_review_attested"]'
       - name: Falsify physical Git-committed semantic, source, DoD and CI mutants
         run: python -m unittest discover -s tests -p 'test_pr22_documentation_proofs.py' -v
+      - name: Qualify all CLI capability bindings and falsify committed mutants
+        run: |
+          python tools/verify_capability_atlas.py --repo . --revision HEAD --output /tmp/cora-capabilities.json
+          python tools/verify_capability_atlas.py --repo . --verify-report /tmp/cora-capabilities.json
+          python -m unittest discover -s tests -p 'test_pr26_capability_atlas.py' -v
+          python -c 'import json; x=json.load(open("/tmp/cora-capabilities.json")); assert x["command_count"]==71 and x["family_count"]==8 and x["governed_status"]=="BLOCKED_EXTERNAL" and x["authorization"]=="NONE" and all(c["test_execution"]=="NOT_ATTESTED_BY_SOURCE" for c in x["commands"])'
       - name: Preserve revision-bound source receipts for review only
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -55,6 +61,7 @@ jobs:
           path: |
             /tmp/cora-doc-proofs.json
             /tmp/cora-readme-nav-1000.json
+            /tmp/cora-capabilities.json
           if-no-files-found: warn
           retention-days: 14
       - name: Product / software / repository contracts and roles
