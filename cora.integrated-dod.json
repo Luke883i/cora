@@ -1,0 +1,113 @@
+{
+  "schema": "cora-integrated-dod/1",
+  "authority": "NONE",
+  "external_status": "BLOCKED_EXTERNAL",
+  "nodes": [
+    {
+      "id": "S_IDENTITY",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "S_FEATURES",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "S_METHODS",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "S_DOCS",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "S_CLAIMS",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "S_AI",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "S_MUTATION",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "S_REPLAY",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "E_TARGET",
+      "depends_on": [],
+      "scope": "EXTERNAL"
+    },
+    {
+      "id": "E_PROVIDER",
+      "depends_on": [],
+      "scope": "EXTERNAL"
+    },
+    {
+      "id": "E_REVIEW",
+      "depends_on": [],
+      "scope": "EXTERNAL"
+    },
+    {
+      "id": "E_HOST",
+      "depends_on": [],
+      "scope": "EXTERNAL"
+    },
+    {
+      "id": "I_INVENTORY",
+      "depends_on": [
+        "S_IDENTITY",
+        "S_FEATURES",
+        "S_METHODS"
+      ],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "I_CONVERGENCE",
+      "depends_on": [
+        "S_DOCS",
+        "S_CLAIMS",
+        "S_AI"
+      ],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "I_ASSURANCE",
+      "depends_on": [
+        "S_MUTATION",
+        "S_REPLAY"
+      ],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "G_SOURCE",
+      "depends_on": [
+        "I_INVENTORY",
+        "I_CONVERGENCE",
+        "I_ASSURANCE"
+      ],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "G_GOVERNED",
+      "depends_on": [
+        "G_SOURCE",
+        "E_TARGET",
+        "E_PROVIDER",
+        "E_REVIEW",
+        "E_HOST"
+      ],
+      "scope": "EXTERNAL"
+    }
+  ]
+}
