@@ -44,6 +44,7 @@ class MethodSynthesisTests(unittest.TestCase):
         self.assertEqual(result['product_id'],'cora')
         self.assertEqual(result['reference_count'],9)
         self.assertEqual(result['procedure_count'],14)
+        self.assertEqual(len(result['method_reference_edges']),28)
         self.assertEqual(result['workflow_count'],12)
         self.assertEqual(result['authorization'],'NONE')
         self.assertEqual(result['governed_model'],'BLOCKED_EXTERNAL')
@@ -162,7 +163,7 @@ class MethodSynthesisTests(unittest.TestCase):
                 elif family==3: h['evidence_refs']=['unknown:'+str(i)]
                 elif family==4: h['counter_refs']=['external:'+str(i)]
                 elif family==5: h['action']='APPROVE_'+str(i)
-                elif family==6: h['statement']='short'
+                elif family==6: h['statement']='bad'+str(i)
                 elif family==7: h['evidence_refs']*=2
                 elif family==8: doc['schema']='cora-ai-authority/'+str(i)
                 else: h['id']=''

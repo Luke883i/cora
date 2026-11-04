@@ -45,17 +45,24 @@ def _validate_atlas(repo, sha, paths):
                 and x.func.attr == 'add_parser' and x.args
                 and isinstance(x.args[0], ast.Constant)
                 and isinstance(x.args[0].value, str)}
-    seen = set()
+    seen, mapped = set(), set()
     for p in atlas['procedures']:
         if (not isinstance(p, dict)
-                or set(p) != {'id','cli','source','scope'}
+                or set(p) != {'id','cli','source','scope','standards'}
                 or not isinstance(p['id'], str) or not p['id'] or p['id'] in seen
                 or p['source'] not in paths
                 or p['scope'] != 'CANDIDATE_PROCEDURE_NOT_ATTESTATION'):
             raise ValueError('method binding invalid')
+        if (not isinstance(p['standards'], list) or not p['standards']
+                or len(p['standards']) != len(set(p['standards']))
+                or any(x not in atlas['references'] for x in p['standards'])):
+            raise ValueError('method reference binding invalid')
+        mapped.update(p['standards'])
         if p['cli'] is not None and p['cli'] not in commands:
             raise ValueError('method command missing from committed CLI')
         seen.add(p['id'])
+    if mapped != set(atlas['references']):
+        raise ValueError('unmapped reference method')
     dod = _committed_json(repo, sha, 'cora.method-synthesis-dod.json')
     if (set(dod) != {'schema','nodes','authority','external_status'}
             or dod['schema'] != 'cora-method-synthesis-dod/1'
@@ -172,6 +179,9 @@ def synthesize(repo: Path, revision='HEAD', *, artifacts=None, workflows=None,
     report = {'schema':SCHEMA,'commit':sha,'source_status':'SOURCE_JOIN_REPLAYED_NARROW',
               'product_id':atlas['product'],'software_methods':assigned,
               'reference_count':len(atlas['references']),
+              'method_reference_edges':sorted([{'procedure':p['id'],'method':ref}
+                   for p in atlas['procedures'] for ref in p['standards']],
+                   key=lambda x:(x['procedure'],x['method'])),
               'procedure_count':len(atlas['procedures']),
               'workflow_count':workflows['workflow_count'],
               'method_catalog':process_catalog()['processes'],

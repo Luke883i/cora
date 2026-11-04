@@ -21,85 +21,141 @@
       "id": "git-provenance",
       "cli": "snapshot",
       "source": "src/cora/git_snapshot.py",
-      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION",
+      "standards": [
+        "NIST_800_86",
+        "SLSA_1_2"
+      ]
     },
     {
       "id": "artifact-semantics",
       "cli": "artifact-audit",
       "source": "src/cora/artifact_roles.py",
-      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION",
+      "standards": [
+        "ISO_25010_2023",
+        "ISO_42010_2022"
+      ]
     },
     {
       "id": "product-ontology",
-      "cli": "version",
+      "cli": null,
       "source": "src/cora/ontology.py",
-      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION",
+      "standards": [
+        "ISO_42010_2022"
+      ]
     },
     {
       "id": "archaeology",
       "cli": "holistic-audit",
       "source": "src/cora/holistic.py",
-      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION",
+      "standards": [
+        "NIST_800_86",
+        "NIST_CA7"
+      ]
     },
     {
       "id": "process-catalog",
       "cli": "process-run",
       "source": "src/cora/process_suite.py",
-      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION",
+      "standards": [
+        "NIST_CA7",
+        "OWASP_SAMM"
+      ]
     },
     {
       "id": "debt-forensics",
       "cli": "debt-scan",
       "source": "src/cora/debt.py",
-      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION",
+      "standards": [
+        "ISO_25010_2023",
+        "NIST_SSDF_800_218"
+      ]
     },
     {
       "id": "agent-assurance",
       "cli": "dod-plan",
       "source": "src/cora/agent_assurance.py",
-      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION",
+      "standards": [
+        "NIST_SSDF_800_218",
+        "OWASP_SAMM"
+      ]
     },
     {
       "id": "reticular-DoD",
       "cli": "convergence-plan",
       "source": "src/cora/reticulum.py",
-      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION",
+      "standards": [
+        "NIST_CA7",
+        "OWASP_SAMM"
+      ]
     },
     {
       "id": "workflow-intelligence",
       "cli": "workflow-audit",
       "source": "src/cora/workflow_rationalization.py",
-      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION",
+      "standards": [
+        "OPENSSF_SCORECARD",
+        "NIST_SSDF_800_218"
+      ]
     },
     {
       "id": "development-gates",
       "cli": "dev-premerge",
       "source": "src/cora/continuous.py",
-      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION",
+      "standards": [
+        "NIST_SSDF_800_218",
+        "SLSA_1_2",
+        "DORA_2026"
+      ]
     },
     {
       "id": "documentation-assurance",
       "cli": null,
       "source": "tools/verify_documentation.py",
-      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION",
+      "standards": [
+        "ISO_42010_2022",
+        "ISO_25010_2023"
+      ]
     },
     {
       "id": "runtime-observation",
       "cli": "runtime-observe",
       "source": "src/cora/runtime_observation.py",
-      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION",
+      "standards": [
+        "NIST_800_86",
+        "DORA_2026"
+      ]
     },
     {
       "id": "source-runtime-fusion",
       "cli": "fuse-evidence",
       "source": "src/cora/observation_fusion.py",
-      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION",
+      "standards": [
+        "SLSA_1_2",
+        "NIST_800_86"
+      ]
     },
     {
       "id": "release-verification",
       "cli": null,
       "source": "tools/release_verify.py",
-      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION"
+      "scope": "CANDIDATE_PROCEDURE_NOT_ATTESTATION",
+      "standards": [
+        "SLSA_1_2",
+        "DORA_2026"
+      ]
     }
   ],
   "authority": "NONE"
