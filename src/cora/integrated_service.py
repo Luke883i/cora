@@ -176,9 +176,14 @@ def integrated_case(repo,revision='HEAD',*,artifacts=None,workflows=None,process
     lattice=_reticulum(repo,sha)
     refs={'method:'+x for x in mids}|{'type:'+x['id'] for x in types['types']}
     refs|={'doc:'+x['path'] for x in docs['docs']}|{'claim:'+x['id'] for x in claims['claims']}
+    canonical_methods={x['id']:x for x in methods['procedures']}
     crosswalk=[]
     for row in types['types']:
         owner=row['owner_source']
+        canonical=canonical_methods.get(row['existing_method'])
+        if (canonical is None or owner!=canonical['source'] or
+                not set(canonical['standards']).issubset(set(row['standards']))):
+            raise ValueError('typed method owner/standards disconnected from original source')
         if owner not in tracked:
             raise ValueError('typed method owner missing from original Git source')
         documentation=sorted(x['path'] for x in docs['docs']

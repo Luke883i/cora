@@ -144,6 +144,15 @@ class IntegratedServiceTests(unittest.TestCase):
             self.assertTrue(any(x['id']=='S01' for x in observed['claim_to_implementation']['gaps']))
             self.assertFalse(observed['features']['all_behaviors_tested'])
             self.assertEqual(observed['authorization'],'NONE')
+            git(local,'checkout','-q',self.sha)
+            profile=local/'cora.type-assurance-profile.json'
+            obj=json.loads(profile.read_text('utf-8'))
+            obj['types'][0]['owner_source']='src/cora/ontology.py'
+            profile.write_text(json.dumps(obj,indent=2)+'\n',encoding='utf-8')
+            git(local,'add','cora.type-assurance-profile.json')
+            git(local,'commit','-qm','physical method-owner crosswalk substitution')
+            with self.assertRaisesRegex(ValueError,'typed method owner/standards disconnected'):
+                integrated_case(local,'HEAD')
 
     def test_seeded_semantic_fault_models_not_runtime_attestation(self):
         a=stress_integrated(32000,20261104)
