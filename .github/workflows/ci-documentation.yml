@@ -53,6 +53,12 @@ jobs:
           python tools/verify_capability_atlas.py --repo . --verify-report /tmp/cora-capabilities.json
           python -m unittest discover -s tests -p 'test_pr26_capability_atlas.py' -v
           python -c 'import json; x=json.load(open("/tmp/cora-capabilities.json")); assert x["command_count"]==71 and x["family_count"]==8 and x["governed_status"]=="BLOCKED_EXTERNAL" and x["authorization"]=="NONE" and all(c["test_execution"]=="NOT_ATTESTED_BY_SOURCE" for c in x["commands"])'
+      - name: Verify typed object/standards source lattice and real-CORA negative mutants
+        run: |
+          test -d .git
+          python tools/verify_type_assurance.py --repo . --revision HEAD > /tmp/cora-type-assurance.json
+          python -m unittest discover -s tests -p 'test_pr27_type_assurance.py' -v
+          python -c 'import json; r=json.load(open("/tmp/cora-type-assurance.json")); assert r["result"]=="PASS_SCOPED_STRUCTURAL_MODEL" and r["type_count"]==20 and r["plane_count"]==7 and r["upstream_method_count"]==14 and r["reference_count"]==10 and r["code_durability_count"]==12 and r["formal_standard_count"]==3 and r["authorization"]=="NONE" and r["external"]=="BLOCKED_EXTERNAL" and r["universal_completeness"]=="UNSUPPORTED"'
       - name: Preserve revision-bound source receipts for review only
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -62,6 +68,7 @@ jobs:
             /tmp/cora-doc-proofs.json
             /tmp/cora-readme-nav-1000.json
             /tmp/cora-capabilities.json
+            /tmp/cora-type-assurance.json
           if-no-files-found: warn
           retention-days: 14
       - name: Product / software / repository contracts and roles

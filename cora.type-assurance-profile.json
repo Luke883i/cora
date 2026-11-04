@@ -1,0 +1,645 @@
+{
+  "schema": "cora-type-assurance-profile/1",
+  "authority": "NONE",
+  "status": "DESIGN_SOURCE_CANDIDATE",
+  "base": {
+    "repository": "Luke883i/cora",
+    "commit": "3fdf761167e62cc427b7339fc6c59343c1b0be8f"
+  },
+  "upstream": {
+    "method_atlas": "cora.method-atlas.json",
+    "ontology": "cora.ontology.json",
+    "reticulum": "cora.method-synthesis-dod.json",
+    "artifact_roles": "cora.artifact-roles.json"
+  },
+  "planes": [
+    "REPOSITORY",
+    "SOFTWARE",
+    "DEPLOYMENT",
+    "RUNTIME",
+    "PRODUCT",
+    "GOVERNANCE",
+    "EVIDENCE"
+  ],
+  "quality_characteristics": [
+    "functional_suitability",
+    "performance_efficiency",
+    "compatibility",
+    "interaction_capability",
+    "reliability",
+    "security",
+    "maintainability",
+    "flexibility",
+    "safety"
+  ],
+  "structural_quality_dimensions": [
+    "security",
+    "reliability",
+    "performance_efficiency",
+    "maintainability"
+  ],
+  "standards": [
+    {
+      "id": "ISO_25010_2023",
+      "url": "https://www.iso.org/standard/78176.html",
+      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE",
+      "kind": "FORMAL_STANDARD"
+    },
+    {
+      "id": "ISO_42010_2022",
+      "url": "https://www.iso.org/standard/74393.html",
+      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE",
+      "kind": "FORMAL_STANDARD"
+    },
+    {
+      "id": "NIST_800_86",
+      "url": "https://csrc.nist.gov/pubs/sp/800/86/final",
+      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE",
+      "kind": "GUIDANCE"
+    },
+    {
+      "id": "NIST_SSDF_800_218",
+      "url": "https://csrc.nist.gov/pubs/sp/800/218/final",
+      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE",
+      "kind": "GUIDANCE"
+    },
+    {
+      "id": "NIST_CA7",
+      "url": "https://csrc.nist.gov/pubs/sp/800/137/final",
+      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE",
+      "kind": "CONTROL_GUIDANCE"
+    },
+    {
+      "id": "SLSA_1_2",
+      "url": "https://slsa.dev/spec/v1.2/",
+      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE",
+      "kind": "SPECIFICATION"
+    },
+    {
+      "id": "OWASP_SAMM",
+      "url": "https://owaspsamm.org/model/",
+      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE",
+      "kind": "MATURITY_MODEL"
+    },
+    {
+      "id": "DORA_2026",
+      "url": "https://dora.dev/research/",
+      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE",
+      "kind": "INDUSTRY_RESEARCH"
+    },
+    {
+      "id": "OPENSSF_SCORECARD",
+      "url": "https://openssf.org/projects/scorecard/",
+      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE",
+      "kind": "ASSESSMENT_TOOL"
+    },
+    {
+      "id": "ISO_5055_2021",
+      "url": "https://www.iso.org/standard/80623.html",
+      "scope": "METHOD_REFERENCE_NOT_COMPLIANCE",
+      "kind": "FORMAL_STANDARD"
+    }
+  ],
+  "types": [
+    {
+      "id": "git-revision",
+      "plane": "REPOSITORY",
+      "existing_method": "git-provenance",
+      "owner_source": "src/cora/git_snapshot.py",
+      "owner_symbol": "snapshot",
+      "standards": [
+        "NIST_800_86",
+        "SLSA_1_2"
+      ],
+      "quality": [
+        "reliability",
+        "security"
+      ],
+      "obligations": [
+        "identity",
+        "epoch"
+      ],
+      "falsifier": "Missing or changed identity must not yield PASS.",
+      "status": "DECLARED_SOURCE_WITNESS_NOT_BEHAVIORAL_PROOF"
+    },
+    {
+      "id": "change-set",
+      "plane": "REPOSITORY",
+      "existing_method": "development-gates",
+      "owner_source": "src/cora/continuous.py",
+      "owner_symbol": "evaluate",
+      "standards": [
+        "DORA_2026",
+        "NIST_SSDF_800_218",
+        "SLSA_1_2"
+      ],
+      "quality": [
+        "maintainability",
+        "compatibility"
+      ],
+      "obligations": [
+        "base_head",
+        "blast_radius"
+      ],
+      "falsifier": "Missing or changed base_head must not yield PASS.",
+      "status": "DECLARED_SOURCE_WITNESS_NOT_BEHAVIORAL_PROOF"
+    },
+    {
+      "id": "artifact",
+      "plane": "REPOSITORY",
+      "existing_method": "artifact-semantics",
+      "owner_source": "src/cora/artifact_roles.py",
+      "owner_symbol": "artifact_audit",
+      "standards": [
+        "ISO_25010_2023",
+        "ISO_42010_2022"
+      ],
+      "quality": [
+        "maintainability",
+        "flexibility"
+      ],
+      "obligations": [
+        "classification",
+        "lineage"
+      ],
+      "falsifier": "Missing or changed classification must not yield PASS.",
+      "status": "DECLARED_SOURCE_WITNESS_NOT_BEHAVIORAL_PROOF"
+    },
+    {
+      "id": "workflow",
+      "plane": "REPOSITORY",
+      "existing_method": "workflow-intelligence",
+      "owner_source": "src/cora/workflow_rationalization.py",
+      "owner_symbol": "audit_workflows",
+      "standards": [
+        "NIST_SSDF_800_218",
+        "OPENSSF_SCORECARD"
+      ],
+      "quality": [
+        "security",
+        "reliability"
+      ],
+      "obligations": [
+        "trigger",
+        "consumer"
+      ],
+      "falsifier": "Missing or changed trigger must not yield PASS.",
+      "status": "DECLARED_SOURCE_WITNESS_NOT_BEHAVIORAL_PROOF"
+    },
+    {
+      "id": "documentation",
+      "plane": "REPOSITORY",
+      "existing_method": "documentation-assurance",
+      "owner_source": "tools/verify_documentation.py",
+      "owner_symbol": "main",
+      "standards": [
+        "ISO_25010_2023",
+        "ISO_42010_2022"
+      ],
+      "quality": [
+        "interaction_capability",
+        "maintainability"
+      ],
+      "obligations": [
+        "claim",
+        "vigenza"
+      ],
+      "falsifier": "Missing or changed claim must not yield PASS.",
+      "status": "DECLARED_SOURCE_WITNESS_NOT_BEHAVIORAL_PROOF"
+    },
+    {
+      "id": "source-module",
+      "plane": "SOFTWARE",
+      "existing_method": "debt-forensics",
+      "owner_source": "src/cora/debt.py",
+      "owner_symbol": "debt_scan",
+      "standards": [
+        "ISO_25010_2023",
+        "ISO_5055_2021",
+        "NIST_SSDF_800_218"
+      ],
+      "quality": [
+        "maintainability",
+        "performance_efficiency"
+      ],
+      "obligations": [
+        "coupling",
+        "structural_debt"
+      ],
+      "falsifier": "Missing or changed coupling must not yield PASS.",
+      "status": "DECLARED_SOURCE_WITNESS_NOT_BEHAVIORAL_PROOF"
+    },
+    {
+      "id": "dependency-graph",
+      "plane": "SOFTWARE",
+      "existing_method": "archaeology",
+      "owner_source": "src/cora/holistic.py",
+      "owner_symbol": "holistic_audit",
+      "standards": [
+        "NIST_800_86",
+        "NIST_CA7"
+      ],
+      "quality": [
+        "compatibility",
+        "maintainability"
+      ],
+      "obligations": [
+        "consumer",
+        "dynamic_unknown"
+      ],
+      "falsifier": "Missing or changed consumer must not yield PASS.",
+      "status": "DECLARED_SOURCE_WITNESS_NOT_BEHAVIORAL_PROOF"
+    },
+    {
+      "id": "contract-schema",
+      "plane": "SOFTWARE",
+      "existing_method": "artifact-semantics",
+      "owner_source": "src/cora/artifact_roles.py",
+      "owner_symbol": "artifact_audit",
+      "standards": [
+        "ISO_25010_2023",
+        "ISO_42010_2022"
+      ],
+      "quality": [
+        "compatibility",
+        "functional_suitability"
+      ],
+      "obligations": [
+        "schema",
+        "validation"
+      ],
+      "falsifier": "Missing or changed schema must not yield PASS.",
+      "status": "DECLARED_SOURCE_WITNESS_NOT_BEHAVIORAL_PROOF"
+    },
+    {
+      "id": "verification-oracle",
+      "plane": "SOFTWARE",
+      "existing_method": "process-catalog",
+      "owner_source": "src/cora/process_suite.py",
+      "owner_symbol": "run_suite",
+      "standards": [
+        "NIST_CA7",
+        "OWASP_SAMM"
+      ],
+      "quality": [
+        "reliability",
+        "functional_suitability"
+      ],
+      "obligations": [
+        "negative_control",
+        "execution_status"
+      ],
+      "falsifier": "Missing or changed negative_control must not yield PASS.",
+      "status": "DECLARED_SOURCE_WITNESS_NOT_BEHAVIORAL_PROOF"
+    },
+    {
+      "id": "change-assurance",
+      "plane": "SOFTWARE",
+      "existing_method": "agent-assurance",
+      "owner_source": "src/cora/agent_assurance.py",
+      "owner_symbol": "assess_claims",
+      "standards": [
+        "NIST_SSDF_800_218",
+        "OWASP_SAMM"
+      ],
+      "quality": [
+        "maintainability",
+        "security"
+      ],
+      "obligations": [
+        "intent",
+        "falsifier"
+      ],
+      "falsifier": "Missing or changed intent must not yield PASS.",
+      "status": "DECLARED_SOURCE_WITNESS_NOT_BEHAVIORAL_PROOF"
+    },
+    {
+      "id": "build-artifact",
+      "plane": "DEPLOYMENT",
+      "existing_method": "release-verification",
+      "owner_source": "tools/release_verify.py",
+      "owner_symbol": "verify_release",
+      "standards": [
+        "DORA_2026",
+        "SLSA_1_2"
+      ],
+      "quality": [
+        "reliability",
+        "security"
+      ],
+      "obligations": [
+        "artifact_identity",
+        "build_readback"
+      ],
+      "falsifier": "Missing or changed artifact_identity must not yield PASS.",
+      "status": "DECLARED_SOURCE_WITNESS_NOT_BEHAVIORAL_PROOF"
+    },
+    {
+      "id": "deployment-boundary",
+      "plane": "DEPLOYMENT",
+      "existing_method": "development-gates",
+      "owner_source": "src/cora/continuous.py",
+      "owner_symbol": "evaluate",
+      "standards": [
+        "DORA_2026",
+        "NIST_SSDF_800_218",
+        "SLSA_1_2"
+      ],
+      "quality": [
+        "security",
+        "safety"
+      ],
+      "obligations": [
+        "host_permissions",
+        "deployment_provenance"
+      ],
+      "falsifier": "Missing or changed host_permissions must not yield PASS.",
+      "status": "DECLARED_SOURCE_WITNESS_NOT_BEHAVIORAL_PROOF"
+    },
+    {
+      "id": "runtime-instance",
+      "plane": "RUNTIME",
+      "existing_method": "runtime-observation",
+      "owner_source": "src/cora/runtime_observation.py",
+      "owner_symbol": "observe_runtime",
+      "standards": [
+        "DORA_2026",
+        "NIST_800_86"
+      ],
+      "quality": [
+        "reliability",
+        "performance_efficiency"
+      ],
+      "obligations": [
+        "isolation",
+        "observed_effect"
+      ],
+      "falsifier": "Missing or changed isolation must not yield PASS.",
+      "status": "DECLARED_SOURCE_WITNESS_NOT_BEHAVIORAL_PROOF"
+    },
+    {
+      "id": "runtime-receipt",
+      "plane": "EVIDENCE",
+      "existing_method": "source-runtime-fusion",
+      "owner_source": "src/cora/observation_fusion.py",
+      "owner_symbol": "fuse_evidence",
+      "standards": [
+        "NIST_800_86",
+        "SLSA_1_2"
+      ],
+      "quality": [
+        "reliability",
+        "security"
+      ],
+      "obligations": [
+        "attribution",
+        "source_runtime_consistency"
+      ],
+      "falsifier": "Missing or changed attribution must not yield PASS.",
+      "status": "DECLARED_SOURCE_WITNESS_NOT_BEHAVIORAL_PROOF"
+    },
+    {
+      "id": "product-capability",
+      "plane": "PRODUCT",
+      "existing_method": "product-ontology",
+      "owner_source": "src/cora/ontology.py",
+      "owner_symbol": "committed_ontology",
+      "standards": [
+        "ISO_42010_2022"
+      ],
+      "quality": [
+        "functional_suitability",
+        "interaction_capability"
+      ],
+      "obligations": [
+        "promise",
+        "implementation"
+      ],
+      "falsifier": "Missing or changed promise must not yield PASS.",
+      "status": "DECLARED_SOURCE_WITNESS_NOT_BEHAVIORAL_PROOF"
+    },
+    {
+      "id": "user-journey",
+      "plane": "PRODUCT",
+      "existing_method": "reticular-DoD",
+      "owner_source": "src/cora/reticulum.py",
+      "owner_symbol": "ordered_cut",
+      "standards": [
+        "NIST_CA7",
+        "OWASP_SAMM"
+      ],
+      "quality": [
+        "interaction_capability",
+        "safety"
+      ],
+      "obligations": [
+        "human_outcome",
+        "accessibility"
+      ],
+      "falsifier": "Missing or changed human_outcome must not yield PASS.",
+      "status": "DECLARED_SOURCE_WITNESS_NOT_BEHAVIORAL_PROOF"
+    },
+    {
+      "id": "governance-owner",
+      "plane": "GOVERNANCE",
+      "existing_method": "reticular-DoD",
+      "owner_source": "src/cora/reticulum.py",
+      "owner_symbol": "ordered_cut",
+      "standards": [
+        "NIST_CA7",
+        "OWASP_SAMM"
+      ],
+      "quality": [
+        "security",
+        "maintainability"
+      ],
+      "obligations": [
+        "decision_right",
+        "nonduplication"
+      ],
+      "falsifier": "Missing or changed decision_right must not yield PASS.",
+      "status": "DECLARED_SOURCE_WITNESS_NOT_BEHAVIORAL_PROOF"
+    },
+    {
+      "id": "policy-gate",
+      "plane": "GOVERNANCE",
+      "existing_method": "development-gates",
+      "owner_source": "src/cora/continuous.py",
+      "owner_symbol": "evaluate",
+      "standards": [
+        "DORA_2026",
+        "NIST_SSDF_800_218",
+        "SLSA_1_2"
+      ],
+      "quality": [
+        "security",
+        "safety"
+      ],
+      "obligations": [
+        "enforcement",
+        "external_authority"
+      ],
+      "falsifier": "Missing or changed enforcement must not yield PASS.",
+      "status": "DECLARED_SOURCE_WITNESS_NOT_BEHAVIORAL_PROOF"
+    },
+    {
+      "id": "source-history",
+      "plane": "REPOSITORY",
+      "existing_method": "archaeology",
+      "owner_source": "src/cora/holistic.py",
+      "owner_symbol": "holistic_audit",
+      "standards": [
+        "NIST_800_86",
+        "NIST_CA7"
+      ],
+      "quality": [
+        "maintainability",
+        "flexibility"
+      ],
+      "obligations": [
+        "causality_candidate",
+        "regression"
+      ],
+      "falsifier": "Missing or changed causality_candidate must not yield PASS.",
+      "status": "DECLARED_SOURCE_WITNESS_NOT_BEHAVIORAL_PROOF"
+    },
+    {
+      "id": "evidence-claim",
+      "plane": "EVIDENCE",
+      "existing_method": "source-runtime-fusion",
+      "owner_source": "src/cora/observation_fusion.py",
+      "owner_symbol": "fuse_evidence",
+      "standards": [
+        "NIST_800_86",
+        "SLSA_1_2"
+      ],
+      "quality": [
+        "functional_suitability",
+        "reliability"
+      ],
+      "obligations": [
+        "claim_scope",
+        "counterevidence"
+      ],
+      "falsifier": "Missing or changed claim_scope must not yield PASS.",
+      "status": "DECLARED_SOURCE_WITNESS_NOT_BEHAVIORAL_PROOF"
+    }
+  ],
+  "durability_invariants": [
+    {
+      "id": "identity-epoch",
+      "type": "git-revision",
+      "existing_method": "git-provenance",
+      "negative_oracle": "stale commit or repository identity",
+      "attestation": "BLOCKED_EXTERNAL",
+      "assurance": "REQUIRES_REAL_TARGET_AND_REVIEW"
+    },
+    {
+      "id": "api-contract-compatibility",
+      "type": "contract-schema",
+      "existing_method": "artifact-semantics",
+      "negative_oracle": "breaking schema accepted as compatible",
+      "attestation": "BLOCKED_EXTERNAL",
+      "assurance": "REQUIRES_REAL_TARGET_AND_REVIEW"
+    },
+    {
+      "id": "state-integrity",
+      "type": "runtime-receipt",
+      "existing_method": "source-runtime-fusion",
+      "negative_oracle": "lost write misreported as durable readback",
+      "attestation": "BLOCKED_EXTERNAL",
+      "assurance": "REQUIRES_REAL_TARGET_AND_REVIEW"
+    },
+    {
+      "id": "security-boundary",
+      "type": "policy-gate",
+      "existing_method": "development-gates",
+      "negative_oracle": "unenforced permission represented as protected",
+      "attestation": "BLOCKED_EXTERNAL",
+      "assurance": "REQUIRES_REAL_TARGET_AND_REVIEW"
+    },
+    {
+      "id": "failure-recovery",
+      "type": "runtime-instance",
+      "existing_method": "runtime-observation",
+      "negative_oracle": "failure with no recovery evidence declared recovered",
+      "attestation": "BLOCKED_EXTERNAL",
+      "assurance": "REQUIRES_REAL_TARGET_AND_REVIEW"
+    },
+    {
+      "id": "deterministic-replay",
+      "type": "verification-oracle",
+      "existing_method": "process-catalog",
+      "negative_oracle": "non-replayable receipt accepted",
+      "attestation": "BLOCKED_EXTERNAL",
+      "assurance": "REQUIRES_REAL_TARGET_AND_REVIEW"
+    },
+    {
+      "id": "change-impact",
+      "type": "change-set",
+      "existing_method": "development-gates",
+      "negative_oracle": "deleted module consumer ignored",
+      "attestation": "BLOCKED_EXTERNAL",
+      "assurance": "REQUIRES_REAL_TARGET_AND_REVIEW"
+    },
+    {
+      "id": "regression-negatives",
+      "type": "verification-oracle",
+      "existing_method": "process-catalog",
+      "negative_oracle": "surviving physical mutant called killed",
+      "attestation": "BLOCKED_EXTERNAL",
+      "assurance": "REQUIRES_REAL_TARGET_AND_REVIEW"
+    },
+    {
+      "id": "supply-chain-identity",
+      "type": "build-artifact",
+      "existing_method": "release-verification",
+      "negative_oracle": "source and distributed artifact differ",
+      "attestation": "BLOCKED_EXTERNAL",
+      "assurance": "REQUIRES_REAL_TARGET_AND_REVIEW"
+    },
+    {
+      "id": "rollback-ability",
+      "type": "change-set",
+      "existing_method": "development-gates",
+      "negative_oracle": "rollback asserted without reversible state",
+      "attestation": "BLOCKED_EXTERNAL",
+      "assurance": "REQUIRES_REAL_TARGET_AND_REVIEW"
+    },
+    {
+      "id": "claim-truth",
+      "type": "product-capability",
+      "existing_method": "product-ontology",
+      "negative_oracle": "source-only source claim promoted to product approval",
+      "attestation": "BLOCKED_EXTERNAL",
+      "assurance": "REQUIRES_REAL_TARGET_AND_REVIEW"
+    },
+    {
+      "id": "authority-uniqueness",
+      "type": "governance-owner",
+      "existing_method": "reticular-DoD",
+      "negative_oracle": "duplicate owner silently accepted",
+      "attestation": "BLOCKED_EXTERNAL",
+      "assurance": "REQUIRES_REAL_TARGET_AND_REVIEW"
+    }
+  ],
+  "qualification": {
+    "source": "SOURCE_CLASSIFICATION_ONLY",
+    "runtime": "BLOCKED_EXTERNAL",
+    "review": "BLOCKED_EXTERNAL",
+    "host": "BLOCKED_EXTERNAL",
+    "product": "BLOCKED_EXTERNAL",
+    "authorization": "NONE"
+  },
+  "bounded_saturation": {
+    "interpretation": "DECLARED_20_TYPES_X_10_STANDARDS_X_9_QUALITY_AXES_AND_12_CODE_INVARIANTS_ONLY",
+    "unsupported": [
+      "universal-type-completeness",
+      "ISO-conformance",
+      "dynamic-consumer-closure",
+      "execution-of-target-tests",
+      "real-deployment",
+      "independent-review"
+    ]
+  }
+}

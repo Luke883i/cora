@@ -626,6 +626,31 @@
     {"pattern":"cora.capability-atlas.json","roles":["ARTIFACT_INDEX","PRODUCT_CONTRACT"],"rationale":"Scoped capability evidence; not a runtime or release attestation."},
     {"pattern":"cora.capability-dod.json","roles":["POLICY","PRODUCT_CONTRACT"],"rationale":"Scoped capability evidence; not a runtime or release attestation."},
     {"pattern":"tools/verify_capability_atlas.py","roles":["CONTRACT_VERIFIER","RELEASE_TOOL"],"rationale":"Scoped capability evidence; not a runtime or release attestation."},
-    {"pattern":"tests/test_pr26_capability_atlas.py","roles":["CONTRACT_VERIFIER","FIXTURE","TEST"],"rationale":"Scoped capability evidence; not a runtime or release attestation."}
+    {"pattern":"tests/test_pr26_capability_atlas.py","roles":["CONTRACT_VERIFIER","FIXTURE","TEST"],"rationale":"Scoped capability evidence; not a runtime or release attestation."},
+    {
+      "pattern": "cora.type-assurance-profile.json",
+      "roles": [
+        "ARTIFACT_INDEX",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Derived source-only typed method/standards contract without product or review authority."
+    },
+    {
+      "pattern": "tools/verify_type_assurance.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "RELEASE_TOOL"
+      ],
+      "rationale": "Git-bound source qualifier for declared types and durability; no target execution."
+    },
+    {
+      "pattern": "tests/test_pr27_type_assurance.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Local synthetic and Git fixture falsification; not a target runtime claim."
+    }
   ]
 }

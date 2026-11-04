@@ -40,3 +40,38 @@ Source tests/CI can be `PASS_SCOPED` on an exact head. The complete global goal 
 ## PR-20 hardening: intent and deleted-source causality
 
 The contextual DevOps opt-in accepts `--intent 'human-described bounded change and acceptance criteria'` and binds its digest to the exact BASE/HEAD. A missing per-change intent makes the source gate `DEBT_BLOCKED`; an explicit one is `CALLER_SUPPLIED_UNVERIFIED_BOUND_TO_BASE_HEAD`, **not** actual owner authority. Replay must provide the identical `--intent`; mismatched text, base or head refutes the receipt. When source files are deleted, renamed or change object type, CORA uses both the BASE and HEAD static candidate import graphs so removed modules do not silently lose their pre-change import consumers; a missing required BASE graph is debt-blocked. Legacy PR-16 evidence-lattice topology also uses the shared cycle/dangling-edge validator, retaining its separate evidence status vocabulary.
+
+
+## Reflection 3/3 — typed method convergence and code-durability contract
+
+The [bounded typed crosswalk](../cora.type-assurance-profile.json) specializes the *existing* method-atlas, artifact-role, ontology and reticulum owners. It declares 20 types in seven planes, links 14 current procedures, 10 methodological references (three ISO standards and seven non-ISO references), nine ISO/IEC 25010:2023 quality characteristics and 12 proposed durability invariants. **The crosswalk is a closed-world candidate, not a measurement of quality, ISO conformity, complete runtime use, or an authority to change/delete source.** The current independent checker is [verify_type_assurance.py](../tools/verify_type_assurance.py), within `cora-release-verification`; it checks exact Git blob bytes at the candidate HEAD and that the baseline is an ancestor.
+
+### Bounded comparative learning: ICTC and iKant_EDU
+
+The two repositories are *external consumer examples*, not the origin of new CORA decision authority. ICTC [#246](https://github.com/Luke883i/ictc/pull/246), [#241](https://github.com/Luke883i/ictc/pull/241), and [#239](https://github.com/Luke883i/ictc/pull/239) exhibit progressive navigation, product-document/presentation coherency, and conservative whole-repository source inventory. iKant_EDU [#216](https://github.com/Luke883i/iKant_EDU/pull/216), [#217](https://github.com/Luke883i/iKant_EDU/pull/217), and [#218](https://github.com/Luke883i/iKant_EDU/pull/218) exhibit minimal method absorption, local-owner-preserving reticular hygiene and a read-only prioritized consumer backlog. The **merged PR status and changed-file patches were inspected through GitHub**; the original target full test suites, native provider delivery, external consumers and deployment were **not executed or attested by this CORA change**. Some source/claim boundaries (e.g. the iKant_EDU #215 cutover) remain explicitly open.
+
+### Source implementation and falsification
+
+- Run `python tools/verify_type_assurance.py --repo . --revision HEAD` from a full checkout and inspect `PASS_SCOPED_STRUCTURAL_MODEL`, `authorization: NONE` and `external: BLOCKED_EXTERNAL`.
+- Run `python -m unittest discover -s tests -p 'test_pr27_type_assurance.py' -v`. The local source-bundle suite exercises 29 distinct negative model families plus two physically committed synthetic Git mutants. The additional real-CORA test is *skipped outside a full Git checkout*, and on a genuine checkout it clones CORA into a disposable local repository and commits two original-source mutants: an owner symbol rename and an ungrounded removal of an external DoD edge.
+- The canonical DoD is **still owned** by `cora.method-synthesis-dod.json`; the verifier rejects missing external leaves, cut-edge drift and nested-function spoofing. This does not introduce a second reticular runtime or a new CLI command.
+- The existing `.github/workflows/ci-documentation.yml` performs exact-head Python 3.11/3.13 checks and writes a source-only receipt. A workflow file does **not** demonstrate that the job executed, passed or is a required branch-protection check; inspect GitHub checks for the precise final candidate HEAD.
+
+### Non-compensatory acceptance and preserved debt
+
+| Gate | Predicates | Sufficient witness | Current boundary |
+| --- | --- | --- | --- |
+| R3-G0 | BASE ancestry, commit identity, original blob readback | Exact Git object verification | Source-only |
+| R3-G1 | 20 declared types, 7 planes and explicit non-universal scope | Bounded profile validator and missing-type mutants | Source-only |
+| R3-G2 | 14 current method owners and no spoofed symbol | Canonical method-atlas, original code AST and physical rename mutant | Original checkout CI pending |
+| R3-G3 | 10 categorized references and 9 quality axes | Declared crosswalk and altered-reference/quality mutants | No external standard conformance |
+| R3-G4 | 12 typed durability obligations and falsifiers | Negative model suites | No real target durability proof |
+| R3-G5 | Original reticular DoD closure, no source-to-external promotion | Changed-edge physical Git mutant | Independent approval absent |
+| R3-G6 | Full original CORA tests at one final exact HEAD; real ICTC/iKant target probes | Actual workflow run and target-specific CI readback | Pending verification |
+| R3-G7 | Independent reviewers, host rules, deployment behavior and governed rollback | External signed/host evidence | BLOCKED_EXTERNAL |
+
+R3-G0–G5 are constrained source checks; the full claim is an AND of R3-G0…R3-G7. A finite synthetic campaign, local fixture test, accepted Git commit, or source-only CI cannot compensate for a missing external witness. A retained `UNKNOWN` consumer, absent target runtime or unobserved user journey must not become an unused file, safe deletion, release GO, verified product quality, or proof of independence.
+
+### Review and post-merge protocol
+
+Preserve the exact BASE/HEAD and original method-atlas/blob hashes; run `python -m unittest discover -s tests -v` and the checker on the *same* candidate SHA; inspect target-specific consumer and data flow effects for all changed source and documentation roles, plus the actual CI completion state. Perform a separate human review before merge. After a real merge, pin the *actual* merged SHA and run fresh `dev-postmerge`, source regression and the relevant behavioral oracles. Rollback means a separate, explicitly authorized reverse change with new readback; the mere presence of a source `git revert` path is not deployment recovery proof.

@@ -14,6 +14,7 @@ The [README](../README.md) is the **one public-facing macro-map**: product promi
 - **Reviewing a PR or release:** [Continuous development](CONTINUOUS_DEVELOPMENT.md) → [Governance](../GOVERNANCE.md) → [Release procedure](RELEASE.md).
 - **Looking for syntax and inputs:** [CLI reference](CLI_REFERENCE.md), [committed ontology](../cora.ontology.json), [role registry](../cora.artifact-roles.json).
 - **Censusing all implemented command surfaces:** [Capability atlas](../cora.capability-atlas.json) → [CLI reference](CLI_REFERENCE.md) → [architecture](ARCHITECTURE.md) → [capability DoD](../cora.capability-dod.json). These are source/test witnesses, not behavior certification.
+- **Auditing code tenuta by object type:** [Typed assurance crosswalk](../cora.type-assurance-profile.json) → [bounded method and R3 DoD](CONVERGENT_ASSURANCE.md) → [Git-bound verifier](../tools/verify_type_assurance.py). This is a source-candidate analysis, not an ISO certificate or product-ready claim.
 
 ## Document semantics
 
