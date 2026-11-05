@@ -24,7 +24,7 @@ def copy_fixture(dst: Path) -> None:
         path = entry["path"]
         (dst / path).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(ROOT / path, dst / path)
-    for path in ("docs/documentation-registry.json", "cora.documentation-dod.json",
+    for path in ("docs/documentation-registry.json", ".cora/contracts/dod/documentation-dod.json",
                  "src/cora/cli.py"):
         (dst / path).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(ROOT / path, dst / path)
@@ -43,7 +43,7 @@ class DocumentationDoDTests(unittest.TestCase):
                          "MAINTAINER_DECLARATION_NOT_INDEPENDENT_ATTESTATION")
 
     def test_02_reticular_global_has_independent_external_cut(self):
-        data = json.loads((ROOT / "cora.documentation-dod.json").read_text("utf-8"))
+        data = json.loads((ROOT / ".cora/contracts/dod/documentation-dod.json").read_text("utf-8"))
         self.assertEqual(len(data["nodes"]), 28)
         self.assertEqual(len(ordered_cut(data["nodes"], "G_DOC_SOURCE")), 24)
         self.assertEqual(len(ordered_cut(data["nodes"], "G_DOC_ACCEPTED")), 28)
@@ -62,7 +62,7 @@ class DocumentationDoDTests(unittest.TestCase):
             p.write_text(json.dumps(j), encoding="utf-8")
 
         def dod_mutate(modifier):
-            p = fixture / "cora.documentation-dod.json"
+            p = fixture / ".cora/contracts/dod/documentation-dod.json"
             j = json.loads(p.read_text("utf-8"))
             modifier(j)
             p.write_text(json.dumps(j), encoding="utf-8")

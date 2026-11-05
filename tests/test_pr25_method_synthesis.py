@@ -88,7 +88,7 @@ class MethodSynthesisTests(unittest.TestCase):
             git(local,'config','user.email','ci@example.invalid')
             source = synthesize(local)
             self.assertTrue(verify_synthesis(local,source))
-            commit = mutate(local,'cora.method-atlas.json',
+            commit = mutate(local,'.cora/contracts/profiles/method-atlas.json',
                             lambda x:x['procedures'][0].update(
                                 source='src/cora/nonexistent.py'))
             with self.assertRaises(ValueError):
@@ -98,13 +98,13 @@ class MethodSynthesisTests(unittest.TestCase):
             def wrong_identity(x):
                 x['procedures'][0]['source']='src/cora/git_snapshot.py'
                 x['product']='invented-product'
-            mutate(local,'cora.method-atlas.json',wrong_identity)
+            mutate(local,'.cora/contracts/profiles/method-atlas.json',wrong_identity)
             with self.assertRaisesRegex(ValueError,'product/software identity mismatch'):
                 synthesize(local)
             def wrong_reference(x):
                 x['product']='cora'
                 x['procedures'][0]['standards']=['UNKNOWN_REFERENCE']
-            mutate(local,'cora.method-atlas.json',wrong_reference)
+            mutate(local,'.cora/contracts/profiles/method-atlas.json',wrong_reference)
             with self.assertRaisesRegex(ValueError,'method reference binding invalid'):
                 synthesize(local)
 
@@ -134,7 +134,7 @@ class MethodSynthesisTests(unittest.TestCase):
             git(ROOT,'clone','--local','-q',str(ROOT),str(local))
             git(local,'checkout','-q',self.source)
             expected=synthesize(local)
-            (local/'cora.method-atlas.json').write_text('{}\n',encoding='utf-8')
+            (local/'.cora/contracts/profiles/method-atlas.json').write_text('{}\n',encoding='utf-8')
             self.assertEqual(synthesize(local),expected)
             self.assertTrue(verify_synthesis(local,expected))
 
@@ -186,7 +186,7 @@ class MethodSynthesisTests(unittest.TestCase):
         self.assertEqual(len(seen),1000)
 
     def test_dod_cut_maintains_external_obligations(self):
-        doc=json.loads((ROOT/'cora.method-synthesis-dod.json').read_text('utf-8'))
+        doc=json.loads((ROOT/'.cora/contracts/dod/method-synthesis-dod.json').read_text('utf-8'))
         self.assertEqual(len(ordered_cut(doc['nodes'],'G_GOVERNED')),16)
         self.assertEqual(doc['external_status'],'BLOCKED_EXTERNAL')
 

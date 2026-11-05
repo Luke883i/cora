@@ -91,7 +91,7 @@ jobs:
           python tools/verify_layout_simplification.py --repo . --revision HEAD --output /tmp/cora-layout-proof.json
           python tools/verify_layout_simplification.py --repo . --revision HEAD --replay /tmp/cora-layout-proof.json > /tmp/cora-layout-replayed.json
           python -m unittest discover -s tests -p 'test_pr30_layout_simplification.py' -v
-          python -c 'import json; x=json.load(open("/tmp/cora-layout-proof.json")); assert x["root_before"]==25 and x["root_after"]==22 and x["internal_contract_blobs_preserved"]==2 and x["top_level_docs_removed"]==14 and x["historical_blobs_preserved"]==14 and x["historical_records"]==17 and x["registered_markdown"]==48 and x["cli_commands"]==71 and x["dod"]["nodes"]==23 and x["authorization"]=="NONE" and x["safe_deletion"]=="NOT_AUTHORIZED"'
+          python -c 'import json; x=json.load(open("/tmp/cora-layout-proof.json")); assert x["root_before"]==25 and x["root_after"]==11 and x["remaining_root_cora_json"]==2 and x["internal_contract_blobs_preserved"]==2 and x["thematic_byte_identical"]==8 and x["thematic_structural_rewrites"]==3 and x["top_level_docs_removed"]==14 and x["historical_blobs_preserved"]==14 and x["historical_records"]==17 and x["registered_markdown"]==48 and x["cli_commands"]==71 and x["dod"]["nodes"]==23 and x["authorization"]=="NONE" and x["safe_deletion"]=="NOT_AUTHORIZED"'
       - name: Falsify ten thousand preseeded layout semantic cases twice
         run: |
           python tools/verify_layout_simplification.py --repo . --revision HEAD --stress --cases 10000 --seed 883 --output /tmp/cora-layout-stress.json
@@ -132,4 +132,4 @@ jobs:
           python -m unittest discover -s tests -p 'test_pr15_release_readiness.py' -q
       - name: Reticular source and governed remain separated
         run: |
-          python -c 'import json; from cora.reticulum import ordered_cut; r=json.load(open("cora.documentation-dod.json")); x={n["id"]:n for n in r["nodes"]}; assert len(ordered_cut(r["nodes"],"G_DOC_SOURCE"))==24; assert len(ordered_cut(r["nodes"],"G_DOC_ACCEPTED"))==28; assert r["authority"]=="NONE" and r["external_status"]=="BLOCKED_EXTERNAL"; assert all(x[n]["scope"]=="EXTERNAL" for n in ("E01","E02","E03"))'
+          python -c 'import json; from cora.reticulum import ordered_cut; r=json.load(open(".cora/contracts/dod/documentation-dod.json")); x={n["id"]:n for n in r["nodes"]}; assert len(ordered_cut(r["nodes"],"G_DOC_SOURCE"))==24; assert len(ordered_cut(r["nodes"],"G_DOC_ACCEPTED"))==28; assert r["authority"]=="NONE" and r["external_status"]=="BLOCKED_EXTERNAL"; assert all(x[n]["scope"]=="EXTERNAL" for n in ("E01","E02","E03"))'

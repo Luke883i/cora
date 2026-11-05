@@ -1,0 +1,90 @@
+{
+  "schema": "cora-contract-paths/1",
+  "authority": "NONE",
+  "routing": "COMMITTED_REPO_SOURCE",
+  "external_consumers": "UNKNOWN",
+  "root_contracts": [
+    "cora.artifact-roles.json",
+    "cora.ontology.json"
+  ],
+  "bindings": [
+    {
+      "logical": "cora.agent-dod.json",
+      "canonical": ".cora/contracts/dod/agent-dod.json",
+      "scope": "INTERNAL_DOD"
+    },
+    {
+      "logical": "cora.artifact-roles.json",
+      "canonical": "cora.artifact-roles.json",
+      "scope": "PUBLIC_STABLE"
+    },
+    {
+      "logical": "cora.capability-atlas.json",
+      "canonical": ".cora/assurance/capability-atlas.json",
+      "scope": "INTERNAL_ASSURANCE"
+    },
+    {
+      "logical": "cora.capability-dod.json",
+      "canonical": ".cora/contracts/dod/capability-dod.json",
+      "scope": "INTERNAL_DOD"
+    },
+    {
+      "logical": "cora.convergence-dod.json",
+      "canonical": ".cora/contracts/dod/convergence-dod.json",
+      "scope": "INTERNAL_DOD"
+    },
+    {
+      "logical": "cora.documentation-dod.json",
+      "canonical": ".cora/contracts/dod/documentation-dod.json",
+      "scope": "INTERNAL_DOD"
+    },
+    {
+      "logical": "cora.documentation-proofs.json",
+      "canonical": ".cora/assurance/documentation-proofs.json",
+      "scope": "INTERNAL_ASSURANCE"
+    },
+    {
+      "logical": "cora.five-synergies-dod.json",
+      "canonical": ".cora/contracts/dod/five-synergies-dod.json",
+      "scope": "INTERNAL_DOD"
+    },
+    {
+      "logical": "cora.gold-assurance.json",
+      "canonical": ".cora/contracts/dod/gold-assurance.json",
+      "scope": "INTERNAL_DOD"
+    },
+    {
+      "logical": "cora.integrated-dod.json",
+      "canonical": ".cora/contracts/dod/integrated-dod.json",
+      "scope": "INTERNAL_DOD"
+    },
+    {
+      "logical": "cora.method-atlas.json",
+      "canonical": ".cora/contracts/profiles/method-atlas.json",
+      "scope": "INTERNAL_PROFILE"
+    },
+    {
+      "logical": "cora.method-synthesis-dod.json",
+      "canonical": ".cora/contracts/dod/method-synthesis-dod.json",
+      "scope": "INTERNAL_DOD"
+    },
+    {
+      "logical": "cora.ontology.json",
+      "canonical": "cora.ontology.json",
+      "scope": "PUBLIC_STABLE"
+    },
+    {
+      "logical": "cora.type-assurance-profile.json",
+      "canonical": ".cora/contracts/profiles/type-assurance-profile.json",
+      "scope": "INTERNAL_PROFILE"
+    },
+    {
+      "logical": "cora.workflow-dod.json",
+      "canonical": ".cora/contracts/dod/workflow-dod.json",
+      "scope": "INTERNAL_DOD"
+    }
+  ],
+  "external_guarantee": "NOT_ATTESTED",
+  "safe_deletion": "NOT_AUTHORIZED",
+  "governed_status": "BLOCKED_EXTERNAL"
+}

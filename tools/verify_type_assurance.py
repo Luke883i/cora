@@ -12,7 +12,7 @@ import re
 import subprocess
 from pathlib import Path
 
-PROFILE = 'cora.type-assurance-profile.json'
+PROFILE = '.cora/contracts/profiles/type-assurance-profile.json'
 SCHEMA = 'cora-type-assurance-profile/1'
 PLANES = frozenset('REPOSITORY SOFTWARE DEPLOYMENT RUNTIME PRODUCT GOVERNANCE EVIDENCE'.split())
 QUALITY = frozenset('functional_suitability performance_efficiency compatibility interaction_capability reliability security maintainability flexibility safety'.split())
@@ -99,8 +99,8 @@ def validate(profile: dict, atlas: dict, ontology: dict, dod: dict, witness_read
     if not isinstance(profile['base'],dict) or set(profile['base']) != {'repository','commit'} or profile['base']['repository'] != 'Luke883i/cora' or not isinstance(profile['base']['commit'],str) or not HEX.fullmatch(profile['base']['commit']):
         raise ValueError('BASE_IDENTITY_INVALID')
     if profile['upstream'] != {
-        'method_atlas':'cora.method-atlas.json','ontology':'cora.ontology.json',
-        'reticulum':'cora.method-synthesis-dod.json','artifact_roles':'cora.artifact-roles.json'}:
+        'method_atlas':'.cora/contracts/profiles/method-atlas.json','ontology':'cora.ontology.json',
+        'reticulum':'.cora/contracts/dod/method-synthesis-dod.json','artifact_roles':'cora.artifact-roles.json'}:
         raise ValueError('UPSTREAM_OWNER_CHANGED')
     if (_strings(profile['planes']) != PLANES or
         _strings(profile['quality_characteristics']) != QUALITY or
@@ -218,12 +218,12 @@ def verify_repo(repo: Path, revision: str = 'HEAD') -> dict:
         _git(repo,'merge-base','--is-ancestor',base,sha)
     except ValueError as e:
         raise ValueError('BASE_NOT_ANCESTOR') from e
-    atlas = _json(repo,sha,'cora.method-atlas.json')
+    atlas = _json(repo,sha,'.cora/contracts/profiles/method-atlas.json')
     ontology = _json(repo,sha,'cora.ontology.json')
-    dod = _json(repo,sha,'cora.method-synthesis-dod.json')
+    dod = _json(repo,sha,'.cora/contracts/dod/method-synthesis-dod.json')
     result = validate(profile,atlas,ontology,dod,lambda path:_read(repo,sha,path))
     result.update({'commit':sha,'profile_git_blob':_git(repo,'rev-parse',sha+':'+PROFILE).decode('ascii').strip(),
-                   'method_atlas_git_blob':_git(repo,'rev-parse',sha+':cora.method-atlas.json').decode('ascii').strip(),
+                   'method_atlas_git_blob':_git(repo,'rev-parse',sha+':.cora/contracts/profiles/method-atlas.json').decode('ascii').strip(),
                    'baseline':base})
     return result
 

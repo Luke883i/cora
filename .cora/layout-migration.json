@@ -2,10 +2,10 @@
   "schema": "cora-layout-migration/1",
   "source_commit": "6475633d836ca94dd9ecf799d1c7ca3c4735ad13",
   "authority": "NONE",
-  "intent": "Simplify root and active documentation navigation by lossless archive of 14 immutable historical records and relocation of a finite-model fixture without changing canonical product/software interfaces.",
+  "intent": "Simplify root and current documentation navigation by preserving 14 immutable historical records and one finite fixture, moving ten byte-identical internal DoDs/profiles, and strictly limiting three additional JSON changes to canonical path rewrites and inventory recategorization; retain two external-facing root contracts.",
   "expected": {
     "root_files_before": 25,
-    "root_files_after": 22,
+    "root_files_after": 11,
     "docs_top_level_removed": 14,
     "cli_commands": 71,
     "markdown_total": 48,
@@ -134,7 +134,7 @@
     }
   ],
   "qualification": {
-    "source": "GIT_BLOB_PRESERVATION_ONLY",
+    "source": "GIT_LINEAGE_AND_BOUNDED_REFERENCE_REWRITE",
     "runtime": "NOT_ATTESTED",
     "external_consumers": "UNKNOWN",
     "safe_deletion": "NOT_AUTHORIZED",
@@ -155,5 +155,100 @@
       "classification": "INTERNAL_SOURCE_DOD_NOT_TARGET_API",
       "preserve_bytes": true
     }
+  ],
+  "thematic_baseline": "d273eebac8482f240f4b18b5ad198fcb041cf1e0",
+  "thematic_moves": [
+    {
+      "old": "cora.agent-dod.json",
+      "new": ".cora/contracts/dod/agent-dod.json",
+      "source_blob": "7f5b5f0803266d4faaad1d0924047a6efe96a779",
+      "target_blob": "7f5b5f0803266d4faaad1d0924047a6efe96a779",
+      "mode": "BYTE_IDENTICAL",
+      "authority": "NONE"
+    },
+    {
+      "old": "cora.capability-atlas.json",
+      "new": ".cora/assurance/capability-atlas.json",
+      "source_blob": "001b9cf25f5455648990dfc5179675a709d54660",
+      "target_blob": "dcad49c7de0598e3bae6fdd8ebeb70aa5b3590da",
+      "mode": "STRUCTURAL_PATH_REWRITE",
+      "authority": "NONE"
+    },
+    {
+      "old": "cora.capability-dod.json",
+      "new": ".cora/contracts/dod/capability-dod.json",
+      "source_blob": "e6b4e30bfa02c62e72969d34e59e46250169a412",
+      "target_blob": "e6b4e30bfa02c62e72969d34e59e46250169a412",
+      "mode": "BYTE_IDENTICAL",
+      "authority": "NONE"
+    },
+    {
+      "old": "cora.convergence-dod.json",
+      "new": ".cora/contracts/dod/convergence-dod.json",
+      "source_blob": "22b58ec639b510ff86a5bd5d131e86b473030a09",
+      "target_blob": "22b58ec639b510ff86a5bd5d131e86b473030a09",
+      "mode": "BYTE_IDENTICAL",
+      "authority": "NONE"
+    },
+    {
+      "old": "cora.documentation-dod.json",
+      "new": ".cora/contracts/dod/documentation-dod.json",
+      "source_blob": "ef281924a8d302a56c88194e6c554a38c2296194",
+      "target_blob": "ef281924a8d302a56c88194e6c554a38c2296194",
+      "mode": "BYTE_IDENTICAL",
+      "authority": "NONE"
+    },
+    {
+      "old": "cora.documentation-proofs.json",
+      "new": ".cora/assurance/documentation-proofs.json",
+      "source_blob": "047ea935fc213e7dcb9c6947832ccd221b0c9532",
+      "target_blob": "34f05e755aa88c3a1c9348302bceed96a20824b3",
+      "mode": "STRUCTURAL_PATH_REWRITE",
+      "authority": "NONE"
+    },
+    {
+      "old": "cora.five-synergies-dod.json",
+      "new": ".cora/contracts/dod/five-synergies-dod.json",
+      "source_blob": "ebe8fdf138564a2d60ec2b155d8e66ed8442c272",
+      "target_blob": "ebe8fdf138564a2d60ec2b155d8e66ed8442c272",
+      "mode": "BYTE_IDENTICAL",
+      "authority": "NONE"
+    },
+    {
+      "old": "cora.gold-assurance.json",
+      "new": ".cora/contracts/dod/gold-assurance.json",
+      "source_blob": "eb09ea3e72182c1caa209fd9f3f02174ff32b569",
+      "target_blob": "eb09ea3e72182c1caa209fd9f3f02174ff32b569",
+      "mode": "BYTE_IDENTICAL",
+      "authority": "NONE"
+    },
+    {
+      "old": "cora.method-atlas.json",
+      "new": ".cora/contracts/profiles/method-atlas.json",
+      "source_blob": "67ce9ee097342c7bb9bcdfae1adcac8a4b22b079",
+      "target_blob": "67ce9ee097342c7bb9bcdfae1adcac8a4b22b079",
+      "mode": "BYTE_IDENTICAL",
+      "authority": "NONE"
+    },
+    {
+      "old": "cora.method-synthesis-dod.json",
+      "new": ".cora/contracts/dod/method-synthesis-dod.json",
+      "source_blob": "03c73387c7ba38feb6d52f91d26e7faadccfff31",
+      "target_blob": "03c73387c7ba38feb6d52f91d26e7faadccfff31",
+      "mode": "BYTE_IDENTICAL",
+      "authority": "NONE"
+    },
+    {
+      "old": "cora.type-assurance-profile.json",
+      "new": ".cora/contracts/profiles/type-assurance-profile.json",
+      "source_blob": "625d5204a692ece1933f8f6ab2299aeda7ac109e",
+      "target_blob": "7453a4e9e6dc319b3e0c898e097658e9128528de",
+      "mode": "STRUCTURAL_PATH_REWRITE",
+      "authority": "NONE"
+    }
+  ],
+  "remaining_public_contracts": [
+    "cora.artifact-roles.json",
+    "cora.ontology.json"
   ]
 }

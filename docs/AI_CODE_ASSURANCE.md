@@ -21,7 +21,7 @@ INTENT: record target behavior, owner, acceptance oracle, constraints and author
 | After merge | recompute source and debt on the actual merge SHA | dev-postmerge; debt-diff | that old PR SHA equals new main |
 | Pilot/release | independent review, external security/runtime, recovery/rollback | dod-plan --stage release | release from model/CI alone |
 
-The normative policy is cora.agent-dod.json. It fixes 24 failure families: six LOCAL, six INTERMEDIATE, six GLOBAL, six EXTERNAL. Each local node names a nearest falsifier, the four intermediate nodes are non-compensatory AND cuts, and G_SOURCE_AGENT depends on the first three intermediates while G_GOVERNED_AGENT additionally requires the independent external intermediate. Editing the PR policy cannot independently authorize acceptance; trusted BASE policy and hosting enforcement remain distinct.
+The normative policy is .cora/contracts/dod/agent-dod.json. It fixes 24 failure families: six LOCAL, six INTERMEDIATE, six GLOBAL, six EXTERNAL. Each local node names a nearest falsifier, the four intermediate nodes are non-compensatory AND cuts, and G_SOURCE_AGENT depends on the first three intermediates while G_GOVERNED_AGENT additionally requires the independent external intermediate. Editing the PR policy cannot independently authorize acceptance; trusted BASE policy and hosting enforcement remain distinct.
 
 ## Input, output, evidence authenticity
 

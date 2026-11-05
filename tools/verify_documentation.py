@@ -89,7 +89,7 @@ def heading_slugs(text: str) -> set[str]:
 
 def validate_dod(root: Path, errors: list[str]) -> None:
     try:
-        d = json.loads((root / "cora.documentation-dod.json").read_text("utf-8"))
+        d = json.loads((root / ".cora/contracts/dod/documentation-dod.json").read_text("utf-8"))
         if (d.get("schema") != "cora-documentation-dod/1" or
             d.get("baseline_markdown_count") != BASELINE_MD or
             d.get("baseline_sha") != BASELINE_SHA or
@@ -132,7 +132,7 @@ NAVIGATION_LENSES = {
                    ".github/PULL_REQUEST_TEMPLATE.md", "LICENSE"),
     "Evidence and DoD": ("docs/CONTINUOUS_DEVELOPMENT.md",
                          "docs/CONVERGENT_ASSURANCE.md", "docs/DOCUMENTATION_DOD.md",
-                         "cora.documentation-proofs.json", "tools/verify_claim_evidence.py"),
+                         ".cora/assurance/documentation-proofs.json", "tools/verify_claim_evidence.py"),
 }
 NAVIGATION_READERS = {
     "First-time user": ("docs/GETTING_STARTED.md", "docs/ARCHITECTURE.md"),

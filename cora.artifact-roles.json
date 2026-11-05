@@ -377,7 +377,7 @@
       "rationale": "Negative coverage and positive performance fixture, not real-repo calibration."
     },
     {
-      "pattern": "cora.agent-dod.json",
+      "pattern": ".cora/contracts/dod/agent-dod.json",
       "roles": [
         "POLICY",
         "PRODUCT_CONTRACT"
@@ -419,7 +419,7 @@
       "rationale": "Actual CORA source-model mutants, falsified index-based scenario coverage and epistemic anti-promotion."
     },
     {
-      "pattern": "cora.gold-assurance.json",
+      "pattern": ".cora/contracts/dod/gold-assurance.json",
       "roles": [
         "POLICY",
         "PRODUCT_CONTRACT"
@@ -508,7 +508,7 @@
       "rationale": "Single agent/Gold/DevOps graph compiler, model AND and selective witness invalidation."
     },
     {
-      "pattern": "cora.convergence-dod.json",
+      "pattern": ".cora/contracts/dod/convergence-dod.json",
       "roles": [
         "POLICY",
         "PRODUCT_CONTRACT"
@@ -549,7 +549,7 @@
       "rationale": "Global source and complete R1–R4 AND cut and falsification gates."
     },
     {
-      "pattern": "cora.documentation-dod.json",
+      "pattern": ".cora/contracts/dod/documentation-dod.json",
       "roles": [
         "POLICY",
         "PRODUCT_CONTRACT"
@@ -629,7 +629,7 @@
       "rationale": "Exact-head documentation and repo regression checks."
     },
     {
-      "pattern": "cora.documentation-proofs.json",
+      "pattern": ".cora/assurance/documentation-proofs.json",
       "roles": [
         "POLICY",
         "PRODUCT_CONTRACT"
@@ -688,7 +688,7 @@
       "rationale": "Physical workflow source mutants and bounded parser counterexamples."
     },
     {
-      "pattern": "cora.method-atlas.json",
+      "pattern": ".cora/contracts/profiles/method-atlas.json",
       "roles": [
         "ARTIFACT_INDEX",
         "PRODUCT_CONTRACT"
@@ -696,7 +696,7 @@
       "rationale": "Cross-method source correlation with bounded scope and independent review."
     },
     {
-      "pattern": "cora.method-synthesis-dod.json",
+      "pattern": ".cora/contracts/dod/method-synthesis-dod.json",
       "roles": [
         "POLICY",
         "PRODUCT_CONTRACT"
@@ -721,7 +721,7 @@
       "rationale": "Cross-method source correlation with bounded scope and independent review."
     },
     {
-      "pattern": "cora.capability-atlas.json",
+      "pattern": ".cora/assurance/capability-atlas.json",
       "roles": [
         "ARTIFACT_INDEX",
         "PRODUCT_CONTRACT"
@@ -729,7 +729,7 @@
       "rationale": "Scoped capability evidence; not a runtime or release attestation."
     },
     {
-      "pattern": "cora.capability-dod.json",
+      "pattern": ".cora/contracts/dod/capability-dod.json",
       "roles": [
         "POLICY",
         "PRODUCT_CONTRACT"
@@ -754,7 +754,7 @@
       "rationale": "Scoped capability evidence; not a runtime or release attestation."
     },
     {
-      "pattern": "cora.type-assurance-profile.json",
+      "pattern": ".cora/contracts/profiles/type-assurance-profile.json",
       "roles": [
         "ARTIFACT_INDEX",
         "PRODUCT_CONTRACT"
@@ -812,7 +812,7 @@
       "rationale": "Composite source-only five-synergies service; does not supersede original method or execution authority."
     },
     {
-      "pattern": "cora.five-synergies-dod.json",
+      "pattern": ".cora/contracts/dod/five-synergies-dod.json",
       "roles": [
         "POLICY",
         "PRODUCT_CONTRACT"
@@ -876,6 +876,14 @@
         "TEST"
       ],
       "rationale": "Original Git layout migration, negative physical mutants and 10k seeded controls."
+    },
+    {
+      "pattern": ".cora/contracts/index.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Source-bound contract path routing index; retains two public root bootstraps and makes internal thematic files discoverable without claiming external compatibility."
     }
   ]
 }

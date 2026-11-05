@@ -16,7 +16,7 @@ ROOT=Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location('type_assurance',ROOT/'tools/verify_type_assurance.py')
 checker=importlib.util.module_from_spec(spec)
 spec.loader.exec_module(checker)
-PROFILE=json.loads((ROOT/'cora.type-assurance-profile.json').read_text('utf8'))
+PROFILE=json.loads((ROOT/'.cora/contracts/profiles/type-assurance-profile.json').read_text('utf8'))
 
 
 def git(repo,*args):
@@ -130,24 +130,24 @@ class TypeAssuranceTests(unittest.TestCase):
                 target=repo/path
                 target.parent.mkdir(parents=True,exist_ok=True)
                 target.write_bytes(data)
-            for path,obj in [('cora.method-atlas.json',self.atlas),('cora.ontology.json',self.ontology),('cora.method-synthesis-dod.json',self.dod)]:
+            for path,obj in [('.cora/contracts/profiles/method-atlas.json',self.atlas),('cora.ontology.json',self.ontology),('.cora/contracts/dod/method-synthesis-dod.json',self.dod)]:
                 (repo/path).write_text(json.dumps(obj),encoding='utf8')
             git(repo,'add','.')
             git(repo,'commit','-qm','baseline')
             baseline=git(repo,'rev-parse','HEAD')
             self.profile['base']['commit']=baseline
-            (repo/'cora.type-assurance-profile.json').write_text(json.dumps(self.profile),encoding='utf8')
+            (repo/'.cora/contracts/profiles/type-assurance-profile.json').write_text(json.dumps(self.profile),encoding='utf8')
             git(repo,'add','.')
             git(repo,'commit','-qm','install typed source model')
             good=git(repo,'rev-parse','HEAD')
             report=checker.verify_repo(repo,good)
             self.assertEqual(report['result'],'PASS_SCOPED_STRUCTURAL_MODEL')
             self.assertEqual(report['baseline'],baseline)
-            (repo/'cora.type-assurance-profile.json').write_text('{"uncommitted":"dirty"}',encoding='utf8')
+            (repo/'.cora/contracts/profiles/type-assurance-profile.json').write_text('{"uncommitted":"dirty"}',encoding='utf8')
             self.assertEqual(checker.verify_repo(repo,good),report)
             mutated=copy.deepcopy(self.profile)
             mutated['durability_invariants'][0]['attestation']='PASS'
-            (repo/'cora.type-assurance-profile.json').write_text(json.dumps(mutated),encoding='utf8')
+            (repo/'.cora/contracts/profiles/type-assurance-profile.json').write_text(json.dumps(mutated),encoding='utf8')
             git(repo,'add','.')
             git(repo,'commit','-qm','physical git false-pass mutation')
             bad=git(repo,'rev-parse','HEAD')
@@ -157,7 +157,7 @@ class TypeAssuranceTests(unittest.TestCase):
             altered=copy.deepcopy(mutated)
             altered['durability_invariants'][0]['attestation']='BLOCKED_EXTERNAL'
             altered['base']['commit']='0'*40
-            (repo/'cora.type-assurance-profile.json').write_text(json.dumps(altered),encoding='utf8')
+            (repo/'.cora/contracts/profiles/type-assurance-profile.json').write_text(json.dumps(altered),encoding='utf8')
             git(repo,'add','.')
             git(repo,'commit','-qm','physical git stale ancestor mutation')
             with self.assertRaisesRegex(ValueError,'BASE_NOT_ANCESTOR'):
@@ -187,11 +187,11 @@ class TypeAssuranceTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'OWNER_SYMBOL_MISSING'):
                 checker.verify_repo(repo,'HEAD')
             git(repo,'checkout','-q',git(ROOT,'rev-parse','HEAD'))
-            dpath=repo/'cora.method-synthesis-dod.json'
+            dpath=repo/'.cora/contracts/dod/method-synthesis-dod.json'
             dod=json.loads(dpath.read_text(encoding='utf-8'))
             next(x for x in dod['nodes'] if x['id']=='G_GOVERNED')['depends_on'].remove('E01')
             dpath.write_text(json.dumps(dod,indent=2)+'\n',encoding='utf-8')
-            git(repo,'add','cora.method-synthesis-dod.json')
+            git(repo,'add','.cora/contracts/dod/method-synthesis-dod.json')
             git(repo,'commit','-qm','physical CORA evidence-gate mutant')
             with self.assertRaisesRegex(ValueError,'METHOD_DOD_EDGE_OR_SCOPE_DRIFT'):
                 checker.verify_repo(repo,'HEAD')

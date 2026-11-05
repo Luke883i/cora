@@ -2,7 +2,7 @@
 
 ## Product/software/repository intent
 
-The single **CORA** product continues to comprise `cora-engine` and `cora-release-verification`; this change does not create another agent or trust authority. Existing agent and Gold models share `reticulum.ordered_cut`, but retain their prior fixed vocabulary and output formats. The new profile `cora.convergence-dod.json` distinguishes source implementation from full real-world R1–R4 obligations and governed acceptance.
+The single **CORA** product continues to comprise `cora-engine` and `cora-release-verification`; this change does not create another agent or trust authority. Existing agent and Gold models share `reticulum.ordered_cut`, but retain their prior fixed vocabulary and output formats. The new profile `.cora/contracts/dod/convergence-dod.json` distinguishes source implementation from full real-world R1–R4 obligations and governed acceptance.
 
 ## Exact Git and context workflow
 
@@ -44,7 +44,7 @@ The contextual DevOps opt-in accepts `--intent 'human-described bounded change a
 
 ## Reflection 3/3 — typed method convergence and code-durability contract
 
-The [bounded typed crosswalk](../cora.type-assurance-profile.json) specializes the *existing* method-atlas, artifact-role, ontology and reticulum owners. It declares 20 types in seven planes, links 14 current procedures, 10 methodological references (three ISO standards and seven non-ISO references), nine ISO/IEC 25010:2023 quality characteristics and 12 proposed durability invariants. **The crosswalk is a closed-world candidate, not a measurement of quality, ISO conformity, complete runtime use, or an authority to change/delete source.** The current independent checker is [verify_type_assurance.py](../tools/verify_type_assurance.py), within `cora-release-verification`; it checks exact Git blob bytes at the candidate HEAD and that the baseline is an ancestor.
+The [bounded typed crosswalk](../.cora/contracts/profiles/type-assurance-profile.json) specializes the *existing* method-atlas, artifact-role, ontology and reticulum owners. It declares 20 types in seven planes, links 14 current procedures, 10 methodological references (three ISO standards and seven non-ISO references), nine ISO/IEC 25010:2023 quality characteristics and 12 proposed durability invariants. **The crosswalk is a closed-world candidate, not a measurement of quality, ISO conformity, complete runtime use, or an authority to change/delete source.** The current independent checker is [verify_type_assurance.py](../tools/verify_type_assurance.py), within `cora-release-verification`; it checks exact Git blob bytes at the candidate HEAD and that the baseline is an ancestor.
 
 ### Bounded comparative learning: ICTC and iKant_EDU
 
@@ -54,7 +54,7 @@ The two repositories are *external consumer examples*, not the origin of new COR
 
 - Run `python tools/verify_type_assurance.py --repo . --revision HEAD` from a full checkout and inspect `PASS_SCOPED_STRUCTURAL_MODEL`, `authorization: NONE` and `external: BLOCKED_EXTERNAL`.
 - Run `python -m unittest discover -s tests -p 'test_pr27_type_assurance.py' -v`. The local source-bundle suite exercises 29 distinct negative model families plus two physically committed synthetic Git mutants. The additional real-CORA test is *skipped outside a full Git checkout*, and on a genuine checkout it clones CORA into a disposable local repository and commits two original-source mutants: an owner symbol rename and an ungrounded removal of an external DoD edge.
-- The canonical DoD is **still owned** by `cora.method-synthesis-dod.json`; the verifier rejects missing external leaves, cut-edge drift and nested-function spoofing. This does not introduce a second reticular runtime or a new CLI command.
+- The canonical DoD is **still owned** by `.cora/contracts/dod/method-synthesis-dod.json`; the verifier rejects missing external leaves, cut-edge drift and nested-function spoofing. This does not introduce a second reticular runtime or a new CLI command.
 - The existing `.github/workflows/ci-documentation.yml` performs exact-head Python 3.11/3.13 checks and writes a source-only receipt. A workflow file does **not** demonstrate that the job executed, passed or is a required branch-protection check; inspect GitHub checks for the precise final candidate HEAD.
 
 ### Non-compensatory acceptance and preserved debt
@@ -101,7 +101,7 @@ The generated AI request contains source-bound IDs and instructions to reverse-i
 
 The five developments are **one minimal dependency lattice**: Semantic Truth Engine (G_TRUTH) → bounded AI Reasoning Engine (G_AI); a parallel original-source Behavioral Proof Engine (G_BEHAVIOR) and continuous cross-revision Semantic Evolution (G_EVOLUTION); all converge to G_UNIFIED. The governed root G_GOVERNED additionally requires real AI-provider execution where claimed, operational qualification of all commands, independent review, real target runtime and host authorization. Source success cannot compensate for those external leaves.
 
-The canonical [five-synergies contract](../cora.five-synergies-dod.json) has 29 nodes, fixed in the existing `reticulum.ordered_cut` validator. The five source goals retain their original owners: `integrated_service.py`, `method_synthesis.py`, `continuous.py`, `git_snapshot.py`, and the canonical documentation proof/role/type atlases. `synergy.py` is a read-only composition, not a second authority.
+The canonical [five-synergies contract](../.cora/contracts/dod/five-synergies-dod.json) has 29 nodes, fixed in the existing `reticulum.ordered_cut` validator. The five source goals retain their original owners: `integrated_service.py`, `method_synthesis.py`, `continuous.py`, `git_snapshot.py`, and the canonical documentation proof/role/type atlases. `synergy.py` is a read-only composition, not a second authority.
 
 **Mechanical witnesses by goal:**
 

@@ -651,19 +651,8 @@
       ".github/workflows/ci-verify-pull-request.yml"
     ],
     "contracts": [
-      "cora.agent-dod.json",
       "cora.artifact-roles.json",
-      "cora.capability-atlas.json",
-      "cora.capability-dod.json",
-      "cora.convergence-dod.json",
-      "cora.documentation-dod.json",
-      "cora.documentation-proofs.json",
-      "cora.five-synergies-dod.json",
-      "cora.gold-assurance.json",
-      "cora.method-atlas.json",
-      "cora.method-synthesis-dod.json",
-      "cora.ontology.json",
-      "cora.type-assurance-profile.json"
+      "cora.ontology.json"
     ],
     "markdown": [
       ".github/PULL_REQUEST_TEMPLATE.md",
@@ -752,6 +741,25 @@
       "tests/test_pr29_five_synergies.py",
       "tests/test_pr30_layout_simplification.py",
       "tests/test_selection.py"
+    ],
+    "internal_dod": [
+      ".cora/contracts/dod/agent-dod.json",
+      ".cora/contracts/dod/capability-dod.json",
+      ".cora/contracts/dod/convergence-dod.json",
+      ".cora/contracts/dod/documentation-dod.json",
+      ".cora/contracts/dod/five-synergies-dod.json",
+      ".cora/contracts/dod/gold-assurance.json",
+      ".cora/contracts/dod/integrated-dod.json",
+      ".cora/contracts/dod/method-synthesis-dod.json",
+      ".cora/contracts/dod/workflow-dod.json"
+    ],
+    "internal_profiles": [
+      ".cora/contracts/profiles/method-atlas.json",
+      ".cora/contracts/profiles/type-assurance-profile.json"
+    ],
+    "assurance_records": [
+      ".cora/assurance/capability-atlas.json",
+      ".cora/assurance/documentation-proofs.json"
     ]
   },
   "qualification": {

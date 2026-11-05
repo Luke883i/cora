@@ -29,6 +29,21 @@ HISTORICAL_NAMES = {
 }
 FIXTURE_OLD = "cora.five-synergies-mutants.json"
 FIXTURE_NEW = ".cora/fixtures/five-synergies-mutants.json"
+THEMATIC_BASE = "d273eebac8482f240f4b18b5ad198fcb041cf1e0"
+THEME = {
+    "cora.agent-dod.json": ".cora/contracts/dod/agent-dod.json",
+    "cora.capability-atlas.json": ".cora/assurance/capability-atlas.json",
+    "cora.capability-dod.json": ".cora/contracts/dod/capability-dod.json",
+    "cora.convergence-dod.json": ".cora/contracts/dod/convergence-dod.json",
+    "cora.documentation-dod.json": ".cora/contracts/dod/documentation-dod.json",
+    "cora.documentation-proofs.json": ".cora/assurance/documentation-proofs.json",
+    "cora.five-synergies-dod.json": ".cora/contracts/dod/five-synergies-dod.json",
+    "cora.gold-assurance.json": ".cora/contracts/dod/gold-assurance.json",
+    "cora.method-atlas.json": ".cora/contracts/profiles/method-atlas.json",
+    "cora.method-synthesis-dod.json": ".cora/contracts/dod/method-synthesis-dod.json",
+    "cora.type-assurance-profile.json": ".cora/contracts/profiles/type-assurance-profile.json"
+}
+PUBLIC_ROOT = ("cora.artifact-roles.json","cora.ontology.json")
 EXPECTED = {**HISTORICAL_NAMES, FIXTURE_OLD:FIXTURE_NEW}
 AXES = ("identity","history_bytes","archival_path","markdown_links",
         "readme_promise","code_loader","artifact_roles","inventory",
@@ -131,13 +146,14 @@ def _dod(repo:Path,sha:str)->dict:
 def _migration(repo:Path,sha:str)->dict:
     m=_json(repo,sha,".cora/layout-migration.json")
     if (set(m)!={"schema","source_commit","authority","intent","expected",
-                "excluded","moves","internal_contract_moves","qualification"} or
+                "excluded","moves","internal_contract_moves","qualification",
+                "thematic_baseline","thematic_moves","remaining_public_contracts"} or
         m["schema"]!="cora-layout-migration/1" or
         m["source_commit"]!=BASE or m["authority"]!="NONE" or
-        m["expected"]!={"root_files_before":25,"root_files_after":22,
+        m["expected"]!={"root_files_before":25,"root_files_after":11,
                         "docs_top_level_removed":14,"cli_commands":71,
                         "markdown_total":48,"historical_records":17,"moves":15} or
-        m["qualification"]!={"source":"GIT_BLOB_PRESERVATION_ONLY",
+        m["qualification"]!={"source":"GIT_LINEAGE_AND_BOUNDED_REFERENCE_REWRITE",
                              "runtime":"NOT_ATTESTED",
                              "external_consumers":"UNKNOWN",
                              "safe_deletion":"NOT_AUTHORIZED",
@@ -171,6 +187,26 @@ def _migration(repo:Path,sha:str)->dict:
             not isinstance(row["blob_oid"],str) or
             not re.fullmatch("[0-9a-f]{40}",row["blob_oid"])):
             raise ValueError("internal DoD relocation mapping/authority drift")
+    if m["thematic_baseline"]!=THEMATIC_BASE or m["remaining_public_contracts"]!=list(PUBLIC_ROOT):
+        raise ValueError("thematic migration source or public compatibility drift")
+    thematic=m["thematic_moves"]
+    if (not isinstance(thematic,list) or len(thematic)!=len(THEME) or
+        {x.get("old") for x in thematic if isinstance(x,dict)}!=set(THEME)):
+        raise ValueError("thematic migration coverage incomplete")
+    changed={"cora.capability-atlas.json","cora.documentation-proofs.json",
+             "cora.type-assurance-profile.json"}
+    for row in thematic:
+        old=row["old"]
+        expected_mode="STRUCTURAL_PATH_REWRITE" if old in changed else "BYTE_IDENTICAL"
+        if (set(row)!={"old","new","source_blob","target_blob","mode","authority"} or
+            row["new"]!=THEME[old] or row["mode"]!=expected_mode or
+            row["authority"]!="NONE" or
+            any(not isinstance(row[key],str) or
+                not re.fullmatch("[0-9a-f]{40}",row[key])
+                for key in ("source_blob","target_blob"))):
+            raise ValueError("thematic contract routing/authority changed: "+old)
+        if expected_mode=="BYTE_IDENTICAL" and row["target_blob"]!=row["source_blob"]:
+            raise ValueError("byte-preservation promise violated: "+old)
     exclusions={x.get("path") for x in m["excluded"] if isinstance(x,dict)}
     if exclusions!={"docs/DOD.md","docs/AUDIT_PR01_PR07.md",
                    "docs/STANDARDS_MAINTENANCE_AUDIT.md"}:
@@ -199,6 +235,75 @@ def _preseed(repo:Path,sha:str)->dict:
             raise ValueError("preseed case oracle poisoned: "+str(i))
     return m
 
+def _rewrite_original_json(value):
+    if isinstance(value,str):
+        for old,new in THEME.items():
+            value=value.replace(old,new)
+        return value
+    if isinstance(value,list):
+        return [_rewrite_original_json(item) for item in value]
+    if isinstance(value,dict):
+        return {k:_rewrite_original_json(v) for k,v in value.items()}
+    return value
+
+
+def _validate_theme(repo:Path,sha:str,baseline:dict,head:dict,manifest:dict)->dict:
+    source_tree=_tree(repo,THEMATIC_BASE)
+    ancestor=subprocess.run(["git","-C",str(repo),"merge-base","--is-ancestor",
+                             THEMATIC_BASE,sha],capture_output=True,timeout=45)
+    if ancestor.returncode:
+        raise ValueError("thematic source baseline is not an ancestor")
+    exact=rewritten=0
+    for row in manifest["thematic_moves"]:
+        old,new=row["old"],row["new"]
+        if (old not in baseline or old not in source_tree or old in head or
+            new in source_tree or new not in head or
+            source_tree[old]["oid"]!=row["source_blob"] or
+            head[new]["oid"]!=row["target_blob"] or
+            head[new]["kind"]!="blob" or head[new]["mode"]!="100644"):
+            raise ValueError("thematic Git source/target identity drift: "+old)
+        if row["mode"]=="BYTE_IDENTICAL":
+            if row["source_blob"]!=row["target_blob"]:
+                raise ValueError("thematic byte-identical OID changed: "+old)
+            exact+=1
+        else:
+            original=_rewrite_original_json(_json(repo,THEMATIC_BASE,old))
+            if old=="cora.capability-atlas.json":
+                surfaces=original["repository_surfaces"]
+                surfaces["contracts"]=sorted(x for x in surfaces["contracts"]
+                    if re.fullmatch(r"cora\.[^/]+\.json",x))
+                surfaces["internal_dod"]=sorted(
+                    [p for p in THEME.values() if p.startswith(".cora/contracts/dod/")]+
+                    [".cora/contracts/dod/workflow-dod.json",
+                     ".cora/contracts/dod/integrated-dod.json"])
+                surfaces["internal_profiles"]=sorted(
+                    p for p in THEME.values() if p.startswith(".cora/contracts/profiles/"))
+                surfaces["assurance_records"]=sorted(
+                    p for p in THEME.values() if p.startswith(".cora/assurance/"))
+            if original!=_json(repo,sha,new):
+                raise ValueError("thematic structural rewrite introduced semantic drift: "+old)
+            rewritten+=1
+    index=_json(repo,sha,".cora/contracts/index.json")
+    bindings=index.get("bindings",[])
+    expected={**THEME,
+              "cora.workflow-dod.json":".cora/contracts/dod/workflow-dod.json",
+              "cora.integrated-dod.json":".cora/contracts/dod/integrated-dod.json",
+              **{p:p for p in PUBLIC_ROOT}}
+    if (index.get("schema")!="cora-contract-paths/1" or
+        index.get("authority")!="NONE" or
+        index.get("root_contracts")!=list(PUBLIC_ROOT) or
+        index.get("external_consumers")!="UNKNOWN" or
+        index.get("governed_status")!="BLOCKED_EXTERNAL" or
+        not isinstance(bindings,list) or len(bindings)!=15 or
+        {x.get("logical"):x.get("canonical") for x in bindings}!=expected):
+        raise ValueError("logical contract path index incomplete or unsafe")
+    for route in bindings:
+        if route["canonical"] not in head or route["scope"] not in (
+                "PUBLIC_STABLE","INTERNAL_DOD","INTERNAL_PROFILE","INTERNAL_ASSURANCE"):
+            raise ValueError("contract route target missing or unqualified")
+    return {"byte_identical":exact,"rewritten":rewritten,"remaining_root":len(PUBLIC_ROOT)}
+
+
 def check(repo:Path,revision:str="HEAD")->dict:
     repo=Path(repo).resolve(strict=True)
     sha=_commit(repo,revision)
@@ -225,11 +330,12 @@ def check(repo:Path,revision:str="HEAD")->dict:
             or head[after]["oid"]!=oid or head[after]["mode"]!="100644"
             or head[after]["kind"]!="blob"):
             raise ValueError("internal DoD original Git blob changed: "+before)
+    thematic=_validate_theme(repo,sha,baseline,head,mig)
     preserved=(
         "README.md","AGENTS.md","CHANGELOG.md","CONTRIBUTING.md",
         "GOVERNANCE.md","SECURITY.md","LICENSE","pyproject.toml",
         "cora.ontology.json","cora.artifact-roles.json",
-        "cora.capability-dod.json","cora.method-atlas.json","src/cora/cli.py")
+        "src/cora/cli.py")
     if any(path not in head for path in preserved):
         raise ValueError("canonical root or software entrypoint removed")
     r0=sum("/" not in path for path in baseline)
@@ -238,7 +344,7 @@ def check(repo:Path,revision:str="HEAD")->dict:
            and path.endswith(".md") for path in baseline)
     d1=sum(path.startswith("docs/") and path.count("/")==1
            and path.endswith(".md") for path in head)
-    if (r0,r1,d0-d1)!=(25,22,14):
+    if (r0,r1,d0-d1)!=(25,11,14):
         raise ValueError("root or active docs simplification count drift")
     reg=_json(repo,sha,"docs/documentation-registry.json")
     records={x["path"]:x for x in reg["documents"]}
@@ -254,10 +360,13 @@ def check(repo:Path,revision:str="HEAD")->dict:
     historic=[x for x in reg["documents"] if x["status"]=="HISTORICAL"]
     if len(historic)!=17 or any(x["path"] not in head for x in historic):
         raise ValueError("history retention incomplete")
-    atlas=_json(repo,sha,"cora.capability-atlas.json")
+    atlas=_json(repo,sha,".cora/assurance/capability-atlas.json")
     surf=atlas["repository_surfaces"]
     if (FIXTURE_OLD in surf["contracts"] or
         sorted(surf["contracts"])!=sorted(x for x in head if re.fullmatch(r"cora\.[^/]+\.json",x)) or
+        sorted(surf["internal_dod"])!=sorted(x for x in head if re.fullmatch(r"\.cora/contracts/dod/[^/]+\.json",x)) or
+        sorted(surf["internal_profiles"])!=sorted(x for x in head if re.fullmatch(r"\.cora/contracts/profiles/[^/]+\.json",x)) or
+        sorted(surf["assurance_records"])!=sorted(x for x in head if re.fullmatch(r"\.cora/assurance/[^/]+\.json",x)) or
         sorted(surf["markdown"])!=sorted(x for x in head if x.endswith(".md")) or
         len(atlas["commands"])!=71):
         raise ValueError("canonical source inventory detached")
@@ -293,6 +402,9 @@ def check(repo:Path,revision:str="HEAD")->dict:
            "top_level_docs_removed":d0-d1,
            "historical_blobs_preserved":14,"fixture_blobs_preserved":1,
            "internal_contract_blobs_preserved":2,
+           "thematic_byte_identical":thematic["byte_identical"],
+           "thematic_structural_rewrites":thematic["rewritten"],
+           "remaining_root_cora_json":thematic["remaining_root"],
            "registered_markdown":48,"historical_records":17,
            "cli_commands":71,"dod":_dod(repo,sha),
            "seed_families":len(_preseed(repo,sha)["mutants"]),

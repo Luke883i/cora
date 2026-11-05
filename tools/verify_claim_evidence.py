@@ -20,7 +20,7 @@ from pathlib import Path
 from cora.reticulum import ordered_cut
 
 SCHEMA = "cora-documentation-proof-receipt/1"
-PROFILE = "cora.documentation-proofs.json"
+PROFILE = ".cora/assurance/documentation-proofs.json"
 BASELINE = "d8b75df872c1603597550bebfb8c331c565aa7f9"
 DOCUMENT_BASELINE = "ee6da7625dae1e4101e06eb979a348610f39093b"
 PREDICATES = (
@@ -58,7 +58,7 @@ REQUIRED = (
     ".github/workflows/ci-convergence.yml",
     "src/cora/cli.py", "src/cora/continuous.py", "src/cora/reticulum.py",
     "src/cora/__init__.py", "tools/verify_documentation.py",
-    "cora.ontology.json", "cora.documentation-dod.json", "pyproject.toml",
+    "cora.ontology.json", ".cora/contracts/dod/documentation-dod.json", "pyproject.toml",
 )
 
 
@@ -231,7 +231,7 @@ def _semantic_oracles(store: SourceStore, errors: list[str]) -> None:
     commands, flags = _parser(cli)
     meta = tomllib.loads(r("pyproject.toml"))["project"]
     ont = store.json("cora.ontology.json")
-    dod = store.json("cora.documentation-dod.json")
+    dod = store.json(".cora/contracts/dod/documentation-dod.json")
     docs = store.json("docs/documentation-registry.json")
     policy = store.json(".cora/continuous-policy.json")
     document = {n["id"]: n for n in dod["nodes"]}
@@ -369,7 +369,7 @@ def inspect(repo: Path, revision: str = "HEAD") -> dict:
     errors: list[str] = []
     _ok(profile.get("schema") == "cora-documentation-proofs/1" and
         profile.get("baseline_sha") == BASELINE and
-        profile.get("contract_dod") == "cora.documentation-dod.json" and
+        profile.get("contract_dod") == ".cora/contracts/dod/documentation-dod.json" and
         profile.get("authority") ==
         "CANDIDATE_SOURCE_REPLAY_NOT_HOST_OR_HUMAN_ATTESTATION" and
         len(profile.get("nodes", [])) == 18 and

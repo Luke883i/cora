@@ -35,7 +35,7 @@ EXPECTED_EDGES = {
 
 
 def five_dod(repo: Path, commit: str) -> dict:
-    source = git(Path(repo), 'show', commit + ':cora.five-synergies-dod.json',
+    source = git(Path(repo), 'show', commit + ':.cora/contracts/dod/five-synergies-dod.json',
                  max_output=128 * 1024)
     contract = json.loads(source.decode('utf-8'))
     if (set(contract) != {

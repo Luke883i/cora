@@ -88,7 +88,7 @@ def _docs(repo,sha,tracked):
             'interpretation':'PATH_REFERENCES_NOT_SEMANTIC_OR_BEHAVIORAL_PROOF'}
 
 def _claims(repo,sha,tracked):
-    profile=_doc(repo,sha,'cora.documentation-proofs.json')
+    profile=_doc(repo,sha,'.cora/assurance/documentation-proofs.json')
     if profile.get('schema')!='cora-documentation-proofs/1':
         raise ValueError('wrong canonical claim contract')
     readme=git(repo,'show',sha+':README.md',max_output=196608).decode('utf-8')
@@ -159,9 +159,9 @@ def integrated_case(repo,revision='HEAD',*,artifacts=None,workflows=None,process
     verify_synthesis(repo,original,artifacts=artifacts,workflows=workflows,
                      process=process,hypotheses=hypotheses)
     sha=original['commit'];tracked=_paths(repo,sha)
-    atlas=_doc(repo,sha,'cora.capability-atlas.json')
-    methods=_doc(repo,sha,'cora.method-atlas.json')
-    types=_doc(repo,sha,'cora.type-assurance-profile.json')
+    atlas=_doc(repo,sha,'.cora/assurance/capability-atlas.json')
+    methods=_doc(repo,sha,'.cora/contracts/profiles/method-atlas.json')
+    types=_doc(repo,sha,'.cora/contracts/profiles/type-assurance-profile.json')
     cli=ast.parse(git(repo,'show',sha+':src/cora/cli.py',max_output=524288).decode())
     cmds={c.args[0].value for c in ast.walk(cli) if isinstance(c,ast.Call)
           and isinstance(c.func,ast.Attribute) and c.func.attr=='add_parser' and c.args

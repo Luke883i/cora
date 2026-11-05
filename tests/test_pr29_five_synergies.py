@@ -213,7 +213,7 @@ class FiveSynergiesTests(unittest.TestCase):
             git(local,'config','user.name','CORA physical mutant')
             git(local,'config','user.email','mutant@example.invalid')
             git(local,'checkout','-q',self.head)
-            dod=local/'cora.five-synergies-dod.json'
+            dod=local/'.cora/contracts/dod/five-synergies-dod.json'
             payload=json.loads(dod.read_text('utf-8'))
             next(x for x in payload['nodes'] if x['id']=='G_GOVERNED')['depends_on'].remove('E_HOST')
             dod.write_text(json.dumps(payload),encoding='utf-8')
@@ -224,7 +224,7 @@ class FiveSynergiesTests(unittest.TestCase):
             git(local,'checkout','-q',self.head)
             readme=local/'README.md'
             original=readme.read_text('utf-8')
-            claims=json.loads((local/'cora.documentation-proofs.json').read_text('utf-8'))
+            claims=json.loads((local/'.cora/assurance/documentation-proofs.json').read_text('utf-8'))
             phrase=claims['nodes'][0]['readme_phrase']
             self.assertIn(phrase,original)
             readme.write_text(original.replace(phrase,'MUTATED_UNSUPPORTED_PRODUCT_CLAIM',1),encoding='utf-8')

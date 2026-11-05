@@ -40,10 +40,14 @@ class LayoutSimplificationTests(unittest.TestCase):
     def test_01_lossless_archive_root_and_source_replay(self):
         report=LAYOUT.check(ROOT,self.head)
         self.assertEqual(report["root_before"],25)
-        self.assertEqual(report["root_after"],24)
+        self.assertEqual(report["root_after"],11)
         self.assertEqual(report["top_level_docs_removed"],14)
         self.assertEqual(report["historical_blobs_preserved"],14)
         self.assertEqual(report["fixture_blobs_preserved"],1)
+        self.assertEqual(report["internal_contract_blobs_preserved"],2)
+        self.assertEqual(report["thematic_byte_identical"],8)
+        self.assertEqual(report["thematic_structural_rewrites"],3)
+        self.assertEqual(report["remaining_root_cora_json"],2)
         self.assertEqual(report["registered_markdown"],48)
         self.assertEqual(report["historical_records"],17)
         self.assertEqual(report["cli_commands"],71)
@@ -131,6 +135,31 @@ class LayoutSimplificationTests(unittest.TestCase):
                 sha=change(local,moved_path,poison)
                 with self.assertRaisesRegex(ValueError,"internal DoD original Git blob changed"):
                     LAYOUT.check(local,sha)
+
+    def test_07_structural_catalog_mutation_and_routing_attack(self):
+        with tempfile.TemporaryDirectory() as directory:
+            repo=Path(directory)/"copy"
+            subprocess.run(["git","clone","--local","-q",str(ROOT),str(repo)],check=True)
+            git(repo,"config","user.name","CORA thematic source falsifier")
+            git(repo,"config","user.email","fixture@example.invalid")
+            git(repo,"checkout","-q",self.head)
+            catalog=".cora/assurance/capability-atlas.json"
+            def alter(payload):
+                data=json.loads(payload)
+                data["authority"]="FORGED_ACCEPTED"
+                return json.dumps(data,indent=2)
+            tampered=change(repo,catalog,alter)
+            with self.assertRaisesRegex(ValueError,"thematic Git source/target identity drift"):
+                LAYOUT.check(repo,tampered)
+            git(repo,"checkout","-q",self.head)
+            contract=".cora/contracts/index.json"
+            def forge_route(payload):
+                data=json.loads(payload)
+                next(r for r in data["bindings"] if r["logical"]=="cora.agent-dod.json")["canonical"]="cora.agent-dod.json"
+                return json.dumps(data,indent=2)
+            tampered=change(repo,contract,forge_route)
+            with self.assertRaisesRegex(ValueError,"logical contract path index"):
+                LAYOUT.check(repo,tampered)
 
     def test_05_link_and_atlas_integrity_also_existing_verifier(self):
         from cora.artifact_roles import artifact_audit

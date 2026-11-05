@@ -88,14 +88,14 @@ class RevisionBoundDocumentationTests(unittest.TestCase):
             ("parser-intent-disconnected", "src/cora/cli.py",
              lambda s: s.replace("'--intent'", "'--unbound-claim'"),
              "S04-S05:documented-cli-parser-missing"),
-            ("contract-claim-refuted", "cora.documentation-proofs.json",
+            ("contract-claim-refuted", ".cora/assurance/documentation-proofs.json",
              json_change(lambda j: j["nodes"][0].update(
                  {"readme_phrase": "CORA autonomously writes all software"})),
              "readme-claim-not-supported:S01"),
-            ("contract-falsifier-deleted", "cora.documentation-proofs.json",
+            ("contract-falsifier-deleted", ".cora/assurance/documentation-proofs.json",
              json_change(lambda j: j["nodes"][5].update({"falsifier": ""})),
              "missing-falsifier:S06"),
-            ("reticular-external-omitted", "cora.documentation-dod.json",
+            ("reticular-external-omitted", ".cora/contracts/dod/documentation-dod.json",
              json_change(lambda j: next(x for x in j["nodes"]
                  if x["id"] == "G_DOC_ACCEPTED")["depends_on"].remove("E03")),
              "S09:noncompensatory-dod-tampered"),

@@ -20,7 +20,7 @@ from cora.continuous import evaluate_contextual, verify_contextual_gate
 from cora.cli import main
 
 ROOT = Path(__file__).resolve().parents[1]
-CONTRACT = ROOT / "cora.convergence-dod.json"
+CONTRACT = ROOT / ".cora/contracts/dod/convergence-dod.json"
 
 
 def git(path: Path, *args: str) -> str:
@@ -79,8 +79,8 @@ class ConvergenceTest(unittest.TestCase):
         cls.profile = load_convergence_contract(CONTRACT)
 
     def test_one_canonical_kernel_preserves_both_legacy_profiles(self):
-        a = load_contract(ROOT / "cora.agent-dod.json")
-        g = load_gold_contract(ROOT / "cora.gold-assurance.json")
+        a = load_contract(ROOT / ".cora/contracts/dod/agent-dod.json")
+        g = load_gold_contract(ROOT / ".cora/contracts/dod/gold-assurance.json")
         self.assertEqual(len(backward_plan(a)["local_cut"]), 18)
         self.assertEqual(len(retrograde_gold(g)["local_cut"]), 12)
         self.assertEqual(len(backward_plan(a, goal="G_GOVERNED_AGENT")["local_cut"]), 24)

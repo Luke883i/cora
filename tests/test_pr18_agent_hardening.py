@@ -21,7 +21,7 @@ ROOT = Path(__file__).resolve().parents[1]
 class AgentHistoricalHardening(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.contract = load_contract(ROOT / "cora.agent-dod.json")
+        cls.contract = load_contract(ROOT / ".cora/contracts/dod/agent-dod.json")
 
     @staticmethod
     def claims():
