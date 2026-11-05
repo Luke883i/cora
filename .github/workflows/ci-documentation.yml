@@ -72,6 +72,20 @@ jobs:
           cora stress-convergence --integrated --require-full --output /tmp/cora-integrated-10m-replay.json
           cmp /tmp/cora-integrated-10m.json /tmp/cora-integrated-10m-replay.json
           python -c 'import json; r=json.load(open("/tmp/cora-integrated-10m.json")); assert r["status"]=="PASS_SCOPED_FINITE_MODEL" and r["cases"]==10000000 and len(r["families"])==32 and r["positive"]==625000 and r["negative"]==9375000 and r["mismatches"]==0 and r["unsafe_promotions"]==0 and r["physical_source_mutants"]==0 and r["review"]=="BLOCKED_EXTERNAL" and r["product"]=="BLOCKED_EXTERNAL"'
+      - name: Reconcile five synergic DoD goals against real original CORA source
+        run: |
+          test -d .git
+          BASE="$(git rev-parse HEAD^)"
+          cora method-synthesize . --synergic --revision HEAD --base-sha "$BASE" --execute-source-probes --output /tmp/cora-five-goals.json --ai-request-output /tmp/cora-five-ai-plan.json
+          cora verify-method-synthesis /tmp/cora-five-goals.json --repo . --synergic
+          python -m unittest discover -s tests -p 'test_pr29_five_synergies.py' -v
+          python -c 'import json; x=json.load(open("/tmp/cora-five-goals.json")); assert x["method_counts"]=={"commands":71,"families":8,"original_methods":14,"object_types":20,"abstraction_dimensions":12} and x["truth"]["verified_semantic_claims"]==0 and len(x["truth"]["claims"])==18 and x["behavior"]["source_probes_passed"]==3 and x["goals"]["G_UNIFIED"]=="SOURCE_CANDIDATE_NOT_PRODUCT_READY" and x["goals"]["G_GOVERNED"]=="BLOCKED_EXTERNAL" and x["reticulum"]["nodes"]==29 and x["authorization"]=="NONE" and not x["all_71_behaviors_proven"]'
+      - name: Falsify one million preseeded semantic cases twice on exact Git HEAD
+        run: |
+          cora stress-convergence --synergic --repo . --revision HEAD --sessions 10 --cases-per-session 100000 --require-full --output /tmp/cora-five-million.json
+          cora stress-convergence --synergic --repo . --revision HEAD --sessions 10 --cases-per-session 100000 --require-full --output /tmp/cora-five-million-replay.json
+          cmp /tmp/cora-five-million.json /tmp/cora-five-million-replay.json
+          python -c 'import json; x=json.load(open("/tmp/cora-five-million.json")); assert x["state"]=="PASS_SCOPED_SEEDED_MODEL" and x["cases"]==1000000 and x["families"]==32 and x["positive_controls"]==62500 and x["negative_scenarios"]==937500 and x["oracle_disagreements"]==0 and x["unauthorized_promotions"]==0 and x["physical_source_mutations"]==0 and x["external_status"]=="BLOCKED_EXTERNAL" and not x["product_ready"]'
       - name: Preserve revision-bound source receipts for review only
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -86,6 +100,10 @@ jobs:
             /tmp/cora-integrated-ai-request.json
             /tmp/cora-integrated-10m.json
             /tmp/cora-integrated-10m-replay.json
+            /tmp/cora-five-goals.json
+            /tmp/cora-five-ai-plan.json
+            /tmp/cora-five-million.json
+            /tmp/cora-five-million-replay.json
           if-no-files-found: warn
           retention-days: 14
       - name: Product / software / repository contracts and roles

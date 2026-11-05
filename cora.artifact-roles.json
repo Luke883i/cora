@@ -676,6 +676,39 @@
         "TEST"
       ],
       "rationale": "Exact-Git source regression, simulated AI and physical negative test witnesses."
+    },
+    {
+      "pattern": "src/cora/synergy.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Composite source-only five-synergies service; does not supersede original method or execution authority."
+    },
+    {
+      "pattern": "cora.five-synergies-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Explicit source/external retrograde AND lattice; cannot grant production or review approval."
+    },
+    {
+      "pattern": "tests/test_pr29_five_synergies.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Original Git source and negative controls for the five synergic development goals."
+    },
+    {
+      "pattern": "cora.five-synergies-mutants.json",
+      "roles": [
+        "FIXTURE",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Preseeded finite semantic fault classes and oracles; not physical mutations, independent attestation or production proof."
     }
   ]
 }

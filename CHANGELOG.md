@@ -1,5 +1,9 @@
 # Changelog — CORA
 
+## Candidate PR — five synergic source-assurance developments (unmerged)
+
+A 29-node retrograde DoD binds source-only README claim/test tracing, an explicitly authorized AI callback adapter, original CORA behavioral source probes, BASE-policy semantic delta/consumer triage and one reproducible service report using the existing 71-command CLI. A preseeded 1M finite semantic fault campaign is distinct from real Git source mutants and external product approval. This is a branch/PR candidate, not a public release.
+
 ## Candidate change (unmerged) — integrated source assurance
 
 The new candidate extends the existing `method-synthesize` entrypoint with bounded document/code claim correlation, AI request/response fencing, original 71-command parity and a 10M finite semantic falsification option. This is a PR candidate, not a published release or automatic product acceptance. PR #27 has merged into main; its source checks passed, while independent product/runtime gate claims remain separate.

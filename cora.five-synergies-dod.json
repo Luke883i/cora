@@ -1,0 +1,190 @@
+{
+  "schema": "cora-five-synergies-dod/1",
+  "authority": "NONE",
+  "source_goal": "G_UNIFIED",
+  "accepted_goal": "G_GOVERNED",
+  "external_status": "BLOCKED_EXTERNAL",
+  "interpretation": "BOUNDED_SOURCE_ASSURANCE_NOT_PRODUCT_CERTIFICATION",
+  "nodes": [
+    {
+      "id": "T_GIT",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "T_CLAIM",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "T_SYMBOL",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "T_TEST",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "A_PROMPT",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "A_GROUNDED",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "A_COUNTER",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "A_PROVIDER_OPTIN",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "B_PROBE",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "B_NEGATIVE",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "B_SCOPE",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "C_DIFF",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "C_IMPACT",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "C_POLICY",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "U_JOIN",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "U_REPLAY",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "U_STRESS",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "U_AUTHORITIES",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "G_TRUTH",
+      "depends_on": [
+        "T_GIT",
+        "T_CLAIM",
+        "T_SYMBOL",
+        "T_TEST"
+      ],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "G_AI",
+      "depends_on": [
+        "G_TRUTH",
+        "A_PROMPT",
+        "A_GROUNDED",
+        "A_COUNTER",
+        "A_PROVIDER_OPTIN"
+      ],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "G_BEHAVIOR",
+      "depends_on": [
+        "B_PROBE",
+        "B_NEGATIVE",
+        "B_SCOPE"
+      ],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "G_EVOLUTION",
+      "depends_on": [
+        "C_DIFF",
+        "C_IMPACT",
+        "C_POLICY"
+      ],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "G_UNIFIED",
+      "depends_on": [
+        "G_TRUTH",
+        "G_AI",
+        "G_BEHAVIOR",
+        "G_EVOLUTION",
+        "U_JOIN",
+        "U_REPLAY",
+        "U_STRESS",
+        "U_AUTHORITIES"
+      ],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "E_REAL_PROVIDER",
+      "depends_on": [],
+      "scope": "EXTERNAL"
+    },
+    {
+      "id": "E_ALL_FEATURES",
+      "depends_on": [],
+      "scope": "EXTERNAL"
+    },
+    {
+      "id": "E_INDEPENDENT_REVIEW",
+      "depends_on": [],
+      "scope": "EXTERNAL"
+    },
+    {
+      "id": "E_TARGET_RUNTIME",
+      "depends_on": [],
+      "scope": "EXTERNAL"
+    },
+    {
+      "id": "E_HOST",
+      "depends_on": [],
+      "scope": "EXTERNAL"
+    },
+    {
+      "id": "G_GOVERNED",
+      "depends_on": [
+        "G_UNIFIED",
+        "E_REAL_PROVIDER",
+        "E_ALL_FEATURES",
+        "E_INDEPENDENT_REVIEW",
+        "E_TARGET_RUNTIME",
+        "E_HOST"
+      ],
+      "scope": "EXTERNAL"
+    }
+  ]
+}

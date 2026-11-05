@@ -48,6 +48,7 @@ from .gold_effects import audit_workflow, reconcile_effect_claim
 from .workflow_rationalization import audit_workflows, verify_workflows
 from .method_synthesis import synthesize, verify_synthesis, analyst_request
 from .integrated_service import integrated_case, verify_integrated, ai_request as integrated_ai_request, stress_integrated
+from .synergy import unified_assurance, verify_unified_assurance, stress_five_synergies
 from .gold_saturation import gold_saturation
 from .gold_assurance import load_convergence_contract, convergent_plan
 from .gold_saturation import saturate_convergence
@@ -122,6 +123,10 @@ def main(argv: list[str] | None = None) -> int:
     cs.add_argument('--cases-per-session', type=int, default=1000000)
     cs.add_argument('--require-full', action='store_true')
     cs.add_argument('--integrated', action='store_true', help='10M bounded integrated semantic model, not target mutants')
+    cs.add_argument('--synergic', action='store_true', help='1M preseeded five-goal semantic model cases; no target execution')
+    cs.add_argument('--repo', type=Path, default=Path('.'))
+    cs.add_argument('--revision', default='HEAD')
+    cs.add_argument('--seed', type=int, default=883)
     cs.add_argument('--output', type=Path)
     za = sub.add_parser('zip-intake', help='Bounded untrusted ZIP preflight: no execution, history unavailable')
     za.add_argument('archive', type=Path)
@@ -420,6 +425,9 @@ def main(argv: list[str] | None = None) -> int:
     ms.add_argument('--hypotheses', type=Path, help='Optional untrusted AI hypothesis envelope')
     ms.add_argument('--analyst-request', type=Path, help='Source-free bounded case questions')
     ms.add_argument('--integrated', action='store_true', help='Original method + doc/implementation case, source-only')
+    ms.add_argument('--synergic', action='store_true', help='Five source-bound synergic goals through original methods')
+    ms.add_argument('--base-sha', help='Original BASE for continuous semantic evolution')
+    ms.add_argument('--execute-source-probes', action='store_true', help='Opt-in three safe original CORA Git source probes')
     ms.add_argument('--ai-observations', type=Path, help='Untrusted source-bound AI answer; never approval')
     ms.add_argument('--ai-request-output', type=Path, help='Export reticular AI questions; no provider call')
     ms.add_argument('--output', type=Path)
@@ -431,6 +439,7 @@ def main(argv: list[str] | None = None) -> int:
     mv.add_argument('--process', type=Path)
     mv.add_argument('--hypotheses', type=Path)
     mv.add_argument('--integrated', action='store_true', help='Recompute integrated source case from original Git')
+    mv.add_argument('--synergic', action='store_true', help='Replay five-goal source case and safe original Git probes')
     mv.add_argument('--ai-observations', type=Path, help='Original untrusted AI envelope for replay')
     mv.add_argument('--output', type=Path)
     g = sub.add_parser('snapshot')
@@ -472,7 +481,15 @@ def main(argv: list[str] | None = None) -> int:
             result=convergent_plan(contract,args.goal)
             code=0
         elif args.cmd == 'stress-convergence':
-            if args.integrated:
+            if args.synergic:
+                if args.integrated:
+                    raise ValueError('choose only one finite model')
+                cases=args.sessions*args.cases_per_session
+                if args.require_full and cases!=1000000:
+                    raise ValueError('five-goal require-full means one million preseeded cases')
+                result=stress_five_synergies(args.repo,args.revision,cases=cases,seed=args.seed)
+                code=0 if result['state']=='PASS_SCOPED_SEEDED_MODEL' else 2
+            elif args.integrated:
                 cases=args.sessions*args.cases_per_session
                 if args.require_full and cases!=10000000:
                     raise ValueError('integrated require-full needs exactly 10M finite cases')
@@ -795,7 +812,18 @@ def main(argv: list[str] | None = None) -> int:
             for key in ('artifacts','workflows','process','hypotheses'):
                 path = getattr(args, key)
                 loaded[key] = json.loads(path.read_text('utf-8')) if path else None
-            if args.integrated:
+            if args.synergic:
+                if args.integrated or any(x is not None for x in loaded.values()):
+                    raise ValueError('five-goal service owns original source receipts; no conflicting modes')
+                ai=json.loads(args.ai_observations.read_text('utf-8')) if args.ai_observations else None
+                result=unified_assurance(args.repo,args.revision,base=args.base_sha,
+                                         ai=ai,execute_probes=args.execute_source_probes)
+                request=result['reasoning_plan']
+                if args.ai_request_output:
+                    args.ai_request_output.write_text(json.dumps(request,sort_keys=True,indent=2)+'\n',encoding='utf-8')
+                if args.analyst_request:
+                    args.analyst_request.write_text(json.dumps(request,sort_keys=True,indent=2)+'\n',encoding='utf-8')
+            elif args.integrated:
                 ai=json.loads(args.ai_observations.read_text('utf-8')) if args.ai_observations else None
                 result=integrated_case(args.repo,args.revision,**loaded,ai=ai)
                 if args.ai_request_output:
@@ -815,7 +843,16 @@ def main(argv: list[str] | None = None) -> int:
             for key in ('artifacts','workflows','process','hypotheses'):
                 path = getattr(args, key)
                 loaded[key] = json.loads(path.read_text('utf-8')) if path else None
-            if args.integrated:
+            if args.synergic:
+                if args.integrated or any(x is not None for x in loaded.values()):
+                    raise ValueError('five-goal replay cannot mix original report operands')
+                ai=json.loads(args.ai_observations.read_text('utf-8')) if args.ai_observations else None
+                verify_unified_assurance(args.repo,original,ai=ai)
+                result={'schema':'cora-five-synergies-replay/1','commit':original['commit'],
+                        'receipt_digest':original['receipt_digest'],
+                        'status':'REPLAYED_ORIGINAL_GIT_SOURCE_NOT_PRODUCT',
+                        'authorization':'NONE'}
+            elif args.integrated:
                 ai=json.loads(args.ai_observations.read_text('utf-8')) if args.ai_observations else None
                 verify_integrated(args.repo,original,**loaded,ai=ai)
                 result={'schema':'cora-integrated-case-replay/1','commit':original['commit'],

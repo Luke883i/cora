@@ -614,6 +614,7 @@
       "src/cora/selection.py",
       "src/cora/selection_stress.py",
       "src/cora/semantic_lattice.py",
+      "src/cora/synergy.py",
       "src/cora/transform.py",
       "src/cora/transform_stress.py",
       "src/cora/workflow_rationalization.py"
@@ -656,6 +657,8 @@
       "cora.convergence-dod.json",
       "cora.documentation-dod.json",
       "cora.documentation-proofs.json",
+      "cora.five-synergies-dod.json",
+      "cora.five-synergies-mutants.json",
       "cora.gold-assurance.json",
       "cora.integrated-dod.json",
       "cora.method-atlas.json",
@@ -748,6 +751,7 @@
       "tests/test_pr26_capability_atlas.py",
       "tests/test_pr27_type_assurance.py",
       "tests/test_pr28_integrated_service.py",
+      "tests/test_pr29_five_synergies.py",
       "tests/test_selection.py"
     ]
   },
