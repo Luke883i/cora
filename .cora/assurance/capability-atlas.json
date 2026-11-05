@@ -581,6 +581,7 @@
       "src/cora/artifact_roles.py",
       "src/cora/artifact_saturation.py",
       "src/cora/audit.py",
+      "src/cora/ci_repro.py",
       "src/cora/cli.py",
       "src/cora/closure.py",
       "src/cora/closure_stress.py",
@@ -744,6 +745,7 @@
       "tests/test_pr30_layout_simplification.py",
       "tests/test_pr31_maturity_atlas.py",
       "tests/test_pr32_host_release.py",
+      "tests/test_pr33_ci_repro.py",
       "tests/test_selection.py"
     ],
     "internal_dod": [
@@ -757,6 +759,7 @@
       ".cora/contracts/dod/maturity-dod.json",
       ".cora/contracts/dod/method-synthesis-dod.json",
       ".cora/contracts/dod/postmerge-release-dod.json",
+      ".cora/contracts/dod/postmerge-repro-dod.json",
       ".cora/contracts/dod/workflow-dod.json"
     ],
     "internal_profiles": [

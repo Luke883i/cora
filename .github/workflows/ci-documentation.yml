@@ -47,6 +47,9 @@ jobs:
           python -c 'import json; p=json.load(open("/tmp/cora-doc-proofs.json")); assert p["source_status"]=="PASS_SCOPED_SOURCE" and p["source_claim_count"]==18 and p["governed_status"]=="BLOCKED_EXTERNAL" and p["authorization"]=="NONE" and not p["host_review_attested"]'
       - name: Falsify physical Git-committed semantic, source, DoD and CI mutants
         run: python -m unittest discover -s tests -p 'test_pr22_documentation_proofs.py' -v
+      - name: PR33 independent PR26 Git fixture repeatability samples
+        run: |
+          python -m cora.ci_repro --repo . --sha "$(git rev-parse HEAD)" --repetitions 3 --group PR26_CAPABILITY_MUTANTS --output /tmp/cora-pr33-capability-repeats.json
       - name: Qualify all CLI capability bindings and falsify committed mutants
         run: |
           python tools/verify_capability_atlas.py --repo . --revision HEAD --output /tmp/cora-capabilities.json
@@ -122,6 +125,7 @@ jobs:
             /tmp/cora-integrated-10m-replay.json
             /tmp/cora-five-goals.json
             /tmp/cora-five-ai-plan.json
+            /tmp/cora-pr33-capability-repeats.json
             /tmp/cora-pr31-source.json
             /tmp/cora-pr31-atlas.json
             /tmp/cora-pr31-atlas.html

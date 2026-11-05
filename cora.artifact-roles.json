@@ -934,6 +934,31 @@
         "TEST"
       ],
       "rationale": "Physical original-Git DoD mutation and live GitHub governance snapshot negative tests, no release authority."
+    },
+    {
+      "pattern": ".cora/contracts/dod/postmerge-repro-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Noncompensatory source/external postmerge reproducibility and release governance proof obligations."
+    },
+    {
+      "pattern": "src/cora/ci_repro.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Read-only Git-bound measured repeatability probe for existing PR25/PR26 tests; never independent RCA or release authority."
+    },
+    {
+      "pattern": "tests/test_pr33_ci_repro.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Original Git DoD edge mutants, token isolation and sample-metric anti-masking regressions."
     }
   ]
 }

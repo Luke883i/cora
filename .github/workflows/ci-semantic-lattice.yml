@@ -41,6 +41,11 @@ jobs:
           cora verify-artifacts /tmp/cora-artifacts.json --repo .
           cora snapshot . --revision HEAD --output /tmp/cora-snapshot.json
           cora verify-ledger /tmp/cora-snapshot.json --repo .
+      - name: PR33 original Git fixture metrics and negative-contract regressions
+        run: |
+          python -m unittest discover -s tests -p 'test_pr33_ci_repro.py' -q
+          python -m cora.ci_repro --repo . --sha "$(git rev-parse HEAD)" --repetitions 3 --output /tmp/cora-pr33-measured.json
+          python -c 'import json; a=json.load(open("/tmp/cora-pr33-measured.json")); assert a["sample_total"]==6 and a["failures_total"]==0 and a["postmerge_status"]=="BLOCKED_EXTERNAL" and a["root_cause"]=="NOT_ATTESTED" and a["authorization"]=="NONE"'
       - name: C6-C7 full unit regression with measured branch coverage
         run: coverage run --branch --source=src/cora -m unittest discover -s tests -q
       - name: Reproduce PR25 original-Git physical mutants three times (no retry masking)
@@ -90,6 +95,7 @@ jobs:
             /tmp/cora-roles.json
             /tmp/cora-artifacts.json
             /tmp/cora-snapshot.json
+            /tmp/cora-pr33-measured.json
             /tmp/cora-coverage.json
             /tmp/cora-coverage-floor.json
             /tmp/cora-git-benchmark.json

@@ -84,3 +84,20 @@ Run `cora workflow-audit . --revision HEAD --output /tmp/workflows.json` and `co
 The [method atlas](../.cora/contracts/profiles/method-atlas.json) connects fourteen CORA procedures to nine industry methods as inspiration, **not standards certification**. The [AND DoD](../.cora/contracts/dod/method-synthesis-dod.json) keeps seven source obligations distinct from four external requirements. A workflow role disagreement is `SOURCE_CONTRADICTION`; a shared caller is `OBSERVED_SOURCE_RELATION`; a proposed workflow adjustment is `INFERRED_REVIEW_ONLY`; unavailable process evidence is `OBSERVED_SOURCE_GAP`. The analyst request embeds bounded questions rather than source code or a purported LLM conclusion.
 
 Do not interpret shared inputs as equivalent executions, source proofs as release attestation, or typed AI suggestions as authenticated facts. Real usability, maintained-target behavior, independent host/reviewer authority and postmerge effects remain outside this source-only case.
+
+## PR33 — measurable post-merge forensics, not synthetic release approval
+
+**Objective:** diagnose the recurring post-merge PR25 and PR26 original-Git falsifier failures using complete, attributable repeated observations, rather than one green rerun. Use `python -m cora.ci_repro --repo . --sha "$(git rev-parse HEAD)" --repetitions 3 --output /tmp/cora-pr33-measured.json` from a clean, authorized CORA checkout. The runner executes the two original test cohorts (PR25 and PR26) in three separate child interpreters each, without `shell=True` and without forwarding GitHub API tokens. All outcomes, including failed attempts and timeouts, are counted; later PASS cannot erase any FAIL.
+
+### Quantitative checklist and gate ownership
+
+| Gate | Metric or condition | Evidence / acceptance |
+|---|---|---|
+| R1 — Git identity | Full source `commit`, Git `tree`, exact checkout HEAD | Git original object reads; a tree match does not equate distinct commits |
+| R2 — Environment parity | Python 3.11 & 3.13, Git version, coverage version, dependency SHA-256 | Per-job report and human check for parity; no environment assumptions |
+| R3 — Git mutation coverage | PR25 and PR26 cohorts, >=3 invocations each per Python | Six samples per matrix job; runner reports every return code |
+| R4 — No masked failures | 0 failed or timed-out attempts; sample failure rate 0 | Any nonzero or timeout => `FAIL_OBSERVED` and nonzero CI exit |
+| R5 — Traceability | Failed test IDs, stderr fingerprint, elapsed min/max/p95 | Attribution to exact SHA, job and source. Original trace in Actions logs |
+| R6 — Independent RCA and delivery | Reproduction + validated counterexample, reviewed final-main CI, protected main, independent reviewer | External gate; cannot be closed by a probe report |
+
+**Limit:** `PASS_SCOPED_REPEATABILITY_SAMPLE` means only the observed cohorts passed in that finite sample; it is not statistical proof that a flaky test no longer exists or that a root cause was found. `original_contract()` rechecks the Git-committed 21-node, noncompensatory [postmerge DoD](../.cora/contracts/dod/postmerge-repro-dod.json); source/model observations remain separate from independently observed merge, human approval and real release. Report's status never grants authorization. Compare unmodified CI logs across jobs before filing an independent root-cause conclusion.

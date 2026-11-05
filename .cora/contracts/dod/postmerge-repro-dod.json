@@ -1,0 +1,215 @@
+{
+  "schema": "cora-postmerge-repro-dod/1",
+  "authority": "NONE",
+  "status": "SOURCE_CONTRACT_NOT_EXECUTION_PROOF",
+  "global_goal": "G_QUALIFIED",
+  "logic": "NONCOMPENSATORY_AND",
+  "abstract_goal": "Every post-merge CI anomaly is attributable to exact Git and environment, recurrent original-Git tests are quantified without retry masking, and release governance cannot be synthesized from a green source report.",
+  "metrics": {
+    "required_groups": [
+      "PR25_GIT_MUTANTS",
+      "PR26_CAPABILITY_MUTANTS"
+    ],
+    "required_python": [
+      "3.11",
+      "3.13"
+    ],
+    "min_repetitions_per_group_per_python": 3,
+    "max_observed_failures": 0,
+    "required_git_identity": [
+      "commit",
+      "tree"
+    ],
+    "external_root_cause": "INDEPENDENT_ATTESTATION_REQUIRED",
+    "required_host_enforcement": true
+  },
+  "rules": [
+    "Every repeated test attempt is retained, even if later passes.",
+    "A valid JSON source receipt is not proof of successful independent execution.",
+    "A matching Git tree does not imply the same commit history.",
+    "The model cannot prove or assume independent RCA; unobserved postmerge must stay BLOCKED_EXTERNAL.",
+    "No tag, release, merge, deployment, or independent approval is authorized."
+  ],
+  "nodes": [
+    {
+      "id": "L_COMMIT",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Original commit fully resolved; no PR title hash.",
+      "witness_paths": [
+        "src/cora/git_snapshot.py"
+      ]
+    },
+    {
+      "id": "L_TREE",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Commit/tree identity separated and witnessed.",
+      "witness_paths": [
+        "src/cora/git_snapshot.py"
+      ]
+    },
+    {
+      "id": "L_ENVIRONMENT",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Python, Git, coverage and dependency fingerprint recorded for each run.",
+      "witness_paths": [
+        "src/cora/ci_repro.py"
+      ]
+    },
+    {
+      "id": "L_COMMAND",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Exactly known test commands with no shell, pinned root.",
+      "witness_paths": [
+        "src/cora/ci_repro.py"
+      ]
+    },
+    {
+      "id": "L_PR25_REPEATS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Three independent tests of original Git PR25 mutants.",
+      "witness_paths": [
+        "tests/test_pr25_method_synthesis.py"
+      ]
+    },
+    {
+      "id": "L_PR26_REPEATS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Three independent tests of PR26 original Git capability mutants.",
+      "witness_paths": [
+        "tests/test_pr26_capability_atlas.py"
+      ]
+    },
+    {
+      "id": "L_METRIC_FLOORS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Samples, failure fraction and duration, strict 0 observed failures threshold.",
+      "witness_paths": [
+        "src/cora/ci_repro.py"
+      ]
+    },
+    {
+      "id": "L_FAIL_CLOSED",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Nonzero exit, timeouts and missing evidence never become PASS.",
+      "witness_paths": [
+        "src/cora/ci_repro.py"
+      ]
+    },
+    {
+      "id": "L_LOG_FINGERPRINT",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Per-attempt exception/test IDs and hashed stderr without claiming root cause.",
+      "witness_paths": [
+        "src/cora/ci_repro.py"
+      ]
+    },
+    {
+      "id": "E_MAIN_POSTMERGE",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "Observe successful exact final merge SHA independent of PR HEAD."
+    },
+    {
+      "id": "E_RCA_VERIFIED",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "Independent root-cause explanation and reproduction/negative-control evidence."
+    },
+    {
+      "id": "E_REVIEWER",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "Independent non-author authenticated review."
+    },
+    {
+      "id": "E_REQUIRED_CHECKS",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "Active hosted required checks and branch protection."
+    },
+    {
+      "id": "E_RELEASE_OWNER",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "Human release approval and verified distribution provenance."
+    },
+    {
+      "id": "G_GIT_IDENTITY",
+      "scope": "SOURCE",
+      "depends_on": [
+        "L_COMMIT",
+        "L_TREE"
+      ],
+      "description": "g git identity"
+    },
+    {
+      "id": "G_ENV_PARITY",
+      "scope": "SOURCE",
+      "depends_on": [
+        "L_ENVIRONMENT",
+        "L_COMMAND"
+      ],
+      "description": "g env parity"
+    },
+    {
+      "id": "G_REPETITION",
+      "scope": "SOURCE",
+      "depends_on": [
+        "L_PR25_REPEATS",
+        "L_PR26_REPEATS",
+        "L_METRIC_FLOORS"
+      ],
+      "description": "g repetition"
+    },
+    {
+      "id": "G_DIAGNOSTICS",
+      "scope": "SOURCE",
+      "depends_on": [
+        "L_FAIL_CLOSED",
+        "L_LOG_FINGERPRINT"
+      ],
+      "description": "g diagnostics"
+    },
+    {
+      "id": "G_POSTMERGE_REPRODUCIBLE",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "G_GIT_IDENTITY",
+        "G_ENV_PARITY",
+        "G_REPETITION",
+        "G_DIAGNOSTICS",
+        "E_MAIN_POSTMERGE",
+        "E_RCA_VERIFIED"
+      ],
+      "description": "g postmerge reproducible"
+    },
+    {
+      "id": "G_RELEASE_GOVERNANCE",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "E_REVIEWER",
+        "E_REQUIRED_CHECKS",
+        "E_RELEASE_OWNER"
+      ],
+      "description": "g release governance"
+    },
+    {
+      "id": "G_QUALIFIED",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "G_POSTMERGE_REPRODUCIBLE",
+        "G_RELEASE_GOVERNANCE"
+      ],
+      "description": "g qualified"
+    }
+  ]
+}
