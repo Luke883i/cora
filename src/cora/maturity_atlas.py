@@ -64,6 +64,13 @@ def _validate_nodes(contract: dict, tree: dict[str, str]) -> tuple[dict, dict]:
             or len(set(gates)) != 6
             or by["G_MATURITY"]["depends_on"] != gates):
         raise ValueError("six mandatory noncompensatory gates changed")
+    mandatory_external = {"E_RELEASE_ACCEPTANCE", "E_REAL_BENCHMARK", "E_ORACLE_INDEPENDENCE",
+                          "E_PROTECTED_MAIN", "E_REVIEW_IDENTITY", "E_NOVICE_TASK",
+                          "E_LONGITUDINAL_TARGET", "E_ROLLBACK_PROOF"}
+    if any(by[key]["scope"] != "EXTERNAL" or by[key]["depends_on"] for key in mandatory_external):
+        raise ValueError("mandatory external assurance leaf cannot be promoted")
+    if any(by[g]["scope"] != ("SOURCE" if g == "G2_SOURCE_INTEGRITY" else "EXTERNAL") for g in gates):
+        raise ValueError("source/external gate ownership drift")
     for x in nodes:
         if x.get("scope") not in ("SOURCE", "EXTERNAL"):
             raise ValueError("invalid maturity scope")
@@ -316,33 +323,33 @@ footer{{font-size:12px;color:var(--muted);margin-top:48px;overflow-wrap:anywhere
 <nav><a href="#overview">Panoramica</a><a href="#maturity">Reticolo DoD</a>
 <a href="#catalog">Attività e comandi</a><a href="#methods">Metodi</a>
 <a href="#inventory">Artefatti e CI</a><a href="#lineage">Lineage</a><a href="#reading">Uso responsabile</a></nav></aside>
-<main><header class="hero" id="overview"><span class="kicker">ATLAS / {{_safe(atlas['identity']['distribution_version'])}}</span>
+<main><header class="hero" id="overview"><span class="kicker">ATLAS / {_safe(atlas['identity']['distribution_version'])}</span>
 <h1>Una mappa per capire<br>e usare CORA.</h1>
 <p>Superficie funzionale integrata, fonti originali, test dichiarati, obbligazioni di maturità e limiti verificabili.
 Il coding agent implementa: CORA organizza quello che resta da dimostrare.</p>
 <span class="status">Source candidate · non è certificazione o autorizzazione</span>
-<p class="small">Commit esatto <code style="color:#fff">{{_safe(commit)}}</code></p></header>
-<div class="metrics">{{metrics}}</div>
+<p class="small">Commit esatto <code style="color:#fff">{_safe(commit)}</code></p></header>
+<div class="metrics">{metrics}</div>
 <section id="maturity"><h2>01 · Reticolo di maturità</h2>
 <p>Sei condizioni necessarie. Un modello sorgente non può trasformare un controllo esterno in PASS.</p>
-<div class="panel">{{''.join(gate_rows)}}<p class="small muted">Stato globale: {{_safe(atlas['maturity']['assessment']['status'])}} · Autorità: NONE · Il modello non attesta il passaggio dei test.</p></div>
-<p class="small">{{link(DOD_PATH, "Contratto DoD originale e derivazione retrograda")}}</p></section>
+<div class="panel">{''.join(gate_rows)}<p class="small muted">Stato globale: {_safe(atlas['maturity']['assessment']['status'])} · Autorità: NONE · Il modello non attesta il passaggio dei test.</p></div>
+<p class="small">{link(DOD_PATH, "Contratto DoD originale e derivazione retrograda")}</p></section>
 <section id="catalog"><h2>02 · Attività e comandi</h2>
-<p>Inventario esaustivo dei {{len(atlas['capabilities'])}} comandi dichiarati, non di {{len(atlas['capabilities'])}} comportamenti provati.
+<p>Inventario esaustivo dei {len(atlas['capabilities'])} comandi dichiarati, non di {len(atlas['capabilities'])} comportamenti provati.
 Ogni attività collega implementazione, test sorgente, metodo e perimetro di interazione.</p>
 <label for="find">Cerca un comando, attività, modulo o metodo</label>
 <input id="find" type="search" placeholder="Es. audit, replay, runtime, merge…" autocomplete="off">
 <p class="filter-tip" id="visible-count" aria-live="polite">Visualizzazione completa.</p>
-{{''.join(cards)}}</section>
+{''.join(cards)}</section>
 <section id="methods"><h2>03 · Metodi canonici</h2>
 <div class="panel"><p>Le 14 procedure conservano i loro owner software; l'atlante non costruisce un nuovo motore di inferenza.</p>
-<ul>{{methods}}</ul></div></section>
+<ul>{methods}</ul></div></section>
 <section id="inventory"><h2>04 · Inventario completo di sorgenti e verifiche</h2>
-<div class="panel"><p>Indici Git del commit esatto: sorgenti, CI, test, contratti e documentazione. Presenza di file ≠ esecuzione.</p>{{inventory}}</div></section>
+<div class="panel"><p>Indici Git del commit esatto: sorgenti, CI, test, contratti e documentazione. Presenza di file ≠ esecuzione.</p>{inventory}</div></section>
 <section id="lineage"><h2>05 · Provenienza e dipendenze comuni</h2>
-<div class="panel"><p><strong>{{atlas['lineage']['unique_git_origins']}}</strong> blob Git distinti nel mapping CLI/test.
+<div class="panel"><p><strong>{atlas['lineage']['unique_git_origins']}</strong> blob Git distinti nel mapping CLI/test.
 <strong>0</strong> conferme indipendenti: due metodi che condividono un blob non costituiscono due osservazioni indipendenti.</p>
-<details><summary>Mostra esempi di fonti condivise</summary><ul>{{share}}</ul></details></div></section>
+<details><summary>Mostra esempi di fonti condivise</summary><ul>{share}</ul></details></div></section>
 <section id="reading"><h2>06 · Come usare CORA responsabilmente</h2>
 <div class="cols"><div class="panel"><h3>Per l'utilizzatore</h3><p>Parti dalla famiglia di attività, leggi la guida e il contratto.
 Esegui il comando in un checkout autorizzato; verifica il report al medesimo commit e richiedi test indipendenti.</p></div>
@@ -350,8 +357,8 @@ Esegui il comando in un checkout autorizzato; verifica il report al medesimo com
 Formula ipotesi falsificabili; non chiamare una descrizione o un hash prova comportamentale o approvazione.</p></div></div>
 <p class="note">Non vengono eseguiti test target, Docker o provider AI per creare questa pagina. La release è un candidato alpha;
 protezione host, adozione e validità real-world rimangono esterne.</p>
-<p>{{link("docs/CONVERGENT_ASSURANCE.md","Metodo integrato")}} · {{link("AGENTS.md","Regole per agenti")}} · {{link("README.md","Presentazione del prodotto")}}</p></section>
-<footer>{{_safe(HTML_MARKER)}} · source receipt {{_safe(atlas['source_receipt_digest'])}} · atlas digest {{_safe(atlas['atlas_digest'])}}
+<p>{link("docs/CONVERGENT_ASSURANCE.md","Metodo integrato")} · {link("AGENTS.md","Regole per agenti")} · {link("README.md","Presentazione del prodotto")}</p></section>
+<footer>{_safe(HTML_MARKER)} · source receipt {_safe(atlas['source_receipt_digest'])} · atlas digest {_safe(atlas['atlas_digest'])}
 <br>HTML autocontenuto, filtri locali. I link alle fonti Git richiedono accesso autorizzato al repository.</footer>
 </main></div>
 <script>
@@ -379,7 +386,7 @@ protezione host, adozione e validità real-world rimangono esterne.</p>
 </script></body></html>
 """
     # Fail closed on accidental unescaped Python interpolation placeholders.
-    if "{{" in body or "}}" in body:
+    if any(token in body for token in ("{metrics}", "{methods}", "{inventory}", "{_safe(", "{link(")):
         raise ValueError("unrendered atlas template placeholders")
     return body
 
