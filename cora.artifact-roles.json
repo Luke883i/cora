@@ -705,8 +705,8 @@
     {
       "pattern": "cora.five-synergies-mutants.json",
       "roles": [
-        "PRODUCT_CONTRACT",
-        "FIXTURE"
+        "FIXTURE",
+        "PRODUCT_CONTRACT"
       ],
       "rationale": "Preseeded finite semantic fault classes and oracles; not physical mutations, independent attestation or production proof."
     }
