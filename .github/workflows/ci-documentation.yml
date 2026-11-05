@@ -86,6 +86,18 @@ jobs:
           cora stress-convergence --synergic --repo . --revision HEAD --sessions 10 --cases-per-session 100000 --require-full --output /tmp/cora-five-million-replay.json
           cmp /tmp/cora-five-million.json /tmp/cora-five-million-replay.json
           python -c 'import json; x=json.load(open("/tmp/cora-five-million.json")); assert x["state"]=="PASS_SCOPED_SEEDED_MODEL" and x["cases"]==1000000 and x["families"]==32 and x["positive_controls"]==62500 and x["negative_scenarios"]==937500 and x["oracle_disagreements"]==0 and x["unauthorized_promotions"]==0 and x["physical_source_mutations"]==0 and x["external_status"]=="BLOCKED_EXTERNAL" and not x["product_ready"]'
+      - name: Qualify lossless root simplification and archival source DoD
+        run: |
+          python tools/verify_layout_simplification.py --repo . --revision HEAD --output /tmp/cora-layout-proof.json
+          python tools/verify_layout_simplification.py --repo . --revision HEAD --replay /tmp/cora-layout-proof.json > /tmp/cora-layout-replayed.json
+          python -m unittest discover -s tests -p 'test_pr30_layout_simplification.py' -v
+          python -c 'import json; x=json.load(open("/tmp/cora-layout-proof.json")); assert x["root_before"]==25 and x["root_after"]==24 and x["top_level_docs_removed"]==14 and x["historical_blobs_preserved"]==14 and x["historical_records"]==17 and x["registered_markdown"]==48 and x["cli_commands"]==71 and x["dod"]["nodes"]==23 and x["authorization"]=="NONE" and x["safe_deletion"]=="NOT_AUTHORIZED"'
+      - name: Falsify ten thousand preseeded layout semantic cases twice
+        run: |
+          python tools/verify_layout_simplification.py --repo . --revision HEAD --stress --cases 10000 --seed 883 --output /tmp/cora-layout-stress.json
+          python tools/verify_layout_simplification.py --repo . --revision HEAD --stress --cases 10000 --seed 883 --output /tmp/cora-layout-stress-replay.json
+          cmp /tmp/cora-layout-stress.json /tmp/cora-layout-stress-replay.json
+          python -c 'import json; x=json.load(open("/tmp/cora-layout-stress.json")); assert x["status"]=="PASS_SCOPED_PRESEEDED_FINITE_MODEL" and x["cases"]==10000 and x["families"]==32 and x["positive_controls"]==626 and x["negative_scenarios"]==9374 and x["oracle_disagreements"]==0 and x["unauthorized_promotions"]==0 and x["actual_git_source_mutants"]==0 and x["external"]=="BLOCKED_EXTERNAL" and x["authorization"]=="NONE"'
       - name: Preserve revision-bound source receipts for review only
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -104,6 +116,10 @@ jobs:
             /tmp/cora-five-ai-plan.json
             /tmp/cora-five-million.json
             /tmp/cora-five-million-replay.json
+            /tmp/cora-layout-proof.json
+            /tmp/cora-layout-replayed.json
+            /tmp/cora-layout-stress.json
+            /tmp/cora-layout-stress-replay.json
           if-no-files-found: warn
           retention-days: 14
       - name: Product / software / repository contracts and roles

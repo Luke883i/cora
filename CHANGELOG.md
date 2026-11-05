@@ -1,5 +1,9 @@
 # Changelog — CORA
 
+## Candidate source refactor — root and historical archive (PR draft)
+
+CORA-on-CORA lossless navigation change: 14 historical Markdown documents move to `docs/archive/{decisions,audits,dod}` without changing their Git blob identities; the finite five-synergy mutation corpus moves from root to `.cora/fixtures/`. Three relative-link-dependent historical records remain untouched. README describes root conventions; the canonical registry, role inventory and existing test/CLI links are reconciled. The layout DoD is source-only, with 10k deterministic preseeded semantic cases (not 10k physical Git rewrites). Release/host and external consumer behavior remain blocked.
+
 ## Candidate PR — five synergic source-assurance developments (unmerged)
 
 A 29-node retrograde DoD binds source-only README claim/test tracing, an explicitly authorized AI callback adapter, original CORA behavioral source probes, BASE-policy semantic delta/consumer triage and one reproducible service report using the existing 71-command CLI. A preseeded 1M finite semantic fault campaign is distinct from real Git source mutants and external product approval. This is a branch/PR candidate, not a public release.
