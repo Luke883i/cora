@@ -76,10 +76,10 @@ class DocumentationDoDTests(unittest.TestCase):
              lambda j: j["documents"].append(copy.deepcopy(j["documents"][0]))),
              "duplicate-or-wrong-document-count"),
             ("historical-identity-promoted", lambda: registry_mutate(
-             lambda j: next(x for x in j["documents"] if x["path"] == "docs/ADR-PR01.md").update(
-                 {"status": "CURRENT"})), "historical-authority-promoted:docs/ADR-PR01.md"),
-            ("historical-source-edited", lambda: change("docs/ADR-PR01.md",
-             lambda x: x + "\nModified historical content\n"), "historical-content-changed:docs/ADR-PR01.md"),
+             lambda j: next(x for x in j["documents"] if x["path"] == "docs/archive/decisions/ADR-PR01.md").update(
+                 {"status": "CURRENT"})), "historical-authority-promoted:docs/archive/decisions/ADR-PR01.md"),
+            ("historical-source-edited", lambda: change("docs/archive/decisions/ADR-PR01.md",
+             lambda x: x + "\nModified historical content\n"), "historical-content-changed:docs/archive/decisions/ADR-PR01.md"),
             ("broken-link", lambda: change("README.md",
              lambda x: x + "\n[Missing](docs/nonexistent.md)\n"), "broken-link:README.md:docs/nonexistent.md"),
             ("broken-heading-anchor", lambda: change("README.md",

@@ -22,7 +22,7 @@ The [README](../README.md) is the **one public-facing macro-map**: product promi
 
 **CURRENT** means active source documentation; **SCOPED_CURRENT** is active only in its named domain; **HISTORICAL** records a specific earlier state and must not override current product claims. A DoD is a declared obligation, not evidence that the requirement has been satisfied. A Git SHA or a deterministic replay proves a bounded source relationship, not runtime correctness, review authority or release approval.
 
-Machine inventory: [documentation registry](documentation-registry.json); [documentation DoD](DOCUMENTATION_DOD.md) and [machine lattice](../cora.documentation-dod.json). The [README claim/evidence profile](../cora.documentation-proofs.json) and [Git-bound verifier](../tools/verify_claim_evidence.py) add revision-bound, falsifiable source traces for S01–S18 without promoting them to host or runtime attestation. Historic decision and audit records are retained at their original paths and baselines.
+Machine inventory: [documentation registry](documentation-registry.json); [documentation DoD](DOCUMENTATION_DOD.md) and [machine lattice](../cora.documentation-dod.json). The [README claim/evidence profile](../cora.documentation-proofs.json) and [Git-bound verifier](../tools/verify_claim_evidence.py) add revision-bound, falsifiable source traces for S01–S18 without promoting them to host or runtime attestation. Historical records are archived byte-for-byte under `docs/archive/`; three link-dependent historical documents remain in their original paths with documented exceptions.
 
 ## Complete Markdown inventory
 
@@ -42,7 +42,7 @@ Machine inventory: [documentation registry](documentation-registry.json); [docum
 
 ### 02 — Product DoD and release
 
-- [AUDIT PR15 MAIN](AUDIT_PR15_MAIN.md) — HISTORICAL · AUDIT
+- [AUDIT PR15 MAIN](archive/audits/AUDIT_PR15_MAIN.md) — HISTORICAL · AUDIT
 - [DOD](DOD.md) — HISTORICAL · DOD
 - [DOD RELEASE READINESS](DOD_RELEASE_READINESS.md) — CURRENT · DOD
 - [DOD V1 EXPERIMENTAL](DOD_V1_EXPERIMENTAL.md) — CURRENT · DOD
@@ -57,23 +57,23 @@ Machine inventory: [documentation registry](documentation-registry.json); [docum
 - [DOD SELECTION](DOD_SELECTION.md) — CURRENT · DOD
 - [ENGINEERING DEBT](ENGINEERING_DEBT.md) — CURRENT · METHOD
 - [FILE LAB](FILE_LAB.md) — CURRENT · METHOD
-- [FORENSIC SELF AUDIT](FORENSIC_SELF_AUDIT.md) — HISTORICAL · AUDIT
+- [FORENSIC SELF AUDIT](archive/audits/FORENSIC_SELF_AUDIT.md) — HISTORICAL · AUDIT
 - [HOLISTIC FORENSICS](HOLISTIC_FORENSICS.md) — CURRENT · METHOD
 - [STANDARDS MAINTENANCE AUDIT](STANDARDS_MAINTENANCE_AUDIT.md) — HISTORICAL · AUDIT
 
 ### 04 — AI coding assurance and continuous DevOps
 
 - [AI CODE ASSURANCE](AI_CODE_ASSURANCE.md) — CURRENT · METHOD
-- [AUDIT PR18 MAIN](AUDIT_PR18_MAIN.md) — HISTORICAL · AUDIT
+- [AUDIT PR18 MAIN](archive/audits/AUDIT_PR18_MAIN.md) — HISTORICAL · AUDIT
 - [CONTINUOUS DEVELOPMENT](CONTINUOUS_DEVELOPMENT.md) — CURRENT · METHOD
 - [DOD CONTINUOUS](DOD_CONTINUOUS.md) — CURRENT · DOD
-- [DOD PR17 AGENT](DOD_PR17_AGENT.md) — HISTORICAL · DOD
+- [DOD PR17 AGENT](archive/dod/DOD_PR17_AGENT.md) — HISTORICAL · DOD
 
 ### 05 — Reticular gold and convergence
 
-- [AUDIT PR19 CLOSURE](AUDIT_PR19_CLOSURE.md) — HISTORICAL · AUDIT
+- [AUDIT PR19 CLOSURE](archive/audits/AUDIT_PR19_CLOSURE.md) — HISTORICAL · AUDIT
 - [CONVERGENT ASSURANCE](CONVERGENT_ASSURANCE.md) — CURRENT · METHOD
-- [DOD PR16 SEMANTIC ASSURANCE](DOD_PR16_SEMANTIC_ASSURANCE.md) — HISTORICAL · DOD
+- [DOD PR16 SEMANTIC ASSURANCE](archive/dod/DOD_PR16_SEMANTIC_ASSURANCE.md) — HISTORICAL · DOD
 - [DOD PR16 SEMANTIC LATTICE](DOD_PR16_SEMANTIC_LATTICE.md) — SCOPED_CURRENT · DOD
 - [DOD PR19 GOLD](DOD_PR19_GOLD.md) — SCOPED_CURRENT · DOD
 - [DOD PR20 CONVERGENCE](DOD_PR20_CONVERGENCE.md) — SCOPED_CURRENT · DOD
@@ -81,14 +81,14 @@ Machine inventory: [documentation registry](documentation-registry.json); [docum
 
 ### 06 — Architectural decision records
 
-- [ADR PR01](ADR-PR01.md) — HISTORICAL · ADR
-- [ADR PR02](ADR-PR02.md) — HISTORICAL · ADR
-- [ADR PR03](ADR-PR03.md) — HISTORICAL · ADR
-- [ADR PR04](ADR-PR04.md) — HISTORICAL · ADR
-- [ADR PR05](ADR-PR05.md) — HISTORICAL · ADR
-- [ADR PR06](ADR-PR06.md) — HISTORICAL · ADR
-- [ADR PR07](ADR-PR07.md) — HISTORICAL · ADR
-- [ADR PR15](ADR-PR15.md) — HISTORICAL · ADR
+- [ADR PR01](archive/decisions/ADR-PR01.md) — HISTORICAL · ADR
+- [ADR PR02](archive/decisions/ADR-PR02.md) — HISTORICAL · ADR
+- [ADR PR03](archive/decisions/ADR-PR03.md) — HISTORICAL · ADR
+- [ADR PR04](archive/decisions/ADR-PR04.md) — HISTORICAL · ADR
+- [ADR PR05](archive/decisions/ADR-PR05.md) — HISTORICAL · ADR
+- [ADR PR06](archive/decisions/ADR-PR06.md) — HISTORICAL · ADR
+- [ADR PR07](archive/decisions/ADR-PR07.md) — HISTORICAL · ADR
+- [ADR PR15](archive/decisions/ADR-PR15.md) — HISTORICAL · ADR
 
 ### 07 — Documentation onboarding and reference
 

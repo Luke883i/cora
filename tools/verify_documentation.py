@@ -28,10 +28,10 @@ CUTS = {
     "G_DOC_ACCEPTED": ["G_DOC_SOURCE", "E01", "E02", "E03"],
 }
 KNOWN_HISTORICAL = {
-    "docs/DOD.md", "docs/DOD_PR17_AGENT.md",
-    "docs/DOD_PR16_SEMANTIC_ASSURANCE.md",
+    "docs/DOD.md", "docs/archive/dod/DOD_PR17_AGENT.md",
+    "docs/archive/dod/DOD_PR16_SEMANTIC_ASSURANCE.md",
     "docs/STANDARDS_MAINTENANCE_AUDIT.md",
-    "docs/FORENSIC_SELF_AUDIT.md",
+    "docs/archive/audits/FORENSIC_SELF_AUDIT.md",
 }
 LINK = re.compile(r"(?<!!)\[[^\]]+\]\((<[^>]+>|[^)\s]+)")
 CODE_FENCE = re.compile(r"^\s*(`{3,}|~{3,})")
@@ -235,7 +235,7 @@ def verify(root: Path) -> list[str]:
         if not isinstance(path, str) or path.startswith("/") or ".." in path.split("/"):
             errors.append("invalid-path")
             continue
-        historical = (path.startswith("docs/ADR-") or path.startswith("docs/AUDIT_")
+        historical = (path.startswith("docs/archive/") or path.startswith("docs/ADR-") or path.startswith("docs/AUDIT_")
                       or path in KNOWN_HISTORICAL)
         if r.get("status") not in STATUS or r.get("kind") not in KINDS or r.get("group") not in VALID_GROUP:
             errors.append("invalid-classification:" + path)

@@ -99,9 +99,9 @@ class RevisionBoundDocumentationTests(unittest.TestCase):
              json_change(lambda j: next(x for x in j["nodes"]
                  if x["id"] == "G_DOC_ACCEPTED")["depends_on"].remove("E03")),
              "S09:noncompensatory-dod-tampered"),
-            ("historic-audit-rewritten", "docs/AUDIT_PR18_MAIN.md",
+            ("historic-audit-rewritten", "docs/archive/audits/AUDIT_PR18_MAIN.md",
              lambda s: s + "\nRetroactively approved.\n",
-             "S10:historical-blob-mutated:docs/AUDIT_PR18_MAIN.md"),
+             "S10:historical-blob-mutated:docs/archive/audits/AUDIT_PR18_MAIN.md"),
             ("changelog-current-omitted", "CHANGELOG.md",
              lambda s: s.replace("PR-21", "undocumented revision"),
              "H2:post-pr21-chronology-stale"),

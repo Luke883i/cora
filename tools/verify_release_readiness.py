@@ -13,7 +13,7 @@ NAME = "Continuous Ontological Repository Assurance"
 REQUIRED = (
  "README.md","CHANGELOG.md","AGENTS.md","GOVERNANCE.md",
  "docs/CONTINUOUS_DEVELOPMENT.md",
- "docs/ARCHITECTURE.md","docs/ADR-PR15.md","docs/AUDIT_PR15_MAIN.md",
+ "docs/ARCHITECTURE.md","docs/archive/decisions/ADR-PR15.md","docs/archive/audits/AUDIT_PR15_MAIN.md",
  "docs/DOD_RELEASE_READINESS.md","docs/RELEASE.md",
  "pyproject.toml","src/cora/__init__.py","cora.ontology.json",
  "cora.artifact-roles.json",".cora/continuous-policy.json",
@@ -122,7 +122,7 @@ def inspect_source(root: Path) -> dict:
             not re.search(r"uses:\s+actions/checkout@[a-f0-9]{40}\b",raw) or
             not re.search(r"uses:\s+actions/setup-python@[a-f0-9]{40}\b",raw)):
             errors.append("WORKFLOW_SOURCE_POLICY_DRIFT:"+rel)
-    for rel in ("docs/ADR-PR15.md","docs/RELEASE.md","docs/ARCHITECTURE.md"):
+    for rel in ("docs/archive/decisions/ADR-PR15.md","docs/RELEASE.md","docs/ARCHITECTURE.md"):
         if NAME not in txt(rel):
             errors.append("NAME_NOT_CONSISTENT:"+rel)
     for v in ("G-source","G-release","I1","I7","BLOCKED_EXTERNAL","L28"):

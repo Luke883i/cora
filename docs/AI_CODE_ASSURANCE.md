@@ -47,7 +47,7 @@ STOP/BLOCKED on ambiguous product intent, missing canonical owner, inability to 
 
 ## PR-18 historical correction
 
-PR-17 counted the first 24 individual faults and 276 pairs by index even when a mutated `_scenario` could return the wrong mask. PR-18 counts only actual prespecified masks, asserts scenario diversity and includes six physical Python source mutants of CORA's finite model. `dod-assess` now identifies `next_unresolved_falsifier`, refuses whitespace-only witnesses and never treats L19–L24 caller claims as independently authenticated. This is better source-model falsification, **not** real target-repository semantic validity; see [the historiographic audit](AUDIT_PR18_MAIN.md).
+PR-17 counted the first 24 individual faults and 276 pairs by index even when a mutated `_scenario` could return the wrong mask. PR-18 counts only actual prespecified masks, asserts scenario diversity and includes six physical Python source mutants of CORA's finite model. `dod-assess` now identifies `next_unresolved_falsifier`, refuses whitespace-only witnesses and never treats L19–L24 caller claims as independently authenticated. This is better source-model falsification, **not** real target-repository semantic validity; see [the historiographic audit](archive/audits/AUDIT_PR18_MAIN.md).
 
 ## Current reader path after PR-20
 
