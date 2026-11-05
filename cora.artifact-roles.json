@@ -942,6 +942,14 @@
         "PRODUCT_CONTRACT"
       ],
       "rationale": "Noncompensatory source/external postmerge reproducibility and release governance proof obligations."
+    },
+    {
+      "pattern": "src/cora/ci_repro.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Read-only Git-bound measured repeatability probe for existing PR25/PR26 tests; never independent RCA or release authority."
     }
   ]
 }

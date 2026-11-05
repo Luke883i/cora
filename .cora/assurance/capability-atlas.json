@@ -581,6 +581,7 @@
       "src/cora/artifact_roles.py",
       "src/cora/artifact_saturation.py",
       "src/cora/audit.py",
+      "src/cora/ci_repro.py",
       "src/cora/cli.py",
       "src/cora/closure.py",
       "src/cora/closure_stress.py",
