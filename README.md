@@ -14,6 +14,8 @@ CORA is an offline-first **Python 3.11+ command-line product** that helps develo
 
 **Open source license:** [MIT](LICENSE) applies to CORA's code and documentation. Permissive reuse does **not** grant access to third-party repositories, authenticate findings or remove the need for review. See [security](SECURITY.md) and [contributing](CONTRIBUTING.md).
 
+**Repository map:** the root keeps the product entrypoint, policies, package metadata and canonical `cora.*.json` contracts. Active guidance is in [`docs/`](docs/), byte-preserved historical decisions and audits are reached through the [documentation index](docs/INDEX.md), and finite-model fixtures live in [`.cora/fixtures/`](.cora/fixtures/). Code, tests and verification remain in `src/`, `tests/` and `tools/`; moving a file does not establish safe deletion or runtime equivalence.
+
 ## How CORA works
 
 ```text
@@ -54,11 +56,7 @@ Keep reports outside the source checkout; `/tmp` is a Unix example. `audit` read
 
 ## What works today
 
-**Five synergic source-assurance goals:** `cora method-synthesize . --synergic --base-sha BASE_SHA --execute-source-probes --output REPORT --ai-request-output AI_PLAN` brings together the Semantic Truth, AI Reasoning, Behavioral Proof, Continuous Semantic Evolution and Unified Assurance source routes. It preserves the 71 original CLI commands, never invokes an AI provider by default, and does not claim 71 proven behaviors. See [five-goal DoD and falsification](docs/CONVERGENT_ASSURANCE.md).
-
-
-**Integrated source review (candidate):** use `cora method-synthesize . --integrated --ai-request-output /tmp/cora-ai-request.json --output /tmp/cora-case.json` to correlate original methods, current documents, 18 declared README claim traces and all 71 CLI interfaces on one Git revision. The AI request is a non-authoritative review input, not a provider invocation or test of all 71 behaviors; see [convergent assurance](docs/CONVERGENT_ASSURANCE.md).
-
+**Five synergic source-assurance goals:** `cora method-synthesize . --synergic --base-sha BASE_SHA --execute-source-probes --output REPORT --ai-request-output AI_PLAN` brings together the Semantic Truth, AI Reasoning, Behavioral Proof, Continuous Semantic Evolution and Unified Assurance source routes, while `--integrated` connects documentation, the 18 claim traces and the 71 declared CLI interfaces. Neither mode invokes an AI provider by default or proves every behavior. See [five-goal DoD and falsification](docs/CONVERGENT_ASSURANCE.md).
 
 | Engineering goal | Relevant CORA capabilities | Evidence boundary |
 | --- | --- | --- |

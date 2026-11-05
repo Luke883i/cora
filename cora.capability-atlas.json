@@ -630,6 +630,7 @@
       "tools/verify_capability_atlas.py",
       "tools/verify_claim_evidence.py",
       "tools/verify_documentation.py",
+      "tools/verify_layout_simplification.py",
       "tools/verify_pr16_coverage.py",
       "tools/verify_release_readiness.py",
       "tools/verify_repository_contract.py",
@@ -658,7 +659,6 @@
       "cora.documentation-dod.json",
       "cora.documentation-proofs.json",
       "cora.five-synergies-dod.json",
-      "cora.five-synergies-mutants.json",
       "cora.gold-assurance.json",
       "cora.integrated-dod.json",
       "cora.method-atlas.json",
@@ -752,6 +752,7 @@
       "tests/test_pr27_type_assurance.py",
       "tests/test_pr28_integrated_service.py",
       "tests/test_pr29_five_synergies.py",
+      "tests/test_pr30_layout_simplification.py",
       "tests/test_selection.py"
     ]
   },

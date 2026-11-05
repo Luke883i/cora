@@ -173,7 +173,7 @@ class FiveSynergiesTests(unittest.TestCase):
             git(repo,'config','user.email','mutant@example.invalid')
             git(repo,'checkout','-q',self.head)
             self.assertEqual(len(_validated_seed(repo,self.head)),32)
-            path=repo/'cora.five-synergies-mutants.json'
+            path=repo/'.cora/fixtures/five-synergies-mutants.json'
             source=json.loads(path.read_text('utf-8'))
             source['rows'][2]['invalidated']=[]
             path.write_text(json.dumps(source),encoding='utf-8')

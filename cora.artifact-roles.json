@@ -829,12 +829,53 @@
       "rationale": "Original Git source and negative controls for the five synergic development goals."
     },
     {
-      "pattern": "cora.five-synergies-mutants.json",
+      "pattern": ".cora/fixtures/five-synergies-mutants.json",
       "roles": [
         "FIXTURE",
         "PRODUCT_CONTRACT"
       ],
       "rationale": "Preseeded finite semantic fault classes and oracles; not physical mutations, independent attestation or production proof."
+    },
+    {
+      "pattern": ".cora/layout-migration.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Original-Git-bound lossless move manifest; not authorization to delete or rename arbitrary files."
+    },
+    {
+      "pattern": ".cora/layout-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Noncompensatory source/external layout assurance lattice; never a release approval."
+    },
+    {
+      "pattern": ".cora/layout-preseed.json",
+      "roles": [
+        "FIXTURE",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Deterministic finite layout fault classes; not ten thousand physical repository mutants."
+    },
+    {
+      "pattern": "tools/verify_layout_simplification.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "RELEASE_TOOL"
+      ],
+      "rationale": "Checks layout archive blob identities and source navigation; no filesystem mutations."
+    },
+    {
+      "pattern": "tests/test_pr30_layout_simplification.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Original Git layout migration, negative physical mutants and 10k seeded controls."
     }
   ]
 }
