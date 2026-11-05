@@ -1,0 +1,150 @@
+{
+  "schema": "cora-postmerge-release-dod/1",
+  "title": "PR32 — reverse-derived postmerge reproducibility and independent release-governance obligations",
+  "status": "SOURCE_CANDIDATE",
+  "authority": "NONE",
+  "abstract_goal": "CORA source assurance is repeatable on exact integration commit, real host governance is independently observed, and no release can be qualified from self-reported or synthetic evidence.",
+  "global_goal": "G_POSTMERGE_RELEASE",
+  "semantics": "NONCOMPENSATORY_AND",
+  "observations": "SOURCE_WITNESS_EXISTS_MEANS_MODEL_ONLY",
+  "non_authority": [
+    "No source, check, CI green or API response can authenticate the release owner.",
+    "Host observations are time-sensitive and must be re-read on the final tag and commit.",
+    "No automatic release or tag creation.",
+    "Main branch protection, required checks, reviewer acceptance and signing are external."
+  ],
+  "nodes": [
+    {
+      "id": "L_EXACT_GIT_SOURCE",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "l exact git source",
+      "witness_paths": [
+        "src/cora/git_snapshot.py",
+        "src/cora/evidence.py"
+      ]
+    },
+    {
+      "id": "L_REPEATED_CI",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "l repeated ci",
+      "witness_paths": [
+        ".github/workflows/ci-semantic-lattice.yml",
+        "tests/test_pr25_method_synthesis.py"
+      ]
+    },
+    {
+      "id": "L_DIAGNOSTIC_ORACLE",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "l diagnostic oracle",
+      "witness_paths": [
+        "tests/test_pr25_method_synthesis.py",
+        ".github/workflows/ci-semantic-lattice.yml"
+      ]
+    },
+    {
+      "id": "L_RELEASE_CANDIDATE",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "l release candidate",
+      "witness_paths": [
+        "tools/release_verify.py",
+        "tools/external_validate.py",
+        ".github/workflows/ci-release-candidate.yml"
+      ]
+    },
+    {
+      "id": "E_HOST_REQUIRED_CHECKS",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "e host required checks"
+    },
+    {
+      "id": "E_HOST_PROTECTED_MAIN",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "e host protected main"
+    },
+    {
+      "id": "E_DISTINCT_REVIEWER",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "e distinct reviewer"
+    },
+    {
+      "id": "E_RELEASE_OWNER",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "e release owner"
+    },
+    {
+      "id": "E_SIGNED_PROVENANCE",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "e signed provenance"
+    },
+    {
+      "id": "E_PUBLISHED_TAG_PARITY",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "e published tag parity"
+    },
+    {
+      "id": "E_REAL_EXTERNAL_PILOT",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "e real external pilot"
+    },
+    {
+      "id": "E_OPERATIONAL_ROLLBACK",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "e operational rollback"
+    },
+    {
+      "id": "G_REPRO_SOURCE",
+      "scope": "SOURCE",
+      "depends_on": [
+        "L_EXACT_GIT_SOURCE",
+        "L_REPEATED_CI",
+        "L_DIAGNOSTIC_ORACLE",
+        "L_RELEASE_CANDIDATE"
+      ],
+      "description": "g repro source"
+    },
+    {
+      "id": "G_GOVERNED_HOST",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "E_HOST_REQUIRED_CHECKS",
+        "E_HOST_PROTECTED_MAIN",
+        "E_DISTINCT_REVIEWER"
+      ],
+      "description": "g governed host"
+    },
+    {
+      "id": "G_RELEASE_ACCEPTANCE",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "E_RELEASE_OWNER",
+        "E_SIGNED_PROVENANCE",
+        "E_PUBLISHED_TAG_PARITY",
+        "E_REAL_EXTERNAL_PILOT",
+        "E_OPERATIONAL_ROLLBACK"
+      ],
+      "description": "g release acceptance"
+    },
+    {
+      "id": "G_POSTMERGE_RELEASE",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "G_REPRO_SOURCE",
+        "G_GOVERNED_HOST",
+        "G_RELEASE_ACCEPTANCE"
+      ],
+      "description": "g postmerge release"
+    }
+  ]
+}

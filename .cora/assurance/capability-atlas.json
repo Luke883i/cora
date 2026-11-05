@@ -602,6 +602,7 @@
       "src/cora/guard.py",
       "src/cora/guard_runtime.py",
       "src/cora/holistic.py",
+      "src/cora/host_release.py",
       "src/cora/integrated_service.py",
       "src/cora/maturity_atlas.py",
       "src/cora/method_synthesis.py",
@@ -742,6 +743,7 @@
       "tests/test_pr29_five_synergies.py",
       "tests/test_pr30_layout_simplification.py",
       "tests/test_pr31_maturity_atlas.py",
+      "tests/test_pr32_host_release.py",
       "tests/test_selection.py"
     ],
     "internal_dod": [
@@ -754,6 +756,7 @@
       ".cora/contracts/dod/integrated-dod.json",
       ".cora/contracts/dod/maturity-dod.json",
       ".cora/contracts/dod/method-synthesis-dod.json",
+      ".cora/contracts/dod/postmerge-release-dod.json",
       ".cora/contracts/dod/workflow-dod.json"
     ],
     "internal_profiles": [

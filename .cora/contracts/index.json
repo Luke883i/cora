@@ -79,6 +79,11 @@
       "scope": "PUBLIC_STABLE"
     },
     {
+      "logical": "cora.postmerge-release-dod.json",
+      "canonical": ".cora/contracts/dod/postmerge-release-dod.json",
+      "scope": "INTERNAL_DOD"
+    },
+    {
       "logical": "cora.type-assurance-profile.json",
       "canonical": ".cora/contracts/profiles/type-assurance-profile.json",
       "scope": "INTERNAL_PROFILE"

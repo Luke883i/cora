@@ -909,6 +909,31 @@
         "TEST"
       ],
       "rationale": "Source witness, injection escaping, replay and independent-approval anti-promotion."
+    },
+    {
+      "pattern": "src/cora/host_release.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Read-only GitHub branch/review/release observations and source DoD; no approval or release rights."
+    },
+    {
+      "pattern": ".cora/contracts/dod/postmerge-release-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Reticular source/external release prerequisites, never a release attestation."
+    },
+    {
+      "pattern": "tests/test_pr32_host_release.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Physical original-Git DoD mutation and live GitHub governance snapshot negative tests, no release authority."
     }
   ]
 }
