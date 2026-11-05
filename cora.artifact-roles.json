@@ -884,6 +884,31 @@
         "PRODUCT_CONTRACT"
       ],
       "rationale": "Source-bound contract path routing index; retains two public root bootstraps and makes internal thematic files discoverable without claiming external compatibility."
+    },
+    {
+      "pattern": ".cora/contracts/dod/maturity-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Six-gate source/external reticulum with explicit non-authority."
+    },
+    {
+      "pattern": "src/cora/maturity_atlas.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Pinned original-Git HTML/JSON projection, never behavioral truth."
+    },
+    {
+      "pattern": "tests/test_pr31_maturity_atlas.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Source witness, injection escaping, replay and independent-approval anti-promotion."
     }
   ]
 }

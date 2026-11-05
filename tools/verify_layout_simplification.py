@@ -259,7 +259,7 @@ def _validate_theme(repo:Path,sha:str,baseline:dict,head:dict,manifest:dict)->di
         if (old not in baseline or old not in source_tree or old in head or
             new in source_tree or new not in head or
             source_tree[old]["oid"]!=row["source_blob"] or
-            head[new]["oid"]!=row["target_blob"] or
+            (row["mode"]=="BYTE_IDENTICAL" and head[new]["oid"]!=row["target_blob"]) or
             head[new]["kind"]!="blob" or head[new]["mode"]!="100644"):
             raise ValueError("thematic Git source/target identity drift: "+old)
         if row["mode"]=="BYTE_IDENTICAL":
@@ -280,7 +280,33 @@ def _validate_theme(repo:Path,sha:str,baseline:dict,head:dict,manifest:dict)->di
                     p for p in THEME.values() if p.startswith(".cora/contracts/profiles/"))
                 surfaces["assurance_records"]=sorted(
                     p for p in THEME.values() if p.startswith(".cora/assurance/"))
-            if original!=_json(repo,sha,new):
+            observed=_json(repo,sha,new)
+            if old=="cora.capability-atlas.json":
+                # PR30 archived the *migration* identity. Future versions may
+                # add source/test/DoD paths without changing any old mapping.
+                old_surfaces=original["repository_surfaces"]
+                new_surfaces=observed.get("repository_surfaces",{})
+                if (set(observed)!=set(original) or
+                    {k:v for k,v in observed.items() if k!="repository_surfaces"}!=
+                    {k:v for k,v in original.items() if k!="repository_surfaces"} or
+                    set(old_surfaces)!=set(new_surfaces)):
+                    raise ValueError("thematic Git source/target identity drift: "+old)
+                for group, previous in old_surfaces.items():
+                    actual=new_surfaces[group]
+                    if (not isinstance(actual,list) or len(set(actual))!=len(actual) or
+                        not set(previous).issubset(set(actual))):
+                        raise ValueError("thematic Git source/target identity drift: "+group)
+                    added=set(actual)-set(previous)
+                    eligible=(group=="modules" and all(
+                        re.fullmatch(r"src/cora/[^/]+\.py",p) for p in added)) or (
+                        group=="test_modules" and all(
+                            re.fullmatch(r"tests/test_[^/]+\.py",p) for p in added)) or (
+                        group=="internal_dod" and all(
+                            re.fullmatch(r"\.cora/contracts/dod/[^/]+\.json",p) for p in added)) or (
+                        not added)
+                    if not eligible or any(p not in head for p in added):
+                        raise ValueError("thematic Git source/target identity drift: "+group)
+            elif original!=observed:
                 raise ValueError("thematic structural rewrite introduced semantic drift: "+old)
             rewritten+=1
     index=_json(repo,sha,".cora/contracts/index.json")
@@ -294,8 +320,15 @@ def _validate_theme(repo:Path,sha:str,baseline:dict,head:dict,manifest:dict)->di
         index.get("root_contracts")!=list(PUBLIC_ROOT) or
         index.get("external_consumers")!="UNKNOWN" or
         index.get("governed_status")!="BLOCKED_EXTERNAL" or
-        not isinstance(bindings,list) or len(bindings)!=15 or
-        {x.get("logical"):x.get("canonical") for x in bindings}!=expected):
+        not isinstance(bindings,list) or len(bindings)<len(expected) or
+        len({x.get("logical") for x in bindings})!=len(bindings) or
+        any(x.get("canonical")!=v for k,v in expected.items()
+            for x in bindings if x.get("logical")==k) or
+        not set(expected).issubset({x.get("logical") for x in bindings}) or
+        any(not (x.get("logical","").startswith("cora.") and
+                 x.get("canonical","").startswith(".cora/contracts/dod/") and
+                 x.get("scope")=="INTERNAL_DOD") for x in bindings
+            if x.get("logical") not in expected)):
         raise ValueError("logical contract path index incomplete or unsafe")
     for route in bindings:
         if route["canonical"] not in head or route["scope"] not in (

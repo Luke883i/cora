@@ -54,6 +54,21 @@ cora verify-ledger /tmp/cora-ledger.json --repo .
 
 Keep reports outside the source checkout; `/tmp` is a Unix example. `audit` reads the working tree, while `snapshot` reads a **pinned Git commit**; their evidence is not interchangeable. Explore the full [new-user tutorial](docs/GETTING_STARTED.md) and [CLI reference](docs/CLI_REFERENCE.md).
 
+## Integrated human / AI atlas
+
+The canonical integrated entry remains **`cora method-synthesize --synergic`**. Optional atlas outputs map each of the 71 declared CLI commands to original Git source, test-source witness and method family. Offline HTML is for human navigation; JSON and the separate AI request are for assistants. These outputs do not execute AI models, certify runtime behavior, approve PRs or publish releases. The [six-gate maturity DoD](.cora/contracts/dod/maturity-dod.json) retains independent acceptance obligations.
+
+```sh
+BASE_SHA=$(git rev-parse HEAD^)
+cora method-synthesize . --synergic --revision HEAD --base-sha "$BASE_SHA" \
+  --output /tmp/cora-source.json --atlas-json /tmp/cora-atlas.json \
+  --atlas-html /tmp/cora-atlas.html --ai-request-output /tmp/cora-ai-request.json
+cora verify-method-synthesis /tmp/cora-source.json --repo . --synergic \
+  --atlas-json /tmp/cora-atlas.json --atlas-html /tmp/cora-atlas.html
+```
+
+Open `/tmp/cora-atlas.html` in a browser. The self-contained HTML provides search, activity families, source/CI inventories, DoD gates, common-source lineage and original Git links. This documents **CORA's own source catalog**, not arbitrary target runtime completeness. For target repository review, use [agent adoption](docs/AGENT_ADOPTION.md), independently authorized tests and human approval. See the [integrated method](docs/CONVERGENT_ASSURANCE.md).
+
 ## What works today
 
 **Five synergic source-assurance goals:** `cora method-synthesize . --synergic --base-sha BASE_SHA --execute-source-probes --output REPORT --ai-request-output AI_PLAN` brings together the Semantic Truth, AI Reasoning, Behavioral Proof, Continuous Semantic Evolution and Unified Assurance source routes, while `--integrated` connects documentation, the 18 claim traces and the 71 declared CLI interfaces. Neither mode invokes an AI provider by default or proves every behavior. See [five-goal DoD and falsification](docs/CONVERGENT_ASSURANCE.md).

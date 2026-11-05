@@ -6,6 +6,7 @@ import sys
 import subprocess
 from pathlib import Path
 from . import __version__
+from .maturity_atlas import build_atlas, render_html, verify_atlas
 from .audit import audit, read_declarations
 from .mutations import stress
 from .mutation_evidence import stress_evidence
@@ -430,6 +431,8 @@ def main(argv: list[str] | None = None) -> int:
     ms.add_argument('--execute-source-probes', action='store_true', help='Opt-in three safe original CORA Git source probes')
     ms.add_argument('--ai-observations', type=Path, help='Untrusted source-bound AI answer; never approval')
     ms.add_argument('--ai-request-output', type=Path, help='Export reticular AI questions; no provider call')
+    ms.add_argument('--atlas-json', type=Path, help='Export deterministic source-only human/AI capability atlas')
+    ms.add_argument('--atlas-html', type=Path, help='Export self-contained offline navigable HTML')
     ms.add_argument('--output', type=Path)
     mv = sub.add_parser('verify-method-synthesis', help='Exact Git replay of correlation and original inputs')
     mv.add_argument('report', type=Path)
@@ -441,6 +444,8 @@ def main(argv: list[str] | None = None) -> int:
     mv.add_argument('--integrated', action='store_true', help='Recompute integrated source case from original Git')
     mv.add_argument('--synergic', action='store_true', help='Replay five-goal source case and safe original Git probes')
     mv.add_argument('--ai-observations', type=Path, help='Original untrusted AI envelope for replay')
+    mv.add_argument('--atlas-json', type=Path, help='Re-derive atlas JSON from original Git and compare')
+    mv.add_argument('--atlas-html', type=Path, help='Re-derive atlas HTML from original Git and compare')
     mv.add_argument('--output', type=Path)
     g = sub.add_parser('snapshot')
     g.add_argument('repo', type=Path)
@@ -812,6 +817,8 @@ def main(argv: list[str] | None = None) -> int:
             for key in ('artifacts','workflows','process','hypotheses'):
                 path = getattr(args, key)
                 loaded[key] = json.loads(path.read_text('utf-8')) if path else None
+            if (args.atlas_json or args.atlas_html) and not args.synergic:
+                raise ValueError('integrated maturity atlas requires canonical --synergic mode')
             if args.synergic:
                 if args.integrated or any(x is not None for x in loaded.values()):
                     raise ValueError('five-goal service owns original source receipts; no conflicting modes')
@@ -823,6 +830,12 @@ def main(argv: list[str] | None = None) -> int:
                     args.ai_request_output.write_text(json.dumps(request,sort_keys=True,indent=2)+'\n',encoding='utf-8')
                 if args.analyst_request:
                     args.analyst_request.write_text(json.dumps(request,sort_keys=True,indent=2)+'\n',encoding='utf-8')
+                if args.atlas_json or args.atlas_html:
+                    atlas = build_atlas(args.repo, result)
+                    if args.atlas_json:
+                        args.atlas_json.write_text(json.dumps(atlas,sort_keys=True,indent=2)+'\n',encoding='utf-8')
+                    if args.atlas_html:
+                        args.atlas_html.write_text(render_html(atlas),encoding='utf-8')
             elif args.integrated:
                 ai=json.loads(args.ai_observations.read_text('utf-8')) if args.ai_observations else None
                 result=integrated_case(args.repo,args.revision,**loaded,ai=ai)
@@ -843,11 +856,17 @@ def main(argv: list[str] | None = None) -> int:
             for key in ('artifacts','workflows','process','hypotheses'):
                 path = getattr(args, key)
                 loaded[key] = json.loads(path.read_text('utf-8')) if path else None
+            if (args.atlas_json or args.atlas_html) and not args.synergic:
+                raise ValueError('atlas replay requires --synergic mode')
             if args.synergic:
                 if args.integrated or any(x is not None for x in loaded.values()):
                     raise ValueError('five-goal replay cannot mix original report operands')
                 ai=json.loads(args.ai_observations.read_text('utf-8')) if args.ai_observations else None
                 verify_unified_assurance(args.repo,original,ai=ai)
+                if args.atlas_json or args.atlas_html:
+                    verify_atlas(args.repo,original,
+                        data=json.loads(args.atlas_json.read_text('utf-8')) if args.atlas_json else None,
+                        page=args.atlas_html.read_text('utf-8') if args.atlas_html else None)
                 result={'schema':'cora-five-synergies-replay/1','commit':original['commit'],
                         'receipt_digest':original['receipt_digest'],
                         'status':'REPLAYED_ORIGINAL_GIT_SOURCE_NOT_PRODUCT',

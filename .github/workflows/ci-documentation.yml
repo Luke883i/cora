@@ -53,6 +53,14 @@ jobs:
           python tools/verify_capability_atlas.py --repo . --verify-report /tmp/cora-capabilities.json
           python -m unittest discover -s tests -p 'test_pr26_capability_atlas.py' -v
           python -c 'import json; x=json.load(open("/tmp/cora-capabilities.json")); assert x["command_count"]==71 and x["family_count"]==8 and x["governed_status"]=="BLOCKED_EXTERNAL" and x["authorization"]=="NONE" and all(c["test_execution"]=="NOT_ATTESTED_BY_SOURCE" for c in x["commands"])'
+      - name: PR31 integrated HTML/AI atlas and negative original-Git maturity falsifiers
+        run: |
+          python -m unittest discover -s tests -p 'test_pr31_maturity_atlas.py' -v
+          BASE=$(git rev-parse HEAD^)
+          cora method-synthesize . --synergic --revision HEAD --base-sha "$BASE" --output /tmp/cora-pr31-source.json --atlas-json /tmp/cora-pr31-atlas.json --atlas-html /tmp/cora-pr31-atlas.html --ai-request-output /tmp/cora-pr31-ai.json
+          cora verify-method-synthesis /tmp/cora-pr31-source.json --repo . --synergic --atlas-json /tmp/cora-pr31-atlas.json --atlas-html /tmp/cora-pr31-atlas.html
+          python -c 'import json; a=json.load(open("/tmp/cora-pr31-atlas.json")); assert len(a["capabilities"])==71 and len(a["procedures"])==14 and len(a["maturity"]["gates"])==6 and a["maturity"]["assessment"]["status"]=="BLOCKED_EXTERNAL" and a["lineage"]["independent_corroborations"]==0 and a["authorization"]=="NONE"'
+
       - name: Verify typed object/standards source lattice and real-CORA negative mutants
         run: |
           test -d .git
@@ -114,6 +122,10 @@ jobs:
             /tmp/cora-integrated-10m-replay.json
             /tmp/cora-five-goals.json
             /tmp/cora-five-ai-plan.json
+            /tmp/cora-pr31-source.json
+            /tmp/cora-pr31-atlas.json
+            /tmp/cora-pr31-atlas.html
+            /tmp/cora-pr31-ai.json
             /tmp/cora-five-million.json
             /tmp/cora-five-million-replay.json
             /tmp/cora-layout-proof.json
