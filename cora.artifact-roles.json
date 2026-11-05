@@ -925,6 +925,15 @@
         "PRODUCT_CONTRACT"
       ],
       "rationale": "Reticular source/external release prerequisites, never a release attestation."
+    },
+    {
+      "pattern": "tests/test_pr32_host_release.py",
+      "roles": [
+        "TEST",
+        "FIXTURE",
+        "CONTRACT_VERIFIER"
+      ],
+      "rationale": "Physical original-Git DoD mutation and live GitHub governance snapshot negative tests, no release authority."
     }
   ]
 }
