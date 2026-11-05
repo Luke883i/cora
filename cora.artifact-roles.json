@@ -950,6 +950,15 @@
         "SOFTWARE_SOURCE"
       ],
       "rationale": "Read-only Git-bound measured repeatability probe for existing PR25/PR26 tests; never independent RCA or release authority."
+    },
+    {
+      "pattern": "tests/test_pr33_ci_repro.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Original Git DoD edge mutants, token isolation and sample-metric anti-masking regressions."
     }
   ]
 }
