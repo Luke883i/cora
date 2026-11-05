@@ -602,6 +602,7 @@
       "src/cora/guard.py",
       "src/cora/guard_runtime.py",
       "src/cora/holistic.py",
+      "src/cora/integrated_service.py",
       "src/cora/method_synthesis.py",
       "src/cora/mutation_evidence.py",
       "src/cora/mutations.py",
@@ -656,6 +657,7 @@
       "cora.documentation-dod.json",
       "cora.documentation-proofs.json",
       "cora.gold-assurance.json",
+      "cora.integrated-dod.json",
       "cora.method-atlas.json",
       "cora.method-synthesis-dod.json",
       "cora.ontology.json",
@@ -745,6 +747,7 @@
       "tests/test_pr25_method_synthesis.py",
       "tests/test_pr26_capability_atlas.py",
       "tests/test_pr27_type_assurance.py",
+      "tests/test_pr28_integrated_service.py",
       "tests/test_selection.py"
     ]
   },

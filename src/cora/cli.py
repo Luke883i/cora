@@ -47,6 +47,7 @@ from .gold_mutations import physical_mutants
 from .gold_effects import audit_workflow, reconcile_effect_claim
 from .workflow_rationalization import audit_workflows, verify_workflows
 from .method_synthesis import synthesize, verify_synthesis, analyst_request
+from .integrated_service import integrated_case, verify_integrated, ai_request as integrated_ai_request, stress_integrated
 from .gold_saturation import gold_saturation
 from .gold_assurance import load_convergence_contract, convergent_plan
 from .gold_saturation import saturate_convergence
@@ -120,6 +121,7 @@ def main(argv: list[str] | None = None) -> int:
     cs.add_argument('--sessions', type=int, default=10)
     cs.add_argument('--cases-per-session', type=int, default=1000000)
     cs.add_argument('--require-full', action='store_true')
+    cs.add_argument('--integrated', action='store_true', help='10M bounded integrated semantic model, not target mutants')
     cs.add_argument('--output', type=Path)
     za = sub.add_parser('zip-intake', help='Bounded untrusted ZIP preflight: no execution, history unavailable')
     za.add_argument('archive', type=Path)
@@ -417,6 +419,9 @@ def main(argv: list[str] | None = None) -> int:
     ms.add_argument('--process', type=Path, help='Optional original process-run receipt, reverified')
     ms.add_argument('--hypotheses', type=Path, help='Optional untrusted AI hypothesis envelope')
     ms.add_argument('--analyst-request', type=Path, help='Source-free bounded case questions')
+    ms.add_argument('--integrated', action='store_true', help='Original method + doc/implementation case, source-only')
+    ms.add_argument('--ai-observations', type=Path, help='Untrusted source-bound AI answer; never approval')
+    ms.add_argument('--ai-request-output', type=Path, help='Export reticular AI questions; no provider call')
     ms.add_argument('--output', type=Path)
     mv = sub.add_parser('verify-method-synthesis', help='Exact Git replay of correlation and original inputs')
     mv.add_argument('report', type=Path)
@@ -425,6 +430,8 @@ def main(argv: list[str] | None = None) -> int:
     mv.add_argument('--workflows', type=Path)
     mv.add_argument('--process', type=Path)
     mv.add_argument('--hypotheses', type=Path)
+    mv.add_argument('--integrated', action='store_true', help='Recompute integrated source case from original Git')
+    mv.add_argument('--ai-observations', type=Path, help='Original untrusted AI envelope for replay')
     mv.add_argument('--output', type=Path)
     g = sub.add_parser('snapshot')
     g.add_argument('repo', type=Path)
@@ -465,11 +472,18 @@ def main(argv: list[str] | None = None) -> int:
             result=convergent_plan(contract,args.goal)
             code=0
         elif args.cmd == 'stress-convergence':
-            contract=load_convergence_contract(args.contract)
-            result=saturate_convergence(contract,sessions=args.sessions,
-                                        cases_per_session=args.cases_per_session)
-            code=2 if result['status']=='REFUTED' or (args.require_full and
-                        result['status']!='PASS_SCOPED_FINITE_MODEL') else 0
+            if args.integrated:
+                cases=args.sessions*args.cases_per_session
+                if args.require_full and cases!=10000000:
+                    raise ValueError('integrated require-full needs exactly 10M finite cases')
+                result=stress_integrated(cases=cases)
+                code=2 if result['status']!='PASS_SCOPED_FINITE_MODEL' else 0
+            else:
+                contract=load_convergence_contract(args.contract)
+                result=saturate_convergence(contract,sessions=args.sessions,
+                                            cases_per_session=args.cases_per_session)
+                code=2 if result['status']=='REFUTED' or (args.require_full and
+                            result['status']!='PASS_SCOPED_FINITE_MODEL') else 0
         elif args.cmd == 'gold-plan':
             c=load_gold_contract(args.contract)
             pilot=json.loads(args.pilot_report.read_text('utf-8')) if args.pilot_report else None
@@ -781,11 +795,19 @@ def main(argv: list[str] | None = None) -> int:
             for key in ('artifacts','workflows','process','hypotheses'):
                 path = getattr(args, key)
                 loaded[key] = json.loads(path.read_text('utf-8')) if path else None
-            result = synthesize(args.repo,args.revision,**loaded)
-            if args.analyst_request:
-                args.analyst_request.write_text(
-                    json.dumps(analyst_request(result),sort_keys=True,indent=2)+'\n',
-                    encoding='utf-8')
+            if args.integrated:
+                ai=json.loads(args.ai_observations.read_text('utf-8')) if args.ai_observations else None
+                result=integrated_case(args.repo,args.revision,**loaded,ai=ai)
+                if args.ai_request_output:
+                    args.ai_request_output.write_text(json.dumps(integrated_ai_request(result),sort_keys=True,indent=2)+'\n',encoding='utf-8')
+                if args.analyst_request:
+                    args.analyst_request.write_text(json.dumps(integrated_ai_request(result),sort_keys=True,indent=2)+'\n',encoding='utf-8')
+            else:
+                if args.ai_observations or args.ai_request_output:
+                    raise ValueError('AI reticular options require --integrated')
+                result=synthesize(args.repo,args.revision,**loaded)
+                if args.analyst_request:
+                    args.analyst_request.write_text(json.dumps(analyst_request(result),sort_keys=True,indent=2)+'\n',encoding='utf-8')
             code = 0
         elif args.cmd == 'verify-method-synthesis':
             original = json.loads(args.report.read_text('utf-8'))
@@ -793,10 +815,19 @@ def main(argv: list[str] | None = None) -> int:
             for key in ('artifacts','workflows','process','hypotheses'):
                 path = getattr(args, key)
                 loaded[key] = json.loads(path.read_text('utf-8')) if path else None
-            verify_synthesis(args.repo,original,**loaded)
-            result = {'schema':'cora-method-synthesis-replay/1',
-                      'commit':original['commit'],'receipt_digest':original['receipt_digest'],
-                      'status':'REPLAYED_GIT_SOURCE_ONLY','authorization':'NONE'}
+            if args.integrated:
+                ai=json.loads(args.ai_observations.read_text('utf-8')) if args.ai_observations else None
+                verify_integrated(args.repo,original,**loaded,ai=ai)
+                result={'schema':'cora-integrated-case-replay/1','commit':original['commit'],
+                        'report_digest':original['report_digest'],'status':'REPLAYED_SOURCE_NOT_RUNTIME',
+                        'authorization':'NONE'}
+            else:
+                if args.ai_observations:
+                    raise ValueError('AI reticular options require --integrated')
+                verify_synthesis(args.repo,original,**loaded)
+                result = {'schema':'cora-method-synthesis-replay/1',
+                          'commit':original['commit'],'receipt_digest':original['receipt_digest'],
+                          'status':'REPLAYED_GIT_SOURCE_ONLY','authorization':'NONE'}
             code = 0
         elif args.cmd == 'snapshot':
             result = snapshot(args.repo, args.revision)

@@ -651,6 +651,31 @@
         "TEST"
       ],
       "rationale": "Local synthetic and Git fixture falsification; not a target runtime claim."
+    },
+    {
+      "pattern": "src/cora/integrated_service.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Bounded reticular source/AI service; never an execution or product proof."
+    },
+    {
+      "pattern": "cora.integrated-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Source/external AND-gate lattice; not a release or human approval."
+    },
+    {
+      "pattern": "tests/test_pr28_integrated_service.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Exact-Git source regression, simulated AI and physical negative test witnesses."
     }
   ]
 }

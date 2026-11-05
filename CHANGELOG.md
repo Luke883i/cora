@@ -1,5 +1,9 @@
 # Changelog — CORA
 
+## Candidate change (unmerged) — integrated source assurance
+
+The new candidate extends the existing `method-synthesize` entrypoint with bounded document/code claim correlation, AI request/response fencing, original 71-command parity and a 10M finite semantic falsification option. This is a PR candidate, not a published release or automatic product acceptance. PR #27 has merged into main; its source checks passed, while independent product/runtime gate claims remain separate.
+
 All entries distinguish **merged source**, a **version declared in the repository**, and an actually **published release**. Merged PRs 01–25 do not themselves establish a public package, tagged GitHub Release, signed provenance, or production fitness. Current Python version: `1.0.0a4` (alpha, not published).
 
 ## Current merged source — PR-19 to PR-25 (unreleased, verified 4 November 2026)

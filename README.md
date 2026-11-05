@@ -54,6 +54,9 @@ Keep reports outside the source checkout; `/tmp` is a Unix example. `audit` read
 
 ## What works today
 
+**Integrated source review (candidate):** use `cora method-synthesize . --integrated --ai-request-output /tmp/cora-ai-request.json --output /tmp/cora-case.json` to correlate original methods, current documents, 18 declared README claim traces and all 71 CLI interfaces on one Git revision. The AI request is a non-authoritative review input, not a provider invocation or test of all 71 behaviors; see [convergent assurance](docs/CONVERGENT_ASSURANCE.md).
+
+
 | Engineering goal | Relevant CORA capabilities | Evidence boundary |
 | --- | --- | --- |
 | **Understand a repository** | Git snapshot, declared ontology, partial import graph, manifest adapters, artifact roles | Candidate dependencies and owner declarations, not complete runtime usage |
