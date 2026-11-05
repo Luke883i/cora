@@ -295,9 +295,23 @@ def _semantic_oracles(store: SourceStore, errors: list[str]) -> None:
     historical = [d for d in registry if d["status"] == "HISTORICAL"]
     _ok(len(original) == 43 and len(historical) == 17,
         errors, "S10-S17:historical-cardinality-mismatch")
+    # Preserve the original historical baseline keys across lossless Git renames.
+    # The HEAD relocation map is an untrusted declaration: each mapped original
+    # must still be present in the immutable documentation baseline, with the
+    # same byte-identical blob recorded in the current Git tree.
+    migration = json.loads(store.text(".cora/layout-migration.json"))
+    if (migration.get("schema") != "cora-layout-migration/1" or
+        migration.get("source_commit") != "6475633d836ca94dd9ecf799d1c7ca3c4735ad13" or
+        migration.get("authority") != "NONE"):
+        raise ValueError("historical relocation source authority drift")
+    old_for_new = {x["new"]: x["old"] for x in migration["moves"]
+                   if x["kind"] == "HISTORICAL_MARKDOWN"}
+    if len(old_for_new) != 14:
+        raise ValueError("historical relocation mapping incomplete")
     for item in original:
         path = item["path"]
-        expected = store.document_baseline_tree.get(path, ("", ""))[1]
+        source_baseline_path = old_for_new.get(path, path)
+        expected = store.document_baseline_tree.get(source_baseline_path, ("", ""))[1]
         _ok(bool(expected) and item["baseline_blob"] == expected,
             errors, "S17:baseline-object-mismatch:" + path)
         if item["status"] == "HISTORICAL":
