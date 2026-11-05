@@ -2,6 +2,9 @@
 
 ## Candidate source refactor — root and historical archive (PR draft)
 
+Incremental canonical path migration: two internal, source-only DoD contracts (`workflow-dod` and `integrated-dod`) now reside at `.cora/contracts/dod/` as unchanged Git blobs. Original implementation/test/document references and protected source inventories are updated. Root-facing ontology and artifact roles remain unchanged.
+
+
 CORA-on-CORA lossless navigation change: 14 historical Markdown documents move to `docs/archive/{decisions,audits,dod}` without changing their Git blob identities; the finite five-synergy mutation corpus moves from root to `.cora/fixtures/`. Three relative-link-dependent historical records remain untouched. README describes root conventions; the canonical registry, role inventory and existing test/CLI links are reconciled. The layout DoD is source-only, with 10k deterministic preseeded semantic cases (not 10k physical Git rewrites). Release/host and external consumer behavior remain blocked.
 
 ## Candidate PR — five synergic source-assurance developments (unmerged)

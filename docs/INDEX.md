@@ -18,6 +18,8 @@ The [README](../README.md) is the **one public-facing macro-map**: product promi
 - **Running integrated source-to-document convergence:** [Convergent assurance service](CONVERGENT_ASSURANCE.md) → [typed lattice](../cora.type-assurance-profile.json) → [canonical CLI](CLI_REFERENCE.md). Original software owners remain responsible; model-supplied hypotheses are untrusted.
 - **Auditing code tenuta by object type:** [Typed assurance crosswalk](../cora.type-assurance-profile.json) → [bounded method and R3 DoD](CONVERGENT_ASSURANCE.md) → [Git-bound verifier](../tools/verify_type_assurance.py). This is a source-candidate analysis, not an ISO certificate or product-ready claim.
 
+**Contract paths:** canonical onboarding JSON remains in the repository root while internal source DoDs can live under [`.cora/contracts/dod/`](../.cora/contracts/dod/integrated-dod.json); use the role inventory and Git history to identify consumers. A source-only DoD is not a release certificate.
+
 **Archive invariant:** `docs/archive/` contains immutable historical Git blobs; [the relocation map](../.cora/layout-migration.json) records original-to-current paths and protected exceptions. Historical text is not rewritten, not product authority and not a safe-deletion signal. Read current procedures above before relying on old decisions.
 
 ## Document semantics

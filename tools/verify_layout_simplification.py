@@ -131,10 +131,10 @@ def _dod(repo:Path,sha:str)->dict:
 def _migration(repo:Path,sha:str)->dict:
     m=_json(repo,sha,".cora/layout-migration.json")
     if (set(m)!={"schema","source_commit","authority","intent","expected",
-                "excluded","moves","qualification"} or
+                "excluded","moves","internal_contract_moves","qualification"} or
         m["schema"]!="cora-layout-migration/1" or
         m["source_commit"]!=BASE or m["authority"]!="NONE" or
-        m["expected"]!={"root_files_before":25,"root_files_after":24,
+        m["expected"]!={"root_files_before":25,"root_files_after":22,
                         "docs_top_level_removed":14,"cli_commands":71,
                         "markdown_total":48,"historical_records":17,"moves":15} or
         m["qualification"]!={"source":"GIT_BLOB_PRESERVATION_ONLY",
@@ -155,6 +155,22 @@ def _migration(repo:Path,sha:str)->dict:
             not isinstance(v["blob_oid"],str) or
             not re.fullmatch("[0-9a-f]{40}",v["blob_oid"])):
             raise ValueError("lossless migration mapping mutated")
+    internal_expected={
+        "cora.workflow-dod.json":".cora/contracts/dod/workflow-dod.json",
+        "cora.integrated-dod.json":".cora/contracts/dod/integrated-dod.json",
+    }
+    internal=m["internal_contract_moves"]
+    if (not isinstance(internal,list) or len(internal)!=2 or
+        {x.get("old") for x in internal if isinstance(x,dict)}!=set(internal_expected)):
+        raise ValueError("internal DoD migration list incomplete")
+    for row in internal:
+        if (set(row)!={"old","new","blob_oid","classification","preserve_bytes"} or
+            row["new"]!=internal_expected[row["old"]] or
+            row["classification"]!="INTERNAL_SOURCE_DOD_NOT_TARGET_API" or
+            row["preserve_bytes"] is not True or
+            not isinstance(row["blob_oid"],str) or
+            not re.fullmatch("[0-9a-f]{40}",row["blob_oid"])):
+            raise ValueError("internal DoD relocation mapping/authority drift")
     exclusions={x.get("path") for x in m["excluded"] if isinstance(x,dict)}
     if exclusions!={"docs/DOD.md","docs/AUDIT_PR01_PR07.md",
                    "docs/STANDARDS_MAINTENANCE_AUDIT.md"}:
@@ -202,6 +218,13 @@ def check(repo:Path,revision:str="HEAD")->dict:
             head[after]["oid"]!=row["blob_oid"] or
             head[after]["mode"]!="100644" or head[after]["kind"]!="blob"):
             raise ValueError("historical or fixture Git blob changed: "+before)
+    for row in mig["internal_contract_moves"]:
+        before,after,oid=row["old"],row["new"],row["blob_oid"]
+        if (before not in baseline or before in head or after in baseline
+            or after not in head or baseline[before]["oid"]!=oid
+            or head[after]["oid"]!=oid or head[after]["mode"]!="100644"
+            or head[after]["kind"]!="blob"):
+            raise ValueError("internal DoD original Git blob changed: "+before)
     preserved=(
         "README.md","AGENTS.md","CHANGELOG.md","CONTRIBUTING.md",
         "GOVERNANCE.md","SECURITY.md","LICENSE","pyproject.toml",
@@ -215,7 +238,7 @@ def check(repo:Path,revision:str="HEAD")->dict:
            and path.endswith(".md") for path in baseline)
     d1=sum(path.startswith("docs/") and path.count("/")==1
            and path.endswith(".md") for path in head)
-    if (r0,r1,d0-d1)!=(25,24,14):
+    if (r0,r1,d0-d1)!=(25,22,14):
         raise ValueError("root or active docs simplification count drift")
     reg=_json(repo,sha,"docs/documentation-registry.json")
     records={x["path"]:x for x in reg["documents"]}
@@ -269,6 +292,7 @@ def check(repo:Path,revision:str="HEAD")->dict:
            "root_before":r0,"root_after":r1,
            "top_level_docs_removed":d0-d1,
            "historical_blobs_preserved":14,"fixture_blobs_preserved":1,
+           "internal_contract_blobs_preserved":2,
            "registered_markdown":48,"historical_records":17,
            "cli_commands":71,"dod":_dod(repo,sha),
            "seed_families":len(_preseed(repo,sha)["mutants"]),

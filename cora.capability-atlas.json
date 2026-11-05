@@ -660,12 +660,10 @@
       "cora.documentation-proofs.json",
       "cora.five-synergies-dod.json",
       "cora.gold-assurance.json",
-      "cora.integrated-dod.json",
       "cora.method-atlas.json",
       "cora.method-synthesis-dod.json",
       "cora.ontology.json",
-      "cora.type-assurance-profile.json",
-      "cora.workflow-dod.json"
+      "cora.type-assurance-profile.json"
     ],
     "markdown": [
       ".github/PULL_REQUEST_TEMPLATE.md",

@@ -5,7 +5,7 @@
   "intent": "Simplify root and active documentation navigation by lossless archive of 14 immutable historical records and relocation of a finite-model fixture without changing canonical product/software interfaces.",
   "expected": {
     "root_files_before": 25,
-    "root_files_after": 24,
+    "root_files_after": 22,
     "docs_top_level_removed": 14,
     "cli_commands": 71,
     "markdown_total": 48,
@@ -139,5 +139,21 @@
     "external_consumers": "UNKNOWN",
     "safe_deletion": "NOT_AUTHORIZED",
     "governed": "BLOCKED_EXTERNAL"
-  }
+  },
+  "internal_contract_moves": [
+    {
+      "old": "cora.workflow-dod.json",
+      "new": ".cora/contracts/dod/workflow-dod.json",
+      "blob_oid": "e1dd5783c11886f37a3be268685137de73572796",
+      "classification": "INTERNAL_SOURCE_DOD_NOT_TARGET_API",
+      "preserve_bytes": true
+    },
+    {
+      "old": "cora.integrated-dod.json",
+      "new": ".cora/contracts/dod/integrated-dod.json",
+      "blob_oid": "4678e6c1ee36927e273e3c1193b713ef2af09802",
+      "classification": "INTERNAL_SOURCE_DOD_NOT_TARGET_API",
+      "preserve_bytes": true
+    }
+  ]
 }

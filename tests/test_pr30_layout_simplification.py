@@ -114,6 +114,24 @@ class LayoutSimplificationTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,"missing dependency"):
                 LAYOUT.check(local,sha)
 
+    def test_06_internal_dod_blob_forgery_is_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            local=Path(directory)/"local"
+            subprocess.run(["git","clone","--local","-q",str(ROOT),str(local)],check=True)
+            git(local,"config","user.name","CORA internal DoD proof")
+            git(local,"config","user.email","mutant@example.invalid")
+            git(local,"checkout","-q",self.head)
+            for moved_path in (".cora/contracts/dod/workflow-dod.json",
+                               ".cora/contracts/dod/integrated-dod.json"):
+                git(local,"checkout","-q",self.head)
+                def poison(text):
+                    obj=json.loads(text)
+                    obj["authority"]="APPROVED_BY_MUTANT"
+                    return json.dumps(obj,indent=2)
+                sha=change(local,moved_path,poison)
+                with self.assertRaisesRegex(ValueError,"internal DoD original Git blob changed"):
+                    LAYOUT.check(local,sha)
+
     def test_05_link_and_atlas_integrity_also_existing_verifier(self):
         from cora.artifact_roles import artifact_audit
         from cora.git_snapshot import snapshot

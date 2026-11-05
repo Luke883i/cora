@@ -663,7 +663,7 @@
       "rationale": "One thousand finite negative editorial/reader-target inputs with honest source-only counterexample scope."
     },
     {
-      "pattern": "cora.workflow-dod.json",
+      "pattern": ".cora/contracts/dod/workflow-dod.json",
       "roles": [
         "POLICY",
         "PRODUCT_CONTRACT"
@@ -787,7 +787,7 @@
       "rationale": "Bounded reticular source/AI service; never an execution or product proof."
     },
     {
-      "pattern": "cora.integrated-dod.json",
+      "pattern": ".cora/contracts/dod/integrated-dod.json",
       "roles": [
         "POLICY",
         "PRODUCT_CONTRACT"

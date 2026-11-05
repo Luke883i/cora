@@ -111,7 +111,7 @@ def _claims(repo,sha,tracked):
             'truth':'PATH_AND_PHRASE_WITNESS_ONLY'}
 
 def _reticulum(repo,sha):
-    p=_doc(repo,sha,'cora.integrated-dod.json')
+    p=_doc(repo,sha,'.cora/contracts/dod/integrated-dod.json')
     if set(p)!={'schema','nodes','authority','external_status'} or p['schema']!='cora-integrated-dod/1' or p['authority']!='NONE' or p['external_status']!='BLOCKED_EXTERNAL':
         raise ValueError('integrated DoD authority')
     n=p['nodes']

@@ -91,7 +91,7 @@ jobs:
           python tools/verify_layout_simplification.py --repo . --revision HEAD --output /tmp/cora-layout-proof.json
           python tools/verify_layout_simplification.py --repo . --revision HEAD --replay /tmp/cora-layout-proof.json > /tmp/cora-layout-replayed.json
           python -m unittest discover -s tests -p 'test_pr30_layout_simplification.py' -v
-          python -c 'import json; x=json.load(open("/tmp/cora-layout-proof.json")); assert x["root_before"]==25 and x["root_after"]==24 and x["top_level_docs_removed"]==14 and x["historical_blobs_preserved"]==14 and x["historical_records"]==17 and x["registered_markdown"]==48 and x["cli_commands"]==71 and x["dod"]["nodes"]==23 and x["authorization"]=="NONE" and x["safe_deletion"]=="NOT_AUTHORIZED"'
+          python -c 'import json; x=json.load(open("/tmp/cora-layout-proof.json")); assert x["root_before"]==25 and x["root_after"]==22 and x["internal_contract_blobs_preserved"]==2 and x["top_level_docs_removed"]==14 and x["historical_blobs_preserved"]==14 and x["historical_records"]==17 and x["registered_markdown"]==48 and x["cli_commands"]==71 and x["dod"]["nodes"]==23 and x["authorization"]=="NONE" and x["safe_deletion"]=="NOT_AUTHORIZED"'
       - name: Falsify ten thousand preseeded layout semantic cases twice
         run: |
           python tools/verify_layout_simplification.py --repo . --revision HEAD --stress --cases 10000 --seed 883 --output /tmp/cora-layout-stress.json

@@ -46,7 +46,7 @@ class CapabilityAtlasTests(unittest.TestCase):
         self.assertEqual(r["surfaces"]["modules"], 48)
         self.assertEqual(r["surfaces"]["operational_tools"], 15)
         self.assertEqual(r["surfaces"]["github_workflows"], 12)
-        self.assertEqual(r["surfaces"]["contracts"], 15)
+        self.assertEqual(r["surfaces"]["contracts"], 13)
         self.assertEqual(r["surfaces"]["markdown"], 48)
         self.assertEqual(r["surfaces"]["test_modules"], 36)
         self.assertEqual(r["authorization"], "NONE")

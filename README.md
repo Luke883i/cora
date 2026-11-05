@@ -14,7 +14,7 @@ CORA is an offline-first **Python 3.11+ command-line product** that helps develo
 
 **Open source license:** [MIT](LICENSE) applies to CORA's code and documentation. Permissive reuse does **not** grant access to third-party repositories, authenticate findings or remove the need for review. See [security](SECURITY.md) and [contributing](CONTRIBUTING.md).
 
-**Repository map:** the root keeps the product entrypoint, policies, package metadata and canonical `cora.*.json` contracts. Active guidance is in [`docs/`](docs/), byte-preserved historical decisions and audits are reached through the [documentation index](docs/INDEX.md), and finite-model fixtures live in [`.cora/fixtures/`](.cora/fixtures/). Code, tests and verification remain in `src/`, `tests/` and `tools/`; moving a file does not establish safe deletion or runtime equivalence.
+**Repository map:** the root keeps the product entrypoint, policies, package metadata and stable adoption-facing JSON contracts; internal DoD contracts live under `.cora/contracts/dod/`. Active guidance is in [`docs/`](docs/), byte-preserved historical decisions and audits are reached through the [documentation index](docs/INDEX.md), and finite-model fixtures live in [`.cora/fixtures/`](.cora/fixtures/). Code, tests and verification remain in `src/`, `tests/` and `tools/`; moving a file does not establish safe deletion or runtime equivalence.
 
 ## How CORA works
 

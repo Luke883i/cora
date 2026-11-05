@@ -75,7 +75,7 @@ CORA adapts the iKant_EDU PR-201/202 inventory, PR-205 historical preservation, 
 
 Run `cora workflow-audit . --revision HEAD --output /tmp/workflows.json` and `cora verify-workflows /tmp/workflows.json --repo .`. Compare with `--base BASE_SHA` to inspect additions, modifications and removals. This read-only analysis identifies partial trigger/job syntax, local workflow callers, source references and duplicate checks; it cannot prove absent external consumers or equivalent runs.
 
-`cora.workflow-dod.json` specifies `G_WORKFLOW_SOURCE` and `G_WORKFLOW_GOVERNED` with external E01-E04 evidence open. A reviewer must establish replacement behavior and actual platform controls before separately approving retirement. A source receipt never executes or modifies target workflows.
+`.cora/contracts/dod/workflow-dod.json` specifies `G_WORKFLOW_SOURCE` and `G_WORKFLOW_GOVERNED` with external E01-E04 evidence open. A reviewer must establish replacement behavior and actual platform controls before separately approving retirement. A source receipt never executes or modifies target workflows.
 
 ## Method synthesis and governed AI hypotheses (PR-25)
 
