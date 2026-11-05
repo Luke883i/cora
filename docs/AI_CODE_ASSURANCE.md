@@ -21,7 +21,7 @@ INTENT: record target behavior, owner, acceptance oracle, constraints and author
 | After merge | recompute source and debt on the actual merge SHA | dev-postmerge; debt-diff | that old PR SHA equals new main |
 | Pilot/release | independent review, external security/runtime, recovery/rollback | dod-plan --stage release | release from model/CI alone |
 
-The normative policy is cora.agent-dod.json. It fixes 24 failure families: six LOCAL, six INTERMEDIATE, six GLOBAL, six EXTERNAL. Each local node names a nearest falsifier, the four intermediate nodes are non-compensatory AND cuts, and G_SOURCE_AGENT depends on the first three intermediates while G_GOVERNED_AGENT additionally requires the independent external intermediate. Editing the PR policy cannot independently authorize acceptance; trusted BASE policy and hosting enforcement remain distinct.
+The normative policy is .cora/contracts/dod/agent-dod.json. It fixes 24 failure families: six LOCAL, six INTERMEDIATE, six GLOBAL, six EXTERNAL. Each local node names a nearest falsifier, the four intermediate nodes are non-compensatory AND cuts, and G_SOURCE_AGENT depends on the first three intermediates while G_GOVERNED_AGENT additionally requires the independent external intermediate. Editing the PR policy cannot independently authorize acceptance; trusted BASE policy and hosting enforcement remain distinct.
 
 ## Input, output, evidence authenticity
 
@@ -47,7 +47,7 @@ STOP/BLOCKED on ambiguous product intent, missing canonical owner, inability to 
 
 ## PR-18 historical correction
 
-PR-17 counted the first 24 individual faults and 276 pairs by index even when a mutated `_scenario` could return the wrong mask. PR-18 counts only actual prespecified masks, asserts scenario diversity and includes six physical Python source mutants of CORA's finite model. `dod-assess` now identifies `next_unresolved_falsifier`, refuses whitespace-only witnesses and never treats L19–L24 caller claims as independently authenticated. This is better source-model falsification, **not** real target-repository semantic validity; see [the historiographic audit](AUDIT_PR18_MAIN.md).
+PR-17 counted the first 24 individual faults and 276 pairs by index even when a mutated `_scenario` could return the wrong mask. PR-18 counts only actual prespecified masks, asserts scenario diversity and includes six physical Python source mutants of CORA's finite model. `dod-assess` now identifies `next_unresolved_falsifier`, refuses whitespace-only witnesses and never treats L19–L24 caller claims as independently authenticated. This is better source-model falsification, **not** real target-repository semantic validity; see [the historiographic audit](archive/audits/AUDIT_PR18_MAIN.md).
 
 ## Current reader path after PR-20
 

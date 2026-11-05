@@ -93,14 +93,14 @@ def check(repo, revision="HEAD"):
     from cora.artifact_roles import roles_for, validate_declarations
     repo = Path(repo).resolve(strict=True)
     commit, tree = source_at(repo, revision)
-    base = {"cora.capability-atlas.json", "cora.capability-dod.json",
+    base = {".cora/assurance/capability-atlas.json", ".cora/contracts/dod/capability-dod.json",
             "cora.ontology.json", "cora.artifact-roles.json",
             "docs/documentation-registry.json", "src/cora/cli.py",
             "README.md", "docs/CLI_REFERENCE.md", "docs/INDEX.md",
             "docs/ARCHITECTURE.md", "docs/DOCUMENTATION_DOD.md", "CHANGELOG.md"}
     texts = text_at(repo, tree, base)
-    atlas = json.loads(texts["cora.capability-atlas.json"])
-    dod = json.loads(texts["cora.capability-dod.json"])
+    atlas = json.loads(texts[".cora/assurance/capability-atlas.json"])
+    dod = json.loads(texts[".cora/contracts/dod/capability-dod.json"])
     ontology = json.loads(texts["cora.ontology.json"])
     role_decl = json.loads(texts["cora.artifact-roles.json"])
     validate_declarations(role_decl)
@@ -131,6 +131,9 @@ def check(repo, revision="HEAD"):
         "operational_tools": lambda p: re.fullmatch(r"tools/[^/]+\.py", p),
         "github_workflows": lambda p: re.fullmatch(r"\.github/workflows/[^/]+\.ya?ml", p),
         "contracts": lambda p: re.fullmatch(r"cora\.[^/]+\.json", p),
+        "internal_dod": lambda p: re.fullmatch(r"\.cora/contracts/dod/[^/]+\.json", p),
+        "internal_profiles": lambda p: re.fullmatch(r"\.cora/contracts/profiles/[^/]+\.json", p),
+        "assurance_records": lambda p: re.fullmatch(r"\.cora/assurance/[^/]+\.json", p),
         "markdown": lambda p: p.endswith(".md"),
         "test_modules": lambda p: re.fullmatch(r"tests/test_[^/]+\.py", p),
     }
@@ -184,12 +187,12 @@ def check(repo, revision="HEAD"):
             and node.name.startswith("test_") for node in ast.walk(syntax)):
             raise ValueError("test witness has no test functions: " + path)
     readme = texts["README.md"]
-    if ("[capability atlas](cora.capability-atlas.json)" not in readme
+    if ("[capability atlas](.cora/assurance/capability-atlas.json)" not in readme
             or "71 CLI commands" not in readme
             or "not 71 independently proven features" not in readme):
         raise ValueError("README feature scope incomplete")
-    if ("../cora.capability-atlas.json" not in texts["docs/INDEX.md"]
-            or "../cora.capability-dod.json" not in texts["docs/DOCUMENTATION_DOD.md"]):
+    if ("../.cora/assurance/capability-atlas.json" not in texts["docs/INDEX.md"]
+            or "../.cora/contracts/dod/capability-dod.json" not in texts["docs/DOCUMENTATION_DOD.md"]):
         raise ValueError("capability evidence is not navigable")
     if ("merged PR-25" not in texts["docs/ARCHITECTURE.md"]
             or "PR-25" not in texts["CHANGELOG.md"]
@@ -204,8 +207,8 @@ def check(repo, revision="HEAD"):
         "schema":SCHEMA, "commit":commit, "source_status":"PASS_SCOPED_SOURCE",
         "command_count":len(rows), "commands":receipts, "family_count":len(families),
         "surfaces":{k:len(v) for k,v in sorted(surfaces.items())},
-        "atlas_oid":tree["cora.capability-atlas.json"][1],
-        "dod_oid":tree["cora.capability-dod.json"][1],
+        "atlas_oid":tree[".cora/assurance/capability-atlas.json"][1],
+        "dod_oid":tree[".cora/contracts/dod/capability-dod.json"][1],
         "cli_oid":tree["src/cora/cli.py"][1],
         "proof_scope":"SYNTAX_IMPORT_AND_SOURCE_TEST_WITNESS_NOT_EXECUTED",
         "real_target":"UNOBSERVED", "ci_final_head":"NOT_ATTESTED_BY_SOURCE",

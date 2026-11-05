@@ -15,7 +15,7 @@ from cora.gold_saturation import gold_saturation
 from cora.cli import main
 
 BASE=Path(__file__).resolve().parents[1]
-POLICY=BASE/"cora.gold-assurance.json"
+POLICY=BASE/".cora/contracts/dod/gold-assurance.json"
 
 def git(root,*args):
     p=subprocess.run(["git","-C",str(root),*args],capture_output=True,text=True,check=True)

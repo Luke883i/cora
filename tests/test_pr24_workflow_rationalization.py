@@ -51,7 +51,7 @@ class WorkflowRationalizationTests(unittest.TestCase):
         self.assertEqual(r["governed_status"], "BLOCKED_EXTERNAL")
         self.assertTrue(all(not row["retirement_authorized"] for row in r["workflows"]))
         verify_workflows(ROOT, r)
-        doc = json.loads((ROOT / "cora.workflow-dod.json").read_text("utf-8"))
+        doc = json.loads((ROOT / ".cora/contracts/dod/workflow-dod.json").read_text("utf-8"))
         self.assertEqual(len(ordered_cut(doc["nodes"], "G_WORKFLOW_GOVERNED")), 15)
 
     def test_real_git_inbound_and_priviliged_workflows(self):

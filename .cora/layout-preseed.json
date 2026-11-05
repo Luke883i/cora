@@ -1,0 +1,293 @@
+{
+  "schema": "cora-layout-preseed/1",
+  "seed": 883,
+  "authority": "NONE",
+  "classification": "FINITE_MUTATION_MODEL_NOT_10000_REAL_GIT_EDITS",
+  "cases_required": 10000,
+  "mutants": [
+    {
+      "id": "NO_OP",
+      "target_class": "unchanged_verified_source",
+      "invalidated": [],
+      "expected": "SOURCE_CANDIDATE",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "VALID_LOSSLESS_MOVE",
+      "target_class": "unchanged_verified_source",
+      "invalidated": [],
+      "expected": "SOURCE_CANDIDATE",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "BASE_NOT_ANCESTOR",
+      "target_class": "git_move",
+      "invalidated": [
+        "identity"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "MISSING_SOURCE_BLOB",
+      "target_class": "git_move",
+      "invalidated": [
+        "history_bytes"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "ALTERED_HISTORICAL_BYTES",
+      "target_class": "git_move",
+      "invalidated": [
+        "history_bytes"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "OLD_PATH_LEFT_BEHIND",
+      "target_class": "git_move",
+      "invalidated": [
+        "archival_path"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "WRONG_ARCHIVE_DESTINATION",
+      "target_class": "git_move",
+      "invalidated": [
+        "history_bytes"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "HISTORICAL_PROMOTED_CURRENT",
+      "target_class": "markdown_navigation",
+      "invalidated": [
+        "markdown_links"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "MISSING_REGISTRY_ENTRY",
+      "target_class": "markdown_navigation",
+      "invalidated": [
+        "markdown_links"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "BROKEN_README_LINK",
+      "target_class": "markdown_navigation",
+      "invalidated": [
+        "readme_promise"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "BROKEN_DOCUMENT_ANCHOR",
+      "target_class": "markdown_navigation",
+      "invalidated": [
+        "markdown_links"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "STALE_MARKDOWN_LINK",
+      "target_class": "markdown_navigation",
+      "invalidated": [
+        "markdown_links"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "CROSS_PLATFORM_CASE_COLLISION",
+      "target_class": "markdown_navigation",
+      "invalidated": [
+        "archival_path"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "RELATIVE_PATH_ESCAPE",
+      "target_class": "markdown_navigation",
+      "invalidated": [
+        "markdown_links"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "SYMLINK_SUBSTITUTION",
+      "target_class": "markdown_navigation",
+      "invalidated": [
+        "history_bytes"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "ROOT_FIXTURE_NOT_MOVED",
+      "target_class": "root_and_code",
+      "invalidated": [
+        "code_loader"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "FIXTURE_BYTES_MUTATED",
+      "target_class": "root_and_code",
+      "invalidated": [
+        "history_bytes"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "STALE_FIXTURE_LOADER",
+      "target_class": "root_and_code",
+      "invalidated": [
+        "code_loader"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "CLI_COMMAND_REMOVED",
+      "target_class": "root_and_code",
+      "invalidated": [
+        "code_loader"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "CANONICAL_CONTRACT_MOVED",
+      "target_class": "root_and_code",
+      "invalidated": [
+        "archival_path"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "UNKNOWN_CONSUMER_AS_SAFE",
+      "target_class": "authority",
+      "invalidated": [
+        "external_boundary"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "FAKE_RUNTIME_PASS",
+      "target_class": "authority",
+      "invalidated": [
+        "external_boundary"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "FALSE_STANDARD_CONFORMANCE",
+      "target_class": "authority",
+      "invalidated": [
+        "external_boundary"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "ROLE_RULE_STALE",
+      "target_class": "authority",
+      "invalidated": [
+        "artifact_roles"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "ATLAS_SURFACE_MISSING",
+      "target_class": "source_census",
+      "invalidated": [
+        "inventory"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "REGRESSION_TEST_DROPPED",
+      "target_class": "source_census",
+      "invalidated": [
+        "regression"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "CI_SCOPE_DROPPED",
+      "target_class": "source_census",
+      "invalidated": [
+        "regression"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "REPLAY_DIGEST_FORGED",
+      "target_class": "proof_replay",
+      "invalidated": [
+        "source_replay"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "POISONED_PRESEED_ORACLE",
+      "target_class": "proof_replay",
+      "invalidated": [
+        "source_replay"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "NONDETERMINISTIC_SEED",
+      "target_class": "proof_replay",
+      "invalidated": [
+        "source_replay"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "UNAUTHORIZED_ARCHIVE_DELETE",
+      "target_class": "proof_replay",
+      "invalidated": [
+        "governance"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "POSTMERGE_BASE_DRIFT",
+      "target_class": "proof_replay",
+      "invalidated": [
+        "identity"
+      ],
+      "expected": "SOURCE_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    }
+  ]
+}

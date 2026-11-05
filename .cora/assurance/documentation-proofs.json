@@ -1,7 +1,7 @@
 {
   "schema": "cora-documentation-proofs/1",
   "baseline_sha": "d8b75df872c1603597550bebfb8c331c565aa7f9",
-  "contract_dod": "cora.documentation-dod.json",
+  "contract_dod": ".cora/contracts/dod/documentation-dod.json",
   "authority": "CANDIDATE_SOURCE_REPLAY_NOT_HOST_OR_HUMAN_ATTESTATION",
   "source_goal": "G_DOC_SOURCE",
   "accepted_goal": "G_DOC_ACCEPTED",
@@ -185,7 +185,7 @@
           "role": "CLAIM"
         },
         {
-          "path": "cora.documentation-dod.json",
+          "path": ".cora/contracts/dod/documentation-dod.json",
           "role": "IMPLEMENTATION"
         },
         {
@@ -235,7 +235,7 @@
           "role": "TEST"
         },
         {
-          "path": "cora.capability-atlas.json",
+          "path": ".cora/assurance/capability-atlas.json",
           "role": "IMPLEMENTATION"
         },
         {

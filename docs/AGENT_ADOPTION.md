@@ -18,7 +18,7 @@ In the target, establish its *own* committed `cora.ontology.json`. Contextual pr
 The agent identifies the product outcome, independent acceptance oracle, impacted owners and consumers, and real BASE/HEAD commits. The exact change intent is supplied as text; CORA binds it to the source revision but does **not** authenticate its human author. Run the source/complete DoD plan:
 
 ```sh
-cora convergence-plan --contract /path/to/cora/cora.convergence-dod.json
+cora convergence-plan --contract /path/to/cora/.cora/contracts/dod/convergence-dod.json
 ```
 
 ## 3. Execute an opt-in contextual source gate
@@ -28,12 +28,12 @@ After the target change is committed, replace the placeholders with real revisio
 ```sh
 cora dev-premerge /path/to/target --base BASE_SHA --head PR_HEAD_SHA \
   --contextual --intent "Ship the stated change with its named acceptance tests" \
-  --convergence-contract /path/to/cora/cora.convergence-dod.json \
+  --convergence-contract /path/to/cora/.cora/contracts/dod/convergence-dod.json \
   --output /tmp/cora-premerge.json
 
 cora verify-contextual-gate /tmp/cora-premerge.json --repo /path/to/target \
   --intent "Ship the stated change with its named acceptance tests" \
-  --convergence-contract /path/to/cora/cora.convergence-dod.json
+  --convergence-contract /path/to/cora/.cora/contracts/dod/convergence-dod.json
 ```
 
 The same intent is required at replay. Missing intent produces `DEBT_BLOCKED`. A valid source report may still require review; dynamic consumers, behavioral tests and trusted side-effect readback remain separate obligations. `--strict` intentionally rejects unresolved conditions rather than turning them into approvals.

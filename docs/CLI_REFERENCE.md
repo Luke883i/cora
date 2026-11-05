@@ -2,7 +2,7 @@
 
 This is the complete inventory of the single `cora` CLI from `src/cora/cli.py`, maintained against its real `argparse` parser. Use `cora COMMAND --help` for exact flags and inputs; this is not evidence of test execution or a guarantee of behavioral correctness. Start with [Getting started](GETTING_STARTED.md) or [Agent adoption](AGENT_ADOPTION.md).
 
-The [complete capability atlas](../cora.capability-atlas.json) enumerates all **71 parser commands** with eight method families, implementation and test-source paths, classified side effects and non-CLI repository surfaces. This reference explains command entrypoints; the atlas describes source witnesses. Neither proves 71 independently qualified features, executed tests or real-target behavior. See the [capability DoD](../cora.capability-dod.json) for source-versus-external obligations.
+The [complete capability atlas](../.cora/assurance/capability-atlas.json) enumerates all **71 parser commands** with eight method families, implementation and test-source paths, classified side effects and non-CLI repository surfaces. This reference explains command entrypoints; the atlas describes source witnesses. Neither proves 71 independently qualified features, executed tests or real-target behavior. See the [capability DoD](../.cora/contracts/dod/capability-dod.json) for source-versus-external obligations.
 
 ## Git identity and source evidence
 
@@ -103,9 +103,9 @@ The [complete capability atlas](../cora.capability-atlas.json) enumerates all **
 
 Source-bound source snapshot: `cora snapshot TARGET --revision HEAD --output REPORT`, then `cora verify-ledger REPORT --repo TARGET`.
 
-Contextual premerge: `cora dev-premerge TARGET --base BASE_SHA --head HEAD_SHA --contextual --intent "The bounded change and acceptance criteria" --convergence-contract /path/to/cora/cora.convergence-dod.json --output REPORT`.
+Contextual premerge: `cora dev-premerge TARGET --base BASE_SHA --head HEAD_SHA --contextual --intent "The bounded change and acceptance criteria" --convergence-contract /path/to/cora/.cora/contracts/dod/convergence-dod.json --output REPORT`.
 
-Replay with **the same intent**: `cora verify-contextual-gate REPORT --repo TARGET --intent "The bounded change and acceptance criteria" --convergence-contract /path/to/cora/cora.convergence-dod.json`.
+Replay with **the same intent**: `cora verify-contextual-gate REPORT --repo TARGET --intent "The bounded change and acceptance criteria" --convergence-contract /path/to/cora/.cora/contracts/dod/convergence-dod.json`.
 
 A target must have its own committed ontology and BASE-committed continuous policy for a complete contextual review. An absent intent is debt-blocked. Real tests, security scanners, reviewers and hosting controls remain independently governed. The README intentionally explains product value, rather than listing every command.
 

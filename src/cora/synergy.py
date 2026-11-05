@@ -35,7 +35,7 @@ EXPECTED_EDGES = {
 
 
 def five_dod(repo: Path, commit: str) -> dict:
-    source = git(Path(repo), 'show', commit + ':cora.five-synergies-dod.json',
+    source = git(Path(repo), 'show', commit + ':.cora/contracts/dod/five-synergies-dod.json',
                  max_output=128 * 1024)
     contract = json.loads(source.decode('utf-8'))
     if (set(contract) != {
@@ -384,7 +384,7 @@ def verify_unified_assurance(repo: Path, report: dict, *,
 
 def _validated_seed(repo: Path, sha: str) -> list[dict]:
     from .integrated_service import FAULTS
-    raw=git(repo,'show',sha+':cora.five-synergies-mutants.json',
+    raw=git(repo,'show',sha+':.cora/fixtures/five-synergies-mutants.json',
             max_output=64*1024)
     corpus=json.loads(raw.decode('utf-8'))
     if (not isinstance(corpus,dict) or set(corpus)!={

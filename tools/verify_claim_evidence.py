@@ -20,7 +20,7 @@ from pathlib import Path
 from cora.reticulum import ordered_cut
 
 SCHEMA = "cora-documentation-proof-receipt/1"
-PROFILE = "cora.documentation-proofs.json"
+PROFILE = ".cora/assurance/documentation-proofs.json"
 BASELINE = "d8b75df872c1603597550bebfb8c331c565aa7f9"
 DOCUMENT_BASELINE = "ee6da7625dae1e4101e06eb979a348610f39093b"
 PREDICATES = (
@@ -53,11 +53,12 @@ REQUIRED = (
     "docs/GETTING_STARTED.md", "docs/AGENT_ADOPTION.md",
     "docs/CONVERGENT_ASSURANCE.md", "docs/ARCHITECTURE.md",
     "docs/RELEASE.md", "CHANGELOG.md", "GOVERNANCE.md", "AGENTS.md",
-    ".cora/continuous-policy.json", ".github/workflows/ci-documentation.yml",
+    ".cora/continuous-policy.json", ".cora/layout-migration.json",
+    ".github/workflows/ci-documentation.yml",
     ".github/workflows/ci-convergence.yml",
     "src/cora/cli.py", "src/cora/continuous.py", "src/cora/reticulum.py",
     "src/cora/__init__.py", "tools/verify_documentation.py",
-    "cora.ontology.json", "cora.documentation-dod.json", "pyproject.toml",
+    "cora.ontology.json", ".cora/contracts/dod/documentation-dod.json", "pyproject.toml",
 )
 
 
@@ -230,7 +231,7 @@ def _semantic_oracles(store: SourceStore, errors: list[str]) -> None:
     commands, flags = _parser(cli)
     meta = tomllib.loads(r("pyproject.toml"))["project"]
     ont = store.json("cora.ontology.json")
-    dod = store.json("cora.documentation-dod.json")
+    dod = store.json(".cora/contracts/dod/documentation-dod.json")
     docs = store.json("docs/documentation-registry.json")
     policy = store.json(".cora/continuous-policy.json")
     document = {n["id"]: n for n in dod["nodes"]}
@@ -295,9 +296,23 @@ def _semantic_oracles(store: SourceStore, errors: list[str]) -> None:
     historical = [d for d in registry if d["status"] == "HISTORICAL"]
     _ok(len(original) == 43 and len(historical) == 17,
         errors, "S10-S17:historical-cardinality-mismatch")
+    # Preserve the original historical baseline keys across lossless Git renames.
+    # The HEAD relocation map is an untrusted declaration: each mapped original
+    # must still be present in the immutable documentation baseline, with the
+    # same byte-identical blob recorded in the current Git tree.
+    migration = json.loads(store.text(".cora/layout-migration.json"))
+    if (migration.get("schema") != "cora-layout-migration/1" or
+        migration.get("source_commit") != "6475633d836ca94dd9ecf799d1c7ca3c4735ad13" or
+        migration.get("authority") != "NONE"):
+        raise ValueError("historical relocation source authority drift")
+    old_for_new = {x["new"]: x["old"] for x in migration["moves"]
+                   if x["kind"] == "HISTORICAL_MARKDOWN"}
+    if len(old_for_new) != 14:
+        raise ValueError("historical relocation mapping incomplete")
     for item in original:
         path = item["path"]
-        expected = store.document_baseline_tree.get(path, ("", ""))[1]
+        source_baseline_path = old_for_new.get(path, path)
+        expected = store.document_baseline_tree.get(source_baseline_path, ("", ""))[1]
         _ok(bool(expected) and item["baseline_blob"] == expected,
             errors, "S17:baseline-object-mismatch:" + path)
         if item["status"] == "HISTORICAL":
@@ -354,7 +369,7 @@ def inspect(repo: Path, revision: str = "HEAD") -> dict:
     errors: list[str] = []
     _ok(profile.get("schema") == "cora-documentation-proofs/1" and
         profile.get("baseline_sha") == BASELINE and
-        profile.get("contract_dod") == "cora.documentation-dod.json" and
+        profile.get("contract_dod") == ".cora/contracts/dod/documentation-dod.json" and
         profile.get("authority") ==
         "CANDIDATE_SOURCE_REPLAY_NOT_HOST_OR_HUMAN_ATTESTATION" and
         len(profile.get("nodes", [])) == 18 and

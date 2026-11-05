@@ -24,7 +24,7 @@ def copy_fixture(dst: Path) -> None:
         path = entry["path"]
         (dst / path).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(ROOT / path, dst / path)
-    for path in ("docs/documentation-registry.json", "cora.documentation-dod.json",
+    for path in ("docs/documentation-registry.json", ".cora/contracts/dod/documentation-dod.json",
                  "src/cora/cli.py"):
         (dst / path).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(ROOT / path, dst / path)
@@ -43,7 +43,7 @@ class DocumentationDoDTests(unittest.TestCase):
                          "MAINTAINER_DECLARATION_NOT_INDEPENDENT_ATTESTATION")
 
     def test_02_reticular_global_has_independent_external_cut(self):
-        data = json.loads((ROOT / "cora.documentation-dod.json").read_text("utf-8"))
+        data = json.loads((ROOT / ".cora/contracts/dod/documentation-dod.json").read_text("utf-8"))
         self.assertEqual(len(data["nodes"]), 28)
         self.assertEqual(len(ordered_cut(data["nodes"], "G_DOC_SOURCE")), 24)
         self.assertEqual(len(ordered_cut(data["nodes"], "G_DOC_ACCEPTED")), 28)
@@ -62,7 +62,7 @@ class DocumentationDoDTests(unittest.TestCase):
             p.write_text(json.dumps(j), encoding="utf-8")
 
         def dod_mutate(modifier):
-            p = fixture / "cora.documentation-dod.json"
+            p = fixture / ".cora/contracts/dod/documentation-dod.json"
             j = json.loads(p.read_text("utf-8"))
             modifier(j)
             p.write_text(json.dumps(j), encoding="utf-8")
@@ -76,10 +76,10 @@ class DocumentationDoDTests(unittest.TestCase):
              lambda j: j["documents"].append(copy.deepcopy(j["documents"][0]))),
              "duplicate-or-wrong-document-count"),
             ("historical-identity-promoted", lambda: registry_mutate(
-             lambda j: next(x for x in j["documents"] if x["path"] == "docs/ADR-PR01.md").update(
-                 {"status": "CURRENT"})), "historical-authority-promoted:docs/ADR-PR01.md"),
-            ("historical-source-edited", lambda: change("docs/ADR-PR01.md",
-             lambda x: x + "\nModified historical content\n"), "historical-content-changed:docs/ADR-PR01.md"),
+             lambda j: next(x for x in j["documents"] if x["path"] == "docs/archive/decisions/ADR-PR01.md").update(
+                 {"status": "CURRENT"})), "historical-authority-promoted:docs/archive/decisions/ADR-PR01.md"),
+            ("historical-source-edited", lambda: change("docs/archive/decisions/ADR-PR01.md",
+             lambda x: x + "\nModified historical content\n"), "historical-content-changed:docs/archive/decisions/ADR-PR01.md"),
             ("broken-link", lambda: change("README.md",
              lambda x: x + "\n[Missing](docs/nonexistent.md)\n"), "broken-link:README.md:docs/nonexistent.md"),
             ("broken-heading-anchor", lambda: change("README.md",

@@ -15,7 +15,7 @@ from cora.agent_saturation import (_implementation, _reference_oracle,
 from cora.cli import main
 
 ROOT = Path(__file__).resolve().parents[1]
-POLICY = ROOT / "cora.agent-dod.json"
+POLICY = ROOT / ".cora/contracts/dod/agent-dod.json"
 HEAD = "a" * 40
 
 
@@ -38,7 +38,8 @@ class AgentAssuranceFalsification(unittest.TestCase):
     def test_twenty_four_real_policy_file_mutants_killed(self):
         """Real temporary JSON file changes, NOT 24 source-code behavioral mutants."""
         with tempfile.TemporaryDirectory() as td:
-            temp = Path(td) / "cora.agent-dod.json"
+            temp = Path(td) / ".cora/contracts/dod/agent-dod.json"
+            temp.parent.mkdir(parents=True,exist_ok=True)
             for idx in range(24):
                 mutated = copy.deepcopy(self.contract)
                 mutated["nodes"][idx]["family"] = "forged_" + FAMILIES[idx]

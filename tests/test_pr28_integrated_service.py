@@ -123,18 +123,18 @@ class IntegratedServiceTests(unittest.TestCase):
             git(local,'checkout','-q',self.sha)
             base=integrated_case(local)
             self.assertTrue(verify_integrated(local,base))
-            contract=local/'cora.integrated-dod.json'
+            contract=local/'.cora/contracts/dod/integrated-dod.json'
             doc=json.loads(contract.read_text('utf-8'))
             next(x for x in doc['nodes'] if x['id']=='G_GOVERNED')['depends_on'].remove('E_REVIEW')
             contract.write_text(json.dumps(doc,indent=2)+'\n',encoding='utf-8')
-            git(local,'add','cora.integrated-dod.json')
+            git(local,'add','.cora/contracts/dod/integrated-dod.json')
             git(local,'commit','-qm','physical external-DoD-edge source mutant')
             with self.assertRaisesRegex(ValueError,'DoD false promotion'):
                 integrated_case(local,'HEAD')
             git(local,'checkout','-q',self.sha)
             readme=local/'README.md'
             source=readme.read_text('utf-8')
-            from_profile=json.loads((local/'cora.documentation-proofs.json').read_text('utf-8'))
+            from_profile=json.loads((local/'.cora/assurance/documentation-proofs.json').read_text('utf-8'))
             phrase=from_profile['nodes'][0]['readme_phrase']
             self.assertIn(phrase,source)
             readme.write_text(source.replace(phrase,'UNSUPPORTED_CANDIDATE_SENTENCE',1),encoding='utf-8')
@@ -145,11 +145,11 @@ class IntegratedServiceTests(unittest.TestCase):
             self.assertFalse(observed['features']['all_behaviors_tested'])
             self.assertEqual(observed['authorization'],'NONE')
             git(local,'checkout','-q',self.sha)
-            profile=local/'cora.type-assurance-profile.json'
+            profile=local/'.cora/contracts/profiles/type-assurance-profile.json'
             obj=json.loads(profile.read_text('utf-8'))
             obj['types'][0]['owner_source']='src/cora/ontology.py'
             profile.write_text(json.dumps(obj,indent=2)+'\n',encoding='utf-8')
-            git(local,'add','cora.type-assurance-profile.json')
+            git(local,'add','.cora/contracts/profiles/type-assurance-profile.json')
             git(local,'commit','-qm','physical method-owner crosswalk substitution')
             with self.assertRaisesRegex(ValueError,'typed method owner/standards disconnected'):
                 integrated_case(local,'HEAD')

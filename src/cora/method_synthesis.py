@@ -25,7 +25,7 @@ def _committed_json(repo, sha, path):
 
 
 def _validate_atlas(repo, sha, paths):
-    atlas = _committed_json(repo, sha, 'cora.method-atlas.json')
+    atlas = _committed_json(repo, sha, '.cora/contracts/profiles/method-atlas.json')
     if (set(atlas) != {'schema','product','software','references','procedures','authority'}
             or atlas['schema'] != 'cora-method-atlas/1' or atlas['authority'] != 'NONE'):
         raise ValueError('method atlas contract invalid')
@@ -63,7 +63,7 @@ def _validate_atlas(repo, sha, paths):
         seen.add(p['id'])
     if mapped != set(atlas['references']):
         raise ValueError('unmapped reference method')
-    dod = _committed_json(repo, sha, 'cora.method-synthesis-dod.json')
+    dod = _committed_json(repo, sha, '.cora/contracts/dod/method-synthesis-dod.json')
     if (set(dod) != {'schema','nodes','authority','external_status'}
             or dod['schema'] != 'cora-method-synthesis-dod/1'
             or dod['authority'] != 'NONE'

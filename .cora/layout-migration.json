@@ -1,0 +1,254 @@
+{
+  "schema": "cora-layout-migration/1",
+  "source_commit": "6475633d836ca94dd9ecf799d1c7ca3c4735ad13",
+  "authority": "NONE",
+  "intent": "Simplify root and current documentation navigation by preserving 14 immutable historical records and one finite fixture, moving ten byte-identical internal DoDs/profiles, and strictly limiting three additional JSON changes to canonical path rewrites and inventory recategorization; retain two external-facing root contracts.",
+  "expected": {
+    "root_files_before": 25,
+    "root_files_after": 11,
+    "docs_top_level_removed": 14,
+    "cli_commands": 71,
+    "markdown_total": 48,
+    "historical_records": 17,
+    "moves": 15
+  },
+  "excluded": [
+    {
+      "path": "docs/DOD.md",
+      "reason": "Has three relative historical/current document links and is kept in place to preserve original blob and live navigation."
+    },
+    {
+      "path": "docs/AUDIT_PR01_PR07.md",
+      "reason": "Referenced by the immutable historical DOD.md; cannot move losslessly without rewriting source links."
+    },
+    {
+      "path": "docs/STANDARDS_MAINTENANCE_AUDIT.md",
+      "reason": "Referenced by immutable historical DOD.md; retained in place."
+    }
+  ],
+  "moves": [
+    {
+      "old": "docs/ADR-PR01.md",
+      "new": "docs/archive/decisions/ADR-PR01.md",
+      "blob_oid": "96dfedaf7a0f63136e5bd5015b525e1118c72d77",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "docs/ADR-PR02.md",
+      "new": "docs/archive/decisions/ADR-PR02.md",
+      "blob_oid": "3944a68c6baf23587a4e24a0736b72d5c256ac82",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "docs/ADR-PR03.md",
+      "new": "docs/archive/decisions/ADR-PR03.md",
+      "blob_oid": "8e691b98587b5f3a2deba26b74c68b7bb7b70411",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "docs/ADR-PR04.md",
+      "new": "docs/archive/decisions/ADR-PR04.md",
+      "blob_oid": "5e7881c5ee80070c4abbe65b53b4ff85986c18a6",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "docs/ADR-PR05.md",
+      "new": "docs/archive/decisions/ADR-PR05.md",
+      "blob_oid": "bc1bdd0f1875dd3514fc2c410f66674e7097a8d1",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "docs/ADR-PR06.md",
+      "new": "docs/archive/decisions/ADR-PR06.md",
+      "blob_oid": "a48221021cd7f7a7ab69e24869f8e60f7d40d7b2",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "docs/ADR-PR07.md",
+      "new": "docs/archive/decisions/ADR-PR07.md",
+      "blob_oid": "b8252f1c3169172a6e854a83c7761f30dc382b0c",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "docs/ADR-PR15.md",
+      "new": "docs/archive/decisions/ADR-PR15.md",
+      "blob_oid": "1ef97dc94b115e7761a2f8da42a9dcc8e048dc7e",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "docs/AUDIT_PR15_MAIN.md",
+      "new": "docs/archive/audits/AUDIT_PR15_MAIN.md",
+      "blob_oid": "94a0f171286c2b2812d04bbf04a64123698f1a28",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "docs/AUDIT_PR18_MAIN.md",
+      "new": "docs/archive/audits/AUDIT_PR18_MAIN.md",
+      "blob_oid": "faabef6fb8874ccdd58bda654dbaf853f3d90ea4",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "docs/AUDIT_PR19_CLOSURE.md",
+      "new": "docs/archive/audits/AUDIT_PR19_CLOSURE.md",
+      "blob_oid": "50fcf2621c0b65a958b41f5f4bbb43e9e802af6c",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "docs/FORENSIC_SELF_AUDIT.md",
+      "new": "docs/archive/audits/FORENSIC_SELF_AUDIT.md",
+      "blob_oid": "6556b56897d40b525d80bd88431208eecc03b45f",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "docs/DOD_PR16_SEMANTIC_ASSURANCE.md",
+      "new": "docs/archive/dod/DOD_PR16_SEMANTIC_ASSURANCE.md",
+      "blob_oid": "b44cbb4cbb669106b9579d5ec7e0288713d5c12a",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "docs/DOD_PR17_AGENT.md",
+      "new": "docs/archive/dod/DOD_PR17_AGENT.md",
+      "blob_oid": "0d168f366171fe0d81018af78ce7b9c440d20995",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "cora.five-synergies-mutants.json",
+      "new": ".cora/fixtures/five-synergies-mutants.json",
+      "blob_oid": "e32772fca116a5f87ebb51e99d0f6362d1f96e87",
+      "kind": "FINITE_MODEL_FIXTURE",
+      "preserve_bytes": true
+    }
+  ],
+  "qualification": {
+    "source": "GIT_LINEAGE_AND_BOUNDED_REFERENCE_REWRITE",
+    "runtime": "NOT_ATTESTED",
+    "external_consumers": "UNKNOWN",
+    "safe_deletion": "NOT_AUTHORIZED",
+    "governed": "BLOCKED_EXTERNAL"
+  },
+  "internal_contract_moves": [
+    {
+      "old": "cora.workflow-dod.json",
+      "new": ".cora/contracts/dod/workflow-dod.json",
+      "blob_oid": "e1dd5783c11886f37a3be268685137de73572796",
+      "classification": "INTERNAL_SOURCE_DOD_NOT_TARGET_API",
+      "preserve_bytes": true
+    },
+    {
+      "old": "cora.integrated-dod.json",
+      "new": ".cora/contracts/dod/integrated-dod.json",
+      "blob_oid": "4678e6c1ee36927e273e3c1193b713ef2af09802",
+      "classification": "INTERNAL_SOURCE_DOD_NOT_TARGET_API",
+      "preserve_bytes": true
+    }
+  ],
+  "thematic_baseline": "d273eebac8482f240f4b18b5ad198fcb041cf1e0",
+  "thematic_moves": [
+    {
+      "old": "cora.agent-dod.json",
+      "new": ".cora/contracts/dod/agent-dod.json",
+      "source_blob": "7f5b5f0803266d4faaad1d0924047a6efe96a779",
+      "target_blob": "7f5b5f0803266d4faaad1d0924047a6efe96a779",
+      "mode": "BYTE_IDENTICAL",
+      "authority": "NONE"
+    },
+    {
+      "old": "cora.capability-atlas.json",
+      "new": ".cora/assurance/capability-atlas.json",
+      "source_blob": "001b9cf25f5455648990dfc5179675a709d54660",
+      "target_blob": "dcad49c7de0598e3bae6fdd8ebeb70aa5b3590da",
+      "mode": "STRUCTURAL_PATH_REWRITE",
+      "authority": "NONE"
+    },
+    {
+      "old": "cora.capability-dod.json",
+      "new": ".cora/contracts/dod/capability-dod.json",
+      "source_blob": "e6b4e30bfa02c62e72969d34e59e46250169a412",
+      "target_blob": "e6b4e30bfa02c62e72969d34e59e46250169a412",
+      "mode": "BYTE_IDENTICAL",
+      "authority": "NONE"
+    },
+    {
+      "old": "cora.convergence-dod.json",
+      "new": ".cora/contracts/dod/convergence-dod.json",
+      "source_blob": "22b58ec639b510ff86a5bd5d131e86b473030a09",
+      "target_blob": "22b58ec639b510ff86a5bd5d131e86b473030a09",
+      "mode": "BYTE_IDENTICAL",
+      "authority": "NONE"
+    },
+    {
+      "old": "cora.documentation-dod.json",
+      "new": ".cora/contracts/dod/documentation-dod.json",
+      "source_blob": "ef281924a8d302a56c88194e6c554a38c2296194",
+      "target_blob": "ef281924a8d302a56c88194e6c554a38c2296194",
+      "mode": "BYTE_IDENTICAL",
+      "authority": "NONE"
+    },
+    {
+      "old": "cora.documentation-proofs.json",
+      "new": ".cora/assurance/documentation-proofs.json",
+      "source_blob": "047ea935fc213e7dcb9c6947832ccd221b0c9532",
+      "target_blob": "34f05e755aa88c3a1c9348302bceed96a20824b3",
+      "mode": "STRUCTURAL_PATH_REWRITE",
+      "authority": "NONE"
+    },
+    {
+      "old": "cora.five-synergies-dod.json",
+      "new": ".cora/contracts/dod/five-synergies-dod.json",
+      "source_blob": "ebe8fdf138564a2d60ec2b155d8e66ed8442c272",
+      "target_blob": "ebe8fdf138564a2d60ec2b155d8e66ed8442c272",
+      "mode": "BYTE_IDENTICAL",
+      "authority": "NONE"
+    },
+    {
+      "old": "cora.gold-assurance.json",
+      "new": ".cora/contracts/dod/gold-assurance.json",
+      "source_blob": "eb09ea3e72182c1caa209fd9f3f02174ff32b569",
+      "target_blob": "eb09ea3e72182c1caa209fd9f3f02174ff32b569",
+      "mode": "BYTE_IDENTICAL",
+      "authority": "NONE"
+    },
+    {
+      "old": "cora.method-atlas.json",
+      "new": ".cora/contracts/profiles/method-atlas.json",
+      "source_blob": "67ce9ee097342c7bb9bcdfae1adcac8a4b22b079",
+      "target_blob": "67ce9ee097342c7bb9bcdfae1adcac8a4b22b079",
+      "mode": "BYTE_IDENTICAL",
+      "authority": "NONE"
+    },
+    {
+      "old": "cora.method-synthesis-dod.json",
+      "new": ".cora/contracts/dod/method-synthesis-dod.json",
+      "source_blob": "03c73387c7ba38feb6d52f91d26e7faadccfff31",
+      "target_blob": "03c73387c7ba38feb6d52f91d26e7faadccfff31",
+      "mode": "BYTE_IDENTICAL",
+      "authority": "NONE"
+    },
+    {
+      "old": "cora.type-assurance-profile.json",
+      "new": ".cora/contracts/profiles/type-assurance-profile.json",
+      "source_blob": "625d5204a692ece1933f8f6ab2299aeda7ac109e",
+      "target_blob": "7453a4e9e6dc319b3e0c898e097658e9128528de",
+      "mode": "STRUCTURAL_PATH_REWRITE",
+      "authority": "NONE"
+    }
+  ],
+  "remaining_public_contracts": [
+    "cora.artifact-roles.json",
+    "cora.ontology.json"
+  ]
+}

@@ -7,9 +7,9 @@
     "commit": "3fdf761167e62cc427b7339fc6c59343c1b0be8f"
   },
   "upstream": {
-    "method_atlas": "cora.method-atlas.json",
+    "method_atlas": ".cora/contracts/profiles/method-atlas.json",
     "ontology": "cora.ontology.json",
-    "reticulum": "cora.method-synthesis-dod.json",
+    "reticulum": ".cora/contracts/dod/method-synthesis-dod.json",
     "artifact_roles": "cora.artifact-roles.json"
   },
   "planes": [

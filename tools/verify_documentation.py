@@ -28,10 +28,10 @@ CUTS = {
     "G_DOC_ACCEPTED": ["G_DOC_SOURCE", "E01", "E02", "E03"],
 }
 KNOWN_HISTORICAL = {
-    "docs/DOD.md", "docs/DOD_PR17_AGENT.md",
-    "docs/DOD_PR16_SEMANTIC_ASSURANCE.md",
+    "docs/DOD.md", "docs/archive/dod/DOD_PR17_AGENT.md",
+    "docs/archive/dod/DOD_PR16_SEMANTIC_ASSURANCE.md",
     "docs/STANDARDS_MAINTENANCE_AUDIT.md",
-    "docs/FORENSIC_SELF_AUDIT.md",
+    "docs/archive/audits/FORENSIC_SELF_AUDIT.md",
 }
 LINK = re.compile(r"(?<!!)\[[^\]]+\]\((<[^>]+>|[^)\s]+)")
 CODE_FENCE = re.compile(r"^\s*(`{3,}|~{3,})")
@@ -89,7 +89,7 @@ def heading_slugs(text: str) -> set[str]:
 
 def validate_dod(root: Path, errors: list[str]) -> None:
     try:
-        d = json.loads((root / "cora.documentation-dod.json").read_text("utf-8"))
+        d = json.loads((root / ".cora/contracts/dod/documentation-dod.json").read_text("utf-8"))
         if (d.get("schema") != "cora-documentation-dod/1" or
             d.get("baseline_markdown_count") != BASELINE_MD or
             d.get("baseline_sha") != BASELINE_SHA or
@@ -132,7 +132,7 @@ NAVIGATION_LENSES = {
                    ".github/PULL_REQUEST_TEMPLATE.md", "LICENSE"),
     "Evidence and DoD": ("docs/CONTINUOUS_DEVELOPMENT.md",
                          "docs/CONVERGENT_ASSURANCE.md", "docs/DOCUMENTATION_DOD.md",
-                         "cora.documentation-proofs.json", "tools/verify_claim_evidence.py"),
+                         ".cora/assurance/documentation-proofs.json", "tools/verify_claim_evidence.py"),
 }
 NAVIGATION_READERS = {
     "First-time user": ("docs/GETTING_STARTED.md", "docs/ARCHITECTURE.md"),
@@ -235,7 +235,7 @@ def verify(root: Path) -> list[str]:
         if not isinstance(path, str) or path.startswith("/") or ".." in path.split("/"):
             errors.append("invalid-path")
             continue
-        historical = (path.startswith("docs/ADR-") or path.startswith("docs/AUDIT_")
+        historical = (path.startswith("docs/archive/") or path.startswith("docs/ADR-") or path.startswith("docs/AUDIT_")
                       or path in KNOWN_HISTORICAL)
         if r.get("status") not in STATUS or r.get("kind") not in KINDS or r.get("group") not in VALID_GROUP:
             errors.append("invalid-classification:" + path)

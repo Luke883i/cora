@@ -14,6 +14,8 @@ CORA is an offline-first **Python 3.11+ command-line product** that helps develo
 
 **Open source license:** [MIT](LICENSE) applies to CORA's code and documentation. Permissive reuse does **not** grant access to third-party repositories, authenticate findings or remove the need for review. See [security](SECURITY.md) and [contributing](CONTRIBUTING.md).
 
+**Repository map:** the root keeps the product entrypoint, policies, package metadata and stable adoption-facing JSON contracts; only the two adoption-facing JSON contracts (`cora.ontology.json` and `cora.artifact-roles.json`) remain at root. Internal DoDs, profiles and assurance records live under [`.cora/contracts/`](.cora/contracts/index.json) and [`.cora/assurance/`](.cora/assurance/capability-atlas.json). Their [committed routing index](.cora/contracts/index.json) records the canonical paths. Active guidance is in [`docs/`](docs/), byte-preserved historical decisions and audits are reached through the [documentation index](docs/INDEX.md), and finite-model fixtures live in [`.cora/fixtures/`](.cora/fixtures/). Code, tests and verification remain in `src/`, `tests/` and `tools/`; moving a file does not establish safe deletion or runtime equivalence.
+
 ## How CORA works
 
 ```text
@@ -54,11 +56,7 @@ Keep reports outside the source checkout; `/tmp` is a Unix example. `audit` read
 
 ## What works today
 
-**Five synergic source-assurance goals:** `cora method-synthesize . --synergic --base-sha BASE_SHA --execute-source-probes --output REPORT --ai-request-output AI_PLAN` brings together the Semantic Truth, AI Reasoning, Behavioral Proof, Continuous Semantic Evolution and Unified Assurance source routes. It preserves the 71 original CLI commands, never invokes an AI provider by default, and does not claim 71 proven behaviors. See [five-goal DoD and falsification](docs/CONVERGENT_ASSURANCE.md).
-
-
-**Integrated source review (candidate):** use `cora method-synthesize . --integrated --ai-request-output /tmp/cora-ai-request.json --output /tmp/cora-case.json` to correlate original methods, current documents, 18 declared README claim traces and all 71 CLI interfaces on one Git revision. The AI request is a non-authoritative review input, not a provider invocation or test of all 71 behaviors; see [convergent assurance](docs/CONVERGENT_ASSURANCE.md).
-
+**Five synergic source-assurance goals:** `cora method-synthesize . --synergic --base-sha BASE_SHA --execute-source-probes --output REPORT --ai-request-output AI_PLAN` brings together the Semantic Truth, AI Reasoning, Behavioral Proof, Continuous Semantic Evolution and Unified Assurance source routes, while `--integrated` connects documentation, the 18 claim traces and the 71 declared CLI interfaces. Neither mode invokes an AI provider by default or proves every behavior. See [five-goal DoD and falsification](docs/CONVERGENT_ASSURANCE.md).
 
 | Engineering goal | Relevant CORA capabilities | Evidence boundary |
 | --- | --- | --- |
@@ -70,23 +68,23 @@ Keep reports outside the source checkout; `/tmp` is a Unix example. `audit` read
 | **Correlate audit methods** | Git-bound ontology, roles and workflow evidence, original receipt replay and bounded AI hypothesis review | A source correlation is not behavioral, causal or human-verified proof |
 | **Run separately authorized experiments** | Controlled document rename, optional staged source mutations and runtime observation | Explicit authorization, independent oracles and external isolation checks remain necessary |
 
-**Complete functional census:** the [capability atlas](cora.capability-atlas.json) enumerates **71 CLI commands** in eight methods with implementation and test-source witnesses: **not 71 independently proven features**. It also maps internal Python modules, release-verification tools, CI, contracts and documentation. The [capability DoD](cora.capability-dod.json) keeps source and external qualification separate. A test file's existence is not evidence that the test ran or passed.
+**Complete functional census:** the [capability atlas](.cora/assurance/capability-atlas.json) enumerates **71 CLI commands** in eight methods with implementation and test-source witnesses: **not 71 independently proven features**. It also maps internal Python modules, release-verification tools, CI, contracts and documentation. The [capability DoD](.cora/contracts/dod/capability-dod.json) keeps source and external qualification separate. A test file's existence is not evidence that the test ran or passed.
 
-All current command names, scope details and parameters are in the [parser-checked CLI reference](docs/CLI_REFERENCE.md). For methods and domain-specific DoD, use the [complete documentation index](docs/INDEX.md). The [Git-bound documentation proof profile](cora.documentation-proofs.json) relates critical README statements and S01–S18 to source/test blobs and falsifiers; [replay verification](tools/verify_claim_evidence.py) checks bounded source predicates, not general runtime truth or independent approval.
+All current command names, scope details and parameters are in the [parser-checked CLI reference](docs/CLI_REFERENCE.md). For methods and domain-specific DoD, use the [complete documentation index](docs/INDEX.md). The [Git-bound documentation proof profile](.cora/assurance/documentation-proofs.json) relates critical README statements and S01–S18 to source/test blobs and falsifiers; [replay verification](tools/verify_claim_evidence.py) checks bounded source predicates, not general runtime truth or independent approval.
 
 ## Use CORA with an AI coding assistant
 
 Give your assistant an authorized checkout of CORA and a **separate target repository**; a GitHub link alone does not install or enforce anything. The target needs its **own** committed `cora.ontology.json` and a continuous policy `.cora/continuous-policy.json` present in the BASE revision for contextual review. Record a real engineering intent and acceptance oracle, then run:
 
 ```sh
-cora convergence-plan --contract /path/to/cora/cora.convergence-dod.json
+cora convergence-plan --contract /path/to/cora/.cora/contracts/dod/convergence-dod.json
 cora dev-premerge /path/to/target --base BASE_SHA --head PR_HEAD_SHA \
   --contextual --intent "Ship the bounded change with its acceptance tests" \
-  --convergence-contract /path/to/cora/cora.convergence-dod.json \
+  --convergence-contract /path/to/cora/.cora/contracts/dod/convergence-dod.json \
   --output /tmp/cora-premerge.json
 cora verify-contextual-gate /tmp/cora-premerge.json --repo /path/to/target \
   --intent "Ship the bounded change with its acceptance tests" \
-  --convergence-contract /path/to/cora/cora.convergence-dod.json
+  --convergence-contract /path/to/cora/.cora/contracts/dod/convergence-dod.json
 ```
 
 The same intent is required for replay. Without it the contextual gate is **DEBT_BLOCKED**. These commands do **not** implicitly run the target tests or prove runtime correctness. Run real tests and obtain independent review separately. See [step-by-step agent adoption](docs/AGENT_ADOPTION.md), [current engineering method](docs/CONVERGENT_ASSURANCE.md) and the [R1–R4 DoD](docs/DOD_PR20_CONVERGENCE.md).
@@ -142,7 +140,7 @@ The five expandable lenses below are a **map, not five competing sources of trut
 <details>
 <summary>Evidence and DoD | methods, falsification, lineage and limitations</summary>
 
-**Read in order:** the [continuous development method](docs/CONTINUOUS_DEVELOPMENT.md), [convergent method](docs/CONVERGENT_ASSURANCE.md), [documentation DoD](docs/DOCUMENTATION_DOD.md), [reticular source contract](cora.documentation-dod.json), [S01–S18 source proof profile](cora.documentation-proofs.json) and [Git replay verifier](tools/verify_claim_evidence.py). For investigation choose [File Lab](docs/FILE_LAB.md), [holistic forensics](docs/HOLISTIC_FORENSICS.md) or [engineering debt](docs/ENGINEERING_DEBT.md). For older decisions and falsified claims consult the [historical ADR/audit index](docs/INDEX.md), not an obsolete DoD as current acceptance authority.
+**Read in order:** the [continuous development method](docs/CONTINUOUS_DEVELOPMENT.md), [convergent method](docs/CONVERGENT_ASSURANCE.md), [documentation DoD](docs/DOCUMENTATION_DOD.md), [reticular source contract](.cora/contracts/dod/documentation-dod.json), [S01–S18 source proof profile](.cora/assurance/documentation-proofs.json) and [Git replay verifier](tools/verify_claim_evidence.py). For investigation choose [File Lab](docs/FILE_LAB.md), [holistic forensics](docs/HOLISTIC_FORENSICS.md) or [engineering debt](docs/ENGINEERING_DEBT.md). For older decisions and falsified claims consult the [historical ADR/audit index](docs/INDEX.md), not an obsolete DoD as current acceptance authority.
 
 </details>
 

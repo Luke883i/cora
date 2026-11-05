@@ -173,11 +173,11 @@ class FiveSynergiesTests(unittest.TestCase):
             git(repo,'config','user.email','mutant@example.invalid')
             git(repo,'checkout','-q',self.head)
             self.assertEqual(len(_validated_seed(repo,self.head)),32)
-            path=repo/'cora.five-synergies-mutants.json'
+            path=repo/'.cora/fixtures/five-synergies-mutants.json'
             source=json.loads(path.read_text('utf-8'))
             source['rows'][2]['invalidated']=[]
             path.write_text(json.dumps(source),encoding='utf-8')
-            git(repo,'add',path.name)
+            git(repo,'add',path.relative_to(repo).as_posix())
             git(repo,'commit','-qm','preseed negative turned into false positive')
             with self.assertRaisesRegex(ValueError,'preseed semantic fault/oracle changed'):
                 _validated_seed(repo,git(repo,'rev-parse','HEAD'))
@@ -213,18 +213,18 @@ class FiveSynergiesTests(unittest.TestCase):
             git(local,'config','user.name','CORA physical mutant')
             git(local,'config','user.email','mutant@example.invalid')
             git(local,'checkout','-q',self.head)
-            dod=local/'cora.five-synergies-dod.json'
+            dod=local/'.cora/contracts/dod/five-synergies-dod.json'
             payload=json.loads(dod.read_text('utf-8'))
             next(x for x in payload['nodes'] if x['id']=='G_GOVERNED')['depends_on'].remove('E_HOST')
             dod.write_text(json.dumps(payload),encoding='utf-8')
-            git(local,'add',dod.name)
+            git(local,'add',dod.relative_to(local).as_posix())
             git(local,'commit','-qm','physical missing external authority mutant')
             with self.assertRaisesRegex(ValueError,'removed dependency'):
                 five_dod(local,'HEAD')
             git(local,'checkout','-q',self.head)
             readme=local/'README.md'
             original=readme.read_text('utf-8')
-            claims=json.loads((local/'cora.documentation-proofs.json').read_text('utf-8'))
+            claims=json.loads((local/'.cora/assurance/documentation-proofs.json').read_text('utf-8'))
             phrase=claims['nodes'][0]['readme_phrase']
             self.assertIn(phrase,original)
             readme.write_text(original.replace(phrase,'MUTATED_UNSUPPORTED_PRODUCT_CLAIM',1),encoding='utf-8')

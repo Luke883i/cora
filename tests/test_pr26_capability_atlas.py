@@ -44,11 +44,14 @@ class CapabilityAtlasTests(unittest.TestCase):
         self.assertEqual(r["command_count"], 71)
         self.assertEqual(r["family_count"], 8)
         self.assertEqual(r["surfaces"]["modules"], 48)
-        self.assertEqual(r["surfaces"]["operational_tools"], 14)
+        self.assertEqual(r["surfaces"]["operational_tools"], 15)
         self.assertEqual(r["surfaces"]["github_workflows"], 12)
-        self.assertEqual(r["surfaces"]["contracts"], 16)
+        self.assertEqual(r["surfaces"]["contracts"], 2)
+        self.assertEqual(r["surfaces"]["internal_dod"], 9)
+        self.assertEqual(r["surfaces"]["internal_profiles"], 2)
+        self.assertEqual(r["surfaces"]["assurance_records"], 2)
         self.assertEqual(r["surfaces"]["markdown"], 48)
-        self.assertEqual(r["surfaces"]["test_modules"], 35)
+        self.assertEqual(r["surfaces"]["test_modules"], 36)
         self.assertEqual(r["authorization"], "NONE")
         self.assertEqual(r["governed_status"], "BLOCKED_EXTERNAL")
         self.assertEqual(r["ci_final_head"], "NOT_ATTESTED_BY_SOURCE")
@@ -74,7 +77,7 @@ class CapabilityAtlasTests(unittest.TestCase):
             def change(doc):
                 row=next(x for x in doc["commands"] if x["command"]=="apply-rename-doc")
                 row["interaction"]="SOURCE_ANALYSIS_OR_PROPOSAL"
-            sha=commit_json(local,"cora.capability-atlas.json",change)
+            sha=commit_json(local,".cora/assurance/capability-atlas.json",change)
             with self.assertRaisesRegex(ValueError,"effectful command"):
                 CAP.check(local,sha)
 
@@ -84,14 +87,14 @@ class CapabilityAtlasTests(unittest.TestCase):
             def change(doc):
                 row=next(x for x in doc["commands"] if x["command"]=="audit")
                 row["method_source"]="src/cora/debt.py"
-            sha=commit_json(local,"cora.capability-atlas.json",change)
+            sha=commit_json(local,".cora/assurance/capability-atlas.json",change)
             with self.assertRaisesRegex(ValueError,"implementation detached"):
                 CAP.check(local,sha)
             def change2(doc):
                 row=next(x for x in doc["commands"] if x["command"]=="audit")
                 row["method_source"]="src/cora/audit.py"
                 row["test_source"]="tests/nonexistent.py"
-            sha=commit_json(local,"cora.capability-atlas.json",change2)
+            sha=commit_json(local,".cora/assurance/capability-atlas.json",change2)
             with self.assertRaises(ValueError):
                 CAP.check(local,sha)
 
@@ -100,14 +103,14 @@ class CapabilityAtlasTests(unittest.TestCase):
             local=fork(Path(t))
             def change(doc):
                 next(x for x in doc["nodes"] if x["id"]=="G_CAP_SOURCE")["depends_on"].pop()
-            sha=commit_json(local,"cora.capability-dod.json",change)
+            sha=commit_json(local,".cora/contracts/dod/capability-dod.json",change)
             with self.assertRaisesRegex(ValueError,"DoD edge"):
                 CAP.check(local,sha)
             # Restore the failed reticular mutation before the independent
             # documentation falsifier; otherwise a stale DoD could mask it.
-            contract=local/"cora.capability-dod.json"
-            contract.write_bytes((ROOT/"cora.capability-dod.json").read_bytes())
-            g(local,"add","cora.capability-dod.json")
+            contract=local/".cora/contracts/dod/capability-dod.json"
+            contract.write_bytes((ROOT/".cora/contracts/dod/capability-dod.json").read_bytes())
+            g(local,"add",".cora/contracts/dod/capability-dod.json")
             g(local,"commit","-qm","restore DoD before chronology test")
             self.assertEqual(CAP.check(local)["source_status"],"PASS_SCOPED_SOURCE")
             path=local/"docs/ARCHITECTURE.md"
@@ -130,7 +133,7 @@ class CapabilityAtlasTests(unittest.TestCase):
             self.assertEqual(CAP.check(ROOT)["authorization"],"NONE")
 
     def test_07_thousand_finite_noncompensatory_mutants(self):
-        original=json.loads((ROOT/"cora.capability-dod.json").read_text("utf-8"))
+        original=json.loads((ROOT/".cora/contracts/dod/capability-dod.json").read_text("utf-8"))
         seen=set()
         for family in range(10):
             for i in range(100):
