@@ -86,8 +86,11 @@ class MaturityAtlasTests(unittest.TestCase):
 
     def test_external_evidence_cannot_be_self_supplied(self):
         fake = {"E_PROTECTED_MAIN": MODEL, "E_REVIEW_IDENTITY": MODEL}
-        with self.assertRaisesRegex(ValueError, "non-leaf or invalid"):
-            assess_cut(self.atlas["maturity"]["nodes"], "G_MATURITY", fake)
+        observed = assess_cut(self.atlas["maturity"]["nodes"], "G_MATURITY", fake)
+        self.assertEqual(observed["status"], EXTERNAL)
+        self.assertEqual(observed["states"]["E_PROTECTED_MAIN"], EXTERNAL)
+        self.assertEqual(observed["states"]["E_REVIEW_IDENTITY"], EXTERNAL)
+        self.assertEqual(observed["authorization"], "NONE")
 
     def test_git_committed_external_review_reclassification_mutant(self):
         with tempfile.TemporaryDirectory() as d:
