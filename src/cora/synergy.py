@@ -131,3 +131,67 @@ def semantic_truth(repo: Path, integrated: dict) -> dict:
             'verified_semantic_claims':0,
             'qualification':'SOURCE_AST_OBSERVATION_NOT_BEHAVIORAL_PROOF',
             'authorization':'NONE'}
+
+
+REASON_SCHEMA = 'cora-synergic-reasoner/1'
+
+
+def reasoning_plan(integrated: dict, truth: dict) -> dict:
+    """Bounded, source-free AI case. It asks, never asserts, semantic entailment."""
+    from .integrated_service import ai_request
+    if truth.get('commit') != integrated.get('commit'):
+        raise ValueError('cross-revision AI source plan rejected')
+    request=ai_request(integrated)
+    cases=[]
+    for row in truth['claims']:
+        ref='claim:'+row['claim_id']
+        if ref not in request['valid_source_refs']:
+            raise ValueError('AI case missing canonical evidence reference')
+        cases.append({'claim_ref':ref,'source_status':row['status'],
+                      'question':'Can a behavior be disproved despite source-level claim and test witnesses?',
+                      'negative_control':'Mutate declared README phrase or implementation and re-check from Git.',
+                      'positive_control':'Keep source contract and test witness intact; require independent runtime proof.',
+                      'semantic_entailment':'UNKNOWN'})
+    return {'schema':REASON_SCHEMA,'source_commit':integrated['commit'],
+            'case_digest':integrated['case_digest'],
+            'request':request,'candidate_questions':cases,
+            'source_bytes_embedded':False,'provider_invoked':False,
+            'authority':'NONE'}
+
+
+def import_ai_reasoning(integrated: dict, answer: dict) -> dict:
+    """Constrain a model's claims to exact source refs; no LLM result is evidence."""
+    from .integrated_service import _ai, ai_request
+    allowed=set(ai_request(integrated)['valid_source_refs'])
+    observed=_ai(answer,integrated['commit'],integrated['case_digest'],allowed)
+    for item in observed:
+        if set(item['support_refs']) & set(item['counter_refs']):
+            raise ValueError('AI support and counterexample cannot be the same witness')
+    return {'schema':'cora-synergic-ai-observation/1',
+            'source_commit':integrated['commit'],
+            'items':observed,'state':'UNTRUSTED_AI_HYPOTHESES_NOT_PROOF',
+            'provider_identity':'UNATTESTED','approval':'NONE'}
+
+
+def invoke_reasoner(integrated: dict, truth: dict, provider=None, *,
+                    authorize: bool = False) -> dict:
+    """Explicit caller-owned provider callback; never outbound network by default.
+
+    A provider supplied by the caller may use a real model. The only material
+    passed is a bounded, source-free request. Its return is always untrusted.
+    """
+    plan=reasoning_plan(integrated,truth)
+    if provider is None:
+        if authorize:
+            raise ValueError('AI provider not connected')
+        return {'schema':'cora-synergic-reasoner-invocation/1',
+                'provider':'NOT_CONNECTED','plan':plan,
+                'observations':[],'authority':'NONE'}
+    if authorize is not True or not callable(provider):
+        raise ValueError('explicit valid AI callback authorization required')
+    output=provider(plan['request'])
+    assessment=import_ai_reasoning(integrated,output)
+    return {'schema':'cora-synergic-reasoner-invocation/1',
+            'provider':'CALLBACK_CALLED_NOT_INDEPENDENTLY_ATTESTED',
+            'plan':plan,'observations':assessment['items'],
+            'authority':'NONE'}

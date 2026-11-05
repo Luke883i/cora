@@ -9,7 +9,7 @@ import unittest
 from pathlib import Path
 
 from cora.integrated_service import integrated_case
-from cora.synergy import five_dod, semantic_truth
+from cora.synergy import five_dod, semantic_truth, reasoning_plan, import_ai_reasoning, invoke_reasoner
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -38,6 +38,48 @@ class FiveSynergiesTests(unittest.TestCase):
         self.assertEqual(five_dod(ROOT,self.head)['governed_status'],'BLOCKED_EXTERNAL')
         self.assertTrue(any(y['status']=='TEST_SYMBOLS_OBSERVED_NOT_RUN'
                             for x in result['claims'] for y in x['source_witnesses']))
+
+
+    def test_ai_reasoner_opt_in_positive_and_adversarial(self):
+        case=integrated_case(ROOT,self.head)
+        truth=semantic_truth(ROOT,case)
+        plan=reasoning_plan(case,truth)
+        self.assertEqual(len(plan['candidate_questions']),18)
+        self.assertFalse(plan['source_bytes_embedded'])
+        self.assertFalse(plan['provider_invoked'])
+        self.assertIn('claim:S01',plan['request']['valid_source_refs'])
+        self.assertEqual(invoke_reasoner(case,truth)['provider'],'NOT_CONNECTED')
+        with self.assertRaisesRegex(ValueError,'explicit valid'):
+            invoke_reasoner(case,truth,lambda x: {},authorize=False)
+        calls=[]
+        def fake_provider(request):
+            calls.append(request)
+            return {'schema':'cora-integrated-ai/1',
+                    'source_commit':case['commit'],
+                    'case_digest':case['case_digest'],
+                    'items':[{'id':'a1',
+                        'hypothesis':'The README claim may not match its actual behavior.',
+                        'support_refs':['claim:S01'],
+                        'counter_refs':['method:documentation-assurance'],
+                        'abstraction_path':['documents','architecture','product'],
+                        'adversarial_scenario':'Break the source implementation but keep the README.',
+                        'positive_control':'Preserve the source while verifying actual behavior.',
+                        'action':'INVESTIGATE'}]}
+        obs=invoke_reasoner(case,truth,fake_provider,authorize=True)
+        self.assertEqual(len(calls),1)
+        self.assertEqual(obs['provider'],'CALLBACK_CALLED_NOT_INDEPENDENTLY_ATTESTED')
+        self.assertEqual(obs['observations'][0]['state'],'UNVERIFIED_AI_HYPOTHESIS')
+        self.assertEqual(obs['authority'],'NONE')
+        forged=fake_provider(plan['request'])
+        forged['items'][0]['counter_refs']=['claim:S01']
+        with self.assertRaisesRegex(ValueError,'same witness'):
+            import_ai_reasoning(case,forged)
+        forged['items'][0]['counter_refs']=['INVENTED']
+        with self.assertRaises(ValueError):
+            import_ai_reasoning(case,forged)
+        forged['items'][0]['action']='APPROVE'
+        with self.assertRaises(ValueError):
+            import_ai_reasoning(case,forged)
 
     def test_physical_dod_and_readme_source_mutations(self):
         with tempfile.TemporaryDirectory() as directory:
