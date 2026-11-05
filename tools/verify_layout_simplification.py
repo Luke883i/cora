@@ -34,7 +34,7 @@ AXES = ("identity","history_bytes","archival_path","markdown_links",
         "readme_promise","code_loader","artifact_roles","inventory",
         "regression","source_replay","external_boundary","governance")
 FAULT_IDS = (
-    "NO_CHANGE","VALID_ARCHIVE",
+    "NO_OP","VALID_LOSSLESS_MOVE",
     "BASE_NOT_ANCESTOR","MISSING_SOURCE_BLOB","ALTERED_HISTORICAL_BYTES",
     "OLD_PATH_LEFT_BEHIND","WRONG_ARCHIVE_DESTINATION",
     "HISTORICAL_PROMOTED_CURRENT","MISSING_REGISTRY_ENTRY",
