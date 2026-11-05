@@ -43,6 +43,12 @@ jobs:
           cora verify-ledger /tmp/cora-snapshot.json --repo .
       - name: C6-C7 full unit regression with measured branch coverage
         run: coverage run --branch --source=src/cora -m unittest discover -s tests -q
+      - name: Reproduce PR25 original-Git physical mutants three times (no retry masking)
+        run: |
+          for attempt in 1 2 3; do
+            echo "PR25 original-Git test attempt $attempt / 3, exact HEAD $(git rev-parse HEAD), tree $(git rev-parse HEAD^{tree})"
+            python -m unittest discover -s tests -p test_pr25_method_synthesis.py -q
+          done
       - name: C8 independent critical coverage floor
         run: |
           coverage json -o /tmp/cora-coverage.json
@@ -108,10 +114,25 @@ jobs:
             echo "::error::Python 3.11 exact-environment unit regression failed (exit $result)."
             tail -n 90 /tmp/cora-unit-diagnostic.txt
           fi
-          headline=$(grep -E '^(ERROR: |FAIL: |FAILED|Ran [0-9]+ tests|SyntaxError:|ModuleNotFoundError:|ValueError:)' /tmp/cora-unit-diagnostic.txt | head -n 3 | tr '\n' '_' | cut -c 1-190 || true)
+          if [[ "$result" -ne 0 ]]; then
+            reason=$(grep -E '^(fatal:|error:|.*Error:|.*Exception:|.*OSError:|.*RuntimeError:)' /tmp/cora-unit-diagnostic.txt | tail -n 1 | tr -d '\r' | cut -c 1-130 || true)
+            headline="cause:${reason:-unclassified}; "
+          else
+            headline=""
+          fi
+          headline="${headline}$(grep -E '^(ERROR: |FAIL: |FAILED|Ran [0-9]+ tests)' /tmp/cora-unit-diagnostic.txt | head -n 2 | tr '\n' '_' | cut -c 1-110 || true)"
+          headline=$(printf '%s' "$headline" | tr -cd '[:print:]' | cut -c 1-190)
           if [[ -z "$headline" ]]; then headline="no-standard-unittest-error-line"; fi
           echo "headline=$headline" >> "$GITHUB_OUTPUT"
           echo "test_status=$result" >> "$GITHUB_OUTPUT"
+      - name: Retain Python 3.11 raw diagnostic trace for independent review
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: cora-pr32-diagnostic-311-${{ github.sha }}
+          path: /tmp/cora-unit-diagnostic.txt
+          if-no-files-found: warn
+          retention-days: 14
   diagnostic-unit-visible:
     needs: [diagnostic-unit-discovery]
     name: "${{ format('Diagnostic unit [{0}]: {1}', needs.diagnostic-unit-discovery.outputs.test_status, needs.diagnostic-unit-discovery.outputs.headline) }}"
@@ -155,10 +176,25 @@ jobs:
             echo "::error::Python 3.13 exact-environment unit regression failed (exit $result)."
             tail -n 90 /tmp/cora-unit-diagnostic-313.txt
           fi
-          headline=$(grep -E '^(ERROR: |FAIL: |FAILED|Ran [0-9]+ tests|AssertionError:|SyntaxError:|ModuleNotFoundError:|TypeError:|ValueError:)' /tmp/cora-unit-diagnostic-313.txt | head -n 4 | tr '\n' '_' | cut -c 1-190 || true)
+          if [[ "$result" -ne 0 ]]; then
+            reason=$(grep -E '^(fatal:|error:|.*Error:|.*Exception:|.*OSError:|.*RuntimeError:)' /tmp/cora-unit-diagnostic-313.txt | tail -n 1 | tr -d '\r' | cut -c 1-130 || true)
+            headline="cause:${reason:-unclassified}; "
+          else
+            headline=""
+          fi
+          headline="${headline}$(grep -E '^(ERROR: |FAIL: |FAILED|Ran [0-9]+ tests)' /tmp/cora-unit-diagnostic-313.txt | head -n 2 | tr '\n' '_' | cut -c 1-110 || true)"
+          headline=$(printf '%s' "$headline" | tr -cd '[:print:]' | cut -c 1-190)
           if [[ -z "$headline" ]]; then headline="no-standard-unittest-error-line"; fi
           echo "headline=$headline" >> "$GITHUB_OUTPUT"
           echo "test_status=$result" >> "$GITHUB_OUTPUT"
+      - name: Retain Python 3.13 raw diagnostic trace for independent review
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: cora-pr32-diagnostic-313-${{ github.sha }}
+          path: /tmp/cora-unit-diagnostic-313.txt
+          if-no-files-found: warn
+          retention-days: 14
   diagnostic-unit-visible-313:
     needs: [diagnostic-unit-discovery-313]
     name: "${{ format('Diagnostic Python 3.13 [{0}]: {1}', needs.diagnostic-unit-discovery-313.outputs.test_status, needs.diagnostic-unit-discovery-313.outputs.headline) }}"
