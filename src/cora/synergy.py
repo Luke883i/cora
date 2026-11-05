@@ -195,3 +195,53 @@ def invoke_reasoner(integrated: dict, truth: dict, provider=None, *,
             'provider':'CALLBACK_CALLED_NOT_INDEPENDENTLY_ATTESTED',
             'plan':plan,'observations':assessment['items'],
             'authority':'NONE'}
+
+
+BEHAVIOR_SCHEMA = 'cora-synergic-behavioral-proof/1'
+
+def behavioral_proofs(repo: Path, integrated: dict, *, authorize: bool = False) -> dict:
+    """Only safe, original CORA Git-source operations, never target test or runtime."""
+    if not isinstance(integrated,dict) or integrated.get('schema')!='cora-integrated-case/1':
+        raise ValueError('invalid original integrated source case')
+    sha=integrated['commit']
+    if authorize is not True:
+        return {'schema':BEHAVIOR_SCHEMA,'commit':sha,
+                'status':'NOT_RUN_REQUIRES_EXPLICIT_AUTHORIZATION','probes':[],
+                'source_probes_passed':0,'all_71_behaviors_proven':False,
+                'runtime_attested':False,'authorization':'NONE'}
+    if integrated['ai_observations']:
+        raise ValueError('unreplayed AI overlay cannot be promoted to behavioral proof')
+    from .git_snapshot import snapshot
+    from .evidence import validate_ledger, domain_hash
+    from .method_synthesis import synthesize, verify_synthesis
+    from .integrated_service import verify_integrated
+    repo=Path(repo).resolve(strict=True)
+    ledger=snapshot(repo,sha)
+    validate_ledger(ledger)
+    method=synthesize(repo,sha)
+    verify_synthesis(repo,method)
+    verify_integrated(repo,integrated)
+    probes=[
+        {'id':'git-ledger','receipt':ledger['ledger_digest'],
+         'scope':'ORIGINAL_GIT_SOURCE_ONLY'},
+        {'id':'method-synthesis-replay','receipt':method['receipt_digest'],
+         'scope':'ORIGINAL_METHODS_SOURCE_ONLY'},
+        {'id':'integrated-report-replay','receipt':integrated['report_digest'],
+         'scope':'ORIGINAL_INTEGRATION_SOURCE_ONLY'},
+    ]
+    output={'schema':BEHAVIOR_SCHEMA,'commit':sha,
+            'status':'OBSERVED_LOCAL_SOURCE_PROBES_NOT_RUNTIME',
+            'probes':probes,'source_probes_passed':len(probes),
+            'all_71_behaviors_proven':False,'runtime_attested':False,
+            'authorization':'NONE'}
+    output['receipt_digest']=domain_hash('CORA:five-behavior-probes:1',output)
+    return output
+
+def verify_behavioral_proofs(repo: Path, report: dict) -> bool:
+    if not isinstance(report,dict) or report.get('schema')!=BEHAVIOR_SCHEMA or report.get('status')!='OBSERVED_LOCAL_SOURCE_PROBES_NOT_RUNTIME':
+        raise ValueError('invalid or unexecuted behavior receipt')
+    from .integrated_service import integrated_case
+    expected=behavioral_proofs(repo,integrated_case(repo,report['commit']),authorize=True)
+    if report!=expected:
+        raise ValueError('behavioral result forged or stale')
+    return True

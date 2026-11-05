@@ -9,7 +9,8 @@ import unittest
 from pathlib import Path
 
 from cora.integrated_service import integrated_case
-from cora.synergy import five_dod, semantic_truth, reasoning_plan, import_ai_reasoning, invoke_reasoner
+from cora.synergy import (five_dod, semantic_truth, reasoning_plan, import_ai_reasoning,
+                          invoke_reasoner, behavioral_proofs, verify_behavioral_proofs)
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -80,6 +81,23 @@ class FiveSynergiesTests(unittest.TestCase):
         forged['items'][0]['action']='APPROVE'
         with self.assertRaises(ValueError):
             import_ai_reasoning(case,forged)
+
+
+    def test_original_behavioral_probes_and_forged_receipt(self):
+        case=integrated_case(ROOT,self.head)
+        inactive=behavioral_proofs(ROOT,case)
+        self.assertEqual(inactive['source_probes_passed'],0)
+        with self.assertRaises(ValueError):
+            verify_behavioral_proofs(ROOT,inactive)
+        evidence=behavioral_proofs(ROOT,case,authorize=True)
+        self.assertEqual(evidence['source_probes_passed'],3)
+        self.assertFalse(evidence['runtime_attested'])
+        self.assertFalse(evidence['all_71_behaviors_proven'])
+        self.assertTrue(verify_behavioral_proofs(ROOT,evidence))
+        forged=copy.deepcopy(evidence)
+        forged['source_probes_passed']=71
+        with self.assertRaisesRegex(ValueError,'forged'):
+            verify_behavioral_proofs(ROOT,forged)
 
     def test_physical_dod_and_readme_source_mutations(self):
         with tempfile.TemporaryDirectory() as directory:
