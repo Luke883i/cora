@@ -4,6 +4,10 @@ import shutil
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
+import json
+import subprocess
+from tools.verify_release_readiness import candidate_receipt
 from tools.verify_release_readiness import REQUIRED, inspect_source, main
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -74,6 +78,43 @@ class ReadinessTest(unittest.TestCase):
         b=inspect_source(self.repo)
         self.assertEqual(b["source_status"],"PASS_SCOPED")
         self.assertNotEqual(a["input_sha256"]["CHANGELOG.md"],b["input_sha256"]["CHANGELOG.md"])
+    def test_alpha_receipt_is_never_release_authority(self):
+        if not (ROOT/".git").exists():
+            self.skipTest("original Git checkout required")
+        sha = subprocess.check_output(
+            ["git", "-C", str(ROOT), "rev-parse", "HEAD"]).decode().strip()
+        with tempfile.TemporaryDirectory() as d:
+            loc = Path(d)
+            wheel = loc/"cora_audit-1.0.0a4-py3-none-any.whl"
+            sdist = loc/"cora_audit-1.0.0a4.tar.gz"
+            wheel.write_bytes(b"fake wheel bytes: this test mocks original archive oracle")
+            sdist.write_bytes(b"fake tar bytes: this test mocks original archive oracle")
+            verified = {"distribution": "cora-audit", "version": "1.0.0a4",
+                        "wheel_sha256": "a"*64, "sdist_sha256": "b"*64}
+            proof = loc/"verification.json"
+            proof.write_text(json.dumps(verified), encoding="utf-8")
+            installation = loc/"external.json"
+            installation.write_text(json.dumps({
+                "schema":"cora-external-validation/1",
+                "status":"SCOPED_FIXTURES_PASS",
+                "distribution_forms":{"wheel":{}, "sdist":{}},
+            }), encoding="utf-8")
+            with patch("tools.verify_release_readiness.verify_release", return_value=verified):
+                candidate = candidate_receipt(ROOT, sha, wheel, sdist, proof, installation)
+                self.assertEqual(candidate["source_commit"], sha)
+                self.assertEqual(candidate["authorization"], "NONE")
+                self.assertEqual(candidate["external_gate"], "BLOCKED_EXTERNAL")
+                self.assertFalse(candidate["publication_authorized"])
+                self.assertEqual(candidate["signed_provenance"], "NOT_ATTESTED")
+                self.assertEqual(candidate["github_release"], "NOT_PUBLISHED")
+                # A forged candidate verification report fails closed even
+                # when the immutable original-artifact oracle is mocked.
+                proof.write_text(json.dumps(dict(verified, version="9.9.9")), encoding="utf-8")
+                with self.assertRaisesRegex(ValueError, "recomputed binaries"):
+                    candidate_receipt(ROOT, sha, wheel, sdist, proof, installation)
+            with self.assertRaisesRegex(ValueError, "not checkout HEAD"):
+                candidate_receipt(ROOT, "0"*40, wheel, sdist, proof, installation)
+
     def test_worktree_scope_not_misrepresented_as_signed_provenance(self):
         a=inspect_source(self.repo)
         self.assertIn("UNPINNED",a["source_scope"])
