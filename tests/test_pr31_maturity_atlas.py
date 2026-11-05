@@ -96,6 +96,7 @@ class MaturityAtlasTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             clone = Path(d) / "cora"
             subprocess.run(["git", "clone", "-q", "--local", str(ROOT), str(clone)], check=True)
+            git(clone, "checkout", "-q", self.sha)
             git(clone, "config", "user.name", "CORA negative fixture")
             git(clone, "config", "user.email", "test@example.invalid")
             path = clone / ".cora/contracts/dod/maturity-dod.json"
