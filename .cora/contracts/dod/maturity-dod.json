@@ -1,0 +1,297 @@
+{
+  "schema": "cora-maturity-dod/1",
+  "title": "CORA maturity assurance: abstract goal to backward-derived AND reticulum",
+  "authority": "NONE",
+  "status": "EXPERIMENTAL_SOURCE_CONTRACT",
+  "abstract_goal": "An independent user and AI can discover and use CORA's declared capabilities, trace every bounded source claim to original evidence, understand unknowns, and obtain governed reliable decisions over time.",
+  "derivation": "BACKWARD_AND_NONCOMPENSATORY",
+  "global_goal": "G_MATURITY",
+  "gates": [
+    "G1_IDENTITY",
+    "G2_SOURCE_INTEGRITY",
+    "G3_BEHAVIORAL_VALIDITY",
+    "G4_GOVERNED_DELIVERY",
+    "G5_PRODUCT_USABILITY",
+    "G6_CONTINUOUS_QUALIFICATION"
+  ],
+  "epistemic_invariants": [
+    "Git path existence is not runtime execution.",
+    "A source witness and its derived report share one origin and are not independent confirmations.",
+    "HTML readability is not user acceptance.",
+    "A test-source reference is not a passed test.",
+    "Synthetic-model counts cannot substitute real behavior.",
+    "Independent host protections, human approval, external pilot, release publication and longitudinal operation are not Git-source evidence.",
+    "No local model, agent response or report grants authorization."
+  ],
+  "nodes": [
+    {
+      "id": "L_PRODUCT_ID",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Committed product identity, not distributed-product acceptance.",
+      "witness_paths": [
+        "cora.ontology.json",
+        "README.md"
+      ]
+    },
+    {
+      "id": "L_SOFTWARE_ID",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Named software and Python entrypoint are internally consistent.",
+      "witness_paths": [
+        "cora.ontology.json",
+        "pyproject.toml",
+        "src/cora/cli.py"
+      ]
+    },
+    {
+      "id": "L_REPOSITORY_ID",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Git identity, source provenance and repository roots are explicit.",
+      "witness_paths": [
+        "docs/ARCHITECTURE.md",
+        "cora.ontology.json"
+      ]
+    },
+    {
+      "id": "L_RELEASE_SOURCE",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Alpha release status and packaging declaration are bounded.",
+      "witness_paths": [
+        "docs/RELEASE.md",
+        "pyproject.toml"
+      ]
+    },
+    {
+      "id": "E_RELEASE_ACCEPTANCE",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "Published independently approved and user-accepted distribution; no source-only promotion."
+    },
+    {
+      "id": "I_IDENTITY_SOURCE",
+      "scope": "SOURCE",
+      "depends_on": [
+        "L_PRODUCT_ID",
+        "L_SOFTWARE_ID",
+        "L_REPOSITORY_ID",
+        "L_RELEASE_SOURCE"
+      ],
+      "description": "Distinct identity source contracts."
+    },
+    {
+      "id": "G1_IDENTITY",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "I_IDENTITY_SOURCE",
+        "E_RELEASE_ACCEPTANCE"
+      ],
+      "description": "Product/software/repository/release boundary includes independent release."
+    },
+    {
+      "id": "L_GIT_PIN",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Pin exact Git revision for observations.",
+      "witness_paths": [
+        "src/cora/git_snapshot.py"
+      ]
+    },
+    {
+      "id": "L_SOURCE_REPLAY",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Recompute original evidence from Git, not from report self-hashes.",
+      "witness_paths": [
+        "src/cora/evidence.py",
+        "src/cora/method_synthesis.py"
+      ]
+    },
+    {
+      "id": "L_SOURCE_INVALIDATION",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Changed dependencies invalidate witnesses; unaffected still require revalidation.",
+      "witness_paths": [
+        "src/cora/reticulum.py"
+      ]
+    },
+    {
+      "id": "L_LINEAGE",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Shared Git origins are counted once; correlation not independent corroboration.",
+      "witness_paths": [
+        "src/cora/maturity_atlas.py"
+      ]
+    },
+    {
+      "id": "G2_SOURCE_INTEGRITY",
+      "scope": "SOURCE",
+      "depends_on": [
+        "L_GIT_PIN",
+        "L_SOURCE_REPLAY",
+        "L_SOURCE_INVALIDATION",
+        "L_LINEAGE"
+      ],
+      "description": "Scoped original-source verification only."
+    },
+    {
+      "id": "L_BEHAVIOR_MODEL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Named source tests and synthetic falsifiers, not behavioral population statistics.",
+      "witness_paths": [
+        "tests/test_pr29_five_synergies.py"
+      ]
+    },
+    {
+      "id": "E_REAL_BENCHMARK",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "Independent maintained real-repository benchmark with precision/recall and non-regression."
+    },
+    {
+      "id": "E_ORACLE_INDEPENDENCE",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "Independent test labeling, runtime behavior and external reproducibility."
+    },
+    {
+      "id": "G3_BEHAVIORAL_VALIDITY",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "L_BEHAVIOR_MODEL",
+        "E_REAL_BENCHMARK",
+        "E_ORACLE_INDEPENDENCE"
+      ],
+      "description": "No real behavioral assurance from synthetic source models."
+    },
+    {
+      "id": "L_CI_POLICY",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Workflow and policy structure observed as source.",
+      "witness_paths": [
+        ".cora/continuous-policy.json",
+        ".github/workflows/ci-verify-pull-request.yml"
+      ]
+    },
+    {
+      "id": "E_PROTECTED_MAIN",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "Host-enforced required checks and protected branch inspected independently."
+    },
+    {
+      "id": "E_REVIEW_IDENTITY",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "Authenticated non-author human reviewer and separation of duties."
+    },
+    {
+      "id": "G4_GOVERNED_DELIVERY",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "L_CI_POLICY",
+        "E_PROTECTED_MAIN",
+        "E_REVIEW_IDENTITY"
+      ],
+      "description": "Green CI cannot self-authenticate governance."
+    },
+    {
+      "id": "L_COMPLETE_CATALOG",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Catalog binds all declared CLI commands, methods, sources and tests.",
+      "witness_paths": [
+        ".cora/assurance/capability-atlas.json",
+        "src/cora/cli.py"
+      ]
+    },
+    {
+      "id": "L_USABLE_ATLAS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Deterministic accessible self-contained navigable HTML and machine report.",
+      "witness_paths": [
+        "src/cora/maturity_atlas.py",
+        "tests/test_pr31_maturity_atlas.py"
+      ]
+    },
+    {
+      "id": "E_NOVICE_TASK",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "Observed unaided newcomer completion and correct interpretation of scope."
+    },
+    {
+      "id": "G5_PRODUCT_USABILITY",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "L_COMPLETE_CATALOG",
+        "L_USABLE_ATLAS",
+        "E_NOVICE_TASK"
+      ],
+      "description": "Readable HTML is not independently measured usability."
+    },
+    {
+      "id": "L_SOURCE_REGRESSIONS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Source-scoped regressions and exact-head gate.",
+      "witness_paths": [
+        "tests/test_pr31_maturity_atlas.py",
+        ".github/workflows/ci-documentation.yml"
+      ]
+    },
+    {
+      "id": "L_POSTMERGE_SOURCE",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Source-bound pre/postmerge analysis exists.",
+      "witness_paths": [
+        "src/cora/continuous.py"
+      ]
+    },
+    {
+      "id": "E_LONGITUDINAL_TARGET",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "Real maintained-target longitudinal drift and incident observation."
+    },
+    {
+      "id": "E_ROLLBACK_PROOF",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "Independent verified restore and operational rollback."
+    },
+    {
+      "id": "G6_CONTINUOUS_QUALIFICATION",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "L_SOURCE_REGRESSIONS",
+        "L_POSTMERGE_SOURCE",
+        "E_LONGITUDINAL_TARGET",
+        "E_ROLLBACK_PROOF"
+      ],
+      "description": "No long-term release fitness inferred from fast PR sequence."
+    },
+    {
+      "id": "G_MATURITY",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "G1_IDENTITY",
+        "G2_SOURCE_INTEGRITY",
+        "G3_BEHAVIORAL_VALIDITY",
+        "G4_GOVERNED_DELIVERY",
+        "G5_PRODUCT_USABILITY",
+        "G6_CONTINUOUS_QUALIFICATION"
+      ],
+      "description": "All six gates required; no compensating scores or self-approval."
+    }
+  ]
+}

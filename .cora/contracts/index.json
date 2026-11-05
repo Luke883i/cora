@@ -59,6 +59,11 @@
       "scope": "INTERNAL_DOD"
     },
     {
+      "logical": "cora.maturity-dod.json",
+      "canonical": ".cora/contracts/dod/maturity-dod.json",
+      "scope": "INTERNAL_DOD"
+    },
+    {
       "logical": "cora.method-atlas.json",
       "canonical": ".cora/contracts/profiles/method-atlas.json",
       "scope": "INTERNAL_PROFILE"
