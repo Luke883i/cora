@@ -1,0 +1,152 @@
+{
+  "schema": "cora-layout-dod/1",
+  "owner": "cora-release-verification",
+  "authority": "NONE",
+  "source_goal": "G_SOURCE",
+  "governed_goal": "G_GOVERNED",
+  "external_status": "BLOCKED_EXTERNAL",
+  "nodes": [
+    {
+      "id": "L_BASE",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "L_ROOT",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "L_HISTORY",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "L_FIXTURE",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "L_DOCS",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "L_LINKS",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "L_README",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "L_ATLAS",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "L_ROLES",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "L_SOURCE",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "L_TESTS",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "L_REPLAY",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "L_MUTANTS",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "L_NO_PROMOTION",
+      "depends_on": [],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "I_PRESERVE",
+      "depends_on": [
+        "L_BASE",
+        "L_ROOT",
+        "L_HISTORY",
+        "L_FIXTURE"
+      ],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "I_ACCESS",
+      "depends_on": [
+        "L_DOCS",
+        "L_LINKS",
+        "L_README",
+        "L_ATLAS",
+        "L_ROLES"
+      ],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "I_QUALITY",
+      "depends_on": [
+        "L_SOURCE",
+        "L_TESTS",
+        "L_REPLAY",
+        "L_MUTANTS",
+        "L_NO_PROMOTION"
+      ],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "G_SOURCE",
+      "depends_on": [
+        "I_PRESERVE",
+        "I_ACCESS",
+        "I_QUALITY"
+      ],
+      "scope": "SOURCE"
+    },
+    {
+      "id": "E_HOST",
+      "depends_on": [],
+      "scope": "EXTERNAL"
+    },
+    {
+      "id": "E_REVIEW",
+      "depends_on": [],
+      "scope": "EXTERNAL"
+    },
+    {
+      "id": "E_RUNTIME",
+      "depends_on": [],
+      "scope": "EXTERNAL"
+    },
+    {
+      "id": "E_EXTERNAL",
+      "depends_on": [],
+      "scope": "EXTERNAL"
+    },
+    {
+      "id": "G_GOVERNED",
+      "depends_on": [
+        "G_SOURCE",
+        "E_HOST",
+        "E_REVIEW",
+        "E_RUNTIME",
+        "E_EXTERNAL"
+      ],
+      "scope": "EXTERNAL"
+    }
+  ]
+}

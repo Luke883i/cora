@@ -1,0 +1,143 @@
+{
+  "schema": "cora-layout-migration/1",
+  "source_commit": "6475633d836ca94dd9ecf799d1c7ca3c4735ad13",
+  "authority": "NONE",
+  "intent": "Simplify root and active documentation navigation by lossless archive of 14 immutable historical records and relocation of a finite-model fixture without changing canonical product/software interfaces.",
+  "expected": {
+    "root_files_before": 25,
+    "root_files_after": 24,
+    "docs_top_level_removed": 14,
+    "cli_commands": 71,
+    "markdown_total": 48,
+    "historical_records": 17,
+    "moves": 15
+  },
+  "excluded": [
+    {
+      "path": "docs/DOD.md",
+      "reason": "Has three relative historical/current document links and is kept in place to preserve original blob and live navigation."
+    },
+    {
+      "path": "docs/AUDIT_PR01_PR07.md",
+      "reason": "Referenced by the immutable historical DOD.md; cannot move losslessly without rewriting source links."
+    },
+    {
+      "path": "docs/STANDARDS_MAINTENANCE_AUDIT.md",
+      "reason": "Referenced by immutable historical DOD.md; retained in place."
+    }
+  ],
+  "moves": [
+    {
+      "old": "docs/ADR-PR01.md",
+      "new": "docs/archive/decisions/ADR-PR01.md",
+      "blob_oid": "96dfedaf7a0f63136e5bd5015b525e1118c72d77",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "docs/ADR-PR02.md",
+      "new": "docs/archive/decisions/ADR-PR02.md",
+      "blob_oid": "3944a68c6baf23587a4e24a0736b72d5c256ac82",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "docs/ADR-PR03.md",
+      "new": "docs/archive/decisions/ADR-PR03.md",
+      "blob_oid": "8e691b98587b5f3a2deba26b74c68b7bb7b70411",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "docs/ADR-PR04.md",
+      "new": "docs/archive/decisions/ADR-PR04.md",
+      "blob_oid": "5e7881c5ee80070c4abbe65b53b4ff85986c18a6",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "docs/ADR-PR05.md",
+      "new": "docs/archive/decisions/ADR-PR05.md",
+      "blob_oid": "bc1bdd0f1875dd3514fc2c410f66674e7097a8d1",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "docs/ADR-PR06.md",
+      "new": "docs/archive/decisions/ADR-PR06.md",
+      "blob_oid": "a48221021cd7f7a7ab69e24869f8e60f7d40d7b2",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "docs/ADR-PR07.md",
+      "new": "docs/archive/decisions/ADR-PR07.md",
+      "blob_oid": "b8252f1c3169172a6e854a83c7761f30dc382b0c",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "docs/ADR-PR15.md",
+      "new": "docs/archive/decisions/ADR-PR15.md",
+      "blob_oid": "1ef97dc94b115e7761a2f8da42a9dcc8e048dc7e",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "docs/AUDIT_PR15_MAIN.md",
+      "new": "docs/archive/audits/AUDIT_PR15_MAIN.md",
+      "blob_oid": "94a0f171286c2b2812d04bbf04a64123698f1a28",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "docs/AUDIT_PR18_MAIN.md",
+      "new": "docs/archive/audits/AUDIT_PR18_MAIN.md",
+      "blob_oid": "faabef6fb8874ccdd58bda654dbaf853f3d90ea4",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "docs/AUDIT_PR19_CLOSURE.md",
+      "new": "docs/archive/audits/AUDIT_PR19_CLOSURE.md",
+      "blob_oid": "50fcf2621c0b65a958b41f5f4bbb43e9e802af6c",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "docs/FORENSIC_SELF_AUDIT.md",
+      "new": "docs/archive/audits/FORENSIC_SELF_AUDIT.md",
+      "blob_oid": "6556b56897d40b525d80bd88431208eecc03b45f",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "docs/DOD_PR16_SEMANTIC_ASSURANCE.md",
+      "new": "docs/archive/dod/DOD_PR16_SEMANTIC_ASSURANCE.md",
+      "blob_oid": "b44cbb4cbb669106b9579d5ec7e0288713d5c12a",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "docs/DOD_PR17_AGENT.md",
+      "new": "docs/archive/dod/DOD_PR17_AGENT.md",
+      "blob_oid": "0d168f366171fe0d81018af78ce7b9c440d20995",
+      "kind": "HISTORICAL_MARKDOWN",
+      "preserve_bytes": true
+    },
+    {
+      "old": "cora.five-synergies-mutants.json",
+      "new": ".cora/fixtures/five-synergies-mutants.json",
+      "blob_oid": "e32772fca116a5f87ebb51e99d0f6362d1f96e87",
+      "kind": "FINITE_MODEL_FIXTURE",
+      "preserve_bytes": true
+    }
+  ],
+  "qualification": {
+    "source": "GIT_BLOB_PRESERVATION_ONLY",
+    "runtime": "NOT_ATTESTED",
+    "external_consumers": "UNKNOWN",
+    "safe_deletion": "NOT_AUTHORIZED",
+    "governed": "BLOCKED_EXTERNAL"
+  }
+}
