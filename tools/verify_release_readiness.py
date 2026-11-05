@@ -12,7 +12,14 @@ import tomllib
 import urllib.error
 from pathlib import Path
 from cora.host_release import observe_github, original_git_dod, verify_expected_boundary
-from tools.release_verify import verify_release
+# Both executable-script and package-import entrypoints are supported.
+# A standalone 'python tools/verify_release_readiness.py' has tools/ as sys.path[0].
+try:
+    from tools.release_verify import verify_release
+except ModuleNotFoundError as exc:
+    if exc.name != "tools":
+        raise
+    from release_verify import verify_release
 
 NAME = "Continuous Ontological Repository Assurance"
 REQUIRED = (
