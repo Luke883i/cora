@@ -6,11 +6,13 @@ import hashlib
 import json
 import os
 import re
+import subprocess
 import sys
 import tomllib
 import urllib.error
 from pathlib import Path
 from cora.host_release import observe_github, original_git_dod, verify_expected_boundary
+from tools.release_verify import verify_release
 
 NAME = "Continuous Ontological Repository Assurance"
 REQUIRED = (
@@ -147,6 +149,66 @@ def inspect_source(root: Path) -> dict:
       "release_authorized":False,"authorization":"NONE",
     }
 
+def candidate_receipt(root: Path, revision: str, wheel: Path, sdist: Path,
+                      verification: Path, external: Path) -> dict:
+    """Exact Git source and binary candidate facts; NEVER approval or publication.
+
+    Verification report and external test report are compared, not trusted as
+    standalone authority. Independent signature, maintainer and deployment
+    decisions cannot originate in this process.
+    """
+    root = Path(root).resolve(strict=True)
+    if not isinstance(revision, str) or not re.fullmatch(r"[0-9a-f]{40}", revision):
+        raise ValueError("candidate must name full exact Git SHA")
+    def call(*args):
+        done = subprocess.run(["git", "-C", str(root), *args], capture_output=True,
+                              text=True, timeout=20)
+        if done.returncode:
+            raise ValueError("candidate Git provenance unavailable")
+        return done.stdout.strip()
+    if call("rev-parse", "--verify", "HEAD") != revision:
+        raise ValueError("candidate revision is not checkout HEAD")
+    tree = call("rev-parse", "HEAD^{tree}")
+    # A working-tree build cannot masquerade as a committed-source build.
+    dirty = subprocess.run(["git", "-C", str(root), "diff", "--quiet", "HEAD", "--", "."],
+                           timeout=20)
+    if dirty.returncode:
+        raise ValueError("tracked source differs from committed Git tree")
+    actual = verify_release(Path(wheel), Path(sdist), root)
+    declared = json.loads(Path(verification).read_text("utf-8"))
+    if declared != actual:
+        raise ValueError("verification receipt does not match independently recomputed binaries")
+    validation = json.loads(Path(external).read_text("utf-8"))
+    if (validation.get("schema") != "cora-external-validation/1"
+            or validation.get("status") != "SCOPED_FIXTURES_PASS"
+            or set(validation.get("distribution_forms", {})) != {"wheel", "sdist"}):
+        raise ValueError("installed-fixture evidence missing or wrong identity")
+    version = actual["version"]
+    if (version != "1.0.0a4"
+            or Path(wheel).name != f"cora_audit-{version}-py3-none-any.whl"
+            or Path(sdist).name != f"cora_audit-{version}.tar.gz"):
+        raise ValueError("candidate distribution name/version differs from release plan")
+    return {
+        "schema": "cora-alpha-candidate-receipt/1",
+        "source_commit": revision, "source_tree": tree,
+        "distribution": actual["distribution"], "version": version,
+        "artifact_sha256": {
+            Path(wheel).name: actual["wheel_sha256"],
+            Path(sdist).name: actual["sdist_sha256"],
+        },
+        "wheel_sdist_original_source_parity": "VERIFIED_SCOPED",
+        "installed_fixture_status": "PRESEEDED_SYNTHETIC_FIXTURES_PASS_NOT_REAL_CONSUMER",
+        "signed_provenance": "NOT_ATTESTED",
+        "protected_main": "NOT_ATTESTED_BY_CANDIDATE",
+        "independent_reviewer": "NOT_ATTESTED",
+        "release_manager": "NOT_ATTESTED",
+        "tag": "NOT_CREATED", "github_release": "NOT_PUBLISHED",
+        "root_cause_postmerge": "NOT_ATTESTED",
+        "external_gate": "BLOCKED_EXTERNAL",
+        "authorization": "NONE", "publication_authorized": False,
+    }
+
+
 def main(argv=None):
     p=argparse.ArgumentParser()
     p.add_argument("--repo",type=Path,default=Path("."))
@@ -159,6 +221,12 @@ def main(argv=None):
     p.add_argument("--host-pr-number", type=int, help="optional review subject for GitHub account evidence")
     p.add_argument("--host-output", type=Path, help="sanitized JSON; NEVER includes GITHUB_TOKEN")
     p.add_argument("--require-host-enforcement", action="store_true", help="return 3 when host checks remain unprotected")
+    p.add_argument("--candidate-sha", help="Full exact Git SHA to be packaged")
+    p.add_argument("--candidate-wheel", type=Path)
+    p.add_argument("--candidate-sdist", type=Path)
+    p.add_argument("--candidate-verification", type=Path)
+    p.add_argument("--candidate-external", type=Path)
+    p.add_argument("--candidate-output", type=Path, help="Review-only artifact manifest")
     a=p.parse_args(argv)
     try:
         report=inspect_source(a.repo)
@@ -168,6 +236,19 @@ def main(argv=None):
     if a.output:a.output.write_text(result,encoding="utf-8")
     else:sys.stdout.write(result)
     if report["source_status"]!="PASS_SCOPED":return 2
+    if a.candidate_sha is not None:
+        if (a.observe_host or a.candidate_output is None
+                or not all((a.candidate_wheel, a.candidate_sdist,
+                            a.candidate_verification, a.candidate_external))):
+            p.exit(2,"CANDIDATE_BLOCKED: incomplete or ambiguous input\n")
+        try:
+            evidence = candidate_receipt(a.repo, a.candidate_sha,
+                                         a.candidate_wheel, a.candidate_sdist,
+                                         a.candidate_verification, a.candidate_external)
+            a.candidate_output.write_text(
+                json.dumps(evidence,sort_keys=True,indent=2)+"\n",encoding="utf-8")
+        except (ValueError, OSError, KeyError, subprocess.SubprocessError) as exc:
+            p.exit(2,"CANDIDATE_BLOCKED: "+type(exc).__name__+"\n")
     if a.observe_host:
         try:
             commit, cut = original_git_dod(a.repo)
