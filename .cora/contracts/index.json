@@ -84,6 +84,11 @@
       "scope": "INTERNAL_DOD"
     },
     {
+      "logical": "cora.postmerge-repro-dod.json",
+      "canonical": ".cora/contracts/dod/postmerge-repro-dod.json",
+      "scope": "INTERNAL_DOD"
+    },
+    {
       "logical": "cora.type-assurance-profile.json",
       "canonical": ".cora/contracts/profiles/type-assurance-profile.json",
       "scope": "INTERNAL_PROFILE"

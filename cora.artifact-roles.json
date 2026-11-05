@@ -934,6 +934,14 @@
         "TEST"
       ],
       "rationale": "Physical original-Git DoD mutation and live GitHub governance snapshot negative tests, no release authority."
+    },
+    {
+      "pattern": ".cora/contracts/dod/postmerge-repro-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Noncompensatory source/external postmerge reproducibility and release governance proof obligations."
     }
   ]
 }
