@@ -913,8 +913,8 @@
     {
       "pattern": "src/cora/host_release.py",
       "roles": [
-        "SOFTWARE_SOURCE",
-        "CONTRACT_VERIFIER"
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
       ],
       "rationale": "Read-only GitHub branch/review/release observations and source DoD; no approval or release rights."
     },
@@ -929,9 +929,9 @@
     {
       "pattern": "tests/test_pr32_host_release.py",
       "roles": [
-        "TEST",
+        "CONTRACT_VERIFIER",
         "FIXTURE",
-        "CONTRACT_VERIFIER"
+        "TEST"
       ],
       "rationale": "Physical original-Git DoD mutation and live GitHub governance snapshot negative tests, no release authority."
     }
