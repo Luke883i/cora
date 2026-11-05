@@ -25,6 +25,54 @@ SOURCE_STATE = "GIT_SOURCE_MODEL_NOT_INDEPENDENT_BEHAVIOR"
 HTML_MARKER = "CORA ATLAS | SOURCE-BOUNDED"
 REPO_ID = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 GIT_SHA = re.compile(r"^[a-f0-9]{40}(?:[a-f0-9]{24})?$")
+MANDATORY_NODES = frozenset(["E_LONGITUDINAL_TARGET","E_NOVICE_TASK","E_ORACLE_INDEPENDENCE","E_PROTECTED_MAIN","E_REAL_BENCHMARK","E_RELEASE_ACCEPTANCE","E_REVIEW_IDENTITY","E_ROLLBACK_PROOF","G1_IDENTITY","G2_SOURCE_INTEGRITY","G3_BEHAVIORAL_VALIDITY","G4_GOVERNED_DELIVERY","G5_PRODUCT_USABILITY","G6_CONTINUOUS_QUALIFICATION","G_MATURITY","I_IDENTITY_SOURCE","L_BEHAVIOR_MODEL","L_CI_POLICY","L_COMPLETE_CATALOG","L_GIT_PIN","L_LINEAGE","L_POSTMERGE_SOURCE","L_PRODUCT_ID","L_RELEASE_SOURCE","L_REPOSITORY_ID","L_SOFTWARE_ID","L_SOURCE_INVALIDATION","L_SOURCE_REGRESSIONS","L_SOURCE_REPLAY","L_USABLE_ATLAS"])
+MANDATORY_EDGES = {
+    "I_IDENTITY_SOURCE": [
+        "L_PRODUCT_ID",
+        "L_SOFTWARE_ID",
+        "L_REPOSITORY_ID",
+        "L_RELEASE_SOURCE"
+    ],
+    "G1_IDENTITY": [
+        "I_IDENTITY_SOURCE",
+        "E_RELEASE_ACCEPTANCE"
+    ],
+    "G2_SOURCE_INTEGRITY": [
+        "L_GIT_PIN",
+        "L_SOURCE_REPLAY",
+        "L_SOURCE_INVALIDATION",
+        "L_LINEAGE"
+    ],
+    "G3_BEHAVIORAL_VALIDITY": [
+        "L_BEHAVIOR_MODEL",
+        "E_REAL_BENCHMARK",
+        "E_ORACLE_INDEPENDENCE"
+    ],
+    "G4_GOVERNED_DELIVERY": [
+        "L_CI_POLICY",
+        "E_PROTECTED_MAIN",
+        "E_REVIEW_IDENTITY"
+    ],
+    "G5_PRODUCT_USABILITY": [
+        "L_COMPLETE_CATALOG",
+        "L_USABLE_ATLAS",
+        "E_NOVICE_TASK"
+    ],
+    "G6_CONTINUOUS_QUALIFICATION": [
+        "L_SOURCE_REGRESSIONS",
+        "L_POSTMERGE_SOURCE",
+        "E_LONGITUDINAL_TARGET",
+        "E_ROLLBACK_PROOF"
+    ],
+    "G_MATURITY": [
+        "G1_IDENTITY",
+        "G2_SOURCE_INTEGRITY",
+        "G3_BEHAVIORAL_VALIDITY",
+        "G4_GOVERNED_DELIVERY",
+        "G5_PRODUCT_USABILITY",
+        "G6_CONTINUOUS_QUALIFICATION"
+    ]
+}
 
 
 def _object(repo: Path, sha: str, path: str) -> dict:
@@ -59,6 +107,9 @@ def _validate_nodes(contract: dict, tree: dict[str, str]) -> tuple[dict, dict]:
     if len(order) != len(nodes):
         raise ValueError("maturity DoD contains unreachable/orphaned obligations")
     by = {x["id"]: x for x in nodes}
+    if (len(nodes) != 30 or set(by) != MANDATORY_NODES or
+        any(by[k]["depends_on"] != v for k,v in MANDATORY_EDGES.items())):
+        raise ValueError("mandatory maturity edge or node missing")
     gates = contract.get("gates")
     if (not isinstance(gates, list) or len(gates) != 6
             or len(set(gates)) != 6

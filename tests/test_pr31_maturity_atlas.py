@@ -111,6 +111,17 @@ class MaturityAtlasTests(unittest.TestCase):
             fake["commit"] = git(clone, "rev-parse", "HEAD")
             with self.assertRaisesRegex(ValueError, "external assurance leaf"):
                 build_atlas(clone, fake)
+            # Independent second committed mutant removes G2 lineage and its leaf.
+            git(clone, "checkout", "-q", self.sha)
+            data = json.loads(path.read_text("utf-8"))
+            data["nodes"] = [n for n in data["nodes"] if n["id"] != "L_LINEAGE"]
+            next(n for n in data["nodes"] if n["id"] == "G2_SOURCE_INTEGRITY")["depends_on"].remove("L_LINEAGE")
+            path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+            git(clone, "add", ".cora/contracts/dod/maturity-dod.json")
+            git(clone, "commit", "-qm", "mutant: erase G2 lineage cut")
+            fake["commit"] = git(clone, "rev-parse", "HEAD")
+            with self.assertRaisesRegex(ValueError, "mandatory maturity"):
+                build_atlas(clone, fake)
 
     def test_cli_generates_and_replays_human_and_ai_views(self):
         with tempfile.TemporaryDirectory() as d:
