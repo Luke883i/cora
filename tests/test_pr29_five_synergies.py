@@ -177,7 +177,7 @@ class FiveSynergiesTests(unittest.TestCase):
             source=json.loads(path.read_text('utf-8'))
             source['rows'][2]['invalidated']=[]
             path.write_text(json.dumps(source),encoding='utf-8')
-            git(repo,'add',path.name)
+            git(repo,'add',path.relative_to(repo).as_posix())
             git(repo,'commit','-qm','preseed negative turned into false positive')
             with self.assertRaisesRegex(ValueError,'preseed semantic fault/oracle changed'):
                 _validated_seed(repo,git(repo,'rev-parse','HEAD'))
@@ -217,7 +217,7 @@ class FiveSynergiesTests(unittest.TestCase):
             payload=json.loads(dod.read_text('utf-8'))
             next(x for x in payload['nodes'] if x['id']=='G_GOVERNED')['depends_on'].remove('E_HOST')
             dod.write_text(json.dumps(payload),encoding='utf-8')
-            git(local,'add',dod.name)
+            git(local,'add',dod.relative_to(local).as_posix())
             git(local,'commit','-qm','physical missing external authority mutant')
             with self.assertRaisesRegex(ValueError,'removed dependency'):
                 five_dod(local,'HEAD')
