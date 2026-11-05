@@ -39,6 +39,7 @@ class AgentAssuranceFalsification(unittest.TestCase):
         """Real temporary JSON file changes, NOT 24 source-code behavioral mutants."""
         with tempfile.TemporaryDirectory() as td:
             temp = Path(td) / ".cora/contracts/dod/agent-dod.json"
+            temp.parent.mkdir(parents=True,exist_ok=True)
             for idx in range(24):
                 mutated = copy.deepcopy(self.contract)
                 mutated["nodes"][idx]["family"] = "forged_" + FAMILIES[idx]

@@ -131,7 +131,9 @@ class TypeAssuranceTests(unittest.TestCase):
                 target.parent.mkdir(parents=True,exist_ok=True)
                 target.write_bytes(data)
             for path,obj in [('.cora/contracts/profiles/method-atlas.json',self.atlas),('cora.ontology.json',self.ontology),('.cora/contracts/dod/method-synthesis-dod.json',self.dod)]:
-                (repo/path).write_text(json.dumps(obj),encoding='utf8')
+                target=repo/path
+                target.parent.mkdir(parents=True,exist_ok=True)
+                target.write_text(json.dumps(obj),encoding='utf8')
             git(repo,'add','.')
             git(repo,'commit','-qm','baseline')
             baseline=git(repo,'rev-parse','HEAD')
