@@ -49,6 +49,21 @@ jobs:
             echo "PR25 original-Git test attempt $attempt / 3, exact HEAD $(git rev-parse HEAD), tree $(git rev-parse HEAD^{tree})"
             python -m unittest discover -s tests -p test_pr25_method_synthesis.py -q
           done
+      - name: Replay PR25 Git falsifiers on exact pre-PR main commit (not a synthetic tree)
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          original=$(mktemp -d)
+          git worktree add --detach "$original" "$BASE_SHA"
+          trap 'git worktree remove --force "$original"' EXIT
+          echo "Original integrated-main commit: $(git -C "$original" rev-parse HEAD)"
+          echo "Original integrated-main tree: $(git -C "$original" rev-parse HEAD^{tree})"
+          echo "Proposed source tree: $(git rev-parse HEAD^{tree})"
+          for attempt in 1 2 3; do
+            echo "MAIN ORIGINAL PR25 physical Git repeat $attempt/3"
+            (cd "$original" && PYTHONPATH="$original/src" python -m unittest discover -s tests -p test_pr25_method_synthesis.py -q)
+          done
       - name: C8 independent critical coverage floor
         run: |
           coverage json -o /tmp/cora-coverage.json
