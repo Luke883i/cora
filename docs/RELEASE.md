@@ -30,3 +30,20 @@ The existing candidate builders create a **wheel** and **sdist**; they do not pu
 **Explicit publication by the authorized operator only:** From a clean, reviewed checkout of the exact approved commit, verify the package metadata version `1.0.0a4`; create and push a protected annotated tag `v1.0.0a4` naming exactly that commit. Verify the remote tag target. Then in GitHub Releases select **Draft a new release**, use that existing tag, tick **This is a pre-release**, attach only the reviewed wheel/sdist plus SHA-256 and provenance/verification reports, include release notes and external limitations, and publish after release-manager approval. The command-line alternative, **after all the above gates**, is `gh release create v1.0.0a4 dist/cora_audit-1.0.0a4-py3-none-any.whl dist/cora_audit-1.0.0a4.tar.gz --verify-tag --prerelease --title "CORA 1.0.0a4 (alpha)" --notes-file RELEASE_NOTES.md` (with real reviewed artifact paths). GitHub Actions in this repository have read-only permissions and intentionally do **not** auto-create tags or releases.
 
 **Current blocking facts as of 5 November 2026:** The read-only GitHub branch observation returned `protected=false` and no enforced required checks, and a merged-main Python 3.13 diagnostic failed while an equivalent-tree PR head passed. The PR32 reticulum uses original Git source and live host evidence to preserve these failures, not to promote release readiness. GitHub release publication remains operator-controlled and blocked until separately authorized.
+
+## PR34 — release candidate manifest and release-manager checklist
+
+The `CI | CORA release candidate verification` job now checks out the **actual PR HEAD** (not GitHub's ephemeral synthetic merge commit), verifies the original Git object and clean tracked source, builds wheel/sdist twice, checks archive safety, compares payload to original source, installs wheel and sdist into separate local venv fixtures, and produces the following **review-only artifacts** for each Python version: `candidate-receipt.json`, `release-source.json`, `SHA256SUMS`, `RELEASE_NOTES_REVIEW.txt`, verified wheel/sdist, validation reports and the experimental bundle. Source identity and binary SHA-256 are automatically reconciled. This is a candidate, not a supplier-signed provenance attestation.
+
+**Measurable prepublication checklist (noncompensatory; all required):**
+
+- [ ] Exact intended final `main` commit and tag target match the previously qualified source and binaries.
+- [ ] **All** required CI on the actual final main commit succeeds, including independently observed PR25/PR26 repeats with 0 failed attempts on Python 3.11/3.13 and identified cause or explicit open debt for historical divergence.
+- [ ] `SHA256SUMS` matches **the actual wheel and sdist to be uploaded**, with install and source parity reports from the same commit.
+- [ ] GitHub branch protection and required checks demonstrably enforce the approved branch rules. Repository source declarations are not sufficient.
+- [ ] Authenticated independent non-author reviewer approves the actual release change and release manager explicitly authorizes publication.
+- [ ] Provenance/signatures are independently validated, external pilot and rollback owner are recorded, and release notes clearly mark alpha limitations.
+- [ ] `v1.0.0a4` is created and verified as an annotated tag pointing to the approved commit, **after** all above conditions.
+- [ ] Only then publish the GitHub Release as a **pre-release** using the verified assets; record published tag, SHA, artifact digests and operator.
+
+**Current classification:** `BLOCKED_EXTERNAL`. A passing PR34 manifest cannot clear hosted governance, independent release consent, provenance signing, real target acceptance or past unexplained Git-test failures. Do not auto-publish or use unchecked CI artifacts as evidence of a public release.
