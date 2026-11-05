@@ -120,13 +120,13 @@ A target must have its own committed ontology and BASE-committed continuous poli
 
 No new CLI command is required. From a full CORA Git checkout:
 
-\`\`\`sh
+```sh
 BASE=$(git rev-parse HEAD^)
 cora method-synthesize . --synergic --revision HEAD --base-sha "$BASE" --execute-source-probes --output /tmp/cora-five.json --ai-request-output /tmp/cora-five-ai.json
 cora verify-method-synthesis /tmp/cora-five.json --repo . --synergic
 cora stress-convergence --synergic --repo . --revision HEAD --sessions 10 --cases-per-session 100000 --require-full --output /tmp/cora-five-mutations.json
-\`\`\`
+```
 
-The five-goal report binds the original 18 README claim/source/test traces, opt-in no-target-execution Git source probes, a safe AI case with support/counterexample rules, BASE-policy premerge document/change impact, and the exact 29-node reticulum. No provider connection is made. A model can be invoked explicitly only through a caller-owned \`invoke_reasoner(case, truth, provider_callback, authorize=True)\` adapter; tests use a fake provider and never attest a live LLM. The model answer must carry the original commit/case digest, cited source refs, disjoint support/counterexample refs, adversarial scenario, positive control and an allowed review-only action. The operator remains responsible for outbound provider security.
+The five-goal report binds the original 18 README claim/source/test traces, opt-in no-target-execution Git source probes, a safe AI case with support/counterexample rules, BASE-policy premerge document/change impact, and the exact 29-node reticulum. No provider connection is made. A model can be invoked explicitly only through a caller-owned `invoke_reasoner(case, truth, provider_callback, authorize=True)` adapter; tests use a fake provider and never attest a live LLM. The model answer must carry the original commit/case digest, cited source refs, disjoint support/counterexample refs, adversarial scenario, positive control and an allowed review-only action. The operator remains responsible for outbound provider security.
 
-\`--execute-source-probes\` runs **three safe CORA source operations** (Git snapshot, original method-synthesis replay and integrated report replay). It does not execute arbitrary target code, attest a deployed application or test all 71 behaviors. Without the flag, behavior remains NOT_RUN. The preseeded million-case stress suite is a deterministic **finite semantic model** (two positive controls and thirty negative fault classes repeated); **zero physical code mutations** are performed by that stress command. Original physical Git mutants are in the separate source test suite. \`G_GOVERNED\` is always \`BLOCKED_EXTERNAL\` until independently observed.
+`--execute-source-probes` runs **three safe CORA source operations** (Git snapshot, original method-synthesis replay and integrated report replay). It does not execute arbitrary target code, attest a deployed application or test all 71 behaviors. Without the flag, behavior remains NOT_RUN. The preseeded million-case stress suite is a deterministic **finite semantic model** (two positive controls and thirty negative fault classes repeated); **zero physical code mutations** are performed by that stress command. Original physical Git mutants are in the separate source test suite. `G_GOVERNED` is always `BLOCKED_EXTERNAL` until independently observed.
