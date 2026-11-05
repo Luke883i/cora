@@ -4,10 +4,13 @@ import argparse
 import ast
 import hashlib
 import json
+import os
 import re
 import sys
 import tomllib
+import urllib.error
 from pathlib import Path
+from cora.host_release import observe_github, original_git_dod, verify_expected_boundary
 
 NAME = "Continuous Ontological Repository Assurance"
 REQUIRED = (
@@ -149,6 +152,13 @@ def main(argv=None):
     p.add_argument("--repo",type=Path,default=Path("."))
     p.add_argument("--output",type=Path)
     p.add_argument("--require-release-approval",action="store_true")
+    p.add_argument("--observe-host", action="store_true", help="Read-only live GitHub branch/ruleset/release observation")
+    p.add_argument("--host-repository", help="owner/repo; validated before any network call")
+    p.add_argument("--host-commit", help="full exact checkout HEAD SHA")
+    p.add_argument("--host-tag", default="v1.0.0a4")
+    p.add_argument("--host-pr-number", type=int, help="optional review subject for GitHub account evidence")
+    p.add_argument("--host-output", type=Path, help="sanitized JSON; NEVER includes GITHUB_TOKEN")
+    p.add_argument("--require-host-enforcement", action="store_true", help="return 3 when host checks remain unprotected")
     a=p.parse_args(argv)
     try:
         report=inspect_source(a.repo)
@@ -158,6 +168,31 @@ def main(argv=None):
     if a.output:a.output.write_text(result,encoding="utf-8")
     else:sys.stdout.write(result)
     if report["source_status"]!="PASS_SCOPED":return 2
+    if a.observe_host:
+        try:
+            commit, cut = original_git_dod(a.repo)
+            if a.host_commit != commit:
+                raise ValueError("host observation must refer to exact checkout HEAD")
+            host = observe_github(a.host_repository or "", commit,
+                                  os.environ.get("GITHUB_TOKEN", ""),
+                                  tag=a.host_tag, pr_number=a.host_pr_number)
+            verify_expected_boundary(host)
+            observed = {
+                "schema": "cora-host-release-dossier/1",
+                "commit": commit, "source_doD": cut,
+                "host": host, "external_gate": "BLOCKED_EXTERNAL",
+                "release_authorized": False, "authorization": "NONE",
+                "provenance": "GITHUB_API_LIVE_READ_ONLY_AND_ORIGINAL_GIT_SOURCE_NOT_INDEPENDENT_APPROVAL",
+            }
+            rendered = json.dumps(observed, sort_keys=True, indent=2) + "\n"
+            if a.host_output:
+                a.host_output.write_text(rendered, encoding="utf-8")
+            else:
+                sys.stdout.write(rendered)
+            if a.require_host_enforcement and not host["required_checks_enforced_observed"]:
+                return 3
+        except (ValueError, OSError, KeyError, urllib.error.URLError) as exc:
+            p.exit(2, "HOST_OBSERVATION_BLOCKED: " + type(exc).__name__ + "\n")
     return 3 if a.require_release_approval else 0
 
 if __name__=="__main__":

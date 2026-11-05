@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  pull-requests: read
 jobs:
   source-readiness:
     runs-on: ubuntu-latest
@@ -30,6 +31,23 @@ jobs:
           python tools/verify_repository_contract.py --repo .
           python tools/verify_release_readiness.py --repo . --output /tmp/release-source.json
           python -c 'import json; r=json.load(open("/tmp/release-source.json")); assert r["source_status"]=="PASS_SCOPED" and r["release_status"]=="BLOCKED_EXTERNAL" and r["authorization"]=="NONE" and not r["release_authorized"]'
+      - name: Probe actual GitHub branch enforcement and unpublished tag (read-only)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          CORA_REPO: ${{ github.repository }}
+        run: |
+          python tools/verify_release_readiness.py --repo . --observe-host --host-repository "$CORA_REPO" --host-commit "$(git rev-parse HEAD)" --host-tag v1.0.0a4 --host-output /tmp/cora-pr32-host.json --output /tmp/cora-pr32-source.json
+          python -c 'import json; a=json.load(open("/tmp/cora-pr32-host.json")); assert a["schema"]=="cora-host-release-dossier/1" and a["host"]["provenance"].startswith("AUTHENTICATED_READ_ONLY_") and a["external_gate"]=="BLOCKED_EXTERNAL" and a["authorization"]=="NONE" and a["release_authorized"] is False'
+      - name: Preserve time-sensitive host-state observations for human review
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: cora-pr32-host-readonly-${{ matrix.python-version }}
+          path: |
+            /tmp/cora-pr32-host.json
+            /tmp/cora-pr32-source.json
+          if-no-files-found: warn
+          retention-days: 14
       - name: CORA-on-CORA source replay
         run: |
           python tools/verify_artifact_roles.py --repo . --output /tmp/roles.json
