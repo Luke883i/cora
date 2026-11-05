@@ -175,9 +175,15 @@ def build_atlas(repo: Path, unified: dict) -> dict:
         "documentation_files": sorted(x for x in tree if x.startswith("docs/") and x.endswith(".md")),
         "contracts": sorted(x for x in tree if x.startswith(".cora/contracts/") and x.endswith(".json"))
     }
-    shared = [{"path": p, "oid": oid, "referenced_by": sorted(commands)}
-              for (p, oid), commands in sorted(unique_origin.items())
-              if len(commands) > 1]
+    # De-duplicate even copied paths with the exact same Git blob OID.
+    blob_origins = defaultdict(lambda: {"paths": set(), "commands": set()})
+    for (path, oid), command_ids in unique_origin.items():
+        blob_origins[oid]["paths"].add(path)
+        blob_origins[oid]["commands"].update(command_ids)
+    shared = [{"path": " | ".join(sorted(row["paths"])), "oid": oid,
+               "referenced_by": sorted(row["commands"])}
+              for oid, row in sorted(blob_origins.items())
+              if len(row["commands"]) > 1]
     result = {
         "schema": SCHEMA, "commit": sha, "source_schema": UNIFIED,
         "source_receipt_digest": unified["receipt_digest"],
@@ -193,7 +199,7 @@ def build_atlas(repo: Path, unified: dict) -> dict:
         "maturity": {"goal": "G_MATURITY", "nodes": contract["nodes"],
                      "gates": contract["gates"], "assessment": assessment,
                      **diagnostic, "authority": "NONE"},
-        "lineage": {"unique_git_origins": len(unique_origin),
+        "lineage": {"unique_git_origins": len(blob_origins),
                     "shared_git_origins": shared,
                     "independent_corroborations": 0,
                     "rule": "SAME_GIT_BLOB_NEVER_COUNTS_AS_INDEPENDENT_CORROBORATION"},

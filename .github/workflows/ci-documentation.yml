@@ -122,6 +122,10 @@ jobs:
             /tmp/cora-integrated-10m-replay.json
             /tmp/cora-five-goals.json
             /tmp/cora-five-ai-plan.json
+            /tmp/cora-pr31-source.json
+            /tmp/cora-pr31-atlas.json
+            /tmp/cora-pr31-atlas.html
+            /tmp/cora-pr31-ai.json
             /tmp/cora-five-million.json
             /tmp/cora-five-million-replay.json
             /tmp/cora-layout-proof.json
