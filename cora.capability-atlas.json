@@ -658,6 +658,7 @@
       "cora.documentation-dod.json",
       "cora.documentation-proofs.json",
       "cora.five-synergies-dod.json",
+      "cora.five-synergies-mutants.json",
       "cora.gold-assurance.json",
       "cora.integrated-dod.json",
       "cora.method-atlas.json",

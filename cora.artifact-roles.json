@@ -701,6 +701,14 @@
         "TEST"
       ],
       "rationale": "Original Git source and negative controls for the five synergic development goals."
+    },
+    {
+      "pattern": "cora.five-synergies-mutants.json",
+      "roles": [
+        "PRODUCT_CONTRACT",
+        "FIXTURE"
+      ],
+      "rationale": "Preseeded finite semantic fault classes and oracles; not physical mutations, independent attestation or production proof."
     }
   ]
 }

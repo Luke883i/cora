@@ -310,3 +310,146 @@ def verify_semantic_evolution(repo: Path, report: dict) -> bool:
     if report!=expected:
         raise ValueError('semantic evolution replay mismatch')
     return True
+
+
+UNIFIED_SCHEMA = 'cora-five-synergies-unified/1'
+STRESS_SCHEMA = 'cora-five-synergies-stress/1'
+SEED_SCHEMA = 'cora-five-synergies-mutants/1'
+SEED_FIELDS = ('git_identity','documentation_trace','owner_binding','test_oracle',
+               'authority_safety','consumer_unknown','ai_grounding','receipt_source',
+               'dod_integrity','workflow_governance')
+# An independently authored, finite reference mapping. The committed preseed
+# must match this list; neither source file nor test can certify live behavior.
+PRESEEDED_FAULT_DIMENSION = (
+    -1,-1,0,0,2,5,1,1,1,8,2,3,3,3,9,7,6,4,7,3,6,9,4,2,9,5,1,4,7,0,3,4
+)
+
+
+def unified_assurance(repo: Path, revision: str = 'HEAD', *,
+                      base: str | None = None,
+                      ai: dict | None = None,
+                      execute_probes: bool = False) -> dict:
+    """One source service: five original-owner results, noncompensatory DoD."""
+    from .integrated_service import integrated_case
+    from .evidence import domain_hash
+    repo=Path(repo).resolve(strict=True)
+    original=integrated_case(repo,revision)
+    sha=original['commit']
+    lattice=five_dod(repo,sha)
+    truth=semantic_truth(repo,original)
+    reason=reasoning_plan(original,truth)
+    observations=import_ai_reasoning(original,ai) if ai is not None else {
+        'schema':'cora-synergic-ai-observation/1','source_commit':sha,
+        'items':[],'state':'AI_NOT_SUPPLIED','provider_identity':'NOT_CONNECTED',
+        'approval':'NONE'}
+    behavior=behavioral_proofs(repo,original,authorize=execute_probes)
+    evolution=semantic_evolution(repo,base,original) if base is not None else None
+    goals={'G_TRUTH':'SOURCE_TRACE_NOT_SEMANTIC_ENTAILMENT',
+           'G_AI':'GROUNDED_PROTOCOL_NOT_REAL_PROVIDER',
+           'G_BEHAVIOR':behavior['status'],
+           'G_EVOLUTION':'SOURCE_DIFF_REPLAYED_REVIEW_REQUIRED' if evolution else 'MISSING_BASE',
+           'G_UNIFIED':'SOURCE_CANDIDATE_NOT_PRODUCT_READY'
+             if evolution and behavior['source_probes_passed']==3 else 'DEBT_BLOCKED',
+           'G_GOVERNED':'BLOCKED_EXTERNAL'}
+    report={'schema':UNIFIED_SCHEMA,'commit':sha,'base_commit':base,
+            'original_integrated_receipt':original['report_digest'],
+            'truth':truth,'reasoning_plan':reason,
+            'ai_observations':observations,
+            'behavior':behavior,'evolution':evolution,
+            'method_counts':{'commands':original['features']['available_parser_commands'],
+                             'families':original['features']['families'],
+                             'original_methods':original['methods']['count'],
+                             'object_types':original['methods']['types'],
+                             'abstraction_dimensions':len(original['dimensions'])},
+            'reticulum':lattice,'goals':goals,
+            'all_71_behaviors_proven':False,
+            'actual_model_provider_attested':False,
+            'product_ready':False,'authorization':'NONE'}
+    report['receipt_digest']=domain_hash('CORA:five-synergies-unified:1',report)
+    return report
+
+
+def verify_unified_assurance(repo: Path, report: dict, *,
+                             ai: dict | None = None) -> bool:
+    if not isinstance(report,dict) or report.get('schema')!=UNIFIED_SCHEMA:
+        raise ValueError('unified assurance report schema invalid')
+    behavior=report.get('behavior',{})
+    source_probe=behavior.get('source_probes_passed')==3
+    expected=unified_assurance(repo,report['commit'],base=report['base_commit'],
+                               ai=ai,execute_probes=source_probe)
+    if expected!=report:
+        raise ValueError('unified assurance Git replay mismatch')
+    return True
+
+
+def _validated_seed(repo: Path, sha: str) -> list[dict]:
+    from .integrated_service import FAULTS
+    raw=git(repo,'show',sha+':cora.five-synergies-mutants.json',
+            max_output=64*1024)
+    corpus=json.loads(raw.decode('utf-8'))
+    if (not isinstance(corpus,dict) or set(corpus)!={
+        'schema','status','authority','seed','dimensions','rows'
+    } or corpus['schema']!=SEED_SCHEMA or
+        corpus['status']!='PRESEEDED_FINITE_SCENARIOS_NOT_CODE_MUTANTS'
+        or corpus['authority']!='NONE' or corpus['seed']!=883
+        or corpus['dimensions']!=list(SEED_FIELDS)):
+        raise ValueError('preseed scenario contract drift')
+    rows=corpus['rows']
+    if not isinstance(rows,list) or len(rows)!=32 or len(FAULTS)!=32:
+        raise ValueError('32 preseeded scenario families required')
+    for i,row in enumerate(rows):
+        ref=[] if i<2 else [SEED_FIELDS[PRESEEDED_FAULT_DIMENSION[i]]]
+        if (not isinstance(row,dict) or set(row)!={
+                'id','invalidated','expected','external'
+            } or row['id']!=FAULTS[i] or row['invalidated']!=ref
+            or row['expected']!=('SOURCE_CANDIDATE' if i<2 else 'SOURCE_DEBT_BLOCKED')
+            or row['external']!='BLOCKED_EXTERNAL'):
+            raise ValueError('preseed semantic fault/oracle changed: '+str(i))
+    return rows
+
+
+def stress_five_synergies(repo: Path, revision: str = 'HEAD', *,
+                          cases: int = 1_000_000, seed: int = 883) -> dict:
+    """1M seeded model scenarios, 32 realistic classes, 0 code mutations.
+
+    Independent candidate predicate: AND over ten semantic obligation flags.
+    Reference oracle: canonical 30 fault classes and two positive controls.
+    """
+    import hashlib
+    from .integrated_service import integrated_case
+    if type(cases)!=int or not 32<=cases<=1_000_000 or type(seed)!=int or not 0<=seed<2**32:
+        raise ValueError('finite semantic stress bound violated')
+    original=integrated_case(repo,revision)
+    sha=original['commit']
+    rows=_validated_seed(Path(repo),sha)
+    state=(seed|1)&0xffffffffffffffff
+    counts=[0]*32; positives=negatives=mismatches=unsafe=0
+    digest=hashlib.sha256()
+    for n in range(cases):
+        state=(state*6364136223846793005+1442695040888963407)&0xffffffffffffffff
+        i=n%32
+        flags=[True]*len(SEED_FIELDS)
+        for invalid in rows[i]['invalidated']:
+            flags[SEED_FIELDS.index(invalid)]=False
+        # A preseed fault can expose a second, independent invalidation.
+        if i>=2 and state&7==0:
+            flags[(state>>24)%len(flags)]=False
+        candidate='SOURCE_CANDIDATE' if all(flags) else 'SOURCE_DEBT_BLOCKED'
+        expected=rows[i]['expected']
+        mismatches+=candidate!=expected
+        positives+=candidate=='SOURCE_CANDIDATE'
+        negatives+=candidate=='SOURCE_DEBT_BLOCKED'
+        counts[i]+=1
+        digest.update(bytes((i,int(candidate!=expected))))
+        digest.update((state&0xffffffff).to_bytes(4,'little'))
+        # No finite model can promote EXTERNAL gates.
+    result={'schema':STRESS_SCHEMA,'commit':sha,'seed':seed,'cases':cases,
+            'families':32,'scenario_counts':counts,
+            'positive_controls':positives,'negative_scenarios':negatives,
+            'oracle_disagreements':mismatches,'unauthorized_promotions':unsafe,
+            'digest_sha256':digest.hexdigest(),
+            'physical_source_mutations':0,'product_ready':False,
+            'external_status':'BLOCKED_EXTERNAL','authorization':'NONE',
+            'state':'PASS_SCOPED_SEEDED_MODEL' if not mismatches and all(counts)
+                    else 'REFUTED_MODEL'}
+    return result

@@ -1,0 +1,272 @@
+{
+  "schema": "cora-five-synergies-mutants/1",
+  "status": "PRESEEDED_FINITE_SCENARIOS_NOT_CODE_MUTANTS",
+  "authority": "NONE",
+  "seed": 883,
+  "dimensions": [
+    "git_identity",
+    "documentation_trace",
+    "owner_binding",
+    "test_oracle",
+    "authority_safety",
+    "consumer_unknown",
+    "ai_grounding",
+    "receipt_source",
+    "dod_integrity",
+    "workflow_governance"
+  ],
+  "rows": [
+    {
+      "id": "NONE",
+      "invalidated": [],
+      "expected": "SOURCE_CANDIDATE",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "BENIGN",
+      "invalidated": [],
+      "expected": "SOURCE_CANDIDATE",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "STALE_SHA",
+      "invalidated": [
+        "git_identity"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "MISSING_BLOB",
+      "invalidated": [
+        "git_identity"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "OWNER_DRIFT",
+      "invalidated": [
+        "owner_binding"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "DYNAMIC_CONSUMER",
+      "invalidated": [
+        "consumer_unknown"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "BROKEN_DOC_LINK",
+      "invalidated": [
+        "documentation_trace"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "STALE_DOC",
+      "invalidated": [
+        "documentation_trace"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "FALSE_DOC_CLAIM",
+      "invalidated": [
+        "documentation_trace"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "FALSE_COMPLIANCE",
+      "invalidated": [
+        "dod_integrity"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "SCHEMA_DRIFT",
+      "invalidated": [
+        "owner_binding"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "UNCOVERED_API",
+      "invalidated": [
+        "test_oracle"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "MISSING_TEST",
+      "invalidated": [
+        "test_oracle"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "SURVIVING_MUTANT",
+      "invalidated": [
+        "test_oracle"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "UNENFORCED_CI",
+      "invalidated": [
+        "workflow_governance"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "UNTRUSTED_SARIF",
+      "invalidated": [
+        "receipt_source"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "UNTRUSTED_AI",
+      "invalidated": [
+        "ai_grounding"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "FAKE_AI_AUTHORITY",
+      "invalidated": [
+        "authority_safety"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "FOREIGN_RECEIPT",
+      "invalidated": [
+        "receipt_source"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "MISSING_RUNTIME",
+      "invalidated": [
+        "test_oracle"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "MISSING_PROVIDER",
+      "invalidated": [
+        "ai_grounding"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "DEPLOYMENT_DRIFT",
+      "invalidated": [
+        "workflow_governance"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "UNAUTHORIZED_EFFECT",
+      "invalidated": [
+        "authority_safety"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "OWNER_DUPLICATION",
+      "invalidated": [
+        "owner_binding"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "UNPROVEN_ROLLBACK",
+      "invalidated": [
+        "workflow_governance"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "UNKNOWN_AS_UNUSED",
+      "invalidated": [
+        "consumer_unknown"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "LOSSY_DOCUMENT_CHANGE",
+      "invalidated": [
+        "documentation_trace"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "FALSE_PRODUCT_GO",
+      "invalidated": [
+        "authority_safety"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "POSTMERGE_DRIFT",
+      "invalidated": [
+        "receipt_source"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "SUPPLY_CHAIN_DRIFT",
+      "invalidated": [
+        "git_identity"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "REGRESSION",
+      "invalidated": [
+        "test_oracle"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "MISSING_REVIEW",
+      "invalidated": [
+        "authority_safety"
+      ],
+      "expected": "SOURCE_DEBT_BLOCKED",
+      "external": "BLOCKED_EXTERNAL"
+    }
+  ]
+}

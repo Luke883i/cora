@@ -11,7 +11,9 @@ from pathlib import Path
 from cora.integrated_service import integrated_case
 from cora.synergy import (five_dod, semantic_truth, reasoning_plan, import_ai_reasoning,
                           invoke_reasoner, behavioral_proofs, verify_behavioral_proofs,
-                          semantic_evolution, verify_semantic_evolution)
+                          semantic_evolution, verify_semantic_evolution,
+                          unified_assurance, verify_unified_assurance,
+                          stress_five_synergies, _validated_seed)
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -126,6 +128,83 @@ class FiveSynergiesTests(unittest.TestCase):
             fake['impacts']=[]
             with self.assertRaisesRegex(ValueError,'replay mismatch'):
                 verify_semantic_evolution(repo,fake)
+
+
+    def test_all_five_goals_end_to_end_and_forged_source_replay(self):
+        parent=git(ROOT,'rev-parse','HEAD^')
+        report=unified_assurance(ROOT,self.head,base=parent,execute_probes=True)
+        self.assertEqual(report['method_counts'],{
+            'commands':71,'families':8,'original_methods':14,
+            'object_types':20,'abstraction_dimensions':12})
+        self.assertEqual(len(report['truth']['claims']),18)
+        self.assertEqual(len(report['reasoning_plan']['candidate_questions']),18)
+        self.assertEqual(report['behavior']['source_probes_passed'],3)
+        self.assertIsNotNone(report['evolution'])
+        self.assertEqual(report['reticulum']['nodes'],29)
+        self.assertEqual(report['goals']['G_UNIFIED'],'SOURCE_CANDIDATE_NOT_PRODUCT_READY')
+        self.assertEqual(report['goals']['G_GOVERNED'],'BLOCKED_EXTERNAL')
+        self.assertFalse(report['all_71_behaviors_proven'])
+        self.assertFalse(report['actual_model_provider_attested'])
+        self.assertTrue(verify_unified_assurance(ROOT,report))
+        forged=copy.deepcopy(report)
+        forged['goals']['G_GOVERNED']='PASS'
+        with self.assertRaisesRegex(ValueError,'Git replay mismatch'):
+            verify_unified_assurance(ROOT,forged)
+
+    def test_seeded_semantic_mutations_controls_and_repeatability(self):
+        a=stress_five_synergies(ROOT,self.head,cases=32000,seed=883)
+        b=stress_five_synergies(ROOT,self.head,cases=32000,seed=883)
+        self.assertEqual(a,b)
+        self.assertEqual(a['families'],32)
+        self.assertEqual(a['positive_controls'],2000)
+        self.assertEqual(a['negative_scenarios'],30000)
+        self.assertEqual(a['oracle_disagreements'],0)
+        self.assertEqual(a['unauthorized_promotions'],0)
+        self.assertEqual(a['physical_source_mutations'],0)
+        self.assertEqual(a['external_status'],'BLOCKED_EXTERNAL')
+        with self.assertRaises(ValueError):
+            stress_five_synergies(ROOT,self.head,cases=1000001)
+
+    def test_physical_preseed_fault_mutation_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            repo=Path(directory)/'preseed'
+            subprocess.run(['git','clone','--local','-q',str(ROOT),str(repo)],check=True)
+            git(repo,'config','user.name','preseed adversarial source')
+            git(repo,'config','user.email','mutant@example.invalid')
+            git(repo,'checkout','-q',self.head)
+            self.assertEqual(len(_validated_seed(repo,self.head)),32)
+            path=repo/'cora.five-synergies-mutants.json'
+            source=json.loads(path.read_text('utf-8'))
+            source['rows'][2]['invalidated']=[]
+            path.write_text(json.dumps(source),encoding='utf-8')
+            git(repo,'add',path.name)
+            git(repo,'commit','-qm','preseed negative turned into false positive')
+            with self.assertRaisesRegex(ValueError,'preseed semantic fault/oracle changed'):
+                _validated_seed(repo,git(repo,'rev-parse','HEAD'))
+
+
+    def test_real_unified_cli_and_source_replay(self):
+        from cora.cli import main
+        with tempfile.TemporaryDirectory() as directory:
+            out=Path(directory)/'five-goals.json'
+            ai=Path(directory)/'ai-request.json'
+            parent=git(ROOT,'rev-parse','HEAD^')
+            self.assertEqual(main(['method-synthesize',str(ROOT),'--revision',self.head,
+                                   '--synergic','--base-sha',parent,
+                                   '--execute-source-probes','--output',str(out),
+                                   '--ai-request-output',str(ai)]),0)
+            report=json.loads(out.read_text('utf-8'))
+            request=json.loads(ai.read_text('utf-8'))
+            self.assertEqual(report['method_counts']['commands'],71)
+            self.assertEqual(request['schema'],'cora-synergic-reasoner/1')
+            self.assertFalse(request['provider_invoked'])
+            self.assertEqual(main(['verify-method-synthesis',str(out),
+                                   '--repo',str(ROOT),'--synergic']),0)
+            stress=Path(directory)/'stress.json'
+            self.assertEqual(main(['stress-convergence','--synergic','--repo',str(ROOT),
+                                   '--revision',self.head,'--sessions','1',
+                                   '--cases-per-session','3200','--output',str(stress)]),0)
+            self.assertEqual(json.loads(stress.read_text('utf-8'))['oracle_disagreements'],0)
 
     def test_physical_dod_and_readme_source_mutations(self):
         with tempfile.TemporaryDirectory() as directory:
