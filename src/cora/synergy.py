@@ -245,3 +245,68 @@ def verify_behavioral_proofs(repo: Path, report: dict) -> bool:
     if report!=expected:
         raise ValueError('behavioral result forged or stale')
     return True
+
+
+EVOLUTION_SCHEMA = 'cora-synergic-evolution/1'
+
+
+def semantic_evolution(repo: Path, base: str, integrated: dict) -> dict:
+    """Join BASE-policy lifecycle changes with original document/code links.
+
+    A touched source is a potential documentation impact, never causality proof.
+    Absence of a static relation is UNKNOWN, not proof of no consumers.
+    """
+    from .continuous import evaluate, verify_gate
+    from .evidence import domain_hash
+    if not isinstance(integrated,dict) or integrated.get('schema')!='cora-integrated-case/1':
+        raise ValueError('invalid integrated source case')
+    repo=Path(repo).resolve(strict=True)
+    gate=evaluate(repo,base,integrated['commit'],phase='premerge')
+    verify_gate(repo,gate)
+    changed=sorted({p for row in gate['changed_paths']
+                    for p in (row['old_path'],row['new_path'])})
+    links={}
+    for row in integrated['semantic_crosswalk']:
+        links.setdefault(row['owner_source'],{'docs':set(),'claims':set()})
+        links[row['owner_source']]['docs'].update(row['documentation_refs'])
+        links[row['owner_source']]['claims'].update(row['claim_refs'])
+    documented={x['path'] for x in integrated['documents']['docs']}
+    impacts=[];unmapped=[]
+    for path in changed:
+        refs=links.get(path)
+        doc_hits=set(refs['docs']) if refs else set()
+        claimed=set(refs['claims']) if refs else set()
+        for item in integrated['claim_to_implementation']['claims']:
+            if any(e['path']==path for e in item['evidence']):
+                claimed.add(item['id'])
+        if path in documented:
+            doc_hits.add(path)
+        mapped=bool(doc_hits or claimed or refs)
+        if not mapped:
+            unmapped.append(path)
+        impacts.append({'path':path,'affected_current_docs':sorted(doc_hits),
+                        'affected_readme_claims':sorted(claimed),
+                        'disposition':'REVIEW_DOC_AND_BEHAVIOR' if mapped else 'UNKNOWN_CONSUMER_OR_UNDOCUMENTED_CHANGE'})
+    result={'schema':EVOLUTION_SCHEMA,'base_commit':gate['base_commit'],
+            'head_commit':gate['head_commit'],
+            'gate_receipt':gate['receipt_digest'],'gate_status':gate['status'],
+            'policy_modified':gate['policy_modified'],
+            'required_human_roles':gate['required_human_roles'],
+            'changed_paths':changed,'impacts':impacts,
+            'unmapped_changed_paths':sorted(unmapped),
+            'behavioral_regression':'NOT_ATTESTED',
+            'dynamic_consumers':'UNKNOWN',
+            'authorization':'NONE'}
+    result['receipt_digest']=domain_hash('CORA:synergy-evolution:1',result)
+    return result
+
+
+def verify_semantic_evolution(repo: Path, report: dict) -> bool:
+    if not isinstance(report,dict) or report.get('schema')!=EVOLUTION_SCHEMA:
+        raise ValueError('invalid semantic evolution receipt')
+    from .integrated_service import integrated_case
+    expected=semantic_evolution(repo,report['base_commit'],
+                                integrated_case(repo,report['head_commit']))
+    if report!=expected:
+        raise ValueError('semantic evolution replay mismatch')
+    return True

@@ -10,7 +10,8 @@ from pathlib import Path
 
 from cora.integrated_service import integrated_case
 from cora.synergy import (five_dod, semantic_truth, reasoning_plan, import_ai_reasoning,
-                          invoke_reasoner, behavioral_proofs, verify_behavioral_proofs)
+                          invoke_reasoner, behavioral_proofs, verify_behavioral_proofs,
+                          semantic_evolution, verify_semantic_evolution)
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -98,6 +99,33 @@ class FiveSynergiesTests(unittest.TestCase):
         forged['source_probes_passed']=71
         with self.assertRaisesRegex(ValueError,'forged'):
             verify_behavioral_proofs(ROOT,forged)
+
+
+    def test_real_continuous_semantic_impact_and_stale_forgery(self):
+        with tempfile.TemporaryDirectory() as directory:
+            repo=Path(directory)/'evolution'
+            subprocess.run(['git','clone','--local','-q',str(ROOT),str(repo)],check=True)
+            git(repo,'config','user.name','CORA evolution case')
+            git(repo,'config','user.email','test@example.invalid')
+            git(repo,'checkout','-q',self.head)
+            base=self.head
+            path=repo/'README.md'
+            path.write_text(path.read_text('utf-8')+'\\n## Candidate semantic evolution change\\n',encoding='utf-8')
+            git(repo,'add','README.md')
+            git(repo,'commit','-qm','change current product front door')
+            head=git(repo,'rev-parse','HEAD')
+            case=integrated_case(repo,head)
+            report=semantic_evolution(repo,base,case)
+            self.assertEqual(report['head_commit'],head)
+            self.assertIn('README.md',report['changed_paths'])
+            self.assertEqual(report['behavioral_regression'],'NOT_ATTESTED')
+            self.assertEqual(report['dynamic_consumers'],'UNKNOWN')
+            self.assertTrue(verify_semantic_evolution(repo,report))
+            fake=copy.deepcopy(report)
+            fake['unmapped_changed_paths']=[]
+            fake['impacts']=[]
+            with self.assertRaisesRegex(ValueError,'replay mismatch'):
+                verify_semantic_evolution(repo,fake)
 
     def test_physical_dod_and_readme_source_mutations(self):
         with tempfile.TemporaryDirectory() as directory:
