@@ -59,6 +59,11 @@
       "scope": "INTERNAL_DOD"
     },
     {
+      "logical": "cora.integrated-one-run-dod.json",
+      "canonical": ".cora/contracts/dod/integrated-one-run-dod.json",
+      "scope": "INTERNAL_DOD"
+    },
+    {
       "logical": "cora.maturity-dod.json",
       "canonical": ".cora/contracts/dod/maturity-dod.json",
       "scope": "INTERNAL_DOD"

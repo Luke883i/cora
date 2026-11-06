@@ -1,0 +1,854 @@
+{
+  "schema": "cora-integrated-one-run-dod/2",
+  "status": "PROPOSED_UNIMPLEMENTED_NOT_ATTESTED",
+  "authority": "NONE",
+  "title": "CORA One-Run Assurance: universal activity governance and forensic atlas",
+  "abstract_goal": "From one existing process-run command, discover every available CORA activity, plan and govern execution according to independent authorization, collect provenance-rich evidence and expose all results and omissions through one navigable offline forensic atlas.",
+  "semantics": "BACKWARD_DERIVED_AND_NONCOMPENSATORY",
+  "source_goal": "G_ONE_RUN_INTEGRATED_SOURCE",
+  "global_goal": "G_ONE_RUN_PRODUCT",
+  "baseline_pr36": {
+    "repo": "Luke883i/cora",
+    "main_commit": "cfca7f5e6ab777d4aacf2c0989812925eb31b459",
+    "pr": 36,
+    "pr_merged_at_utc": "2026-11-06T11:03:41Z",
+    "contract_path": ".cora/contracts/dod/one-run-dod.json",
+    "schema": "cora-one-run-dod/1",
+    "immutable_node_count": 27,
+    "import_source_goal": "G_ONE_RUN_SOURCE",
+    "import_product_goal": "G_ONE_RUN_PRODUCT",
+    "parser_commands_observed": 71,
+    "safe_source_methods_observed": 8,
+    "finite_model_cases": 100000,
+    "finite_model_families": 32,
+    "finite_model_seed": 883,
+    "preservation_rules": [
+      "Do not rename, remove or weaken PR36 original 27 nodes/edges or source versus external distinction.",
+      "Do not duplicate process_suite as a second source executor.",
+      "Do not claim the 71 commands have been executed because they are catalogued.",
+      "Do not promote source Git replay or local test exits to independently attested runtime.",
+      "Do not treat mutation vectors as physical source mutants or real-world defects."
+    ]
+  },
+  "invocation_target": {
+    "compatibility": "Extend existing cora process-run; no second orchestrator and no breaking change to PR36 safe defaults",
+    "illustrative_future_command": "cora process-run . --revision HEAD --process full --one-run --profile comprehensive --output /tmp/cora-dossier/run.json --atlas-html /tmp/cora-dossier/index.html --evidence-dir /tmp/cora-dossier/evidence",
+    "future_flags_not_currently_implemented": [
+      "--profile",
+      "--evidence-dir",
+      "--authorization-file"
+    ],
+    "safe_default": "Read-only Git-source assurance; all executable effects disabled until explicit separately verified authorization",
+    "operating_profiles": [
+      "inspect",
+      "source-comprehensive",
+      "authorized-local",
+      "governed-external"
+    ]
+  },
+  "activity_registry": {
+    "classification": [
+      "CLI_COMMAND",
+      "INTERNAL_METHOD",
+      "VERIFIER",
+      "TEST_SUITE",
+      "TEST_CASE",
+      "BENCHMARK",
+      "MUTATION_CAMPAIGN",
+      "CI_WORKFLOW",
+      "EXTERNAL_OBSERVATION",
+      "EFFECTFUL_OPERATION"
+    ],
+    "effect_classes": [
+      "READ_ONLY",
+      "LOCAL_EXECUTION",
+      "REPOSITORY_WRITE",
+      "EXTERNAL_MUTATION",
+      "PUBLICATION"
+    ],
+    "required_fields": [
+      "activity_id",
+      "version",
+      "owner_software",
+      "source_paths",
+      "entrypoint",
+      "call_path",
+      "input_contract",
+      "output_contract",
+      "dependencies",
+      "effect_class",
+      "authorization_policy",
+      "execution_adapter",
+      "verifier_id",
+      "evidence_schema",
+      "trust_class"
+    ],
+    "trust_classes": [
+      "GIT_SOURCE",
+      "LOCAL_RUNTIME_OBSERVATION",
+      "INDEPENDENT_RUNTIME_ATTESTATION",
+      "HUMAN_OR_HOST_AUTHORIZATION"
+    ],
+    "discoverability_rule": "No orphan discovered surface, unregistered executor, duplicate owner or unreported unavailable activity",
+    "policy": "Catalogued does not mean executed; safe source work can be automated, effectful and remote work requires independent authorization"
+  },
+  "outcomes": {
+    "eligibility": [
+      "ELIGIBLE",
+      "INELIGIBLE",
+      "NOT_APPLICABLE",
+      "UNKNOWN"
+    ],
+    "authorization": [
+      "NOT_REQUIRED",
+      "DENIED",
+      "EXPLICITLY_AUTHORIZED",
+      "UNVERIFIED"
+    ],
+    "execution": [
+      "NOT_RUN",
+      "RUNNING",
+      "EXECUTED",
+      "REUSED",
+      "FAIL",
+      "BLOCKED",
+      "CANCELLED",
+      "TIMED_OUT"
+    ],
+    "verification": [
+      "NOT_VERIFIED",
+      "SOURCE_REPLAYED",
+      "LOCAL_RECEIPT_RECONCILED",
+      "INDEPENDENTLY_CORROBORATED",
+      "REFUTED",
+      "BLOCKED"
+    ],
+    "proof_level": [
+      "DECLARATION",
+      "SOURCE_SCOPED",
+      "LOCAL_OBSERVATION_UNATTESTED",
+      "INDEPENDENT_RUNTIME",
+      "EXTERNAL_ACCEPTANCE"
+    ],
+    "invariant": "An output is PASS only for a named obligation and the required proof level; no aggregate PASS for unverified runtime, unknowns, unauthorized actions or incomplete product gates."
+  },
+  "nodes": [
+    {
+      "id": "S_PR36_IMPORTED",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Replay all exact 27 existing PR36 nodes and original-Git source predicates without modifying their identities, dependencies or evidence authority.",
+      "witness_paths": [
+        ".cora/contracts/dod/one-run-dod.json",
+        "src/cora/one_run.py",
+        "tests/test_pr36_one_run.py"
+      ]
+    },
+    {
+      "id": "S_DISCOVER_CLI",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Derive CLI inventory from actual parser/dispatch, reconcile the 71-command baseline and all changes, reject missing/extra/duplicate IDs.",
+      "witness_paths": [
+        "src/cora/cli.py",
+        ".cora/assurance/capability-atlas.json"
+      ]
+    },
+    {
+      "id": "S_DISCOVER_NONCLI",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Discover declared executable tooling, unit/integration tests, source verifiers, benchmark/stress runners, CI workflows and externally operated activities; record unresolvable surfaces.",
+      "witness_paths": [
+        "tools/",
+        "tests/",
+        ".github/workflows/"
+      ]
+    },
+    {
+      "id": "S_REGISTRY_SCHEMA",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Versioned execution registry with stable activity_id, version, owner, kind, entrypoint, parser/call-path, inputs, outputs, effect_class, trust, prerequisites, verifier, runtime policy and evidence schema."
+    },
+    {
+      "id": "S_REGISTRY_BIJECTION",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Every discoverable executable surface maps exactly once to a canonical registered activity or an explicit justified alias; every registered entry resolves to a real owner; unmatched is a blocking discrepancy."
+    },
+    {
+      "id": "S_SCOPE_SEPARATION",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Product, software, repository, deliverable, runtime and external host identities, plus Git BASE/HEAD/working-tree state, are separate first-class references.",
+      "witness_paths": [
+        "cora.ontology.json",
+        "pyproject.toml",
+        "docs/ARCHITECTURE.md"
+      ]
+    },
+    {
+      "id": "S_PLAN_DAG",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Compile deterministic cycle-free dependency DAG from activity registry, declared DoD requirements and selected profile; expose all planned/non-selected activities."
+    },
+    {
+      "id": "S_PLAN_INPUTS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Validate user intent, fixed Git objects, input predicates, profile, host constraints and task parameter contracts before scheduling; reject cross-revision/source mixing."
+    },
+    {
+      "id": "S_PLAN_REUSE",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Reuse results only with matching input, environment, revision, verifier and policy keys; shared execution cannot be counted as independent observations."
+    },
+    {
+      "id": "S_PLAN_RESOURCES",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Predeclare time, CPU, memory, disk, output size, retries and cancellation policy; failures and timeouts remain visible."
+    },
+    {
+      "id": "S_EFFECT_GATING",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Classify all activities READ_ONLY/LOCAL_EXEC/WRITE_REPO/REMOTE_EFFECT/RELEASE; default READ_ONLY, deny unsafe action unless an external authorization is bound to exact activity+revision+scope."
+    },
+    {
+      "id": "S_RUNTIME_POLICY",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "For code execution define isolated ephemeral environment, pinned image/toolchain, controlled network, secret isolation, filesystem mounts and resource limits; local opt-in is not sandbox attestation."
+    },
+    {
+      "id": "S_SOURCE_METHODS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Reuse existing process_suite and one_run pipeline; expose the eight existing source methods and their measured/direct/reused/not-run outcomes without duplication.",
+      "witness_paths": [
+        "src/cora/process_suite.py",
+        "src/cora/one_run.py"
+      ]
+    },
+    {
+      "id": "S_EXECUTOR_ADAPTERS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Provide typed adapters for existing CLI, tool verifiers, tests, benchmarks and CI observations, with an explicit unsupported/manual adapter; never blindly recurse over the 71 CLI commands."
+    },
+    {
+      "id": "S_TASK_RESULTS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Every activity has one explicit terminal state with eligibility, authorization, execution, verification and proof level stored as orthogonal fields; no implicit PASS."
+    },
+    {
+      "id": "S_TEST_CASE_EVENTS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Emit stable per-test identifiers, class/name, attempt, expected/observed outcome, failure traceback, log and artifacts for optional authorized tests; distinguish collection failure from 0 tests."
+    },
+    {
+      "id": "S_FAIL_PROPAGATION",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Block dependent tasks after failed prerequisites, retain originating exception/root cause, do not hide intermediate FAIL or timeout; allow only bounded explicit retries."
+    },
+    {
+      "id": "S_MANIFEST_GIT",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Record exact repo identity, BASE/HEAD/commit/tree, dirty state and source hashes; provenance from Git must not claim runtime or human attestation."
+    },
+    {
+      "id": "S_MANIFEST_ENV",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Capture toolchain/OS/Python/dependency hashes, runner image identity, runtime policy, command argv, cwd, environment allowlist fingerprint and clock source without leaking credentials."
+    },
+    {
+      "id": "S_MANIFEST_TASK",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "For every attempt store event sequence, input/output hashes, status transition, duration, exit, stdout/stderr content-addressed references, bounded retention and observed errors."
+    },
+    {
+      "id": "S_PROOF_LINEAGE",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Carry claim→DoD→activity→attempt→artifact→verifier→observation links with original source and trust domain; no self-hash-only verification."
+    },
+    {
+      "id": "S_EVIDENCE_MISSING",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Missing, truncated, unauthenticated, stale, external-only and blocked evidence remain separate searchable gaps with exact reasons and collection next steps."
+    },
+    {
+      "id": "S_ORIGINAL_SOURCE_REPLAY",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Preserve PR36 original-Git report recomputation and HTML replay, reject forged reports, cross-commit and changed mandatory DoD edges.",
+      "witness_paths": [
+        "src/cora/one_run.py"
+      ]
+    },
+    {
+      "id": "S_EXECUTION_RECONCILE",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Reconcile locally captured process events against manifest and attached logs without claiming external authenticity; compare witnesses independently where possible."
+    },
+    {
+      "id": "S_REPORT_REPLAY",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Rebuild deterministic summary and navigational HTML from immutable captured dossier, verify digests and stable artifact refs; separate deterministic bytes from inherently variable runtime timings."
+    },
+    {
+      "id": "S_ATLAS_OVERVIEW",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "One offline Atlas entrypoint with run identity, global gate, task matrix, source vs runtime vs independent evidence, risk and unexecuted reasons."
+    },
+    {
+      "id": "S_ATLAS_DRILLDOWN",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "For every registered activity, test case, failure and mutated counterexample provide navigable details, timeline, inputs, dependency chain, logs and original artifacts."
+    },
+    {
+      "id": "S_ATLAS_DOD",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Interactive graph/list of obligations with statuses, blockers, minimum unsatisfied cut, upstream evidence, affected claims and actionable next check."
+    },
+    {
+      "id": "S_ATLAS_ACCESSIBILITY",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "No remote dependencies by default; safe escaping, keyboard navigation, search/filter, semantic markup, large-run pagination and offline relative artifact links."
+    },
+    {
+      "id": "S_RESULT_METRICS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Report explicit denominators for discovery, eligibility, execution, verification, proof completeness, failures, runtime, cost and novelty; never conflate declared and executed commands."
+    },
+    {
+      "id": "S_GAP_REGISTER",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Every unsatisfied DoD, unknown/blocked capability or missing evidence creates a deduplicated gap with owner, priority, source, falsifier, next step and reopen condition."
+    },
+    {
+      "id": "S_DOCUMENT_STATE",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Reconcile active README/architecture/CLI/reference assertions against parser, Git and verified host facts, distinguish current vs historical vs source-only."
+    },
+    {
+      "id": "S_MODEL_FALSIFIERS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Preserve PR36 100k preseeded distinct vectors, 32 families, seed 883, two deterministic replays and zero oracle disagreements/unsafe promotions.",
+      "witness_paths": [
+        "src/cora/one_run_stress.py",
+        "tests/test_pr36_one_run.py"
+      ]
+    },
+    {
+      "id": "S_EXTENDED_MUTANTS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Apply independently specified negative tests to registry drift, untrusted execution, artifact loss, test-level failure, spoofed approvals, graph omission, replay/HTML and host truth; physical Git mutants separately counted."
+    },
+    {
+      "id": "S_CI_REGRESSION",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "obligation": "Run strict source contract checks and representative system-integration tests on exact final HEAD and supported Python versions; retain original external obligations."
+    },
+    {
+      "id": "E_ISOLATION_VERIFIED",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "obligation": "Independently verify actual OS/container isolation and network/filesystem/secret egress limits for code execution."
+    },
+    {
+      "id": "E_AUTHORIZATION_VERIFIED",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "obligation": "External authorization must identify exact revision, permitted effects, environment and approver; CORA cannot grant itself authority."
+    },
+    {
+      "id": "E_RUNTIME_INDEPENDENCE",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "obligation": "Independent runner/observer corroborates selected execution outcomes with runtime metadata and retained raw test records."
+    },
+    {
+      "id": "E_BENCHMARK_GROUND_TRUTH",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "obligation": "Non-CORA maintained targets have labeled ground truth, independent oracle, preregistered metrics and repeatable comparative runs."
+    },
+    {
+      "id": "E_HOST_ENFORCEMENT",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "obligation": "Verify actual protected-main required checks, permission roles, authenticated independent review and host-side gate enforcement."
+    },
+    {
+      "id": "E_NEW_USER_UX",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "obligation": "Unfamiliar users complete preregistered tasks on a real browser and correctly distinguish source evidence from executed/unattested results."
+    },
+    {
+      "id": "E_RELEASE_AND_ROLLBACK",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "obligation": "Qualified wheel/sdist, release provenance, owner approval, rollback procedure and real acceptance evidence are independently recorded."
+    },
+    {
+      "id": "E_OPERATIONAL_VALUE",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "obligation": "Measure wall-clock and analyst effort versus baseline on maintained non-CORA repositories, including false positives and follow-up effort."
+    },
+    {
+      "id": "G_REGISTRY",
+      "scope": "SOURCE",
+      "depends_on": [
+        "S_DISCOVER_CLI",
+        "S_DISCOVER_NONCLI",
+        "S_REGISTRY_SCHEMA",
+        "S_REGISTRY_BIJECTION",
+        "S_SCOPE_SEPARATION"
+      ],
+      "obligation": "Closed discovery and executable semantics for all CORA capabilities in scope."
+    },
+    {
+      "id": "G_PLANNING",
+      "scope": "SOURCE",
+      "depends_on": [
+        "S_PLAN_DAG",
+        "S_PLAN_INPUTS",
+        "S_PLAN_REUSE",
+        "S_PLAN_RESOURCES"
+      ],
+      "obligation": "Deterministic explainable plan and selected profile with resource/identity controls."
+    },
+    {
+      "id": "G_SAFE_EXECUTION_DESIGN",
+      "scope": "SOURCE",
+      "depends_on": [
+        "S_EFFECT_GATING",
+        "S_RUNTIME_POLICY",
+        "S_SOURCE_METHODS",
+        "S_EXECUTOR_ADAPTERS",
+        "S_TASK_RESULTS",
+        "S_TEST_CASE_EVENTS",
+        "S_FAIL_PROPAGATION"
+      ],
+      "obligation": "Correct execution-control implementation and boundaries, not runtime sandbox attestation."
+    },
+    {
+      "id": "G_DOSSIER",
+      "scope": "SOURCE",
+      "depends_on": [
+        "S_MANIFEST_GIT",
+        "S_MANIFEST_ENV",
+        "S_MANIFEST_TASK",
+        "S_PROOF_LINEAGE",
+        "S_EVIDENCE_MISSING"
+      ],
+      "obligation": "Provenance-preserving unified raw evidence and missing-proof accounting."
+    },
+    {
+      "id": "G_REPLAY",
+      "scope": "SOURCE",
+      "depends_on": [
+        "S_ORIGINAL_SOURCE_REPLAY",
+        "S_EXECUTION_RECONCILE",
+        "S_REPORT_REPLAY"
+      ],
+      "obligation": "Original-Git replay and honest local execution reconciliation."
+    },
+    {
+      "id": "G_ATLAS",
+      "scope": "SOURCE",
+      "depends_on": [
+        "S_ATLAS_OVERVIEW",
+        "S_ATLAS_DRILLDOWN",
+        "S_ATLAS_DOD",
+        "S_ATLAS_ACCESSIBILITY"
+      ],
+      "obligation": "One offline browsable forensic atlas, not simply a summary report."
+    },
+    {
+      "id": "G_COMPLETENESS",
+      "scope": "SOURCE",
+      "depends_on": [
+        "S_RESULT_METRICS",
+        "S_GAP_REGISTER",
+        "S_DOCUMENT_STATE"
+      ],
+      "obligation": "Every activity and evidence obligation is accounted for; explicit gaps and synchronized current documentation."
+    },
+    {
+      "id": "G_FALSIFICATION",
+      "scope": "SOURCE",
+      "depends_on": [
+        "S_MODEL_FALSIFIERS",
+        "S_EXTENDED_MUTANTS",
+        "S_CI_REGRESSION"
+      ],
+      "obligation": "Repeatable PR36 regression plus new adversarial scope and truthful CI evidence."
+    },
+    {
+      "id": "G_ONE_RUN_INTEGRATED_SOURCE",
+      "scope": "SOURCE",
+      "depends_on": [
+        "S_PR36_IMPORTED",
+        "G_REGISTRY",
+        "G_PLANNING",
+        "G_SAFE_EXECUTION_DESIGN",
+        "G_DOSSIER",
+        "G_REPLAY",
+        "G_ATLAS",
+        "G_COMPLETENESS",
+        "G_FALSIFICATION"
+      ],
+      "obligation": "PR36-preserving, source-scoped One-Run integrated assurance implementation."
+    },
+    {
+      "id": "G_AUTHORIZED_OPERATION",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "G_ONE_RUN_INTEGRATED_SOURCE",
+        "E_ISOLATION_VERIFIED",
+        "E_AUTHORIZATION_VERIFIED",
+        "E_RUNTIME_INDEPENDENCE"
+      ],
+      "obligation": "Actually authorized and independently isolated optional execution with independent runtime evidence."
+    },
+    {
+      "id": "G_PRODUCT_ACCEPTANCE",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "G_AUTHORIZED_OPERATION",
+        "E_BENCHMARK_GROUND_TRUTH",
+        "E_HOST_ENFORCEMENT",
+        "E_NEW_USER_UX",
+        "E_OPERATIONAL_VALUE"
+      ],
+      "obligation": "Externally measured behavioral, usability, operational and host-governance acceptance."
+    },
+    {
+      "id": "G_ONE_RUN_PRODUCT",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "G_PRODUCT_ACCEPTANCE",
+        "E_RELEASE_AND_ROLLBACK"
+      ],
+      "obligation": "Release-ready globally accepted one-command assurance product, without local self-authorization."
+    }
+  ],
+  "metrics": {
+    "registry_command_coverage": {
+      "formula": "registered_parser_commands / discovered_parser_commands",
+      "required": "1.0; 0 orphans; current baseline = 71, dynamically rederived"
+    },
+    "activity_classification_coverage": {
+      "formula": "activities_with_explicit_eligibility_authority_and_terminal_state / all_discovered_activities",
+      "required": "1.0"
+    },
+    "eligible_attempt_coverage": {
+      "formula": "authorized_eligible_attempted_or_explicitly_refused / authorized_eligible_planned",
+      "required": "1.0; refusal recorded, not PASS"
+    },
+    "evidence_accountability": {
+      "formula": "attempts_with_receipt_or_explicit_loss_record / all_attempted",
+      "required": "1.0"
+    },
+    "per_test_traceability": {
+      "formula": "captured_cases_with_stable_id_result_log_or_failure / cases_reported_by_runner",
+      "required": "1.0 when runner supports per-test results; unsupported => BLOCKED"
+    },
+    "missing_link_count": {
+      "formula": "broken claim_dod_activity_attempt_artifact_verifier links",
+      "required": 0
+    },
+    "unsafe_authorization_count": {
+      "formula": "unauthorized effectful actions or status promotions",
+      "required": 0
+    },
+    "wrong_revision_joins": {
+      "formula": "cross revision/environment mismatches promoted as verified",
+      "required": 0
+    },
+    "source_replay_false_accepts": {
+      "formula": "tampered original source reports accepted",
+      "required": 0
+    },
+    "mutation_control": {
+      "formula": "PR36 existing seed 883 100000 cases 32 families",
+      "required": "two identical replay digests; 0 oracle disagreements; 0 unsafe promotions"
+    },
+    "new_mutation_quality": {
+      "formula": "new negative/positive/physical/real classes individually counted and survival ratios reported",
+      "required": "zero high-critical unsafe survivors; no artificial target counts"
+    },
+    "independent_benchmark": {
+      "formula": "precision, recall, false-positive, elapsed, baseline and truth-label disagreements, by target",
+      "required": "preregistered external acceptance thresholds; >= 3 maintained non-CORA repos"
+    },
+    "newcomer_interpretation": {
+      "formula": "task success and epistemic classification mistakes across >=2 novice testers",
+      "required": "0 source-vs-runtime authority confusions for mandatory acceptance tasks"
+    },
+    "run_cost": {
+      "formula": "CPU, memory, disk, wall time and analyst minutes; cold/warm and failure profiles",
+      "required": "reported with fixed workload and baseline; budget compliance explicitly scored"
+    }
+  },
+  "checklist": [
+    {
+      "id": "C01",
+      "gate": "G_REGISTRY",
+      "criterion": "Parser commands count equals canonical registry CLI count; no missing, extra, duplicate or unresolved dispatch; historical 71 is a baseline, not a permanently hardcoded count.",
+      "mandatory": true
+    },
+    {
+      "id": "C02",
+      "gate": "G_REGISTRY",
+      "criterion": "Every tool, CI, test/benchmark/verifier and external observation has a registered owner or explicit nonexecutable/manual classification.",
+      "mandatory": true
+    },
+    {
+      "id": "C03",
+      "gate": "G_REGISTRY",
+      "criterion": "Each activity states prerequisites, authority/effect class, test-level output shape, verifier and source witness.",
+      "mandatory": true
+    },
+    {
+      "id": "C04",
+      "gate": "G_PLANNING",
+      "criterion": "One command generates a stable topologically sorted plan with selected, blocked, not-applicable and not-selected activities.",
+      "mandatory": true
+    },
+    {
+      "id": "C05",
+      "gate": "G_PLANNING",
+      "criterion": "BASE/HEAD/tree, policy, environment and budgets are pinned; runs cannot combine unrelated sources as one observation.",
+      "mandatory": true
+    },
+    {
+      "id": "C06",
+      "gate": "G_SAFE_EXECUTION_DESIGN",
+      "criterion": "Without approval, no network, arbitrary test code, write to repository, release or host mutation is performed.",
+      "mandatory": true
+    },
+    {
+      "id": "C07",
+      "gate": "G_SAFE_EXECUTION_DESIGN",
+      "criterion": "Optional execution requires independent policy-bound authorization and measured sandbox properties; repository file identity alone is insufficient.",
+      "mandatory": true
+    },
+    {
+      "id": "C08",
+      "gate": "G_SAFE_EXECUTION_DESIGN",
+      "criterion": "All eligible authorized tasks either produce terminal result/attempt or explicit cancellation/block reason; no silent success.",
+      "mandatory": true
+    },
+    {
+      "id": "C09",
+      "gate": "G_SAFE_EXECUTION_DESIGN",
+      "criterion": "Source methods preserve PR36 outcomes; reused methods are never counted as independent executions.",
+      "mandatory": true
+    },
+    {
+      "id": "C10",
+      "gate": "G_SAFE_EXECUTION_DESIGN",
+      "criterion": "Every executed unit test has case ID, attempt, status, duration, error/log and artifact links; collection failure is not zero tests.",
+      "mandatory": true
+    },
+    {
+      "id": "C11",
+      "gate": "G_DOSSIER",
+      "criterion": "Every attempted task has manifest identity, command, environment, hash-bound outputs, complete error and raw evidence retention or explicit truncation flag.",
+      "mandatory": true
+    },
+    {
+      "id": "C12",
+      "gate": "G_DOSSIER",
+      "criterion": "Source, local observation, third-party attestation and authorization are separate trust classes.",
+      "mandatory": true
+    },
+    {
+      "id": "C13",
+      "gate": "G_REPLAY",
+      "criterion": "Source replay uses original Git; execution reconciliation does not invent runtime signatures; tampered logs/receipts are rejected.",
+      "mandatory": true
+    },
+    {
+      "id": "C14",
+      "gate": "G_REPLAY",
+      "criterion": "Atlas regeneration is deterministic from one immutable normalized dossier; volatile timing is not misrepresented as repeatable.",
+      "mandatory": true
+    },
+    {
+      "id": "C15",
+      "gate": "G_ATLAS",
+      "criterion": "One offline entrypoint gives dashboard, task matrix and drill-down from every activity to test/error/evidence/lineage.",
+      "mandatory": true
+    },
+    {
+      "id": "C16",
+      "gate": "G_ATLAS",
+      "criterion": "DoD blockers, unsatisfied cut, verifier, owner and actionable next step reachable by navigation; no buried gaps.",
+      "mandatory": true
+    },
+    {
+      "id": "C17",
+      "gate": "G_ATLAS",
+      "criterion": "Accessibility, keyboard navigation, escaping, offline behavior and large-report performance are tested.",
+      "mandatory": true
+    },
+    {
+      "id": "C18",
+      "gate": "G_COMPLETENESS",
+      "criterion": "All discovered capabilities explicitly classified; 100% coverage of classification, not 100% unsafe execution.",
+      "mandatory": true
+    },
+    {
+      "id": "C19",
+      "gate": "G_COMPLETENESS",
+      "criterion": "All failed/blocked/unknown obligations surface in machine-readable gap register; current docs cannot contradict observed source/host truth.",
+      "mandatory": true
+    },
+    {
+      "id": "C20",
+      "gate": "G_COMPLETENESS",
+      "criterion": "Metrics state denominators and distinguish executed, reused, modeled, verified, independent and unrun counts.",
+      "mandatory": true
+    },
+    {
+      "id": "C21",
+      "gate": "G_FALSIFICATION",
+      "criterion": "Existing 100k PR36 preseeded model with 32 families and seed 883 still replays twice; zero oracle disagreement and false promotion.",
+      "mandatory": true
+    },
+    {
+      "id": "C22",
+      "gate": "G_FALSIFICATION",
+      "criterion": "New failure families include omission, cycle, authorization spoof, secret egress, missing per-test item, truncated logs, environment mismatch, falsified host pass and atlas XSS.",
+      "mandatory": true
+    },
+    {
+      "id": "C23",
+      "gate": "G_FALSIFICATION",
+      "criterion": "Physical Git mutants, synthetic vectors, real repository benchmarks and actual executions are reported as different populations.",
+      "mandatory": true
+    },
+    {
+      "id": "C24",
+      "gate": "G_FALSIFICATION",
+      "criterion": "CI tests run on exact final HEAD and check both positive controls and refusals; no masking of intermittent failures.",
+      "mandatory": true
+    },
+    {
+      "id": "C25",
+      "gate": "G_AUTHORIZED_OPERATION",
+      "criterion": "Third-party observer validates execution environment isolation and runtime receipts; opt-in or process exit alone is insufficient.",
+      "mandatory": true
+    },
+    {
+      "id": "C26",
+      "gate": "G_PRODUCT_ACCEPTANCE",
+      "criterion": "External benchmark includes at least three maintained non-CORA repositories, independently labeled oracles, preregistered success criteria and failure analyses.",
+      "mandatory": true
+    },
+    {
+      "id": "C27",
+      "gate": "G_PRODUCT_ACCEPTANCE",
+      "criterion": "At least two first-time users complete task-based atlas usability test; record comprehension errors, time-to-evidence and mistaken authority assumptions.",
+      "mandatory": true
+    },
+    {
+      "id": "C28",
+      "gate": "G_PRODUCT_ACCEPTANCE",
+      "criterion": "Protected main, trusted checks and distinct reviewer identity independently verified; host 403 is NOT evidence of PASS.",
+      "mandatory": true
+    },
+    {
+      "id": "C29",
+      "gate": "G_PRODUCT_ACCEPTANCE",
+      "criterion": "Quantify cost and human effort versus baseline including warm/cold runs, failure cases, p50/p95 and follow-up effort.",
+      "mandatory": true
+    },
+    {
+      "id": "C30",
+      "gate": "G_ONE_RUN_PRODUCT",
+      "criterion": "Formal release provenance, approved owner, rollback evidence and separately recorded external acceptance before production-ready claim.",
+      "mandatory": true
+    }
+  ],
+  "priority_workstreams": [
+    {
+      "id": "P0_TRUTH_AND_GOVERNANCE",
+      "includes": [
+        "S_DOCUMENT_STATE",
+        "E_HOST_ENFORCEMENT"
+      ],
+      "acceptance": "No CURRENT contradiction; independent host controls attested or BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "P1_REGISTRY_AND_CALLPATH",
+      "includes": [
+        "G_REGISTRY",
+        "G_PLANNING"
+      ],
+      "acceptance": "Exact parser/dispatch coverage and all nonCLI classes reconciled"
+    },
+    {
+      "id": "P1_BENCHMARKS",
+      "includes": [
+        "E_BENCHMARK_GROUND_TRUTH"
+      ],
+      "acceptance": "Independent non-CORA target oracles and baseline comparison"
+    },
+    {
+      "id": "P2_ORCHESTRATION_ATLAS",
+      "includes": [
+        "G_SAFE_EXECUTION_DESIGN",
+        "G_DOSSIER",
+        "G_ATLAS"
+      ],
+      "acceptance": "Full typed dossier with per-test and per-error navigation"
+    },
+    {
+      "id": "P2_USABILITY_COST",
+      "includes": [
+        "E_NEW_USER_UX",
+        "E_OPERATIONAL_VALUE"
+      ],
+      "acceptance": "Observed task success, comprehension and cost"
+    }
+  ],
+  "non_claims": [
+    "Not an instruction to auto-execute every available command",
+    "Not proof that all 71 parser commands have run",
+    "Not 100000 physical mutants",
+    "Not independent runtime or environment attestation",
+    "Not host permission to modify, merge or publish",
+    "Not proof that no unmodelled activity exists outside independently surveyed boundaries"
+  ],
+  "deployment_note": "Proposal for PR37 and later acceptance gates; not committed to GitHub and not an executed proof."
+}
