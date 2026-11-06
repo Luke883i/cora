@@ -126,6 +126,69 @@ def _is_cora(repo: Path, sha: str) -> bool:
         return False
 
 
+ROW_FIELDS = {"id", "state", "source_state", "source", "commit",
+              "source_digest", "reason", "elapsed_ms", "timing_basis",
+              "proof_scope", "authority"}
+
+
+def validate_execution_row(row: dict) -> bool:
+    """Bounded semantic grammar also used by the 100k mutation verifier.
+
+    Structural validity is not execution provenance; verify_one additionally
+    compares these fields to an independently recomputed original-Git report.
+    """
+    if not isinstance(row, dict) or set(row) != ROW_FIELDS:
+        raise ValueError("execution row missing, duplicate or unknown fields")
+    name = row["id"]
+    raw = row["source_state"]
+    state = row["state"]
+    elapsed = row["elapsed_ms"]
+    timing = row["timing_basis"]
+    digest = row["source_digest"]
+    if (name not in METHOD_FILES or row["source"] != METHOD_FILES[name]
+            or not isinstance(row["commit"], str) or not SHA.fullmatch(row["commit"])
+            or raw not in STATUS_MAP or state != STATUS_MAP[raw]
+            or state not in OUTCOMES
+            or row["proof_scope"] != "GIT_SOURCE_METHOD_NOT_PRODUCT_BEHAVIOR"
+            or row["authority"] != "NONE"
+            or (digest is not None and (
+                not isinstance(digest, str) or
+                not re.fullmatch(r"[0-9a-f]{40}|[0-9a-f]{64}", digest)))
+            or (elapsed is not None and (
+                type(elapsed) is not int or not 0 <= elapsed <= 3600000))
+            or timing not in ("DIRECT_METHOD_EXECUTION",
+                              "SHARED_HOLISTIC_INVOCATION",
+                              "REUSED_NOT_INDEPENDENTLY_TIMED",
+                              "SOURCE_METHOD_UNAVAILABLE", "NOT_INVOKED")):
+        raise ValueError("invalid execution row or unauthorized status promotion")
+    if (state == "EXECUTED_SCOPED" and (
+            elapsed is None or timing != "DIRECT_METHOD_EXECUTION"
+            or row["reason"] is not None)
+            or state == "REUSED_SCOPED" and (
+                timing not in ("SHARED_HOLISTIC_INVOCATION", "REUSED_NOT_INDEPENDENTLY_TIMED")
+                or (timing == "REUSED_NOT_INDEPENDENTLY_TIMED" and elapsed is not None)
+                or (timing == "SHARED_HOLISTIC_INVOCATION" and elapsed is None)
+                or row["reason"] is not None)
+            or state == "NOT_RUN" and (
+                elapsed is not None or timing != "NOT_INVOKED" or digest is not None)
+            or state == "BLOCKED" and (
+                not isinstance(row["reason"], str) or not row["reason"]
+                or timing != "SOURCE_METHOD_UNAVAILABLE"
+                and timing != "DIRECT_METHOD_EXECUTION")):
+        raise ValueError("execution timing or error cannot be laundered")
+    return True
+
+
+def validate_execution_rows(rows: list[dict]) -> bool:
+    if not isinstance(rows, list) or len(rows) > 8:
+        raise ValueError("bounded one-run source methods only")
+    if len({x.get("id") for x in rows if isinstance(x, dict)}) != len(rows):
+        raise ValueError("duplicate source method observation")
+    if not all(validate_execution_row(x) for x in rows):
+        raise ValueError("unverifiable execution rows")
+    return True
+
+
 def _row(method: dict, commit: str) -> dict:
     raw = method["status"]
     if raw not in STATUS_MAP or method["method"] not in METHOD_FILES:
@@ -145,7 +208,7 @@ def _row(method: dict, commit: str) -> dict:
             or (status == "EXECUTED_SCOPED" and elapsed is None)
             or (status == "BLOCKED" and method.get("reason") is None)):
         raise ValueError("missing, forged or misleading activity measurement")
-    return {
+    row = {
         "id": method["method"], "state": status, "source_state": raw,
         "source": METHOD_FILES[method["method"]], "commit": commit,
         "source_digest": method.get("source_digest"),
@@ -155,6 +218,8 @@ def _row(method: dict, commit: str) -> dict:
         "proof_scope": "GIT_SOURCE_METHOD_NOT_PRODUCT_BEHAVIOR",
         "authority": "NONE",
     }
+    validate_execution_row(row)
+    return row
 
 
 def _self_tests(repo: Path, *, enabled: bool, timeout: int) -> dict:
@@ -222,8 +287,7 @@ def run_one(repo: Path, revision: str = "HEAD", *,
     proc = run_suite(repo, commit, process=process,
                      max_commits=max_commits, focus=focus, measure=True)
     activities = [_row(row, commit) for row in proc["results"]]
-    if len({x["id"] for x in activities}) != len(activities):
-        raise ValueError("duplicate attempted method")
+    validate_execution_rows(activities)
     catalog = build_atlas(repo, unified_assurance(repo, commit)) if cora else None
     dod = _original_dod(repo, commit) if cora else {
         "goal": "BLOCKED_EXTERNAL", "authority": "NONE",
@@ -274,6 +338,7 @@ def verify_one(repo: Path, receipt: dict, *, html_page: str | None = None) -> bo
     if not verify_suite(repo, plain):
         raise ValueError("original source process replay failed")
     expected_activities = [_row(x, sha) for x in receipt["source_process"]["results"]]
+    validate_execution_rows(receipt["activities"])
     if expected_activities != receipt["activities"]:
         raise ValueError("execution outcomes or lineage have been rewritten")
     if (len({x["id"] for x in expected_activities}) != len(expected_activities)
