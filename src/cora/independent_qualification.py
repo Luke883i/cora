@@ -78,6 +78,7 @@ def verify_contract(doc: dict) -> bool:
             or doc.get("authority") != "NONE"
             or doc.get("source_baseline") != BASE
             or doc.get("product_status") != "BLOCKED_EXTERNAL"
+            or doc.get("source_status") != "IMPLEMENTATION_CANDIDATE_UNVERIFIED"
             or doc.get("semantics") != "ALL_FOUR_MANDATORY_GATES_NONCOMPENSATORY"
             or doc.get("one_run_contract") !=
                "PRESERVE_EXISTING_PROCESS_RUN_NO_SECOND_ORCHESTRATOR"
@@ -98,28 +99,40 @@ def verify_contract(doc: dict) -> bool:
         raise ValueError("missing or extra qualification gate")
     for family in FAMILIES:
         for name in SOURCE[family]:
-            if lookup[name].get("scope") != "SOURCE" or lookup[name].get("depends_on") != []:
+            if (lookup[name].get("scope") != "SOURCE" or
+                    lookup[name].get("state") != "SOURCE_WITNESS_REQUIRED" or
+                    lookup[name].get("depends_on") != []):
                 raise ValueError("source qualification witness scope altered")
         for name in EXTERNAL[family]:
-            if lookup[name].get("scope") != "EXTERNAL" or lookup[name].get("depends_on") != []:
+            if (lookup[name].get("scope") != "EXTERNAL" or
+                    lookup[name].get("state") != "BLOCKED_EXTERNAL" or
+                    lookup[name].get("depends_on") != []):
                 raise ValueError("external qualification witness promoted")
         node = lookup["G_" + family]
         if (node.get("scope") != "EXTERNAL" or
+                node.get("state") != "BLOCKED_EXTERNAL" or
                 node.get("depends_on") != list(SOURCE[family] + EXTERNAL[family])):
             raise ValueError("qualification mandatory edge removed")
     goal = lookup[GOAL]
     if (goal.get("scope") != "EXTERNAL" or
+            goal.get("state") != "BLOCKED_EXTERNAL" or
             goal.get("depends_on") != ["G_" + k for k in FAMILIES]):
         raise ValueError("product goal edge or scope promoted")
     thresholds = doc.get("requirements", {})
     if (thresholds.get("BEHAVIOR", {}).get("minimum_real_targets") != 2
+            or thresholds.get("BEHAVIOR", {}).get("minimum_independent_oracle_owners") != 1
             or thresholds.get("BEHAVIOR", {}).get("critical_false_passes") != 0
             or thresholds.get("USABILITY", {}).get("minimum_participants") != 8
             or thresholds.get("USABILITY", {}).get("minimum_repositories") != 2
+            or thresholds.get("USABILITY", {}).get("independent_observer") is not True
             or thresholds.get("USABILITY", {}).get("task_completion_min_ratio") != 0.8
             or thresholds.get("USABILITY", {}).get("critical_proof_misclassifications") != 0
             or thresholds.get("ISOLATION", {}).get("host_attestation") is not True
+            or thresholds.get("ISOLATION", {}).get("negative_host_tests") is not True
+            or thresholds.get("ISOLATION", {}).get("teardown_verified") is not True
             or thresholds.get("GOVERNANCE", {}).get("host_authority_verified") is not True
+            or thresholds.get("GOVERNANCE", {}).get("reviewer_independent") is not True
+            or thresholds.get("GOVERNANCE", {}).get("rollback_drill") is not True
             or doc.get("source_falsification", {}).get("cases") != 10000):
         raise ValueError("qualification numerical or host threshold weakened")
     return True
