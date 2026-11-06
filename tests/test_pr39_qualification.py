@@ -119,7 +119,7 @@ class IndependentQualificationTests(unittest.TestCase):
             if kind=="REMOVE_NODE":
                 doc["nodes"].pop(rng.randrange(len(doc["nodes"])))
             elif kind=="DUPLICATE_ID":
-                doc["nodes"][rng.randrange(4)]["id"]="S_B1_INDEPENDENT_GIT_ORACLE"
+                doc["nodes"][rng.randrange(1,4)]["id"]="S_B1_INDEPENDENT_GIT_ORACLE"
             elif kind=="REMOVE_EDGE":
                 next(x for x in doc["nodes"] if x["id"]=="G_BEHAVIOR")["depends_on"].pop()
             elif kind=="PROMOTE_EXTERNAL":
