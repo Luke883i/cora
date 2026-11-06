@@ -15,6 +15,8 @@ Start at the [README](README.md), [agent adoption tutorial](docs/AGENT_ADOPTION.
 7. **Governed PR** — link exact final-HEAD CI, changed-path blast radius, unresolved obligations and rollback; require independent reviewer and protected hosting controls for high-risk policy, security, CI, guard, release or retention changes.
 8. **Postmerge** — inspect actual merged main SHA using `dev-postmerge --contextual --intent SAME_INTENT`; rerun relevant regression and invalidated witnesses, never reuse former PR-head evidence without revalidation.
 
+**PR38 feature-change discipline:** Before adding a source module, CLI command, test, DoD or workflow, inspect the [37-PR genealogy](.cora/assurance/history/pr01-37-commit-diff-audit.json), reuse the original owner and prove that capability, role, DoD and CI catalogs still cover the exact HEAD. Historical workflow totals are baseline minimums, not current counts. New or moved paths must have reversible mappings; absent static imports cannot authorize deletion. Generate and replay the single comprehensive One-Run dossier, then obtain independent runtime/review evidence where required.
+
 For documentation changes, also run the Git-bound S01–S18 proof verifier against the candidate HEAD and replay the receipt with the same exact Git revision. The profile is a source proposition register, not a substitute for review or the independent E01–E03 acceptance gates. See [documentation DoD](docs/DOCUMENTATION_DOD.md).
 
 ## Stop and boundary rules

@@ -56,24 +56,26 @@ Keep reports outside the source checkout; `/tmp` is a Unix example. `audit` read
 
 ## Integrated human / AI atlas
 
-The canonical integrated entry remains **`cora method-synthesize --synergic`**. Optional atlas outputs map each of the 71 declared CLI commands to original Git source, test-source witness and method family. Offline HTML is for human navigation; JSON and the separate AI request are for assistants. These outputs do not execute AI models, certify runtime behavior, approve PRs or publish releases. The [six-gate maturity DoD](.cora/contracts/dod/maturity-dod.json) retains independent acceptance obligations.
+**Primary integrated audit:** CORA uses one existing entrypoint, **process-run --one-run --profile comprehensive**. It inventories all known activities, safely executes only eligible PR36 source methods by default, records every other activity as NOT_RUN/BLOCKED and presents source evidence and debt through one HTML/JSON dossier. The PR38 candidate adds a searchable history of 37 PRs and 305 individual commit deltas, including the PR34 unmerged exception. Source provenance does not prove runtime behavior, safe deletion or product approval. See [One-Run DoD](.cora/contracts/dod/integrated-one-run-dod.json), [history-convergence DoD](.cora/contracts/dod/history-convergence-dod.json) and [commit-level ledger](.cora/assurance/history/pr01-37-commit-diff-audit.json).
 
 ```sh
-BASE_SHA=$(git rev-parse HEAD^)
-cora method-synthesize . --synergic --revision HEAD --base-sha "$BASE_SHA" \
-  --output /tmp/cora-source.json --atlas-json /tmp/cora-atlas.json \
-  --atlas-html /tmp/cora-atlas.html --ai-request-output /tmp/cora-ai-request.json
-cora verify-method-synthesis /tmp/cora-source.json --repo . --synergic \
-  --atlas-json /tmp/cora-atlas.json --atlas-html /tmp/cora-atlas.html
+cora process-run . --revision HEAD --process full --one-run --profile comprehensive \
+  --output /tmp/cora-run.json --atlas-json /tmp/cora-run-machine.json \
+  --atlas-html /tmp/cora-run.html --evidence-dir /tmp/cora-evidence
+cora verify-process /tmp/cora-run.json --repo . --one-run \
+  --atlas-json /tmp/cora-run-machine.json --atlas-html /tmp/cora-run.html \
+  --evidence-dir /tmp/cora-evidence
 ```
 
-Open `/tmp/cora-atlas.html` in a browser. The self-contained HTML provides search, activity families, source/CI inventories, DoD gates, common-source lineage and original Git links. This documents **CORA's own source catalog**, not arbitrary target runtime completeness. For target repository review, use [agent adoption](docs/AGENT_ADOPTION.md), independently authorized tests and human approval. See the [integrated method](docs/CONVERGENT_ASSURANCE.md).
+Open /tmp/cora-run.html to navigate activity outcomes, blocked tests, DoD obligations, original Git PR/commit records, historical path reconciliation and future feature gaps. The analytical companion **method-synthesize --synergic** remains available for five-goal source synthesis and optional untrusted AI hypotheses; it is not a competing primary executor. See [convergent assurance](docs/CONVERGENT_ASSURANCE.md).
 
 ## What works today
 
 **One-run execution atlas (PR36):** Use the existing `cora process-run . --revision HEAD --process full --one-run --output /tmp/cora-run.json --atlas-html /tmp/cora-run.html` to generate an **execution-results** dashboard. The HTML shows measured source-method results, honest source reuse, BLOCKED/NOT_RUN and the existing 71-command source catalog in one self-contained view. The default never executes arbitrary target tests, network calls or AI; CORA-only Python unit tests require `--execute-self-tests` and remain unauthenticated execution claims. Original-Git JSON/HTML replay uses `cora verify-process /tmp/cora-run.json --repo . --one-run --atlas-html /tmp/cora-run.html`. This is **one-run scoped source assurance**, not proof that all 71 CLI behaviors have run. See [CLI reference](docs/CLI_REFERENCE.md) and [one-run reticular DoD](.cora/contracts/dod/one-run-dod.json).
 
-**Comprehensive activity dossier (PR37 source candidate):** The same `process-run --one-run --profile comprehensive` inventories the parser/dispatch commands, original source methods, test suites and cases, verifier tools and GitHub workflows. Only the safe PR36 source methods run by default; every other activity has an explicit NOT_RUN or BLOCKED reason. Add `--evidence-dir /tmp/cora-evidence` for content-addressed local artifacts. Optional local self-tests require `--execute-self-tests --authorization-file CONSENT.json` with exact commit, tree and checkout; this is not sandbox attestation. Verify the integrated JSON and HTML with `cora verify-process REPORT --repo . --one-run --atlas-html PAGE --evidence-dir /tmp/cora-evidence`. The 55-node [integrated DoD](.cora/contracts/dod/integrated-one-run-dod.json) remains debt-blocked, with external product acceptance explicitly unverified.
+**Comprehensive activity dossier (merged PR37; still experimental):** The same `process-run --one-run --profile comprehensive` inventories the parser/dispatch commands, original source methods, test suites and cases, verifier tools and GitHub workflows. Only the safe PR36 source methods run by default; every other activity has an explicit NOT_RUN or BLOCKED reason. Add `--evidence-dir /tmp/cora-evidence` for content-addressed local artifacts. Optional local self-tests require `--execute-self-tests --authorization-file CONSENT.json` with exact commit, tree and checkout; this is not sandbox attestation. Verify the integrated JSON and HTML with `cora verify-process REPORT --repo . --one-run --atlas-html PAGE --evidence-dir /tmp/cora-evidence`. The 55-node [integrated DoD](.cora/contracts/dod/integrated-one-run-dod.json) remains debt-blocked, with external product acceptance explicitly unverified.
+
+**History and future-change assurance (PR38 source candidate):** The 305-commit [original-Git ledger](.cora/assurance/history/pr01-37-commit-diff-audit.json) and [severe 32-node DoD](.cora/contracts/dod/history-convergence-dod.json) classify 28 former paths as relocated or historical, never automatically removable. One-Run gains PR/commit drill-down and shows the obligations required when future features alter modules, test suites, workflows, contracts or documentation. External runtime, independent review, hosted governance and user comprehension remain open.
 
 **Five synergic source-assurance goals:** `cora method-synthesize . --synergic --base-sha BASE_SHA --execute-source-probes --output REPORT --ai-request-output AI_PLAN` brings together the Semantic Truth, AI Reasoning, Behavioral Proof, Continuous Semantic Evolution and Unified Assurance source routes, while `--integrated` connects documentation, the 18 claim traces and the 71 declared CLI interfaces. Neither mode invokes an AI provider by default or proves every behavior. See [five-goal DoD and falsification](docs/CONVERGENT_ASSURANCE.md).
 
