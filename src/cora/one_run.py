@@ -179,13 +179,17 @@ def validate_execution_row(row: dict) -> bool:
     return True
 
 
-def validate_execution_rows(rows: list[dict]) -> bool:
+def validate_execution_rows(rows: list[dict], *, expected_commit: str | None = None) -> bool:
     if not isinstance(rows, list) or len(rows) > 8:
         raise ValueError("bounded one-run source methods only")
     if len({x.get("id") for x in rows if isinstance(x, dict)}) != len(rows):
         raise ValueError("duplicate source method observation")
     if not all(validate_execution_row(x) for x in rows):
         raise ValueError("unverifiable execution rows")
+    if expected_commit is not None and (
+            not SHA.fullmatch(expected_commit) or
+            any(row["commit"] != expected_commit for row in rows)):
+        raise ValueError("cross-commit execution evidence rejected")
     return True
 
 
@@ -287,7 +291,7 @@ def run_one(repo: Path, revision: str = "HEAD", *,
     proc = run_suite(repo, commit, process=process,
                      max_commits=max_commits, focus=focus, measure=True)
     activities = [_row(row, commit) for row in proc["results"]]
-    validate_execution_rows(activities)
+    validate_execution_rows(activities, expected_commit=commit)
     catalog = build_atlas(repo, unified_assurance(repo, commit)) if cora else None
     dod = _original_dod(repo, commit) if cora else {
         "goal": "BLOCKED_EXTERNAL", "authority": "NONE",
@@ -338,7 +342,7 @@ def verify_one(repo: Path, receipt: dict, *, html_page: str | None = None) -> bo
     if not verify_suite(repo, plain):
         raise ValueError("original source process replay failed")
     expected_activities = [_row(x, sha) for x in receipt["source_process"]["results"]]
-    validate_execution_rows(receipt["activities"])
+    validate_execution_rows(receipt["activities"], expected_commit=sha)
     if expected_activities != receipt["activities"]:
         raise ValueError("execution outcomes or lineage have been rewritten")
     if (len({x["id"] for x in expected_activities}) != len(expected_activities)
