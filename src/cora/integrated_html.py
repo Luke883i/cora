@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import html
 import json
+from urllib.parse import quote
 
 SCHEMA = "cora-integrated-one-run/2"
 SCRIPT = r"""(function(){
@@ -289,13 +290,28 @@ def render_integrated_html(receipt: dict) -> str:
                     _h(", ".join(delta.get("affected_paths", [])) or "None") +
                     '</p><p><strong>Obligations:</strong> ' +
                     _h("; ".join(delta["required_witnesses"]) or "None") +
-                    '</p></details>')
+                    '</p><p><strong>Catalog status:</strong> ' +
+                    _h(delta.get("catalog_status", "NOT_OBSERVED")) + '</p>')
+        if delta.get("catalog_violations"):
+            head.append('<ul>')
+            for missing in delta["catalog_violations"]:
+                head.append('<li><code>' + _h(missing["path"]) +
+                            '</code> · ' + _h(missing["code"]) + '</li>')
+            head.append('</ul>')
+        head.append('</details>')
         head.append('<h3>Retention review (non-authorizing)</h3>'
                     '<p>Former paths require migration and consumer mapping, '
                     'not automatic deprecation or removal.</p><details>'
                     '<summary>Inspect historical or relocated paths</summary><ul>')
         for item in history["retention"]["candidates"]:
-            head.append('<li><code>' + _h(item["old_path"]) + '</code> · ' +
+            canonical_url = ("https://github.com/Luke883i/cora/blob/" +
+                             history["baseline_commit"] + "/" +
+                             quote(item["canonical_path"], safe="/"))
+            head.append('<li><code>' + _h(item["old_path"]) + '</code> → ' +
+                        '<a href="' + _h(canonical_url) +
+                        '" rel="noopener noreferrer"><code>' +
+                        _h(item["canonical_path"]) + '</code></a> · ' +
+                        _h(item["migration_mode"]) + ' · ' +
                         _h(item["classification"]) + ' · ' +
                         _h(item["independent_consumer_readback"]) + '</li>')
         head.append('</ul></details>')
