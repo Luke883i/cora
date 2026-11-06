@@ -136,3 +136,21 @@ The five-goal report binds the original 18 README claim/source/test traces, opt-
 The canonical original-owner command is `cora method-synthesize REPO --synergic`, not a new parallel scanner. Use `--base-sha SHA` to include source-diff context; `--atlas-html PATH` writes a self-contained responsive offline HTML atlas and `--atlas-json PATH` writes the exact-commit machine-readable version. `--ai-request-output PATH` remains a source-grounded AI question plan, **not a provider invocation**. Supply `--output PATH` for the original unified source report, then replay with `cora verify-method-synthesis REPORT --repo REPO --synergic --atlas-json PATH --atlas-html PATH`.
 
 The atlas maps all **71 declared commands** to original source and test file witnesses, eight families, 14 method owners, workflow/document/test inventories and the [six-gate maturity DoD](../.cora/contracts/dod/maturity-dod.json). It is a Git source viewer: test paths are not test execution, independently demonstrated usability or an authorization decision. The release, host, human reviewer, maintained target and longitudinal gates remain `BLOCKED_EXTERNAL`. Report output must live outside the checkout. The CLI does **not** execute target tests or AI automatically.
+
+## One-run assurance — one existing command, executed results (PR36)
+
+From a complete authorized CORA Git checkout, generate one **actual execution dossier**, not merely the 71-command index:
+
+```bash
+cora process-run . --revision HEAD --process full --one-run \
+  --output /tmp/cora-one-run.json \
+  --atlas-html /tmp/cora-one-run.html --atlas-json /tmp/cora-one-run-machine.json
+cora verify-process /tmp/cora-one-run.json --repo . --one-run \
+  --atlas-html /tmp/cora-one-run.html --atlas-json /tmp/cora-one-run-machine.json
+```
+
+The existing `process-run` runs or reuses eight safe source methods, **not** every one of the 71 declared CLI commands. In one-run mode it records each method as `EXECUTED_SCOPED`, `REUSED_SCOPED`, `BLOCKED` or `NOT_RUN`, with a measured duration or an explicit shared-reuse/unmeasured reason; unsafe actions remain `NOT_RUN`. The original PR31 71-command catalog and six maturity gates remain available underneath the visible execution summary. JSON and HTML are derived from the same receipt and compared against original Git source; **timing and optional runtime exits are not independently attestable by source replay**.
+
+To explicitly execute CORA's own Python unittest suite on an exact CORA checkout, add `--execute-self-tests --test-timeout 240`; this executes local code and must never be used on untrusted code or without authorization. Its result remains `RUN_REPORTED_UNATTESTED` on exit zero and requires an independent test operator. The command never starts arbitrary provider/LLM calls, external network scanners, Docker, target repository tests, transforms, merge or release.
+
+Physical committed DoD mutants and other anti-tamper tests are in `tests/test_pr36_one_run.py`. The separate `python -m cora.one_run_stress --cases 100000 --seed 883 --output /tmp/cora-one-run-100k.json` command performs deterministic **preseeded finite-model semantic mutations of the *receipt grammar***, not 100,000 real source changes. The 32 families include 30 negative cases and 2 positive controls; CI runs the campaign twice and compares full output bytes. See [the DoD and metrics](../.cora/contracts/dod/one-run-dod.json) and [implementation guidance](CONTINUOUS_DEVELOPMENT.md).

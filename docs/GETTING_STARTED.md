@@ -42,3 +42,9 @@ The product/software map comes from a maintained declaration. Static imports are
 For the next steps, choose [agent adoption](AGENT_ADOPTION.md), the [CLI reference](CLI_REFERENCE.md) or the [architecture](ARCHITECTURE.md). Outputs here use Unix `/tmp`; on other platforms choose a suitable directory outside the checkout.
 
 No independent newcomer usability test is claimed by this tutorial.
+
+## Un solo comando e un Atlante HTML degli esiti reali
+
+Usa `cora process-run . --one-run --process full --revision HEAD --output /tmp/cora-run.json --atlas-html /tmp/cora-run.html`. Apri l'HTML nel browser: la sezione **00 · Esiti realmente osservati** distingue metodi eseguiti, riusi, blocchi, attività non eseguite, tempi e lineage del commit. Le 71 funzioni del catalogo sono elencate come **dichiarazioni**, non come 71 esecuzioni. Non occorre una seconda CLI. L'HTML è offline, responsive e generato dallo stesso rapporto machine-readable verificabile con `cora verify-process /tmp/cora-run.json --repo . --one-run --atlas-html /tmp/cora-run.html`.
+
+Per impostazione predefinita i test runtime restano `NOT_RUN`. Solo con `--execute-self-tests` su un checkout CORA affidabile vengono eseguiti i test unitari locali (nessuna attestazione indipendente o approvazione). Per repository terzi senza i contratti CORA, l'atlante mostra i risultati sorgente realmente disponibili, ma non inventa un catalogo di 71 attività.

@@ -71,6 +71,8 @@ Open `/tmp/cora-atlas.html` in a browser. The self-contained HTML provides searc
 
 ## What works today
 
+**One-run execution atlas (PR36):** Use the existing `cora process-run . --revision HEAD --process full --one-run --output /tmp/cora-run.json --atlas-html /tmp/cora-run.html` to generate an **execution-results** dashboard. The HTML shows measured source-method results, honest source reuse, BLOCKED/NOT_RUN and the existing 71-command source catalog in one self-contained view. The default never executes arbitrary target tests, network calls or AI; CORA-only Python unit tests require `--execute-self-tests` and remain unauthenticated execution claims. Original-Git JSON/HTML replay uses `cora verify-process /tmp/cora-run.json --repo . --one-run --atlas-html /tmp/cora-run.html`. This is **one-run scoped source assurance**, not proof that all 71 CLI behaviors have run. See [CLI reference](docs/CLI_REFERENCE.md) and [one-run reticular DoD](.cora/contracts/dod/one-run-dod.json).
+
 **Five synergic source-assurance goals:** `cora method-synthesize . --synergic --base-sha BASE_SHA --execute-source-probes --output REPORT --ai-request-output AI_PLAN` brings together the Semantic Truth, AI Reasoning, Behavioral Proof, Continuous Semantic Evolution and Unified Assurance source routes, while `--integrated` connects documentation, the 18 claim traces and the 71 declared CLI interfaces. Neither mode invokes an AI provider by default or proves every behavior. See [five-goal DoD and falsification](docs/CONVERGENT_ASSURANCE.md).
 
 | Engineering goal | Relevant CORA capabilities | Evidence boundary |

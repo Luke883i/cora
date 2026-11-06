@@ -109,6 +109,18 @@ jobs:
           python tools/verify_layout_simplification.py --repo . --revision HEAD --stress --cases 10000 --seed 883 --output /tmp/cora-layout-stress-replay.json
           cmp /tmp/cora-layout-stress.json /tmp/cora-layout-stress-replay.json
           python -c 'import json; x=json.load(open("/tmp/cora-layout-stress.json")); assert x["status"]=="PASS_SCOPED_PRESEEDED_FINITE_MODEL" and x["cases"]==10000 and x["families"]==32 and x["positive_controls"]==626 and x["negative_scenarios"]==9374 and x["oracle_disagreements"]==0 and x["unauthorized_promotions"]==0 and x["actual_git_source_mutants"]==0 and x["external"]=="BLOCKED_EXTERNAL" and x["authorization"]=="NONE"'
+      - name: PR36 one-run original Git execution dossier, HTML byte replay and physical mutants
+        run: |
+          python -m unittest discover -s tests -p 'test_pr36_one_run.py' -v
+          cora process-run . --revision HEAD --process full --one-run --output /tmp/cora-one-run.json --atlas-json /tmp/cora-one-run-atlas.json --atlas-html /tmp/cora-one-run.html
+          cora verify-process /tmp/cora-one-run.json --repo . --one-run --atlas-json /tmp/cora-one-run-atlas.json --atlas-html /tmp/cora-one-run.html
+          python -c 'import json; a=json.load(open("/tmp/cora-one-run.json")); assert len(a["activities"])==8 and a["catalog_commands_declared"]==71 and a["catalog_commands_executed_individually"]==0 and a["runtime_status"]=="NOT_RUN" and a["dod"]["nodes"]==27 and a["global_status"]=="BLOCKED_EXTERNAL" and a["authorization"]=="NONE" and not a["release_authorized"]'
+      - name: PR36 falsify 100k distinct preseeded semantic receipts twice
+        run: |
+          python -m cora.one_run_stress --cases 100000 --seed 883 --output /tmp/cora-one-run-100k.json
+          python -m cora.one_run_stress --cases 100000 --seed 883 --output /tmp/cora-one-run-100k-replay.json
+          cmp /tmp/cora-one-run-100k.json /tmp/cora-one-run-100k-replay.json
+          python -c 'import json; r=json.load(open("/tmp/cora-one-run-100k.json")); assert r["status"]=="PASS_SCOPED_PRESEEDED_FINITE_MODEL" and r["cases"]==100000 and r["families"]==32 and r["positive_controls"]==6250 and r["negative_scenarios"]==93750 and r["distinct_input_fingerprints"]==100000 and r["oracle_disagreements"]==0 and r["unauthorized_promotions"]==0 and r["physical_source_mutants"]==0 and r["external"]=="BLOCKED_EXTERNAL" and r["authority"]=="NONE"'
       - name: Preserve revision-bound source receipts for review only
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -129,6 +141,11 @@ jobs:
             /tmp/cora-pr31-source.json
             /tmp/cora-pr31-atlas.json
             /tmp/cora-pr31-atlas.html
+            /tmp/cora-one-run.json
+            /tmp/cora-one-run-atlas.json
+            /tmp/cora-one-run.html
+            /tmp/cora-one-run-100k.json
+            /tmp/cora-one-run-100k-replay.json
             /tmp/cora-pr31-ai.json
             /tmp/cora-five-million.json
             /tmp/cora-five-million-replay.json
