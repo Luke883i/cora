@@ -36,6 +36,8 @@ from .debt import debt_scan, verify_debt, compare_debt
 from .debt_stress import stress_debt
 from .process_suite import process_catalog, run_suite, verify_suite, PROCESSES
 from .one_run import run_one, verify_one, render_one_html
+from .integrated_run import run_integrated, verify_integrated as verify_integrated_one_run
+from .integrated_html import render_integrated_html
 from .continuous import evaluate as development_gate, verify_gate, agent_check
 from .continuous_stress import stress_continuous
 from .archive_intake import inspect_zip, verify_intake
@@ -367,6 +369,9 @@ def main(argv: list[str] | None = None) -> int:
     pr.add_argument('--execute-self-tests',action='store_true',help='Explicit opt-in to locally execute CORA unittest suite; not an external oracle')
     pr.add_argument('--test-timeout',type=int,default=240)
     pr.add_argument('--model-stress-cases',type=int,choices=(0,100000),default=0,help='Opt-in bounded 100k preseeded receipt mutants, not physical code changes')
+    pr.add_argument('--profile',choices=('comprehensive',),help='PR37: account for every discovered CORA activity; source-only by default')
+    pr.add_argument('--evidence-dir',type=Path,help='Outside-repo directory for the integrated evidence manifest and optional test log')
+    pr.add_argument('--authorization-file',type=Path,help='Explicit exact-SHA local consent for optional untrusted self-tests, not sandbox attestation')
     pv = sub.add_parser('verify-process',help='Source revalidation of process receipt')
     pv.add_argument('report',type=Path)
     pv.add_argument('--repo',required=True,type=Path)
@@ -374,6 +379,7 @@ def main(argv: list[str] | None = None) -> int:
     pv.add_argument('--one-run',action='store_true',help='Verify original Git source, metrics and optional HTML')
     pv.add_argument('--atlas-json',type=Path)
     pv.add_argument('--atlas-html',type=Path)
+    pv.add_argument('--evidence-dir',type=Path,help='Recompute byte hashes against retained integrated evidence files')
     dsx = sub.add_parser('stress-debt',help='1M seeded debt-policy model mutations')
     dsx.add_argument('--seed',type=int,default=883)
     dsx.add_argument('--cases',type=int,default=1000000)
@@ -753,36 +759,68 @@ def main(argv: list[str] | None = None) -> int:
             code = 0
         elif args.cmd == 'process-run':
             if args.one_run:
-                result = run_one(args.repo,args.revision,process=args.process,
-                                 max_commits=args.max_commits,focus=args.focus,
-                                 execute_self_tests=args.execute_self_tests,
-                                 test_timeout=args.test_timeout,
-                                 model_stress_cases=args.model_stress_cases)
-                if args.atlas_json:
-                    args.atlas_json.write_text(json.dumps(result,sort_keys=True,indent=2)+'\n',encoding='utf-8')
-                if args.atlas_html:
-                    args.atlas_html.write_text(render_one_html(result),encoding='utf-8')
-                code = 2 if (result['source_status']=='DEBT_BLOCKED'
-                             or result['runtime_status']=='FAIL'
-                             or result['model_stress']['status']=='REFUTED') else 0
+                if args.profile == 'comprehensive':
+                    result = run_integrated(args.repo,args.revision,process=args.process,
+                        max_commits=args.max_commits,focus=args.focus,
+                        execute_self_tests=args.execute_self_tests,
+                        authorization_file=args.authorization_file,
+                        evidence_dir=args.evidence_dir,test_timeout=args.test_timeout,
+                        model_stress_cases=args.model_stress_cases)
+                    if args.atlas_json:
+                        args.atlas_json.write_text(json.dumps(result,sort_keys=True,indent=2)+'\n',encoding='utf-8')
+                    if args.atlas_html:
+                        args.atlas_html.write_text(render_integrated_html(result),encoding='utf-8')
+                    # External blockers do not prevent generating a truthful dossier.
+                    base = result['baseline_pr36']
+                    code = 2 if (base['source_status']=='DEBT_BLOCKED'
+                                 or base['model_stress']['status']=='REFUTED'
+                                 or result['tests']['state']=='FAIL') else 0
+                else:
+                    if args.evidence_dir or args.authorization_file:
+                        raise ValueError('integrated evidence/authorization flags require --profile comprehensive')
+                    result = run_one(args.repo,args.revision,process=args.process,
+                                     max_commits=args.max_commits,focus=args.focus,
+                                     execute_self_tests=args.execute_self_tests,
+                                     test_timeout=args.test_timeout,
+                                     model_stress_cases=args.model_stress_cases)
+                    if args.atlas_json:
+                        args.atlas_json.write_text(json.dumps(result,sort_keys=True,indent=2)+'\n',encoding='utf-8')
+                    if args.atlas_html:
+                        args.atlas_html.write_text(render_one_html(result),encoding='utf-8')
+                    code = 2 if (result['source_status']=='DEBT_BLOCKED'
+                                 or result['runtime_status']=='FAIL'
+                                 or result['model_stress']['status']=='REFUTED') else 0
             else:
-                if args.atlas_html or args.atlas_json or args.execute_self_tests or args.model_stress_cases:
-                    raise ValueError('HTML, JSON atlas and optional tests require --one-run')
+                if (args.atlas_html or args.atlas_json or args.execute_self_tests
+                        or args.model_stress_cases or args.profile or args.evidence_dir
+                        or args.authorization_file):
+                    raise ValueError('integrated/HTML/JSON/optional execution flags require --one-run')
                 result = run_suite(args.repo,args.revision,process=args.process,
                                    max_commits=args.max_commits,focus=args.focus)
                 code = 0 if result['status']!='DEBT_BLOCKED' else 2
         elif args.cmd == 'verify-process':
             item = json.loads(args.report.read_text(encoding='utf-8'))
             if args.one_run:
-                if args.atlas_json and json.loads(args.atlas_json.read_text('utf-8'))!=item:
+                if args.atlas_json and json.loads(args.atlas_json.read_text('utf-8')) != item:
                     raise ValueError('one-run JSON atlas is not the source receipt')
-                verify_one(args.repo,item,
-                           html_page=args.atlas_html.read_text('utf-8') if args.atlas_html else None)
-                result = {'schema':'cora-one-run-replay/1','status':'SOURCE_REPLAYED_RUNTIME_NOT_ATTESTED',
-                          'receipt_digest':item['receipt_digest'],'commit':item['commit'],
-                          'authorization':'NONE'}
+                if item.get('schema') == 'cora-integrated-one-run/2':
+                    verify_integrated_one_run(args.repo,item,
+                        html_page=args.atlas_html.read_text('utf-8') if args.atlas_html else None,
+                        evidence_dir=args.evidence_dir)
+                    result = {'schema':'cora-integrated-one-run-replay/2',
+                              'status':'GIT_SOURCE_REPLAYED_LOCAL_TESTS_NOT_INDEPENDENTLY_ATTESTED',
+                              'receipt_digest':item['receipt_digest'],'commit':item['commit'],
+                              'product_status':'BLOCKED_EXTERNAL','authorization':'NONE'}
+                else:
+                    if args.evidence_dir:
+                        raise ValueError('evidence-dir verification requires integrated source receipt')
+                    verify_one(args.repo,item,
+                               html_page=args.atlas_html.read_text('utf-8') if args.atlas_html else None)
+                    result = {'schema':'cora-one-run-replay/1','status':'SOURCE_REPLAYED_RUNTIME_NOT_ATTESTED',
+                              'receipt_digest':item['receipt_digest'],'commit':item['commit'],
+                              'authorization':'NONE'}
             else:
-                if args.atlas_json or args.atlas_html:
+                if args.atlas_json or args.atlas_html or args.evidence_dir:
                     raise ValueError('one-run atlas replay requires --one-run')
                 verify_suite(args.repo,item)
                 result = {'schema':'cora-process-verification/1','status':'SOURCE_REPLAY_VERIFIED',
