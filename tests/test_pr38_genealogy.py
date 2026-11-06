@@ -225,5 +225,32 @@ class HistoryReticularTests(unittest.TestCase):
         self.assertIn('href="https://github.com/Luke883i/cora/pull/1"',escaped_link)
 
 
+    def test_10_git_original_changed_paths_replayed_for_every_merged_unit(self):
+        """301 merged PR commit units: compare GitHub census with original Git diff-tree.
+
+        PR34's four closed-unmerged commits remain explicitly NOT OBSERVED here:
+        they are not reachable from the original main ancestry and are not passed.
+        """
+        verified, withheld = 0, []
+        for pr in self.data["prs"]:
+            for unit in pr["commits"]:
+                sha = unit["sha"]
+                if sha not in self.headers:
+                    withheld.append((pr["number"], sha))
+                    continue
+                raw = subprocess.check_output(
+                    ["git", "-C", str(ROOT), "diff-tree", "--no-commit-id",
+                     "--name-only", "-r", "-z", "-M", sha],
+                    stderr=subprocess.PIPE, timeout=15)
+                original = {v.decode("utf-8") for v in raw.split(b"\0") if v}
+                declared = {entry["path"] for entry in unit["paths"]}
+                with self.subTest(pr=pr["number"], commit=sha):
+                    self.assertEqual(original, declared)
+                verified += 1
+        self.assertEqual(verified, 301)
+        self.assertEqual(len(withheld), 4)
+        self.assertEqual({pr for pr, _ in withheld}, {34})
+
+
 if __name__ == "__main__":
     unittest.main()
