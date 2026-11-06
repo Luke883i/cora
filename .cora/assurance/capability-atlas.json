@@ -767,6 +767,7 @@
       ".cora/contracts/dod/capability-dod.json",
       ".cora/contracts/dod/convergence-dod.json",
       ".cora/contracts/dod/documentation-dod.json",
+      ".cora/contracts/dod/engineering-knowledge-dod.json",
       ".cora/contracts/dod/five-synergies-dod.json",
       ".cora/contracts/dod/gold-assurance.json",
       ".cora/contracts/dod/history-convergence-dod.json",

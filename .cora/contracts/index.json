@@ -44,6 +44,11 @@
       "scope": "INTERNAL_ASSURANCE"
     },
     {
+      "logical": "cora.engineering-knowledge-dod.json",
+      "canonical": ".cora/contracts/dod/engineering-knowledge-dod.json",
+      "scope": "INTERNAL_DOD"
+    },
+    {
       "logical": "cora.five-synergies-dod.json",
       "canonical": ".cora/contracts/dod/five-synergies-dod.json",
       "scope": "INTERNAL_DOD"

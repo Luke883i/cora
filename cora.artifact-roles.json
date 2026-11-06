@@ -1089,6 +1089,14 @@
         "TEST"
       ],
       "rationale": "PR39 Git replay, 10k mutants, native Git and anti-promotion tests."
+    },
+    {
+      "pattern": ".cora/contracts/dod/engineering-knowledge-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "PR40 exact-Git source knowledge, seeded falsification and independent external DoD; no product authority."
     }
   ]
 }

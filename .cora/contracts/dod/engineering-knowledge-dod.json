@@ -1,0 +1,259 @@
+{
+  "schema": "cora-engineering-knowledge-dod/1",
+  "version": 1,
+  "baseline_main": "75827bfbd1d67f861e950c4802ccdd92e9c9a2e4",
+  "authority": "NONE",
+  "source_status": "IMPLEMENTATION_CANDIDATE_NOT_ATTESTED",
+  "product_status": "BLOCKED_EXTERNAL",
+  "global_goal": "G_ENGINEERING_KNOWLEDGE",
+  "source_goal": "G_SOURCE_EKC",
+  "logic": "NONCOMPENSATORY_AND",
+  "purpose": "Reconcile exact repository/source identity, static and runtime unknowns, CI failures, host governance, temporal documentation and historical knowledge; independent external operators retain acceptance authority.",
+  "source": [
+    "S_GIT_IDENTITY",
+    "S_FULL_SOURCE_CENSUS",
+    "S_STATIC_DYNAMIC_BOUNDARIES",
+    "S_TEMPORAL_DOC_TRUTH",
+    "S_CI_FAIL_CLOSED",
+    "S_GOVERNANCE_NONPROMOTION",
+    "S_REUSED_HISTORY",
+    "S_MODEL_AND_PHYSICAL_FALSIFIERS"
+  ],
+  "external": [
+    "E_INDEPENDENT_RCA",
+    "E_EFFECTIVE_HOST_PROTECTION",
+    "E_INDEPENDENT_REVIEW",
+    "E_MAINTAINED_TARGET_BEHAVIOR",
+    "E_RUNTIME_USER_ACCEPTANCE"
+  ],
+  "edges": {
+    "G_STATIC": [
+      "S_GIT_IDENTITY",
+      "S_FULL_SOURCE_CENSUS",
+      "S_STATIC_DYNAMIC_BOUNDARIES",
+      "S_TEMPORAL_DOC_TRUTH"
+    ],
+    "G_REPRO": [
+      "S_CI_FAIL_CLOSED",
+      "S_MODEL_AND_PHYSICAL_FALSIFIERS"
+    ],
+    "G_TRUTH": [
+      "S_GOVERNANCE_NONPROMOTION",
+      "S_REUSED_HISTORY"
+    ],
+    "G_SOURCE_EKC": [
+      "G_STATIC",
+      "G_REPRO",
+      "G_TRUTH"
+    ],
+    "G_EXTERNAL_EKC": [
+      "E_INDEPENDENT_RCA",
+      "E_EFFECTIVE_HOST_PROTECTION",
+      "E_INDEPENDENT_REVIEW",
+      "E_MAINTAINED_TARGET_BEHAVIOR",
+      "E_RUNTIME_USER_ACCEPTANCE"
+    ],
+    "G_ENGINEERING_KNOWLEDGE": [
+      "G_SOURCE_EKC",
+      "G_EXTERNAL_EKC"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "S_GIT_IDENTITY",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "proof": "EXACT_GIT_AND_EXECUTION_REQUIRED",
+      "status": "NOT_ESTABLISHED_BY_DECLARATION"
+    },
+    {
+      "id": "S_FULL_SOURCE_CENSUS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "proof": "EXACT_GIT_AND_EXECUTION_REQUIRED",
+      "status": "NOT_ESTABLISHED_BY_DECLARATION"
+    },
+    {
+      "id": "S_STATIC_DYNAMIC_BOUNDARIES",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "proof": "EXACT_GIT_AND_EXECUTION_REQUIRED",
+      "status": "NOT_ESTABLISHED_BY_DECLARATION"
+    },
+    {
+      "id": "S_TEMPORAL_DOC_TRUTH",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "proof": "EXACT_GIT_AND_EXECUTION_REQUIRED",
+      "status": "NOT_ESTABLISHED_BY_DECLARATION"
+    },
+    {
+      "id": "S_CI_FAIL_CLOSED",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "proof": "EXACT_GIT_AND_EXECUTION_REQUIRED",
+      "status": "NOT_ESTABLISHED_BY_DECLARATION"
+    },
+    {
+      "id": "S_GOVERNANCE_NONPROMOTION",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "proof": "EXACT_GIT_AND_EXECUTION_REQUIRED",
+      "status": "NOT_ESTABLISHED_BY_DECLARATION"
+    },
+    {
+      "id": "S_REUSED_HISTORY",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "proof": "EXACT_GIT_AND_EXECUTION_REQUIRED",
+      "status": "NOT_ESTABLISHED_BY_DECLARATION"
+    },
+    {
+      "id": "S_MODEL_AND_PHYSICAL_FALSIFIERS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "proof": "EXACT_GIT_AND_EXECUTION_REQUIRED",
+      "status": "NOT_ESTABLISHED_BY_DECLARATION"
+    },
+    {
+      "id": "E_INDEPENDENT_RCA",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "proof": "INDEPENDENT_OPERATOR_REQUIRED",
+      "status": "NOT_ESTABLISHED_BY_DECLARATION"
+    },
+    {
+      "id": "E_EFFECTIVE_HOST_PROTECTION",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "proof": "INDEPENDENT_OPERATOR_REQUIRED",
+      "status": "NOT_ESTABLISHED_BY_DECLARATION"
+    },
+    {
+      "id": "E_INDEPENDENT_REVIEW",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "proof": "INDEPENDENT_OPERATOR_REQUIRED",
+      "status": "NOT_ESTABLISHED_BY_DECLARATION"
+    },
+    {
+      "id": "E_MAINTAINED_TARGET_BEHAVIOR",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "proof": "INDEPENDENT_OPERATOR_REQUIRED",
+      "status": "NOT_ESTABLISHED_BY_DECLARATION"
+    },
+    {
+      "id": "E_RUNTIME_USER_ACCEPTANCE",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "proof": "INDEPENDENT_OPERATOR_REQUIRED",
+      "status": "NOT_ESTABLISHED_BY_DECLARATION"
+    },
+    {
+      "id": "G_STATIC",
+      "scope": "SOURCE",
+      "depends_on": [
+        "S_GIT_IDENTITY",
+        "S_FULL_SOURCE_CENSUS",
+        "S_STATIC_DYNAMIC_BOUNDARIES",
+        "S_TEMPORAL_DOC_TRUTH"
+      ],
+      "proof": "EXACT_GIT_AND_EXECUTION_REQUIRED",
+      "status": "NOT_ESTABLISHED_BY_DECLARATION"
+    },
+    {
+      "id": "G_REPRO",
+      "scope": "SOURCE",
+      "depends_on": [
+        "S_CI_FAIL_CLOSED",
+        "S_MODEL_AND_PHYSICAL_FALSIFIERS"
+      ],
+      "proof": "EXACT_GIT_AND_EXECUTION_REQUIRED",
+      "status": "NOT_ESTABLISHED_BY_DECLARATION"
+    },
+    {
+      "id": "G_TRUTH",
+      "scope": "SOURCE",
+      "depends_on": [
+        "S_GOVERNANCE_NONPROMOTION",
+        "S_REUSED_HISTORY"
+      ],
+      "proof": "EXACT_GIT_AND_EXECUTION_REQUIRED",
+      "status": "NOT_ESTABLISHED_BY_DECLARATION"
+    },
+    {
+      "id": "G_SOURCE_EKC",
+      "scope": "SOURCE",
+      "depends_on": [
+        "G_STATIC",
+        "G_REPRO",
+        "G_TRUTH"
+      ],
+      "proof": "EXACT_GIT_AND_EXECUTION_REQUIRED",
+      "status": "NOT_ESTABLISHED_BY_DECLARATION"
+    },
+    {
+      "id": "G_EXTERNAL_EKC",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "E_INDEPENDENT_RCA",
+        "E_EFFECTIVE_HOST_PROTECTION",
+        "E_INDEPENDENT_REVIEW",
+        "E_MAINTAINED_TARGET_BEHAVIOR",
+        "E_RUNTIME_USER_ACCEPTANCE"
+      ],
+      "proof": "EXACT_GIT_AND_EXECUTION_REQUIRED",
+      "status": "NOT_ESTABLISHED_BY_DECLARATION"
+    },
+    {
+      "id": "G_ENGINEERING_KNOWLEDGE",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "G_SOURCE_EKC",
+        "G_EXTERNAL_EKC"
+      ],
+      "proof": "EXACT_GIT_AND_EXECUTION_REQUIRED",
+      "status": "NOT_ESTABLISHED_BY_DECLARATION"
+    }
+  ],
+  "metrics": {
+    "semantic_cases": 10000000,
+    "sessions": 10,
+    "cases_per_session": 1000000,
+    "seeds": [
+      883,
+      1387,
+      2025,
+      3347,
+      4523,
+      5801,
+      6911,
+      7927,
+      8443,
+      9829
+    ],
+    "fault_families": 14,
+    "preregistered_one_to_four_way_plus_control": 1471,
+    "single_fault_coverage": 14,
+    "pair_fault_coverage": 91,
+    "max_mismatches": 0,
+    "max_unsafe_promotions": 0,
+    "real_source_mutations_in_model": 0,
+    "required_python": [
+      "3.11",
+      "3.13"
+    ],
+    "exact_final_head_required": true
+  },
+  "nonclaims": [
+    "FINITE_CASES_ARE_NOT_TEN_MILLION_GIT_MUTATIONS",
+    "GIT_REPLAY_IS_NOT_REAL_TARGET_BEHAVIOR",
+    "STATIC_AST_IS_NOT_DYNAMIC_RUNTIME_COVERAGE",
+    "CI_GREEN_IS_NOT_HOST_ENFORCEMENT",
+    "SOURCE_CANDIDATE_IS_NOT_REVIEWER_APPROVAL",
+    "RCA_NOT_ESTABLISHED_BY_A_WORKAROUND",
+    "GITHUB_403_IS_NOT_NO_PROTECTION",
+    "NO_AUTO_MERGE_DEPLOY_PUBLICATION_OR_DELETION"
+  ]
+}
