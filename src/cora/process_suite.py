@@ -5,6 +5,7 @@ LLMs, target test commands, transforms, publication or runtime probes.
 """
 from __future__ import annotations
 from pathlib import Path
+from time import monotonic
 from .evidence import domain_hash, valid_path
 from .git_snapshot import snapshot
 from .artifact_roles import artifact_audit
@@ -39,7 +40,7 @@ def process_catalog() -> dict:
 
 
 def run_suite(repo:Path,revision:str='HEAD',*,process:str='full',
-              max_commits:int=64,focus:str|None=None)->dict:
+              max_commits:int=64,focus:str|None=None,measure:bool=False)->dict:
     if process not in PROCESSES or type(max_commits) is not int or not 1<=max_commits<=1000:
         raise ValueError('unknown CORA process or invalid history limit')
     if focus is not None and not valid_path(focus):
@@ -47,25 +48,35 @@ def run_suite(repo:Path,revision:str='HEAD',*,process:str='full',
     repo=Path(repo).resolve(strict=True)
     commit=snapshot(repo,revision)['commit']
     checks=[]
+    started=monotonic() if measure else None
     methods=[]
     requested=set(IMPLEMENTED[process])
     def record(name:str,fn):
+        begun=monotonic() if measure else None
         try:
             v=fn()
             digest=next((v[k] for k in ('report_digest','ledger_digest','graph_digest','digest','selection_digest') if k in v),None)
-            checks.append({'method':name,'status':'EXECUTED_SCOPED','source_digest':digest})
+            item={'method':name,'status':'EXECUTED_SCOPED','source_digest':digest}
         except (ValueError, KeyError, TypeError) as exc:
-            checks.append({'method':name,'status':'DEBT_BLOCKED','reason':type(exc).__name__})
+            item={'method':name,'status':'DEBT_BLOCKED','reason':type(exc).__name__}
+        if measure:
+            item['elapsed_ms']=max(0,int((monotonic()-begun)*1000))
+            item['timing_basis']='DIRECT_METHOD_EXECUTION'
+        checks.append(item)
         methods.append(name)
     # The full pipeline reuses *same-commit, same-history* evidence actually
     # computed by holistic_audit. This is not a global cache, and a method with
     # missing evidence is DEBT_BLOCKED rather than counted as successfully run.
     holistic = None
+    holistic_duration=None
     if process == 'full':
+        holistic_started=monotonic() if measure else None
         try:
             holistic = holistic_audit(repo,commit,max_commits=max_commits,focus=focus)
         except (ValueError,KeyError,TypeError):
             pass  # Explicit fallback below still records failed methods.
+        if measure:
+            holistic_duration=max(0,int((monotonic()-holistic_started)*1000))
     derived = {
         'git_snapshot': ('ledger_digest','git_provenance'),
         'artifact_roles': ('artifact_report_digest','artifact_roles'),
@@ -91,17 +102,29 @@ def run_suite(repo:Path,revision:str='HEAD',*,process:str='full',
             digest=holistic.get(field)
             method_status=holistic['method_ledger'].get(ledger_field)
             if digest is not None and method_status not in ('NOT_AVAILABLE','NOT_RUN'):
-                checks.append({'method':name,'status':'REUSED_SCOPED_FROM_HOLISTIC',
-                               'source_digest':digest})
+                item={'method':name,'status':'REUSED_SCOPED_FROM_HOLISTIC',
+                      'source_digest':digest}
+                if measure:
+                    item['elapsed_ms']=holistic_duration if name=='holistic_archaeology' else None
+                    item['timing_basis']='SHARED_HOLISTIC_INVOCATION' if name=='holistic_archaeology' else 'REUSED_NOT_INDEPENDENTLY_TIMED'
+                checks.append(item)
             else:
-                checks.append({'method':name,'status':'DEBT_BLOCKED','reason':'SOURCE_METHOD_UNAVAILABLE'})
+                item={'method':name,'status':'DEBT_BLOCKED','reason':'SOURCE_METHOD_UNAVAILABLE'}
+                if measure:
+                    item['elapsed_ms']=None
+                    item['timing_basis']='SOURCE_METHOD_UNAVAILABLE'
+                checks.append(item)
             methods.append(name)
         else:
             record(name,sources[name])
     if focus is not None and 'file_selection_if_focus' in requested:
         record('file_selection_if_focus',lambda:select_file(repo,focus,revision=commit))
     if focus is None and 'file_selection_if_focus' in requested:
-        checks.append({'method':'file_selection_if_focus','status':'NOT_RUN_REQUIRES_FOCUS'})
+        item={'method':'file_selection_if_focus','status':'NOT_RUN_REQUIRES_FOCUS'}
+        if measure:
+            item['elapsed_ms']=None
+            item['timing_basis']='NOT_INVOKED'
+        checks.append(item)
     status='DEBT_BLOCKED' if any(c['status']=='DEBT_BLOCKED' for c in checks) else 'PASS_SCOPED_WITH_UNVERIFIED_GAPS'
     result={'schema':'cora-process-run/1', 'commit':commit,'process':process,'history_limit':max_commits,
             'focus':focus,'results':checks,'status':status,
@@ -109,6 +132,9 @@ def run_suite(repo:Path,revision:str='HEAD',*,process:str='full',
             'excluded_unsafe_methods':process_catalog()['excluded_unsafe_methods'],
             'coverage':'Selected read-only source methods only; full does not mean all real-world behavior',
             'authorized_action':'NONE'}
+    if measure:
+        result['timing']={'wall_ms':max(0,int((monotonic()-started)*1000)),
+                          'basis':'MONOTONIC_LOCAL_OBSERVATION_NOT_REPLAYABLE'}
     result['run_digest']=domain_hash('CORA:process-run:1',result)
     return result
 

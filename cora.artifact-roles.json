@@ -959,6 +959,39 @@
         "TEST"
       ],
       "rationale": "Original Git DoD edge mutants, token isolation and sample-metric anti-masking regressions."
+    },
+    {
+      "pattern": ".cora/contracts/dod/one-run-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Noncompensatory 27-node one-run execution/presentation/replay versus external product gate; not approval."
+    },
+    {
+      "pattern": "src/cora/one_run.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Existing process-run orchestration + PR31 HTML view; bounded source/test receipts and replays, never release approval."
+    },
+    {
+      "pattern": "src/cora/one_run_stress.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "100k deterministic preseeded semantic receipt mutations, 32 independent families; no physical source mutation or test authorization."
+    },
+    {
+      "pattern": "tests/test_pr36_one_run.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "One-run original-Git source and DoD mutants, anti-tamper HTML/JSON, real process and deterministic 32-family falsifiers."
     }
   ]
 }

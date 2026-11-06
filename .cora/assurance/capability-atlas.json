@@ -610,6 +610,8 @@
       "src/cora/mutation_evidence.py",
       "src/cora/mutations.py",
       "src/cora/observation_fusion.py",
+      "src/cora/one_run.py",
+      "src/cora/one_run_stress.py",
       "src/cora/ontology.py",
       "src/cora/process_suite.py",
       "src/cora/reticulum.py",
@@ -746,6 +748,7 @@
       "tests/test_pr31_maturity_atlas.py",
       "tests/test_pr32_host_release.py",
       "tests/test_pr33_ci_repro.py",
+      "tests/test_pr36_one_run.py",
       "tests/test_selection.py"
     ],
     "internal_dod": [
@@ -758,6 +761,7 @@
       ".cora/contracts/dod/integrated-dod.json",
       ".cora/contracts/dod/maturity-dod.json",
       ".cora/contracts/dod/method-synthesis-dod.json",
+      ".cora/contracts/dod/one-run-dod.json",
       ".cora/contracts/dod/postmerge-release-dod.json",
       ".cora/contracts/dod/postmerge-repro-dod.json",
       ".cora/contracts/dod/workflow-dod.json"

@@ -1,0 +1,309 @@
+{
+  "schema": "cora-one-run-dod/1",
+  "version": 1,
+  "authority": "NONE",
+  "status": "SOURCE_CONTRACT_NOT_EXECUTION_PROOF",
+  "abstract_goal": "One command executes and measures all selected safe methods, explicitly records unrun/blocked capabilities and optional authorized test execution; one re-playable original-Git JSON receipt drives a self-contained navigable HTML results atlas. A source report never substitutes for independent real-target qualification or approval.",
+  "global_goal": "G_ONE_RUN_PRODUCT",
+  "source_goal": "G_ONE_RUN_SOURCE",
+  "semantics": "AND_NONCOMPENSATORY",
+  "metrics": {
+    "commands_declared": 71,
+    "safe_source_method_count": 8,
+    "required_outcome_classes": [
+      "EXECUTED_SCOPED",
+      "REUSED_SCOPED",
+      "FAIL",
+      "BLOCKED",
+      "NOT_RUN",
+      "RUN_REPORTED_UNATTESTED"
+    ],
+    "min_seeded_cases": 100000,
+    "seed": 883,
+    "positive_control_families": 2,
+    "negative_fault_families": 30,
+    "max_oracle_disagreements": 0,
+    "max_unsafe_promotions": 0,
+    "source_receipt_replay_required": true,
+    "html_byte_compare_required": true,
+    "publication_authorized": false
+  },
+  "checklist": [
+    {
+      "id": "D1",
+      "gate": "G_EXECUTION",
+      "criterion": "One existing CLI entry and exact Git identity; each selected method has typed outcome, elapsed time or explicit reused/unmeasured marker."
+    },
+    {
+      "id": "D2",
+      "gate": "G_PRESENTATION",
+      "criterion": "All 71 declared commands are shown but NOT_RUN unless independently observed; source cases and runtime are disjoint."
+    },
+    {
+      "id": "D3",
+      "gate": "G_PRESENTATION",
+      "criterion": "One self-contained accessible HTML shows actual run, filters, errors, lineage, DoD and caveats."
+    },
+    {
+      "id": "D4",
+      "gate": "G_SOURCE_REPLAY",
+      "criterion": "Original Git source result can replay; altered receipt and HTML fail, no test-run self-attestation."
+    },
+    {
+      "id": "D5",
+      "gate": "G_SOURCE_REPLAY",
+      "criterion": "100k pre-seeded model vectors, 30 negative families and 2 positive; 0 disagreements, replay digest identical."
+    },
+    {
+      "id": "D6",
+      "gate": "G_GOVERNED_ONE_RUN",
+      "criterion": "Independent target, UX, test oracle, reviewer and hosting evidence separately observed."
+    },
+    {
+      "id": "D7",
+      "gate": "G_ONE_RUN_PRODUCT",
+      "criterion": "Release and rollback externally accepted; no source-only authorization."
+    }
+  ],
+  "nodes": [
+    {
+      "id": "L_GIT",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Pinned commit/tree identity from Git objects",
+      "witness_paths": [
+        "src/cora/git_snapshot.py"
+      ]
+    },
+    {
+      "id": "L_ENTRY",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Existing process-run entry, no duplicate CLI",
+      "witness_paths": [
+        "src/cora/cli.py"
+      ]
+    },
+    {
+      "id": "L_SOURCE_RUN",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Original safe process execution and reuse",
+      "witness_paths": [
+        "src/cora/process_suite.py"
+      ]
+    },
+    {
+      "id": "L_OUTCOMES",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Distinct executed, reused, fail, blocked, not run",
+      "witness_paths": [
+        "src/cora/one_run.py"
+      ]
+    },
+    {
+      "id": "L_TIMINGS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Measured attempts and honest reused/unmeasured timing",
+      "witness_paths": [
+        "src/cora/process_suite.py"
+      ]
+    },
+    {
+      "id": "L_LINEAGE",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Every attempted method bound to source receipt and commit",
+      "witness_paths": [
+        "src/cora/one_run.py"
+      ]
+    },
+    {
+      "id": "L_CATALOG",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "All 71 declared commands catalogued, not presumed executed",
+      "witness_paths": [
+        "src/cora/maturity_atlas.py"
+      ]
+    },
+    {
+      "id": "L_GAPS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Explicit NOT_RUN for excluded or unauthorized activities",
+      "witness_paths": [
+        "src/cora/one_run.py"
+      ]
+    },
+    {
+      "id": "L_CONSENT",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Opt-in fixed self-test command and execution scope",
+      "witness_paths": [
+        "src/cora/one_run.py"
+      ]
+    },
+    {
+      "id": "L_JSON",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Machine JSON with typed counters and bounded proofs",
+      "witness_paths": [
+        "src/cora/one_run.py"
+      ]
+    },
+    {
+      "id": "L_HTML",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Offline responsive HTML includes *observed* outcomes",
+      "witness_paths": [
+        "src/cora/one_run.py"
+      ]
+    },
+    {
+      "id": "L_ESCAPE",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Untrusted text escaped with no network or active script injection",
+      "witness_paths": [
+        "src/cora/one_run.py"
+      ]
+    },
+    {
+      "id": "L_REPLAY",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Original Git source replay, anti-tamper and HTML byte comparison",
+      "witness_paths": [
+        "src/cora/one_run.py"
+      ]
+    },
+    {
+      "id": "L_100K",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "100k preseeded realistic finite-model cases, replayed",
+      "witness_paths": [
+        "src/cora/one_run_stress.py"
+      ]
+    },
+    {
+      "id": "L_REAL_MUTANTS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "description": "Real Git and output-forgery negative tests",
+      "witness_paths": [
+        "tests/test_pr36_one_run.py"
+      ]
+    },
+    {
+      "id": "E_TARGET_RUNTIME",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "Independent target runtime behavior and acceptance"
+    },
+    {
+      "id": "E_TEST_ORACLE",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "Independent oracle for test outputs"
+    },
+    {
+      "id": "E_USABILITY",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "Independent newcomer UX test in a real browser"
+    },
+    {
+      "id": "E_HOST",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "Actual host required checks and protections"
+    },
+    {
+      "id": "E_REVIEW",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "Independent authenticated review and ownership"
+    },
+    {
+      "id": "E_RELEASE",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "description": "Published qualified release, signed provenance and rollback"
+    },
+    {
+      "id": "G_EXECUTION",
+      "scope": "SOURCE",
+      "depends_on": [
+        "L_GIT",
+        "L_ENTRY",
+        "L_SOURCE_RUN",
+        "L_OUTCOMES",
+        "L_TIMINGS",
+        "L_LINEAGE"
+      ],
+      "description": "Run and count every available source activity"
+    },
+    {
+      "id": "G_PRESENTATION",
+      "scope": "SOURCE",
+      "depends_on": [
+        "L_CATALOG",
+        "L_GAPS",
+        "L_CONSENT",
+        "L_JSON",
+        "L_HTML",
+        "L_ESCAPE"
+      ],
+      "description": "One JSON and offline HTML; clear limits"
+    },
+    {
+      "id": "G_SOURCE_REPLAY",
+      "scope": "SOURCE",
+      "depends_on": [
+        "L_REPLAY",
+        "L_100K",
+        "L_REAL_MUTANTS"
+      ],
+      "description": "Replay, adverse mutations and no promotion"
+    },
+    {
+      "id": "G_ONE_RUN_SOURCE",
+      "scope": "SOURCE",
+      "depends_on": [
+        "G_EXECUTION",
+        "G_PRESENTATION",
+        "G_SOURCE_REPLAY"
+      ],
+      "description": "One run source scoped and falsifiable"
+    },
+    {
+      "id": "G_GOVERNED_ONE_RUN",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "G_ONE_RUN_SOURCE",
+        "E_TARGET_RUNTIME",
+        "E_TEST_ORACLE",
+        "E_USABILITY",
+        "E_HOST",
+        "E_REVIEW"
+      ],
+      "description": "Independently accepted execution experience"
+    },
+    {
+      "id": "G_ONE_RUN_PRODUCT",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "G_GOVERNED_ONE_RUN",
+        "E_RELEASE"
+      ],
+      "description": "Qualified released end-user experience"
+    }
+  ]
+}
