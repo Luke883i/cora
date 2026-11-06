@@ -24,6 +24,36 @@ def git(repo, *args):
                                    stderr=subprocess.PIPE).decode().strip()
 
 
+
+def clone_original_git_fixture(source, destination):
+    """Independent transport clone; no hardlinked object store or leaked Git overrides.
+
+    This deliberately does not retry: a failed physical Git fixture is an
+    observed failure, with bounded diagnostic stderr rather than a hidden
+    CalledProcessError. The root cause of the historical CI failure is not
+    inferred by changing transport.
+    """
+    import os
+    env = {key: value for key, value in os.environ.items()
+           if not key.startswith("GIT_CONFIG_") and key not in (
+               "GIT_OBJECT_DIRECTORY", "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+               "GIT_INDEX_FILE")}
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(source), "clone", "--no-local", "-q",
+             "--", str(source), str(destination)],
+            capture_output=True, text=True, timeout=60, check=False, env=env)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise RuntimeError("original-Git physical fixture clone failed: " +
+                           type(exc).__name__) from exc
+    if result.returncode:
+        detail = (result.stderr or result.stdout or "NO_GIT_DIAGNOSTIC").strip()
+        raise RuntimeError("original-Git physical fixture clone failed"
+                           f" (exit {result.returncode}): " + detail[:1200])
+    if not (destination / ".git").exists():
+        raise RuntimeError("clone returned success without original Git metadata")
+
+
 def mutate(repo, path, update):
     file = repo / path
     original = json.loads(file.read_text('utf-8'))
@@ -88,7 +118,7 @@ class MethodSynthesisTests(unittest.TestCase):
     def test_physical_git_atlas_and_identity_mutants(self):
         with tempfile.TemporaryDirectory() as folder:
             local = Path(folder)/'cora'
-            git(ROOT,'clone','--local','-q',str(ROOT),str(local))
+            clone_original_git_fixture(ROOT, local)
             git(local,'checkout','-q',self.source)
             git(local,'config','user.name','CI fixture')
             git(local,'config','user.email','ci@example.invalid')
@@ -117,7 +147,7 @@ class MethodSynthesisTests(unittest.TestCase):
     def test_physical_git_role_conflict_detected_not_approvable(self):
         with tempfile.TemporaryDirectory() as folder:
             local=Path(folder)/'cora'
-            git(ROOT,'clone','--local','-q',str(ROOT),str(local))
+            clone_original_git_fixture(ROOT, local)
             git(local,'checkout','-q',self.source)
             git(local,'config','user.name','CI fixture')
             git(local,'config','user.email','ci@example.invalid')
@@ -137,7 +167,7 @@ class MethodSynthesisTests(unittest.TestCase):
     def test_source_readback_differs_from_dirty_worktree(self):
         with tempfile.TemporaryDirectory() as folder:
             local=Path(folder)/'cora'
-            git(ROOT,'clone','--local','-q',str(ROOT),str(local))
+            clone_original_git_fixture(ROOT, local)
             git(local,'checkout','-q',self.source)
             expected=synthesize(local)
             (local/'.cora/contracts/profiles/method-atlas.json').write_text('{}\n',encoding='utf-8')
