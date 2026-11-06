@@ -592,6 +592,7 @@
       "src/cora/evidence.py",
       "src/cora/file_lab.py",
       "src/cora/file_lab_stress.py",
+      "src/cora/genealogy.py",
       "src/cora/git_snapshot.py",
       "src/cora/gold_assurance.py",
       "src/cora/gold_effects.py",
@@ -754,6 +755,7 @@
       "tests/test_pr33_ci_repro.py",
       "tests/test_pr36_one_run.py",
       "tests/test_pr37_integrated_one_run.py",
+      "tests/test_pr38_genealogy.py",
       "tests/test_selection.py"
     ],
     "internal_dod": [
@@ -763,6 +765,7 @@
       ".cora/contracts/dod/documentation-dod.json",
       ".cora/contracts/dod/five-synergies-dod.json",
       ".cora/contracts/dod/gold-assurance.json",
+      ".cora/contracts/dod/history-convergence-dod.json",
       ".cora/contracts/dod/integrated-dod.json",
       ".cora/contracts/dod/integrated-one-run-dod.json",
       ".cora/contracts/dod/maturity-dod.json",
