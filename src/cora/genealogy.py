@@ -129,8 +129,22 @@ def verify_dod_document(doc: dict) -> bool:
     return True
 
 
+def git_commit_headers(repo: Path) -> dict[str, tuple[str, list[str]]]:
+    """Independent original-Git identity oracle: tree and parents for each reachable SHA."""
+    output = git(repo, "log", "--format=%H %T %P", BASE,
+                 max_output=15_000_000).decode("utf-8")
+    parsed = {}
+    for line in output.splitlines():
+        fields = line.split(" ")
+        if len(fields) >= 2 and SHA.fullmatch(fields[0]) and SHA.fullmatch(fields[1]):
+            parsed[fields[0]] = (fields[1], fields[2:])
+    if not parsed:
+        raise ValueError("original Git history headers unavailable")
+    return parsed
+
+
 def verify_history_document(doc: dict, base_files: set[str],
-                            *, full: bool = True) -> bool:
+                            *, git_headers: dict | None = None) -> bool:
     if (doc.get("schema") != HISTORY_SCHEMA
             or doc.get("base_main_commit") != BASE
             or doc.get("repository") != "Luke883i/cora"
@@ -157,9 +171,13 @@ def verify_history_document(doc: dict, base_files: set[str],
                 or pr.get("commit_count") != len(pr["commits"])
                 or not pr["commits"]):
             raise ValueError("PR34 nonmerge/PR metadata/commit census misrepresented")
+        if pr["head_sha"] != pr["commits"][-1].get("sha"):
+            raise ValueError("PR head no longer matches final historic commit")
         union: set[str] = set()
         total_changes = 0
-        for c in pr["commits"]:
+        for idx, c in enumerate(pr["commits"]):
+            if idx and pr["commits"][idx - 1]["sha"] not in c.get("parents", []):
+                raise ValueError("commit genealogy broken inside PR")
             sha = c.get("sha")
             if (not isinstance(sha, str) or not SHA.fullmatch(sha)
                     or sha in seen or not SHA.fullmatch(str(c.get("tree")))
@@ -172,6 +190,10 @@ def verify_history_document(doc: dict, base_files: set[str],
                     or not c["paths"]):
                 raise ValueError("malformed, duplicated or unparented commit")
             seen.add(sha)
+            if git_headers is not None and sha in git_headers:
+                original_tree, original_parents = git_headers[sha]
+                if c["tree"] != original_tree or c["parents"] != original_parents:
+                    raise ValueError("committed Git tree/parent lineage differs from original Git")
             stats = c.get("stats")
             if (not isinstance(stats, dict) or
                     any(type(stats.get(k)) is not int or stats[k] < 0
@@ -313,10 +335,10 @@ def build_genealogy(repo: Path, revision: str) -> dict:
             git(repo, "rev-parse", BASE + "^{tree}",
                 max_output=128).decode().strip()):
         raise ValueError("frozen historical source tree differs from original Git")
-    verify_history_document(data, base_files)
+    headers = git_commit_headers(repo)
+    verify_history_document(data, base_files, git_headers=headers)
     # Reachability is not a hosted PR review or runtime assertion.
-    ancestors = set(git(repo, "rev-list", BASE,
-                        max_output=24_000_000).decode().splitlines())
+    ancestors = set(headers)
     missing_merged = sorted(
         c["sha"] for p in data["prs"] if p["merge_status"] == "MERGED_SOURCE_RECORDED"
         for c in p["commits"] if c["sha"] not in ancestors)
