@@ -1048,6 +1048,47 @@
         "SOFTWARE_SOURCE"
       ],
       "rationale": "PR38 original Git genealogy and lifecycle candidate source verifier; no deletion or host authority."
+    },
+    {
+      "pattern": ".cora/contracts/dod/independent-qualification-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "29-node source/external product acceptance reticulum: no self-qualified release."
+    },
+    {
+      "pattern": "src/cora/independent_qualification.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Git-replayed four-boundary product qualifications; all external gates blocked."
+    },
+    {
+      "pattern": "tools/independent_git_oracle.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Native Git independent-implementation comparator; not maintained targets."
+    },
+    {
+      "pattern": "tools/governance_readback.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Read-only host protection probe; 403 and missing checks are blockers."
+    },
+    {
+      "pattern": "tests/test_pr39_qualification.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "PR39 Git replay, 10k mutants, native Git and anti-promotion tests."
     }
   ]
 }

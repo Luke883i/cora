@@ -32,6 +32,37 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_pr37_*.py' -v
       - name: PR38 305 Git-commit units, 10k bounded DoD mutants, original-Git and HTML falsifiers
         run: python -m unittest discover -s tests -p 'test_pr38_genealogy.py' -v
+      - name: PR39 four-gate DoD, native Git reference, study and 403 host falsifiers
+        run: python -m unittest discover -s tests -p 'test_pr39_*.py' -v
+      - name: Produce source-only native Git oracle and no-token host blocker on PR
+        run: |
+          mkdir -p /tmp/cora-pr39
+          python tools/independent_git_oracle.py --output /tmp/cora-pr39/git-reference.json
+          env -u GITHUB_TOKEN python tools/governance_readback.py --repo Luke883i/cora --branch main --output /tmp/cora-pr39/host-readback.json
+          python - <<'PY'
+          import json
+          native=json.load(open('/tmp/cora-pr39/git-reference.json'))
+          host=json.load(open('/tmp/cora-pr39/host-readback.json'))
+          assert native['fixture_count']==2
+          assert all(x['status']=='MATCHED_NATIVE_GIT_REFERENCE_SCOPED' for x in native['fixtures'])
+          assert native['independent_owners']=='NOT_ATTESTED'
+          assert native['product_status']=='BLOCKED_EXTERNAL'
+          assert host['authority']=='NONE' and host['merge_authorized'] is False
+          assert host['host_enforcement_attested'] is False
+          assert host['release_authorized'] is False
+          PY
+      - name: PR39 host-authorized readback only after trusted main push
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python tools/governance_readback.py --repo Luke883i/cora --branch main --output /tmp/cora-pr39/host-readback-trusted-main.json
+          python - <<'PY'
+          import json
+          x=json.load(open('/tmp/cora-pr39/host-readback-trusted-main.json'))
+          assert x['merge_authorized'] is False and x['host_enforcement_attested'] is False
+          assert x['release_authorized'] is False and x['authority']=='NONE'
+          PY
       - name: Reconcile repository, artifact role, capability and document inventories
         run: |
           python tools/verify_repository_contract.py --repo .
@@ -61,6 +92,11 @@ jobs:
           assert x['dod']['source_goal'] == 'DEBT_BLOCKED'
           assert x['product_status'] == 'BLOCKED_EXTERNAL'
           assert x['authorization'] == 'NONE'
+          assert x['qualification']['external_gates_unclosed'] == 4
+          assert x['qualification']['product_status'] == 'BLOCKED_EXTERNAL'
+          assert len(x['qualification']['gates']) == 4
+          assert all(g['state']=='BLOCKED_EXTERNAL' for g in x['qualification']['gates'])
+          assert any(f['path']=='qualification.json' for f in x['evidence_manifest']['files'])
           assert x['genealogy']['pr_count'] == 37
           assert x['genealogy']['commit_count'] == 305
           assert x['genealogy']['closed_unmerged'] == [34]
@@ -73,7 +109,9 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: cora-pr37-source-only-python-${{ matrix.python-version }}
-          path: /tmp/cora-pr37/
+          path: |
+            /tmp/cora-pr37/
+            /tmp/cora-pr39/
           if-no-files-found: warn
           retention-days: 14
 

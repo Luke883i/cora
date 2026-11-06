@@ -16,6 +16,7 @@ from .git_snapshot import git, snapshot
 from .integrated_registry import build_registry, verify_contract, SCHEMA as REGISTRY_SCHEMA
 from .one_run import run_one, verify_one
 from .genealogy import build_genealogy, corpus_available
+from .independent_qualification import build_qualification, verify_qualification, CONTRACT as QUALIFICATION_CONTRACT
 
 SCHEMA = "cora-integrated-one-run/2"
 ATTEMPT_STATES = {"EXECUTED_SCOPED", "REUSED_SCOPED", "BLOCKED", "FAIL",
@@ -289,6 +290,8 @@ def _artifact_payloads(bundle: dict, log: bytes | None) -> dict[str, bytes]:
              "execution-manifest.json": _serialize(bundle["execution_manifest"])}
     if "genealogy" in bundle:
         files["genealogy.json"] = _serialize(bundle["genealogy"])
+    if "qualification" in bundle:
+        files["qualification.json"] = _serialize(bundle["qualification"])
     if log is not None:
         files["unittest-verbose.log"] = log
     return files
@@ -361,6 +364,10 @@ def run_integrated(repo: Path, revision: str = "HEAD", *, process: str = "full",
     }
     if corpus_available(repo, sha):
         bundle["genealogy"] = build_genealogy(repo, sha)
+    if (QUALIFICATION_CONTRACT in {x.decode("utf-8") for x in
+           git(repo, "ls-tree", "-r", "-z", "--name-only", sha,
+               max_output=16_000_000).split(b"\0") if x}):
+        bundle["qualification"] = build_qualification(repo, sha)
     bundle["evidence_manifest"] = _manifest(bundle, log, out is not None)
     bundle["receipt_digest"] = domain_hash("CORA:integrated-one-run:2", bundle)
     if out is not None:
@@ -396,6 +403,15 @@ def verify_integrated(repo: Path, receipt: dict, *, html_page: str | None = None
             raise ValueError("historical genealogy mismatch")
     elif corpus_available(repo, sha):
         raise ValueError("genealogy obligation missing from dossier")
+    if "qualification" in receipt:
+        if not verify_qualification(repo, receipt["qualification"]):
+            raise ValueError("independent qualification Git replay failed")
+        if receipt["qualification"]["commit"] != sha:
+            raise ValueError("cross revision qualification prohibited")
+    elif (QUALIFICATION_CONTRACT in {x.decode("utf-8") for x in
+            git(repo, "ls-tree", "-r", "-z", "--name-only", sha,
+                max_output=16_000_000).split(b"\0") if x}):
+        raise ValueError("product qualification evidence silently omitted")
     expected = build_registry(repo, sha)
     if receipt.get("registry") != expected:
         raise ValueError("integrated registry differs from original Git")

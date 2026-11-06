@@ -605,6 +605,7 @@
       "src/cora/guard_runtime.py",
       "src/cora/holistic.py",
       "src/cora/host_release.py",
+      "src/cora/independent_qualification.py",
       "src/cora/integrated_html.py",
       "src/cora/integrated_registry.py",
       "src/cora/integrated_run.py",
@@ -632,6 +633,8 @@
       "tools/benchmark_pr16_git_batch.py",
       "tools/build_candidate.py",
       "tools/external_validate.py",
+      "tools/governance_readback.py",
+      "tools/independent_git_oracle.py",
       "tools/make_experimental_bundle.py",
       "tools/release_stress.py",
       "tools/release_verify.py",
@@ -756,6 +759,7 @@
       "tests/test_pr36_one_run.py",
       "tests/test_pr37_integrated_one_run.py",
       "tests/test_pr38_genealogy.py",
+      "tests/test_pr39_qualification.py",
       "tests/test_selection.py"
     ],
     "internal_dod": [
@@ -766,6 +770,7 @@
       ".cora/contracts/dod/five-synergies-dod.json",
       ".cora/contracts/dod/gold-assurance.json",
       ".cora/contracts/dod/history-convergence-dod.json",
+      ".cora/contracts/dod/independent-qualification-dod.json",
       ".cora/contracts/dod/integrated-dod.json",
       ".cora/contracts/dod/integrated-one-run-dod.json",
       ".cora/contracts/dod/maturity-dod.json",

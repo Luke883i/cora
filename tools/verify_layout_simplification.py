@@ -297,7 +297,9 @@ def _validate_theme(repo:Path,sha:str,baseline:dict,head:dict,manifest:dict)->di
                         not set(previous).issubset(set(actual))):
                         raise ValueError("thematic Git source/target identity drift: "+group)
                     added=set(actual)-set(previous)
-                    eligible=(group=="modules" and all(
+                    eligible=(group=="operational_tools" and all(
+                        re.fullmatch(r"tools/[^/]+\.py",p) for p in added)) or (
+                        group=="modules" and all(
                         re.fullmatch(r"src/cora/[^/]+\.py",p) for p in added)) or (
                         group=="test_modules" and all(
                             re.fullmatch(r"tests/test_[^/]+\.py",p) for p in added)) or (
