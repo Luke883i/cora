@@ -611,6 +611,7 @@
       "src/cora/mutations.py",
       "src/cora/observation_fusion.py",
       "src/cora/one_run.py",
+      "src/cora/one_run_stress.py",
       "src/cora/ontology.py",
       "src/cora/process_suite.py",
       "src/cora/reticulum.py",

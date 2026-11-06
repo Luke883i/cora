@@ -975,6 +975,14 @@
         "SOFTWARE_SOURCE"
       ],
       "rationale": "Existing process-run orchestration + PR31 HTML view; bounded source/test receipts and replays, never release approval."
+    },
+    {
+      "pattern": "src/cora/one_run_stress.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "100k deterministic preseeded semantic receipt mutations, 32 independent families; no physical source mutation or test authorization."
     }
   ]
 }
