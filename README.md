@@ -69,6 +69,13 @@ cora verify-process /tmp/cora-run.json --repo . --one-run \
 
 Open /tmp/cora-run.html to navigate activity outcomes, blocked tests, DoD obligations, original Git PR/commit records, historical path reconciliation and future feature gaps. The analytical companion **method-synthesize --synergic** remains available for five-goal source synthesis and optional untrusted AI hypotheses; it is not a competing primary executor. See [convergent assurance](docs/CONVERGENT_ASSURANCE.md).
 
+
+## PR39 — independently qualified product versus source assurance
+
+The existing comprehensive One-Run pipeline gains a **nonauthorizing product qualification panel**. Its [29-node independent qualification DoD](.cora/contracts/dod/independent-qualification-dod.json) has four mandatory boundaries: (1) behavior compared with an implementation-independent oracle and maintained external targets; (2) observed comprehension by real users; (3) independently tested runtime containment; and (4) host-enforced GitHub governance and release/rollback. This is a source candidate, not a product approval.
+
+Run the safe native-Git reference via the command: python tools/independent_git_oracle.py --output /tmp/cora-native-oracle.json. It compares CORA against Git on two committed synthetic repositories and therefore does not close maintained-target product benchmarks. The optional host readback command is: python tools/governance_readback.py --repo Luke883i/cora --branch main --output /tmp/cora-host.json. Supply a read-only GITHUB_TOKEN through the environment. A missing token or HTTP 403 remains an explicit blocker. Operator protocols and thresholds are in [Release and independent qualification](docs/RELEASE.md). CI badges, Docker flags and self-submitted usability data never authorize merging, deleting or releasing.
+
 ## What works today
 
 **One-run execution atlas (PR36):** Use the existing `cora process-run . --revision HEAD --process full --one-run --output /tmp/cora-run.json --atlas-html /tmp/cora-run.html` to generate an **execution-results** dashboard. The HTML shows measured source-method results, honest source reuse, BLOCKED/NOT_RUN and the existing 71-command source catalog in one self-contained view. The default never executes arbitrary target tests, network calls or AI; CORA-only Python unit tests require `--execute-self-tests` and remain unauthenticated execution claims. Original-Git JSON/HTML replay uses `cora verify-process /tmp/cora-run.json --repo . --one-run --atlas-html /tmp/cora-run.html`. This is **one-run scoped source assurance**, not proof that all 71 CLI behaviors have run. See [CLI reference](docs/CLI_REFERENCE.md) and [one-run reticular DoD](.cora/contracts/dod/one-run-dod.json).

@@ -50,3 +50,8 @@ Usa `cora process-run . --one-run --process full --revision HEAD --output /tmp/c
 Per impostazione predefinita i test runtime restano `NOT_RUN`. Solo con `--execute-self-tests` su un checkout CORA affidabile vengono eseguiti i test unitari locali (nessuna attestazione indipendente o approvazione). Per repository terzi senza i contratti CORA, l'atlante mostra i risultati sorgente realmente disponibili, ma non inventa un catalogo di 71 attività.
 
 Per includere anche il benchmark semantico pre-seeded nello stesso Atlante HTML, aggiungi `--model-stress-cases 100000` al comando One-Run: è un modello finito di controesempi e non modifica i sorgenti Git.
+
+
+## New independent reviewer exercise
+
+Open the Independent qualification section of a comprehensive One-Run Atlas. Locate G_BEHAVIOR, G_USABILITY, G_ISOLATION and G_GOVERNANCE, inspect their source paths and distinguish the BLOCKED_EXTERNAL obligations. Find one actual test result, identify the corresponding Git commit, and explain why a native-Git synthetic fixture, Docker command, self-submitted study sheet and a CI badge cannot individually certify the product. The study script and externally observed threshold are described in [Release](RELEASE.md); no participant observations are asserted merely because this documentation exists.
