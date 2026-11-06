@@ -56,7 +56,7 @@ Keep reports outside the source checkout; `/tmp` is a Unix example. `audit` read
 
 ## Integrated human / AI atlas
 
-**Primary integrated audit:** CORA uses one existing entrypoint, **process-run --one-run --profile comprehensive**. It inventories all known activities, safely executes only eligible PR36 source methods by default, records every other activity as NOT_RUN/BLOCKED and presents source evidence and debt through one HTML/JSON dossier. The PR38 candidate adds a searchable history of 37 PRs and 305 individual commit deltas, including the PR34 unmerged exception. Source provenance does not prove runtime behavior, safe deletion or product approval. See [One-Run DoD](.cora/contracts/dod/integrated-one-run-dod.json), [history-convergence DoD](.cora/contracts/dod/history-convergence-dod.json) and [commit-level ledger](.cora/assurance/history/pr01-37-commit-diff-audit.json).
+**Primary integrated audit:** CORA uses one existing entrypoint, **process-run --one-run --profile comprehensive**. It inventories all known activities, safely executes only eligible PR36 source methods by default, records every other activity as NOT_RUN/BLOCKED and presents source evidence and debt through one HTML/JSON dossier. Merged PR38 adds a searchable history of 37 PRs and 305 individual commit deltas, including the PR34 unmerged exception. Source provenance does not prove runtime behavior, safe deletion or product approval. See [One-Run DoD](.cora/contracts/dod/integrated-one-run-dod.json), [history-convergence DoD](.cora/contracts/dod/history-convergence-dod.json) and [commit-level ledger](.cora/assurance/history/pr01-37-commit-diff-audit.json).
 
 ```sh
 cora process-run . --revision HEAD --process full --one-run --profile comprehensive \
@@ -67,10 +67,10 @@ cora verify-process /tmp/cora-run.json --repo . --one-run \
   --evidence-dir /tmp/cora-evidence
 ```
 
-Open /tmp/cora-run.html to navigate activity outcomes, blocked tests, DoD obligations, original Git PR/commit records, historical path reconciliation and future feature gaps. The analytical companion **method-synthesize --synergic** remains available for five-goal source synthesis and optional untrusted AI hypotheses; it is not a competing primary executor. See [convergent assurance](docs/CONVERGENT_ASSURANCE.md).
+Open /tmp/cora-run.html to navigate activity outcomes, blocked tests, DoD obligations, original Git PR/commit records, historical path reconciliation and future feature gaps. The analytical companion **method-synthesize --synergic** remains available for five-goal source synthesis and optional untrusted AI hypotheses; it is not a competing primary executor. See [convergent assurance](docs/CONVERGENT_ASSURANCE.md) and the [PR40 engineering knowledge DoD](.cora/contracts/dod/engineering-knowledge-dod.json) for bounded static/dynamic debt, original-Git replay and a 10M finite model (not 10M code changes).
 
 
-**PR39 product qualification (source candidate):** The existing [four-gate DoD](.cora/contracts/dod/independent-qualification-dod.json) explicitly blocks independent behavior, real-user usability, runtime containment and effective host-governance acceptance until outside operators supply verified evidence. The source-only native Git comparator (tools/independent_git_oracle.py) and optional read-only host probe (tools/governance_readback.py) cannot approve a release; see [operator protocol](docs/RELEASE.md).
+**PR39 product qualification (source candidate):** With merged PR39, the existing [four-gate DoD](.cora/contracts/dod/independent-qualification-dod.json) explicitly blocks independent behavior, real-user usability, runtime containment and effective host-governance acceptance until outside operators supply verified evidence. The source-only native Git comparator (tools/independent_git_oracle.py) and optional read-only host probe (tools/governance_readback.py) cannot approve a release; see [operator protocol](docs/RELEASE.md).
 
 ## What works today
 

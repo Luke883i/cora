@@ -1,6 +1,10 @@
 # Changelog — CORA
 
-## PR38 history/retention and future-feature source dossier — candidate, not accepted
+## PR40 engineering knowledge source convergence — DRAFT, NOT MERGED
+
+Retrograde 19-node noncompensatory engineering knowledge DoD; original-Git static/dynamic-boundary report with replay; 14 fault families and 10×1M preseeded finite-model checks; real Git-committed external-scope and chronology falsifiers; diagnostic PR25 clone isolation; updated CI and source-era guidance. No external RCA, host enforcement, real-target behavior or product/release approval is claimed.
+
+## PR38 history/retention and future-feature source dossier — merged source, not external acceptance
 
 The original PR01–37 commit delta corpus (305 commit units, 37 PRs) is preserved as one machine-readable original-Git source register. PR34 is closed without merge. A 32-node severe DoD, Git/tree verifier, bounded negative models, physical fixtures and a searchable HTML genealogy extend the existing PR37 One-Run dossier without another primary executable. The 28 old paths are migration/archive items, not source code safely removable. Independent real-target, host, consumer and release acceptance remain external.
 

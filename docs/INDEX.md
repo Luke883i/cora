@@ -22,7 +22,7 @@ The [README](../README.md) is the **one public-facing macro-map**: product promi
 
 **Integrated source dossier:** the [PR37 v2 contract](../.cora/contracts/dod/integrated-one-run-dod.json) composes the PR36 source gates with a Git-pinned activity census, typed plans, local evidence and an offline forensic atlas. Product acceptance remains external and unverified.
 
-**Contract paths:** the only root-facing JSON contracts are `cora.ontology.json` and `cora.artifact-roles.json`. Find the fifteen internal DoDs, two profiles and two assurance records using the [contract-path index](../.cora/contracts/index.json). Git-baselined path rewrites are source-scoped: they do not attest third-party runtime compatibility or conformance.
+**Contract paths:** the only root-facing JSON contracts are `cora.ontology.json` and `cora.artifact-roles.json`. Find the seventeen internal DoDs, two profiles and two assurance records using the [contract-path index](../.cora/contracts/index.json). Git-baselined path rewrites are source-scoped: they do not attest third-party runtime compatibility or conformance.
 
 **Archive invariant:** `docs/archive/` contains immutable historical Git blobs; [the relocation map](../.cora/layout-migration.json) records original-to-current paths and protected exceptions. Historical text is not rewritten, not product authority and not a safe-deletion signal. Read current procedures above before relying on old decisions.
 
@@ -104,3 +104,5 @@ Machine inventory: [documentation registry](documentation-registry.json); [docum
 - [AGENT ADOPTION](AGENT_ADOPTION.md) — CURRENT · METHOD
 - [CLI REFERENCE](CLI_REFERENCE.md) — CURRENT · REFERENCE
 - [DOCUMENTATION DOD](DOCUMENTATION_DOD.md) — CURRENT · DOD
+
+**PR40 source knowledge convergence:** [19-node engineering DoD](../.cora/contracts/dod/engineering-knowledge-dod.json) → [existing debt method](ENGINEERING_DEBT.md) → [Git replay and 10M bounded falsifier](../tools/verify_engineering_closure.py). This records static callsite indicators and explicitly unobserved runtime; it does not certify GitHub host governance, product usability or external approval.
