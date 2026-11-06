@@ -1024,6 +1024,30 @@
         "SOFTWARE_SOURCE"
       ],
       "rationale": "PR37 Git-bound activity or evidence/view contract implementation; not independent runtime attestation."
+    },
+    {
+      "pattern": ".cora/assurance/history/pr01-37-commit-diff-audit.json",
+      "roles": [
+        "ARTIFACT_INDEX",
+        "FIXTURE"
+      ],
+      "rationale": "Frozen observation of 37 PR/305 commit-level delta metadata, with explicit nonmerge and non-runtime proof scope."
+    },
+    {
+      "pattern": ".cora/contracts/dod/history-convergence-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "PR38 backward-derived noncompensatory genealogy, cleanup, future feature and forensic atlas DoD; not self certification."
+    },
+    {
+      "pattern": "src/cora/genealogy.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "PR38 original Git genealogy and lifecycle candidate source verifier; no deletion or host authority."
     }
   ]
 }

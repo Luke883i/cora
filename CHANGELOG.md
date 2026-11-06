@@ -1,5 +1,10 @@
 # Changelog — CORA
 
+## PR38 history/retention and future-feature source dossier — candidate, not accepted
+
+The original PR01–37 commit delta corpus (305 commit units, 37 PRs) is preserved as one machine-readable original-Git source register. PR34 is closed without merge. A 32-node severe DoD, Git/tree verifier, bounded negative models, physical fixtures and a searchable HTML genealogy extend the existing PR37 One-Run dossier without another primary executable. The 28 old paths are migration/archive items, not source code safely removable. Independent real-target, host, consumer and release acceptance remain external.
+
+
 ## Experimental integrated activity dossier — PR37 source candidate (not independently accepted)
 
 The existing `process-run --one-run` gains an opt-in `--profile comprehensive` source dossier: Git-pinned command, test, method and workflow registry; non-executed activity accounting; typed test observation consent; evidence hashes and source replay; search-and-drilldown HTML. PR36 source executor and its 27-node DoD stay preserved. The new 55-node reticulum remains debt-blocked for incomplete source controls and all external acceptance. No GitHub action, arbitrary test, AI call, write or release is performed by default.

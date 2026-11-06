@@ -1,6 +1,6 @@
 # CORA governed prerelease procedure (GitHub and Python distribution)
 
-Status: **staged, not published**. Product name: CORA — Continuous Ontological Repository Assurance. Package: `cora-audit`; software: `cora-engine` and `cora-release-verification`; repository: `Luke883i/cora`. Current repository version: `1.0.0a4` (PEP 440 *alpha*). PR-20 is merged into source, but there is no independently authenticated public release or published stable 1.0.0. The original PR-15 introduced this version identity; merging later PRs does not attest release readiness.
+Status: **staged, not published**. PR34 was closed without merge; PR35 merged the rebased alpha source preflight, followed by merged PR36–37 source-only One-Run assurance. PR38 is a new source candidate, not release or product acceptance. Product name: CORA — Continuous Ontological Repository Assurance. Package: `cora-audit`; software: `cora-engine` and `cora-release-verification`; repository: `Luke883i/cora`. Current repository version: `1.0.0a4` (PEP 440 *alpha*). PR-20 is merged into source, but there is no independently authenticated public release or published stable 1.0.0. The original PR-15 introduced this version identity; merging later PRs does not attest release readiness.
 
 ## GitHub-native workflow
 1. Create a topic branch at an exact `main` SHA. Author atomic semantic commits with source changes, independent negative tests, build/verification changes, documentation and DoD. The branch is not an approval.

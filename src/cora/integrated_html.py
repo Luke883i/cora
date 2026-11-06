@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import html
 import json
+from urllib.parse import quote
 
 SCHEMA = "cora-integrated-one-run/2"
 SCRIPT = r"""(function(){
@@ -13,6 +14,19 @@ const kinds=document.getElementById("kind-filter");
 const states=document.getElementById("state-filter");
 const cards=[...document.querySelectorAll("article.activity")];
 const tally=document.getElementById("visible-count");
+const historyFilter=document.getElementById("history-filter");
+if(historyFilter){
+ const units=[...document.querySelectorAll("article.commit-unit")];
+ const groups=[...document.querySelectorAll("details.pr-record")];
+ const count=document.getElementById("history-filter-count");
+ function updateHistory(){
+  const term=historyFilter.value.trim().toLowerCase();let shown=0;
+  for(const u of units){const match=!term||u.dataset.search.includes(term);u.hidden=!match;if(match)shown++;}
+  for(const g of groups)g.hidden=![...g.querySelectorAll("article.commit-unit")].some(u=>!u.hidden);
+  count.textContent=shown+" / "+units.length+" commits";
+ }
+ historyFilter.addEventListener("input",updateHistory);updateHistory();
+}
 function apply(){
  const term=q.value.trim().toLowerCase(), kind=kinds.value, state=states.value;
  let shown=0;
@@ -43,6 +57,12 @@ nav{display:flex;flex-wrap:wrap;gap:12px;margin-top:15px}nav a{color:#e4edfa}
 .controls{display:flex;flex-wrap:wrap;gap:15px;padding:14px 0;align-items:end}label{display:flex;gap:5px;flex-direction:column;font-weight:600}
 input,select{padding:9px;border:1px solid #969da8;border-radius:7px;font-size:14px;min-width:210px}
 article.activity{margin:5px 0}article.activity[hidden]{display:none}
+details.pr-record{border:1px solid #ccd5dd;background:#fff;border-radius:9px;padding:12px;margin:9px 0}
+details.pr-record>summary{font-size:15px}article.commit-unit{border-left:3px solid #2d5a7b;background:#f6f9fc;padding:7px 12px;margin:8px 0 8px 12px}
+article.commit-unit[hidden],details.pr-record[hidden]{display:none}
+.trace-pill{background:#ebf1f5;border-radius:4px;padding:2px 6px;font-size:12px}
+.note-trust{background:#fff7e7;border-left:4px solid #b08944;padding:12px}
+
 summary{cursor:pointer;font-weight:650;overflow-wrap:anywhere}small,code{overflow-wrap:anywhere}
 pre{white-space:pre-wrap;word-break:break-word;background:#f4f6f8;padding:12px}
 table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:7px;border-bottom:1px solid #e3e7eb;vertical-align:top;overflow-wrap:anywhere}
@@ -81,6 +101,8 @@ def render_integrated_html(receipt: dict) -> str:
              ("test-cases","Individual tests"),("gaps","Unresolved gaps"),
              ("dod","DoD reticulum"),("artifacts","Evidence manifest"),
              ("provenance","Provenance")]
+    if "genealogy" in receipt:
+        links.insert(3, ("history", "PR / commit genealogy"))
     head = [
         "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\">",
         "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">",
@@ -215,6 +237,102 @@ def render_integrated_html(receipt: dict) -> str:
                     _h(file["bytes"]) + '</td><td><code>' + _h(file["sha256"]) +
                     '</code></td></tr>')
     head.append("</tbody></table></section>")
+    history = receipt.get("genealogy")
+    if history and history.get("status") != "NOT_AVAILABLE_BEFORE_PR38_BASELINE":
+        head.append('<section class="panel" id="history"><h2>Genealogy — PR1–PR37</h2>')
+        head.append('<p class="note-trust">Git source records: ' + _h(history["pr_count"]) +
+                    ' PR, ' + _h(history["commit_count"]) +
+                    ' commits. PR34 closed unmerged. Changed paths and counters are not '
+                    'proof of current runtime behavior, safe deletion or external approval.</p>')
+        head.append('<div class="tiles"><div class="tile">Commit deltas<strong>' +
+                    _h(history["commit_count"]) + '</strong></div>'
+                    '<div class="tile">Historical or relocated paths<strong>' +
+                    _h(history["retention"]["historical_or_relocated_count"]) + '</strong></div>'
+                    '<div class="tile">Deletions authorized<strong>0</strong></div></div>')
+        head.append('<label for="history-filter">Search PR, SHA, file or method'
+                    '<input id="history-filter" type="search" autocomplete="off" '
+                    'placeholder="PR / SHA / path / obligation"></label>'
+                    '<p id="history-filter-count" aria-live="polite"></p>')
+        for pr in history["prs"]:
+            head.append('<details class="pr-record" id="pr-' + _h(pr["number"]) +
+                        '"><summary>PR ' + _h(pr["number"]) + ' · ' + _h(pr["title"]) +
+                        ' <span class="trace-pill">' + _h(pr["state"]) + ' · ' +
+                        _h(pr["commit_count"]) + ' commit</span></summary>'
+                        '<p><a href="https://github.com/Luke883i/cora/pull/' + _h(pr["number"]) +
+                        '" rel="noopener noreferrer">GitHub PR</a> · ' +
+                        _h(pr["phase"]) + ' · ' + _h(", ".join(pr["domains"])) + '</p>')
+            for u in pr["commits"]:
+                search = " ".join((str(pr["number"]), pr["title"], u["sha"],
+                                   u["subject"], " ".join(u["paths"]),
+                                   " ".join(u["obligations"]))).lower()
+                head.append('<article class="commit-unit" id="commit-' + _h(u["sha"][:12]) +
+                            '" data-search="' + _h(search) + '"><details><summary>' +
+                            _h(u["sha"][:12]) + ' · ' + _h(u["subject"]) +
+                            '</summary><p><span class="trace-pill">' + _h(u["unit_status"]) +
+                            '</span> · +' + _h(u["additions"]) + ' / -' +
+                            _h(u["deletions"]) + ' · ' + _h(u["path_count"]) +
+                            ' files</p><p><a href="' +
+                            _h("https://github.com/Luke883i/cora/commit/" + u["sha"]) +
+                            '" rel="noopener noreferrer">Open original Git commit</a></p>'
+                            '<p><strong>Required checks:</strong> ' +
+                            _h("; ".join(u["obligations"])) +
+                            '</p><details><summary>Paths and current lineage</summary><ul>')
+                for path in u["paths"]:
+                    state = "PRESENT_AT_BASELINE" if path in u["currently_present_paths"] else "HISTORICAL_OR_RELOCATED"
+                    head.append('<li><code>' + _h(path) + '</code> · ' + _h(state) + '</li>')
+                head.append('</ul></details></details></article>')
+            head.append('</details>')
+        delta = history["future_delta"]
+        head.append('<h3>Future feature convergence</h3><p>' + _h(delta["status"]) +
+                    ' · ' + _h(delta.get("source_conclusion", "NOT_ATTESTED")) +
+                    '</p><details><summary>Current branch changes and required witnesses</summary>'
+                    '<p><strong>Paths:</strong> ' +
+                    _h(", ".join(delta.get("affected_paths", [])) or "None") +
+                    '</p><p><strong>Obligations:</strong> ' +
+                    _h("; ".join(delta["required_witnesses"]) or "None") +
+                    '</p><p><strong>Catalog status:</strong> ' +
+                    _h(delta.get("catalog_status", "NOT_OBSERVED")) + '</p>')
+        if delta.get("catalog_violations"):
+            head.append('<ul>')
+            for missing in delta["catalog_violations"]:
+                head.append('<li><code>' + _h(missing["path"]) +
+                            '</code> · ' + _h(missing["code"]) + '</li>')
+            head.append('</ul>')
+        head.append('</details>')
+        head.append('<h3>Retention review (non-authorizing)</h3>'
+                    '<p>Former paths require migration and consumer mapping, '
+                    'not automatic deprecation or removal.</p><details>'
+                    '<summary>Inspect historical or relocated paths</summary><ul>')
+        for item in history["retention"]["candidates"]:
+            canonical_url = ("https://github.com/Luke883i/cora/blob/" +
+                             history["baseline_commit"] + "/" +
+                             quote(item["canonical_path"], safe="/"))
+            head.append('<li><code>' + _h(item["old_path"]) + '</code> → ' +
+                        '<a href="' + _h(canonical_url) +
+                        '" rel="noopener noreferrer"><code>' +
+                        _h(item["canonical_path"]) + '</code></a> · ' +
+                        _h(item["migration_mode"]) + ' · ' +
+                        _h(item["classification"]) + ' · ' +
+                        _h(item["independent_consumer_readback"]) + '</li>')
+        head.append('</ul></details>')
+        liveness = history.get("module_liveness")
+        if liveness:
+            head.append('<h3>Current software module retention candidates</h3>'
+                        '<p>Committed AST imports identify review candidates only. '
+                        'Dynamic imports, CLI entrypoints, external consumers and '
+                        'runtime behavior are not exhaustively proven. '
+                        'No module can be automatically deleted or deprecated.</p>')
+            head.append('<details><summary>Inspect ' + _h(liveness["module_count"]) +
+                        ' Python module records</summary><ul>')
+            for row in liveness["candidates"]:
+                count = (len(row["source_importers"]) + len(row["test_importers"]) +
+                         len(row["tool_importers"]))
+                head.append('<li><code>' + _h(row["path"]) +
+                            '</code> · <span class="trace-pill">' + _h(row["class"]) +
+                            '</span> · ' + _h(count) + ' static importer(s) · '
+                            'deletion NOT AUTHORIZED</li>')
+            head.append('</ul></details>')
+        head.append('</section>')
     head.append('<section class="panel" id="provenance"><h2>Source and execution provenance</h2><pre>' +
                 _h(json.dumps(receipt["execution_manifest"], ensure_ascii=True, sort_keys=True, indent=2)) +
                 '</pre><p>Original PR36 receipt: <code>' +

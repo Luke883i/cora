@@ -1,0 +1,487 @@
+{
+  "schema": "cora-history-convergence-dod/1",
+  "status": "SOURCE_CANDIDATE_WITH_EXTERNAL_DEBT",
+  "authority": "NONE",
+  "baseline_main": "d214c71ce654c700edaaa418e6de8e7c7bab3738",
+  "baseline_pr37": 37,
+  "source_goal": "G_HISTORY_CONVERGED_SOURCE",
+  "global_goal": "G_PRODUCT_CLOSURE",
+  "semantics": "BACKWARD_DERIVED_AND_NONCOMPENSATORY",
+  "goal": "For every PR and commit preserve exact Git provenance, connect decisions to current software/products/repo, classify live/retained/debt without deletion authority, govern subsequent changes with stable contracts and render source and runtime gaps navigably in one existing comprehensive One-Run atlas.",
+  "historical_contract": "Existing PR01–37 history is a source-bound frozen witness; future PRs extend a new revisioned observation, never silently rewrite its historical identities.",
+  "nonclaims": [
+    "COMMIT_DIFF_METADATA_IS_NOT_INDEPENDENT_CODE_REVIEW",
+    "MISSING_PATH_IS_NOT_DEAD_CODE",
+    "STATIC_IMPORT_GRAPH_IS_NOT_FULL_RUNTIME_REACHABILITY",
+    "NO_AUTO_ARCHIVE_DEPRECATION_OR_DELETE",
+    "HTML_PRESENTATION_IS_NOT_USABILITY_PROOF",
+    "CI_GREEN_IS_NOT_HOST_REQUIRED_CHECKS",
+    "NO_SELF_ATTESTED_PRODUCT_ACCEPTANCE"
+  ],
+  "nodes": [
+    {
+      "id": "S01_PR_CENSUS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "proof": "GIT_BOUND_SOURCE_OR_CI_REQUIRED",
+      "closure": "NOT_ESTABLISHED_BY_CONTRACT_ONLY"
+    },
+    {
+      "id": "S02_COMMIT_CENSUS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "proof": "GIT_BOUND_SOURCE_OR_CI_REQUIRED",
+      "closure": "NOT_ESTABLISHED_BY_CONTRACT_ONLY"
+    },
+    {
+      "id": "S03_FILE_DELTA_PROVENANCE",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "proof": "GIT_BOUND_SOURCE_OR_CI_REQUIRED",
+      "closure": "NOT_ESTABLISHED_BY_CONTRACT_ONLY"
+    },
+    {
+      "id": "S04_NONMERGED_TRUTH",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "proof": "GIT_BOUND_SOURCE_OR_CI_REQUIRED",
+      "closure": "NOT_ESTABLISHED_BY_CONTRACT_ONLY"
+    },
+    {
+      "id": "S05_CURRENT_SOURCE_LINEAGE",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "proof": "GIT_BOUND_SOURCE_OR_CI_REQUIRED",
+      "closure": "NOT_ESTABLISHED_BY_CONTRACT_ONLY"
+    },
+    {
+      "id": "S06_NO_FALSE_DEAD_CODE",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "proof": "GIT_BOUND_SOURCE_OR_CI_REQUIRED",
+      "closure": "NOT_ESTABLISHED_BY_CONTRACT_ONLY"
+    },
+    {
+      "id": "S07_ARCHIVE_MIGRATION_COMPAT",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "proof": "GIT_BOUND_SOURCE_OR_CI_REQUIRED",
+      "closure": "NOT_ESTABLISHED_BY_CONTRACT_ONLY"
+    },
+    {
+      "id": "S08_SINGLE_PRIMARY_ENTRY",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "proof": "GIT_BOUND_SOURCE_OR_CI_REQUIRED",
+      "closure": "NOT_ESTABLISHED_BY_CONTRACT_ONLY"
+    },
+    {
+      "id": "S09_CURRENT_HISTORICAL_DOCS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "proof": "GIT_BOUND_SOURCE_OR_CI_REQUIRED",
+      "closure": "NOT_ESTABLISHED_BY_CONTRACT_ONLY"
+    },
+    {
+      "id": "S10_FEATURE_DELTA_INVARIANTS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "proof": "GIT_BOUND_SOURCE_OR_CI_REQUIRED",
+      "closure": "NOT_ESTABLISHED_BY_CONTRACT_ONLY"
+    },
+    {
+      "id": "S11_CANONICAL_CATALOGS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "proof": "GIT_BOUND_SOURCE_OR_CI_REQUIRED",
+      "closure": "NOT_ESTABLISHED_BY_CONTRACT_ONLY"
+    },
+    {
+      "id": "S12_ATLAS_PR_COMMIT_NAV",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "proof": "GIT_BOUND_SOURCE_OR_CI_REQUIRED",
+      "closure": "NOT_ESTABLISHED_BY_CONTRACT_ONLY"
+    },
+    {
+      "id": "S13_ATLAS_EVIDENCE_REFS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "proof": "GIT_BOUND_SOURCE_OR_CI_REQUIRED",
+      "closure": "NOT_ESTABLISHED_BY_CONTRACT_ONLY"
+    },
+    {
+      "id": "S14_ATLAS_STATUS_NONPROMOTION",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "proof": "GIT_BOUND_SOURCE_OR_CI_REQUIRED",
+      "closure": "NOT_ESTABLISHED_BY_CONTRACT_ONLY"
+    },
+    {
+      "id": "S15_ORIGINAL_GIT_REPLAY",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "proof": "GIT_BOUND_SOURCE_OR_CI_REQUIRED",
+      "closure": "NOT_ESTABLISHED_BY_CONTRACT_ONLY"
+    },
+    {
+      "id": "S16_REAL_AND_FINITE_FALSIFIERS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "proof": "GIT_BOUND_SOURCE_OR_CI_REQUIRED",
+      "closure": "NOT_ESTABLISHED_BY_CONTRACT_ONLY"
+    },
+    {
+      "id": "S17_FINAL_SHA_CI",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "proof": "GIT_BOUND_SOURCE_OR_CI_REQUIRED",
+      "closure": "NOT_ESTABLISHED_BY_CONTRACT_ONLY"
+    },
+    {
+      "id": "S18_RETICULAR_CLOSURE_CHECK",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "proof": "GIT_BOUND_SOURCE_OR_CI_REQUIRED",
+      "closure": "NOT_ESTABLISHED_BY_CONTRACT_ONLY"
+    },
+    {
+      "id": "E01_INDEPENDENT_CODE_REVIEW",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "proof": "INDEPENDENT_OR_HOST_WITNESS_REQUIRED",
+      "closure": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "E02_REAL_TARGET_BENCHMARK",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "proof": "INDEPENDENT_OR_HOST_WITNESS_REQUIRED",
+      "closure": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "E03_RUNTIME_ISOLATION_AND_ATTESTATION",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "proof": "INDEPENDENT_OR_HOST_WITNESS_REQUIRED",
+      "closure": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "E04_NEW_USER_INTERPRETATION",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "proof": "INDEPENDENT_OR_HOST_WITNESS_REQUIRED",
+      "closure": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "E05_HOST_RELEASE_ROLLBACK",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "proof": "INDEPENDENT_OR_HOST_WITNESS_REQUIRED",
+      "closure": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "E06_DELETION_CONSUMER_READBACK",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "proof": "INDEPENDENT_OR_HOST_WITNESS_REQUIRED",
+      "closure": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "G_HISTORY_COVERAGE",
+      "scope": "SOURCE",
+      "depends_on": [
+        "S01_PR_CENSUS",
+        "S02_COMMIT_CENSUS",
+        "S03_FILE_DELTA_PROVENANCE",
+        "S04_NONMERGED_TRUTH",
+        "S05_CURRENT_SOURCE_LINEAGE"
+      ],
+      "proof": "NONCOMPENSATORY_SOURCE_AND",
+      "closure": "NOT_ESTABLISHED_BY_CONTRACT_ONLY"
+    },
+    {
+      "id": "G_RETENTION_HARDENING",
+      "scope": "SOURCE",
+      "depends_on": [
+        "S06_NO_FALSE_DEAD_CODE",
+        "S07_ARCHIVE_MIGRATION_COMPAT"
+      ],
+      "proof": "NONCOMPENSATORY_SOURCE_AND",
+      "closure": "NOT_ESTABLISHED_BY_CONTRACT_ONLY"
+    },
+    {
+      "id": "G_DOCUMENTATION_TRUTH",
+      "scope": "SOURCE",
+      "depends_on": [
+        "S08_SINGLE_PRIMARY_ENTRY",
+        "S09_CURRENT_HISTORICAL_DOCS"
+      ],
+      "proof": "NONCOMPENSATORY_SOURCE_AND",
+      "closure": "NOT_ESTABLISHED_BY_CONTRACT_ONLY"
+    },
+    {
+      "id": "G_FUTURE_CONVERGENCE",
+      "scope": "SOURCE",
+      "depends_on": [
+        "S10_FEATURE_DELTA_INVARIANTS",
+        "S11_CANONICAL_CATALOGS"
+      ],
+      "proof": "NONCOMPENSATORY_SOURCE_AND",
+      "closure": "NOT_ESTABLISHED_BY_CONTRACT_ONLY"
+    },
+    {
+      "id": "G_ATLAS_FORENSICS",
+      "scope": "SOURCE",
+      "depends_on": [
+        "S12_ATLAS_PR_COMMIT_NAV",
+        "S13_ATLAS_EVIDENCE_REFS",
+        "S14_ATLAS_STATUS_NONPROMOTION"
+      ],
+      "proof": "NONCOMPENSATORY_SOURCE_AND",
+      "closure": "NOT_ESTABLISHED_BY_CONTRACT_ONLY"
+    },
+    {
+      "id": "G_FALSIFIABLE_SOURCE",
+      "scope": "SOURCE",
+      "depends_on": [
+        "S15_ORIGINAL_GIT_REPLAY",
+        "S16_REAL_AND_FINITE_FALSIFIERS",
+        "S17_FINAL_SHA_CI",
+        "S18_RETICULAR_CLOSURE_CHECK"
+      ],
+      "proof": "NONCOMPENSATORY_SOURCE_AND",
+      "closure": "NOT_ESTABLISHED_BY_CONTRACT_ONLY"
+    },
+    {
+      "id": "G_HISTORY_CONVERGED_SOURCE",
+      "scope": "SOURCE",
+      "depends_on": [
+        "G_HISTORY_COVERAGE",
+        "G_RETENTION_HARDENING",
+        "G_DOCUMENTATION_TRUTH",
+        "G_FUTURE_CONVERGENCE",
+        "G_ATLAS_FORENSICS",
+        "G_FALSIFIABLE_SOURCE"
+      ],
+      "proof": "NONCOMPENSATORY_SOURCE_AND",
+      "closure": "NOT_ESTABLISHED_BY_CONTRACT_ONLY"
+    },
+    {
+      "id": "G_PRODUCT_CLOSURE",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "G_HISTORY_CONVERGED_SOURCE",
+        "E01_INDEPENDENT_CODE_REVIEW",
+        "E02_REAL_TARGET_BENCHMARK",
+        "E03_RUNTIME_ISOLATION_AND_ATTESTATION",
+        "E04_NEW_USER_INTERPRETATION",
+        "E05_HOST_RELEASE_ROLLBACK",
+        "E06_DELETION_CONSUMER_READBACK"
+      ],
+      "proof": "ALL_MANDATORY_EXTERNAL_AND_SOURCE",
+      "closure": "BLOCKED_EXTERNAL"
+    }
+  ],
+  "controls": {
+    "historical_pr_count": 37,
+    "historical_commit_count": 305,
+    "nonmerged_prs": [
+      34
+    ],
+    "history_file": ".cora/assurance/history/pr01-37-commit-diff-audit.json",
+    "pr37_preserved": true,
+    "execution_boundary": "PR37_SAFE_SOURCE_ONLY_DEFAULT",
+    "activity_statuses": "EVERY_DISCOVERED_ACTOR_EXPLICITLY_ACCOUNTED",
+    "sensitivity": "UNKNOWN_RUNTIME_AND_EXTERNAL_ALWAYS_VISIBLE",
+    "incremental_change": "SOURCE_FILES_CLI_DOCS_DOD_TESTS_CI_EVIDENCE_ATLAS_CHANGED_TOGETHER_OR_DEBT_BLOCKED"
+  },
+  "checklist": [
+    {
+      "id": "C01",
+      "gate": "S01_PR_CENSUS",
+      "evidence_required": "ORIGINAL_GIT_SOURCE_AND_NEGATIVE_WITNESS",
+      "state": "UNVERIFIED"
+    },
+    {
+      "id": "C02",
+      "gate": "S02_COMMIT_CENSUS",
+      "evidence_required": "ORIGINAL_GIT_SOURCE_AND_NEGATIVE_WITNESS",
+      "state": "UNVERIFIED"
+    },
+    {
+      "id": "C03",
+      "gate": "S03_FILE_DELTA_PROVENANCE",
+      "evidence_required": "ORIGINAL_GIT_SOURCE_AND_NEGATIVE_WITNESS",
+      "state": "UNVERIFIED"
+    },
+    {
+      "id": "C04",
+      "gate": "S04_NONMERGED_TRUTH",
+      "evidence_required": "ORIGINAL_GIT_SOURCE_AND_NEGATIVE_WITNESS",
+      "state": "UNVERIFIED"
+    },
+    {
+      "id": "C05",
+      "gate": "S05_CURRENT_SOURCE_LINEAGE",
+      "evidence_required": "ORIGINAL_GIT_SOURCE_AND_NEGATIVE_WITNESS",
+      "state": "UNVERIFIED"
+    },
+    {
+      "id": "C06",
+      "gate": "S06_NO_FALSE_DEAD_CODE",
+      "evidence_required": "ORIGINAL_GIT_SOURCE_AND_NEGATIVE_WITNESS",
+      "state": "UNVERIFIED"
+    },
+    {
+      "id": "C07",
+      "gate": "S07_ARCHIVE_MIGRATION_COMPAT",
+      "evidence_required": "ORIGINAL_GIT_SOURCE_AND_NEGATIVE_WITNESS",
+      "state": "UNVERIFIED"
+    },
+    {
+      "id": "C08",
+      "gate": "S08_SINGLE_PRIMARY_ENTRY",
+      "evidence_required": "ORIGINAL_GIT_SOURCE_AND_NEGATIVE_WITNESS",
+      "state": "UNVERIFIED"
+    },
+    {
+      "id": "C09",
+      "gate": "S09_CURRENT_HISTORICAL_DOCS",
+      "evidence_required": "ORIGINAL_GIT_SOURCE_AND_NEGATIVE_WITNESS",
+      "state": "UNVERIFIED"
+    },
+    {
+      "id": "C10",
+      "gate": "S10_FEATURE_DELTA_INVARIANTS",
+      "evidence_required": "ORIGINAL_GIT_SOURCE_AND_NEGATIVE_WITNESS",
+      "state": "UNVERIFIED"
+    },
+    {
+      "id": "C11",
+      "gate": "S11_CANONICAL_CATALOGS",
+      "evidence_required": "ORIGINAL_GIT_SOURCE_AND_NEGATIVE_WITNESS",
+      "state": "UNVERIFIED"
+    },
+    {
+      "id": "C12",
+      "gate": "S12_ATLAS_PR_COMMIT_NAV",
+      "evidence_required": "ORIGINAL_GIT_SOURCE_AND_NEGATIVE_WITNESS",
+      "state": "UNVERIFIED"
+    },
+    {
+      "id": "C13",
+      "gate": "S13_ATLAS_EVIDENCE_REFS",
+      "evidence_required": "ORIGINAL_GIT_SOURCE_AND_NEGATIVE_WITNESS",
+      "state": "UNVERIFIED"
+    },
+    {
+      "id": "C14",
+      "gate": "S14_ATLAS_STATUS_NONPROMOTION",
+      "evidence_required": "ORIGINAL_GIT_SOURCE_AND_NEGATIVE_WITNESS",
+      "state": "UNVERIFIED"
+    },
+    {
+      "id": "C15",
+      "gate": "S15_ORIGINAL_GIT_REPLAY",
+      "evidence_required": "ORIGINAL_GIT_SOURCE_AND_NEGATIVE_WITNESS",
+      "state": "UNVERIFIED"
+    },
+    {
+      "id": "C16",
+      "gate": "S16_REAL_AND_FINITE_FALSIFIERS",
+      "evidence_required": "ORIGINAL_GIT_SOURCE_AND_NEGATIVE_WITNESS",
+      "state": "UNVERIFIED"
+    },
+    {
+      "id": "C17",
+      "gate": "S17_FINAL_SHA_CI",
+      "evidence_required": "ORIGINAL_GIT_SOURCE_AND_NEGATIVE_WITNESS",
+      "state": "UNVERIFIED"
+    },
+    {
+      "id": "C18",
+      "gate": "S18_RETICULAR_CLOSURE_CHECK",
+      "evidence_required": "ORIGINAL_GIT_SOURCE_AND_NEGATIVE_WITNESS",
+      "state": "UNVERIFIED"
+    },
+    {
+      "id": "X1",
+      "gate": "E01_INDEPENDENT_CODE_REVIEW",
+      "evidence_required": "EXTERNAL_INDEPENDENT_WITNESS",
+      "state": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "X2",
+      "gate": "E02_REAL_TARGET_BENCHMARK",
+      "evidence_required": "EXTERNAL_INDEPENDENT_WITNESS",
+      "state": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "X3",
+      "gate": "E03_RUNTIME_ISOLATION_AND_ATTESTATION",
+      "evidence_required": "EXTERNAL_INDEPENDENT_WITNESS",
+      "state": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "X4",
+      "gate": "E04_NEW_USER_INTERPRETATION",
+      "evidence_required": "EXTERNAL_INDEPENDENT_WITNESS",
+      "state": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "X5",
+      "gate": "E05_HOST_RELEASE_ROLLBACK",
+      "evidence_required": "EXTERNAL_INDEPENDENT_WITNESS",
+      "state": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "X6",
+      "gate": "E06_DELETION_CONSUMER_READBACK",
+      "evidence_required": "EXTERNAL_INDEPENDENT_WITNESS",
+      "state": "BLOCKED_EXTERNAL"
+    }
+  ],
+  "metrics": {
+    "pr_coverage": "37/37_AT_FROZEN_BASE",
+    "commit_delta_coverage": "305/305_WITH_PATHS_AND_STATS",
+    "mismerged_statuses": 0,
+    "duplicate_commits": 0,
+    "unregistered_future_surfaces": 0,
+    "silent_missing_evidence": 0,
+    "unjustified_deleted_components": 0,
+    "unauthorized_promotions": 0,
+    "unattributed_test_events": 0,
+    "unreplayable_source_receipts": 0,
+    "html_unescaped_inputs": 0,
+    "unlinked_required_dod": 0,
+    "reviewed_independent_benchmarks": "EXTERNAL_NOT_ATTESTED",
+    "user_comprehension": "EXTERNAL_NOT_ATTESTED"
+  },
+  "falsification": {
+    "seed": 883,
+    "cases": 10000,
+    "mode": "BOUNDED_SEMANTIC_MODEL_NOT_10000_REAL_COMMITS",
+    "families": [
+      "DROP_PR",
+      "DROP_COMMIT",
+      "DUP_SHA",
+      "FORGE_PR34_MERGE",
+      "FORGE_AUTHORITY",
+      "WRONG_BASE",
+      "WRONG_TREE",
+      "REMOVE_COMMIT_FILE",
+      "INVALID_PATH",
+      "NEGATIVE_STATS",
+      "INVENTORY_GAP",
+      "FORGE_EXTERNAL_PASS"
+    ],
+    "physical_git_negative_tests": "AT_LEAST_ONE_MUTATED_COMMITTED_RECEIPT_AND_ONE_REMOVED_CATALOG_BINDING",
+    "scope": "FINITE_PREDICATES_ONLY"
+  },
+  "acceptance": {
+    "source": "REQUIRES_FINAL_SHA_UNIT_AND_REPLAY_WITH_TRUE_SOURCE_OBLIGATIONS",
+    "product": "REQUIRES_ALL_INDEPENDENT_EXTERNAL_OBLIGATIONS",
+    "no_self_authority": true
+  }
+}
