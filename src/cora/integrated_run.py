@@ -334,7 +334,8 @@ def run_integrated(repo: Path, revision: str = "HEAD", *, process: str = "full",
     bundle = {
         "schema": SCHEMA, "commit": sha, "tree": tree,
         "profile": "SOURCE_COMPREHENSIVE",
-        "authority": "NONE", "release_authorized": False,
+        "authority": "NONE", "authorization": "NONE",
+        "release_authorized": False,
         "source_status": "DEBT_BLOCKED",
         "product_status": "BLOCKED_EXTERNAL",
         "baseline_pr36": base, "registry": registry,
@@ -371,6 +372,7 @@ def verify_integrated(repo: Path, receipt: dict, *, html_page: str | None = None
                       evidence_dir: Path | None = None) -> bool:
     if (not isinstance(receipt, dict) or receipt.get("schema") != SCHEMA
             or receipt.get("authority") != "NONE"
+            or receipt.get("authorization") != "NONE"
             or receipt.get("release_authorized") is not False
             or receipt.get("product_status") != "BLOCKED_EXTERNAL"
             or receipt.get("source_status") != "DEBT_BLOCKED"

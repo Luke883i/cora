@@ -50,6 +50,7 @@ class IntegratedOneRunTests(unittest.TestCase):
         self.assertEqual(report["source_status"], "DEBT_BLOCKED")
         self.assertEqual(report["product_status"], "BLOCKED_EXTERNAL")
         self.assertEqual(report["authority"], "NONE")
+        self.assertEqual(report["authorization"], "NONE")
         self.assertEqual(len(report["dod"]["nodes"]), 55)
         self.assertEqual(len(report["baseline_pr36"]["dod"]["gates"]), 6)
         for row, result in zip(registry["activities"], report["attempts"]):
@@ -98,6 +99,7 @@ class IntegratedOneRunTests(unittest.TestCase):
             lambda x: x["metrics"].update(individually_executed_cli=71),
             lambda x: x["dod"].update(product_goal="PASS"),
             lambda x: x.update(product_status="PASS"),
+            lambda x: x.update(authorization="APPROVED"),
             lambda x: x.update(source_status="PASS"),
             lambda x: x["tests"].update(state="RUN_REPORTED_UNATTESTED"),
             lambda x: x["gaps"].update(issues=[]),

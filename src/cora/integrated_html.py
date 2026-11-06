@@ -66,6 +66,7 @@ def _id(i: int) -> str:
 def render_integrated_html(receipt: dict) -> str:
     """Pure deterministic rendering; verify_integrated validates original Git first."""
     if (receipt.get("schema") != SCHEMA or receipt.get("authority") != "NONE"
+            or receipt.get("authorization") != "NONE"
             or receipt.get("product_status") != "BLOCKED_EXTERNAL"
             or receipt.get("release_authorized") is not False):
         raise ValueError("unqualified or unsafe integrated HTML")
