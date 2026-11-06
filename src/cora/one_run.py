@@ -435,8 +435,11 @@ def render_one_html(receipt: dict) -> str:
     excluded = "".join('<li><code>'+safe(x)+'</code> — NOT_RUN, azione non autorizzata</li>'
                        for x in receipt["excluded_not_run"])
     gates = receipt["dod"]["gates"]
+    # Same canonical order before and after json.dumps(sort_keys=True) replay.
+    gate_order = ("G_EXECUTION", "G_PRESENTATION", "G_SOURCE_REPLAY",
+                  "G_ONE_RUN_SOURCE", "G_GOVERNED_ONE_RUN", "G_ONE_RUN_PRODUCT")
     gate_html = "".join('<div class="gate"><strong>'+safe(name)+'</strong><span class="state">'+
-                        safe(value)+'</span></div>' for name,value in gates.items())
+                        safe(gates[name])+'</span></div>' for name in gate_order if name in gates)
     check_html = "".join('<li><strong>'+safe(c["id"])+'</strong> · '+safe(c["criterion"])+'</li>'
                          for c in receipt["dod"]["checklist"])
     panel = (f'<section id="run-execution"><h2>00 · Esiti realmente osservati</h2>'

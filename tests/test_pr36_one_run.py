@@ -73,6 +73,14 @@ class OneRunAssuranceTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "HTML differs"):
             verify_one(ROOT, report, html_page=page.replace("Esiti realmente osservati", "APPROVED"))
 
+    def test_canonical_json_roundtrip_preserves_html_byte_for_byte(self):
+        source=self.source
+        sorted_json=json.dumps(source,sort_keys=True,ensure_ascii=True)
+        from_json=json.loads(sorted_json)
+        self.assertEqual(render_one_html(source),render_one_html(from_json))
+        self.assertTrue(verify_one(ROOT,from_json,
+                                  html_page=render_one_html(source)))
+
     def test_legacy_process_suite_still_exact_deterministic(self):
         legacy = run_suite(ROOT, self.sha)
         self.assertNotIn("timing", legacy)
