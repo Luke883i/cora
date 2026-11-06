@@ -13,7 +13,7 @@ from unittest.mock import patch
 from cora.cli import main
 from cora.evidence import domain_hash
 from cora.integrated_registry import build_registry, verify_contract
-from cora.integrated_run import run_integrated, verify_integrated, _attempts, _topological
+from cora.integrated_run import run_integrated, verify_integrated, _attempts, _topological, _parse_unittest_log
 from cora.integrated_html import render_integrated_html
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -156,6 +156,16 @@ class IntegratedOneRunTests(unittest.TestCase):
                 damaged.write(b"\nFORGED_PASS")
             with self.assertRaisesRegex(ValueError, "evidence was modified"):
                 verify_integrated(ROOT,output,evidence_dir=evidence)
+
+
+    def test_individual_test_logs_reparse_and_duplicate_refusal(self):
+        raw = b"test_one (test_example.Case.test_one) ... ok\nRan 1 test in 0.001s\nOK\n"
+        events, count, warnings = _parse_unittest_log(raw)
+        self.assertEqual(count,1)
+        self.assertEqual(warnings,[])
+        self.assertEqual(events[0]["activity_id"],"case:tests/test_example.py:Case.test_one")
+        with self.assertRaisesRegex(ValueError,"duplicate"):
+            _parse_unittest_log(raw + raw.split(b"\n")[0] + b"\n")
 
     def test_registry_dependency_cycle_rejected(self):
         malformed = copy.deepcopy(self.report["registry"])

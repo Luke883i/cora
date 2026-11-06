@@ -46,6 +46,39 @@ def _outside_repo(repo: Path, directory: Path) -> Path:
     return target
 
 
+def _parse_unittest_log(log: bytes) -> tuple[list[dict], int | None, list[str]]:
+    """Re-derive test events from locally retained bytes, not receipt declarations."""
+    content = log.decode("utf-8", "replace")
+    # unittest -v: test_method (test_module.Class.test_method) ... ok
+    rx = re.compile(r"^(.+?) \(([^()]+)\) \.\.\. (ok|FAIL|ERROR|skipped .+|expected failure|unexpected success)$")
+    cases = []
+    ids = set()
+    for line in content.splitlines():
+        match = rx.match(line.strip())
+        if match is None:
+            continue
+        dotted = match.group(2).split(".")
+        if len(dotted) < 2:
+            continue
+        module = dotted[0]
+        case_id = "case:tests/" + module + ".py:" + ".".join(dotted[1:])
+        if case_id in ids:
+            raise ValueError("duplicate execution event in verbose unittest log")
+        ids.add(case_id)
+        status = match.group(3)
+        cases.append({"activity_id": case_id,
+                      "state": "FAIL" if status in ("FAIL", "ERROR", "unexpected success")
+                               else "SKIPPED" if status.startswith("skipped")
+                               else "RUN_REPORTED_UNATTESTED",
+                      "outcome": status[:160]})
+    count_match = re.search(r"(?m)^Ran ([0-9]{1,6}) tests?\b", content)
+    reported = int(count_match.group(1)) if count_match else None
+    warnings = []
+    if reported is None or len(cases) != reported:
+        warnings.append("TEST_CASE_COUNT_NOT_RECONCILED")
+    return sorted(cases, key=lambda x: x["activity_id"]), reported, warnings
+
+
 def _test_observation(repo: Path, sha: str, tree: str, *,
                       authorized: Path | None, evidence_dir: Path | None,
                       timeout: int) -> tuple[dict, bytes | None]:
@@ -91,40 +124,13 @@ def _test_observation(repo: Path, sha: str, tree: str, *,
     if len(log) > 4_000_000:
         # Avoid silently discarding evidence while claiming a complete test log.
         raise ValueError("test log exceeds bounded evidence retention; evidence blocked")
-    content = log.decode("utf-8", "replace")
-    # unittest -v: test_method (test_module.Class.test_method) ... ok
-    rx = re.compile(r"^(.+?) \(([^()]+)\) \.\.\. (ok|FAIL|ERROR|skipped .+|expected failure|unexpected success)$")
-    cases = []
-    ids = set()
-    for line in content.splitlines():
-        match = rx.match(line.strip())
-        if match is None:
-            continue
-        dotted = match.group(2).split(".")
-        if len(dotted) < 2:
-            continue
-        module = dotted[0]
-        case_id = "case:tests/" + module + ".py:" + ".".join(dotted[1:])
-        if case_id in ids:
-            raise ValueError("duplicate execution event in verbose unittest log")
-        ids.add(case_id)
-        status = match.group(3)
-        cases.append({"activity_id": case_id,
-                      "state": "FAIL" if status in ("FAIL", "ERROR", "unexpected success")
-                               else "SKIPPED" if status.startswith("skipped")
-                               else "RUN_REPORTED_UNATTESTED",
-                      "outcome": status[:160]})
-    count_match = re.search(r"(?m)^Ran ([0-9]{1,6}) tests?\b", content)
-    reported = int(count_match.group(1)) if count_match else None
-    warnings = []
-    if reported is None or len(cases) != reported:
-        warnings.append("TEST_CASE_COUNT_NOT_RECONCILED")
+    cases, reported, warnings = _parse_unittest_log(log)
     return {
         "state": "RUN_REPORTED_UNATTESTED" if code == 0 else "FAIL",
         "reason": reason, "returncode": code,
         "duration_ms": max(0, int((time.monotonic() - start) * 1000)),
         "log_sha256": hashlib.sha256(log).hexdigest(), "log_bytes": len(log),
-        "reported_tests": reported, "parsed_cases": sorted(cases, key=lambda x: x["activity_id"]),
+        "reported_tests": reported, "parsed_cases": cases,
         "parse_warnings": warnings, "proof_scope": "LOCAL_RUNTIME_OBSERVATION_UNATTESTED",
         "authority": "NONE",
     }, log
@@ -474,6 +480,12 @@ def verify_integrated(repo: Path, receipt: dict, *, html_page: str | None = None
             data = original.read_bytes()
             if hashlib.sha256(data).hexdigest() != file["sha256"] or len(data) != file["bytes"]:
                 raise ValueError("evidence was modified")
+        if test["state"] != "NOT_RUN":
+            raw = (path / "unittest-verbose.log").read_bytes()
+            observed, total, warnings = _parse_unittest_log(raw)
+            if (test["parsed_cases"] != observed or test["reported_tests"] != total
+                    or test["parse_warnings"] != warnings):
+                raise ValueError("individual test events diverge from retained log")
     unsigned = {k: v for k, v in receipt.items() if k != "receipt_digest"}
     if receipt.get("receipt_digest") != domain_hash("CORA:integrated-one-run:2", unsigned):
         raise ValueError("integrated receipt tampered")
