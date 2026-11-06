@@ -6707,6 +6707,7 @@
       "historical_or_relocated": 2,
       "domains": [
         "CI_GOVERNANCE",
+        "CONTRACT",
         "DOCUMENTATION",
         "ENGINE",
         "TEST",
@@ -6743,8 +6744,11 @@
               "previous": null
             }
           ],
-          "semantic_domains": [],
+          "semantic_domains": [
+            "CONTRACT"
+          ],
           "required_witnesses": [
+            "CANONICAL_DOD_EDGE_AND_FALSIFIER",
             "GIT_PARENT_TREE_DIFF_REPLAY"
           ],
           "currently_present_paths": [],
@@ -7344,6 +7348,7 @@
       "historical_or_relocated": 2,
       "domains": [
         "CI_GOVERNANCE",
+        "CONTRACT",
         "DOCUMENTATION",
         "ENGINE",
         "TEST",
@@ -7381,8 +7386,11 @@
               "previous": null
             }
           ],
-          "semantic_domains": [],
+          "semantic_domains": [
+            "CONTRACT"
+          ],
           "required_witnesses": [
+            "CANONICAL_DOD_EDGE_AND_FALSIFIER",
             "GIT_PARENT_TREE_DIFF_REPLAY"
           ],
           "currently_present_paths": [],
@@ -7777,8 +7785,11 @@
               "previous": null
             }
           ],
-          "semantic_domains": [],
+          "semantic_domains": [
+            "CONTRACT"
+          ],
           "required_witnesses": [
+            "CANONICAL_DOD_EDGE_AND_FALSIFIER",
             "GIT_PARENT_TREE_DIFF_REPLAY"
           ],
           "currently_present_paths": [
@@ -8217,6 +8228,7 @@
       "historical_or_relocated": 1,
       "domains": [
         "CI_GOVERNANCE",
+        "CONTRACT",
         "DOCUMENTATION",
         "ENGINE",
         "PRESENTATION",
@@ -8308,8 +8320,11 @@
               "previous": null
             }
           ],
-          "semantic_domains": [],
+          "semantic_domains": [
+            "CONTRACT"
+          ],
           "required_witnesses": [
+            "CANONICAL_DOD_EDGE_AND_FALSIFIER",
             "GIT_PARENT_TREE_DIFF_REPLAY"
           ],
           "currently_present_paths": [],
@@ -9089,6 +9104,7 @@
       "historical_or_relocated": 1,
       "domains": [
         "CI_GOVERNANCE",
+        "CONTRACT",
         "DOCUMENTATION",
         "MIGRATION_OR_ARCHIVE",
         "RELEASE",
@@ -9126,8 +9142,11 @@
               "previous": null
             }
           ],
-          "semantic_domains": [],
+          "semantic_domains": [
+            "CONTRACT"
+          ],
           "required_witnesses": [
+            "CANONICAL_DOD_EDGE_AND_FALSIFIER",
             "GIT_PARENT_TREE_DIFF_REPLAY"
           ],
           "currently_present_paths": [],
@@ -9751,6 +9770,7 @@
       "historical_or_relocated": 1,
       "domains": [
         "CI_GOVERNANCE",
+        "CONTRACT",
         "DOCUMENTATION",
         "TEST",
         "TRUST_BOUNDARY",
@@ -9787,8 +9807,11 @@
               "previous": null
             }
           ],
-          "semantic_domains": [],
+          "semantic_domains": [
+            "CONTRACT"
+          ],
           "required_witnesses": [
+            "CANONICAL_DOD_EDGE_AND_FALSIFIER",
             "GIT_PARENT_TREE_DIFF_REPLAY"
           ],
           "currently_present_paths": [],
@@ -10520,6 +10543,7 @@
       "historical_or_relocated": 1,
       "domains": [
         "CI_GOVERNANCE",
+        "CONTRACT",
         "DOCUMENTATION",
         "ENGINE",
         "MIGRATION_OR_ARCHIVE",
@@ -10595,8 +10619,11 @@
               "previous": null
             }
           ],
-          "semantic_domains": [],
+          "semantic_domains": [
+            "CONTRACT"
+          ],
           "required_witnesses": [
+            "CANONICAL_DOD_EDGE_AND_FALSIFIER",
             "GIT_PARENT_TREE_DIFF_REPLAY"
           ],
           "currently_present_paths": [],
@@ -10877,8 +10904,11 @@
               "previous": null
             }
           ],
-          "semantic_domains": [],
+          "semantic_domains": [
+            "CONTRACT"
+          ],
           "required_witnesses": [
+            "CANONICAL_DOD_EDGE_AND_FALSIFIER",
             "GIT_PARENT_TREE_DIFF_REPLAY"
           ],
           "currently_present_paths": [
@@ -11355,6 +11385,7 @@
       "historical_or_relocated": 3,
       "domains": [
         "CI_GOVERNANCE",
+        "CONTRACT",
         "DOCUMENTATION",
         "PRESENTATION",
         "TEST",
@@ -11706,8 +11737,11 @@
               "previous": null
             }
           ],
-          "semantic_domains": [],
+          "semantic_domains": [
+            "CONTRACT"
+          ],
           "required_witnesses": [
+            "CANONICAL_DOD_EDGE_AND_FALSIFIER",
             "GIT_PARENT_TREE_DIFF_REPLAY"
           ],
           "currently_present_paths": [
@@ -12404,6 +12438,7 @@
       "historical_or_relocated": 3,
       "domains": [
         "CI_GOVERNANCE",
+        "CONTRACT",
         "DOCUMENTATION",
         "ENGINE",
         "PRESENTATION",
@@ -12810,8 +12845,11 @@
               "previous": null
             }
           ],
-          "semantic_domains": [],
+          "semantic_domains": [
+            "CONTRACT"
+          ],
           "required_witnesses": [
+            "CANONICAL_DOD_EDGE_AND_FALSIFIER",
             "GIT_PARENT_TREE_DIFF_REPLAY"
           ],
           "currently_present_paths": [
@@ -15133,8 +15171,11 @@
               "previous": null
             }
           ],
-          "semantic_domains": [],
+          "semantic_domains": [
+            "CONTRACT"
+          ],
           "required_witnesses": [
+            "CANONICAL_DOD_EDGE_AND_FALSIFIER",
             "GIT_PARENT_TREE_DIFF_REPLAY"
           ],
           "currently_present_paths": [
@@ -17260,8 +17301,11 @@
               "previous": null
             }
           ],
-          "semantic_domains": [],
+          "semantic_domains": [
+            "CONTRACT"
+          ],
           "required_witnesses": [
+            "CANONICAL_DOD_EDGE_AND_FALSIFIER",
             "GIT_PARENT_TREE_DIFF_REPLAY"
           ],
           "currently_present_paths": [
