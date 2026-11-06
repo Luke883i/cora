@@ -40,6 +40,9 @@ class HistoryReticularTests(unittest.TestCase):
         self.assertTrue(verify_history_document(self.data, _files(ROOT, BASE), git_headers=self.headers))
         self.assertEqual(self.data["pr_count"], 37)
         self.assertEqual(self.data["unit_count"], 305)
+        # PR24 scans text consumers under a strict per-file budget; preserve it.
+        # The 305-unit machine record must stay bounded without relaxing that guard.
+        self.assertLessEqual((ROOT / HISTORY).stat().st_size, 512 * 1024)
         self.assertEqual(self.data["closed_unmerged_prs"], [34])
         self.assertEqual(self.data["merged_prs"], 36)
         self.assertEqual(sum(p["commit_count"] for p in self.data["prs"]), 305)
