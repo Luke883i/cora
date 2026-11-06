@@ -103,6 +103,8 @@ def render_integrated_html(receipt: dict) -> str:
              ("provenance","Provenance")]
     if "genealogy" in receipt:
         links.insert(3, ("history", "PR / commit genealogy"))
+    if "qualification" in receipt:
+        links.insert(4, ("qualification", "Independent qualification"))
     head = [
         "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\">",
         "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">",
@@ -333,6 +335,38 @@ def render_integrated_html(receipt: dict) -> str:
                             'deletion NOT AUTHORIZED</li>')
             head.append('</ul></details>')
         head.append('</section>')
+    qualification = receipt.get("qualification")
+    if qualification:
+        if (qualification.get("product_status") != "BLOCKED_EXTERNAL"
+                or qualification.get("authorization") != "NONE"
+                or qualification.get("external_gates_unclosed") != 4):
+            raise ValueError("unsupported independent product claim in atlas")
+        head.append('<section class="panel" id="qualification">'
+                    '<h2>Independent qualification — four mandatory gates</h2>'
+                    '<p class="note-trust"><strong>BLOCKED_EXTERNAL.</strong> '
+                    'Source witness paths and synthetic Git fixtures do not attest '
+                    'maintained-target behavior, real user comprehension, runtime '
+                    'containment or host-enforced release controls.</p>'
+                    '<div class="tiles">')
+        for gate in qualification["gates"]:
+            head.append('<article class="tile"><h3>' + _h(gate["family"]) +
+                        '</h3><p class="status BLOCKED">' + _h(gate["state"]) +
+                        '</p><p>' + _h(gate["source_observation"]) +
+                        '</p><p><strong>External obligations:</strong> ' +
+                        _h(", ".join(gate["external_obligations"])) +
+                        '</p><p><strong>Current evidence:</strong> ' +
+                        _h(gate["independent_evidence"]) +
+                        '</p><details><summary>Source witnesses and next action</summary>'
+                        '<p>Sources: <code>' +
+                        _h(", ".join(gate["source_witness_paths"]) or "NONE") +
+                        '</code></p><p>Missing: <code>' +
+                        _h(", ".join(gate["missing_source_paths"]) or "NONE") +
+                        '</code></p><p>' + _h(gate["next_action"]) +
+                        '</p></details></article>')
+        head.append('</div><p>External acceptance requires separately '
+                    'operated behavioral tests, observed usability sessions, '
+                    'host isolation attestation and host-authorized review. '
+                    'Nothing in this Atlas grants permission to release.</p></section>')
     head.append('<section class="panel" id="provenance"><h2>Source and execution provenance</h2><pre>' +
                 _h(json.dumps(receipt["execution_manifest"], ensure_ascii=True, sort_keys=True, indent=2)) +
                 '</pre><p>Original PR36 receipt: <code>' +
