@@ -129,6 +129,30 @@ class OneRunAssuranceTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "bounded"):
             run_one(ROOT, self.sha, test_timeout=1)
 
+    def test_opt_in_test_subprocess_never_receives_github_credentials(self):
+        import os
+        from cora.one_run import _self_tests
+        prior=os.environ.get("GITHUB_TOKEN")
+        os.environ["GITHUB_TOKEN"]="secret-not-for-test-child"
+        try:
+            seen=[]
+            def fake(*args,**kwargs):
+                seen.append(kwargs)
+                return subprocess.CompletedProcess(args[0],0,b"",
+                        b"Ran 415 tests in 2.0s\\n\\nOK\\n")
+            with patch("cora.one_run.subprocess.run",side_effect=fake):
+                outcome=_self_tests(ROOT,enabled=True,timeout=240)
+            self.assertEqual(len(seen),1)
+            self.assertNotIn("GITHUB_TOKEN",seen[0]["env"])
+            self.assertEqual(outcome["state"],"RUN_REPORTED_UNATTESTED")
+            self.assertEqual(outcome["test_count"],415)
+            self.assertNotIn("secret-not-for-test-child",json.dumps(outcome))
+        finally:
+            if prior is None:
+                os.environ.pop("GITHUB_TOKEN",None)
+            else:
+                os.environ["GITHUB_TOKEN"]=prior
+
     def test_offline_html_escapes_untrusted_run_reason(self):
         poisoned = copy.deepcopy(self.source)
         poisoned["activities"][0]["reason"] = '<img src=x onerror="alert(1)">'

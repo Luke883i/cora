@@ -11,6 +11,7 @@ import copy
 import hashlib
 import html
 import json
+import os
 import re
 import subprocess
 import sys
@@ -237,17 +238,26 @@ def _self_tests(repo: Path, *, enabled: bool, timeout: int) -> dict:
     if not enabled:
         return record
     start = time.monotonic()
+    # Never pass CI API/identity tokens to opt-in executing test code.
+    protected = {"GITHUB_TOKEN", "GH_TOKEN", "ACTIONS_RUNTIME_TOKEN",
+                 "ACTIONS_ID_TOKEN_REQUEST_TOKEN", "GITHUB_APP_TOKEN"}
+    child_env = {k: v for k, v in os.environ.items()
+                 if k not in protected and not k.startswith("ACTIONS_ID_TOKEN_REQUEST_")}
     try:
         proc = subprocess.run(
             [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-q"],
-            cwd=repo, capture_output=True, timeout=timeout, check=False)
+            cwd=repo, capture_output=True, timeout=timeout, check=False,
+            env=child_env)
         out = (proc.stdout + b"\n" + proc.stderr)[-200_000:]
         code = proc.returncode
         reason = "EXIT_ZERO_NOT_INDEPENDENTLY_ATTESTED" if code == 0 else "TEST_EXIT_NONZERO"
     except subprocess.TimeoutExpired as exc:
         out = ((exc.stdout or b"") + b"\n" + (exc.stderr or b""))[-200_000:]
         code, reason = 124, "TEST_TIMEOUT"
+    count_match = re.search(rb"(?m)^Ran ([0-9]{1,6}) tests?\b", out)
+    count = int(count_match.group(1)) if count_match else None
     record.update({
+        "test_count": count,
         "state": "RUN_REPORTED_UNATTESTED" if code == 0 else "FAIL",
         "reason": reason, "returncode": code,
         "elapsed_ms": max(0, int((time.monotonic()-start)*1000)),
@@ -379,7 +389,10 @@ def verify_one(repo: Path, receipt: dict, *, html_page: str | None = None) -> bo
                 type(test.get("elapsed_ms")) is not int or test["elapsed_ms"] < 0
                 or not isinstance(test.get("log_sha256"), str)
                 or len(test["log_sha256"]) != 64
-                or (test["state"] == "FAIL") == (test["returncode"] == 0)):
+                or (test["state"] == "FAIL") == (test["returncode"] == 0)
+                or (test.get("test_count") is not None and
+                    (type(test["test_count"]) is not int or
+                     not 0 <= test["test_count"] <= 100000))):
             raise ValueError("invalid optional-test exit claim")
     if receipt.get("profile") != (
             "SAFE_SOURCE" if test["state"] == "NOT_RUN" else "SAFE_SOURCE_PLUS_OPT_IN_TESTS"):
@@ -453,7 +466,8 @@ def render_one_html(receipt: dict) -> str:
     test_row = ('<div class="panel"><h3>Suite unittest locale (opt-in)</h3><p>Stato: <strong>' +
                 safe(test["state"]) + '</strong> · ' + safe(test["reason"]) +
                 '</p><p class="small">Exit code dichiarato: ' + safe(test["returncode"]) +
-                ' · Durata: ' + safe(test["elapsed_ms"]) + ' ms · Log SHA-256: ' +
+                ' · Durata: ' + safe(test["elapsed_ms"]) + ' ms · Test riportati: ' +
+                safe(test["test_count"]) + ' · Log SHA-256: ' +
                 safe(test["log_sha256"]) + '</p><p class="muted small">Un exit zero non certifica '
                 'test di terzi né una release.</p></div>')
     excluded = "".join('<li><code>'+safe(x)+'</code> — NOT_RUN, azione non autorizzata</li>'
