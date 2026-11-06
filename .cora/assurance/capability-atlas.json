@@ -604,6 +604,9 @@
       "src/cora/guard_runtime.py",
       "src/cora/holistic.py",
       "src/cora/host_release.py",
+      "src/cora/integrated_html.py",
+      "src/cora/integrated_registry.py",
+      "src/cora/integrated_run.py",
       "src/cora/integrated_service.py",
       "src/cora/maturity_atlas.py",
       "src/cora/method_synthesis.py",
@@ -649,6 +652,7 @@
       ".github/workflows/ci-engineering-debt.yml",
       ".github/workflows/ci-gold-assurance.yml",
       ".github/workflows/ci-holistic-archaeology.yml",
+      ".github/workflows/ci-one-run-integrated.yml",
       ".github/workflows/ci-release-candidate.yml",
       ".github/workflows/ci-release-readiness.yml",
       ".github/workflows/ci-selection.yml",
@@ -749,6 +753,7 @@
       "tests/test_pr32_host_release.py",
       "tests/test_pr33_ci_repro.py",
       "tests/test_pr36_one_run.py",
+      "tests/test_pr37_integrated_one_run.py",
       "tests/test_selection.py"
     ],
     "internal_dod": [
@@ -759,6 +764,7 @@
       ".cora/contracts/dod/five-synergies-dod.json",
       ".cora/contracts/dod/gold-assurance.json",
       ".cora/contracts/dod/integrated-dod.json",
+      ".cora/contracts/dod/integrated-one-run-dod.json",
       ".cora/contracts/dod/maturity-dod.json",
       ".cora/contracts/dod/method-synthesis-dod.json",
       ".cora/contracts/dod/one-run-dod.json",

@@ -1,6 +1,6 @@
 {
   "schema": "cora-integrated-one-run-dod/2",
-  "status": "PROPOSED_UNIMPLEMENTED_NOT_ATTESTED",
+  "status": "SOURCE_CANDIDATE_WITH_OPEN_DOD_GATES",
   "authority": "NONE",
   "title": "CORA One-Run Assurance: universal activity governance and forensic atlas",
   "abstract_goal": "From one existing process-run command, discover every available CORA activity, plan and govern execution according to independent authorization, collect provenance-rich evidence and expose all results and omissions through one navigable offline forensic atlas.",
@@ -850,5 +850,5 @@
     "Not host permission to modify, merge or publish",
     "Not proof that no unmodelled activity exists outside independently surveyed boundaries"
   ],
-  "deployment_note": "Proposal for PR37 and later acceptance gates; not committed to GitHub and not an executed proof."
+  "deployment_note": "PR37 exact-Git source dossier is review-only; full SOURCE reticulum remains DEBT_BLOCKED and all independent product gates are BLOCKED_EXTERNAL. No publication or approval is inferred."
 }
