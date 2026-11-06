@@ -1,0 +1,169 @@
+name: CI | CORA integrated One-Run source dossier PR37
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  integrated-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.13']
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Exact original candidate HEAD
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - name: Install CORA source candidate
+        run: python -m pip install -e .
+      - name: PR37 original-Git, 10k DoD mutants, physical commit, authority and HTML adversaries
+        run: python -m unittest discover -s tests -p 'test_pr37_*.py' -v
+      - name: Reconcile repository, artifact role, capability and document inventories
+        run: |
+          python tools/verify_repository_contract.py --repo .
+          python tools/verify_artifact_roles.py --repo .
+          python tools/verify_capability_atlas.py --repo .
+          python tools/verify_documentation.py --repo .
+      - name: Build comprehensive forensic dossier and repeat original PR36 100k finite model
+        run: |
+          mkdir -p /tmp/cora-pr37
+          cora process-run . --revision HEAD --process full --one-run --profile comprehensive \
+            --model-stress-cases 100000 --output /tmp/cora-pr37/run.json \
+            --atlas-json /tmp/cora-pr37/machine.json \
+            --atlas-html /tmp/cora-pr37/index.html \
+            --evidence-dir /tmp/cora-pr37/evidence
+          cora verify-process /tmp/cora-pr37/run.json --repo . --one-run \
+            --atlas-json /tmp/cora-pr37/machine.json --atlas-html /tmp/cora-pr37/index.html \
+            --evidence-dir /tmp/cora-pr37/evidence
+          python - <<'PY'
+          import json
+          x=json.load(open('/tmp/cora-pr37/run.json'))
+          assert x['registry']['declared_commands'] == 71
+          assert x['metrics']['activity_accounted'] == x['metrics']['registered_total']
+          assert x['metrics']['individually_executed_cli'] == 0
+          assert x['baseline_pr36']['model_stress']['cases'] == 100000
+          assert x['baseline_pr36']['model_stress']['oracle_disagreements'] == 0
+          assert x['baseline_pr36']['model_stress']['unauthorized_promotions'] == 0
+          assert x['dod']['source_goal'] == 'DEBT_BLOCKED'
+          assert x['product_status'] == 'BLOCKED_EXTERNAL'
+          assert x['authorization'] == 'NONE'
+          PY
+      - name: Preserve local source evidence without claiming independent attestation
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cora-pr37-source-only-python-${{ matrix.python-version }}
+          path: /tmp/cora-pr37/
+          if-no-files-found: warn
+          retention-days: 14
+
+  diagnose-comprehensive:
+    name: Diagnose comprehensive one-run source output
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    outputs:
+      exit_code: ${{ steps.assess.outputs.exit_code }}
+      headline: ${{ steps.assess.outputs.headline }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -e .
+      - id: assess
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          if test "$(git rev-parse HEAD)" != "$EXPECTED_SHA"; then
+            echo 'headline=wrong-checkout' >> "$GITHUB_OUTPUT"
+            echo 'exit_code=3' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          mkdir -p /tmp/cora-pr37-diagnostic
+          set +e
+          cora process-run . --revision HEAD --process full --one-run --profile comprehensive \
+            --model-stress-cases 100000 --output /tmp/cora-pr37-diagnostic/run.json \
+            --atlas-json /tmp/cora-pr37-diagnostic/machine.json \
+            --atlas-html /tmp/cora-pr37-diagnostic/index.html \
+            --evidence-dir /tmp/cora-pr37-diagnostic/evidence \
+              > /tmp/cora-pr37-diagnostic/stdout.txt 2> /tmp/cora-pr37-diagnostic/stderr.txt
+          status=$?
+          if test "$status" -eq 0; then
+            cora verify-process /tmp/cora-pr37-diagnostic/run.json --repo . --one-run \
+              --atlas-json /tmp/cora-pr37-diagnostic/machine.json \
+              --atlas-html /tmp/cora-pr37-diagnostic/index.html \
+              --evidence-dir /tmp/cora-pr37-diagnostic/evidence \
+              > /tmp/cora-pr37-diagnostic/verify-out.txt 2> /tmp/cora-pr37-diagnostic/verify-error.txt
+            status=$?
+          fi
+          if test "$status" -eq 0; then
+            python - <<'PY' > /tmp/cora-pr37-diagnostic/assert-out.txt 2> /tmp/cora-pr37-diagnostic/assert-error.txt
+          import json, sys
+          a=json.load(open('/tmp/cora-pr37-diagnostic/run.json'))
+          checks={
+            'declared_71':a['registry']['declared_commands']==71,
+            'activities_accounted':a['metrics']['activity_accounted']==a['metrics']['registered_total'],
+            'zero_individual_cli':a['metrics']['individually_executed_cli']==0,
+            '100k_cases':a['baseline_pr36']['model_stress']['cases']==100000,
+            'zero_oracle_disagreements':a['baseline_pr36']['model_stress']['oracle_disagreements']==0,
+            'zero_unsafe_promotions':a['baseline_pr36']['model_stress']['unauthorized_promotions']==0,
+            'source_debt_visible':a['dod']['source_goal']=='DEBT_BLOCKED',
+            'product_externally_blocked':a['product_status']=='BLOCKED_EXTERNAL',
+            'authority_none':a['authorization']=='NONE'
+          }
+          failures=[k for k,passed in checks.items() if not passed]
+          if failures:
+              print('ASSERT_MISMATCH:' + ','.join(failures))
+              sys.exit(4)
+          print('ASSERTIONS_PASS')
+          PY
+            status=$?
+          fi
+          set -e
+          if test "$status" -eq 0; then
+            headline='complete-source-run-and-replay'
+          else
+            headline=$(cat /tmp/cora-pr37-diagnostic/stderr.txt /tmp/cora-pr37-diagnostic/verify-error.txt /tmp/cora-pr37-diagnostic/assert-out.txt /tmp/cora-pr37-diagnostic/assert-error.txt 2>/dev/null |
+              grep -E '(CORA error:|Error:|AssertionError:|Traceback|ASSERT_MISMATCH:)' | tail -n 1 |
+              tr -cd '[:print:]' | cut -c 1-145 || true)
+            if test -z "$headline" && test -f /tmp/cora-pr37-diagnostic/run.json; then
+              headline=$(python -c 'import json; x=json.load(open("/tmp/cora-pr37-diagnostic/run.json")); print("baseline="+x["baseline_pr36"]["source_status"]+";process="+x["baseline_pr36"]["source_process"]["status"]+";model="+x["baseline_pr36"]["model_stress"]["status"])' 2>/dev/null || true)
+            fi
+            if test -z "$headline"; then headline='unclassified-exit'; fi
+          fi
+          echo "headline=$headline" >> "$GITHUB_OUTPUT"
+          echo "exit_code=$status" >> "$GITHUB_OUTPUT"
+          echo "::notice::DIAG status=$status cause=$headline"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: cora-pr37-debug-exact-head
+          path: /tmp/cora-pr37-diagnostic/
+          if-no-files-found: warn
+          retention-days: 7
+
+  diagnose-visible:
+    needs: [diagnose-comprehensive]
+    name: "Diagnostic comprehensive exit ${{ needs.diagnose-comprehensive.outputs.exit_code }} - ${{ needs.diagnose-comprehensive.outputs.headline }}"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Preserve failure as failure
+        env:
+          STATUS: ${{ needs.diagnose-comprehensive.outputs.exit_code }}
+        run: test "$STATUS" -eq 0

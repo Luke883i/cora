@@ -992,6 +992,38 @@
         "TEST"
       ],
       "rationale": "One-run original-Git source and DoD mutants, anti-tamper HTML/JSON, real process and deterministic 32-family falsifiers."
+    },
+    {
+      "pattern": ".cora/contracts/dod/integrated-one-run-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "PR37 reticular integrated one-run source proposal; external acceptance remains blocked."
+    },
+    {
+      "pattern": "src/cora/integrated_registry.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "PR37 Git-bound activity or evidence/view contract implementation; not independent runtime attestation."
+    },
+    {
+      "pattern": "src/cora/integrated_run.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "PR37 Git-bound activity or evidence/view contract implementation; not independent runtime attestation."
+    },
+    {
+      "pattern": "src/cora/integrated_html.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "PR37 Git-bound activity or evidence/view contract implementation; not independent runtime attestation."
     }
   ]
 }

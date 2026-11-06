@@ -45,7 +45,19 @@ class CapabilityAtlasTests(unittest.TestCase):
         self.assertEqual(r["family_count"], 8)
         self.assertGreaterEqual(r["surfaces"]["modules"], 48)
         self.assertEqual(r["surfaces"]["operational_tools"], 15)
-        self.assertEqual(r["surfaces"]["github_workflows"], 12)
+        # The PR26 baseline had twelve workflows; later valid additions remain
+        # mandatory inventory, not regressions or silently ignored consumers.
+        sha = g(ROOT, "rev-parse", "HEAD")
+        current = [p for p in g(ROOT, "ls-tree", "-r", "--name-only", sha,
+                               "--", ".github/workflows").splitlines()
+                   if p.endswith((".yml", ".yaml"))]
+        baseline = [p for p in g(ROOT, "ls-tree", "-r", "--name-only",
+                                "cfca7f5e6ab777d4aacf2c0989812925eb31b459",
+                                "--", ".github/workflows").splitlines()
+                    if p.endswith((".yml", ".yaml"))]
+        self.assertEqual(len(baseline), 12)
+        self.assertTrue(set(baseline).issubset(set(current)))
+        self.assertEqual(r["surfaces"]["github_workflows"], len(current))
         self.assertEqual(r["surfaces"]["contracts"], 2)
         self.assertGreaterEqual(r["surfaces"]["internal_dod"], 9)
         self.assertEqual(r["surfaces"]["internal_profiles"], 2)

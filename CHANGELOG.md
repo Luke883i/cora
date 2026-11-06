@@ -1,5 +1,9 @@
 # Changelog — CORA
 
+## Experimental integrated activity dossier — PR37 source candidate (not independently accepted)
+
+The existing `process-run --one-run` gains an opt-in `--profile comprehensive` source dossier: Git-pinned command, test, method and workflow registry; non-executed activity accounting; typed test observation consent; evidence hashes and source replay; search-and-drilldown HTML. PR36 source executor and its 27-node DoD stay preserved. The new 55-node reticulum remains debt-blocked for incomplete source controls and all external acceptance. No GitHub action, arbitrary test, AI call, write or release is performed by default.
+
 ## Candidate source refactor — root and historical archive (PR draft)
 
 The thematic migration now leaves **11 files in root versus 25 at baseline**, of which only **two are CORA JSONs**: `cora.ontology.json` and `cora.artifact-roles.json`, retained for adoption-facing compatibility. Nine internal DoDs, two profiles and two assurance registers reside under `.cora/contracts/dod/`, `.cora/contracts/profiles/` and `.cora/assurance/`; a committed [path index](.cora/contracts/index.json) resolves all 15 logical contracts. Ten internal contract DoDs/profiles preserve exact Git blobs (including the two first moved earlier); three inventory/evidence/profile JSONs were rewritten solely for bounded canonical path and inventory changes, tested against original Git. Independent external consumer compatibility and real runtime behavior remain unobserved.

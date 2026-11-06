@@ -18,7 +18,9 @@ The [README](../README.md) is the **one public-facing macro-map**: product promi
 - **Running integrated source-to-document convergence:** [Convergent assurance service](CONVERGENT_ASSURANCE.md) → [typed lattice](../.cora/contracts/profiles/type-assurance-profile.json) → [canonical CLI](CLI_REFERENCE.md). Original software owners remain responsible; model-supplied hypotheses are untrusted.
 - **Auditing code tenuta by object type:** [Typed assurance crosswalk](../.cora/contracts/profiles/type-assurance-profile.json) → [bounded method and R3 DoD](CONVERGENT_ASSURANCE.md) → [Git-bound verifier](../tools/verify_type_assurance.py). This is a source-candidate analysis, not an ISO certificate or product-ready claim.
 
-**Contract paths:** the only root-facing JSON contracts are `cora.ontology.json` and `cora.artifact-roles.json`. Find the thirteen internal DoDs, two profiles and two assurance records using the [contract-path index](../.cora/contracts/index.json). Git-baselined path rewrites are source-scoped: they do not attest third-party runtime compatibility or conformance.
+**Integrated source dossier:** the [PR37 v2 contract](../.cora/contracts/dod/integrated-one-run-dod.json) composes the PR36 source gates with a Git-pinned activity census, typed plans, local evidence and an offline forensic atlas. Product acceptance remains external and unverified.
+
+**Contract paths:** the only root-facing JSON contracts are `cora.ontology.json` and `cora.artifact-roles.json`. Find the fourteen internal DoDs, two profiles and two assurance records using the [contract-path index](../.cora/contracts/index.json). Git-baselined path rewrites are source-scoped: they do not attest third-party runtime compatibility or conformance.
 
 **Archive invariant:** `docs/archive/` contains immutable historical Git blobs; [the relocation map](../.cora/layout-migration.json) records original-to-current paths and protected exceptions. Historical text is not rewritten, not product authority and not a safe-deletion signal. Read current procedures above before relying on old decisions.
 

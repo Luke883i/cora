@@ -45,7 +45,13 @@ class MethodSynthesisTests(unittest.TestCase):
         self.assertEqual(result['reference_count'],9)
         self.assertEqual(result['procedure_count'],14)
         self.assertEqual(len(result['method_reference_edges']),28)
-        self.assertEqual(result['workflow_count'],12)
+        # Workflow census is bound to the original commit, not PR25's historical 12.
+        # The independent Git tree count detects both additions and omissions.
+        discovered = [p for p in git(ROOT, 'ls-tree', '-r', '--name-only',
+                                    self.source, '--', '.github/workflows').splitlines()
+                      if p.endswith(('.yml', '.yaml'))]
+        self.assertGreaterEqual(len(discovered), 12)
+        self.assertEqual(result['workflow_count'], len(discovered))
         self.assertEqual(result['authorization'],'NONE')
         self.assertEqual(result['source_model'],'BLOCKED_UNOBSERVED')
         self.assertEqual(result['governed_model'],'BLOCKED_EXTERNAL')
