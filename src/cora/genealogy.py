@@ -260,11 +260,34 @@ def _delta(repo: Path, sha: str) -> dict:
             required.update(("TEST_ORACLE_PROVENANCE_AND_REPLAY",))
         if path in ("src/cora/integrated_html.py", "src/cora/integrated_run.py"):
             required.update(("HTML_JSON_REPLAY_AND_ACCESSIBILITY",))
+    # Future changes must appear in the *current* exact-Git catalogs,
+    # without creating a second source of truth or a fixed 71/13 gate.
+    atlas = json.loads(_source(repo, sha, ".cora/assurance/capability-atlas.json"))
+    routes = json.loads(_source(repo, sha, ".cora/contracts/index.json"))
+    catalog = atlas.get("repository_surfaces", {})
+    registered_dods = {x["canonical"] for x in routes.get("bindings", [])
+                       if x.get("scope") == "INTERNAL_DOD"}
+    violations = []
+    current_paths = _files(repo, sha)
+    for path in paths:
+        if path not in current_paths:
+            continue  # Deletions demand independent consumers, not catalog membership.
+        kind = ("modules" if re.fullmatch(r"src/cora/[^/]+\.py", path)
+                else "test_modules" if re.fullmatch(r"tests/test_[^/]+\.py", path)
+                else "github_workflows" if re.fullmatch(r"\.github/workflows/[^/]+\.ya?ml", path)
+                else "internal_dod" if re.fullmatch(r"\.cora/contracts/dod/[^/]+\.json", path)
+                else None)
+        if kind and path not in catalog.get(kind, []):
+            violations.append({"path": path, "code": "SURFACE_NOT_IN_CANONICAL_ATLAS"})
+        if kind == "internal_dod" and path not in registered_dods:
+            violations.append({"path": path, "code": "DOD_NOT_IN_CANONICAL_ROUTING"})
     return {
         "status": "SOURCE_CHANGED_NEW_FEATURES_REQUIRE_SEPARATE_WITNESSES"
                   if paths else "NO_GIT_DELTA_FROM_HISTORY_BASE",
         "affected_paths": paths,
         "required_witnesses": sorted(required),
+        "catalog_violations": violations,
+        "catalog_status": "DEBT_BLOCKED_UNREGISTERED" if violations else "SOURCE_CATALOG_COVERED_NOT_BEHAVIORAL_PROOF",
         "source_conclusion": "DEBT_BLOCKED_UNTIL_INDEPENDENT_REVIEW",
         "external": "BLOCKED_EXTERNAL",
     }
