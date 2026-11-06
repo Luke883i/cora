@@ -758,6 +758,7 @@
       ".cora/contracts/dod/integrated-dod.json",
       ".cora/contracts/dod/maturity-dod.json",
       ".cora/contracts/dod/method-synthesis-dod.json",
+      ".cora/contracts/dod/one-run-dod.json",
       ".cora/contracts/dod/postmerge-release-dod.json",
       ".cora/contracts/dod/postmerge-repro-dod.json",
       ".cora/contracts/dod/workflow-dod.json"

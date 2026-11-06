@@ -959,6 +959,14 @@
         "TEST"
       ],
       "rationale": "Original Git DoD edge mutants, token isolation and sample-metric anti-masking regressions."
+    },
+    {
+      "pattern": ".cora/contracts/dod/one-run-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Noncompensatory 27-node one-run execution/presentation/replay versus external product gate; not approval."
     }
   ]
 }

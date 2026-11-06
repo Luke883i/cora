@@ -74,6 +74,11 @@
       "scope": "INTERNAL_DOD"
     },
     {
+      "logical": "cora.one-run-dod.json",
+      "canonical": ".cora/contracts/dod/one-run-dod.json",
+      "scope": "INTERNAL_DOD"
+    },
+    {
       "logical": "cora.ontology.json",
       "canonical": "cora.ontology.json",
       "scope": "PUBLIC_STABLE"
