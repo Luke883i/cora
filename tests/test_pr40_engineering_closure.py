@@ -98,6 +98,14 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "chronology drift"):
                 ekc.analyze(clone, "HEAD")
 
+    def test_declared_external_proof_is_not_self_signed_source(self):
+        self.assertEqual(
+            next(n for n in self.doc["nodes"] if n["id"] == "G_EXTERNAL_EKC")["proof"],
+            "INDEPENDENT_OPERATOR_REQUIRED")
+        self.assertEqual(
+            next(n for n in self.doc["nodes"] if n["id"] == "G_ENGINEERING_KNOWLEDGE")["proof"],
+            "INDEPENDENT_OPERATOR_REQUIRED")
+
     def test_source_only_dod_never_authenticates_external_leaf(self):
         by = {n["id"]: n for n in self.doc["nodes"]}
         self.assertEqual(by["G_ENGINEERING_KNOWLEDGE"]["scope"], "EXTERNAL")

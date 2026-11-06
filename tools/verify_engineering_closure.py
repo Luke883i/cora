@@ -103,8 +103,12 @@ def contract_at(repo: Path, sha: str) -> dict:
         expected_scope = ("EXTERNAL" if ident in EXTERNAL or ident in
                           ("G_EXTERNAL_EKC", "G_ENGINEERING_KNOWLEDGE")
                           else "SOURCE")
+        required_proof = ("INDEPENDENT_OPERATOR_REQUIRED" if expected_scope == "EXTERNAL"
+                          else "EXACT_GIT_AND_EXECUTION_REQUIRED")
         if (node.get("scope") != expected_scope
                 or node.get("depends_on") != EDGES.get(ident, [])
+                or node.get("proof") != required_proof
+                or (ident in EXTERNAL and node.get("witness_paths"))
                 or node.get("status") != "NOT_ESTABLISHED_BY_DECLARATION"):
             raise ValueError("DoD mandatory scope/edge or assertion drift")
     metrics = doc.get("metrics", {})
@@ -120,8 +124,23 @@ def contract_at(repo: Path, sha: str) -> dict:
             or metrics.get("max_mismatches") != 0
             or metrics.get("max_unsafe_promotions") != 0
             or metrics.get("real_source_mutations_in_model") != 0
-            or metrics.get("exact_final_head_required") is not True):
+            or metrics.get("exact_final_head_required") is not True
+            or metrics.get("required_python") != ["3.11", "3.13"]):
         raise ValueError("knowledge semantic campaign thresholds drift")
+    mandatory_nonclaims = {
+        "FINITE_CASES_ARE_NOT_TEN_MILLION_GIT_MUTATIONS",
+        "GIT_REPLAY_IS_NOT_REAL_TARGET_BEHAVIOR",
+        "STATIC_AST_IS_NOT_DYNAMIC_RUNTIME_COVERAGE",
+        "CI_GREEN_IS_NOT_HOST_ENFORCEMENT",
+        "SOURCE_CANDIDATE_IS_NOT_REVIEWER_APPROVAL",
+        "RCA_NOT_ESTABLISHED_BY_A_WORKAROUND",
+        "GITHUB_403_IS_NOT_NO_PROTECTION",
+        "NO_AUTO_MERGE_DEPLOY_PUBLICATION_OR_DELETION",
+    }
+    disclaimers = doc.get("nonclaims")
+    if (not isinstance(disclaimers, list) or len(disclaimers) != len(mandatory_nonclaims)
+            or set(disclaimers) != mandatory_nonclaims):
+        raise ValueError("source/external negative boundary claims removed")
     return doc
 
 

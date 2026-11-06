@@ -203,7 +203,7 @@
         "E_MAINTAINED_TARGET_BEHAVIOR",
         "E_RUNTIME_USER_ACCEPTANCE"
       ],
-      "proof": "EXACT_GIT_AND_EXECUTION_REQUIRED",
+      "proof": "INDEPENDENT_OPERATOR_REQUIRED",
       "status": "NOT_ESTABLISHED_BY_DECLARATION"
     },
     {
@@ -213,7 +213,7 @@
         "G_SOURCE_EKC",
         "G_EXTERNAL_EKC"
       ],
-      "proof": "EXACT_GIT_AND_EXECUTION_REQUIRED",
+      "proof": "INDEPENDENT_OPERATOR_REQUIRED",
       "status": "NOT_ESTABLISHED_BY_DECLARATION"
     }
   ],
