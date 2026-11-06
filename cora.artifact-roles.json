@@ -983,6 +983,15 @@
         "SOFTWARE_SOURCE"
       ],
       "rationale": "100k deterministic preseeded semantic receipt mutations, 32 independent families; no physical source mutation or test authorization."
+    },
+    {
+      "pattern": "tests/test_pr36_one_run.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "One-run original-Git source and DoD mutants, anti-tamper HTML/JSON, real process and deterministic 32-family falsifiers."
     }
   ]
 }

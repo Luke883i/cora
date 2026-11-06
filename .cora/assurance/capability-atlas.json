@@ -748,6 +748,7 @@
       "tests/test_pr31_maturity_atlas.py",
       "tests/test_pr32_host_release.py",
       "tests/test_pr33_ci_repro.py",
+      "tests/test_pr36_one_run.py",
       "tests/test_selection.py"
     ],
     "internal_dod": [
