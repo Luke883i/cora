@@ -44,7 +44,19 @@ class CapabilityAtlasTests(unittest.TestCase):
         self.assertEqual(r["command_count"], 71)
         self.assertEqual(r["family_count"], 8)
         self.assertGreaterEqual(r["surfaces"]["modules"], 48)
-        self.assertEqual(r["surfaces"]["operational_tools"], 15)
+        # Preserve the 15 original PR38 tools; future canonical tool growth
+        # must reconcile with exact Git instead of a stale fixed-count oracle.
+        sha = g(ROOT, "rev-parse", "HEAD")
+        base = "324bc2d44d291f2256f354d2f2837e2ff2e62b52"
+        tools_now = {p for p in g(ROOT, "ls-tree", "-r", "--name-only",
+                                  sha, "--", "tools").splitlines()
+                     if p.startswith("tools/") and p.count("/") == 1 and p.endswith(".py")}
+        tools_base = {p for p in g(ROOT, "ls-tree", "-r", "--name-only",
+                                   base, "--", "tools").splitlines()
+                      if p.startswith("tools/") and p.count("/") == 1 and p.endswith(".py")}
+        self.assertEqual(len(tools_base), 15)
+        self.assertTrue(tools_base.issubset(tools_now))
+        self.assertEqual(r["surfaces"]["operational_tools"], len(tools_now))
         # The PR26 baseline had twelve workflows; later valid additions remain
         # mandatory inventory, not regressions or silently ignored consumers.
         sha = g(ROOT, "rev-parse", "HEAD")
