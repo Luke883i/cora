@@ -35,6 +35,7 @@ from .archaeology_stress import stress_archaeology
 from .debt import debt_scan, verify_debt, compare_debt
 from .debt_stress import stress_debt
 from .process_suite import process_catalog, run_suite, verify_suite, PROCESSES
+from .one_run import run_one, verify_one, render_one_html
 from .continuous import evaluate as development_gate, verify_gate, agent_check
 from .continuous_stress import stress_continuous
 from .archive_intake import inspect_zip, verify_intake
@@ -360,10 +361,18 @@ def main(argv: list[str] | None = None) -> int:
     pr.add_argument('--max-commits',type=int,default=64)
     pr.add_argument('--focus')
     pr.add_argument('--output',type=Path)
+    pr.add_argument('--one-run',action='store_true',help='Integrated source execution + measured results atlas; not all 71 commands')
+    pr.add_argument('--atlas-html',type=Path,help='Offline navigable HTML with actual measured run outcomes')
+    pr.add_argument('--atlas-json',type=Path,help='Full one-run JSON for human and AI inspection')
+    pr.add_argument('--execute-self-tests',action='store_true',help='Explicit opt-in to locally execute CORA unittest suite; not an external oracle')
+    pr.add_argument('--test-timeout',type=int,default=240)
     pv = sub.add_parser('verify-process',help='Source revalidation of process receipt')
     pv.add_argument('report',type=Path)
     pv.add_argument('--repo',required=True,type=Path)
     pv.add_argument('--output',type=Path)
+    pv.add_argument('--one-run',action='store_true',help='Verify original Git source, metrics and optional HTML')
+    pv.add_argument('--atlas-json',type=Path)
+    pv.add_argument('--atlas-html',type=Path)
     dsx = sub.add_parser('stress-debt',help='1M seeded debt-policy model mutations')
     dsx.add_argument('--seed',type=int,default=883)
     dsx.add_argument('--cases',type=int,default=1000000)
@@ -742,14 +751,39 @@ def main(argv: list[str] | None = None) -> int:
             result = process_catalog()
             code = 0
         elif args.cmd == 'process-run':
-            result = run_suite(args.repo,args.revision,process=args.process,
-                               max_commits=args.max_commits,focus=args.focus)
-            code = 0 if result['status']!='DEBT_BLOCKED' else 2
+            if args.one_run:
+                result = run_one(args.repo,args.revision,process=args.process,
+                                 max_commits=args.max_commits,focus=args.focus,
+                                 execute_self_tests=args.execute_self_tests,
+                                 test_timeout=args.test_timeout)
+                if args.atlas_json:
+                    args.atlas_json.write_text(json.dumps(result,sort_keys=True,indent=2)+'\n',encoding='utf-8')
+                if args.atlas_html:
+                    args.atlas_html.write_text(render_one_html(result),encoding='utf-8')
+                code = 2 if (result['source_status']=='DEBT_BLOCKED'
+                             or result['runtime_status']=='FAIL') else 0
+            else:
+                if args.atlas_html or args.atlas_json or args.execute_self_tests:
+                    raise ValueError('HTML, JSON atlas and optional tests require --one-run')
+                result = run_suite(args.repo,args.revision,process=args.process,
+                                   max_commits=args.max_commits,focus=args.focus)
+                code = 0 if result['status']!='DEBT_BLOCKED' else 2
         elif args.cmd == 'verify-process':
             item = json.loads(args.report.read_text(encoding='utf-8'))
-            verify_suite(args.repo,item)
-            result = {'schema':'cora-process-verification/1','status':'SOURCE_REPLAY_VERIFIED',
-                      'run_digest':item['run_digest'],'commit':item['commit']}
+            if args.one_run:
+                if args.atlas_json and json.loads(args.atlas_json.read_text('utf-8'))!=item:
+                    raise ValueError('one-run JSON atlas is not the source receipt')
+                verify_one(args.repo,item,
+                           html_page=args.atlas_html.read_text('utf-8') if args.atlas_html else None)
+                result = {'schema':'cora-one-run-replay/1','status':'SOURCE_REPLAYED_RUNTIME_NOT_ATTESTED',
+                          'receipt_digest':item['receipt_digest'],'commit':item['commit'],
+                          'authorization':'NONE'}
+            else:
+                if args.atlas_json or args.atlas_html:
+                    raise ValueError('one-run atlas replay requires --one-run')
+                verify_suite(args.repo,item)
+                result = {'schema':'cora-process-verification/1','status':'SOURCE_REPLAY_VERIFIED',
+                          'run_digest':item['run_digest'],'commit':item['commit']}
             code = 0
         elif args.cmd == 'stress-debt':
             result = stress_debt(seed=args.seed,cases=args.cases)
