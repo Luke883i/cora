@@ -64,6 +64,10 @@ class HistoryReticularTests(unittest.TestCase):
         self.assertEqual(r["retention"]["historical_or_relocated_count"],28)
         self.assertTrue(all(x["deletion_authorized"] is False
                             for x in r["retention"]["candidates"]))
+        self.assertGreaterEqual(r["module_liveness"]["module_count"],56)
+        self.assertEqual(r["module_liveness"]["automatic_deletion"],"NONE")
+        self.assertTrue(all(x["safe_to_delete"] is False
+                            for x in r["module_liveness"]["candidates"]))
         self.assertEqual(r["history_dod"]["source"],
                          "DEBT_BLOCKED_SOURCE_BENCHMARK_AND_FUTURE_CHECKS")
         self.assertEqual(len(r["prs"]),37)

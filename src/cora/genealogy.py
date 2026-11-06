@@ -5,11 +5,12 @@ host witness. A missing import or old path is never permission to delete.
 """
 from __future__ import annotations
 
+import ast
 import json
 import re
 from pathlib import Path
 
-from .git_snapshot import git
+from .git_snapshot import git, _sizes, _read_objects
 
 HISTORY = ".cora/assurance/history/pr01-37-commit-diff-audit.json"
 DOD = ".cora/contracts/dod/history-convergence-dod.json"
@@ -315,6 +316,87 @@ def _delta(repo: Path, sha: str) -> dict:
     }
 
 
+def module_liveness_candidates(repo: Path, sha: str) -> dict:
+    """Bounded committed AST import census; NO static edge is NOT dead code."""
+    raw = git(repo, "ls-tree", "-r", "-z", sha, max_output=16_000_000)
+    entries: dict[str, str] = {}
+    for record in raw.split(b"\0"):
+        if not record or b"\t" not in record:
+            continue
+        metadata, path = record.split(b"\t", 1)
+        cols = metadata.split()
+        if (len(cols) == 3 and cols[1] == b"blob" and
+                path.decode("utf-8", "replace").endswith(".py")):
+            key = path.decode("utf-8", "replace")
+            if (key.startswith("src/cora/") or key.startswith("tests/")
+                    or key.startswith("tools/")):
+                entries[key] = cols[2].decode("ascii")
+    ids = sorted(set(entries.values()))
+    if len(ids) > 400:
+        raise ValueError("bounded module reference inventory exceeded")
+    sizes = _sizes(repo, ids)
+    if any(size > 1_000_000 for size in sizes.values()):
+        raise ValueError("too large for bounded AST import census")
+    source = _read_objects(repo, ids, sizes)
+    references: dict[str, set[str]] = {}
+    parsing_errors: list[str] = []
+    for file, oid in sorted(entries.items()):
+        try:
+            tree = ast.parse(source[oid].decode("utf-8"), filename=file)
+        except (ValueError, SyntaxError, UnicodeError):
+            parsing_errors.append(file)
+            continue
+        imports: set[str] = set()
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                for alias in node.names:
+                    parts = alias.name.split(".")
+                    if len(parts) >= 2 and parts[0] == "cora":
+                        imports.add(parts[1])
+            elif isinstance(node, ast.ImportFrom):
+                mod = node.module or ""
+                if node.level and mod:
+                    imports.add(mod.split(".")[0])
+                elif mod.startswith("cora."):
+                    imports.add(mod.split(".")[1])
+                elif node.level and not mod:
+                    imports.update(a.name for a in node.names)
+        for item in imports:
+            references.setdefault(item, set()).add(file)
+    records = []
+    for path in sorted(p for p in entries if p.startswith("src/cora/") and
+                       p.count("/") == 2):
+        stem = Path(path).stem
+        consumers = sorted(p for p in references.get(stem, set()) if p != path)
+        code = sorted(p for p in consumers if p.startswith("src/cora/"))
+        tests = sorted(p for p in consumers if p.startswith("tests/"))
+        tooling = sorted(p for p in consumers if p.startswith("tools/"))
+        if path in ("src/cora/cli.py", "src/cora/__init__.py"):
+            class_name = "KNOWN_ENTRYPOINT_OR_PACKAGE"
+        elif code:
+            class_name = "STATIC_ENGINE_CONSUMER_OBSERVED"
+        elif tests or tooling:
+            class_name = "TEST_OR_TOOL_ONLY_STATIC_CONSUMER"
+        else:
+            class_name = "NO_STATIC_IMPORT_OBSERVED_REVIEW_DYNAMIC_CONSUMERS"
+        records.append({
+            "path": path, "class": class_name,
+            "source_importers": code, "test_importers": tests,
+            "tool_importers": tooling,
+            "safe_to_delete": False,
+            "scope": "AST_IMPORT_SOURCE_ONLY_DYNAMIC_AND_EXTERNAL_CONSUMERS_UNKNOWN"
+        })
+    return {
+        "schema": "cora-static-liveness-candidates/1",
+        "commit": sha, "module_count": len(records),
+        "parse_errors": parsing_errors,
+        "candidates": records,
+        "automatic_deprecation": "NONE",
+        "automatic_deletion": "NONE",
+        "replay_boundary": "COMMITTED_GIT_IMPORT_GRAPH_NOT_RUNTIME_REACHABILITY",
+    }
+
+
 def build_genealogy(repo: Path, revision: str) -> dict:
     """Read only original Git commits; never execute discovered code or delete."""
     repo = Path(repo).resolve(strict=True)
@@ -397,6 +479,7 @@ def build_genealogy(repo: Path, revision: str) -> dict:
             "current_source_modules_removal_authorized": 0,
         },
         "future_delta": _delta(repo, sha),
+        "module_liveness": module_liveness_candidates(repo, sha),
         "history_dod": {
             "source": "DEBT_BLOCKED_SOURCE_BENCHMARK_AND_FUTURE_CHECKS",
             "product": "BLOCKED_EXTERNAL",

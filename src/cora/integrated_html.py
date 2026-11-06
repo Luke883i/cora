@@ -298,6 +298,23 @@ def render_integrated_html(receipt: dict) -> str:
             head.append('<li><code>' + _h(item["old_path"]) + '</code> · ' +
                         _h(item["classification"]) + ' · ' +
                         _h(item["independent_consumer_readback"]) + '</li>')
+        liveness = history.get("module_liveness")
+        if liveness:
+            head.append('<h3>Current software module retention candidates</h3>'
+                        '<p>Committed AST imports identify review candidates only. '
+                        'Dynamic imports, CLI entrypoints, external consumers and '
+                        'runtime behavior are not exhaustively proven. '
+                        'No module can be automatically deleted or deprecated.</p>')
+            head.append('<details><summary>Inspect ' + _h(liveness["module_count"]) +
+                        ' Python module records</summary><ul>')
+            for row in liveness["candidates"]:
+                count = (len(row["source_importers"]) + len(row["test_importers"]) +
+                         len(row["tool_importers"]))
+                head.append('<li><code>' + _h(row["path"]) +
+                            '</code> · <span class="trace-pill">' + _h(row["class"]) +
+                            '</span> · ' + _h(count) + ' static importer(s) · '
+                            'deletion NOT AUTHORIZED</li>')
+            head.append('</ul></details>')
         head.append('</ul></details></section>')
     head.append('<section class="panel" id="provenance"><h2>Source and execution provenance</h2><pre>' +
                 _h(json.dumps(receipt["execution_manifest"], ensure_ascii=True, sort_keys=True, indent=2)) +
