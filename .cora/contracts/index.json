@@ -59,6 +59,11 @@
       "scope": "INTERNAL_DOD"
     },
     {
+      "logical": "cora.independent-qualification-dod.json",
+      "canonical": ".cora/contracts/dod/independent-qualification-dod.json",
+      "scope": "INTERNAL_DOD"
+    },
+    {
       "logical": "cora.integrated-dod.json",
       "canonical": ".cora/contracts/dod/integrated-dod.json",
       "scope": "INTERNAL_DOD"

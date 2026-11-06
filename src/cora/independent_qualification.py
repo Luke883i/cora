@@ -46,14 +46,14 @@ WITNESSES = {
         "tools/independent_git_oracle.py", "tests/test_pr39_qualification.py",
         "tools/external_validate.py"),
     "USABILITY": (
-        "docs/INDEPENDENT_PRODUCT_QUALIFICATION.md",
+        "docs/RELEASE.md",
         "tests/test_pr39_qualification.py"),
     "ISOLATION": (
         "src/cora/runtime_observation.py", "tests/test_pr16_runtime_fusion.py",
         "tests/test_pr39_qualification.py"),
     "GOVERNANCE": (
         ".github/workflows/ci-one-run-integrated.yml",
-        "docs/INDEPENDENT_PRODUCT_QUALIFICATION.md",
+        "docs/RELEASE.md",
         "tests/test_pr39_qualification.py"),
 }
 
