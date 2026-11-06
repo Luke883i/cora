@@ -295,6 +295,20 @@ def main(argv: list[str] | None = None) -> int:
                           "failures_total": report["failures_total"],
                           "status": report["status"],
                           "authorization": "NONE"}, sort_keys=True))
+        if report["failures_total"]:
+            # Safe typed failure witnesses, no raw logs or credential strings.
+            # A later passing attempt never downgrades this nonzero exit.
+            for group, cohort in sorted(report["cohorts"].items()):
+                for attempt_no, sample in enumerate(cohort["samples"], 1):
+                    if sample["returncode"] != 0:
+                        print(json.dumps({
+                            "group": group, "attempt": attempt_no,
+                            "returncode": sample["returncode"],
+                            "outcome": sample["outcome"],
+                            "exception_classes": sample["exception_classes"],
+                            "failure_test_ids": sample["failure_test_ids"],
+                            "log_sha256": sample["test_output_sha256"],
+                        }, sort_keys=True), file=sys.stderr)
         return 3 if report["failures_total"] else 0
     except (OSError, ValueError, subprocess.SubprocessError) as exc:
         # No pass or fake metrics on internal errors. Full error remains in CI logs.
