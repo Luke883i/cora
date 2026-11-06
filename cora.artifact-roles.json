@@ -967,6 +967,14 @@
         "PRODUCT_CONTRACT"
       ],
       "rationale": "Noncompensatory 27-node one-run execution/presentation/replay versus external product gate; not approval."
+    },
+    {
+      "pattern": "src/cora/one_run.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Existing process-run orchestration + PR31 HTML view; bounded source/test receipts and replays, never release approval."
     }
   ]
 }

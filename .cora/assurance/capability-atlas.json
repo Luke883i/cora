@@ -610,6 +610,7 @@
       "src/cora/mutation_evidence.py",
       "src/cora/mutations.py",
       "src/cora/observation_fusion.py",
+      "src/cora/one_run.py",
       "src/cora/ontology.py",
       "src/cora/process_suite.py",
       "src/cora/reticulum.py",
