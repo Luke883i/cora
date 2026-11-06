@@ -20,7 +20,9 @@ URL_TEMPLATE = "https://api.github.com/repos/{repo}/branches/{branch}/protection
 
 
 def probe(repo: str, branch: str, token: str | None = None) -> dict:
-    if not REPO.fullmatch(repo) or not BRANCH.fullmatch(branch):
+    if (not REPO.fullmatch(repo) or not BRANCH.fullmatch(branch)
+            or any(part in (".", "..") for part in repo.split("/"))
+            or branch in (".", "..")):
         raise ValueError("unsafe GitHub host identity")
     report = {
         "schema": "cora-host-governance-readback/1",

@@ -241,6 +241,10 @@ def evaluate_study_packet(packet: dict, commit: str) -> dict:
         seen.add(row["participant_id"])
         repo_ids.add(row["repo_id"])
         personas.add(row["persona"])
+        task_ids = [task.get("task_id") for task in row["tasks"] if isinstance(task, dict)]
+        if (len(set(task_ids)) != len(row["tasks"]) or
+                not {"start_one_run", "trace_lineage", "explain_blocked"}.issubset(task_ids)):
+            raise ValueError("missing or duplicated required usability task")
         for task in row["tasks"]:
             if (not isinstance(task, dict) or
                     set(task) != {"task_id", "completed", "proof_misclassified"}

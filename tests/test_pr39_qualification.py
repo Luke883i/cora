@@ -181,7 +181,7 @@ class IndependentQualificationTests(unittest.TestCase):
                             "independent_assurance_reviewer"),
                 "repo_id": "repo_A" if i%2 else "repo_B",
                 "minutes": 13+i%3,
-                "tasks": [{"task_id":f"task_{j}","completed":True,
+                "tasks": [{"task_id":("start_one_run","trace_lineage","explain_blocked")[j],"completed":True,
                            "proof_misclassified":False} for j in range(3)],
             })
         packet={"schema":"cora-usability-pilot/1",
@@ -204,6 +204,10 @@ class IndependentQualificationTests(unittest.TestCase):
             out=evaluate_study_packet(other,self.sha)
             self.assertEqual(out["numerical_threshold"],"NOT_MET")
             self.assertFalse(out["independent_usability_accepted"])
+        invalid=copy.deepcopy(packet)
+        invalid["participants"][0]["tasks"][1]["task_id"]="start_one_run"
+        with self.assertRaisesRegex(ValueError,"task"):
+            evaluate_study_packet(invalid,self.sha)
         forged=copy.deepcopy(packet)
         forged["participants"][0]["participant_id"]=forged["participants"][1]["participant_id"]
         with self.assertRaisesRegex(ValueError,"participant"):
@@ -239,6 +243,8 @@ class IndependentQualificationTests(unittest.TestCase):
         self.assertFalse(result["merge_authorized"])
         with self.assertRaisesRegex(ValueError,"identity"):
             host.probe("some/../other","main","private")
+        with self.assertRaisesRegex(ValueError,"identity"):
+            host.probe("../..","main","private")
 
     def test_08_physical_git_external_state_mutant_is_rejected(self):
         with tempfile.TemporaryDirectory() as temp:
