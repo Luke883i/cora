@@ -111,8 +111,8 @@ jobs:
           python -c 'import json; x=json.load(open("/tmp/cora-layout-stress.json")); assert x["status"]=="PASS_SCOPED_PRESEEDED_FINITE_MODEL" and x["cases"]==10000 and x["families"]==32 and x["positive_controls"]==626 and x["negative_scenarios"]==9374 and x["oracle_disagreements"]==0 and x["unauthorized_promotions"]==0 and x["actual_git_source_mutants"]==0 and x["external"]=="BLOCKED_EXTERNAL" and x["authorization"]=="NONE"'
       - name: PR36 execute original Git one-run methods and render JSON/HTML
         run: |
-          cora process-run . --revision HEAD --process full --one-run --output /tmp/cora-one-run.json --atlas-json /tmp/cora-one-run-atlas.json --atlas-html /tmp/cora-one-run.html
-          python -c 'import json; a=json.load(open("/tmp/cora-one-run.json")); assert len(a["activities"])==8 and a["catalog_commands_declared"]==71 and a["catalog_commands_executed_individually"]==0 and a["runtime_status"]=="NOT_RUN" and a["dod"]["nodes"]==27 and a["global_status"]=="BLOCKED_EXTERNAL" and a["authorization"]=="NONE" and not a["release_authorized"]'
+          cora process-run . --revision HEAD --process full --one-run --output /tmp/cora-one-run.json --atlas-json /tmp/cora-one-run-atlas.json --atlas-html /tmp/cora-one-run.html --model-stress-cases 100000
+          python -c 'import json; a=json.load(open("/tmp/cora-one-run.json")); assert len(a["activities"])==8 and a["catalog_commands_declared"]==71 and a["catalog_commands_executed_individually"]==0 and a["runtime_status"]=="NOT_RUN" and a["model_stress"]["cases"]==100000 and a["model_stress"]["oracle_disagreements"]==0 and a["dod"]["nodes"]==27 and a["global_status"]=="BLOCKED_EXTERNAL" and a["authorization"]=="NONE" and not a["release_authorized"]'
       - name: PR36 replay underlying deterministic original source-process receipt
         run: |
           python - <<'PY'

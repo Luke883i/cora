@@ -366,6 +366,7 @@ def main(argv: list[str] | None = None) -> int:
     pr.add_argument('--atlas-json',type=Path,help='Full one-run JSON for human and AI inspection')
     pr.add_argument('--execute-self-tests',action='store_true',help='Explicit opt-in to locally execute CORA unittest suite; not an external oracle')
     pr.add_argument('--test-timeout',type=int,default=240)
+    pr.add_argument('--model-stress-cases',type=int,choices=(0,100000),default=0,help='Opt-in bounded 100k preseeded receipt mutants, not physical code changes')
     pv = sub.add_parser('verify-process',help='Source revalidation of process receipt')
     pv.add_argument('report',type=Path)
     pv.add_argument('--repo',required=True,type=Path)
@@ -755,15 +756,17 @@ def main(argv: list[str] | None = None) -> int:
                 result = run_one(args.repo,args.revision,process=args.process,
                                  max_commits=args.max_commits,focus=args.focus,
                                  execute_self_tests=args.execute_self_tests,
-                                 test_timeout=args.test_timeout)
+                                 test_timeout=args.test_timeout,
+                                 model_stress_cases=args.model_stress_cases)
                 if args.atlas_json:
                     args.atlas_json.write_text(json.dumps(result,sort_keys=True,indent=2)+'\n',encoding='utf-8')
                 if args.atlas_html:
                     args.atlas_html.write_text(render_one_html(result),encoding='utf-8')
                 code = 2 if (result['source_status']=='DEBT_BLOCKED'
-                             or result['runtime_status']=='FAIL') else 0
+                             or result['runtime_status']=='FAIL'
+                             or result['model_stress']['status']=='REFUTED') else 0
             else:
-                if args.atlas_html or args.atlas_json or args.execute_self_tests:
+                if args.atlas_html or args.atlas_json or args.execute_self_tests or args.model_stress_cases:
                     raise ValueError('HTML, JSON atlas and optional tests require --one-run')
                 result = run_suite(args.repo,args.revision,process=args.process,
                                    max_commits=args.max_commits,focus=args.focus)

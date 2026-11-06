@@ -81,6 +81,17 @@ class OneRunAssuranceTests(unittest.TestCase):
         self.assertTrue(verify_one(ROOT,from_json,
                                   html_page=render_one_html(source)))
 
+    def test_finite_model_opt_in_is_visible_and_reproducible(self):
+        from cora.one_run_stress import stress_one_run
+        model=stress_one_run(100000,seed=883)
+        self.assertEqual(model["cases"],100000)
+        self.assertEqual(model["positive_controls"],6250)
+        self.assertEqual(model["negative_scenarios"],93750)
+        self.assertEqual(model["oracle_disagreements"],0)
+        self.assertEqual(model["unauthorized_promotions"],0)
+        self.assertEqual(model["physical_source_mutants"],0)
+        self.assertEqual(self.source["model_stress"]["status"],"NOT_RUN")
+
     def test_legacy_process_suite_still_exact_deterministic(self):
         legacy = run_suite(ROOT, self.sha)
         self.assertNotIn("timing", legacy)

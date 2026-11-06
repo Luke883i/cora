@@ -278,8 +278,9 @@ def _plain_receipt(report: dict) -> dict:
 def run_one(repo: Path, revision: str = "HEAD", *,
             process: str = "full", max_commits: int = 64,
             focus: str | None = None, execute_self_tests: bool = False,
-            test_timeout: int = 240) -> dict:
-    if type(execute_self_tests) is not bool or not 30 <= test_timeout <= 900:
+            test_timeout: int = 240, model_stress_cases: int = 0) -> dict:
+    if (type(execute_self_tests) is not bool or not 30 <= test_timeout <= 900
+            or type(model_stress_cases) is not int or model_stress_cases not in (0, 100000)):
         raise ValueError("bounded and explicitly authorized test operation required")
     repo = Path(repo).resolve(strict=True)
     commit = snapshot(repo, revision)["commit"]
@@ -297,6 +298,14 @@ def run_one(repo: Path, revision: str = "HEAD", *,
         "goal": "BLOCKED_EXTERNAL", "authority": "NONE",
         "source_level": "NO_CORA_PRODUCT_DOD_ON_TARGET", "gates": {}, "checklist": []}
     test = _self_tests(repo, enabled=execute_self_tests, timeout=test_timeout)
+    if model_stress_cases:
+        # Fixed finite-model suite: safe, deterministic, no physical Git mutation.
+        from .one_run_stress import stress_one_run
+        model = stress_one_run(100000, seed=883)
+    else:
+        model = {"schema": "cora-one-run-model-not-run/1", "status": "NOT_RUN",
+                 "cases": 0, "reason": "EXPLICIT_OPT_IN_REQUIRED",
+                 "authority": "NONE", "external": "BLOCKED_EXTERNAL"}
     metrics = _metrics(activities, test)
     excluded = sorted(set(process_catalog()["excluded_unsafe_methods"]))
     receipt = {
@@ -305,6 +314,7 @@ def run_one(repo: Path, revision: str = "HEAD", *,
         "process": process, "history_limit": max_commits, "focus": focus,
         "source_process": proc,
         "activities": activities, "self_tests": test,
+        "model_stress": model,
         "excluded_not_run": excluded,
         "catalog": catalog, "catalog_commands_declared": len(catalog["capabilities"]) if catalog else 0,
         "catalog_commands_executed_individually": 0,
@@ -313,6 +323,7 @@ def run_one(repo: Path, revision: str = "HEAD", *,
         "metrics": metrics,
         "dod": dod,
         "source_status": ("DEBT_BLOCKED" if proc["status"] == "DEBT_BLOCKED"
+                          or model["status"] == "REFUTED"
                          else "PASS_SCOPED_WITH_UNVERIFIED_GAPS"),
         "runtime_status": test["state"],
         "global_status": "BLOCKED_EXTERNAL",
@@ -377,6 +388,18 @@ def verify_one(repo: Path, receipt: dict, *, html_page: str | None = None) -> bo
         raise ValueError("not-run dangerous operations suppressed")
     if receipt.get("metrics") != _metrics(receipt["activities"], test):
         raise ValueError("aggregated metrics masked errors or skips")
+    model = receipt.get("model_stress")
+    if model is None:
+        raise ValueError("model benchmark observation missing")
+    if model.get("status") == "NOT_RUN":
+        if model != {"schema": "cora-one-run-model-not-run/1", "status": "NOT_RUN",
+                     "cases": 0, "reason": "EXPLICIT_OPT_IN_REQUIRED",
+                     "authority": "NONE", "external": "BLOCKED_EXTERNAL"}:
+            raise ValueError("not-run model benchmark forged")
+    else:
+        from .one_run_stress import stress_one_run
+        if model != stress_one_run(100000, seed=883):
+            raise ValueError("preseeded model benchmark is not reproducible")
     cora = _is_cora(repo, sha)
     expected_catalog = build_atlas(repo, unified_assurance(repo, sha)) if cora else None
     expected_dod = _original_dod(repo, sha) if cora else {
@@ -391,6 +414,7 @@ def verify_one(repo: Path, receipt: dict, *, html_page: str | None = None) -> bo
             receipt.get("dod") != expected_dod or
             receipt.get("source_status") != (
                 "DEBT_BLOCKED" if plain["status"] == "DEBT_BLOCKED"
+                  or model["status"] == "REFUTED"
                 else "PASS_SCOPED_WITH_UNVERIFIED_GAPS") or
             receipt.get("runtime_status") != test["state"]):
         raise ValueError("one-run source catalog or DoD drift")
@@ -434,6 +458,18 @@ def render_one_html(receipt: dict) -> str:
                 'test di terzi né una release.</p></div>')
     excluded = "".join('<li><code>'+safe(x)+'</code> — NOT_RUN, azione non autorizzata</li>'
                        for x in receipt["excluded_not_run"])
+    model = receipt["model_stress"]
+    model_html = ('<div class="panel"><h3>Benchmark semantico pre-seeded (opt-in)</h3>'
+                  '<p>Stato: <strong>' + safe(model["status"]) + '</strong> · casi: ' +
+                  safe(model["cases"]) + '</p>' +
+                  ('<p>Controlli positivi: ' + safe(model["positive_controls"]) +
+                   ' · scenari negativi: ' + safe(model["negative_scenarios"]) +
+                   ' · divergenze: ' + safe(model["oracle_disagreements"]) +
+                   ' · promozioni indebite: ' + safe(model["unauthorized_promotions"]) +
+                   '</p>' if model["status"] != "NOT_RUN" else
+                   '<p class="small muted">Non eseguito senza --model-stress-cases 100000.</p>') +
+                  '<p class="small muted">Modello finito di ricevute; zero mutazioni Git fisiche; '
+                  'non certifica comportamenti runtime.</p></div>')
     gates = receipt["dod"]["gates"]
     # Same canonical order before and after json.dumps(sort_keys=True) replay.
     gate_order = ("G_EXECUTION", "G_PRESENTATION", "G_SOURCE_REPLAY",
@@ -447,7 +483,7 @@ def render_one_html(receipt: dict) -> str:
              f'<code>{safe(receipt["tree"])}</code> · processo <strong>{safe(receipt["process"])}</strong>. '
              'I risultati sorgente eseguiti, riutilizzati e non eseguiti non sono equivalenti.</p>'
              f'<div class="metrics" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr))">{metric_html}</div>'
-             '<h3>Attività sorgente</h3>'+''.join(rows)+test_row+
+             '<h3>Attività sorgente</h3>'+''.join(rows)+test_row+model_html+
              '<h3>Attività escluse / non eseguite</h3><div class="panel"><ul>'+excluded+
              '</ul></div><h3>Reticolo DoD e checklist</h3><div class="panel">'+gate_html+
              '<p class="small">Il reticolo sorgente è un modello, non prova '
