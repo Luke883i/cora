@@ -199,6 +199,8 @@ class HistoryReticularTests(unittest.TestCase):
         self.assertTrue(verify_integrated(ROOT,bundle,html_page=page))
         self.assertIn('id="history"',page)
         self.assertIn('id="pr-34"',page)
+        self.assertIn('</ul></details><h3>Current software module retention candidates</h3>',page)
+        self.assertIn('href="https://github.com/Luke883i/cora/pull/34"',page)
         self.assertIn("Search PR, SHA, file or method",page)
         self.assertIn("CLOSED_UNMERGED",page)
         self.assertIn("git",page)
@@ -217,6 +219,10 @@ class HistoryReticularTests(unittest.TestCase):
         self.assertIn("&lt;img src=x",rendered)
         self.assertIn("0",rendered)
         self.assertIn("BLOCKED_EXTERNAL",rendered)
+        forged["genealogy"]["prs"][0]["pr_url"]="javascript:alert(1)"
+        escaped_link=render_integrated_html(forged)
+        self.assertNotIn("javascript:alert(1)",escaped_link)
+        self.assertIn('href="https://github.com/Luke883i/cora/pull/1"',escaped_link)
 
 
 if __name__ == "__main__":

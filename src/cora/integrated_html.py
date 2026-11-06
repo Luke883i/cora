@@ -257,7 +257,7 @@ def render_integrated_html(receipt: dict) -> str:
                         '"><summary>PR ' + _h(pr["number"]) + ' · ' + _h(pr["title"]) +
                         ' <span class="trace-pill">' + _h(pr["state"]) + ' · ' +
                         _h(pr["commit_count"]) + ' commit</span></summary>'
-                        '<p><a href="' + _h(pr["pr_url"]) +
+                        '<p><a href="https://github.com/Luke883i/cora/pull/' + _h(pr["number"]) +
                         '" rel="noopener noreferrer">GitHub PR</a> · ' +
                         _h(pr["phase"]) + ' · ' + _h(", ".join(pr["domains"])) + '</p>')
             for u in pr["commits"]:
@@ -298,6 +298,7 @@ def render_integrated_html(receipt: dict) -> str:
             head.append('<li><code>' + _h(item["old_path"]) + '</code> · ' +
                         _h(item["classification"]) + ' · ' +
                         _h(item["independent_consumer_readback"]) + '</li>')
+        head.append('</ul></details>')
         liveness = history.get("module_liveness")
         if liveness:
             head.append('<h3>Current software module retention candidates</h3>'
@@ -315,7 +316,7 @@ def render_integrated_html(receipt: dict) -> str:
                             '</span> · ' + _h(count) + ' static importer(s) · '
                             'deletion NOT AUTHORIZED</li>')
             head.append('</ul></details>')
-        head.append('</ul></details></section>')
+        head.append('</section>')
     head.append('<section class="panel" id="provenance"><h2>Source and execution provenance</h2><pre>' +
                 _h(json.dumps(receipt["execution_manifest"], ensure_ascii=True, sort_keys=True, indent=2)) +
                 '</pre><p>Original PR36 receipt: <code>' +
