@@ -104,7 +104,7 @@ def vector(i: int, seed: int) -> tuple[str, list[dict], bool]:
     elif fam == 17:
         v["elapsed_ms"] = i
     elif fam == 18:
-        v["source_digest"] = hashlib.sha256(b"false-source").hexdigest()
+        v["source_digest"] = hashlib.sha256(f"false-source-{seed}-{i}".encode("ascii")).hexdigest()
     elif fam == 19:
         v["reason"] = ""
     elif fam == 20:
