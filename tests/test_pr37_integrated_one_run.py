@@ -207,7 +207,7 @@ class IntegratedOneRunTests(unittest.TestCase):
             if family == "DROP_NODE":
                 doc["nodes"].pop(rnd.randrange(len(doc["nodes"])))
             elif family == "DUPLICATE_ID":
-                doc["nodes"][rnd.randrange(10)]["id"] = "S_PR36_IMPORTED"
+                doc["nodes"][rnd.randrange(1,10)]["id"] = "S_PR36_IMPORTED"
             elif family == "REMOVE_GATE_EDGE":
                 next(n for n in doc["nodes"] if n["id"]=="G_REGISTRY")["depends_on"].pop()
             elif family == "PROMOTE_EXTERNAL":

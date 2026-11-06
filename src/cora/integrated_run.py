@@ -163,9 +163,14 @@ def _attempts(registry: dict, baseline: dict, test: dict) -> list[dict]:
             state, reason = observed[key]["state"], observed[key]["outcome"]
             origin = test["log_sha256"]
         elif row["kind"] == "TEST_SUITE":
-            if test["state"] != "NOT_RUN":
-                state, reason = test["state"], test["reason"]
-                origin, elapsed = test["log_sha256"], test["duration_ms"]
+            members = [event for event in test["parsed_cases"]
+                       if event["activity_id"].startswith("case:" + row["source_paths"][0] + ":")]
+            if members:
+                state = "FAIL" if any(event["state"] == "FAIL" for event in members) else "RUN_REPORTED_UNATTESTED"
+                reason = "ATTRIBUTED_CASE_EVENTS_NOT_INDEPENDENT_PROOF"
+                origin, elapsed = test["log_sha256"], None
+            elif test["state"] != "NOT_RUN":
+                state, reason = "BLOCKED", "NO_ATTRIBUTABLE_CASES_FOR_SUITE"
             else:
                 reason = "LOCAL_TESTS_NOT_AUTHORIZED"
         elif key == CONTROL_PLANE:
