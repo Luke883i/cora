@@ -99,23 +99,48 @@ jobs:
           set +e
           cora process-run . --revision HEAD --process full --one-run --profile comprehensive \
             --model-stress-cases 100000 --output /tmp/cora-pr37-diagnostic/run.json \
+            --atlas-json /tmp/cora-pr37-diagnostic/machine.json \
             --atlas-html /tmp/cora-pr37-diagnostic/index.html \
             --evidence-dir /tmp/cora-pr37-diagnostic/evidence \
               > /tmp/cora-pr37-diagnostic/stdout.txt 2> /tmp/cora-pr37-diagnostic/stderr.txt
           status=$?
           if test "$status" -eq 0; then
             cora verify-process /tmp/cora-pr37-diagnostic/run.json --repo . --one-run \
+              --atlas-json /tmp/cora-pr37-diagnostic/machine.json \
               --atlas-html /tmp/cora-pr37-diagnostic/index.html \
               --evidence-dir /tmp/cora-pr37-diagnostic/evidence \
               > /tmp/cora-pr37-diagnostic/verify-out.txt 2> /tmp/cora-pr37-diagnostic/verify-error.txt
+            status=$?
+          fi
+          if test "$status" -eq 0; then
+            python - <<'PY' > /tmp/cora-pr37-diagnostic/assert-out.txt 2> /tmp/cora-pr37-diagnostic/assert-error.txt
+          import json, sys
+          a=json.load(open('/tmp/cora-pr37-diagnostic/run.json'))
+          checks={
+            'declared_71':a['registry']['declared_commands']==71,
+            'activities_accounted':a['metrics']['activity_accounted']==a['metrics']['registered_total'],
+            'zero_individual_cli':a['metrics']['individually_executed_cli']==0,
+            '100k_cases':a['baseline_pr36']['model_stress']['cases']==100000,
+            'zero_oracle_disagreements':a['baseline_pr36']['model_stress']['oracle_disagreements']==0,
+            'zero_unsafe_promotions':a['baseline_pr36']['model_stress']['unauthorized_promotions']==0,
+            'source_debt_visible':a['dod']['source_goal']=='DEBT_BLOCKED',
+            'product_externally_blocked':a['product_status']=='BLOCKED_EXTERNAL',
+            'authority_none':a['authorization']=='NONE'
+          }
+          failures=[k for k,passed in checks.items() if not passed]
+          if failures:
+              print('ASSERT_MISMATCH:' + ','.join(failures))
+              sys.exit(4)
+          print('ASSERTIONS_PASS')
+          PY
             status=$?
           fi
           set -e
           if test "$status" -eq 0; then
             headline='complete-source-run-and-replay'
           else
-            headline=$(cat /tmp/cora-pr37-diagnostic/stderr.txt /tmp/cora-pr37-diagnostic/verify-error.txt 2>/dev/null |
-              grep -E '(CORA error:|Error:|AssertionError:|Traceback)' | tail -n 1 |
+            headline=$(cat /tmp/cora-pr37-diagnostic/stderr.txt /tmp/cora-pr37-diagnostic/verify-error.txt /tmp/cora-pr37-diagnostic/assert-out.txt /tmp/cora-pr37-diagnostic/assert-error.txt 2>/dev/null |
+              grep -E '(CORA error:|Error:|AssertionError:|Traceback|ASSERT_MISMATCH:)' | tail -n 1 |
               tr -cd '[:print:]' | cut -c 1-145 || true)
             if test -z "$headline" && test -f /tmp/cora-pr37-diagnostic/run.json; then
               headline=$(python -c 'import json; x=json.load(open("/tmp/cora-pr37-diagnostic/run.json")); print("baseline="+x["baseline_pr36"]["source_status"]+";process="+x["baseline_pr36"]["source_process"]["status"]+";model="+x["baseline_pr36"]["model_stress"]["status"])' 2>/dev/null || true)

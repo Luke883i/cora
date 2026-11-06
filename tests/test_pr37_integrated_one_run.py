@@ -138,20 +138,23 @@ class IntegratedOneRunTests(unittest.TestCase):
     def test_materialized_evidence_manifest_and_one_cli_entry(self):
         with tempfile.TemporaryDirectory() as tmp:
             dirpath = Path(tmp)
-            reportpath, atlaspath = dirpath/"run.json", dirpath/"index.html"
+            reportpath, atlaspath, machinepath = dirpath/"run.json", dirpath/"index.html", dirpath/"machine.json"
             evidence = dirpath/"evidence"
             code = main(["process-run",str(ROOT),"--revision",self.sha,"--process","full",
                          "--one-run","--profile","comprehensive","--output",str(reportpath),
-                         "--atlas-html",str(atlaspath),"--evidence-dir",str(evidence)])
+                         "--atlas-html",str(atlaspath),"--atlas-json",str(machinepath),
+                         "--evidence-dir",str(evidence)])
             self.assertIn(code,(0,2))
             output = json.loads(reportpath.read_text("utf-8"))
+            self.assertEqual(output, json.loads(machinepath.read_text("utf-8")))
             self.assertEqual(output["schema"], "cora-integrated-one-run/2")
             self.assertEqual(output["evidence_manifest"]["state"],
                              "MATERIALIZED_LOCAL_NOT_INDEPENDENTLY_ATTESTED")
             self.assertTrue(verify_integrated(ROOT,output,
                 html_page=atlaspath.read_text("utf-8"),evidence_dir=evidence))
             self.assertEqual(main(["verify-process",str(reportpath),"--repo",str(ROOT),
-                "--one-run","--atlas-html",str(atlaspath),"--evidence-dir",str(evidence)]),0)
+                "--one-run","--atlas-html",str(atlaspath),"--atlas-json",str(machinepath),
+                "--evidence-dir",str(evidence)]),0)
             with (evidence/"gaps.json").open("ab") as damaged:
                 damaged.write(b"\nFORGED_PASS")
             with self.assertRaisesRegex(ValueError, "evidence was modified"):
