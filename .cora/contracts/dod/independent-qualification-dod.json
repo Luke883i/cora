@@ -1,0 +1,405 @@
+{
+  "schema": "cora-independent-qualification-dod/1",
+  "title": "Independent qualification above existing PR36–38 source assurance",
+  "authority": "NONE",
+  "source_baseline": "324bc2d44d291f2256f354d2f2837e2ff2e62b52",
+  "product_scope": "CORA_VERSION_1_EXPERIMENTAL",
+  "source_status": "IMPLEMENTATION_CANDIDATE_UNVERIFIED",
+  "product_status": "BLOCKED_EXTERNAL",
+  "semantics": "ALL_FOUR_MANDATORY_GATES_NONCOMPENSATORY",
+  "one_run_contract": "PRESERVE_EXISTING_PROCESS_RUN_NO_SECOND_ORCHESTRATOR",
+  "goal": "A qualified product requires independently compared behavioral outcomes, real-user task comprehension, externally attested execution isolation, and host-verified governance/release; local source evidence cannot substitute for any external witness.",
+  "source": {
+    "BEHAVIOR": [
+      "S_B1_INDEPENDENT_GIT_ORACLE",
+      "S_B2_TWO_REAL_GIT_FIXTURES",
+      "S_B3_NEGATIVE_REFERENCE_MUTANTS",
+      "S_B4_COVERAGE_BOUNDARY"
+    ],
+    "USABILITY": [
+      "S_U1_TASK_SCRIPT",
+      "S_U2_COMPLETION_METRICS",
+      "S_U3_ZERO_FALSE_PROMOTION",
+      "S_U4_PILOT_DATA_VALIDATOR"
+    ],
+    "ISOLATION": [
+      "S_I1_DENY_BY_DEFAULT",
+      "S_I2_PINNED_MINIMAL_DOCKER_PLAN",
+      "S_I3_TIMEOUT_TEARDOWN_DEBT",
+      "S_I4_NO_SANDBOX_SELF_ATTEST"
+    ],
+    "GOVERNANCE": [
+      "S_G1_REQUIRED_CHECK_CENSUS",
+      "S_G2_HOST_READBACK_AUTHORITY",
+      "S_G3_INDEPENDENT_REVIEW_IDENTITIES",
+      "S_G4_RELEASE_AND_ROLLBACK_DENY"
+    ]
+  },
+  "external": {
+    "BEHAVIOR": [
+      "E_B1_MAINTAINED_EXTERNAL_TARGET",
+      "E_B2_DISTINCT_OWNER_ORACLE"
+    ],
+    "USABILITY": [
+      "E_U1_REAL_USERS_TWO_PERSONAS",
+      "E_U2_INDEPENDENT_OBSERVER"
+    ],
+    "ISOLATION": [
+      "E_I1_HOST_POLICY_ATTESTATION",
+      "E_I2_NEGATIVE_ESCAPE_AND_KILL_TEST"
+    ],
+    "GOVERNANCE": [
+      "E_G1_VERIFIED_REQUIRED_CHECKS",
+      "E_G2_REVIEW_AND_RELEASE_AUTHORITY"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "S_B1_INDEPENDENT_GIT_ORACLE",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "state": "SOURCE_WITNESS_REQUIRED"
+    },
+    {
+      "id": "S_B2_TWO_REAL_GIT_FIXTURES",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "state": "SOURCE_WITNESS_REQUIRED"
+    },
+    {
+      "id": "S_B3_NEGATIVE_REFERENCE_MUTANTS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "state": "SOURCE_WITNESS_REQUIRED"
+    },
+    {
+      "id": "S_B4_COVERAGE_BOUNDARY",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "state": "SOURCE_WITNESS_REQUIRED"
+    },
+    {
+      "id": "S_U1_TASK_SCRIPT",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "state": "SOURCE_WITNESS_REQUIRED"
+    },
+    {
+      "id": "S_U2_COMPLETION_METRICS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "state": "SOURCE_WITNESS_REQUIRED"
+    },
+    {
+      "id": "S_U3_ZERO_FALSE_PROMOTION",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "state": "SOURCE_WITNESS_REQUIRED"
+    },
+    {
+      "id": "S_U4_PILOT_DATA_VALIDATOR",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "state": "SOURCE_WITNESS_REQUIRED"
+    },
+    {
+      "id": "S_I1_DENY_BY_DEFAULT",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "state": "SOURCE_WITNESS_REQUIRED"
+    },
+    {
+      "id": "S_I2_PINNED_MINIMAL_DOCKER_PLAN",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "state": "SOURCE_WITNESS_REQUIRED"
+    },
+    {
+      "id": "S_I3_TIMEOUT_TEARDOWN_DEBT",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "state": "SOURCE_WITNESS_REQUIRED"
+    },
+    {
+      "id": "S_I4_NO_SANDBOX_SELF_ATTEST",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "state": "SOURCE_WITNESS_REQUIRED"
+    },
+    {
+      "id": "S_G1_REQUIRED_CHECK_CENSUS",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "state": "SOURCE_WITNESS_REQUIRED"
+    },
+    {
+      "id": "S_G2_HOST_READBACK_AUTHORITY",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "state": "SOURCE_WITNESS_REQUIRED"
+    },
+    {
+      "id": "S_G3_INDEPENDENT_REVIEW_IDENTITIES",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "state": "SOURCE_WITNESS_REQUIRED"
+    },
+    {
+      "id": "S_G4_RELEASE_AND_ROLLBACK_DENY",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "state": "SOURCE_WITNESS_REQUIRED"
+    },
+    {
+      "id": "E_B1_MAINTAINED_EXTERNAL_TARGET",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "state": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "E_B2_DISTINCT_OWNER_ORACLE",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "state": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "E_U1_REAL_USERS_TWO_PERSONAS",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "state": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "E_U2_INDEPENDENT_OBSERVER",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "state": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "E_I1_HOST_POLICY_ATTESTATION",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "state": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "E_I2_NEGATIVE_ESCAPE_AND_KILL_TEST",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "state": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "E_G1_VERIFIED_REQUIRED_CHECKS",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "state": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "E_G2_REVIEW_AND_RELEASE_AUTHORITY",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "state": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "G_BEHAVIOR",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "S_B1_INDEPENDENT_GIT_ORACLE",
+        "S_B2_TWO_REAL_GIT_FIXTURES",
+        "S_B3_NEGATIVE_REFERENCE_MUTANTS",
+        "S_B4_COVERAGE_BOUNDARY",
+        "E_B1_MAINTAINED_EXTERNAL_TARGET",
+        "E_B2_DISTINCT_OWNER_ORACLE"
+      ],
+      "state": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "G_USABILITY",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "S_U1_TASK_SCRIPT",
+        "S_U2_COMPLETION_METRICS",
+        "S_U3_ZERO_FALSE_PROMOTION",
+        "S_U4_PILOT_DATA_VALIDATOR",
+        "E_U1_REAL_USERS_TWO_PERSONAS",
+        "E_U2_INDEPENDENT_OBSERVER"
+      ],
+      "state": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "G_ISOLATION",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "S_I1_DENY_BY_DEFAULT",
+        "S_I2_PINNED_MINIMAL_DOCKER_PLAN",
+        "S_I3_TIMEOUT_TEARDOWN_DEBT",
+        "S_I4_NO_SANDBOX_SELF_ATTEST",
+        "E_I1_HOST_POLICY_ATTESTATION",
+        "E_I2_NEGATIVE_ESCAPE_AND_KILL_TEST"
+      ],
+      "state": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "G_GOVERNANCE",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "S_G1_REQUIRED_CHECK_CENSUS",
+        "S_G2_HOST_READBACK_AUTHORITY",
+        "S_G3_INDEPENDENT_REVIEW_IDENTITIES",
+        "S_G4_RELEASE_AND_ROLLBACK_DENY",
+        "E_G1_VERIFIED_REQUIRED_CHECKS",
+        "E_G2_REVIEW_AND_RELEASE_AUTHORITY"
+      ],
+      "state": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "G_PRODUCT_INDEPENDENT_QUALIFICATION",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "G_BEHAVIOR",
+        "G_USABILITY",
+        "G_ISOLATION",
+        "G_GOVERNANCE"
+      ],
+      "state": "BLOCKED_EXTERNAL"
+    }
+  ],
+  "global_goal": "G_PRODUCT_INDEPENDENT_QUALIFICATION",
+  "negative_invariants": [
+    "NO_HOST_READBACK_EQUALS_BLOCKED_NOT_PASS",
+    "LOCAL_GIT_ORACLE_IS_DISTINCT_IMPLEMENTATION_NOT_DISTINCT_OPERATOR",
+    "TEST_FIXTURES_ARE_NOT_REAL_MAINTAINED_TARGETS",
+    "SIMULATED_USER_RESPONSES_ARE_NOT_EXTERNAL_USABILITY_STUDY",
+    "DOCKER_FLAGS_ARE_NOT_HOST_ISOLATION_ATTESTATION",
+    "SELF_SIGNED_OR_SELF_ASSERTED_POLICY_CANNOT_AUTHORIZE_RELEASE",
+    "ANY_MISSING_OR_STALE_WITNESS_BLOCKS_PRODUCT",
+    "NO_BACKGROUND_EXECUTION_OR_AUTO_MERGE"
+  ],
+  "requirements": {
+    "BEHAVIOR": {
+      "minimum_real_targets": 2,
+      "minimum_independent_oracle_owners": 1,
+      "reference": "native git, approved independent oracle, published expected outcomes",
+      "critical_false_passes": 0
+    },
+    "USABILITY": {
+      "minimum_participants": 8,
+      "personas": [
+        "first_time_developer",
+        "independent_assurance_reviewer"
+      ],
+      "minimum_repositories": 2,
+      "task_completion_min_ratio": 0.8,
+      "critical_proof_misclassifications": 0,
+      "participant_time_cap_minutes": 20,
+      "independent_observer": true
+    },
+    "ISOLATION": {
+      "pinned_image_digest": true,
+      "non_root": true,
+      "read_only_source": true,
+      "read_only_root": true,
+      "network_none": true,
+      "cap_drop_all": true,
+      "no_new_privileges": true,
+      "resource_bound": true,
+      "host_attestation": true,
+      "teardown_verified": true,
+      "negative_host_tests": true
+    },
+    "GOVERNANCE": {
+      "protected_main_required": true,
+      "required_checks_host_verified": true,
+      "reviewer_independent": true,
+      "release_approval_manual": true,
+      "rollback_drill": true,
+      "host_authority_verified": true
+    }
+  },
+  "observations": {
+    "source_git_oracle": "SOURCE_SCOPED_CANDIDATE",
+    "usability_external": "NOT_OBSERVED",
+    "isolation_external": "NOT_ATTESTED",
+    "governance_host": "ACCESS_DENIED_OR_NOT_ATTESTED"
+  },
+  "source_falsification": {
+    "seed": 883,
+    "cases": 10000,
+    "families": [
+      "DROP_NODE",
+      "DUPLICATE_ID",
+      "REMOVE_MANDATORY_EDGE",
+      "PROMOTE_EXTERNAL_SCOPE",
+      "FORGE_GOVERNANCE_PASS",
+      "FAKE_USER_COUNTS",
+      "SELF_AUTHORIZED_SANDBOX",
+      "WRONG_BASELINE",
+      "MISSING_TARGET_ORACLE",
+      "FORGE_RELEASE",
+      "UNVERIFIED_WITNESS",
+      "SHORT_CIRCUIT_GATE"
+    ],
+    "meaning": "synthetic schema mutations, not 10000 independent real-world defects"
+  },
+  "external_acceptance": "OUTSIDE_OF_SOURCE_CI; independently accountable operators, hosted settings and maintained target evidence; no self-asserted PASS",
+  "checklist": [
+    {
+      "gate": "G_BEHAVIOR",
+      "source": [
+        "S_B1_INDEPENDENT_GIT_ORACLE",
+        "S_B2_TWO_REAL_GIT_FIXTURES",
+        "S_B3_NEGATIVE_REFERENCE_MUTANTS",
+        "S_B4_COVERAGE_BOUNDARY"
+      ],
+      "external": [
+        "E_B1_MAINTAINED_EXTERNAL_TARGET",
+        "E_B2_DISTINCT_OWNER_ORACLE"
+      ],
+      "required": "ALL",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "gate": "G_USABILITY",
+      "source": [
+        "S_U1_TASK_SCRIPT",
+        "S_U2_COMPLETION_METRICS",
+        "S_U3_ZERO_FALSE_PROMOTION",
+        "S_U4_PILOT_DATA_VALIDATOR"
+      ],
+      "external": [
+        "E_U1_REAL_USERS_TWO_PERSONAS",
+        "E_U2_INDEPENDENT_OBSERVER"
+      ],
+      "required": "ALL",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "gate": "G_ISOLATION",
+      "source": [
+        "S_I1_DENY_BY_DEFAULT",
+        "S_I2_PINNED_MINIMAL_DOCKER_PLAN",
+        "S_I3_TIMEOUT_TEARDOWN_DEBT",
+        "S_I4_NO_SANDBOX_SELF_ATTEST"
+      ],
+      "external": [
+        "E_I1_HOST_POLICY_ATTESTATION",
+        "E_I2_NEGATIVE_ESCAPE_AND_KILL_TEST"
+      ],
+      "required": "ALL",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "gate": "G_GOVERNANCE",
+      "source": [
+        "S_G1_REQUIRED_CHECK_CENSUS",
+        "S_G2_HOST_READBACK_AUTHORITY",
+        "S_G3_INDEPENDENT_REVIEW_IDENTITIES",
+        "S_G4_RELEASE_AND_ROLLBACK_DENY"
+      ],
+      "external": [
+        "E_G1_VERIFIED_REQUIRED_CHECKS",
+        "E_G2_REVIEW_AND_RELEASE_AUTHORITY"
+      ],
+      "required": "ALL",
+      "status": "BLOCKED_EXTERNAL"
+    }
+  ]
+}
