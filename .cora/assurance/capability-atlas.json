@@ -642,6 +642,7 @@
       "tools/verify_capability_atlas.py",
       "tools/verify_claim_evidence.py",
       "tools/verify_documentation.py",
+      "tools/verify_engineering_closure.py",
       "tools/verify_layout_simplification.py",
       "tools/verify_pr16_coverage.py",
       "tools/verify_release_readiness.py",
@@ -760,6 +761,7 @@
       "tests/test_pr37_integrated_one_run.py",
       "tests/test_pr38_genealogy.py",
       "tests/test_pr39_qualification.py",
+      "tests/test_pr40_engineering_closure.py",
       "tests/test_selection.py"
     ],
     "internal_dod": [
