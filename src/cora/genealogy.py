@@ -454,13 +454,33 @@ def build_genealogy(repo: Path, revision: str) -> dict:
             "domains": pr["domains"],
             "pr_url": pr["pr_url"],
         })
-    # The 28 old paths are candidates for *path migration reconciliation*,
-    # not signals that any current source module is unused.
+    # PR30's relocation map is the single historical source; an absent path
+    # must never be classified as dead code or safe deletion. This frozen
+    # register cannot be silently modified to authorize future migrations.
+    layout = json.loads(_source(repo, sha, ".cora/layout-migration.json"))
+    if layout.get("schema") != "cora-layout-migration/1" or layout.get("authority") != "NONE":
+        raise ValueError("untrusted historical migration authority or schema")
+    moves = (layout.get("moves", []) + layout.get("internal_contract_moves", [])
+             + layout.get("thematic_moves", []))
+    mapped: dict[str, dict] = {}
+    for move in moves:
+        old, new = move.get("old"), move.get("new")
+        if not _safe_path(old) or not _safe_path(new) or old in mapped:
+            raise ValueError("duplicate or unsafe historical relocation mapping")
+        if move.get("authority") not in (None, "NONE"):
+            raise ValueError("historical relocation cannot authorize deletion")
+        mapped[old] = move
+    if set(mapped) != old_paths or any(m["new"] not in base_files for m in moves):
+        raise ValueError("historical migration mapping is incomplete or targets are absent")
     relocation_candidates = [{
-        "old_path": p,
+        "old_path": p, "canonical_path": mapped[p]["new"],
+        "canonical_present_at_base": True,
+        "migration_mode": mapped[p].get("mode") or
+                          ("BYTE_IDENTICAL" if mapped[p].get("preserve_bytes") else
+                           "HISTORICAL_MIGRATION_DECLARED"),
         "classification": ("HISTORICAL_DOC_ARCHIVE_PATH" if p.startswith("docs/")
                            else "FORMER_ROOT_CONTRACT_OR_PROFILE"),
-        "action": "PRESERVE_OR_VERIFY_CANONICAL_MAPPING",
+        "action": "PRESERVE_CANONICAL_SOURCE_AND_REVIEW_EXTERNAL_CONSUMERS",
         "deletion_authorized": False, "independent_consumer_readback": "NOT_ATTESTED"
     } for p in sorted(old_paths)]
     result = {

@@ -65,6 +65,10 @@ class HistoryReticularTests(unittest.TestCase):
         self.assertEqual(r["authorization"],"NONE")
         self.assertEqual(r["retention"]["current_source_modules_removal_authorized"],0)
         self.assertEqual(r["retention"]["historical_or_relocated_count"],28)
+        self.assertEqual(len({x["canonical_path"] for x in r["retention"]["candidates"]}),28)
+        self.assertTrue(all(x["canonical_present_at_base"] for x in r["retention"]["candidates"]))
+        self.assertTrue(all(x["canonical_path"] in _files(ROOT,BASE)
+                            for x in r["retention"]["candidates"]))
         self.assertTrue(all(x["deletion_authorized"] is False
                             for x in r["retention"]["candidates"]))
         self.assertGreaterEqual(r["module_liveness"]["module_count"],56)
@@ -172,6 +176,22 @@ class HistoryReticularTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,"PR34"):
                 build_genealogy(local,g(local,"rev-parse","HEAD"))
             self.assertTrue(corpus_available(local,self.sha))
+
+    def test_06b_committed_false_relocation_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            local=Path(tmp)/"clone"
+            subprocess.run(["git","clone","-q","--local",str(ROOT),str(local)],check=True)
+            g(local,"checkout","-q",self.sha)
+            g(local,"config","user.name","PR38 migration oracle")
+            g(local,"config","user.email","oracle@example.invalid")
+            path=local/".cora/layout-migration.json"
+            doc=json.loads(path.read_text("utf-8"))
+            doc["moves"][0]["new"]="docs/archive/nonexistent-historic.md"
+            path.write_text(json.dumps(doc))
+            g(local,"add",".cora/layout-migration.json")
+            g(local,"commit","-qm","forged historical layout migration")
+            with self.assertRaisesRegex(ValueError,"migration mapping"):
+                build_genealogy(local,g(local,"rev-parse","HEAD"))
 
     def test_07_future_unregistered_module_creates_debt_not_auto_pass(self):
         with tempfile.TemporaryDirectory() as tmp:
