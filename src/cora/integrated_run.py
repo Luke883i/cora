@@ -15,6 +15,7 @@ from .evidence import domain_hash
 from .git_snapshot import git, snapshot
 from .integrated_registry import build_registry, verify_contract, SCHEMA as REGISTRY_SCHEMA
 from .one_run import run_one, verify_one
+from .genealogy import build_genealogy, corpus_available
 
 SCHEMA = "cora-integrated-one-run/2"
 ATTEMPT_STATES = {"EXECUTED_SCOPED", "REUSED_SCOPED", "BLOCKED", "FAIL",
@@ -286,6 +287,8 @@ def _artifact_payloads(bundle: dict, log: bytes | None) -> dict[str, bytes]:
              "gaps.json": _serialize(bundle["gaps"]),
              "dod.json": _serialize(bundle["dod"]),
              "execution-manifest.json": _serialize(bundle["execution_manifest"])}
+    if "genealogy" in bundle:
+        files["genealogy.json"] = _serialize(bundle["genealogy"])
     if log is not None:
         files["unittest-verbose.log"] = log
     return files
@@ -356,6 +359,8 @@ def run_integrated(repo: Path, revision: str = "HEAD", *, process: str = "full",
             "authorization": "NONE",
         },
     }
+    if corpus_available(repo, sha):
+        bundle["genealogy"] = build_genealogy(repo, sha)
     bundle["evidence_manifest"] = _manifest(bundle, log, out is not None)
     bundle["receipt_digest"] = domain_hash("CORA:integrated-one-run:2", bundle)
     if out is not None:
@@ -386,6 +391,11 @@ def verify_integrated(repo: Path, receipt: dict, *, html_page: str | None = None
         raise ValueError("PR36 original source replay failed")
     if receipt["baseline_pr36"]["commit"] != sha:
         raise ValueError("cross revision PR36 report rejected")
+    if "genealogy" in receipt:
+        if receipt["genealogy"] != build_genealogy(repo, sha):
+            raise ValueError("historical genealogy mismatch")
+    elif corpus_available(repo, sha):
+        raise ValueError("genealogy obligation missing from dossier")
     expected = build_registry(repo, sha)
     if receipt.get("registry") != expected:
         raise ValueError("integrated registry differs from original Git")
