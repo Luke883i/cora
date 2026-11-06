@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import importlib.util
 import json
+import os
 import subprocess
 import tempfile
 import unittest
@@ -21,7 +22,26 @@ def g(repo, *args):
 
 def fork(root):
     source = root/"repo"
-    g(ROOT, "clone", "--local", "-q", str(ROOT), str(source))
+    # Preserve original Git objects without hardlink-based local clone races.
+    # Do not retry: retain a bounded diagnostic on any failure.
+    env = {key: value for key, value in os.environ.items()
+           if not key.startswith("GIT_CONFIG_") and key not in (
+               "GIT_OBJECT_DIRECTORY", "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+               "GIT_INDEX_FILE")}
+    try:
+        observed = subprocess.run(
+            ["git", "-C", str(ROOT), "clone", "--no-local", "-q",
+             "--", str(ROOT), str(source)],
+            capture_output=True, text=True, check=False, timeout=60, env=env)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise RuntimeError("PR26 physical Git fixture transport failed: "
+                           + type(exc).__name__) from exc
+    if observed.returncode:
+        raise RuntimeError("PR26 physical Git fixture clone failed "
+                           f"(exit {observed.returncode}): "
+                           + (observed.stderr or "NO_GIT_DIAGNOSTIC")[:1000])
+    if not (source / ".git").exists():
+        raise RuntimeError("PR26 clone returned success without original Git")
     g(source, "checkout", "-q", g(ROOT, "rev-parse", "HEAD"))
     g(source, "config", "user.name", "source proof fixture")
     g(source, "config", "user.email", "source@example.invalid")
