@@ -182,7 +182,7 @@ class OneRunAssuranceTests(unittest.TestCase):
     def test_original_git_doD_physical_source_mutants(self):
         with tempfile.TemporaryDirectory() as d:
             clone = Path(d)/"git-fixture"
-            subprocess.run(["git", "clone", "-q", "--local", str(ROOT), str(clone)], check=True)
+            subprocess.run(["git", "clone", "-q", "--no-local", str(ROOT), str(clone)], check=True)
             git(clone, "checkout", "-q", self.sha)
             git(clone, "config", "user.name", "CORA negative control")
             git(clone, "config", "user.email", "test@example.invalid")

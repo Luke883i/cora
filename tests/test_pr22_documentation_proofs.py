@@ -27,8 +27,8 @@ def git(root: Path, *args: str) -> str:
 
 def fixture(folder: Path) -> Path:
     target = folder / "repo"
-    subprocess.run(["git", "clone", "--quiet", "--no-checkout", "--local",
-                    "--no-hardlinks", str(ROOT), str(target)],
+    subprocess.run(["git", "clone", "--quiet", "--no-checkout", "--no-local",
+                    str(ROOT), str(target)],
                    capture_output=True, text=True, check=True, timeout=40)
     git(target, "checkout", "--force", "--detach", git(ROOT, "rev-parse", "HEAD"))
     git(target, "config", "user.name", "CORA fixture")

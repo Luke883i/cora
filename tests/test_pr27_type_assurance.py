@@ -174,7 +174,14 @@ class TypeAssuranceTests(unittest.TestCase):
         self.assertEqual(baseline['external'], 'BLOCKED_EXTERNAL')
         with tempfile.TemporaryDirectory() as directory:
             repo = Path(directory) / 'original-source-fixture'
-            subprocess.run(['git','clone','--local','-q',str(ROOT),str(repo)],check=True)
+            # Retain original-Git physical mutation with non-local object transport.
+            # Fail without retry and expose bounded diagnostic stderr.
+            cloned = subprocess.run(
+                ['git','clone','--no-local','-q',str(ROOT),str(repo)],
+                capture_output=True, text=True, check=False, timeout=60)
+            if cloned.returncode:
+                self.fail('PR27 original-Git clone failed (exit %d): %s' %
+                          (cloned.returncode, (cloned.stderr or 'NO_STDERR')[:1600]))
             git(repo,'config','user.name','source negative witness')
             git(repo,'config','user.email','negative@example.invalid')
             git(repo,'checkout','-q',git(ROOT,'rev-parse','HEAD'))

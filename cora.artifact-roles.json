@@ -1089,6 +1089,31 @@
         "TEST"
       ],
       "rationale": "PR39 Git replay, 10k mutants, native Git and anti-promotion tests."
+    },
+    {
+      "pattern": ".cora/contracts/dod/engineering-knowledge-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "PR40 exact-Git source knowledge, seeded falsification and independent external DoD; no product authority."
+    },
+    {
+      "pattern": "tools/verify_engineering_closure.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "RELEASE_TOOL"
+      ],
+      "rationale": "PR40 original-Git static/dynamic-boundary debt census, source-only replay and 10M finite-model campaign; no extra orchestrator."
+    },
+    {
+      "pattern": "tests/test_pr40_engineering_closure.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "PR40 seeded 14-family negatives, Git-committed external scope and current document chronology falsifiers."
     }
   ]
 }

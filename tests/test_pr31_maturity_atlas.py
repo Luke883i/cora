@@ -95,7 +95,7 @@ class MaturityAtlasTests(unittest.TestCase):
     def test_git_committed_external_review_reclassification_mutant(self):
         with tempfile.TemporaryDirectory() as d:
             clone = Path(d) / "cora"
-            subprocess.run(["git", "clone", "-q", "--local", str(ROOT), str(clone)], check=True)
+            subprocess.run(["git", "clone", "-q", "--no-local", str(ROOT), str(clone)], check=True)
             git(clone, "checkout", "-q", self.sha)
             git(clone, "config", "user.name", "CORA negative fixture")
             git(clone, "config", "user.email", "test@example.invalid")

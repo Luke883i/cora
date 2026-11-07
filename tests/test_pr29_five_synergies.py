@@ -106,7 +106,7 @@ class FiveSynergiesTests(unittest.TestCase):
     def test_real_continuous_semantic_impact_and_stale_forgery(self):
         with tempfile.TemporaryDirectory() as directory:
             repo=Path(directory)/'evolution'
-            subprocess.run(['git','clone','--local','-q',str(ROOT),str(repo)],check=True)
+            subprocess.run(['git','clone','--no-local','-q',str(ROOT),str(repo)],check=True)
             git(repo,'config','user.name','CORA evolution case')
             git(repo,'config','user.email','test@example.invalid')
             git(repo,'checkout','-q',self.head)
@@ -168,7 +168,7 @@ class FiveSynergiesTests(unittest.TestCase):
     def test_physical_preseed_fault_mutation_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             repo=Path(directory)/'preseed'
-            subprocess.run(['git','clone','--local','-q',str(ROOT),str(repo)],check=True)
+            subprocess.run(['git','clone','--no-local','-q',str(ROOT),str(repo)],check=True)
             git(repo,'config','user.name','preseed adversarial source')
             git(repo,'config','user.email','mutant@example.invalid')
             git(repo,'checkout','-q',self.head)
@@ -209,7 +209,7 @@ class FiveSynergiesTests(unittest.TestCase):
     def test_physical_dod_and_readme_source_mutations(self):
         with tempfile.TemporaryDirectory() as directory:
             local=Path(directory)/'cora-original'
-            subprocess.run(['git','clone','--local','-q',str(ROOT),str(local)],check=True)
+            subprocess.run(['git','clone','--no-local','-q',str(ROOT),str(local)],check=True)
             git(local,'config','user.name','CORA physical mutant')
             git(local,'config','user.email','mutant@example.invalid')
             git(local,'checkout','-q',self.head)

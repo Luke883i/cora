@@ -78,7 +78,7 @@ class LayoutSimplificationTests(unittest.TestCase):
     def test_03_physical_historical_blob_and_readme_mutants(self):
         with tempfile.TemporaryDirectory() as directory:
             local=Path(directory)/"local"
-            subprocess.run(["git","clone","--local","-q",str(ROOT),str(local)],check=True)
+            subprocess.run(["git","clone","--no-local","-q",str(ROOT),str(local)],check=True)
             git(local,"config","user.name","CORA original source mutant")
             git(local,"config","user.email","mutant@example.invalid")
             git(local,"checkout","-q",self.head)
@@ -97,7 +97,7 @@ class LayoutSimplificationTests(unittest.TestCase):
     def test_04_physical_preseed_oracle_and_dod_cut_mutants(self):
         with tempfile.TemporaryDirectory() as directory:
             local=Path(directory)/"local"
-            subprocess.run(["git","clone","--local","-q",str(ROOT),str(local)],check=True)
+            subprocess.run(["git","clone","--no-local","-q",str(ROOT),str(local)],check=True)
             git(local,"config","user.name","CORA preseed mutant")
             git(local,"config","user.email","mutant@example.invalid")
             git(local,"checkout","-q",self.head)
@@ -121,7 +121,7 @@ class LayoutSimplificationTests(unittest.TestCase):
     def test_06_internal_dod_blob_forgery_is_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             local=Path(directory)/"local"
-            subprocess.run(["git","clone","--local","-q",str(ROOT),str(local)],check=True)
+            subprocess.run(["git","clone","--no-local","-q",str(ROOT),str(local)],check=True)
             git(local,"config","user.name","CORA internal DoD proof")
             git(local,"config","user.email","mutant@example.invalid")
             git(local,"checkout","-q",self.head)
@@ -139,7 +139,7 @@ class LayoutSimplificationTests(unittest.TestCase):
     def test_07_structural_catalog_mutation_and_routing_attack(self):
         with tempfile.TemporaryDirectory() as directory:
             repo=Path(directory)/"copy"
-            subprocess.run(["git","clone","--local","-q",str(ROOT),str(repo)],check=True)
+            subprocess.run(["git","clone","--no-local","-q",str(ROOT),str(repo)],check=True)
             git(repo,"config","user.name","CORA thematic source falsifier")
             git(repo,"config","user.email","fixture@example.invalid")
             git(repo,"checkout","-q",self.head)

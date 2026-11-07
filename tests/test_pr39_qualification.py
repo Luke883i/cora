@@ -249,7 +249,7 @@ class IndependentQualificationTests(unittest.TestCase):
     def test_08_physical_git_external_state_mutant_is_rejected(self):
         with tempfile.TemporaryDirectory() as temp:
             local=Path(temp)/"clone"
-            subprocess.run(["git","clone","-q","--local",str(ROOT),str(local)],
+            subprocess.run(["git","clone","-q","--no-local",str(ROOT),str(local)],
                            check=True,timeout=60)
             run_git(local,"checkout","-q",self.sha)
             run_git(local,"config","user.name","PR39 Git falsifier")
