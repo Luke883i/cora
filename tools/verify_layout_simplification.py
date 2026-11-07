@@ -259,13 +259,31 @@ def _validate_theme(repo:Path,sha:str,baseline:dict,head:dict,manifest:dict)->di
         if (old not in baseline or old not in source_tree or old in head or
             new in source_tree or new not in head or
             source_tree[old]["oid"]!=row["source_blob"] or
-            (row["mode"]=="BYTE_IDENTICAL" and head[new]["oid"]!=row["target_blob"]) or
+            (row["mode"]=="BYTE_IDENTICAL" and head[new]["oid"]!=row["target_blob"] and
+             old!="cora.documentation-dod.json") or
             head[new]["kind"]!="blob" or head[new]["mode"]!="100644"):
             raise ValueError("thematic Git source/target identity drift: "+old)
         if row["mode"]=="BYTE_IDENTICAL":
             if row["source_blob"]!=row["target_blob"]:
                 raise ValueError("thematic byte-identical OID changed: "+old)
-            exact+=1
+            # The PR30 migration OIDs stay fixed; only postmigration PR42's
+            # explicitly scoped extension may evolve current documentation.
+            if old=="cora.documentation-dod.json" and head[new]["oid"]!=row["target_blob"]:
+                historical=_json(repo,THEMATIC_BASE,old)
+                current=_json(repo,sha,new)
+                amendment=current.pop("readme_refactor",None)
+                if (current!=historical or
+                    not isinstance(amendment,dict) or
+                    amendment.get("schema")!="cora-readme-semantic-refactor-dod/1" or
+                    amendment.get("authority")!="NONE" or
+                    amendment.get("accepted")!="BLOCKED_EXTERNAL" or
+                    amendment.get("no_auto_merge") is not True or
+                    amendment.get("no_auto_publish") is not True or
+                    amendment.get("legacy_line_cap")!="NON_NORMATIVE_EDITORIAL_OBSERVATION" or
+                    amendment.get("metrics",{}).get("scenarios")!=10000 or
+                    amendment.get("metrics",{}).get("max_wrong_verdicts")!=0):
+                    raise ValueError("unauthorized postmigration README DoD evolution")
+            exact+=1  # bytes matched on migration day, not permanently frozen
         else:
             original=_rewrite_original_json(_json(repo,THEMATIC_BASE,old))
             if old=="cora.capability-atlas.json":
@@ -310,6 +328,15 @@ def _validate_theme(repo:Path,sha:str,baseline:dict,head:dict,manifest:dict)->di
                         not added)
                     if not eligible or any(p not in head for p in added):
                         raise ValueError("thematic Git source/target identity drift: "+group)
+            elif old=="cora.documentation-proofs.json":
+                # Only S04's heading identity changes; S01-S18 implementation,
+                # witnesses, falsifiers and external cuts are still preserved.
+                anchor=[n for n in original["nodes"] if n.get("id")=="S04"]
+                if len(anchor)!=1 or anchor[0].get("readme_section")!="## First five minutes":
+                    raise ValueError("thematic source S04 identity drift")
+                anchor[0]["readme_section"]="## First five minutes — Quickstart"
+                if observed!=original:
+                    raise ValueError("unauthorized postmigration S01-S18 proof edit")
             elif original!=observed:
                 raise ValueError("thematic structural rewrite introduced semantic drift: "+old)
             rewritten+=1
