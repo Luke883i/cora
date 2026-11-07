@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import json
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -140,6 +141,83 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         self.assertEqual(by["G_SOURCE_EKC"]["scope"], "SOURCE")
         self.assertEqual(self.doc["product_status"], "BLOCKED_EXTERNAL")
         self.assertEqual(self.doc["authority"], "NONE")
+
+
+
+class ClosureEconomyAdversarialTests(unittest.TestCase):
+    """Finite counterexamples plus a real two-commit original-Git fixture."""
+
+    def inventory(self, status="BLOCKED_EXTERNAL", scope="EXTERNAL", extra=False):
+        items = {"x.json::E01": {"scope": scope, "status": status,
+                 "depends_on": [], "claim": "independent human review",
+                 "source_path": "x.json"}}
+        if extra:
+            items["y.json::E02"] = {"scope": "EXTERNAL", "status": "BLOCKED_EXTERNAL",
+                 "depends_on": [], "claim": "independent human review",
+                 "source_path": "y.json"}
+        return {"commit": "a"*40, "contracts": ["x.json"], "nodes": items}
+
+    def test_removal_is_not_evidence_of_closure(self):
+        before = self.inventory()
+        after = self.inventory()
+        after["nodes"] = {}
+        report = ekc.closure_change(before, after)
+        self.assertEqual(len(report["removed_not_closed"]), 1)
+        self.assertEqual(report["verified_closures"], 0)
+        self.assertIsNone(report["closure_yield"])
+
+    def test_self_asserted_pass_never_counts(self):
+        report = ekc.closure_change(self.inventory(), self.inventory("PASS_SCOPED"))
+        self.assertEqual(len(report["asserted_passes_not_verified"]), 1)
+        self.assertEqual(report["verified_closures"], 0)
+
+    def test_external_scope_downgrade_detected(self):
+        report = ekc.closure_change(self.inventory(), self.inventory(scope="SOURCE"))
+        self.assertEqual(report["external_scope_promotions"], ["x.json::E01"])
+
+    def test_duplicate_wording_is_only_a_candidate(self):
+        report = ekc.closure_change(self.inventory(), self.inventory(extra=True))
+        self.assertEqual(len(report["possible_duplicate_wording_not_merged"]), 1)
+        self.assertEqual(report["verified_closures"], 0)
+
+    def test_original_git_mutation_and_replay(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder) / "repo"
+            root.mkdir()
+            git(root, "init", "-q")
+            git(root, "config", "user.name", "fixture")
+            git(root, "config", "user.email", "fixture@example.invalid")
+            location = root / ".cora/contracts/dod"
+            location.mkdir(parents=True)
+            path = location / "example.json"
+            doc = {"schema": "test", "nodes": [
+                {"id": "E01", "scope": "EXTERNAL", "status": "BLOCKED_EXTERNAL",
+                 "depends_on": [], "claim": "external decision"}]}
+            path.write_text(json.dumps(doc), encoding="utf-8")
+            git(root, "add", ".")
+            git(root, "commit", "-qm", "baseline")
+            base = git(root, "rev-parse", "HEAD")
+            doc["nodes"][0]["scope"] = "SOURCE"
+            path.write_text(json.dumps(doc), encoding="utf-8")
+            git(root, "add", ".")
+            git(root, "commit", "-qm", "unsafe semantic promotion")
+            result = ekc.closure_delta(root, base)
+            self.assertEqual(result["status"], "REFUTED")
+            self.assertTrue(ekc.verify_closure_delta(root, result))
+            receipt = Path(folder) / "refuted.json"
+            receipt.write_text(json.dumps(result), encoding="utf-8")
+            proc = subprocess.run([
+                sys.executable, str(ROOT / "tools/verify_engineering_closure.py"),
+                "--repo", str(root), "--verify-closure", str(receipt)],
+                capture_output=True, text=True, check=False, timeout=40)
+            self.assertEqual(proc.returncode, 2, proc.stdout + proc.stderr)
+            fake = copy.deepcopy(result)
+            fake["counts"]["verified_closures"] = 1
+            with self.assertRaisesRegex(ValueError, "does not replay"):
+                ekc.verify_closure_delta(root, fake)
+            with self.assertRaises(ValueError):
+                ekc.closure_delta(root, git(root, "rev-parse", "HEAD"), base)
+
 
 
 if __name__ == "__main__":

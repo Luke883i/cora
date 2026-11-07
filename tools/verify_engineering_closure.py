@@ -348,6 +348,111 @@ def stress(doc: dict, *, sessions: int = 10, cases_per_session: int = 1_000_000)
     }
 
 
+
+# PR43: obligation change accounting. This extends the existing source verifier;
+# a count, asserted status or changed DoD is never approval or behavioral proof.
+CLOSURE_SCHEMA = "cora-obligation-delta/1"
+
+
+def closure_inventory(repo: Path, revision: str) -> dict:
+    """Read ALL committed DoD node occurrences from original Git, not the worktree."""
+    commit = git(repo, "rev-parse", "--verify", revision + "^{commit}").decode().strip()
+    paths = git(repo, "ls-tree", "-r", "--name-only", commit).decode("utf-8").splitlines()
+    paths = sorted(p for p in paths if re.fullmatch(
+        r"\.cora/contracts/dod/[a-zA-Z0-9_-]+\.json", p))
+    if not paths:
+        raise ValueError("no canonical DoD contracts at pinned Git revision")
+    nodes = {}
+    for path in paths:
+        document = json.loads(source(repo, commit, path))
+        rows = document.get("nodes")
+        if not isinstance(rows, list) or not rows:
+            raise ValueError("DoD has no inspectable node list: " + path)
+        for row in rows:
+            if not isinstance(row, dict) or not isinstance(row.get("id"), str):
+                raise ValueError("malformed DoD node: " + path)
+            identity = path + "::" + row["id"]
+            if identity in nodes:
+                raise ValueError("duplicate node identity: " + identity)
+            scope = row.get("scope", "UNCLASSIFIED")
+            if not isinstance(scope, str):
+                raise ValueError("invalid scope: " + identity)
+            deps = row.get("depends_on", [])
+            if not isinstance(deps, list) or not all(isinstance(x, str) for x in deps):
+                raise ValueError("invalid dependencies: " + identity)
+            claim = next((row[k] for k in ("claim", "description", "title", "family")
+                          if isinstance(row.get(k), str) and row[k].strip()), "")
+            nodes[identity] = {
+                "scope": scope, "status": str(row.get("status", "NOT_ASSERTED")),
+                "depends_on": sorted(deps), "claim": claim.strip(),
+                "source_path": path,
+            }
+    return {"commit": commit, "contracts": paths, "nodes": nodes}
+
+
+def closure_change(before: dict, after: dict) -> dict:
+    """Count changed obligations; never convert declarations into verified closures."""
+    a, b = before["nodes"], after["nodes"]
+    removed, added = sorted(set(a)-set(b)), sorted(set(b)-set(a))
+    changed = sorted(k for k in a.keys() & b.keys() if a[k] != b[k])
+    external_promotions = sorted(k for k in a.keys() & b.keys()
+        if a[k]["scope"] == "EXTERNAL" and b[k]["scope"] != "EXTERNAL")
+    asserted_passes = sorted(k for k, value in b.items()
+        if value["status"].upper().startswith(("PASS", "APPROV", "CLOSED", "ACCEPT"))
+        and (k not in a or value["status"] != a[k]["status"]))
+    # Same wording is a duplication hint, not a proof of semantic equivalence.
+    words = {}
+    for identity, row in b.items():
+        normalized = " ".join(row["claim"].lower().split())
+        if normalized:
+            words.setdefault(normalized, []).append(identity)
+    suspected_overlaps = [{"claims": sorted(ids), "phrase": phrase}
+                          for phrase, ids in sorted(words.items()) if len(ids) > 1]
+    return {
+        "before_occurrences": len(a), "after_occurrences": len(b),
+        "contract_growth": len(after["contracts"]) - len(before["contracts"]),
+        "obligation_occurrence_growth": len(b)-len(a),
+        "added": added, "removed_not_closed": removed, "changed": changed,
+        "external_scope_promotions": external_promotions,
+        "asserted_passes_not_verified": asserted_passes,
+        "possible_duplicate_wording_not_merged": suspected_overlaps,
+        "external_open_occurrences": sum(x["scope"] == "EXTERNAL" for x in b.values()),
+        "verified_closures": 0,
+        "closure_yield": None,
+        "identity_boundary": "PATH_PLUS_NODE_ID; cross-contract meaning requires independent equivalence mapping",
+        "evidence_boundary": "NO_INDEPENDENT_RUNTIME_OR_HOST_RECEIPTS_VALIDATED",
+    }
+
+
+def closure_delta(repo: Path, base: str, head: str = "HEAD") -> dict:
+    repo = Path(repo).resolve(strict=True)
+    before, after = closure_inventory(repo, base), closure_inventory(repo, head)
+    if before["commit"] == after["commit"]:
+        raise ValueError("closure comparison needs two distinct commits")
+    ancestor = subprocess.run(
+        ["git", "-C", str(repo), "merge-base", "--is-ancestor",
+         before["commit"], after["commit"]], capture_output=True, timeout=30)
+    if ancestor.returncode != 0:
+        raise ValueError("base must be ancestor of head; no unrelated baseline comparison")
+    counts = closure_change(before, after)
+    return {
+        "schema": CLOSURE_SCHEMA, "base": before["commit"], "head": after["commit"],
+        "status": "REFUTED" if counts["external_scope_promotions"] else "PASS_SCOPED_ACCOUNTING",
+        "counts": counts, "authority": "NONE",
+        "product": "BLOCKED_EXTERNAL", "release_authorized": False,
+        "qualification": "ACCOUNTING_ONLY_NOT_INDEPENDENT_EVIDENCE",
+    }
+
+
+def verify_closure_delta(repo: Path, report: dict) -> bool:
+    if not isinstance(report, dict) or report.get("schema") != CLOSURE_SCHEMA:
+        raise ValueError("closure report schema invalid")
+    expected = closure_delta(repo, report["base"], report["head"])
+    if expected != report:
+        raise ValueError("closure delta does not replay from original Git")
+    return True
+
+
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--repo", type=Path, default=Path("."))
@@ -355,9 +460,21 @@ def main() -> int:
     p.add_argument("--output", type=Path)
     p.add_argument("--verify-report", type=Path)
     p.add_argument("--stress-10m", action="store_true")
+    p.add_argument("--closure-base", help="compare pinned Git DoDs against --revision; source accounting only")
+    p.add_argument("--verify-closure", type=Path, help="replay a closure delta using original Git")
     args = p.parse_args()
     try:
-        if args.verify_report:
+        if args.verify_closure:
+            record = json.loads(args.verify_closure.read_text('utf-8'))
+            verify_closure_delta(args.repo, record)
+            result = {'status': 'REFUTED' if record['status'] == 'REFUTED'
+                      else 'REPLAYED_SOURCE_ONLY', 'base': record['base'],
+                      'head': record['head'], 'authority': 'NONE'}
+        elif args.closure_base:
+            if args.stress_10m or args.verify_report:
+                raise ValueError('closure accounting is separate from stress or knowledge replay')
+            result = closure_delta(args.repo, args.closure_base, args.revision)
+        elif args.verify_report:
             record = json.loads(args.verify_report.read_text("utf-8"))
             verify_report(args.repo, record)
             result = {"status": "SOURCE_REPLAY_SCOPED", "commit": record["commit"],
@@ -374,7 +491,7 @@ def main() -> int:
             args.output.write_text(output, "utf-8")
         else:
             print(output, end="")
-        return 0
+        return 2 if result.get("status") == "REFUTED" else 0
     except (OSError, ValueError, KeyError, subprocess.SubprocessError) as exc:
         print(type(exc).__name__ + ": " + str(exc))
         return 3

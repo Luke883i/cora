@@ -49,6 +49,18 @@ jobs:
           assert x['dynamic_execution']=='NOT_EXECUTED_BY_STATIC_AUDIT'
           assert not x['product_qualified']
           PY
+      - name: PR43 exact-Git requirement accounting and replay (NOT external closure)
+        run: |
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+          python tools/verify_engineering_closure.py --repo . --closure-base 4b9610fa584b752333df14ddf3433b9b72b1247b --revision HEAD --output /tmp/cora-pr43-obligations.json
+          python tools/verify_engineering_closure.py --repo . --verify-closure /tmp/cora-pr43-obligations.json
+          python - <<'PY'
+          import json
+          x=json.load(open('/tmp/cora-pr43-obligations.json'))
+          assert x['status']=='PASS_SCOPED_ACCOUNTING'
+          assert x['counts']['verified_closures']==0 and x['counts']['closure_yield'] is None
+          assert x['product']=='BLOCKED_EXTERNAL' and x['authority']=='NONE'
+          PY
       - name: Seeded one-million contract falsification, double replay
         run: |
           cora stress-debt --seed 883 --cases 1000000 --output /tmp/stress-1.json
