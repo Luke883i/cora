@@ -6,7 +6,7 @@ CORA is an offline-first **Python 3.11+ command-line product** that helps develo
 
 **Why it matters:** a successful code edit, a green test and a confident AI explanation are not the same as product correctness, operational readback or independent approval. CORA makes supported claims, evidence gaps and required next checks explicit. It is **not** a coding agent, general runtime-equivalence prover, universal dead-code detector, automatic code deleter or merge authority.
 
-**Current status:** `v1.experimental` / Python package `1.0.0a4`, alpha **source candidate**, not a stable API or verified public release. See [release status](docs/RELEASE.md) and [product DoD](docs/DOD_V1_EXPERIMENTAL.md).
+**Current status:** `v1.experimental` / Python package `1.0.0a4`, alpha **source candidate**, not a stable API or verified public release. See [release status](docs/RELEASE.md), [product DoD](docs/DOD_V1_EXPERIMENTAL.md), and [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json): a conclusive source freeze candidate, **not** a published release or independently governed approval.
 
 **Recommended use:** an engineer or AI coding assistant proposes a bounded change; CORA organizes Git evidence, falsifiers and review obligations; independent test operators and accountable humans decide acceptance. Start with read-only inspection and exact BASE/HEAD, not automatic remediation.
 

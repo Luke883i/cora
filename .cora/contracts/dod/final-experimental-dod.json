@@ -1,0 +1,484 @@
+{
+  "schema": "cora-final-experimental-dod/1",
+  "version": 1,
+  "authority": "NONE",
+  "source_status": "PENDING_EXACT_HEAD_EXECUTION",
+  "product_status": "BLOCKED_EXTERNAL",
+  "public_release": "NOT_AUTHORIZED",
+  "baseline_main": "2e4951eec8877d16f366d0b49498eb4393a3b580",
+  "baseline_release_name": "CORA 1.0.0a4 — Final Experimental Baseline",
+  "package": "cora-audit",
+  "package_version": "1.0.0a4",
+  "cli_count": 71,
+  "logic": "NONCOMPENSATORY_AND",
+  "status_meaning": {
+    "SOURCE_READY": "Current Git and physical fixture gates executed at exact SHA; NOT human release",
+    "BLOCKED_EXTERNAL": "Independent maintained-target and governance witnesses are missing",
+    "PUBLICATION_APPROVED": "Only if independently authenticated operator authorizes tag and assets"
+  },
+  "source": [
+    "D01_GIT_CHRONO",
+    "D02_PROSE_NEGATIVE",
+    "D03_ROLE_AND_CLI",
+    "D04_ARCHIVE_SEPARATION",
+    "D05_EXACT_HEAD_REPLAY",
+    "B01_INDEPENDENT_NATIVE_ORACLE",
+    "B02_PHYSICAL_NEGATIVE_CONTROL",
+    "B03_NO_RUNTIME_PROMOTION",
+    "B04_BEHAVIOR_DIGEST_REPLAY",
+    "H01_HOST_NONPROMOTION",
+    "H02_INDEPENDENT_REVIEW_POLICY",
+    "H03_REQUIRED_CHECK_DESIGN",
+    "R01_PACKAGE_VERSION",
+    "R02_FINAL_EXPERIMENTAL_SCOPE",
+    "R03_PRESEEDED_MILLION"
+  ],
+  "external": [
+    "E_B1_REAL_TARGET",
+    "E_B2_RUNTIME_ISOLATION",
+    "E_B3_USER_STUDY",
+    "E_H1_HOST_ENFORCEMENT",
+    "E_H2_NONAUTHOR_REVIEW",
+    "E_R1_TAG_ASSETS",
+    "E_R2_RELEASE_OWNER"
+  ],
+  "edges": {
+    "G_DOC_SOURCE": [
+      "D01_GIT_CHRONO",
+      "D02_PROSE_NEGATIVE",
+      "D03_ROLE_AND_CLI",
+      "D04_ARCHIVE_SEPARATION",
+      "D05_EXACT_HEAD_REPLAY"
+    ],
+    "G_BEHAVIOR_SOURCE": [
+      "B01_INDEPENDENT_NATIVE_ORACLE",
+      "B02_PHYSICAL_NEGATIVE_CONTROL",
+      "B03_NO_RUNTIME_PROMOTION",
+      "B04_BEHAVIOR_DIGEST_REPLAY"
+    ],
+    "G_GOVERNANCE_SOURCE": [
+      "H01_HOST_NONPROMOTION",
+      "H02_INDEPENDENT_REVIEW_POLICY",
+      "H03_REQUIRED_CHECK_DESIGN"
+    ],
+    "G_FREEZE_SOURCE": [
+      "G_DOC_SOURCE",
+      "G_BEHAVIOR_SOURCE",
+      "G_GOVERNANCE_SOURCE",
+      "R01_PACKAGE_VERSION",
+      "R02_FINAL_EXPERIMENTAL_SCOPE",
+      "R03_PRESEEDED_MILLION"
+    ],
+    "G_EXTERNAL_BEHAVIOR": [
+      "E_B1_REAL_TARGET",
+      "E_B2_RUNTIME_ISOLATION",
+      "E_B3_USER_STUDY"
+    ],
+    "G_EXTERNAL_GOVERNANCE": [
+      "E_H1_HOST_ENFORCEMENT",
+      "E_H2_NONAUTHOR_REVIEW"
+    ],
+    "G_EXTERNAL_RELEASE": [
+      "E_R1_TAG_ASSETS",
+      "E_R2_RELEASE_OWNER"
+    ],
+    "G_FINAL_EXPERIMENTAL": [
+      "G_FREEZE_SOURCE",
+      "G_EXTERNAL_BEHAVIOR",
+      "G_EXTERNAL_GOVERNANCE",
+      "G_EXTERNAL_RELEASE"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "D01_GIT_CHRONO",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "claim": "Git recorded PR40 merge ancestry and current prose correspond",
+      "witness_paths": [
+        "README.md",
+        "CHANGELOG.md",
+        "docs/ARCHITECTURE.md"
+      ],
+      "acceptance": "EXECUTE_EXACT_GIT_ORACLE_AND_REPLAY",
+      "status": "UNPROVEN_BY_DECLARATION"
+    },
+    {
+      "id": "D02_PROSE_NEGATIVE",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "claim": "No false PR40 Draft/PR39 candidate in current status, archives untouched",
+      "witness_paths": [
+        "CHANGELOG.md",
+        "AGENTS.md",
+        "docs/ARCHITECTURE.md"
+      ],
+      "acceptance": "EXECUTE_EXACT_GIT_ORACLE_AND_REPLAY",
+      "status": "UNPROVEN_BY_DECLARATION"
+    },
+    {
+      "id": "D03_ROLE_AND_CLI",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "claim": "Full 71 command parser and role declarations remain Git-cataloged",
+      "witness_paths": [
+        ".cora/assurance/capability-atlas.json",
+        "cora.artifact-roles.json"
+      ],
+      "acceptance": "EXECUTE_EXACT_GIT_ORACLE_AND_REPLAY",
+      "status": "UNPROVEN_BY_DECLARATION"
+    },
+    {
+      "id": "D04_ARCHIVE_SEPARATION",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "claim": "Historical ADRs and receipt records are never automatically rewritten",
+      "witness_paths": [
+        "docs/documentation-registry.json"
+      ],
+      "acceptance": "EXECUTE_EXACT_GIT_ORACLE_AND_REPLAY",
+      "status": "UNPROVEN_BY_DECLARATION"
+    },
+    {
+      "id": "D05_EXACT_HEAD_REPLAY",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "claim": "Documentation source witness replayed at same actual Git commit",
+      "witness_paths": [
+        "tools/verify_documentation.py"
+      ],
+      "acceptance": "EXECUTE_EXACT_GIT_ORACLE_AND_REPLAY",
+      "status": "UNPROVEN_BY_DECLARATION"
+    },
+    {
+      "id": "B01_INDEPENDENT_NATIVE_ORACLE",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "claim": "Real observed CORA snapshot CLI vs separate native Git implementation",
+      "witness_paths": [
+        "tools/independent_git_oracle.py"
+      ],
+      "acceptance": "EXECUTE_EXACT_GIT_ORACLE_AND_REPLAY",
+      "status": "UNPROVEN_BY_DECLARATION"
+    },
+    {
+      "id": "B02_PHYSICAL_NEGATIVE_CONTROL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "claim": "Physical committed changed bytes and stale SHA rejected by independent comparator",
+      "witness_paths": [
+        "tests/test_pr39_qualification.py"
+      ],
+      "acceptance": "EXECUTE_EXACT_GIT_ORACLE_AND_REPLAY",
+      "status": "UNPROVEN_BY_DECLARATION"
+    },
+    {
+      "id": "B03_NO_RUNTIME_PROMOTION",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "claim": "Two controlled Git fixtures never qualify as maintained real targets",
+      "witness_paths": [
+        "src/cora/independent_qualification.py"
+      ],
+      "acceptance": "EXECUTE_EXACT_GIT_ORACLE_AND_REPLAY",
+      "status": "UNPROVEN_BY_DECLARATION"
+    },
+    {
+      "id": "B04_BEHAVIOR_DIGEST_REPLAY",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "claim": "Expected and observed physical fixture receipts bound to actual execution",
+      "witness_paths": [
+        "tools/independent_git_oracle.py"
+      ],
+      "acceptance": "EXECUTE_EXACT_GIT_ORACLE_AND_REPLAY",
+      "status": "UNPROVEN_BY_DECLARATION"
+    },
+    {
+      "id": "H01_HOST_NONPROMOTION",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "claim": "GitHub host 403 or protected false cannot silently qualify governance",
+      "witness_paths": [
+        "tools/governance_readback.py"
+      ],
+      "acceptance": "EXECUTE_EXACT_GIT_ORACLE_AND_REPLAY",
+      "status": "UNPROVEN_BY_DECLARATION"
+    },
+    {
+      "id": "H02_INDEPENDENT_REVIEW_POLICY",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "claim": "Human reviewer != author remains an external noncompensatory condition",
+      "witness_paths": [
+        "GOVERNANCE.md"
+      ],
+      "acceptance": "EXECUTE_EXACT_GIT_ORACLE_AND_REPLAY",
+      "status": "UNPROVEN_BY_DECLARATION"
+    },
+    {
+      "id": "H03_REQUIRED_CHECK_DESIGN",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "claim": "Requirements for exact merged HEAD and required checks remain explicit",
+      "witness_paths": [
+        ".github/workflows/ci-release-readiness.yml"
+      ],
+      "acceptance": "EXECUTE_EXACT_GIT_ORACLE_AND_REPLAY",
+      "status": "UNPROVEN_BY_DECLARATION"
+    },
+    {
+      "id": "R01_PACKAGE_VERSION",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "claim": "One existing cora CLI and cora-audit 1.0.0a4 remain aligned",
+      "witness_paths": [
+        "pyproject.toml",
+        "src/cora/__init__.py"
+      ],
+      "acceptance": "EXECUTE_EXACT_GIT_ORACLE_AND_REPLAY",
+      "status": "UNPROVEN_BY_DECLARATION"
+    },
+    {
+      "id": "R02_FINAL_EXPERIMENTAL_SCOPE",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "claim": "Conclusive experimental SOURCE baseline not shipped or stable release",
+      "witness_paths": [
+        "docs/RELEASE.md",
+        "README.md"
+      ],
+      "acceptance": "EXECUTE_EXACT_GIT_ORACLE_AND_REPLAY",
+      "status": "UNPROVEN_BY_DECLARATION"
+    },
+    {
+      "id": "R03_PRESEEDED_MILLION",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "claim": "1M bounded vector evaluations; all <=4fault masks; deterministic SHA stream",
+      "witness_paths": [
+        ".cora/fixtures/final-experimental-faults.json"
+      ],
+      "acceptance": "EXECUTE_EXACT_GIT_ORACLE_AND_REPLAY",
+      "status": "UNPROVEN_BY_DECLARATION"
+    },
+    {
+      "id": "E_B1_REAL_TARGET",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "claim": "Independent target owner runs separately maintained repositories with preregistered oracle, 0 critical false PASS",
+      "witness_paths": [],
+      "acceptance": "AUTHENTICATED_INDEPENDENT_OPERATOR_WITNESS",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "E_B2_RUNTIME_ISOLATION",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "claim": "External host operator demonstrates effective deny network/secret/fs/timeout behavior",
+      "witness_paths": [],
+      "acceptance": "AUTHENTICATED_INDEPENDENT_OPERATOR_WITNESS",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "E_B3_USER_STUDY",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "claim": "At least 8 independent novices, 3 tasks each, >=80pct completion and zero critical misclassification",
+      "witness_paths": [],
+      "acceptance": "AUTHENTICATED_INDEPENDENT_OPERATOR_WITNESS",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "E_H1_HOST_ENFORCEMENT",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "claim": "Authenticated current branch rules actually enforce required checks and bypass restrictions",
+      "witness_paths": [],
+      "acceptance": "AUTHENTICATED_INDEPENDENT_OPERATOR_WITNESS",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "E_H2_NONAUTHOR_REVIEW",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "claim": "Distinct verified human approves final change and release authorization",
+      "witness_paths": [],
+      "acceptance": "AUTHENTICATED_INDEPENDENT_OPERATOR_WITNESS",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "E_R1_TAG_ASSETS",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "claim": "Reviewed final main SHA equals signed protected version tag and independently verified wheel/sdist hashes",
+      "witness_paths": [],
+      "acceptance": "AUTHENTICATED_INDEPENDENT_OPERATOR_WITNESS",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "E_R2_RELEASE_OWNER",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "claim": "Accountable human release manager signs rollback drill, provenance and publication decision",
+      "witness_paths": [],
+      "acceptance": "AUTHENTICATED_INDEPENDENT_OPERATOR_WITNESS",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "G_DOC_SOURCE",
+      "scope": "SOURCE",
+      "depends_on": [
+        "D01_GIT_CHRONO",
+        "D02_PROSE_NEGATIVE",
+        "D03_ROLE_AND_CLI",
+        "D04_ARCHIVE_SEPARATION",
+        "D05_EXACT_HEAD_REPLAY"
+      ],
+      "claim": "NONCOMPENSATORY_AND",
+      "witness_paths": [],
+      "acceptance": "EXACT_HEAD_CI_PLUS_GIT_REPLAY",
+      "status": "UNPROVEN_BY_DECLARATION"
+    },
+    {
+      "id": "G_BEHAVIOR_SOURCE",
+      "scope": "SOURCE",
+      "depends_on": [
+        "B01_INDEPENDENT_NATIVE_ORACLE",
+        "B02_PHYSICAL_NEGATIVE_CONTROL",
+        "B03_NO_RUNTIME_PROMOTION",
+        "B04_BEHAVIOR_DIGEST_REPLAY"
+      ],
+      "claim": "NONCOMPENSATORY_AND",
+      "witness_paths": [],
+      "acceptance": "EXACT_HEAD_CI_PLUS_GIT_REPLAY",
+      "status": "UNPROVEN_BY_DECLARATION"
+    },
+    {
+      "id": "G_GOVERNANCE_SOURCE",
+      "scope": "SOURCE",
+      "depends_on": [
+        "H01_HOST_NONPROMOTION",
+        "H02_INDEPENDENT_REVIEW_POLICY",
+        "H03_REQUIRED_CHECK_DESIGN"
+      ],
+      "claim": "NONCOMPENSATORY_AND",
+      "witness_paths": [],
+      "acceptance": "EXACT_HEAD_CI_PLUS_GIT_REPLAY",
+      "status": "UNPROVEN_BY_DECLARATION"
+    },
+    {
+      "id": "G_FREEZE_SOURCE",
+      "scope": "SOURCE",
+      "depends_on": [
+        "G_DOC_SOURCE",
+        "G_BEHAVIOR_SOURCE",
+        "G_GOVERNANCE_SOURCE",
+        "R01_PACKAGE_VERSION",
+        "R02_FINAL_EXPERIMENTAL_SCOPE",
+        "R03_PRESEEDED_MILLION"
+      ],
+      "claim": "NONCOMPENSATORY_AND",
+      "witness_paths": [],
+      "acceptance": "EXACT_HEAD_CI_PLUS_GIT_REPLAY",
+      "status": "UNPROVEN_BY_DECLARATION"
+    },
+    {
+      "id": "G_EXTERNAL_BEHAVIOR",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "E_B1_REAL_TARGET",
+        "E_B2_RUNTIME_ISOLATION",
+        "E_B3_USER_STUDY"
+      ],
+      "claim": "NONCOMPENSATORY_AND",
+      "witness_paths": [],
+      "acceptance": "AUTHENTICATED_INDEPENDENT_OPERATOR_WITNESS",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "G_EXTERNAL_GOVERNANCE",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "E_H1_HOST_ENFORCEMENT",
+        "E_H2_NONAUTHOR_REVIEW"
+      ],
+      "claim": "NONCOMPENSATORY_AND",
+      "witness_paths": [],
+      "acceptance": "AUTHENTICATED_INDEPENDENT_OPERATOR_WITNESS",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "G_EXTERNAL_RELEASE",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "E_R1_TAG_ASSETS",
+        "E_R2_RELEASE_OWNER"
+      ],
+      "claim": "NONCOMPENSATORY_AND",
+      "witness_paths": [],
+      "acceptance": "AUTHENTICATED_INDEPENDENT_OPERATOR_WITNESS",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "G_FINAL_EXPERIMENTAL",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "G_FREEZE_SOURCE",
+        "G_EXTERNAL_BEHAVIOR",
+        "G_EXTERNAL_GOVERNANCE",
+        "G_EXTERNAL_RELEASE"
+      ],
+      "claim": "Conclusive experimental distribution requires every source, behavior, host and accountable human gate",
+      "witness_paths": [],
+      "acceptance": "AUTHENTICATED_INDEPENDENT_OPERATOR_WITNESS",
+      "status": "BLOCKED_EXTERNAL"
+    }
+  ],
+  "metrics": {
+    "doc_current_false_claims_max": 0,
+    "git_tracked_role_coverage_min": 1,
+    "markdown_registry_coverage_min": 1,
+    "cli_parser_exact": 71,
+    "native_git_fixture_repositories_min": 2,
+    "real_git_changed_commit_cases_min": 1,
+    "critical_false_pass_max": 0,
+    "external_maintained_targets_min": 2,
+    "independent_usability_participants_min": 8,
+    "usability_tasks_per_person_min": 3,
+    "usability_completion_min": 0.8,
+    "critical_misclassification_max": 0,
+    "semantic_cases_exact": 1000000,
+    "seeds": [
+      883,
+      20261107,
+      41,
+      1407
+    ],
+    "fault_families_exact": 16,
+    "preseed_up_to_fourway_exact": 2517,
+    "model_mismatches_max": 0,
+    "unsafe_authorizations_max": 0,
+    "release_tag_commit_equal_final_main": true,
+    "non_author_human_review_required": true,
+    "required_status_checks_enforced": true,
+    "exact_final_head_and_postmerge_ci": true,
+    "release_rollback_drill_required": true
+  },
+  "release_freeze": {
+    "scope": "FINAL_EXPERIMENTAL_SOURCE_BASELINE_CANDIDATE",
+    "immutable_after_merge": "Every subsequent source-changing patch creates a new candidate and invalidates earlier receipts; experimental final tag only after independent authorization.",
+    "stable_1_0_0": false,
+    "public_release_authorized": false,
+    "requires_independent_operator": true,
+    "reused_orchestrator": "cora process-run --one-run --profile comprehensive",
+    "forbidden": [
+      "AUTO_MERGE",
+      "AUTO_TAG",
+      "AUTO_PUBLISH",
+      "AUTO_DELETE",
+      "SELF_APPROVAL",
+      "SYNTHETIC_AS_REAL_TARGET"
+    ]
+  }
+}
