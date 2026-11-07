@@ -61,6 +61,52 @@ MASK = (1 << 64) - 1
 SEEDS = [883, 20261107, 41, 1407]
 SCHEMA = "cora-final-experimental-source/1"
 BASELINE = "2e4951eec8877d16f366d0b49498eb4393a3b580"
+EXPECTED_METRICS = {
+  "doc_current_false_claims_max": 0,
+  "git_tracked_role_coverage_min": 1,
+  "markdown_registry_coverage_min": 1,
+  "cli_parser_exact": 71,
+  "native_git_fixture_repositories_min": 2,
+  "real_git_changed_commit_cases_min": 1,
+  "critical_false_pass_max": 0,
+  "external_maintained_targets_min": 2,
+  "independent_usability_participants_min": 8,
+  "usability_tasks_per_person_min": 3,
+  "usability_completion_min": 0.8,
+  "critical_misclassification_max": 0,
+  "semantic_cases_exact": 1000000,
+  "seeds": [
+    883,
+    20261107,
+    41,
+    1407
+  ],
+  "fault_families_exact": 16,
+  "preseed_up_to_fourway_exact": 2517,
+  "model_mismatches_max": 0,
+  "unsafe_authorizations_max": 0,
+  "release_tag_commit_equal_final_main": True,
+  "non_author_human_review_required": True,
+  "required_status_checks_enforced": True,
+  "exact_final_head_and_postmerge_ci": True,
+  "release_rollback_drill_required": True
+}
+EXPECTED_FREEZE = {
+  "scope": "FINAL_EXPERIMENTAL_SOURCE_BASELINE_CANDIDATE",
+  "immutable_after_merge": "Every subsequent source-changing patch creates a new candidate and invalidates earlier receipts; experimental final tag only after independent authorization.",
+  "stable_1_0_0": False,
+  "public_release_authorized": False,
+  "requires_independent_operator": True,
+  "reused_orchestrator": "cora process-run --one-run --profile comprehensive",
+  "forbidden": [
+    "AUTO_MERGE",
+    "AUTO_TAG",
+    "AUTO_PUBLISH",
+    "AUTO_DELETE",
+    "SELF_APPROVAL",
+    "SYNTHETIC_AS_REAL_TARGET"
+  ]
+}
 
 
 def canonical(obj: object) -> bytes:
@@ -125,6 +171,8 @@ def contract_at(repo: Path, sha: str) -> dict:
             or metrics.get("required_status_checks_enforced") is not True
             or metrics.get("exact_final_head_and_postmerge_ci") is not True):
         raise ValueError("measurable final experiment threshold drift")
+    if metrics != EXPECTED_METRICS or doc.get("release_freeze") != EXPECTED_FREEZE:
+        raise ValueError("complete final experiment metric/freeze invariant drift")
     by = {}
     for n in doc.get("nodes", []):
         name = n.get("id")

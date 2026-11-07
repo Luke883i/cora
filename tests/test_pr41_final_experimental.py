@@ -161,6 +161,27 @@ class FinalExperimentalClosureTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "does not replay"):
                 final.verify_report(ROOT, fabricated)
 
+    def test_10_physical_Git_metric_and_freeze_contract_mutants(self):
+        with tempfile.TemporaryDirectory(prefix="pr41-metric-mutant-") as temp:
+            cloned = Path(temp) / "repo"
+            git(ROOT, "clone", "--no-local", "-q", "--", str(ROOT), str(cloned))
+            for field, scope in (
+                ("markdown_registry_coverage_min", "metrics"),
+                ("release_tag_commit_equal_final_main", "metrics"),
+                ("forbidden", "release_freeze"),
+            ):
+                git(cloned, "reset", "--hard", "-q", self.sha)
+                path = cloned / final.CONTRACT
+                contract = json.loads(path.read_text("utf-8"))
+                if field == "forbidden":
+                    contract[scope][field].remove("AUTO_PUBLISH")
+                else:
+                    contract[scope][field] = False if field.startswith("release_tag") else 0
+                path.write_text(json.dumps(contract, indent=2) + "\n", "utf-8")
+                sha = commit(cloned, final.CONTRACT, "mutant: weaken " + field)
+                with self.assertRaisesRegex(ValueError, "invariant drift"):
+                    final.contract_at(cloned, sha)
+
     def test_09_seed_registry_tamper_does_not_redefine_families(self):
         altered = copy.deepcopy(self.contract)
         altered["metrics"]["semantic_cases_exact"] = 10000
