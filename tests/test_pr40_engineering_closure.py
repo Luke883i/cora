@@ -98,6 +98,34 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "chronology drift"):
                 ekc.analyze(clone, "HEAD")
 
+    def test_original_git_mutants_never_clone_with_local_object_transport(self):
+        # Source-only guard on all committed tests; no runtime attestation.
+        import ast
+        filenames = git(ROOT, "ls-tree", "-r", "--name-only", self.sha, "--", "tests")
+        inspected = 0
+        for path in filenames.splitlines():
+            if not (path.startswith("tests/") and path.endswith(".py")):
+                continue
+            syntax = ast.parse(git(ROOT, "show", self.sha + ":" + path),
+                               filename=path)
+            for node in ast.walk(syntax):
+                if not isinstance(node, ast.Call):
+                    continue
+                literals = []
+                for arg in node.args:
+                    if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
+                        literals.append(arg.value)
+                    elif isinstance(arg, (ast.List, ast.Tuple)):
+                        literals.extend(v.value for v in arg.elts
+                                        if isinstance(v, ast.Constant)
+                                        and isinstance(v.value, str))
+                if "clone" in literals:
+                    inspected += 1
+                    self.assertNotIn("--local", literals,
+                                     path + ":" + str(node.lineno)
+                                     + " original-Git hardlink clone is forbidden")
+        self.assertGreaterEqual(inspected, 16)
+
     def test_declared_external_proof_is_not_self_signed_source(self):
         self.assertEqual(
             next(n for n in self.doc["nodes"] if n["id"] == "G_EXTERNAL_EKC")["proof"],

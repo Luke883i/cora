@@ -117,7 +117,7 @@ class IntegratedServiceTests(unittest.TestCase):
     def test_physical_real_cora_dod_and_document_mutants(self):
         with tempfile.TemporaryDirectory() as folder:
             local=Path(folder)/'original'
-            subprocess.run(['git','clone','--local','-q',str(ROOT),str(local)],check=True)
+            subprocess.run(['git','clone','--no-local','-q',str(ROOT),str(local)],check=True)
             git(local,'config','user.name','CORA negative source fixture')
             git(local,'config','user.email','fixture@example.invalid')
             git(local,'checkout','-q',self.sha)

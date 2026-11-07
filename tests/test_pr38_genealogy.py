@@ -155,7 +155,7 @@ class HistoryReticularTests(unittest.TestCase):
     def test_06_physical_git_doD_and_nonmerged_status_mutants(self):
         with tempfile.TemporaryDirectory() as tmp:
             local=Path(tmp)/"clone"
-            subprocess.run(["git","clone","-q","--local",str(ROOT),str(local)],check=True)
+            subprocess.run(["git","clone","-q","--no-local",str(ROOT),str(local)],check=True)
             g(local,"checkout","-q",self.sha)
             g(local,"config","user.name","PR38 source oracle")
             g(local,"config","user.email","oracle@example.invalid")
@@ -180,7 +180,7 @@ class HistoryReticularTests(unittest.TestCase):
     def test_06b_committed_false_relocation_is_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             local=Path(tmp)/"clone"
-            subprocess.run(["git","clone","-q","--local",str(ROOT),str(local)],check=True)
+            subprocess.run(["git","clone","-q","--no-local",str(ROOT),str(local)],check=True)
             g(local,"checkout","-q",self.sha)
             g(local,"config","user.name","PR38 migration oracle")
             g(local,"config","user.email","oracle@example.invalid")
@@ -196,7 +196,7 @@ class HistoryReticularTests(unittest.TestCase):
     def test_07_future_unregistered_module_creates_debt_not_auto_pass(self):
         with tempfile.TemporaryDirectory() as tmp:
             local=Path(tmp)/"clone"
-            subprocess.run(["git","clone","-q","--local",str(ROOT),str(local)],check=True)
+            subprocess.run(["git","clone","-q","--no-local",str(ROOT),str(local)],check=True)
             g(local,"checkout","-q",self.sha)
             g(local,"config","user.name","PR38 unknown-feature fixture")
             g(local,"config","user.email","oracle@example.invalid")
