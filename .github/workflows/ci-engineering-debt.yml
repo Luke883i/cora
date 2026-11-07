@@ -49,10 +49,15 @@ jobs:
           assert x['dynamic_execution']=='NOT_EXECUTED_BY_STATIC_AUDIT'
           assert not x['product_qualified']
           PY
-      - name: PR43 exact-Git requirement accounting and replay (NOT external closure)
+      - name: Exact-PR-ancestry obligation delta and bounded replay (NOT external closure)
+        env:
+          CANDIDATE_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
         run: |
           test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
-          python tools/verify_engineering_closure.py --repo . --closure-base 4b9610fa584b752333df14ddf3433b9b72b1247b --revision HEAD --output /tmp/cora-pr43-obligations.json
+          test -n "$CANDIDATE_BASE"
+          BASE_SHA="$(git merge-base "$CANDIDATE_BASE" HEAD)"
+          test -n "$BASE_SHA" && test "$BASE_SHA" != "$(git rev-parse HEAD)"
+          python tools/verify_engineering_closure.py --repo . --closure-base "$BASE_SHA" --revision HEAD --output /tmp/cora-pr43-obligations.json
           python tools/verify_engineering_closure.py --repo . --verify-closure /tmp/cora-pr43-obligations.json
           python - <<'PY'
           import json
@@ -61,9 +66,8 @@ jobs:
           assert x['counts']['verified_closures']==0 and x['counts']['closure_yield'] is None
           assert x['product']=='BLOCKED_EXTERNAL' and x['authority']=='NONE'
           PY
-      - name: PR44 separate native-Git challenge and plain-language reviewer packet
+      - name: Separate native-Git source challenge (PR39 tests already in One-Run CI)
         run: |
-          python -m unittest discover -s tests -p 'test_pr39_qualification.py' -v
           python tools/independent_git_oracle.py --repo . --closure-report /tmp/cora-pr43-obligations.json --reader-brief /tmp/cora-reader-brief.md --output /tmp/cora-native-challenge.json
           python - <<'PY'
           import json
