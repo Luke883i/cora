@@ -467,7 +467,8 @@ def main() -> int:
         if args.verify_closure:
             record = json.loads(args.verify_closure.read_text('utf-8'))
             verify_closure_delta(args.repo, record)
-            result = {'status': 'REPLAYED_SOURCE_ONLY', 'base': record['base'],
+            result = {'status': 'REFUTED' if record['status'] == 'REFUTED'
+                      else 'REPLAYED_SOURCE_ONLY', 'base': record['base'],
                       'head': record['head'], 'authority': 'NONE'}
         elif args.closure_base:
             if args.stress_10m or args.verify_report:
@@ -490,7 +491,7 @@ def main() -> int:
             args.output.write_text(output, "utf-8")
         else:
             print(output, end="")
-        return 2 if args.closure_base and result.get("status") == "REFUTED" else 0
+        return 2 if result.get("status") == "REFUTED" else 0
     except (OSError, ValueError, KeyError, subprocess.SubprocessError) as exc:
         print(type(exc).__name__ + ": " + str(exc))
         return 3
