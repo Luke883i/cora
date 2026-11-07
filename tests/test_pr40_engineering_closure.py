@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import json
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -203,6 +204,13 @@ class ClosureEconomyAdversarialTests(unittest.TestCase):
             result = ekc.closure_delta(root, base)
             self.assertEqual(result["status"], "REFUTED")
             self.assertTrue(ekc.verify_closure_delta(root, result))
+            receipt = Path(folder) / "refuted.json"
+            receipt.write_text(json.dumps(result), encoding="utf-8")
+            proc = subprocess.run([
+                sys.executable, str(ROOT / "tools/verify_engineering_closure.py"),
+                "--repo", str(root), "--verify-closure", str(receipt)],
+                capture_output=True, text=True, check=False, timeout=40)
+            self.assertEqual(proc.returncode, 2, proc.stdout + proc.stderr)
             fake = copy.deepcopy(result)
             fake["counts"]["verified_closures"] = 1
             with self.assertRaisesRegex(ValueError, "does not replay"):
