@@ -1,0 +1,97 @@
+{
+  "schema": "cora-final-experimental-faults/1",
+  "seed": 883,
+  "authority": "NONE",
+  "classification": "FINITE_SEMANTIC_MODEL_NOT_ONE_MILLION_REAL_GIT_COMMITS",
+  "families": [
+    {
+      "id": "DOC_UNMERGED_PR40",
+      "bit": 0,
+      "realistic_case": "Unmerged wording placed in current CHANGELOG"
+    },
+    {
+      "id": "DOC_ARCHITECTURE_STALE",
+      "bit": 1,
+      "realistic_case": "Current architecture ignores merged PR40"
+    },
+    {
+      "id": "DOC_REGISTRY_BROKEN",
+      "bit": 2,
+      "realistic_case": "Current documentation link/registry detaches from Git"
+    },
+    {
+      "id": "DOC_CLI_UNSYNCED",
+      "bit": 3,
+      "realistic_case": "71-command source and public API drift"
+    },
+    {
+      "id": "BEHAV_SOURCE_FORGED",
+      "bit": 4,
+      "realistic_case": "Git fixture source misbound to expected output"
+    },
+    {
+      "id": "BEHAV_STALE_COMMIT",
+      "bit": 5,
+      "realistic_case": "Native Git expected against wrong revision"
+    },
+    {
+      "id": "BEHAV_ORACLE_FAKE",
+      "bit": 6,
+      "realistic_case": "Observed result fabricated without executed CLI"
+    },
+    {
+      "id": "BEHAV_SYNTHETIC_AS_REAL",
+      "bit": 7,
+      "realistic_case": "Controlled fixtures falsely promoted to maintained targets"
+    },
+    {
+      "id": "GOV_PROTECTION_OFF",
+      "bit": 8,
+      "realistic_case": "Main branch effective enforcement disabled"
+    },
+    {
+      "id": "GOV_RULES_403",
+      "bit": 9,
+      "realistic_case": "Rules API unavailable is forged as absence or protection"
+    },
+    {
+      "id": "GOV_SAME_AUTHOR",
+      "bit": 10,
+      "realistic_case": "PR author used as independent reviewer"
+    },
+    {
+      "id": "GOV_REQUIRED_CHECK_MISSING",
+      "bit": 11,
+      "realistic_case": "One required check not enforced"
+    },
+    {
+      "id": "REL_TAG_MISMATCH",
+      "bit": 12,
+      "realistic_case": "Release tag points to different commit"
+    },
+    {
+      "id": "REL_ARTIFACT_MISMATCH",
+      "bit": 13,
+      "realistic_case": "Wheel or sdist checksum differs from reviewed bytes"
+    },
+    {
+      "id": "REL_ROLLBACK_MISSING",
+      "bit": 14,
+      "realistic_case": "No witnessed rollback authority and procedure"
+    },
+    {
+      "id": "REL_MODEL_AS_APPROVAL",
+      "bit": 15,
+      "realistic_case": "Finite seed outcome promoted to release approval"
+    }
+  ],
+  "preregister": "ZERO_SINGLE_PAIR_TRIPLE_QUADRUPLE_MASKS",
+  "cases": 1000000,
+  "seed_stream": [
+    883,
+    20261107,
+    41,
+    1407
+  ],
+  "external_release_authority": "NEVER_FROM_MODEL"
+}

@@ -1114,6 +1114,39 @@
         "TEST"
       ],
       "rationale": "PR40 seeded 14-family negatives, Git-committed external scope and current document chronology falsifiers."
+    },
+    {
+      "pattern": ".cora/contracts/dod/final-experimental-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "PR41 three pillar and final experimental AND DoD; external release remains unavailable"
+    },
+    {
+      "pattern": ".cora/fixtures/final-experimental-faults.json",
+      "roles": [
+        "FIXTURE",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Sixteen named realistic semantic fault classes and bounded million-case preregistration; not source edits"
+    },
+    {
+      "pattern": "tools/verify_final_experimental.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "RELEASE_TOOL"
+      ],
+      "rationale": "Git-bound current-document chronology, independent-implementation behavior and external host/finish refusal; no publish"
+    },
+    {
+      "pattern": "tests/test_pr41_final_experimental.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "PR41 physical Git counterexamples, independent native oracle, million model replay and fail-closed external/CI gates"
     }
   ]
 }

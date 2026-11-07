@@ -49,6 +49,11 @@
       "scope": "INTERNAL_DOD"
     },
     {
+      "logical": "cora.final-experimental-dod.json",
+      "canonical": ".cora/contracts/dod/final-experimental-dod.json",
+      "scope": "INTERNAL_DOD"
+    },
+    {
       "logical": "cora.five-synergies-dod.json",
       "canonical": ".cora/contracts/dod/five-synergies-dod.json",
       "scope": "INTERNAL_DOD"

@@ -643,6 +643,7 @@
       "tools/verify_claim_evidence.py",
       "tools/verify_documentation.py",
       "tools/verify_engineering_closure.py",
+      "tools/verify_final_experimental.py",
       "tools/verify_layout_simplification.py",
       "tools/verify_pr16_coverage.py",
       "tools/verify_release_readiness.py",
@@ -762,6 +763,7 @@
       "tests/test_pr38_genealogy.py",
       "tests/test_pr39_qualification.py",
       "tests/test_pr40_engineering_closure.py",
+      "tests/test_pr41_final_experimental.py",
       "tests/test_selection.py"
     ],
     "internal_dod": [
@@ -770,6 +772,7 @@
       ".cora/contracts/dod/convergence-dod.json",
       ".cora/contracts/dod/documentation-dod.json",
       ".cora/contracts/dod/engineering-knowledge-dod.json",
+      ".cora/contracts/dod/final-experimental-dod.json",
       ".cora/contracts/dod/five-synergies-dod.json",
       ".cora/contracts/dod/gold-assurance.json",
       ".cora/contracts/dod/history-convergence-dod.json",
