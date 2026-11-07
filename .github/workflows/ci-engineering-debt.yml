@@ -49,6 +49,32 @@ jobs:
           assert x['dynamic_execution']=='NOT_EXECUTED_BY_STATIC_AUDIT'
           assert not x['product_qualified']
           PY
+      - name: PR43 exact-Git requirement accounting and replay (NOT external closure)
+        run: |
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+          python tools/verify_engineering_closure.py --repo . --closure-base 4b9610fa584b752333df14ddf3433b9b72b1247b --revision HEAD --output /tmp/cora-pr43-obligations.json
+          python tools/verify_engineering_closure.py --repo . --verify-closure /tmp/cora-pr43-obligations.json
+          python - <<'PY'
+          import json
+          x=json.load(open('/tmp/cora-pr43-obligations.json'))
+          assert x['status']=='PASS_SCOPED_ACCOUNTING'
+          assert x['counts']['verified_closures']==0 and x['counts']['closure_yield'] is None
+          assert x['product']=='BLOCKED_EXTERNAL' and x['authority']=='NONE'
+          PY
+      - name: PR44 separate native-Git challenge and plain-language reviewer packet
+        run: |
+          python -m unittest discover -s tests -p 'test_pr39_qualification.py' -v
+          python tools/independent_git_oracle.py --repo . --closure-report /tmp/cora-pr43-obligations.json --reader-brief /tmp/cora-reader-brief.md --output /tmp/cora-native-challenge.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.load(open('/tmp/cora-native-challenge.json'))
+          assert x['status']=='MATCHED_NATIVE_GIT_SOURCE_ONLY'
+          assert x['operator_independence']=='NOT_ATTESTED'
+          assert x['product']=='BLOCKED_EXTERNAL' and x['authority']=='NONE'
+          guide=Path('/tmp/cora-reader-brief.md').read_text('utf-8')
+          assert all(v in guide for v in ('Task 1','Task 2','Task 3','BLOCKED_EXTERNAL'))
+          PY
       - name: Seeded one-million contract falsification, double replay
         run: |
           cora stress-debt --seed 883 --cases 1000000 --output /tmp/stress-1.json
