@@ -74,46 +74,33 @@ The [PR40 noncompensatory DoD](../.cora/contracts/dod/engineering-knowledge-dod.
 `python tools/verify_engineering_closure.py --repo . --revision HEAD --stress-10m --output /tmp/ekc-10m.json` executes ten seeds × one million bounded semantic vectors, preregistering all zero/single/pair/triple/quadruple combinations across 14 fault families. A separately worded Boolean reference detects source-state disagreements, and any synthetic reviewer/host PASS fails closed. Retained SHA-256 streams make campaigns reproducible. Exactly 1,471 distinct fault masks are preregistered and reused; ten million **case evaluations are not ten million unique source mutations**. Physical Git-committed mutants and the PR25 original source fixture are tested separately; no external target code is automatically executed.
 
 
-## PR43 — closure accounting without recursive self-certification
+## Post-PR44: efficiency without evidence promotion
 
-**Problem A (contract growth versus actual closure).** The canonical DoD files contain
-node *occurrences*, not a deduplicated register of real-world engineering obligations.
-The existing PR38 Git genealogy is historically bounded. Repeated gate descriptions,
-PASS labels and document revisions cannot become evidence of completed runtime
-checks, authenticated reviews or host enforcement.
+**Backward DoD (source scope).** A useful review must have **one primary
+entry point**, an immediately readable **claim → Git evidence → falsifier**
+path, exact-commit replay, no repeated test invocation for the same purpose,
+and fewer mandatory onboarding operations. The current primary route is the
+existing `cora process-run --one-run --profile comprehensive` followed by
+`cora verify-process --one-run`; it does not add a second executor or
+claim that the 71 declared commands ran.
 
-**Backward-derived acceptance contract (PR43, A0–A6):**
+PR43's **original-Git obligation delta** remains available through
+`tools/verify_engineering_closure.py --closure-base BASE_SHA --revision HEAD_SHA`.
+PR44's **separately implemented comparator** remains available through
+`tools/independent_git_oracle.py --closure-report RECEIPT.json`.
+The two algorithms serve different trust boundaries and are optional for
+the normal One-Run review. A removed node, a rewritten claim or a self-reported
+PASS never counts as a verified closure. The CI comparison now uses the
+actual PR Git merge-base (or the preceding push commit), not the historical
+PR42 SHA. The duplicate PR39 test invocation is retired from engineering-debt
+CI; PR39 remains covered by the existing One-Run workflow.
 
-- **A0 — Fixed history:** compare two distinct original-Git commits in a single
-  ancestor chain; never use an uncommitted working tree.
-- **A1 — Total scoped inventory:** enumerate all committed
-  `.cora/contracts/dod/*.json` node occurrences, using
-  `contract_path::node_id` for stable syntactic identity.
-- **A2 — Honest delta:** report added, removed, changed and asserted statuses.
-  Removal or renaming is **not** closure. Identical claim wording is a candidate
-  overlap, never automatically deduplicated semantic identity.
-- **A3 — No promotion:** reject EXTERNAL-to-SOURCE downgrades and keep
-  `verified_closures=0` until a separate admissible execution/authority
-  evidence channel exists. The ratio `closure_yield=null` is intentional.
-- **A4 — Source replay:** compare the complete receipt against independently
-  recomputed original-Git contents, not the previously printed counts.
-- **A5 — Falsification:** a real two-commit Git mutation, edited receipt,
-  forged PASS, removed node, duplicate claim and reverse ancestry must be detected.
-- **A6 — External boundary:** source accounting never qualifies the product,
-  checks host policy, assigns reviewers or authorizes release.
-
-Use the **existing** engineering verifier, without a new CORA CLI command:
-
-```sh
-python tools/verify_engineering_closure.py --repo . --closure-base BASE_SHA \
-  --revision HEAD --output /tmp/cora-closure-delta.json
-python tools/verify_engineering_closure.py --repo . \
-  --verify-closure /tmp/cora-closure-delta.json
-```
-
-**Interpretation:** `PASS_SCOPED_ACCOUNTING` means the textual DoD changes
-were enumerated consistently; it does **not** report actual defect reduction.
-No meaningful closure-yield denominator or independently deduplicated obligation
-count can be asserted without an externally validated equivalence map and
-separately attributable verification evidence. This is the intentionally
-non-circular stop point for PR43, not another product-acceptance gate.
+**Efficiency proof is bounded:** inspect the exact PR diff for reduced active
+onboarding text, no new CLI command, no new DoD, no new workflow, and no lost
+independent negative-control coverage. The existing One-Run CI executes the
+seeded 100k finite source model and checks replay, false promotions and
+source/external separation. Model volume does **not** measure elapsed human
+review time. The external leaves remain mandatory: unfamiliar-reader task
+completion, maintained-target behavior, runtime isolation, effective protected
+GitHub review and release authorization. Until they are observed, product
+acceptance stays `BLOCKED_EXTERNAL`; shortening prose cannot close them.
