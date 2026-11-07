@@ -359,7 +359,7 @@ def closure_inventory(repo: Path, revision: str) -> dict:
     commit = git(repo, "rev-parse", "--verify", revision + "^{commit}").decode().strip()
     paths = git(repo, "ls-tree", "-r", "--name-only", commit).decode("utf-8").splitlines()
     paths = sorted(p for p in paths if re.fullmatch(
-        r"\\.cora/contracts/dod/[a-zA-Z0-9_-]+\\.json", p))
+        r"\.cora/contracts/dod/[a-zA-Z0-9_-]+\.json", p))
     if not paths:
         raise ValueError("no canonical DoD contracts at pinned Git revision")
     nodes = {}
