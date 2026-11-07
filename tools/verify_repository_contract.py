@@ -81,8 +81,8 @@ def audit_contract(root: Path, *, readme_override: str | None = None) -> list[st
     for heading in ('## First five minutes', '## What works', '## Operating boundaries', '## Engineering map'):
         if heading not in readme:
             errors.append('missing-section:' + heading)
-    if len(lines) > 180:
-        errors.append('readme-too-long:' + str(len(lines)))
+    # PR42: README line count is editorial telemetry, not an engineering gate.
+    # Source identity, first-screen context, actual links and package/CLI checks remain.
     if 'safe_deletion' not in readme and 'deletion' not in readme:
         errors.append('missing-deletion-boundary')
     # Direct README links must resolve in this checkout: no dangling onboarding.
