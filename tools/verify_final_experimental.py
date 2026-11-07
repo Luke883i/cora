@@ -193,12 +193,16 @@ def analyze(repo: Path, revision: str = "HEAD", *, run_behavior: bool = False) -
         "CHANGELOG.md": "PR40 engineering knowledge source convergence — merged source",
         "AGENTS.md": "PR40 knowledge-convergence gate (merged source",
         "docs/ARCHITECTURE.md": "merged PR36–40",
-        "docs/RELEASE.md": "PR40 merged source knowledge",
+        "docs/RELEASE.md": "Existing GitHub release draft",
         "README.md": "[final experimental DoD](.cora/contracts/dod/final-experimental-dod.json)",
         "docs/INDEX.md": "../.cora/contracts/dod/final-experimental-dod.json",
     }
     if any(text not in documents[path] for path, text in expected.items()):
         raise ValueError("current document / merged Git temporal drift")
+    if "PR40 merged source knowledge" not in documents["docs/RELEASE.md"]:
+        raise ValueError("current release chronology lost merged PR40")
+    if "published_at=null" not in documents["docs/RELEASE.md"] or "refs/tags/v1.0.0a4" not in documents["docs/RELEASE.md"]:
+        raise ValueError("release draft tag/asset observation omitted")
     banned = {
         "CHANGELOG.md": ["PR40 engineering knowledge source convergence — DRAFT, NOT MERGED"],
         "AGENTS.md": ["PR40 knowledge-convergence gate (current source candidate)"],

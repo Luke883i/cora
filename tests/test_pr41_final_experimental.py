@@ -119,6 +119,15 @@ class FinalExperimentalClosureTests(unittest.TestCase):
                             "mutant: outdated live architecture")
             with self.assertRaisesRegex(ValueError, "temporal drift"):
                 final.analyze(cloned, mutant)
+            git(cloned, "reset", "--hard", "-q", self.sha)
+            release = cloned / "docs/RELEASE.md"
+            release.write_text(release.read_text("utf-8").replace(
+                "Existing GitHub release draft", "Published final release"),
+                encoding="utf-8")
+            mutant = commit(cloned, "docs/RELEASE.md",
+                            "mutant: draft unverified as published release")
+            with self.assertRaisesRegex(ValueError, "temporal drift"):
+                final.analyze(cloned, mutant)
 
     def test_07_physical_external_governance_promotion_refuted(self):
         with tempfile.TemporaryDirectory(prefix="pr41-gov-mutant-") as temp:
