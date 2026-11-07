@@ -240,5 +240,52 @@
     }
   ],
   "authority": "NONE",
-  "external_status": "BLOCKED_EXTERNAL"
+  "external_status": "BLOCKED_EXTERNAL",
+  "readme_refactor": {
+    "schema": "cora-readme-semantic-refactor-dod/1",
+    "status": "SOURCE_CANDIDATE_NEEDS_EXACT_HEAD_CI",
+    "authority": "NONE",
+    "accepted": "BLOCKED_EXTERNAL",
+    "legacy_line_cap": "NON_NORMATIVE_EDITORIAL_OBSERVATION",
+    "source_gates": [
+      "S01_S18_CLAIMS_IN_SECTIONS",
+      "LIVE_GIT_PR41_AND_RELEASE_TRUTH",
+      "PROGRESSION_AND_FIRST_USE",
+      "FIVE_READER_ROUTES",
+      "FIVE_DECLARED_LENSES",
+      "ACTUAL_71_COMMAND_IDENTITY",
+      "ONE_RUN_AND_AFFECTED_STATUS",
+      "RELATIVE_LINKS_TO_TRACKED_PATHS",
+      "EXTERNAL_NONPROMOTION",
+      "SEMANTIC_POSITIVE_AND_NEGATIVE_FALSIFIERS"
+    ],
+    "metrics": {
+      "required_claim_leaves": 18,
+      "declared_cli_count": 71,
+      "reader_routes": 5,
+      "disclosure_lenses": 5,
+      "scenarios": 10000,
+      "seed": 883,
+      "meaning_preserving": 4000,
+      "adversarial": 6000,
+      "max_wrong_verdicts": 0,
+      "expected_rejected_negative": 6000,
+      "expected_accepted_equivalent": 4000,
+      "required_replay": true,
+      "independent_user_trials_required": true
+    },
+    "external_obligations": [
+      "E01_FIRST_READ_HUMAN",
+      "E02_AGENT_ON_EXTERNAL_MAINTAINED_TARGET",
+      "E03_ENFORCED_HOST_AND_NON_AUTHOR_REVIEW"
+    ],
+    "no_auto_publish": true,
+    "no_auto_merge": true,
+    "nonclaims": [
+      "NO_SEMANTIC_COMPLETENESS_PROOF",
+      "NO_INDEPENDENT_HUMAN_USABILITY_CLAIM",
+      "NO_RELEASE_AUTHORITY_FROM_README",
+      "NO_180_LINE_HARD_GATE"
+    ]
+  }
 }

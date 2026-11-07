@@ -97,6 +97,8 @@ def validate_dod(root: Path, errors: list[str]) -> None:
             d.get("external_status") != "BLOCKED_EXTERNAL" or
             d.get("goals") != {"source": "G_DOC_SOURCE", "accepted": "G_DOC_ACCEPTED"}):
             raise ValueError("DoD status or authority altered")
+        if d.get("readme_refactor") != README_SEMANTIC_DOD:
+            raise ValueError("PR42 README semantic and authority thresholds drift")
         nodes = d["nodes"]
         if not isinstance(nodes, list) or len(nodes) != 28:
             raise ValueError("expected 28 DoD nodes")
@@ -119,6 +121,84 @@ def validate_dod(root: Path, errors: list[str]) -> None:
             raise ValueError("DoD global not connected")
     except (OSError, ValueError, TypeError, KeyError, ImportError) as exc:
         errors.append("documentation-dod-invalid:" + type(exc).__name__)
+
+
+# PR42: exactly-scoped semantic editorial DoD, not an independent reader certificate.
+README_SEMANTIC_DOD = json.loads(r'''{"schema":"cora-readme-semantic-refactor-dod/1","status":"SOURCE_CANDIDATE_NEEDS_EXACT_HEAD_CI","authority":"NONE","accepted":"BLOCKED_EXTERNAL","legacy_line_cap":"NON_NORMATIVE_EDITORIAL_OBSERVATION","source_gates":["S01_S18_CLAIMS_IN_SECTIONS","LIVE_GIT_PR41_AND_RELEASE_TRUTH","PROGRESSION_AND_FIRST_USE","FIVE_READER_ROUTES","FIVE_DECLARED_LENSES","ACTUAL_71_COMMAND_IDENTITY","ONE_RUN_AND_AFFECTED_STATUS","RELATIVE_LINKS_TO_TRACKED_PATHS","EXTERNAL_NONPROMOTION","SEMANTIC_POSITIVE_AND_NEGATIVE_FALSIFIERS"],"metrics":{"required_claim_leaves":18,"declared_cli_count":71,"reader_routes":5,"disclosure_lenses":5,"scenarios":10000,"seed":883,"meaning_preserving":4000,"adversarial":6000,"max_wrong_verdicts":0,"expected_rejected_negative":6000,"expected_accepted_equivalent":4000,"required_replay":true,"independent_user_trials_required":true},"external_obligations":["E01_FIRST_READ_HUMAN","E02_AGENT_ON_EXTERNAL_MAINTAINED_TARGET","E03_ENFORCED_HOST_AND_NON_AUTHOR_REVIEW"],"no_auto_publish":true,"no_auto_merge":true,"nonclaims":["NO_SEMANTIC_COMPLETENESS_PROOF","NO_INDEPENDENT_HUMAN_USABILITY_CLAIM","NO_RELEASE_AUTHORITY_FROM_README","NO_180_LINE_HARD_GATE"]}''')
+
+README_SECTION_ORDER = (
+    r"^## First five minutes\b",
+    r"^## What works today\b",
+    r"^## One-Run\b",
+    r"^## How CORA works\b",
+    r"^## Use CORA with an AI coding assistant\b",
+    r"^## (?:Interpret a CORA result|Understanding CORA results)\b",
+    r"^## Final Experimental Baseline\b",
+    r"^## Documentation by goal\b",
+    r"^## Operating boundaries\b",
+    r"^## Engineering map\b",
+)
+
+README_SPECIFIC_TRUTHS = (
+    "cora snapshot . --revision HEAD",
+    "cora process-run . --revision HEAD --process full --one-run --profile comprehensive",
+    "The default does not execute arbitrary target tests",
+    "External acceptance remains `BLOCKED_EXTERNAL`",
+    "15 SOURCE leaves, 7 EXTERNAL leaves, and 8 aggregate AND gates",
+    "16 realistic fault families",
+    "2,517 preregistered zero-to-fourway masks",
+    "not one million independent source mutations",
+    "merged PR41",
+    "two controlled physical Git repositories",
+    "GitHub workflow files alone do not prove",
+)
+README_FALSE_PROMOTIONS = (
+    r"\bverified public release and stable API\b",
+    r"\bCORA is an autonomous coding agent\b",
+    r"\bThe default (?:automatically )?executes (?:untrusted|arbitrary) target tests\b",
+    r"\bA hash alone authenticates a human reviewer\b",
+    r"\bCI green is independent review\b",
+    r"\bExternal acceptance has been approved\b",
+    r"\bunmerged PR41\b",
+    r"\b\d{5,} independently executed source mutations\b",
+    r"\bPASS_SCOPED certificate alone grants merge and release authority\b",
+    r"\bCORA automatically approves merges\b",
+)
+
+
+def verify_readme_semantics(readme: str, *, root: Path | None = None) -> list[str]:
+    """Finite editorial claims and navigation; not open-world language understanding.
+
+    Formatting-equivalent edits do not fail on physical line count. The
+    assertion catalog is deliberately source-only, independently falsified
+    by positive/negative preseeded tests. The real newcomer study remains E01.
+    """
+    errors: list[str] = []
+    positions = []
+    for marker in README_SECTION_ORDER:
+        m = re.search(marker, readme, flags=re.MULTILINE)
+        if not m:
+            errors.append("readme-semantic-section-missing:" + marker)
+        else:
+            positions.append(m.start())
+    if len(positions) != len(README_SECTION_ORDER) or positions != sorted(positions):
+        errors.append("readme-semantic-progression")
+    if len(re.findall(r"^\x60\x60\x60", readme, flags=re.MULTILINE)) % 2:
+        errors.append("readme-semantic-unclosed-code-fence")
+    if not re.search(r"(?<!\d)71 declared CLI commands(?!\d)", readme):
+        errors.append("readme-semantic-cli-count")
+    for marker in README_SPECIFIC_TRUTHS:
+        if marker not in readme:
+            errors.append("readme-semantic-required-truth:" + marker[:70])
+    for pattern in README_FALSE_PROMOTIONS:
+        if re.search(pattern, readme, flags=re.IGNORECASE):
+            errors.append("readme-semantic-false-promotion:" + pattern)
+    if root is not None:
+        for href in markdown_links(readme):
+            target = resolve("README.md", href)
+            if target is not None and not (root / target[0]).exists():
+                errors.append("readme-semantic-broken-link:" + target[0])
+    return sorted(set(errors))
 
 
 # PR-23: bounded editorial/navigation predicates, not a second authority.
@@ -193,6 +273,7 @@ def verify_progressive_readme(readme: str) -> list[str]:
         errors.append("navigation-authority-promotion")
     if re.search(r"<(?:script|iframe|object|embed)\b", section, re.I):
         errors.append("navigation-unsupported-interaction")
+    errors.extend(verify_readme_semantics(readme))
     return sorted(set(errors))
 
 
@@ -299,8 +380,9 @@ def verify(root: Path) -> list[str]:
                 "docs/INDEX.md", "BLOCKED_EXTERNAL", "--intent")
     if any(token not in readme for token in required):
         errors.append("readme-contract-regression")
-    if len(readme.splitlines()) > 180:
-        errors.append("readme-excessive-length")
+    # Physical line count is diagnostic, not evidence of usability or accuracy.
+    # PR42 replaces the former 180-line hard gate with source-bound predicates.
+    errors.extend(verify_readme_semantics(readme, root=root))
     for path in ("README.md", "docs/AGENT_ADOPTION.md", "docs/CONVERGENT_ASSURANCE.md"):
         if not (root / path).is_file():
             errors.append("missing-procedure:" + path)
