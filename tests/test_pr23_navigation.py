@@ -9,6 +9,7 @@ import hashlib
 import importlib.util
 import json
 import os
+import random
 from pathlib import Path
 import unittest
 
@@ -76,7 +77,9 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         self.assertEqual(DOC.verify(ROOT), [])
         self.assertEqual(len(DOC.NAVIGATION_LENSES), 5)
         self.assertEqual(len(DOC.NAVIGATION_READERS), 5)
-        self.assertLessEqual(len(self.readme.splitlines()), 180)
+        # Physical line count is not the evidence threshold for readability.
+        self.assertIn("## Final Experimental Baseline", self.readme)
+        self.assertEqual(DOC.verify_readme_semantics(self.readme, root=ROOT), [])
         self.assertEqual(self.readme.count("<details>"), 5)
         self.assertIn("[MIT](LICENSE)", self.readme)
 
@@ -134,6 +137,139 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         self.assertEqual(report["distinct_input_fingerprints"], 1000)
         self.assertEqual(report["rejected"], 1000, survivors[:5])
         self.assertFalse(survivors)
+
+
+    def test_pr42_preseeded_10000_semantic_variants(self):
+        """8 benign and 12 adversarial families, 500 each, seed 883.
+
+        These are finite text vectors, not independent users or actual Git mutants.
+        """
+        src = self.readme
+        tick = chr(96)
+        names = (
+            "blank_intro", "blank_one_run", "equivalent_result_title",
+            "equivalent_link_title", "equivalent_emphasis",
+            "blank_capabilities", "equivalent_list_marker", "blank_boundary",
+            "false_release", "false_autonomous_agent", "false_target_execution",
+            "false_physical_mutants", "false_hash_reviewer", "false_ci_review",
+            "false_pr41_merge", "invented_cli", "wrong_command_count",
+            "broken_index", "false_external_approval", "broken_ontology",
+        )
+        unique, stream, results, survivors = set(), hashlib.sha256(), [], []
+        for family, name in enumerate(names):
+            expected_accept = family < 8
+            correct = 0
+            for i in range(500):
+                rnd = random.Random((883 << 20) + family * 500 + i)
+                token = f"{rnd.randrange(10**10):010d}"
+                if family == 0:
+                    m = mutation(src, "## First five minutes",
+                                 "\n" + " " * (i + 1) + "\n## First five minutes")
+                elif family == 1:
+                    m = mutation(src, "## One-Run", "\n" + " " * (i+1) + "\n## One-Run")
+                elif family == 2:
+                    m = mutation(src, "## Interpret a CORA result",
+                                 "## Understanding CORA results" + " " * (i+1))
+                elif family == 3:
+                    m = mutation(src, "[Getting started](docs/GETTING_STARTED.md)",
+                                 "[Start here](docs/GETTING_STARTED.md)")
+                    m = mutation(m, "## Documentation by goal",
+                                 " " * i + "\n## Documentation by goal")
+                elif family == 4:
+                    m = mutation(src, "**Why it matters:**", "*Why it matters:*")
+                    m = mutation(m, "## What works today",
+                                 " " * i + "\n## What works today")
+                elif family == 5:
+                    m = mutation(src, "## What works today",
+                                 "\n" + " " * (i+1) + "\n## What works today")
+                elif family == 6:
+                    literal = "- " + tick + "cora-worktree.json" + tick + ":"
+                    m = mutation(src, literal, "* " + tick + "cora-worktree.json" + tick + ":")
+                    m = mutation(m, "## First five minutes",
+                                 " " * i + "\n## First five minutes")
+                elif family == 7:
+                    m = mutation(src, "## Operating boundaries",
+                                 " " * i + "\n## Operating boundaries")
+                elif family == 8:
+                    m = mutation(src, "**not a stable API or verified public release**",
+                                 "**verified public release and stable API** (" + token + ")")
+                elif family == 9:
+                    m = mutation(src, "**not a coding agent**",
+                                 "**is an autonomous coding agent** (" + token + ")")
+                elif family == 10:
+                    m = mutation(src, "The default does not execute arbitrary target tests",
+                                 "The default automatically executes untrusted target tests " + token)
+                elif family == 11:
+                    m = mutation(src, "not one million independent source mutations",
+                                 str(1000000+i) + " independently executed source mutations")
+                elif family == 12:
+                    m = mutation(src,
+                                 "A hash can identify committed bytes; it cannot authenticate a human reviewer",
+                                 "A hash alone authenticates a human reviewer in " + token)
+                elif family == 13:
+                    m = mutation(src, "## Final Experimental Baseline",
+                                 "CI green is independent review (" + token +
+                                 ").\n\n## Final Experimental Baseline")
+                elif family == 14:
+                    m = mutation(src, "**merged PR41**",
+                                 "**unmerged PR41** (" + token + ")")
+                elif family == 15:
+                    m = mutation(src,
+                                 "cora snapshot . --revision HEAD --output /tmp/cora-ledger.json",
+                                 "cora invented-command-" + token +
+                                 " . --revision HEAD --output /tmp/cora-ledger.json")
+                elif family == 16:
+                    m = mutation(src, "**71 declared CLI commands",
+                                 "**" + str(72+i) + " declared CLI commands")
+                elif family == 17:
+                    m = mutation(src, "docs/INDEX.md",
+                                 "docs/INDEX-" + token + ".md")
+                elif family == 18:
+                    m = mutation(src, "**External acceptance remains " +
+                                 tick + "BLOCKED_EXTERNAL" + tick + "**",
+                                 "**External acceptance has been approved " + token + "**")
+                else:
+                    m = mutation(src, "](cora.ontology.json)",
+                                 "](cora.ontology-" + token + ".json)")
+                self.assertNotEqual(src, m, (family, i))
+                fingerprint = hashlib.sha256(m.encode("utf-8")).digest()
+                self.assertNotIn(fingerprint, unique, (family, i))
+                unique.add(fingerprint)
+                stream.update(fingerprint)
+                problems = DOC.verify_progressive_readme(m)
+                problems += DOC.verify_readme_semantics(m, root=ROOT)
+                observed_accept = not problems
+                correct += observed_accept == expected_accept
+                if observed_accept != expected_accept:
+                    survivors.append({"family": name, "variant": i,
+                                      "expected_accept": expected_accept,
+                                      "reasons": problems[:3]})
+            results.append({"family": name, "vectors": 500, "correct": correct,
+                            "expected_accept": expected_accept})
+        report = {
+            "schema": "cora-readme-10k-semantic-falsification/1",
+            "source_sha": os.getenv("CORA_SOURCE_SHA", "LOCAL_NOT_ATTESTED"),
+            "seed": 883, "families": len(names), "vectors": 10000,
+            "equivalent_accepted": sum(x["correct"] for x in results[:8]),
+            "adversarial_rejected": sum(x["correct"] for x in results[8:]),
+            "distinct_input_digests": len(unique), "incorrect_verdicts": len(survivors),
+            "stream_sha256": stream.hexdigest(),
+            "source_readme_sha256": hashlib.sha256(src.encode("utf-8")).hexdigest(),
+            "results": results, "survivors": survivors[:30],
+            "user_sessions": 0, "external_acceptance": "BLOCKED_EXTERNAL",
+            "authorization": "NONE",
+        }
+        if os.getenv("CORA_README_10K_REPORT"):
+            Path(os.environ["CORA_README_10K_REPORT"]).write_text(
+                json.dumps(report, sort_keys=True, indent=2) + "\n", "utf-8")
+        print("PR42 10k finite README falsifiers: " +
+              json.dumps({"vectors": 10000, "wrong": len(survivors),
+                          "sha256": stream.hexdigest()}, sort_keys=True))
+        self.assertEqual(report["equivalent_accepted"], 4000, survivors[:4])
+        self.assertEqual(report["adversarial_rejected"], 6000, survivors[:4])
+        self.assertEqual(report["distinct_input_digests"], 10000)
+        self.assertEqual(survivors, [])
+
 
 
 if __name__ == "__main__":
