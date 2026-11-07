@@ -106,3 +106,5 @@ Machine inventory: [documentation registry](documentation-registry.json); [docum
 - [DOCUMENTATION DOD](DOCUMENTATION_DOD.md) — CURRENT · DOD
 
 **PR40 source knowledge convergence:** [19-node engineering DoD](../.cora/contracts/dod/engineering-knowledge-dod.json) → [existing debt method](ENGINEERING_DEBT.md) → [Git replay and 10M bounded falsifier](../tools/verify_engineering_closure.py). This records static callsite indicators and explicitly unobserved runtime; it does not certify GitHub host governance, product usability or external approval.
+
+**Final experimental release convergence:** [30-node final source/external AND DoD](../.cora/contracts/dod/final-experimental-dod.json) → [current pre-release checklist and operator protocol](RELEASE.md) → [exact Git, physical fixture and 1M finite-model verifier](../tools/verify_final_experimental.py). A SOURCE pass is not a public release; seven independent external obligations remain noncompensatory.

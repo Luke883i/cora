@@ -1,6 +1,10 @@
 # Changelog — CORA
 
-## PR40 engineering knowledge source convergence — DRAFT, NOT MERGED
+## PR41 — final experimental source-freeze method (publication separately governed)
+
+A three-pillar, noncompensatory 30-node DoD and 16-family preregistered million-case finite semantic model bind current documentation to merged Git, execute two native-Git independent-implementation reference fixtures against the real CLI, and reject fabricated host/reviewer/release authority. The last experimental package name remains `cora-audit 1.0.0a4`; no public final experimental release, stable API, external maintained-target approval, user-study completion or host isolation is claimed. A postmerge exact-SHA freeze and human release decision are separate mandatory acts.
+
+## PR40 engineering knowledge source convergence — merged source, not final product acceptance
 
 Retrograde 19-node noncompensatory engineering knowledge DoD; original-Git static/dynamic-boundary report with replay; 14 fault families and 10×1M preseeded finite-model checks; real Git-committed external-scope and chronology falsifiers; diagnostic PR25 clone isolation; updated CI and source-era guidance. No external RCA, host enforcement, real-target behavior or product/release approval is claimed.
 
