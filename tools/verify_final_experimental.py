@@ -414,17 +414,24 @@ def main() -> int:
                           args.revision + "^{commit}").decode().strip()
                 expected = stress(contract_at(args.repo, sha),
                                   cases=report.get("cases", 0))
+                expected["commit"] = sha
+                expected["tree"] = git(args.repo, "rev-parse",
+                                       sha + "^{tree}").decode().strip()
                 if expected != report:
                     raise ValueError("finite model stream mismatch")
                 outcome = {"schema": "cora-final-experimental-model-replay/1",
+                           "commit": sha,
                            "status": "REPLAYED_FINITE_MODEL_NOT_RELEASE",
                            "release_authorized": False, "external_gates": "BLOCKED_EXTERNAL"}
         else:
-            outcome = analyze(args.repo, args.revision,
-                              run_behavior=args.run_behavior)
+            basic = analyze(args.repo, args.revision,
+                            run_behavior=args.run_behavior)
             if args.stress_1m:
-                outcome["finite_model"] = stress(
-                    contract_at(args.repo, outcome["commit"]))
+                outcome = stress(contract_at(args.repo, basic["commit"]))
+                outcome["commit"] = basic["commit"]
+                outcome["tree"] = basic["tree"]
+            else:
+                outcome = basic
         result = json.dumps(outcome, sort_keys=True, indent=2) + "\n"
         if args.output:
             args.output.write_text(result, "utf-8")
