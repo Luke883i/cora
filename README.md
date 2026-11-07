@@ -76,7 +76,7 @@ cora verify-process /tmp/cora-run.json --repo . --one-run \
   --evidence-dir /tmp/cora-evidence
 ```
 
-**How to read the result:** open `/tmp/cora-run.html`; identify which activities were **executed, reused, blocked, or not run**; follow a claimed outcome to the source SHA, test or receipt, counterexample, and remaining DoD. The files have distinct purposes:
+**How to read the result:** open `/tmp/cora-run.html`; start with **Review in three questions** (conclusion, evidence, falsifier), then inspect which activities were **executed, reused, blocked, or not run**; trace a claimed outcome to its Git SHA, receipt and remaining DoD. The files have distinct purposes:
 
 - `cora-run.json` — execution receipt and contextual outcome.
 - `cora-run-machine.json` — machine-readable integrated Atlas.
