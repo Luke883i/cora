@@ -72,3 +72,48 @@ The engineering owner labels/triages; product owner evaluates impact; QA validat
 The [PR40 noncompensatory DoD](../.cora/contracts/dod/engineering-knowledge-dod.json) retains distinct debt observations: P0 physical Git fixture CI failure (RCA pending), P0 host-protection/reviewer enforcement (independent administrative check), P1 live/historical document chronology, P1 dynamic Python and subprocess boundaries, P1 frozen PR01–37 history (not post-PR37 complete history), P1 maintained-target oracle gap and P2 finite mutation model extrapolation risk. A source report cannot close an external gate.
 
 `python tools/verify_engineering_closure.py --repo . --revision HEAD --stress-10m --output /tmp/ekc-10m.json` executes ten seeds × one million bounded semantic vectors, preregistering all zero/single/pair/triple/quadruple combinations across 14 fault families. A separately worded Boolean reference detects source-state disagreements, and any synthetic reviewer/host PASS fails closed. Retained SHA-256 streams make campaigns reproducible. Exactly 1,471 distinct fault masks are preregistered and reused; ten million **case evaluations are not ten million unique source mutations**. Physical Git-committed mutants and the PR25 original source fixture are tested separately; no external target code is automatically executed.
+
+
+## PR43 — closure accounting without recursive self-certification
+
+**Problem A (contract growth versus actual closure).** The canonical DoD files contain
+node *occurrences*, not a deduplicated register of real-world engineering obligations.
+The existing PR38 Git genealogy is historically bounded. Repeated gate descriptions,
+PASS labels and document revisions cannot become evidence of completed runtime
+checks, authenticated reviews or host enforcement.
+
+**Backward-derived acceptance contract (PR43, A0–A6):**
+
+- **A0 — Fixed history:** compare two distinct original-Git commits in a single
+  ancestor chain; never use an uncommitted working tree.
+- **A1 — Total scoped inventory:** enumerate all committed
+  `.cora/contracts/dod/*.json` node occurrences, using
+  `contract_path::node_id` for stable syntactic identity.
+- **A2 — Honest delta:** report added, removed, changed and asserted statuses.
+  Removal or renaming is **not** closure. Identical claim wording is a candidate
+  overlap, never automatically deduplicated semantic identity.
+- **A3 — No promotion:** reject EXTERNAL-to-SOURCE downgrades and keep
+  `verified_closures=0` until a separate admissible execution/authority
+  evidence channel exists. The ratio `closure_yield=null` is intentional.
+- **A4 — Source replay:** compare the complete receipt against independently
+  recomputed original-Git contents, not the previously printed counts.
+- **A5 — Falsification:** a real two-commit Git mutation, edited receipt,
+  forged PASS, removed node, duplicate claim and reverse ancestry must be detected.
+- **A6 — External boundary:** source accounting never qualifies the product,
+  checks host policy, assigns reviewers or authorizes release.
+
+Use the **existing** engineering verifier, without a new CORA CLI command:
+
+```sh
+python tools/verify_engineering_closure.py --repo . --closure-base BASE_SHA \
+  --revision HEAD --output /tmp/cora-closure-delta.json
+python tools/verify_engineering_closure.py --repo . \
+  --verify-closure /tmp/cora-closure-delta.json
+```
+
+**Interpretation:** `PASS_SCOPED_ACCOUNTING` means the textual DoD changes
+were enumerated consistently; it does **not** report actual defect reduction.
+No meaningful closure-yield denominator or independently deduplicated obligation
+count can be asserted without an externally validated equivalence map and
+separately attributable verification evidence. This is the intentionally
+non-circular stop point for PR43, not another product-acceptance gate.
