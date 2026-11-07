@@ -2,46 +2,21 @@
 
 **CORA (Continuous Ontological Repository Assurance)** — **Engineering evidence for AI-assisted software changes.**
 
-CORA is an offline-first **Python 3.11+ command-line product** that helps developers and AI coding assistants inspect a Git repository, derive source-bound Definitions of Done, challenge claims with counterexamples and produce reproducible pre/post-merge review reports. The assistant writes code; CORA helps structure **what must be demonstrated** before someone can responsibly accept a change.
+CORA is an **offline-first, Python 3.11+ command-line assurance framework** that helps developers and AI coding assistants inspect a Git repository, derive source-bound Definitions of Done (DoD), challenge claims with counterexamples, and produce reproducible pre/post-merge review reports. An AI assistant can propose or write code; CORA helps establish **what the change must demonstrate** before an accountable person accepts it. CORA is **not a coding agent**, a general runtime-equivalence prover, a universal dead-code detector, an automatic code deleter, or a merge authority.
 
-**Why it matters:** a successful code edit, a green test and a confident AI explanation are not the same as product correctness, operational readback or independent approval. CORA makes supported claims, evidence gaps and required next checks explicit. It is **not** a coding agent, general runtime-equivalence prover, universal dead-code detector, automatic code deleter or merge authority.
+**Why it matters:** a successful edit, a green test, a Git hash, and a convincing AI explanation are **different kinds of evidence**. None, alone, demonstrates product correctness, independent operational behavior, or permission to deploy. CORA makes the supported claims, missing evidence, falsifiers, and next review obligations visible.
 
-**Current status:** `v1.experimental` / Python package `1.0.0a4`, alpha **source candidate**, not a stable API or verified public release. See [release status](docs/RELEASE.md), [product DoD](docs/DOD_V1_EXPERIMENTAL.md), and [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json): a conclusive source freeze candidate, **not** a published release or independently governed approval.
+**Current status:** `v1.experimental`; Python distribution **`cora-audit 1.0.0a4`**; source includes **merged PR41** and its *Final Experimental Baseline* contract. This is an integrated experimental **source** baseline, **not a stable API or verified public release**, independently qualified product, production service, or release authorization. The `v1.0.0a4` GitHub pre-release was observed as an **unpublished Draft without assets on 7 November 2026**; that dated observation is not a continuously verified host status. Consult [Release status](docs/RELEASE.md) and the [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) before making a release claim.
 
-**Recommended use:** an engineer or AI coding assistant proposes a bounded change; CORA organizes Git evidence, falsifiers and review obligations; independent test operators and accountable humans decide acceptance. Start with read-only inspection and exact BASE/HEAD, not automatic remediation.
+**Recommended use:** start with an authorized, read-only inspection of an exact Git `BASE` and `HEAD`; use CORA to organize the repository facts, candidate dependencies, counterexamples, source evidence, and unsatisfied verification obligations. Run real target tests and obtain independent review separately. Do not infer automatic remediation, approval, or safe deletion from a report.
 
-**Audience and conditions:** suitable for developers, reviewers, maintainers and assurance teams with legitimate access to the target repository. Python 3.11+ and Git are needed for the quickstart; optional runtime execution and verifier commands need separate authorization. No hosted service, production SLA or automatic approval is provided.
+**Audience and conditions:** software engineers, coding-agent operators, reviewers, maintainers, and assurance teams with legitimate repository access. The quickstart requires **Python 3.11+ and Git**. Optional target-side execution, ZIP/runtime/Docker experiments, network access, and user-supplied verifiers require distinct authorization and appropriate isolation. CORA does not provide a hosted service or production SLA.
 
-**Open source license:** [MIT](LICENSE) applies to CORA's code and documentation. Permissive reuse does **not** grant access to third-party repositories, authenticate findings or remove the need for review. See [security](SECURITY.md) and [contributing](CONTRIBUTING.md).
+**Open source license:** [MIT](LICENSE). The license permits reuse of CORA's code and documentation; it does not grant access to third-party repositories or authenticate a report. See [Security](SECURITY.md) and [Contributing](CONTRIBUTING.md).
 
-**Repository map:** the root keeps the product entrypoint, policies, package metadata and stable adoption-facing JSON contracts; only the two adoption-facing JSON contracts (`cora.ontology.json` and `cora.artifact-roles.json`) remain at root. Internal DoDs, profiles and assurance records live under [`.cora/contracts/`](.cora/contracts/index.json) and [`.cora/assurance/`](.cora/assurance/capability-atlas.json). Their [committed routing index](.cora/contracts/index.json) records the canonical paths. Active guidance is in [`docs/`](docs/), byte-preserved historical decisions and audits are reached through the [documentation index](docs/INDEX.md), and finite-model fixtures live in [`.cora/fixtures/`](.cora/fixtures/). Code, tests and verification remain in `src/`, `tests/` and `tools/`; moving a file does not establish safe deletion or runtime equivalence.
+## First five minutes — Quickstart
 
-## How CORA works
-
-```text
-Human engineering intent + exact BASE / HEAD
-    |
-    v
-Git source --> declared product/software --> candidate dependencies
-    |
-    v
-Reverse-derived DoD --> smallest justified change --> falsifiers
-    |
-    v
-Real tests / reports --> replay & invalidation --> unresolved evidence
-    |
-    v
-Independent reviewer / host controls (outside CORA)
-    |
-    v
-Actual merged SHA --> postmerge source/regression reassessment
-```
-
-CORA distinguishes **provenance**, **inference**, **runtime observation** and **authorization**. A hash can identify committed bytes; it cannot authenticate a human reviewer or demonstrate target behavior.
-
-## First five minutes
-
-From an authorized local checkout of CORA, with Python 3.11+ and Git:
+From an **authorized local checkout of CORA**, install its Python distribution and run a read-only inspection:
 
 ```sh
 python -m pip install -e .
@@ -52,78 +27,139 @@ cora snapshot . --revision HEAD --output /tmp/cora-ledger.json
 cora verify-ledger /tmp/cora-ledger.json --repo .
 ```
 
-Keep reports outside the source checkout; `/tmp` is a Unix example. `audit` reads the working tree, while `snapshot` reads a **pinned Git commit**; their evidence is not interchangeable. Explore the full [new-user tutorial](docs/GETTING_STARTED.md) and [CLI reference](docs/CLI_REFERENCE.md).
+**Expected artifacts and meaning:**
 
-## Integrated human / AI atlas
+- `cora-worktree.json`: a bounded inspection of the working tree; uncommitted material can affect this view.
+- `cora-ledger.json`: the original-Git source inventory of the **pinned commit** `HEAD` resolved at execution time.
+- `verify-ledger`: a consistency/replay check of that scoped Git observation, **not** certification of runtime behavior or reviewer identity.
 
-**Primary integrated audit:** CORA uses one existing entrypoint, **process-run --one-run --profile comprehensive**. It inventories all known activities, safely executes only eligible PR36 source methods by default, records every other activity as NOT_RUN/BLOCKED and presents source evidence and debt through one HTML/JSON dossier. Merged PR38 adds a searchable history of 37 PRs and 305 individual commit deltas, including the PR34 unmerged exception. Source provenance does not prove runtime behavior, safe deletion or product approval. See [One-Run DoD](.cora/contracts/dod/integrated-one-run-dod.json), [history-convergence DoD](.cora/contracts/dod/history-convergence-dod.json) and [commit-level ledger](.cora/assurance/history/pr01-37-commit-diff-audit.json).
+Keep reports outside the source checkout; `/tmp` is a Unix example—choose an appropriate output directory on Windows. Use [`cora COMMAND --help`](docs/CLI_REFERENCE.md) for precise arguments and [Getting started](docs/GETTING_STARTED.md) for the full newcomer walkthrough.
+
+## What works today
+
+CORA's [capability atlas](.cora/assurance/capability-atlas.json) lists **71 declared CLI commands across eight method families**, with implementation and test-source witnesses. This is **not** a claim that 71 product behaviors have been independently executed or certified. The [parser-checked CLI reference](docs/CLI_REFERENCE.md), [capability DoD](.cora/contracts/dod/capability-dod.json), and [complete documentation index](docs/INDEX.md) distinguish available interfaces from qualified outcomes.
+
+| Engineering task | Implemented mechanisms | Boundary of the result |
+| --- | --- | --- |
+| **Understand a repository** | Original-Git `snapshot`, ontology, partial Python import graph, manifest adapters, artifact-role classification | Candidate dependencies and ownership declarations; not exhaustive dynamic usage |
+| **Investigate files and debt** | File Lab, archaeology, holistic forensics, debt signals, conservative selection | No universal safe-deletion proof or independently measured defect rate |
+| **Constrain AI-assisted changes** | Intent-bound reticular DoD, contextual guards, negative controls, finite mutant models | Source obligations are not runtime certification or autonomous coding |
+| **Review PRs and merges** | Exact `BASE`/`HEAD`, pre/post-merge checks, effect-capability analysis, evidence invalidation | Source receipts do not authenticate human approval, host enforcement, or deployment |
+| **Audit CI/CD** | Workflow inventory, local caller/duplicate checks, conservative `BASE → HEAD` rationalization | External consumers and equivalent runtime behavior remain unverified; no automatic retirement |
+| **Correlate assurance methods** | Ontology, source witnesses, Git replay, bounded hypotheses and convergence graphs | Correlation is not independent behavioral proof or causality |
+| **Run separately authorized experiments** | Controlled document/file transformations, staged mutations, optional runtime/ZIP intake | Explicit opt-in, real oracles, and externally verified containment are required |
+
+**Five convergent assurance goals:** Semantic Truth, AI Reasoning, Behavioral Proof, Continuous Semantic Evolution, and Unified Assurance. `method-synthesize --synergic` correlates their bounded source routes; `--integrated` joins documentation, **18 README claim traces**, and the **71 declared interfaces**. It does **not** invoke an AI provider by default or replace One-Run:
+
+```sh
+cora method-synthesize . --synergic --base-sha BASE_SHA \
+  --execute-source-probes --output REPORT --ai-request-output AI_PLAN
+```
+
+Use [Convergent assurance](docs/CONVERGENT_ASSURANCE.md) to interpret the generated plan and its DoD. AI hypotheses remain untrusted until checked against original sources and independent observations.
+
+**Historical and engineering-knowledge capabilities:** merged PR38 supplied an original-Git register of **37 PRs and 305 commit deltas**, including the **unmerged PR34** exception; **28 former paths** are classified as relocated or historical, not automatically removable. It supports PR/commit drill-down, historical path reconciliation, and future-change obligations. That frozen PR01–37 ledger does **not** cover every later PR. Merged PR40 added static/dynamic-boundary knowledge and debt checks: dynamic callsites are **not executed runtime coverage**, and its **10 million** finite scenario evaluations are **not 10 million distinct code mutations**. See the [historical register](.cora/assurance/history/pr01-37-commit-diff-audit.json), [history DoD](.cora/contracts/dod/history-convergence-dod.json), [engineering knowledge DoD](.cora/contracts/dod/engineering-knowledge-dod.json), and [engineering debt guide](docs/ENGINEERING_DEBT.md).
+
+**Independent product qualification framework:** merged PR39 introduced four distinct gates—**behavior, usability, isolation, and effective governance**. The [native-Git reference](tools/independent_git_oracle.py) and [read-only host readback](tools/governance_readback.py) can test bounded properties, but cannot authenticate independent operators, demonstrate maintained-target performance, or approve release. See the [qualification DoD](.cora/contracts/dod/independent-qualification-dod.json).
+
+## One-Run — one command, one evidence dossier
+
+CORA's primary integrated assurance entry point is the **existing** `process-run --one-run --profile comprehensive`. It inventories known methods, parser/dispatch commands, tests, verifier tools, workflows, DoDs, and genealogy. On its default safe profile, **only eligible PR36 source-analysis methods actually run**; all other registered activities receive explicit `NOT_RUN` or `BLOCKED` reasons. A catalog of 71 commands is not an execution log of 71 commands.
 
 ```sh
 cora process-run . --revision HEAD --process full --one-run --profile comprehensive \
   --output /tmp/cora-run.json --atlas-json /tmp/cora-run-machine.json \
   --atlas-html /tmp/cora-run.html --evidence-dir /tmp/cora-evidence
+
 cora verify-process /tmp/cora-run.json --repo . --one-run \
   --atlas-json /tmp/cora-run-machine.json --atlas-html /tmp/cora-run.html \
   --evidence-dir /tmp/cora-evidence
 ```
 
-Open /tmp/cora-run.html to navigate activity outcomes, blocked tests, DoD obligations, original Git PR/commit records, historical path reconciliation and future feature gaps. The analytical companion **method-synthesize --synergic** remains available for five-goal source synthesis and optional untrusted AI hypotheses; it is not a competing primary executor. See [convergent assurance](docs/CONVERGENT_ASSURANCE.md) and the [PR40 engineering knowledge DoD](.cora/contracts/dod/engineering-knowledge-dod.json) for bounded static/dynamic debt, original-Git replay and a 10M finite model (not 10M code changes).
+**How to read the result:** open `/tmp/cora-run.html`; identify which activities were **executed, reused, blocked, or not run**; follow a claimed outcome to the source SHA, test or receipt, counterexample, and remaining DoD. The files have distinct purposes:
 
+- `cora-run.json` — execution receipt and contextual outcome.
+- `cora-run-machine.json` — machine-readable integrated Atlas.
+- `cora-run.html` — browsable human/AI Atlas and drill-down.
+- `cora-evidence/` — optional local content-addressed artifacts.
 
-**PR39 product qualification (source candidate):** With merged PR39, the existing [four-gate DoD](.cora/contracts/dod/independent-qualification-dod.json) explicitly blocks independent behavior, real-user usability, runtime containment and effective host-governance acceptance until outside operators supply verified evidence. The source-only native Git comparator (tools/independent_git_oracle.py) and optional read-only host probe (tools/governance_readback.py) cannot approve a release; see [operator protocol](docs/RELEASE.md).
+`verify-process` checks bounded JSON/HTML/Git replay; matching output does **not** imply external attestation. The smaller original One-Run view can be used without `--profile comprehensive`. CORA-only unit tests require opt-in with `--execute-self-tests`; the comprehensive authorization flow additionally uses `--authorization-file CONSENT.json` tied to the exact commit, tree, and checkout. This is not a hostile-code sandbox or permission to execute untrusted target tests.
 
-## What works today
+References: [One-Run DoD](.cora/contracts/dod/one-run-dod.json), [55-node integrated DoD](.cora/contracts/dod/integrated-one-run-dod.json), [complete CLI syntax](docs/CLI_REFERENCE.md), and [Getting started](docs/GETTING_STARTED.md). The integrated DoD does not become externally accepted merely because its source checks pass.
 
-**One-run execution atlas (PR36):** Use the existing `cora process-run . --revision HEAD --process full --one-run --output /tmp/cora-run.json --atlas-html /tmp/cora-run.html` to generate an **execution-results** dashboard. The HTML shows measured source-method results, honest source reuse, BLOCKED/NOT_RUN and the existing 71-command source catalog in one self-contained view. The default never executes arbitrary target tests, network calls or AI; CORA-only Python unit tests require `--execute-self-tests` and remain unauthenticated execution claims. Original-Git JSON/HTML replay uses `cora verify-process /tmp/cora-run.json --repo . --one-run --atlas-html /tmp/cora-run.html`. This is **one-run scoped source assurance**, not proof that all 71 CLI behaviors have run. See [CLI reference](docs/CLI_REFERENCE.md) and [one-run reticular DoD](.cora/contracts/dod/one-run-dod.json).
+## How CORA works
 
-**Comprehensive activity dossier (merged PR37; still experimental):** The same `process-run --one-run --profile comprehensive` inventories the parser/dispatch commands, original source methods, test suites and cases, verifier tools and GitHub workflows. Only the safe PR36 source methods run by default; every other activity has an explicit NOT_RUN or BLOCKED reason. Add `--evidence-dir /tmp/cora-evidence` for content-addressed local artifacts. Optional local self-tests require `--execute-self-tests --authorization-file CONSENT.json` with exact commit, tree and checkout; this is not sandbox attestation. Verify the integrated JSON and HTML with `cora verify-process REPORT --repo . --one-run --atlas-html PAGE --evidence-dir /tmp/cora-evidence`. The 55-node [integrated DoD](.cora/contracts/dod/integrated-one-run-dod.json) remains debt-blocked, with external product acceptance explicitly unverified.
+```text
+Human engineering intent + exact Git BASE / HEAD
+    ↓
+Git inventory + declared product / software / ownership
+    ↓
+Reverse-derived DoD + bounded intended change + falsifiers
+    ↓
+Actual authorized tests, source outcomes, receipts and replay
+    ↓
+Outstanding runtime, user and governance obligations
+    ↓
+Independent reviewer / host authorization (outside CORA)
+    ↓
+Actual merged SHA + post-merge invalidation / reassessment
+```
 
-**History and future-change assurance (merged PR38):** The 305-commit [original-Git ledger](.cora/assurance/history/pr01-37-commit-diff-audit.json) and [severe 32-node DoD](.cora/contracts/dod/history-convergence-dod.json) classify 28 former paths as relocated or historical, never automatically removable. One-Run gains PR/commit drill-down and shows the obligations required when future features alter modules, test suites, workflows, contracts or documentation. External runtime, independent review, hosted governance and user comprehension remain open.
-
-**Five synergic source-assurance goals:** `cora method-synthesize . --synergic --base-sha BASE_SHA --execute-source-probes --output REPORT --ai-request-output AI_PLAN` brings together the Semantic Truth, AI Reasoning, Behavioral Proof, Continuous Semantic Evolution and Unified Assurance source routes, while `--integrated` connects documentation, the 18 claim traces and the 71 declared CLI interfaces. Neither mode invokes an AI provider by default or proves every behavior. See [five-goal DoD and falsification](docs/CONVERGENT_ASSURANCE.md).
-
-| Engineering goal | Relevant CORA capabilities | Evidence boundary |
-| --- | --- | --- |
-| **Understand a repository** | Git snapshot, declared ontology, partial import graph, manifest adapters, artifact roles | Candidate dependencies and owner declarations, not complete runtime usage |
-| **Investigate files and debt** | File Lab, source archaeology, holistic analysis, debt signals and selection triage | No universal safe-deletion certificate or measured defect rate |
-| **Constrain an AI coding assistant** | Intent-to-proof DoD, finite falsifiers, contextual source assurance | Source model or synthetic scenarios never certify product behavior |
-| **Review changes and follow merges** | BASE-pinned premerge and postmerge, dependency-based invalidation, effect-capability analysis | Report is not reviewer authentication, effective CI permissions or deployment evidence |
-| **Review CI/CD workflows** | Committed Git inventory, local reusable callers, duplicate and repeated-check candidates, conservative BASE→HEAD plan | External consumers, required host checks and behavior equivalence remain unknown; no automatic retirement |
-| **Correlate audit methods** | Git-bound ontology, roles and workflow evidence, original receipt replay and bounded AI hypothesis review | A source correlation is not behavioral, causal or human-verified proof |
-| **Run separately authorized experiments** | Controlled document rename, optional staged source mutations and runtime observation | Explicit authorization, independent oracles and external isolation checks remain necessary |
-
-**Complete functional census:** the [capability atlas](.cora/assurance/capability-atlas.json) enumerates **71 CLI commands** in eight methods with implementation and test-source witnesses: **not 71 independently proven features**. It also maps internal Python modules, release-verification tools, CI, contracts and documentation. The [capability DoD](.cora/contracts/dod/capability-dod.json) keeps source and external qualification separate. A test file's existence is not evidence that the test ran or passed.
-
-All current command names, scope details and parameters are in the [parser-checked CLI reference](docs/CLI_REFERENCE.md). For methods and domain-specific DoD, use the [complete documentation index](docs/INDEX.md). The [Git-bound documentation proof profile](.cora/assurance/documentation-proofs.json) relates critical README statements and S01–S18 to source/test blobs and falsifiers; [replay verification](tools/verify_claim_evidence.py) checks bounded source predicates, not general runtime truth or independent approval.
+CORA distinguishes **provenance, inference, runtime observation, and authorization**. A hash can identify committed bytes; it cannot authenticate a human reviewer or demonstrate target behavior. A test source file is not evidence that its tests ran. Source replay is not truth, and a pass within a finite model is not a general product certificate.
 
 ## Use CORA with an AI coding assistant
 
-Give your assistant an authorized checkout of CORA and a **separate target repository**; a GitHub link alone does not install or enforce anything. The target needs its **own** committed `cora.ontology.json` and a continuous policy `.cora/continuous-policy.json` present in the BASE revision for contextual review. Record a real engineering intent and acceptance oracle, then run:
+Give your assistant an **authorized CORA checkout** and a **separate target repository**. A GitHub URL alone does not install CORA or enforce governance. For contextual source review, the target must include its **own committed** `cora.ontology.json` and `.cora/continuous-policy.json` in the `BASE` revision. Define the engineering intent and the acceptance oracle, then run:
 
 ```sh
 cora convergence-plan --contract /path/to/cora/.cora/contracts/dod/convergence-dod.json
+
 cora dev-premerge /path/to/target --base BASE_SHA --head PR_HEAD_SHA \
   --contextual --intent "Ship the bounded change with its acceptance tests" \
   --convergence-contract /path/to/cora/.cora/contracts/dod/convergence-dod.json \
   --output /tmp/cora-premerge.json
+
 cora verify-contextual-gate /tmp/cora-premerge.json --repo /path/to/target \
   --intent "Ship the bounded change with its acceptance tests" \
   --convergence-contract /path/to/cora/.cora/contracts/dod/convergence-dod.json
 ```
 
-The same intent is required for replay. Without it the contextual gate is **DEBT_BLOCKED**. These commands do **not** implicitly run the target tests or prove runtime correctness. Run real tests and obtain independent review separately. See [step-by-step agent adoption](docs/AGENT_ADOPTION.md), [current engineering method](docs/CONVERGENT_ASSURANCE.md) and the [R1–R4 DoD](docs/DOD_PR20_CONVERGENCE.md).
+**The same intent is required for replay**. Without the matching `--intent`, the contextual gate is `DEBT_BLOCKED`. These source checks do not implicitly execute tests from the target repository or prove that its runtime is correct. Run real tests and obtain independent review separately. Evaluate the **actual merged commit** again rather than reusing the PR-head receipt.
 
-## Read a CORA result correctly
+Follow [Agent adoption](docs/AGENT_ADOPTION.md), [Agent instructions](AGENTS.md), [Continuous development](docs/CONTINUOUS_DEVELOPMENT.md), and the [R1–R4 DoD](docs/DOD_PR20_CONVERGENCE.md).
 
-- **PASS_SCOPED:** the named bounded source obligation passed; not blanket product certification.
-- **BLOCKED / DEBT_BLOCKED:** evidence is missing or cannot be reconciled; not proof of a defect.
-- **REFUTED:** an observed counterexample rejects a particular claim.
-- **BLOCKED_EXTERNAL:** required independent owner, host, reviewer, runtime or pilot evidence is not present.
-- **Authorization:** source and replay reports do not confer merge, deployment, release or deletion permission.
+## Interpret a CORA result
 
-The exact vocabulary depends on the report's schema. Ten-million-case campaigns are **finite synthetic model evaluations**, not ten million actual source mutants, users or runtime tests.
+| Status | What it means | What it does **not** mean |
+| --- | --- | --- |
+| `PASS_SCOPED` / `EXECUTED_SCOPED` | A named bounded obligation passed or an eligible activity actually ran | Entire-product correctness or independent runtime validation |
+| `REUSED_SCOPED` | A source-scoped, lineage-compatible receipt was reused | A new execution or universally portable evidence |
+| `NOT_RUN` | An activity is inventoried but has not executed | PASS or failure |
+| `BLOCKED` / `DEBT_BLOCKED` | Necessary context or proof is unavailable or inconsistent | A defect has necessarily occurred |
+| `REFUTED` | A specific claim conflicts with an observed counterexample | All methods or other claims are invalid |
+| `BLOCKED_EXTERNAL` | Independent target, host, reviewer, isolation, or user evidence is missing | Authorization to merge, deploy, delete, or publish |
+
+**Example of interpretation (illustrative, not a generated CI receipt):** a report that inventories a target test as `NOT_RUN` has proved the **test was identified**, not that it passed. A matching Git replay can establish continuity of the reported source observation, not who approved it. Only independently obtained evidence can close the applicable external gate. The exact status vocabulary depends on the report schema.
+
+## Final Experimental Baseline — merged PR41
+
+PR41 formalizes a **conclusive experimental source baseline**, not a published or independently qualified final product. Its [30-node noncompensatory DoD](.cora/contracts/dod/final-experimental-dod.json) contains **15 SOURCE leaves, 7 EXTERNAL leaves, and 8 aggregate AND gates**. Three pillars organize the stop point:
+
+1. **Git-to-document truth:** the current README, docs, CLI, artifact roles, and evidence claims must agree with committed Git. Expected measurements include **48/48 indexed Markdown files**, classification of all tracked files, **71/71 CLI entries**, zero known false current-state claims, and unmodified historical ADRs/audits.
+2. **Actually observed bounded behavior:** the real CORA CLI is compared with a separately implemented native-Git oracle on **two controlled physical Git repositories**, including changed commits, stale references, and negative controls. This is independent **implementation**, not independent **operator validation** or a benchmark on two maintained external targets.
+3. **Effective governance:** branch restrictions, required checks, distinct non-author review, runtime isolation, and release authorization must be demonstrated **on their actual hosts by authorized independent operators**. Workflow files and source contracts alone cannot enforce these conditions.
+
+The PR41 source campaign includes **1,000,000 deterministic finite-model evaluations**, **four seeds**, **16 realistic fault families**, and **2,517 preregistered zero-to-fourway masks**; it requires zero model/reference disagreements and zero unsafe authorization promotions, with reproducible digest replay. These are not one million independent source mutations, target executions, or user sessions.
+
+**External acceptance remains `BLOCKED_EXTERNAL`** until at least two independently maintained target repositories are tested against preregistered oracles; host isolation is independently witnessed; **at least eight unfamiliar users** attempt **three tasks each**, with **≥80% successful completion and zero critical evidence-status misinterpretations**; GitHub actually enforces required checks and an authenticated non-author reviewer approves; and a release manager verifies the final merged SHA against the tag, wheel, sdist, provenance, and rollback drill.
+
+**Release distinction:** `1.0.0a4` is an alpha package identity. As observed on **7 November 2026**, the existing GitHub `v1.0.0a4` pre-release remained an **unpublished Draft with zero assets** and no verified `refs/tags/v1.0.0a4` ref. This is a dated observation, not a permanent claim about the host. A Draft targeting mutable `main` is not a verified frozen artifact. Any subsequent source change invalidates earlier SHA-bound freeze receipts. CORA cannot self-approve, merge, tag, publish, destructively clean up, or authorize release.
+
+Before a public experimental pre-release, follow the [release operator protocol](docs/RELEASE.md), [experimental product DoD](docs/DOD_V1_EXPERIMENTAL.md), and [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json). A source pass and a human release decision are different events.
 
 ## Documentation by goal
+
+Choose a path according to the task; the [48-document index](docs/INDEX.md) is exhaustive. The routes below are entry points, not competing sources of truth.
 
 - **First-time user:** [Getting started](docs/GETTING_STARTED.md) · [Architecture](docs/ARCHITECTURE.md)
 - **Coding assistant or reviewer:** [Agent adoption](docs/AGENT_ADOPTION.md) · [Agent rules](AGENTS.md) · [Continuous development](docs/CONTINUOUS_DEVELOPMENT.md)
@@ -131,49 +167,51 @@ The exact vocabulary depends on the report's schema. Ten-million-case campaigns 
 - **Product or release owner:** [Governance](GOVERNANCE.md) · [Security](SECURITY.md) · [Release](docs/RELEASE.md)
 - **Full documentation, history and contracts:** [Documentation index](docs/INDEX.md) · [Documentation DoD](docs/DOCUMENTATION_DOD.md)
 
-The five expandable lenses below are a **map, not five competing sources of truth**. The visible summary above is sufficient to choose a path; open only the detail needed.
-
 <details>
-<summary>Product | purpose, users, supported outcomes</summary>
+<summary>Product | purpose, users, and outcomes</summary>
 
-**Why:** review an engineering claim without converting source-only evidence into release authority. **For:** a new engineer, an AI coding operator, a reviewer or a product owner. Start with [Getting started](docs/GETTING_STARTED.md), the [v1.experimental product DoD](docs/DOD_V1_EXPERIMENTAL.md) and [current release scope](docs/RELEASE.md). Product promises are bounded by source coverage; independent usability and real target pilots remain open.
+**Why:** make engineering claims falsifiable without transforming source findings into release authority. **For:** newcomers, engineers, coding-agent operators, reviewers, and product owners. Read [Getting started](docs/GETTING_STARTED.md), [experimental product DoD](docs/DOD_V1_EXPERIMENTAL.md), and [Release](docs/RELEASE.md). Independent real-target pilots and usability validation remain external obligations.
 
 </details>
 
 <details>
-<summary>Software | one CLI, implementation and verification tools</summary>
+<summary>Software | implementation, interfaces, and runtime</summary>
 
-**Runtime:** local Python package `cora-audit`, CLI `cora`, engine [`src/cora/`](src/cora/) and independent source/release verification [`tools/`](tools/). Read [Architecture](docs/ARCHITECTURE.md), [CLI reference](docs/CLI_REFERENCE.md) and [artifact semantics](docs/ARTIFACT_SEMANTICS.md). Static import edges are candidates, not complete execution paths; optional Docker tests are not an attested sandbox.
-
-</details>
-
-<details>
-<summary>Repository | source, tests, contracts, workflows and history</summary>
-
-**Source of record:** this Git repository and exact commit objects, not the working tree, an AI explanation or a PR description. Find [tests](tests/), [CI workflows](.github/workflows/), [committed ontology](cora.ontology.json), [artifact-role registry](cora.artifact-roles.json) and [change history](CHANGELOG.md). The [complete Markdown index](docs/INDEX.md) preserves all 48 documents, including historical ADRs and audits, with declared authority.
+**Runtime:** one local `cora-audit` Python distribution and a single `cora` CLI, with the engine [`src/cora/`](src/cora/) and release-verification [tools/](tools/). See [Architecture](docs/ARCHITECTURE.md), [CLI reference](docs/CLI_REFERENCE.md), and [Artifact semantics](docs/ARTIFACT_SEMANTICS.md). Static dependency edges do not attest dynamic execution, and optional Docker does not independently certify isolation.
 
 </details>
 
 <details>
-<summary>Governance | authorization, security, contribution and license</summary>
+<summary>Repository | versioned sources, CI, and history</summary>
 
-**Decision rights are external:** review requires named accountable humans and host-enforced controls, not `PASS_SCOPED`. Follow [Governance](GOVERNANCE.md), [Security](SECURITY.md), [Contributing](CONTRIBUTING.md), the [PR template](.github/PULL_REQUEST_TEMPLATE.md), [release procedure](docs/RELEASE.md) and [MIT license](LICENSE). The presence of CODEOWNERS or CI source is not evidence that protected checks or independent approvals are enforced.
+**Source of record:** original Git objects bound to an exact SHA, not merely a description or uncommitted working tree. Inspect [tests](tests/), [workflows](.github/workflows/), [ontology](cora.ontology.json), [artifact roles](cora.artifact-roles.json), [changelog](CHANGELOG.md), and [Documentation index](docs/INDEX.md). Historical ADRs and audits retain their original authority; moving or archiving them is not proof of safe deletion.
 
 </details>
 
 <details>
-<summary>Evidence and DoD | methods, falsification, lineage and limitations</summary>
+<summary>Governance | responsibilities and security</summary>
 
-**Read in order:** the [continuous development method](docs/CONTINUOUS_DEVELOPMENT.md), [convergent method](docs/CONVERGENT_ASSURANCE.md), [documentation DoD](docs/DOCUMENTATION_DOD.md), [reticular source contract](.cora/contracts/dod/documentation-dod.json), [S01–S18 source proof profile](.cora/assurance/documentation-proofs.json) and [Git replay verifier](tools/verify_claim_evidence.py). For investigation choose [File Lab](docs/FILE_LAB.md), [holistic forensics](docs/HOLISTIC_FORENSICS.md) or [engineering debt](docs/ENGINEERING_DEBT.md). For older decisions and falsified claims consult the [historical ADR/audit index](docs/INDEX.md), not an obsolete DoD as current acceptance authority.
+**Decision rights are external:** no source report, `PASS_SCOPED`, CODEOWNERS entry, or green CI workflow authenticates an independent approval. See [Governance](GOVERNANCE.md), [Security](SECURITY.md), [Contributing](CONTRIBUTING.md), [PR template](.github/PULL_REQUEST_TEMPLATE.md), and [MIT](LICENSE). Check host-enforced rules and review identities separately.
+
+</details>
+
+<details>
+<summary>Evidence and DoD | claims, falsifiers, and evidence lineage</summary>
+
+**Read in order:** [Continuous development](docs/CONTINUOUS_DEVELOPMENT.md), [Convergent assurance](docs/CONVERGENT_ASSURANCE.md), [Documentation DoD](docs/DOCUMENTATION_DOD.md), [claim–evidence profile S01–S18](.cora/assurance/documentation-proofs.json), and [Git source verifier](tools/verify_claim_evidence.py). For deep investigations consult [File Lab](docs/FILE_LAB.md), [Holistic forensics](docs/HOLISTIC_FORENSICS.md), and [Engineering debt](docs/ENGINEERING_DEBT.md); archived decisions are accessible from [Documentation index](docs/INDEX.md) but are not current approval.
 
 </details>
 
 ## Operating boundaries
 
-CORA's first-party source analysis is not a hostile-code sandbox. Optional Docker execution and user-specified verifier commands require separate opt-in and must not be treated as independently attested isolation. The static Python graph is incomplete for dynamic, external and non-Python consumers. GitHub workflow files alone do not prove required checks, protected branches or independent approvals. No automatic code deletion or general code rewrite is supported. Read the [security policy](SECURITY.md) before running unfamiliar sources or transformations.
+CORA's default offline-first source inspection is **not a hostile-code sandbox**. The default does not execute arbitrary target tests, make network calls, or invoke AI providers. Optional runtime/ZIP/Docker and user-provided verifiers require explicit consent, appropriate containment, and separate verification of isolation; **the existence of a sandbox configuration is not execution proof**. Static Python graphs cannot resolve every dynamic, external, or non-Python dependency. GitHub workflow files alone do not prove required checks, branch protection, or independent review. CORA does not automatically delete files, rewrite arbitrary code, retire workflows, merge PRs, or publish releases.
+
+Security-sensitive changes and unfamiliar repositories require [Security](SECURITY.md), independent recovery/rollback planning, and accountable human approval.
 
 ## Engineering map
 
-**Product:** `cora` — the assurance capability. **Software:** `cora-engine` (`src/cora/`, Python distribution `cora-audit`, single CLI `cora`) plus `cora-release-verification` (`tools/`). **Repository:** `Luke883i/cora` — source, tests, schemas, policies, CI and historical ADRs. These are different entities; a role declaration is not execution evidence. See the [committed ontology](cora.ontology.json), [artifact role registry](cora.artifact-roles.json) and [architecture](docs/ARCHITECTURE.md).
+**Product:** `cora`, the assurance capability. **Software:** `cora-engine` (Python package `cora-audit`, CLI `cora`, implementation [`src/cora/`](src/cora/)) plus `cora-release-verification` ([`tools/`](tools/)). **Repository:** `Luke883i/cora`—versioned sources, [tests](tests/), [schemas](schemas/), [workflows](.github/workflows/), governance, current guidance, and historical ADRs/audits. These identities are not interchangeable with runtime events or release approval.
 
-Contribute through [CONTRIBUTING](CONTRIBUTING.md); use the [changelog](CHANGELOG.md) to distinguish merged source from publication. [License](LICENSE) · [Security reporting](SECURITY.md). An unfamiliar engineer's first-read test and real external product pilots remain open acceptance obligations.
+The root retains package/policy files and the two adoption-facing JSON contracts [`cora.ontology.json`](cora.ontology.json) and [`cora.artifact-roles.json`](cora.artifact-roles.json). Internal DoDs, profiles, assurance reports, and fixtures reside under [`.cora/contracts/`](.cora/contracts/index.json), [`.cora/assurance/`](.cora/assurance/capability-atlas.json), and [`.cora/fixtures/`](.cora/fixtures/). The [canonical contract routing index](.cora/contracts/index.json) maps logical identities to paths. A relocated file is not automatically obsolete, safely removable, or runtime-compatible. The historical record is navigable from [Documentation index](docs/INDEX.md).
+
+**Contribute and report:** [Contributing](CONTRIBUTING.md) · [Changelog](CHANGELOG.md) · [Security](SECURITY.md) · [License](LICENSE). Product usability and independent real-world acceptance remain unverified until their external witnesses are recorded.
