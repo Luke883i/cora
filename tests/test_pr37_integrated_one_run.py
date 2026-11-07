@@ -65,6 +65,12 @@ class IntegratedOneRunTests(unittest.TestCase):
         report = self.report
         page = render_integrated_html(report)
         self.assertTrue(verify_integrated(ROOT, report, html_page=page))
+        self.assertIn('id="review-path"', page)
+        for phrase in ("1. What can be concluded?", "2. Where is the evidence?",
+                       "3. What could disprove it?", "BLOCKED_EXTERNAL"):
+            self.assertIn(phrase, page)
+        self.assertIn('href="#artifacts"', page)
+        self.assertIn('href="#gaps"', page)
         self.assertIn('id="inventory"', page)
         self.assertIn('id="test-cases"', page)
         self.assertIn('id="dod"', page)
@@ -121,6 +127,11 @@ class IntegratedOneRunTests(unittest.TestCase):
         self.assertIn("&lt;img src=x onerror=alert(1)&gt;", page)
         self.assertNotIn('<img src=x onerror=alert(1)>', page)
         self.assertIn("CORA | One-Run forensic atlas", page)
+        # Malicious metrics cannot turn reviewer prose into executable HTML.
+        untrusted["metrics"]["activity_accounted"] = "<img src=x onerror=alert(2)>"
+        escaped = render_integrated_html(untrusted)
+        self.assertIn("&lt;img src=x onerror=alert(2)&gt;", escaped)
+        self.assertNotIn("<img src=x onerror=alert(2)>", escaped)
 
     def test_opt_in_fail_closed_without_separate_commit_consent(self):
         with self.assertRaisesRegex(ValueError, "both opt-in"):

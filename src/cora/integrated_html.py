@@ -97,7 +97,8 @@ def render_integrated_html(receipt: dict) -> str:
     attempts_by_id = {x["activity_id"]: x for x in attempts}
     n_methods = sum(x["kind"] == "INTERNAL_METHOD" for x in rows)
     m = receipt["metrics"]
-    links = [("overview","Overview"),("inventory","Activity inventory"),
+    links = [("overview","Overview"),("review-path","Review in three questions"),
+             ("inventory","Activity inventory"),
              ("test-cases","Individual tests"),("gaps","Unresolved gaps"),
              ("dod","DoD reticulum"),("artifacts","Evidence manifest"),
              ("provenance","Provenance")]
@@ -124,6 +125,22 @@ def render_integrated_html(receipt: dict) -> str:
         'source Git replay is not independent execution attestation. ' +
         'Catalogued CLI commands were not individually executed. Test results, ' +
         'if supplied, remain unauthenticated local observations. No merge/release approval.</div>',
+        '<section class="panel" id="review-path" aria-label="Review in three questions">',
+        '<h2>Review in three questions</h2>',
+        '<p><strong>1. What can be concluded?</strong> ' +
+        _h(m["activity_accounted"]) + ' of ' + _h(m["registered_total"]) +
+        ' activities accounted for; ' + _h(m["status_counts"].get("EXECUTED_SCOPED", 0)) +
+        ' scoped executions and ' + _h(m["status_counts"].get("NOT_RUN", 0)) +
+        ' not run. This is not product acceptance.</p>',
+        '<p><strong>2. Where is the evidence?</strong> Trace the exact Git commit '
+        'to the <a href="#inventory">activity inventory</a> and '
+        '<a href="#artifacts">evidence manifest</a>. '
+        'The separate <a href="#test-cases">test observations</a> may be NOT RUN.</p>',
+        '<p><strong>3. What could disprove it?</strong> Challenge wrong source '
+        'identity, missing execution, inconsistent receipts or unmet obligations '
+        'in <a href="#gaps">unresolved gaps</a>. Independent host, reviewer and '
+        'real-target evidence remain BLOCKED_EXTERNAL; no merge or release authority.</p>',
+        '</section>',
         '<div class="tiles">',
     ]
     tiles = [
