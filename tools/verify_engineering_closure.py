@@ -490,7 +490,7 @@ def main() -> int:
             args.output.write_text(output, "utf-8")
         else:
             print(output, end="")
-        return 0
+        return 2 if args.closure_base and result.get("status") == "REFUTED" else 0
     except (OSError, ValueError, KeyError, subprocess.SubprocessError) as exc:
         print(type(exc).__name__ + ": " + str(exc))
         return 3
