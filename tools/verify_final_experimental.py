@@ -237,10 +237,13 @@ def analyze(repo: Path, revision: str = "HEAD", *, run_behavior: bool = False) -
     names = ["README.md", "CHANGELOG.md", "AGENTS.md",
              "docs/ARCHITECTURE.md", "docs/RELEASE.md", "docs/INDEX.md"]
     documents = {name: source(repo, sha, name) for name in names}
+    # PR44 is verified in actual Git ancestry; do not fossilize a PR40-only prose gate.
+    architecture_era = ("merged PR36–44" if re.search(
+        r"(?m)^Merge pull request #44\\b", subjects) else "merged PR36–40")
     expected = {
         "CHANGELOG.md": "PR40 engineering knowledge source convergence — merged source",
         "AGENTS.md": "PR40 knowledge-convergence gate (merged source",
-        "docs/ARCHITECTURE.md": "merged PR36–40",
+        "docs/ARCHITECTURE.md": architecture_era,
         "docs/RELEASE.md": "Existing GitHub release draft",
         "README.md": "[final experimental DoD](.cora/contracts/dod/final-experimental-dod.json)",
         "docs/INDEX.md": "../.cora/contracts/dod/final-experimental-dod.json",
