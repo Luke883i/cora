@@ -153,17 +153,180 @@ def run_reference_campaign() -> dict:
     return packet
 
 
+
+# PR44: independent *implementation* of the PR43 obligation-delta comparator.
+# It uses native Git directly; this does not authenticate a separate human owner.
+def native_dod_nodes(repo: Path, revision: str) -> dict:
+    commit = git(repo, "rev-parse", "--verify", revision + "^{commit}").decode().strip()
+    paths = git(repo, "ls-tree", "-r", "--name-only", commit).decode("utf-8").splitlines()
+    contracts = sorted(p for p in paths if p.startswith(".cora/contracts/dod/")
+                       and p.endswith(".json") and "/" not in p[len(".cora/contracts/dod/"):])
+    if not contracts:
+        raise ValueError("no original-Git DoD documents found")
+    results = {}
+    for path in contracts:
+        document = json.loads(git(repo, "show", commit + ":" + path))
+        rows = document.get("nodes")
+        if not isinstance(rows, list) or not rows:
+            raise ValueError("malformed canonical DoD nodes")
+        for item in rows:
+            if not isinstance(item, dict) or not isinstance(item.get("id"), str):
+                raise ValueError("malformed canonical DoD identity")
+            key = path + "::" + item["id"]
+            if key in results:
+                raise ValueError("duplicate canonical DoD identity")
+            deps = item.get("depends_on", [])
+            if not isinstance(deps, list) or not all(isinstance(x, str) for x in deps):
+                raise ValueError("malformed canonical DoD dependencies")
+            claim = ""
+            for field in ("claim", "description", "title", "family"):
+                if isinstance(item.get(field), str) and item[field].strip():
+                    claim = item[field].strip()
+                    break
+            scope = item.get("scope", "UNCLASSIFIED")
+            if not isinstance(scope, str):
+                raise ValueError("malformed canonical DoD scope")
+            results[key] = {
+                "scope": scope, "status": str(item.get("status", "NOT_ASSERTED")),
+                "depends_on": sorted(deps), "claim": claim, "source_path": path}
+    return {"commit": commit, "contracts": contracts, "nodes": results}
+
+
+def independent_closure_challenge(repo: Path, record: dict) -> dict:
+    """Recalculate EVERY claimed count without calling the CORA producer."""
+    if not isinstance(record, dict) or record.get("schema") != "cora-obligation-delta/1":
+        raise ValueError("foreign or missing closure receipt schema")
+    if record.get("authority") != "NONE" or record.get("product") != "BLOCKED_EXTERNAL":
+        raise ValueError("source receipt cannot assert host or product approval")
+    if record.get("release_authorized") is not False:
+        raise ValueError("source receipt cannot authorize release")
+    if record.get("qualification") != "ACCOUNTING_ONLY_NOT_INDEPENDENT_EVIDENCE":
+        raise ValueError("scope of proof was promoted")
+    start = native_dod_nodes(repo, record["base"])
+    end = native_dod_nodes(repo, record["head"])
+    if start["commit"] != record["base"] or end["commit"] != record["head"]:
+        raise ValueError("receipt does not pin complete commit identities")
+    if start["commit"] == end["commit"]:
+        raise ValueError("no actual revision delta")
+    # git merge-base --is-ancestor does not return stdout and must be checked.
+    proc = subprocess.run(["git", "-C", str(repo), "merge-base", "--is-ancestor",
+                           start["commit"], end["commit"]],
+                          capture_output=True, timeout=30)
+    if proc.returncode:
+        raise ValueError("unrelated or reverse Git ancestry")
+    before, after = start["nodes"], end["nodes"]
+    keys0, keys1 = set(before), set(after)
+    changed = sorted(k for k in keys0 & keys1 if before[k] != after[k])
+    removed = sorted(keys0 - keys1)
+    added = sorted(keys1 - keys0)
+    unsafe = sorted(k for k in keys0 & keys1
+                    if before[k]["scope"] == "EXTERNAL" and after[k]["scope"] != "EXTERNAL")
+    asserted = sorted(k for k in keys1
+                      if after[k]["status"].upper().startswith(("PASS", "APPROV", "CLOSED", "ACCEPT"))
+                      and (k not in keys0 or before[k]["status"] != after[k]["status"]))
+    repeated = {}
+    for key, node in after.items():
+        value = " ".join(node["claim"].lower().split())
+        if value:
+            repeated.setdefault(value, []).append(key)
+    aliases = [{"claims": sorted(ids), "phrase": phrase}
+               for phrase, ids in sorted(repeated.items()) if len(ids) > 1]
+    expected = {
+        "before_occurrences": len(keys0), "after_occurrences": len(keys1),
+        "contract_growth": len(end["contracts"]) - len(start["contracts"]),
+        "obligation_occurrence_growth": len(keys1) - len(keys0),
+        "added": added, "removed_not_closed": removed, "changed": changed,
+        "external_scope_promotions": unsafe, "asserted_passes_not_verified": asserted,
+        "possible_duplicate_wording_not_merged": aliases,
+        "external_open_occurrences": sum(x["scope"] == "EXTERNAL" for x in after.values()),
+        "verified_closures": 0, "closure_yield": None,
+        "identity_boundary": "PATH_PLUS_NODE_ID; cross-contract meaning requires independent equivalence mapping",
+        "evidence_boundary": "NO_INDEPENDENT_RUNTIME_OR_HOST_RECEIPTS_VALIDATED",
+    }
+    if record.get("counts") != expected:
+        raise ValueError("independent original-Git counts disagree with submitted report")
+    expected_status = "REFUTED" if unsafe else "PASS_SCOPED_ACCOUNTING"
+    if record.get("status") != expected_status:
+        raise ValueError("reported gate status contradicts native Git")
+    return {
+        "schema": "cora-independent-closure-challenge/1",
+        "base": start["commit"], "head": end["commit"],
+        "checked_node_occurrences": len(after),
+        "status": "REFUTED" if unsafe else "MATCHED_NATIVE_GIT_SOURCE_ONLY",
+        "source_impl_independent": True,
+        "operator_independence": "NOT_ATTESTED",
+        "host_rules": "NOT_ATTESTED",
+        "product": "BLOCKED_EXTERNAL",
+        "authority": "NONE", "release_authorized": False,
+    }
+
+
+def reviewer_brief(report: dict, challenge: dict) -> str:
+    """Three-task explanation generated from independently recomputed counts."""
+    counts = report["counts"]
+    if challenge["head"] != report["head"]:
+        raise ValueError("mixed-commit reviewer pack")
+    lines = [
+        "# Review CORA changes without knowing CORA vocabulary",
+        "",
+        "This packet is a local source comparison, NOT a product certificate.",
+        "Recomputed reference: native Git (different implementation; same repository owner not independent person).",
+        "Base commit: `" + report["base"] + "`",
+        "Compared commit: `" + report["head"] + "`",
+        "",
+        "## Task 1 — What changed?",
+        "Recorded requirement occurrences before: " + str(counts["before_occurrences"]),
+        "Recorded requirement occurrences after: " + str(counts["after_occurrences"]),
+        "New occurrences: " + str(len(counts["added"])),
+        "Removed occurrences (NOT completed requirements): " + str(len(counts["removed_not_closed"])),
+        "Changed occurrences: " + str(len(counts["changed"])),
+        "Potential duplicate wording (NOT semantic equivalence): " + str(len(counts["possible_duplicate_wording_not_merged"])),
+        "",
+        "## Task 2 — What has actually been demonstrated?",
+        "Git content and counters were recalculated by a separate implementation.",
+        "Actual independent closures proved by this packet: ZERO.",
+        "Claimed PASS statuses without independent verification: " + str(len(counts["asserted_passes_not_verified"])),
+        "A Git hash proves source identity, not runtime behavior or who reviewed it.",
+        "External review, real targets, user comprehension and host protection remain unverified.",
+        "",
+        "## Task 3 — How could I refute it?",
+        "Check the stated base/head using native git and inspect any changed DoD.",
+        "Change a count or the product status in the JSON and re-run the native-Git challenge.",
+        "For each promised product behavior, demand a separately preregistered real-world test.",
+        "Reject a removed requirement as 'closed'; demand an accountable non-author decision.",
+        "",
+        "## Final disposition",
+        "Native Git source challenge: " + challenge["status"],
+        "Product acceptance: BLOCKED_EXTERNAL; no merge, release or host authorization.",
+        "A meaningful comprehension test requires unfamiliar, observed human participants.",
+        "",
+    ]
+    return "\n".join(lines)
+
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Safe independent-Git source fixture oracle")
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--repo", type=Path, default=Path("."))
+    parser.add_argument("--closure-report", type=Path, help="independently re-evaluate PR43 source accounting")
+    parser.add_argument("--reader-brief", type=Path, help="plain-English three-task review guide")
     args = parser.parse_args()
-    result = run_reference_campaign()
+    if args.closure_report:
+        report = json.loads(args.closure_report.read_text("utf-8"))
+        result = independent_closure_challenge(args.repo, report)
+        if args.reader_brief:
+            args.reader_brief.write_text(reviewer_brief(report, result), encoding="utf-8")
+    else:
+        if args.reader_brief:
+            raise ValueError("--reader-brief requires --closure-report")
+        result = run_reference_campaign()
     content = json.dumps(result, sort_keys=True, indent=2) + "\n"
     if args.output:
         args.output.write_text(content, encoding="utf-8")
     else:
         sys.stdout.write(content)
-    return 0
+    return 2 if result.get('status') == 'REFUTED' else 0
 
 
 if __name__ == "__main__":
