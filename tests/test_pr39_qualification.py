@@ -264,5 +264,101 @@ class IndependentQualificationTests(unittest.TestCase):
                 build_qualification(local,run_git(local,"rev-parse","HEAD"))
 
 
+
+class IndependentClosureChallengeTests(unittest.TestCase):
+    """Native Git counter-oracle; 32 forged JSON variants and physical commit mutation."""
+
+    def fixture(self, root: Path):
+        from tools import verify_engineering_closure as producer
+        from tools import independent_git_oracle as independent
+        subprocess.run(["git", "-C", str(root), "init", "-q"], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.name", "reader"], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.email", "reader@example.invalid"], check=True)
+        file = root / ".cora/contracts/dod/example.json"
+        file.parent.mkdir(parents=True)
+        contract = {"schema": "test", "nodes": [
+            {"id": "E01", "scope": "EXTERNAL", "status": "BLOCKED_EXTERNAL",
+             "claim": "independent review", "depends_on": []}]}
+        file.write_text(json.dumps(contract), encoding="utf-8")
+        run_git(root, "add", ".")
+        run_git(root, "commit", "-qm", "reader baseline")
+        before = run_git(root, "rev-parse", "HEAD")
+        contract["nodes"][0]["status"] = "PASS_SCOPED"
+        file.write_text(json.dumps(contract), encoding="utf-8")
+        run_git(root, "add", ".")
+        run_git(root, "commit", "-qm", "forged source pass candidate")
+        report = producer.closure_delta(root, before)
+        return independent, report
+
+    def test_separately_implemented_oracle_and_reader_brief(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "fixture"
+            root.mkdir()
+            independent, report = self.fixture(root)
+            challenged = independent.independent_closure_challenge(root, report)
+            self.assertEqual(challenged["status"], "MATCHED_NATIVE_GIT_SOURCE_ONLY")
+            text = independent.reviewer_brief(report, challenged)
+            for fragment in ("Task 1", "Task 2", "Task 3", "BLOCKED_EXTERNAL", "ZERO",
+                             "same repository owner not independent person"):
+                self.assertIn(fragment, text)
+
+    def test_32_finite_receipt_mutations_rejected(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "fixture"
+            root.mkdir()
+            independent, report = self.fixture(root)
+            modifiers = [
+                ("counts", "verified_closures", 1),
+                ("counts", "closure_yield", 1.0),
+                ("counts", "before_occurrences", 999),
+                ("counts", "after_occurrences", 999),
+                ("counts", "external_open_occurrences", 0),
+                ("counts", "obligation_occurrence_growth", 8),
+                ("counts", "contract_growth", 6),
+                ("counts", "asserted_passes_not_verified", []),
+                ("counts", "removed_not_closed", ["fabricated"]),
+                ("counts", "added", ["fabricated"]),
+                ("counts", "changed", []),
+                ("counts", "external_scope_promotions", ["fabricated"]),
+                ("counts", "possible_duplicate_wording_not_merged", ["fabricated"]),
+                ("counts", "identity_boundary", "AUTOMATIC_DEDUP_IS_PROOF"),
+                ("counts", "evidence_boundary", "INDEPENDENTLY_ATTESTED"),
+                ("metadata", "authority", "APPROVED"),
+            ]
+            for idx in range(32):
+                group, key, value = modifiers[idx % len(modifiers)]
+                altered = copy.deepcopy(report)
+                if group == "counts":
+                    altered["counts"][key] = value if idx < 16 else str(value) + "-second"
+                else:
+                    altered[key] = value if idx < 16 else "AUTONOMOUS_APPROVAL"
+                with self.subTest(case=idx, key=key):
+                    with self.assertRaises(ValueError):
+                        independent.independent_closure_challenge(root, altered)
+            forged = copy.deepcopy(report)
+            forged["release_authorized"] = True
+            with self.assertRaises(ValueError):
+                independent.independent_closure_challenge(root, forged)
+
+    def test_original_git_scope_promotion_is_a_refutation(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "fixture"
+            root.mkdir()
+            independent, report = self.fixture(root)
+            from tools import verify_engineering_closure as producer
+            path = root / ".cora/contracts/dod/example.json"
+            doc = json.loads(path.read_text("utf-8"))
+            doc["nodes"][0]["scope"] = "SOURCE"
+            path.write_text(json.dumps(doc), encoding="utf-8")
+            run_git(root, "add", ".")
+            run_git(root, "commit", "-qm", "semantic scope promotion")
+            outcome = producer.closure_delta(root, report["base"])
+            challenged = independent.independent_closure_challenge(root, outcome)
+            self.assertEqual(challenged["status"], "REFUTED")
+            # Previously valid evidence cannot be replayed as the new head.
+            self.assertNotEqual(outcome["head"], report["head"])
+
+
+
 if __name__=="__main__":
     unittest.main()
