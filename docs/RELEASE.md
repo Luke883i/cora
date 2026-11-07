@@ -71,7 +71,7 @@ At that same historic observation, GitHub reported main.protected=false, no PR39
 
 ## PR41 — CORA 1.0.0a4 final experimental freeze: a stop point, not a self-issued release
 
-**Release identity:** one existing `cora-audit` distribution, `1.0.0a4`, one `cora` CLI, two declared software boundaries and no new orchestrator. The source label `CORA 1.0.0a4 — Final Experimental Baseline` means a conclusive experimental **source** candidate, not a stable 1.0.0, public release, production service, or unrestricted safety certification. PR41 is a source proposal until merged and observed on the actual merge SHA. The frozen Git commit, reviewed tag, reproducible wheel and sdist, external operator reports and rollback drill are separate identities that must be reconciled before any publication.
+**Release identity:** one existing `cora-audit` distribution, `1.0.0a4`, one `cora` CLI, two declared software boundaries and no new orchestrator. The source label `CORA 1.0.0a4 — Final Experimental Baseline` means a conclusive experimental **source** candidate, not a stable 1.0.0, public release, production service, or unrestricted safety certification. PR41 merged on 7 November 2026 at `c1d52ecfafd7ac83b8528c6fae36c678b4367318`; all 11 observed post-merge GitHub workflows on that SHA concluded successfully. This is a SOURCE merge/CI observation, not external product acceptance, verified release-tag provenance or publication. The frozen Git commit, reviewed tag, reproducible wheel and sdist, external operator reports and rollback drill are separate identities that must be reconciled before any publication.
 
 **Backward-derived [noncompensatory 30-node DoD](../.cora/contracts/dod/final-experimental-dod.json):**
 
