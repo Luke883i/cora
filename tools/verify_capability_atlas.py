@@ -187,9 +187,16 @@ def check(repo, revision="HEAD"):
             and node.name.startswith("test_") for node in ast.walk(syntax)):
             raise ValueError("test witness has no test functions: " + path)
     readme = texts["README.md"]
+    # PR42: preserve the exact capability scope while permitting semantically
+    # equivalent progressive prose. The old literal 71-command sentence was
+    # an editorial choice, never a new authority or test-execution receipt.
+    declared = re.search(r"(?<!\d)71 (?:declared )?CLI commands(?!\d)", readme)
+    bounded = re.search(
+        r"(?:not|\*\*not\*\*)\s+(?:71 independently proven features"
+        r"|a claim that 71 product behaviors have been independently executed or certified)",
+        readme, re.I)
     if ("[capability atlas](.cora/assurance/capability-atlas.json)" not in readme
-            or "71 CLI commands" not in readme
-            or "not 71 independently proven features" not in readme):
+            or not declared or not bounded):
         raise ValueError("README feature scope incomplete")
     if ("../.cora/assurance/capability-atlas.json" not in texts["docs/INDEX.md"]
             or "../.cora/contracts/dod/capability-dod.json" not in texts["docs/DOCUMENTATION_DOD.md"]):

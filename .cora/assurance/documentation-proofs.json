@@ -72,7 +72,7 @@
     {
       "id": "S04",
       "predicate": "first-use",
-      "readme_section": "## First five minutes",
+      "readme_section": "## First five minutes — Quickstart",
       "readme_phrase": "cora verify-ledger /tmp/cora-ledger.json --repo .",
       "evidence": [
         {

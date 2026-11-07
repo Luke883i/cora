@@ -161,6 +161,34 @@ class LayoutSimplificationTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,"logical contract path index"):
                 LAYOUT.check(repo,tampered)
 
+    def test_pr42_postmigration_readme_authority_and_s04_mutants(self):
+        """Historical migration bytes stay fixed; live proof edit is tightly scoped."""
+        with tempfile.TemporaryDirectory() as directory:
+            local=Path(directory)/"local"
+            subprocess.run(["git","clone","--no-local","-q",
+                            str(ROOT),str(local)],check=True)
+            git(local,"config","user.name","CORA README migrated DoD mutant")
+            git(local,"config","user.email","mutant@example.invalid")
+            for path,field in (
+                (".cora/contracts/dod/documentation-dod.json","authority"),
+                (".cora/assurance/documentation-proofs.json","section"),
+            ):
+                git(local,"checkout","-q",self.head)
+                def poison(text):
+                    data=json.loads(text)
+                    if field=="authority":
+                        data["readme_refactor"]["accepted"]="APPROVED_BY_SOURCE"
+                    else:
+                        next(n for n in data["nodes"] if n["id"]=="S04")[
+                            "readme_section"]="## Self-approved source"
+                    return json.dumps(data,indent=2)+"\n"
+                mutant=change(local,path,poison)
+                diagnostic=("unauthorized postmigration README DoD evolution"
+                            if field=="authority" else
+                            "unauthorized postmigration S01-S18 proof edit")
+                with self.assertRaisesRegex(ValueError,diagnostic):
+                    LAYOUT.check(local,mutant)
+
     def test_05_link_and_atlas_integrity_also_existing_verifier(self):
         from cora.artifact_roles import artifact_audit
         from cora.git_snapshot import snapshot

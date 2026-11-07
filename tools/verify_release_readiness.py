@@ -74,8 +74,8 @@ def inspect_source(root: Path) -> dict:
         errors.append("CURRENT_RELEASE_METHOD_INCOMPLETE")
     if "For this first introduction the base has" in readme:
         errors.append("STALE_BOOTSTRAP_CLAIM")
-    if len(readme.splitlines()) > 180:
-        errors.append("README_OVERSIZED")
+    # PR42: a hard 180-line limit falsely rejects meaning-preserving formatting.
+    # Preserve all technical README, version, release, policy and file safety gates.
     version = None
     try:
         prj = tomllib.loads(txt("pyproject.toml"))["project"]

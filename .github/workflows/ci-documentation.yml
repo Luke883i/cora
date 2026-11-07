@@ -33,13 +33,29 @@ jobs:
         run: python tools/verify_documentation.py --repo .
       - name: Falsify real disposable Markdown and JSON contract mutations
         run: python -m unittest discover -s tests -p 'test_pr21_documentation.py' -v
-      - name: Falsify 1,000 bounded editorial and reader-target vectors
+      - name: Falsify original 1k and new 10k README semantic vectors (twice)
         env:
           CORA_NAV_REPORT: /tmp/cora-readme-nav-1000.json
+          CORA_README_10K_REPORT: /tmp/cora-readme-10k-a.json
           CORA_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           python -m unittest discover -s tests -p 'test_pr23_navigation.py' -v
-          python -c 'import json; r=json.load(open("/tmp/cora-readme-nav-1000.json")); assert r["vectors"]==1000 and r["rejected"]==1000 and r["distinct_input_fingerprints"]==1000 and not r["survivors"] and r["authority"]=="NONE" and r["governed_status"]=="BLOCKED_EXTERNAL"'
+          CORA_README_10K_REPORT=/tmp/cora-readme-10k-b.json python -m unittest discover -s tests -p 'test_pr23_navigation.py' -v
+          python - <<'PY'
+          import hashlib,json,subprocess
+          a=json.load(open('/tmp/cora-readme-10k-a.json'))
+          b=json.load(open('/tmp/cora-readme-10k-b.json'))
+          nav=json.load(open('/tmp/cora-readme-nav-1000.json'))
+          head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          readme=hashlib.sha256(open('README.md','rb').read()).hexdigest()
+          assert a==b and a['source_sha']==head and a['source_readme_sha256']==readme
+          assert a['vectors']==10000 and a['equivalent_accepted']==4000
+          assert a['adversarial_rejected']==6000 and a['distinct_input_digests']==10000
+          assert a['incorrect_verdicts']==0 and not a['survivors']
+          assert a['authorization']=='NONE' and a['external_acceptance']=='BLOCKED_EXTERNAL'
+          assert nav['vectors']==1000 and nav['rejected']==1000
+          assert nav['authority']=='NONE' and nav['governed_status']=='BLOCKED_EXTERNAL'
+          PY
       - name: Bound S01-S18 README claims to exact Git source and replay proof
         run: |
           python tools/verify_claim_evidence.py --repo . --revision HEAD --output /tmp/cora-doc-proofs.json
@@ -152,6 +168,9 @@ jobs:
           path: |
             /tmp/cora-doc-proofs.json
             /tmp/cora-readme-nav-1000.json
+            /tmp/cora-readme-nav-1000.json
+            /tmp/cora-readme-10k-a.json
+            /tmp/cora-readme-10k-b.json
             /tmp/cora-capabilities.json
             /tmp/cora-type-assurance.json
             /tmp/cora-integrated.json
