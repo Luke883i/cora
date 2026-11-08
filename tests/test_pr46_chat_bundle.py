@@ -142,6 +142,69 @@ class ChatBundleTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,"oversized"):
             load_chat_step(p)
 
+
+    def test_continuation_proposes_external_witness_without_predeciding_n(self):
+        report = append_chat_iteration(self.bundle, repo=self.repo,
+                                       step=self.step(), receipt=self.receipt())
+        advice = report['continuation']
+        self.assertEqual(advice['iterations_observed'], 1)
+        self.assertEqual(advice['next_iteration_if_authorized'], 2)
+        self.assertIsNone(advice['predetermined_total_N'])
+        self.assertEqual(advice['decision'], 'REQUEST_EXTERNAL_WITNESS')
+        self.assertEqual(advice['next_falsification_actions'][0]['action_id'], 'R1')
+        self.assertFalse(advice['automatic_execution'])
+        self.assertFalse(advice['product_accepted'])
+        self.assertEqual(advice['authorization'], 'NONE')
+
+    def test_continuation_rewording_and_done_report_cannot_mask_stall(self):
+        for i in range(1, 4):
+            step = self.step(i)
+            step['next_step'] = 'rephrased plan round ' + str(i)
+            step['roadmap'][0]['status'] = 'BLOCKED' if i == 1 else 'IN_PROGRESS'
+            report = append_chat_iteration(self.bundle, repo=self.repo,
+                                           step=step, receipt=self.receipt())
+        self.assertTrue(report['continuation']['repeated_no_progress_tail'])
+        self.assertEqual(report['continuation']['decision'], 'REPLAN_STALLED_REPORTS')
+        self.assertFalse(report['continuation']['product_accepted'])
+
+    def test_continuation_changed_source_or_contract_is_not_product_pass(self):
+        append_chat_iteration(self.bundle, repo=self.repo,
+                              step=self.step(), receipt=self.receipt())
+        next_round = append_chat_iteration(self.bundle, repo=self.repo,
+                                           step=self.step(2), receipt=self.receipt('b'*40))
+        self.assertEqual(next_round['continuation']['decision'], 'REVALIDATE_CHANGED_SOURCE')
+        self.assertTrue(next_round['continuation']['source_revision_changed'])
+        new_step = self.step(3)
+        new_step['dod']['nodes'][1]['acceptance'] = 'Independent test AND human review'
+        third = append_chat_iteration(self.bundle, repo=self.repo,
+                                      step=new_step, receipt=self.receipt('b'*40))
+        self.assertEqual(third['continuation']['decision'], 'REVIEW_CHANGED_CONTRACT')
+        self.assertTrue(third['continuation']['contract_drift'])
+        self.assertFalse(third['continuation']['product_accepted'])
+
+    def test_continuation_caller_only_evidence_is_never_certification(self):
+        append_chat_iteration(self.bundle, repo=self.repo,
+                              step=self.step(), receipt=self.receipt())
+        second = self.step(2)
+        second['dod']['nodes'][0]['evidence_refs'] = ['arbitrary:claimed-proof']
+        report = append_chat_iteration(self.bundle, repo=self.repo,
+                                       step=second, receipt=self.receipt())
+        self.assertTrue(report['continuation']['caller_only_evidence_delta'])
+        self.assertEqual(report['continuation']['decision'], 'REQUEST_EXTERNAL_WITNESS')
+        self.assertEqual(report['continuation']['proof_boundary'],
+                         'SOURCE_REPLAY_AND_CALLER_REPORTS_NOT_TARGET_ATTESTATION')
+
+    def test_continuation_all_self_reported_source_leaves_never_release(self):
+        step = self.step()
+        step['dod']['nodes'][1].update(scope='SOURCE',
+                                      observation='REPORTED_OBSERVED',
+                                      evidence_refs=['self-report:reviewer'])
+        report = append_chat_iteration(self.bundle, repo=self.repo,
+                                       step=step, receipt=self.receipt())
+        self.assertIsNone(report['continuation']['next_unresolved'])
+        self.assertEqual(report['continuation']['decision'], 'REQUEST_INDEPENDENT_ACCEPTANCE')
+        self.assertFalse(report['continuation']['product_accepted'])
+
     def test_replay_latest_receipt_must_match(self):
         append_chat_iteration(self.bundle,repo=self.repo,step=self.step(),receipt=self.receipt())
         with self.assertRaises(ValueError):

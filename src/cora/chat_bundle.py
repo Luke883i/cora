@@ -293,6 +293,83 @@ def _read_archive(path: Path) -> tuple[dict, int, str | None, str | None]:
     return meta, count, parent, last_commit
 
 
+
+def _continuation_from_verified_bundle(path: Path, count: int) -> dict:
+    """Bounded next-step *advice* from already replayed, untrusted session records.
+
+    N is observed a posteriori, never precomputed. Reworded roadmaps and
+    DONE_REPORTED labels do not constitute behavioral or engineering progress.
+    No tool execution, permission, source rewrite or release follows this hint.
+    """
+    recent = []
+    with zipfile.ZipFile(path) as archive:
+        for i in range(max(1, count - 2), count + 1):
+            prefix = f"iterations/{i:06d}"
+            step = _strict_json(archive.read(prefix + "/step.json"))
+            receipt = _strict_json(archive.read(prefix + "/source-receipt.json"))
+            # _read_archive has already validated these exact bounded entries.
+            nodes = step["dod"]["nodes"]
+            structure = sorted((n["id"], n["scope"], n["acceptance"],
+                                tuple(sorted(n["depends_on"]))) for n in nodes)
+            fingerprint = _hash(_json({
+                "intent": step["intent"], "goal": step["dod"]["goal"],
+                "nodes": structure,
+            }))
+            reports = sorted((n["id"], n["observation"],
+                              tuple(sorted(n["evidence_refs"]))) for n in nodes
+                             if not n["depends_on"])
+            recent.append({"step": step, "receipt": receipt,
+                           "contract_hash": fingerprint,
+                           "source_evidence_hash": _hash(_json({
+                               "commit": receipt["commit"], "reports": reports,
+                           }))})
+    last = recent[-1]
+    derived = _derived(last["step"])
+    next_id = derived["next_unresolved"]
+    index = {n["id"]: n for n in last["step"]["dod"]["nodes"]}
+    previous = recent[-2] if len(recent) > 1 else None
+    contract_drift = bool(previous and previous["contract_hash"] != last["contract_hash"])
+    changed_sha = bool(previous and previous["receipt"]["commit"] != last["receipt"]["commit"])
+    self_reports_changed = bool(previous and not changed_sha and
+                                previous["source_evidence_hash"] != last["source_evidence_hash"])
+    no_progress_tail = (len(recent) == 3 and
+                        len({r["contract_hash"] for r in recent}) == 1 and
+                        len({r["source_evidence_hash"] for r in recent}) == 1)
+    if count >= MAX_ROUNDS:
+        decision = "PAUSE_CAPACITY_AND_REBASE"
+    elif contract_drift:
+        decision = "REVIEW_CHANGED_CONTRACT"
+    elif changed_sha:
+        decision = "REVALIDATE_CHANGED_SOURCE"
+    elif no_progress_tail:
+        decision = "REPLAN_STALLED_REPORTS"
+    elif next_id is None:
+        decision = "REQUEST_INDEPENDENT_ACCEPTANCE"
+    elif index[next_id]["scope"] == "EXTERNAL":
+        decision = "REQUEST_EXTERNAL_WITNESS"
+    else:
+        decision = "PROPOSE_NEXT_SCOPED_STEP"
+    return {
+        "schema": "cora-chat-continuation-advice/1",
+        "iterations_observed": count, "iteration_capacity_left": MAX_ROUNDS - count,
+        "next_iteration_if_authorized": count + 1 if count < MAX_ROUNDS else None,
+        "predetermined_total_N": None,
+        "next_unresolved": next_id,
+        "next_falsification_actions": derived["next_falsification_actions"],
+        "reported_open_leaves": sum(
+            1 for node in last["step"]["dod"]["nodes"]
+            if not node["depends_on"] and
+            derived["states"][node["id"]] != MODEL),
+        "contract_drift": contract_drift,
+        "source_revision_changed": changed_sha,
+        "caller_only_evidence_delta": self_reports_changed,
+        "repeated_no_progress_tail": no_progress_tail,
+        "decision": decision, "automatic_execution": False,
+        "product_accepted": False, "authorization": "NONE",
+        "proof_boundary": "SOURCE_REPLAY_AND_CALLER_REPORTS_NOT_TARGET_ATTESTATION",
+    }
+
+
 def verify_chat_bundle(path: Path, *, expected_receipt: dict | None = None) -> dict:
     meta, count, latest_hash, commit = _read_archive(Path(path))
     if expected_receipt is not None:
@@ -303,7 +380,8 @@ def verify_chat_bundle(path: Path, *, expected_receipt: dict | None = None) -> d
     return {"schema": "cora-chat-bundle-verification/1", "session_id": meta["session_id"],
             "iterations": count, "last_commit": commit, "last_manifest_sha256": latest_hash,
             "status": "PORTABLE_BYTES_REPLAYED_NOT_INDEPENDENTLY_ATTESTED",
-            "authorization": "NONE", "product_status": "BLOCKED_EXTERNAL"}
+            "authorization": "NONE", "product_status": "BLOCKED_EXTERNAL",
+            "continuation": _continuation_from_verified_bundle(Path(path), count)}
 
 
 def append_chat_iteration(bundle: Path, *, repo: Path, step: dict, receipt: dict) -> dict:
