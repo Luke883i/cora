@@ -117,7 +117,7 @@ class RevisionBoundDocumentationTests(unittest.TestCase):
              lambda s: s + "\nCORA is a stable API.\n",
              "semantic-contradiction:STABLE_API_PROMOTION:docs/RELEASE.md"),
             ("package-version-drift", "pyproject.toml",
-             lambda s: s.replace('version = "1.0.0a4"', 'version = "1.0.0a9"'),
+             lambda s: s.replace('version = "1.0.0a5"', 'version = "1.0.0a9"'),
              "S01-S16:package-release-source-disagreement"),
         ]
         for name, path, change, expected in cases:

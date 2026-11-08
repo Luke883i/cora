@@ -1147,6 +1147,30 @@
         "TEST"
       ],
       "rationale": "PR41 physical Git counterexamples, independent native oracle, million model replay and fail-closed external/CI gates"
+    },
+    {
+      "pattern": "src/cora/chat_bundle.py",
+      "roles": [
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Portable chat ZIP, exact source receipt and bounded non-authoritative DoD/gap record"
+    },
+    {
+      "pattern": "tests/test_pr46_chat_bundle.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Adversarial ZIP, append-only and claimed-authority regression tests"
+    },
+    {
+      "pattern": "examples/chat-step.example.json",
+      "roles": [
+        "FIXTURE",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Portable novice session input preserving evidence limits and external gaps"
     }
   ]
 }
