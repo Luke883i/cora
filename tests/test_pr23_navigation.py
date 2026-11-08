@@ -151,6 +151,49 @@ class ProgressiveDocumentationTests(unittest.TestCase):
                                        "### Two real engineering reference cases  ", 1)
         self.assertEqual(DOC.verify_development_method_readme(cosmetic), [])
 
+
+    def test_application_contract_phase_gates_and_real_era_examples(self):
+        """Negative editorial controls: not an executed app, human trial or acceptance."""
+        self.assertEqual(DOC.verify_contract_to_application_readme(self.readme), [])
+        cases = (
+            ("roles", "Only a reviewer may mark VERIFIED", "Any actor may mark VERIFIED"),
+            ("unauthorized", "Unauthorized verification is denied; state stays unchanged",
+             "Unauthorized verification persists as verified"),
+            ("concurrency", "Reject concurrent updates using the record revision",
+             "Concurrent updates silently overwrite one another"),
+            ("consent", "Authorized local checkout; external effects require new consent",
+             "Any cloud or protected effect is preapproved"),
+            ("stage-sequence", "2. **Derive tests backward:**", "2. **Create a logo:**"),
+            ("missing-gates", "An unresolved leaf", "An auto-approved leaf"),
+            ("blob-precision", "Git *blob objects*", "Magic metadata"),
+            ("commit-identity", "the **same final PR HEAD commit SHA**", "any previous SHA"),
+            ("SHA-drift", "each new implementation commit changes HEAD",
+             "old HEAD always remains valid"),
+            ("postmerge", "After merge, the resulting main SHA is different",
+             "postmerge always equals the original PR HEAD"),
+            ("human-phase", "one scoped, reversible stage",
+             "unlimited autonomous execution"),
+            ("no-blanket", "not blanket consent", "irreversible permissions granted"),
+            ("finite", "a **bounded stopping rule**", "universal proof of correctness"),
+            ("ICTC-intent", "ICTC [#212]", "ICTC origin unknown"),
+            ("ICTC-physical", "spoofs the health/integrity readback", "no real mutant"),
+            ("ikant-hygiene", "unknown dynamic consumers", "confirmed unused code"),
+            ("ikant-recovery", "restoration of 11 unregistered deletions",
+             "automatic approval of all deletions"),
+            ("method-only", "not certify that CORA's CLI ran", "proves CORA CLI ran"),
+        )
+        for label, former, mutated in cases:
+            with self.subTest(label=label):
+                self.assertIn(former, self.readme)
+                candidate = self.readme.replace(former, mutated, 1)
+                self.assertNotEqual(candidate, self.readme)
+                self.assertTrue(DOC.verify_contract_to_application_readme(candidate),
+                                "undetected contract-to-PR editorial mutant: " + label)
+        benign = self.readme.replace(
+            "## Worked example — from a user contract to an application PR",
+            "## Worked example — from a user contract to an application PR  ", 1)
+        self.assertEqual(DOC.verify_contract_to_application_readme(benign), [])
+
     def test_thousand_adversarial_editorial_and_reader_vectors(self):
         family_totals: dict[str, dict[str, int]] = {}
         seen = set()

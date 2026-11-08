@@ -285,10 +285,77 @@ def verify_development_method_readme(readme: str) -> list[str]:
     return sorted(set(errors))
 
 
+
+def verify_contract_to_application_readme(readme: str) -> list[str]:
+    """Finite example/era claim guard: not target execution or a newcomer study."""
+    errors: list[str] = []
+    title = "## Worked example — from a user contract to an application PR"
+    start = readme.find(title)
+    next_section = readme.find("## First five minutes", max(0, start))
+    if start < 0 or next_section < start:
+        return ["application-first-example-missing"]
+    before = readme[:start]
+    worked = readme[start:next_section]
+    if ("## What works today" in before or
+        "**Example — ICTC" in before or
+        not 200 <= len(worked.split()) <= 1000):
+        errors.append("application-example-not-first-or-overloaded")
+    keys = ("goal:", "users:", "record:", "workflow:", "rules:",
+            "acceptance:", "delivery:", "constraints:", "permissions:")
+    if any(k not in worked for k in keys) or worked.count("~~~yaml") != 1 or worked.count("~~~") != 2:
+        errors.append("application-user-contract-underdetermined")
+    for label in (
+            "Only a reviewer may mark VERIFIED",
+            "Unauthorized verification is denied; state stays unchanged",
+            "Reject concurrent updates using the record revision",
+            "Authorized local checkout; external effects require new consent"):
+        if label not in worked:
+            errors.append("application-acceptance-or-authorization-gap:" + label)
+    stages = (
+        "1. **Refine the specification:**",
+        "2. **Derive tests backward:**",
+        "3. **Design and implement one reversible unit:**",
+        "4. **Challenge the result:**",
+        "5. **Measure model coverage and convergence:**",
+        "6. **Materialize and verify the PR on one exact revision:**",
+    )
+    locations = [worked.find(stage) for stage in stages]
+    if min(locations) < 0 or locations != sorted(locations):
+        errors.append("application-phase-edges-not-ordered")
+    facts = (
+        "CORA guides and checks; the assistant/operator and Git perform these effects.",
+        "Git *blob objects*", "Git *trees*", "a *commit*",
+        "the **same final PR HEAD commit SHA**", "each new implementation commit changes HEAD",
+        "After merge, the resulting main SHA is different",
+        "a **bounded stopping rule**", "not proof that the app has no unseen defects",
+        "an independent reviewer", "proceed with the next stage",
+        "one scoped, reversible stage",
+        "not blanket consent", "significant ambiguity", "blocking question",
+    )
+    if any(fragment not in worked for fragment in facts):
+        errors.append("application-phase-gate-or-same-sha-overclaim")
+    if "physical source mutation" in worked and "disposable copy" not in worked:
+        errors.append("application-physical-mutants-not-isolated")
+    a = readme.find("**Methodological eras from repository history")
+    z = readme.find("**Internal CORA vocabulary", max(0, a))
+    eras = readme[a:z] if a >= 0 and z >= a else ""
+    era_checks = (
+        "ICTC [#212]", "iKant_EDU [#190]", "[#200]", "ICTC [#232]",
+        "iKant_EDU [#216]", "[#217]", "[#218]", "[#223]", "ICTC [#246]",
+        "methods, not causation", "spoofs the health/integrity readback",
+        "unknown dynamic consumers", "restoration of 11 unregistered deletions",
+        "not certify that CORA's CLI ran",
+        "a real reviewer",
+    )
+    if any(fragment not in eras for fragment in era_checks):
+        errors.append("project-era-provenance-or-falsification-incomplete")
+    return sorted(set(errors))
+
+
 def verify_multichannel_intro(readme: str) -> list[str]:
     """Finite usability/editorial guards, not evidence of actual reader comprehension."""
     errors: list[str] = []
-    intro = readme.split("## First five minutes", 1)[0]
+    intro = readme.split("## Worked example — from a user contract to an application PR", 1)[0]
     # A formatting-only Markdown emphasis change must not become a semantic fault.
     normalized = intro.replace("*Why it matters:*", "**Why it matters:**")
     if not 130 <= len(intro.split()) <= 440:
@@ -307,14 +374,14 @@ def verify_multichannel_intro(readme: str) -> list[str]:
                 "Evidence dossier", "Target tests + independent review"))):
         errors.append("intro-graph-flow-broken")
     part = intro.split("**Choose an entry point**", 1)
-    nav = part[1].split("**Example — ICTC", 1)[0] if len(part) == 2 else ""
+    nav = part[1].split("**Current status:**", 1)[0] if len(part) == 2 else ""
     if (len([line for line in nav.splitlines() if line.startswith("|")]) != 6
             or any(x not in nav for x in (
                 "Inspect a repository", "Review a change or pull request",
                 "ChatGPT conversation", "file, dependency or workflow",
                 "docs/FILE_LAB.md"))):
         errors.append("intro-four-channel-route-broken")
-    if not all(x in intro for x in (
+    if not all(x in readme for x in (
             "illustrative, not a new ICTC execution", "docs/GOLD_ASSURANCE.md",
             "Target-specific test results", "release approval must be obtained separately")):
         errors.append("intro-ictc-evidence-boundary-missing")
@@ -384,6 +451,7 @@ def verify_progressive_readme(readme: str) -> list[str]:
     errors.extend(verify_readme_semantics(readme))
     errors.extend(verify_multichannel_intro(readme))
     errors.extend(verify_development_method_readme(readme))
+    errors.extend(verify_contract_to_application_readme(readme))
     return sorted(set(errors))
 
 
