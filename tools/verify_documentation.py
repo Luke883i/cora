@@ -309,7 +309,9 @@ def verify_contract_to_application_readme(readme: str) -> list[str]:
             "Only a reviewer may mark VERIFIED",
             "Unauthorized verification is denied; state stays unchanged",
             "Reject concurrent updates using the record revision",
-            "Authorized local checkout; external effects require new consent"):
+            "Authorized local checkout; external effects require new consent",
+            "Authenticated local accounts with assigned roles",
+            "SQLite with versioned schema migrations"):
         if label not in worked:
             errors.append("application-acceptance-or-authorization-gap:" + label)
     stages = (
