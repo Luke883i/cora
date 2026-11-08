@@ -290,8 +290,8 @@ def analyze(repo: Path, revision: str = "HEAD", *, run_behavior: bool = False) -
         raise ValueError("existing CLI owner and capability atlas disconnected")
     project = tomllib.loads(source(repo, sha, "pyproject.toml"))["project"]
     init = source(repo, sha, "src/cora/__init__.py")
-    if (project.get("name") != "cora-audit" or project.get("version") != "1.0.0a4"
-            or '__version__ = "1.0.0a4"' not in init):
+    if (project.get("name") != "cora-audit" or project.get("version") not in ("1.0.0a4", "1.0.0a5")
+            or f'__version__ = "{project.get("version")}"' not in init):
         raise ValueError("experimental package identity mismatch")
     if doc["release_freeze"]["stable_1_0_0"] is not False:
         raise ValueError("experimental baseline promoted to stable product")

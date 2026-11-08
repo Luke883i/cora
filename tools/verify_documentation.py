@@ -232,7 +232,7 @@ def verify_progressive_readme(readme: str) -> list[str]:
     front = readme.split("## How CORA works", 1)[0]
     for visible in ("**Current status:**", "**Recommended use:**",
                     "**Audience and conditions:**", "**Open source license:**",
-                    "[MIT](LICENSE)", "Python 3.11+", "1.0.0a4", "not a stable API"):
+                    "[MIT](LICENSE)", "Python 3.11+", "1.0.0a5", "not a stable API"):
         if visible not in front:
             errors.append("navigation-first-screen:" + visible)
     if "not a coding agent" not in front.lower().replace("*", ""):
@@ -376,7 +376,7 @@ def verify(root: Path) -> list[str]:
                 "**CORA (Continuous Ontological Repository Assurance)**",
                 "## First five minutes", "## What works today",
                 "## Use CORA with an AI coding assistant", "## Operating boundaries",
-                "## Engineering map", "1.0.0a4", "cora --help", "cora snapshot",
+                "## Engineering map", "1.0.0a5", "cora --help", "cora snapshot",
                 "docs/INDEX.md", "BLOCKED_EXTERNAL", "--intent")
     if any(token not in readme for token in required):
         errors.append("readme-contract-regression")
