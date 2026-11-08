@@ -82,3 +82,46 @@ The [machine-readable README refactor DoD](../.cora/contracts/dod/documentation-
 The [PR42 navigation regression](../tests/test_pr23_navigation.py) maintains the original 1,000 adversarial vectors and adds **10,000 deterministic, distinct, preregistered variants** (`seed=883`, 20 families × 500): 4,000 meaning-preserving editorial transformations that must PASS and 6,000 false-authority/claim-count/command/link/traceability changes that must FAIL. Zero incorrect classifications, original-Git 18/18 proof replay, exact-HEAD Python 3.11/3.13 CI and a proofable checksum of the mutant stream are the SOURCE thresholds. A **true unfamiliar engineer**, an external maintained-target agent study and effective protected GitHub non-author review remain separately **BLOCKED_EXTERNAL** without real operator witnesses.
 
 The newest README is a current front door, not a new release or migration of historical truth. The PR42 test source and `README.md` Git blob must be compared to the reviewed candidate, with commit identity invalidated by any subsequent edit. No new orchestrator, auto-merge, release, or paper-only human study is authorized.
+
+
+## PR48 — CTO-facing multi-abstraction front-door DoD (source candidate)
+
+**Goal:** reduce the work required for a new reader to find a defensible,
+source-linked product claim, rather than increasing the apparatus used to
+describe it. The README now states value, an ordinary engineering
+method, two authentic project histories, one practical invocation and
+limits. The supporting docs keep the detailed engineering example,
+architecture, role distinctions and machine contracts.
+
+**Noncompensatory SOURCE leaves (each must pass on the same Git HEAD):**
+
+| Leaf | Required, falsifiable observation |
+| --- | --- |
+| R48-A clarity | First read distinguishes observable product outcome, Python software, Git repository and agent/host roles; technical vocabulary precedes CORA's proprietary labels. |
+| R48-B compression | Root README at most 1,800 whitespace words, introductory promise 115–310 words, with no competing second source-of-truth or deleted supporting contract. Word counts are **guardrails**, not human comprehension proofs. |
+| R48-C source identity | All 18 S01–S18 original claims remain bound to their required README sections and original Git blob/test references; 71 commands remain inventory, not 71 demonstrated behaviors. |
+| R48-D multi-abstraction evidence | ICTC browser role/viewport witness and 656 screenshot-derived issues/12 root causes are separated from synthetic UI campaigns and physical source mutants; iKant_EDU is a **computational cognitive architecture**, not biological/phenomenological cognition, and source history keeps UNKNOWN consumer and protected-workflow constraints. |
+| R48-E method honesty | Backward AND-gate acceptance, bounded slices, seeded fault combinations, independent model oracle, real isolated mutants, novelty-window stopping rule, continuation advice and same-HEAD invalidation remain distinct. |
+| R48-F usability/routing | Five existing readers, five optional lenses, quickstart and One-Run, clean relative links and the comprehensive 48-document index survive. The full corrective-action app contract is preserved in the existing continuous-development guide. |
+| R48-G falsification | 100 additional unique local/global editorial mutations: 20 benign acceptances and 80 planted semantic faults rejected. Original 1k/10k vector campaigns retain 1,000 rejected, 4,000 accepted equivalences and 6,000 rejected dangerous changes, zero survivors. |
+| R48-H integrity | No original tests, protected CI workflows, historical Git blobs, owners or product software rewritten merely to pass editorial review. CI, git diff and replay are checked against the **final candidate SHA**. |
+
+**Global DoD:** R48-A ∧ R48-B ∧ R48-C ∧ R48-D ∧ R48-E ∧
+R48-F ∧ R48-G ∧ R48-H ∧ E01 ∧ E02 ∧ E03. The eight SOURCE
+leaves can be supported by local source and CI receipts; E01 actual
+unfamiliar-reader comprehension, E02 externally maintained target
+behavior and E03 enforceable host/human reviewer gates remain
+**BLOCKED_EXTERNAL** until independently observed.
+
+**Performance criteria proposed for an actual CTO study, not yet
+observed:** first-read identification of value, operating model,
+evidence limits and next action without historical context; shortest
+path to reproduction; questions asked and interpretation errors
+recorded against a deliberately competing long-form baseline. Neither
+static assertions nor deterministic lexical mutants measure this.
+
+**Source owners:** `README.md`; `tools/verify_documentation.py`;
+`tests/test_pr23_navigation.py` (100 new + historical 1k/10k);
+`.cora/assurance/documentation-proofs.json`; `docs/INDEX.md`;
+`docs/ARCHITECTURE.md`; `docs/CONTINUOUS_DEVELOPMENT.md`.
+The original PR42 machine DoD is **retained**, not weakened.
