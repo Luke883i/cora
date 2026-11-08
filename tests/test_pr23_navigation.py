@@ -112,6 +112,11 @@ class ProgressiveDocumentationTests(unittest.TestCase):
                 changed = self.readme.replace(old, new, 1)
                 self.assertNotEqual(changed, self.readme)
                 self.assertNotEqual(DOC.verify_multichannel_intro(changed), [])
+        first = self.readme.index("--chat-bundle")
+        second = self.readme.index("--chat-bundle", first + 1)
+        replaced = self.readme[:second] + "--missing-chat-bundle" + self.readme[second + len("--chat-bundle"):]
+        self.assertIn("chat-zip-produce-and-replay-binding-incomplete",
+                      DOC.verify_multichannel_intro(replaced))
 
 
     def test_engineering_method_semantic_falsifiers(self):

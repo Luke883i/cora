@@ -415,6 +415,10 @@ def verify_multichannel_intro(readme: str) -> list[str]:
             "cora verify-process", "handoff.md", "SHA-256",
             "automatic capture of every chat message", "not independently witnessed")):
         errors.append("chat-workflow-incomplete-or-misleading")
+    # The produce and replay commands each need their own bundle binding.
+    # Presence anywhere in the paragraph is insufficient when both are required.
+    if body.count("--chat-bundle") != 2:
+        errors.append("chat-zip-produce-and-replay-binding-incomplete")
     return sorted(set(errors))
 
 
