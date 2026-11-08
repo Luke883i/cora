@@ -147,6 +147,15 @@ def validate_step(step: object) -> dict:
     return step
 
 
+
+def load_chat_step(path: Path) -> dict:
+    """Load a bounded, unambiguous caller JSON; never silently accept duplicate keys."""
+    source = Path(path)
+    if source.is_symlink() or not source.is_file() or source.stat().st_size > MAX_ENTRY_BYTES:
+        raise ValueError("invalid or oversized chat iteration input")
+    return validate_step(_strict_json(source.read_bytes()))
+
+
 def _derived(step: dict) -> dict:
     nodes = step["dod"]["nodes"]
     observations = {}

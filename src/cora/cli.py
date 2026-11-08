@@ -38,7 +38,7 @@ from .process_suite import process_catalog, run_suite, verify_suite, PROCESSES
 from .one_run import run_one, verify_one, render_one_html
 from .integrated_run import run_integrated, verify_integrated as verify_integrated_one_run
 from .integrated_html import render_integrated_html
-from .chat_bundle import append_chat_iteration, verify_chat_bundle
+from .chat_bundle import append_chat_iteration, verify_chat_bundle, load_chat_step
 from .continuous import evaluate as development_gate, verify_gate, agent_check
 from .continuous_stress import stress_continuous
 from .archive_intake import inspect_zip, verify_intake
@@ -766,6 +766,7 @@ def main(argv: list[str] | None = None) -> int:
                 raise ValueError('chat steps require both --chat-step and --chat-bundle')
             if args.chat_bundle and (not args.one_run or args.profile != 'comprehensive'):
                 raise ValueError('chat bundle requires --one-run --profile comprehensive')
+            chat_step = load_chat_step(args.chat_step) if args.chat_step else None
             if args.one_run:
                 if args.profile == 'comprehensive':
                     result = run_integrated(args.repo,args.revision,process=args.process,
@@ -779,8 +780,7 @@ def main(argv: list[str] | None = None) -> int:
                     if args.atlas_html:
                         args.atlas_html.write_text(render_integrated_html(result),encoding='utf-8')
                     if args.chat_bundle:
-                        step = json.loads(args.chat_step.read_text(encoding='utf-8'))
-                        append_chat_iteration(args.chat_bundle, repo=args.repo, step=step, receipt=result)
+                        append_chat_iteration(args.chat_bundle, repo=args.repo, step=chat_step, receipt=result)
                     # External blockers do not prevent generating a truthful dossier.
                     base = result['baseline_pr36']
                     code = 2 if (base['source_status']=='DEBT_BLOCKED'
