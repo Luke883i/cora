@@ -151,6 +151,7 @@ README_SPECIFIC_TRUTHS = (
     "merged PR41",
     "two controlled physical Git repositories",
     "GitHub workflow files alone do not prove",
+    "A hash can identify committed bytes; it cannot authenticate a human reviewer",
 )
 README_FALSE_PROMOTIONS = (
     r"\bverified public release and stable API\b",
