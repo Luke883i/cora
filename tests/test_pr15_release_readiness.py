@@ -42,7 +42,7 @@ class ReadinessTest(unittest.TestCase):
         self.swap("README.md","Continuous Ontological Repository Assurance","Code Ontology Repo Audit")
         self.deny("PRODUCT_EXPANSION_MISSING")
     def test_version_counterexample(self):
-        self.swap("src/cora/__init__.py","1.0.0a4","1.0.0a3")
+        self.swap("src/cora/__init__.py","1.0.0a5","1.0.0a3")
         self.deny("PACKAGE_INIT_VERSION_DRIFT")
     def test_package_counterexample(self):
         self.swap("pyproject.toml",'name = "cora-audit"','name = "cora-unrelated"')
@@ -85,11 +85,11 @@ class ReadinessTest(unittest.TestCase):
             ["git", "-C", str(ROOT), "rev-parse", "HEAD"]).decode().strip()
         with tempfile.TemporaryDirectory() as d:
             loc = Path(d)
-            wheel = loc/"cora_audit-1.0.0a4-py3-none-any.whl"
-            sdist = loc/"cora_audit-1.0.0a4.tar.gz"
+            wheel = loc/"cora_audit-1.0.0a5-py3-none-any.whl"
+            sdist = loc/"cora_audit-1.0.0a5.tar.gz"
             wheel.write_bytes(b"fake wheel bytes: this test mocks original archive oracle")
             sdist.write_bytes(b"fake tar bytes: this test mocks original archive oracle")
-            verified = {"distribution": "cora-audit", "version": "1.0.0a4",
+            verified = {"distribution": "cora-audit", "version": "1.0.0a5",
                         "wheel_sha256": "a"*64, "sdist_sha256": "b"*64}
             proof = loc/"verification.json"
             proof.write_text(json.dumps(verified), encoding="utf-8")

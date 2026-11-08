@@ -38,6 +38,7 @@ from .process_suite import process_catalog, run_suite, verify_suite, PROCESSES
 from .one_run import run_one, verify_one, render_one_html
 from .integrated_run import run_integrated, verify_integrated as verify_integrated_one_run
 from .integrated_html import render_integrated_html
+from .chat_bundle import append_chat_iteration, verify_chat_bundle, load_chat_step
 from .continuous import evaluate as development_gate, verify_gate, agent_check
 from .continuous_stress import stress_continuous
 from .archive_intake import inspect_zip, verify_intake
@@ -372,6 +373,8 @@ def main(argv: list[str] | None = None) -> int:
     pr.add_argument('--profile',choices=('comprehensive',),help='PR37: account for every discovered CORA activity; source-only by default')
     pr.add_argument('--evidence-dir',type=Path,help='Outside-repo directory for the integrated evidence manifest and optional test log')
     pr.add_argument('--authorization-file',type=Path,help='Explicit exact-SHA local consent for optional untrusted self-tests, not sandbox attestation')
+    pr.add_argument('--chat-step',type=Path,help='Caller-authored, non-authoritative per-round JSON plan and gaps')
+    pr.add_argument('--chat-bundle',type=Path,help='Outside-repo portable logically append-only session ZIP')
     pv = sub.add_parser('verify-process',help='Source revalidation of process receipt')
     pv.add_argument('report',type=Path)
     pv.add_argument('--repo',required=True,type=Path)
@@ -380,6 +383,7 @@ def main(argv: list[str] | None = None) -> int:
     pv.add_argument('--atlas-json',type=Path)
     pv.add_argument('--atlas-html',type=Path)
     pv.add_argument('--evidence-dir',type=Path,help='Recompute byte hashes against retained integrated evidence files')
+    pv.add_argument('--chat-bundle',type=Path,help='Replay ZIP chain and match latest comprehensive One-Run receipt')
     dsx = sub.add_parser('stress-debt',help='1M seeded debt-policy model mutations')
     dsx.add_argument('--seed',type=int,default=883)
     dsx.add_argument('--cases',type=int,default=1000000)
@@ -758,6 +762,11 @@ def main(argv: list[str] | None = None) -> int:
             result = process_catalog()
             code = 0
         elif args.cmd == 'process-run':
+            if bool(args.chat_step) != bool(args.chat_bundle):
+                raise ValueError('chat steps require both --chat-step and --chat-bundle')
+            if args.chat_bundle and (not args.one_run or args.profile != 'comprehensive'):
+                raise ValueError('chat bundle requires --one-run --profile comprehensive')
+            chat_step = load_chat_step(args.chat_step) if args.chat_step else None
             if args.one_run:
                 if args.profile == 'comprehensive':
                     result = run_integrated(args.repo,args.revision,process=args.process,
@@ -770,6 +779,8 @@ def main(argv: list[str] | None = None) -> int:
                         args.atlas_json.write_text(json.dumps(result,sort_keys=True,indent=2)+'\n',encoding='utf-8')
                     if args.atlas_html:
                         args.atlas_html.write_text(render_integrated_html(result),encoding='utf-8')
+                    if args.chat_bundle:
+                        append_chat_iteration(args.chat_bundle, repo=args.repo, step=chat_step, receipt=result)
                     # External blockers do not prevent generating a truthful dossier.
                     base = result['baseline_pr36']
                     code = 2 if (base['source_status']=='DEBT_BLOCKED'
@@ -811,17 +822,19 @@ def main(argv: list[str] | None = None) -> int:
                               'status':'GIT_SOURCE_REPLAYED_LOCAL_TESTS_NOT_INDEPENDENTLY_ATTESTED',
                               'receipt_digest':item['receipt_digest'],'commit':item['commit'],
                               'product_status':'BLOCKED_EXTERNAL','authorization':'NONE'}
+                    if args.chat_bundle:
+                        result['chat_bundle'] = verify_chat_bundle(args.chat_bundle, expected_receipt=item)
                 else:
-                    if args.evidence_dir:
-                        raise ValueError('evidence-dir verification requires integrated source receipt')
+                    if args.evidence_dir or args.chat_bundle:
+                        raise ValueError('integrated source receipt required for evidence/chat ZIP')
                     verify_one(args.repo,item,
                                html_page=args.atlas_html.read_text('utf-8') if args.atlas_html else None)
                     result = {'schema':'cora-one-run-replay/1','status':'SOURCE_REPLAYED_RUNTIME_NOT_ATTESTED',
                               'receipt_digest':item['receipt_digest'],'commit':item['commit'],
                               'authorization':'NONE'}
             else:
-                if args.atlas_json or args.atlas_html or args.evidence_dir:
-                    raise ValueError('one-run atlas replay requires --one-run')
+                if args.atlas_json or args.atlas_html or args.evidence_dir or args.chat_bundle:
+                    raise ValueError('one-run atlas/chat replay requires --one-run')
                 verify_suite(args.repo,item)
                 result = {'schema':'cora-process-verification/1','status':'SOURCE_REPLAY_VERIFIED',
                           'run_digest':item['run_digest'],'commit':item['commit']}

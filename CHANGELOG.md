@@ -1,3 +1,10 @@
+## 1.0.0a5 — portable chat source candidate (unmerged; not published)
+
+- Extend the existing comprehensive One-Run and source replay with opt-in, portable chat-iteration ZIP append/verify.
+- Preserve caller intent, actions, linked roadmap/falsifiers, reverse-derived reticular DoD, evidence references, explicit gaps, immutable-by-contract prior entries, handoff and SHA-256 manifest chain.
+- Provide a complete novice input example and terminal-to-ChatGPT upload/replay instructions; no automatic capture or external signature.
+- Source-only and local isolated tests are not independent product qualification, release approval, or publication; the historical v1.0.0a4 draft remains separate.
+
 # Changelog — CORA
 
 ## PR41 — final experimental source-freeze method (publication separately governed)

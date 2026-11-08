@@ -581,6 +581,7 @@
       "src/cora/artifact_roles.py",
       "src/cora/artifact_saturation.py",
       "src/cora/audit.py",
+      "src/cora/chat_bundle.py",
       "src/cora/ci_repro.py",
       "src/cora/cli.py",
       "src/cora/closure.py",
@@ -764,6 +765,7 @@
       "tests/test_pr39_qualification.py",
       "tests/test_pr40_engineering_closure.py",
       "tests/test_pr41_final_experimental.py",
+      "tests/test_pr46_chat_bundle.py",
       "tests/test_selection.py"
     ],
     "internal_dod": [

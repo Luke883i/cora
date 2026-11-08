@@ -237,7 +237,7 @@ def _semantic_oracles(store: SourceStore, errors: list[str]) -> None:
     document = {n["id"]: n for n in dod["nodes"]}
     _ok(meta["name"] == "cora-audit" and
         meta["scripts"] == {"cora": "cora.cli:main"} and
-        meta["version"] == "1.0.0a4" and
+        meta["version"] in ("1.0.0a4", "1.0.0a5") and
         meta["version"] in readme and
         meta["version"] in r("docs/RELEASE.md") and
         f'__version__ = "{meta["version"]}"' in r("src/cora/__init__.py"),

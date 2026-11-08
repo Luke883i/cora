@@ -104,6 +104,37 @@ jobs:
           assert x['genealogy']['retention']['current_source_modules_removal_authorized'] == 0
           assert x['genealogy']['future_delta']['catalog_status'] == 'SOURCE_CATALOG_COVERED_NOT_BEHAVIORAL_PROOF'
           PY
+      - name: PR46 two-round ChatGPT ZIP handoff, exact-Git replay and nonpromotion
+        run: |
+          mkdir -p /tmp/cora-pr46
+          cp examples/chat-step.example.json /tmp/cora-pr46/step.json
+          cora process-run . --revision HEAD --process full --one-run --profile comprehensive \
+            --output /tmp/cora-pr46/run1.json --atlas-html /tmp/cora-pr46/run1.html \
+            --chat-step /tmp/cora-pr46/step.json --chat-bundle /tmp/cora-pr46/session.zip
+          cora verify-process /tmp/cora-pr46/run1.json --repo . --one-run \
+            --atlas-html /tmp/cora-pr46/run1.html --chat-bundle /tmp/cora-pr46/session.zip
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('/tmp/cora-pr46/step.json')
+          d=json.loads(p.read_text('utf-8'))
+          d['iteration']=2
+          d['next_step']='Request independent behavior and human review for round two'
+          p.write_text(json.dumps(d,indent=2)+'\n',encoding='utf-8')
+          PY
+          cora process-run . --revision HEAD --process full --one-run --profile comprehensive \
+            --output /tmp/cora-pr46/run2.json --atlas-html /tmp/cora-pr46/run2.html \
+            --chat-step /tmp/cora-pr46/step.json --chat-bundle /tmp/cora-pr46/session.zip
+          cora verify-process /tmp/cora-pr46/run2.json --repo . --one-run \
+            --atlas-html /tmp/cora-pr46/run2.html --chat-bundle /tmp/cora-pr46/session.zip
+          python - <<'PY'
+          from cora.chat_bundle import verify_chat_bundle
+          x=verify_chat_bundle('/tmp/cora-pr46/session.zip')
+          assert x['iterations']==2 and x['authorization']=='NONE'
+          assert x['product_status']=='BLOCKED_EXTERNAL'
+          PY
+      - name: PR46 hostile bundle negative regression
+        run: python -m unittest discover -s tests -p 'test_pr46_chat_bundle.py' -v
       - name: Preserve local source evidence without claiming independent attestation
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -112,6 +143,7 @@ jobs:
           path: |
             /tmp/cora-pr37/
             /tmp/cora-pr39/
+            /tmp/cora-pr46/
           if-no-files-found: warn
           retention-days: 14
 

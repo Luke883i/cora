@@ -171,3 +171,14 @@ The same **one-run** command can add `--model-stress-cases 100000` to run and di
 The existing cora process-run . --revision HEAD --process full --one-run --profile comprehensive --output /tmp/run.json --atlas-html /tmp/atlas.html --evidence-dir /tmp/evidence attaches a read-only qualification receipt when the candidate Git commit has the PR39 contract. Verify it using cora verify-process /tmp/run.json --repo . --one-run --atlas-html /tmp/atlas.html --evidence-dir /tmp/evidence. The evidence manifest includes qualification.json with four BLOCKED_EXTERNAL product gates.
 
 Independent-implementation source comparison: python tools/independent_git_oracle.py --output /tmp/native-reference.json. Host observation, with an optional environment-scoped read-only GITHUB_TOKEN: python tools/governance_readback.py --repo Luke883i/cora --branch main --output /tmp/host.json. Both require explicit separate invocation. Neither authenticates external witnesses or grants a release. See [product qualification acceptance](../.cora/contracts/dod/independent-qualification-dod.json) and [operator protocol](RELEASE.md).
+
+## ChatGPT session continuity: one portable iteration per One-Run invocation
+
+`process-run` has two optional paired flags for `--one-run --profile comprehensive`: `--chat-step STEP.json` (caller-authored, strict JSON) and `--chat-bundle PATH.zip` (outside the inspected Git checkout). It runs the existing source methods, writes the usual One-Run receipt and atomically appends an iteration to a portable ZIP. `verify-process --one-run --chat-bundle PATH.zip` checks both exact Git source replay and the ZIP's latest receipt/hash-chain agreement.
+
+Use [the full novice walkthrough](GETTING_STARTED.md) and [the example step](../examples/chat-step.example.json). The required step keys are `schema`, `session_id`, `iteration`, `intent`, `actions`, `roadmap`, `falsifiers`, `dod`, `gaps`, `next_step`. Roadmap entries must reference falsifiers and DoD nodes; unresolved leaf obligations must have explicitly linked gaps. The DoD is topologically ordered using CORA's existing reticular kernel and conservatively assessed; caller evidence never authenticates runtime, reviewer identity, merge or release.
+
+ZIP layout: `meta/session.json`, followed by `rounds/000001/{step.json,receipt.json,dod.json,handoff.md,manifest.json}`, `rounds/000002/...` and so on. Each manifest hashes its own round content and links the previous round's manifest SHA-256. The archive is logically append-only, with a bounded size/round count, duplicate-name and path checks, no implicit execution of its contents and an exclusive writer lock. It is **not** a WORM store or digital signature: a malicious holder can rebuild the chain unless the previous manifest digest is retained independently.
+
+CORA cannot automatically observe every ChatGPT message. No assistant should claim that a round was recorded if the host never ran the command.
+

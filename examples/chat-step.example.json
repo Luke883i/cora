@@ -1,0 +1,70 @@
+{
+  "schema": "cora-chat-iteration/1",
+  "session_id": "example-review-01",
+  "iteration": 1,
+  "intent": "Review one repository change without inventing runtime results",
+  "actions": [
+    {
+      "id": "A1",
+      "action": "Inspect source and name the change",
+      "status": "DONE_REPORTED"
+    }
+  ],
+  "roadmap": [
+    {
+      "id": "R1",
+      "action": "Run a target-specific test with an independent oracle",
+      "depends_on": [],
+      "dod_refs": [
+        "E1"
+      ],
+      "falsifier_refs": [
+        "F1"
+      ],
+      "status": "BLOCKED"
+    }
+  ],
+  "falsifiers": [
+    {
+      "id": "F1",
+      "claim": "The change preserves target behavior",
+      "method": "Run targeted regressions on exact HEAD",
+      "oracle": "Independent expected output compared with observed test execution",
+      "status": "NOT_RUN"
+    }
+  ],
+  "dod": {
+    "goal": "G_ACCEPT",
+    "nodes": [
+      {
+        "id": "E1",
+        "depends_on": [],
+        "scope": "EXTERNAL",
+        "acceptance": "Independent runtime test and reviewer approval",
+        "observation": "UNOBSERVED",
+        "evidence_refs": []
+      },
+      {
+        "id": "G_ACCEPT",
+        "depends_on": [
+          "E1"
+        ],
+        "scope": "SOURCE",
+        "acceptance": "Evidence exists before acceptance",
+        "observation": "UNOBSERVED",
+        "evidence_refs": []
+      }
+    ]
+  },
+  "gaps": [
+    {
+      "id": "GAP1",
+      "description": "No independent target test or reviewer evidence",
+      "blocks": [
+        "E1"
+      ],
+      "next_action": "Obtain independently observed execution and approval"
+    }
+  ],
+  "next_step": "Keep acceptance blocked; request real test evidence and record round 2"
+}
