@@ -17,22 +17,16 @@ flowchart LR
 
 **Choose an entry point**
 
-| You want to… | Start here | Output |
-| --- | --- | --- |
-| Inspect a repository | [First five minutes](#first-five-minutes--quickstart) | Git-bound JSON receipt |
-| Review a change or pull request | [One-Run](#one-run--one-command-one-evidence-dossier) · [AI-assisted review](#use-cora-with-an-ai-coding-assistant) | HTML/JSON dossier and open obligations |
-| Continue work in a ChatGPT conversation | [ChatGPT session workflow](#use-cora-during-a-chatgpt-conversation-experimental) | Portable, verified-by-replay iteration ZIP |
-| Investigate a file, dependency or workflow | [Capabilities](#what-works-today) · [File Lab](docs/FILE_LAB.md) | Source-scoped findings, not a safe-deletion verdict |
+| Goal | Start · outcome |
+| --- | --- |
+| Inspect a repository | [First five minutes](#first-five-minutes--quickstart) → pinned Git JSON receipt |
+| Review a change or pull request | [One-Run](#one-run--one-command-one-evidence-dossier) + [AI-assisted review](#use-cora-with-an-ai-coding-assistant) → HTML/JSON and open obligations |
+| Continue work in a ChatGPT conversation | [ChatGPT session workflow](#use-cora-during-a-chatgpt-conversation-experimental) → portable iteration ZIP |
+| Investigate a file, dependency or workflow | [Capabilities](#what-works-today) + [File Lab](docs/FILE_LAB.md) → source-scoped findings |
 
 **Example — ICTC (illustrative, not a new ICTC execution).** Suppose an ICTC pull request changes release-readiness logic. CORA can pin the Git `BASE`/`HEAD`, map source and workflow references, derive the checks that should still hold, and report which evidence is missing. Target-specific test results, actual downstream effects and release approval must be obtained separately. The [documented ICTC source-lineage pilot](docs/GOLD_ASSURANCE.md) is a bounded reference case, **not** a certification of the running ICTC product.
 
 **Current status:** experimental source `cora-audit 1.0.0a5`, now merged with PR46; **not a stable API or verified public release**. As checked on 8 November 2026, GitHub still showed a draft `v1.0.0a4` release without downloadable assets, not a published `v1.0.0a5` package. See [release status and obligations](docs/RELEASE.md) before making a delivery claim.
-
-**Recommended use:** begin with permission to inspect a repository and an exact Git revision; run CORA read-only, inspect its unknowns, then execute appropriate target tests and independent human review separately. No report grants permission to delete, merge or deploy.
-
-**Audience and conditions:** developers, maintainers, reviewers, coding-agent operators and product/assurance owners. Python 3.11+ and Git are needed; target-side execution, Docker, network operations and untrusted ZIPs require separate authorization and containment. There is no hosted CORA service.
-
-**Open source license:** [MIT](LICENSE). This grants reuse of CORA source, not access to others' repositories or approval authority. See [Security](SECURITY.md) and [Contributing](CONTRIBUTING.md).
 
 ## First five minutes — Quickstart
 
@@ -51,6 +45,13 @@ cora verify-ledger /tmp/cora-ledger.json --repo .
 - `verify-ledger`: consistency replay against Git objects; not a runtime test or reviewer approval.
 
 Keep reports **outside** the inspected repository. `/tmp` is an illustrative Unix path; choose a suitable directory on Windows. For installation, target paths and troubleshooting see [Getting started](docs/GETTING_STARTED.md) and [the parser-checked CLI reference](docs/CLI_REFERENCE.md).
+
+**Recommended use:** begin with permission to inspect a repository and an exact Git revision; run CORA read-only, inspect its unknowns, then execute appropriate target tests and independent human review separately. No report grants permission to delete, merge or deploy.
+
+**Audience and conditions:** developers, maintainers, reviewers, coding-agent operators and product/assurance owners. Python 3.11+ and Git are needed; target-side execution, Docker, network operations and untrusted ZIPs require separate authorization and containment. There is no hosted CORA service.
+
+**Open source license:** [MIT](LICENSE). This grants reuse of CORA source, not access to others' repositories or approval authority. See [Security](SECURITY.md) and [Contributing](CONTRIBUTING.md).
+
 
 ## Use CORA during a ChatGPT conversation (experimental)
 
