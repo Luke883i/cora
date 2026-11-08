@@ -300,7 +300,8 @@ def verify_contract_to_application_readme(readme: str) -> list[str]:
         "**Example — ICTC" in before or
         not 200 <= len(worked.split()) <= 1000):
         errors.append("application-example-not-first-or-overloaded")
-    keys = ("goal:", "users:", "record:", "workflow:", "rules:",
+    keys = ("goal:", "users:", "interface:", "authentication:", "storage:",
+            "record:", "workflow:", "rules:",
             "acceptance:", "delivery:", "constraints:", "permissions:")
     if any(k not in worked for k in keys) or worked.count("~~~yaml") != 1 or worked.count("~~~") != 2:
         errors.append("application-user-contract-underdetermined")

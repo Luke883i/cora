@@ -37,6 +37,9 @@ flowchart LR
 ~~~yaml
 goal: "A local web app to track corrective actions"
 users: ["reporter", "owner", "reviewer"]
+interface: "Local browser UI and JSON API"
+authentication: "Authenticated local accounts with assigned roles"
+storage: "SQLite with versioned schema migrations"
 record: ["id", "title", "owner", "status", "evidence_ref", "revision"]
 workflow: "OPEN -> IN_PROGRESS -> VERIFIED"
 rules:
