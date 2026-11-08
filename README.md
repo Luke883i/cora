@@ -26,7 +26,7 @@ flowchart LR
 
 **Example — ICTC (illustrative, not a new ICTC execution).** Suppose an ICTC pull request changes release-readiness logic. CORA can pin the Git `BASE`/`HEAD`, map source and workflow references, derive the checks that should still hold, and report which evidence is missing. Target-specific test results, actual downstream effects and release approval must be obtained separately. The [documented ICTC source-lineage pilot](docs/GOLD_ASSURANCE.md) is a bounded reference case, **not** a certification of the running ICTC product.
 
-**Current status:** experimental source `cora-audit 1.0.0a5`, now merged with PR46; **not a stable API or verified public release**. As checked on 8 November 2026, GitHub still showed a draft `v1.0.0a4` release without downloadable assets, not a published `v1.0.0a5` package. See [release status and obligations](docs/RELEASE.md) before making a delivery claim.
+**Current status:** experimental source `cora-audit 1.0.0a5`, now merged with PR46; **not a stable API or verified public release**. The earlier **merged PR41** established the source-level experimental baseline. As checked on 8 November 2026, GitHub still showed a draft `v1.0.0a4` release without downloadable assets, not a published `v1.0.0a5` package. See [release status and obligations](docs/RELEASE.md) before making a delivery claim.
 
 ## First five minutes — Quickstart
 
@@ -128,6 +128,8 @@ An unresolved leaf is a **gap**, not a PASS. The next action is chosen from its 
 **4. Actively try to disprove the change.** Before treating successful checks as evidence, identify credible failure mechanisms: wrong owner, changed consumer, stale SHA, missing authorization, false “unused” classification, CI effect, or a faulty state transition. Run suitable source checks, negative regression tests and—**only when explicitly authorized**—tests on a disposable modified checkout. A failing mutant is detected by its specified oracle; a surviving, timed-out or inconclusive mutant must not be counted as killed.
 
 **5. Re-run and close by evidence.** Pin `BASE`/`HEAD`, inspect the One-Run dossier, replay applicable source observations, run real target tests separately, and obtain the responsible review. After merge, reassess the **actual merged SHA**: prior PR-head evidence does not automatically transfer. The ChatGPT session ZIP records each explicitly executed iteration and carries the next open obligation; it is not automatic chat memory or signed approval.
+
+A hash can identify committed bytes; it cannot authenticate a human reviewer or prove target runtime behavior.
 
 ### Numerical and semantic testing: what the numbers mean
 
