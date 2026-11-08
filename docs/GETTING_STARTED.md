@@ -58,6 +58,27 @@ The second comparator is implementation-independent, not a different human
 reviewer. A removed or renamed DoD node is not a completed requirement;
 equivalent wording is only a candidate for human reconciliation.
 
+
+## In a ChatGPT session: the shortest reproducible path
+
+A **conversation is not a CORA runtime**. A chat can draft a plan or read a ZIP, but a source observation only exists after the Python CLI runs against a repository the operator may access.
+
+- Start with a local checkout of CORA and a target repository you are authorized to inspect. Keep outputs outside the repository. No credentials, entire private chat transcripts, or private source files belong in the portable ZIP by default.
+- Copy `examples/chat-step.example.json` to `/tmp/chat-step.json`; edit `session_id`, `intent`, `actions`, `falsifiers`, `roadmap`, `dod` and `gaps`. The sample is intentionally blocked pending an independent runtime/reviewer oracle.
+- From CORA's checkout, run:
+
+```sh
+cora process-run . --revision HEAD --one-run --profile comprehensive \
+  --output /tmp/round.json --atlas-html /tmp/round.html \
+  --chat-step /tmp/chat-step.json --chat-bundle /tmp/cora-session.zip
+cora verify-process /tmp/round.json --repo . --one-run \
+  --atlas-html /tmp/round.html --chat-bundle /tmp/cora-session.zip
+```
+
+Open `/tmp/round.html` for review, then attach `/tmp/cora-session.zip` to your next ChatGPT turn. Request a reading of the **latest** `rounds/NNNNNN/handoff.md`, the DoD and the missing evidence. For round 2 set `iteration: 2` in a new input JSON and run again with the *same* ZIP. The command rejects skipped, repeated or different-session rounds; prior records remain logically intact. The ZIP can be moved to another machine and verified there, but independent Git replay needs the original authorized checkout and exact revision.
+
+**Status vocabulary:** `DONE_REPORTED` is a user's statement, not an executed test; `PASS_REPORTED` is not a certified pass; external DoD obligations cannot be self-promoted; `BLOCKED_EXTERNAL` is an honest open qualification gate. The SHA-256 chain detects inconsistent archive entries but is not a signature. There is no automatic chat capture or hosted service; each iteration requires a deliberate CORA execution or a human-assisted invocation.
+
 ## Where to go next
 
 For a scoped architectural investigation use `cora graph` and

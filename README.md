@@ -6,7 +6,7 @@ CORA is an **offline-first, Python 3.11+ command-line assurance framework** that
 
 **Why it matters:** a successful edit, a green test, a Git hash, and a convincing AI explanation are **different kinds of evidence**. None, alone, demonstrates product correctness, independent operational behavior, or permission to deploy. CORA makes the supported claims, missing evidence, falsifiers, and next review obligations visible.
 
-**Current status:** `v1.experimental`; Python distribution **`cora-audit 1.0.0a4`**; source includes **merged PR41** and its *Final Experimental Baseline* contract. This is an integrated experimental **source** baseline, **not a stable API or verified public release**, independently qualified product, production service, or release authorization. The `v1.0.0a4` GitHub pre-release was observed as an **unpublished Draft without assets on 7 November 2026**; that dated observation is not a continuously verified host status. Consult [Release status](docs/RELEASE.md) and the [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) before making a release claim.
+**Current status:** `v1.experimental`; **`cora-audit 1.0.0a5` is an unmerged source candidate, not a published release**; the historical `1.0.0a4` release remains a draft. Existing source records include source includes **merged PR41** and its *Final Experimental Baseline* contract. This is an integrated experimental **source** baseline, **not a stable API or verified public release**, independently qualified product, production service, or release authorization. The `v1.0.0a4` GitHub pre-release was observed as an **unpublished Draft without assets on 7 November 2026**; that dated observation is not a continuously verified host status. Consult [Release status](docs/RELEASE.md) and the [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) before making a release claim.
 
 **Recommended use:** start with an authorized, read-only inspection of an exact Git `BASE` and `HEAD`; use CORA to organize the repository facts, candidate dependencies, counterexamples, source evidence, and unsatisfied verification obligations. Run real target tests and obtain independent review separately. Do not infer automatic remediation, approval, or safe deletion from a report.
 
@@ -34,6 +34,27 @@ cora verify-ledger /tmp/cora-ledger.json --repo .
 - `verify-ledger`: a consistency/replay check of that scoped Git observation, **not** certification of runtime behavior or reviewer identity.
 
 Keep reports outside the source checkout; `/tmp` is a Unix example—choose an appropriate output directory on Windows. Use [`cora COMMAND --help`](docs/CLI_REFERENCE.md) for precise arguments and [Getting started](docs/GETTING_STARTED.md) for the full newcomer walkthrough.
+
+
+## Use CORA during a ChatGPT conversation (experimental)
+
+**CORA runs as a local Python program, not inside ChatGPT by itself.** ChatGPT can help describe an engineering goal and prepare the next iteration, but it cannot truthfully record a test, a Git commit or a ZIP unless a connected execution environment actually runs CORA. If the assistant cannot access Python and an authorized repository checkout, run these commands locally and upload the resulting ZIP to the chat.
+
+1. Start in a permitted Git checkout, with Python 3.11+ and Git. Install CORA as shown above. Copy [the complete example iteration](examples/chat-step.example.json) to an output directory outside the checkout and edit its intent, actions, falsification strategy, roadmap, reticular DoD and explicit gaps; do not paste passwords or raw private conversations into it.
+2. Run the **existing One-Run command** to create the normal source dossier and append a numbered round to a portable ZIP:
+
+```sh
+cora process-run . --revision HEAD --process full --one-run --profile comprehensive \
+  --output /tmp/cora-chat-run.json --atlas-html /tmp/cora-chat-run.html \
+  --chat-step /tmp/chat-step.json --chat-bundle /tmp/cora-chat-session.zip
+cora verify-process /tmp/cora-chat-run.json --repo . --one-run \
+  --atlas-html /tmp/cora-chat-run.html --chat-bundle /tmp/cora-chat-session.zip
+```
+
+3. Upload `cora-chat-session.zip` in the next ChatGPT message and ask: *Read the last handoff and DoD, distinguish observations from claims, list open gaps, and propose iteration 2 without declaring a PASS.* If ZIP reading is unavailable, extract and supply `rounds/000001/handoff.md`. For the next round, set `iteration` to `2` in a new step JSON, rerun the command with the same ZIP, and repeat.
+4. A round may have unresolved obligations: **recording BLOCKED is a valid outcome**, not a failed conversation. A change of Git SHA requires renewed verification; older receipts are historical, not automatically reusable.
+
+The bundle is **logically append-only**: prior round entries cannot be overwritten through CORA and manifests form a SHA-256 hash chain. ZIP bytes themselves change on append, and hashes are **not a digital signature or proof of independent reviewer identity**. Files and human-supplied statuses remain untrusted until externally verified. Generation requires an explicit CLI invocation for each round; there is no background capture or automatic hook into every ChatGPT turn. On Windows use a local output path instead of `/tmp`. See [Getting started](docs/GETTING_STARTED.md), [CLI reference](docs/CLI_REFERENCE.md) and [Agent adoption](docs/AGENT_ADOPTION.md).
 
 ## What works today
 
@@ -153,7 +174,7 @@ The PR41 source campaign includes **1,000,000 deterministic finite-model evaluat
 
 **External acceptance remains `BLOCKED_EXTERNAL`** until at least two independently maintained target repositories are tested against preregistered oracles; host isolation is independently witnessed; **at least eight unfamiliar users** attempt **three tasks each**, with **≥80% successful completion and zero critical evidence-status misinterpretations**; GitHub actually enforces required checks and an authenticated non-author reviewer approves; and a release manager verifies the final merged SHA against the tag, wheel, sdist, provenance, and rollback drill.
 
-**Release distinction:** `1.0.0a4` is an alpha package identity. As observed on **7 November 2026**, the existing GitHub `v1.0.0a4` pre-release remained an **unpublished Draft with zero assets** and no verified `refs/tags/v1.0.0a4` ref. This is a dated observation, not a permanent claim about the host. A Draft targeting mutable `main` is not a verified frozen artifact. Any subsequent source change invalidates earlier SHA-bound freeze receipts. CORA cannot self-approve, merge, tag, publish, destructively clean up, or authorize release.
+**Release distinction:** `1.0.0a5` is a proposed source-package alpha identity, not a publication. Historically, `1.0.0a4` was an alpha package identity. As observed on **7 November 2026**, the existing GitHub `v1.0.0a4` pre-release remained an **unpublished Draft with zero assets** and no verified `refs/tags/v1.0.0a4` ref. This is a dated observation, not a permanent claim about the host. A Draft targeting mutable `main` is not a verified frozen artifact. Any subsequent source change invalidates earlier SHA-bound freeze receipts. CORA cannot self-approve, merge, tag, publish, destructively clean up, or authorize release.
 
 Before a public experimental pre-release, follow the [release operator protocol](docs/RELEASE.md), [experimental product DoD](docs/DOD_V1_EXPERIMENTAL.md), and [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json). A source pass and a human release decision are different events.
 
