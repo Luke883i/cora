@@ -6,6 +6,8 @@
 
 **Why it matters:** a code edit, a green test, a Git SHA and an AI explanation are different observations. A reviewer needs to know what each observation supports, what could refute it, and what remains unverified.
 
+**Scale with limits:** seeded failure scenarios challenge many combinations cheaply; [the numerical methods](#numerical-and-semantic-testing-what-the-numbers-mean) explain why a large test count alone cannot establish correctness.
+
 ```mermaid
 flowchart LR
     A["Change intent + Git revision"] --> B["CORA<br/>inspect • plan • challenge"]
