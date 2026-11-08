@@ -78,13 +78,13 @@ Each command invocation adds one round. The ZIP is **logically append-only** wit
 
 The [capability atlas](.cora/assurance/capability-atlas.json) records **71 declared CLI commands** across eight families. This is a **source inventory**, not 71 independently validated behaviors. The [complete documentation index](docs/INDEX.md), [capability DoD](.cora/contracts/dod/capability-dod.json) and [parser-checked CLI reference](docs/CLI_REFERENCE.md) distinguish implemented interfaces from executed evidence.
 
-| Engineering question | Source-scoped capabilities | Key limitation |
-| --- | --- | --- |
-| What is in this repository? | Git inventory, declared product/software ontology, Python import graph and artifact roles | Dynamic and external dependencies may be invisible |
-| What changed, and who could be affected? | File Lab, software archaeology, dependency paths, debt and workflow inspection | A missing static reference never proves safe deletion |
-| What must a coding-agent change demonstrate? | Intent-bound DoD, dependency checks, falsifiers, bounded physical and model-based mutations | A synthetic mutant count is not executed target-code coverage |
-| Which checks actually ran? | Comprehensive One-Run, receipts, source replay and portable chat handoff | `NOT_RUN` and `BLOCKED` are never equivalent to PASS |
-| What is ready for review? | Pre/post-merge source reports, evidence lineage, conservative CI impact analysis | No automatic merge, deployment or release authorization |
+| Engineering question | Capability and important limit |
+| --- | --- |
+| What is in this repository? | Git inventory, declared product/software ontology, Python import graph and artifact roles. **Limit:** dynamic and external dependencies may be invisible. |
+| What changed, and who could be affected? | File Lab, software archaeology, dependency paths, debt and workflow inspection. **Limit:** a missing static reference never proves safe deletion. |
+| What must a coding-agent change demonstrate? | Intent-bound DoD, dependency checks, falsifiers, bounded physical and model-based mutations. **Limit:** a synthetic mutant count is not executed target-code coverage. |
+| Which checks actually ran? | Comprehensive One-Run, receipts, source replay and portable chat handoff. **Limit:** `NOT_RUN` and `BLOCKED` are never equivalent to PASS. |
+| What is ready for review? | Pre/post-merge source reports, evidence lineage and conservative CI impact analysis. **Limit:** no automatic merge, deployment or release authorization. |
 
 **Five convergent assurance goals:** Semantic Truth, AI Reasoning, Behavioral Proof, Continuous Semantic Evolution and Unified Assurance. They are internal method groupings, not independent proof of correctness. `method-synthesize --synergic` correlates bounded source reports; `--integrated` also links documentation and 18 README source-claim traces. See [Convergent assurance](docs/CONVERGENT_ASSURANCE.md) for the optional command, R1–R4 stages and source/behavior distinction.
 
@@ -173,14 +173,14 @@ cora verify-contextual-gate /tmp/cora-premerge.json --repo /path/to/target \
 
 ## Interpret a CORA result
 
-| Status | Read it as | Do not infer |
-| --- | --- | --- |
-| `PASS_SCOPED` / `EXECUTED_SCOPED` | Named bounded source obligation passed or activity ran | Entire product works |
-| `REUSED_SCOPED` | Earlier compatible source receipt reused | Fresh independent test |
-| `NOT_RUN` | Inventoried but not executed | PASS or failure |
-| `BLOCKED` / `DEBT_BLOCKED` | Required context or evidence missing/inconsistent | Proven defect |
-| `REFUTED` | Specific claim has a counterexample | Every related claim is false |
-| `BLOCKED_EXTERNAL` | Real target, user, host, reviewer or isolation proof missing | Permission to deploy, merge or release |
+| Status | Meaning and limit |
+| --- | --- |
+| `PASS_SCOPED` / `EXECUTED_SCOPED` | A named bounded obligation passed or an eligible activity actually ran. **Not:** proof that the entire product works. |
+| `REUSED_SCOPED` | An earlier compatible source receipt was reused. **Not:** a new independent test. |
+| `NOT_RUN` | An inventoried activity was not executed. **Neither:** PASS nor failure. |
+| `BLOCKED` / `DEBT_BLOCKED` | Required context or evidence is missing or inconsistent. **Not:** necessarily a proven defect. |
+| `REFUTED` | A specific claim conflicts with a counterexample. **Not:** a refutation of every related claim. |
+| `BLOCKED_EXTERNAL` | Real-target, user, host, reviewer or isolation evidence is missing. **Not:** permission to merge, deploy or release. |
 
 **Example (illustrative, not a generated CI receipt):** `NOT_RUN` for a target test proves only that the test was identified, not that it passed. Do not conflate the lexical state `PASS_SCOPED` with a product acceptance decision.
 
