@@ -114,3 +114,157 @@ The one-run experience deliberately extends `process-run` and `verify-process`: 
 ## PR39 rule for future feature convergence
 
 A future source engine, benchmark, runtime runner, UI, publication mechanism or governance claim must update the canonical feature atlas and artifact roles, introduce independent negative oracles, extend the existing One-Run lineage and explicit blockers, revise operator docs, and pass tests on exact HEAD. Changes to the four product proof boundaries must alter the versioned independent qualification DoD deliberately, with an independent reviewer. PR36–38 identities and earlier receipts remain immutable historical witnesses; no local green test may substitute for a missing external authority.
+
+
+## LEVEL: contract-to-product development with bounded continuation (PR47 candidate)
+
+**One promise:** convert an expressive human goal into successive, testable software
+changes while preserving provenance, negative controls and an honest stopping
+decision. **CORA is the local assurance/control protocol, not an autonomous
+software writer, build authority or independent reviewer.** A human-authorized
+coding agent and Git/build/test tools make the actual source changes and PRs.
+
+### The minimum evidence graph, derived backward
+
+Start at the observable goal, then ask *what evidence must exist before this
+goal may be accepted?* Write prerequisites as an AND-DAG, never as a checklist
+whose sum or score can compensate for a missing obligation.
+
+| Node | Acceptance condition / evidence | Class | When absent |
+| --- | --- | --- | --- |
+| L0 | Expressive versioned human contract: actors, behavior, data, UX, exclusions, permitted effects, expected negative tests | SOURCE + human intent declaration | Stop for a specific missing choice |
+| L1 | Existing owners/consumers and protected originals reconstructed on exact BASE and HEAD; unknown dependencies remain UNKNOWN | SOURCE | Block unsafe deletion or parallel owner |
+| L2 | Dependency-ordered, atomic acceptance conditions and falsification oracles; all required children are non-compensatory | SOURCE | Next unresolved leaf is the next candidate |
+| L3 | Bounded, reversible vertical slice: code + test + docs in the authorized target; Git blob/tree/commit provenance | SOURCE | Do not promote a design to executed software |
+| L4 | Predeclared positive and negative tests with observed outcomes: distinguish real source mutants from finite-model perturbations | SOURCE for report; EXTERNAL for independent behavior | Surviving or not-run tests block acceptance |
+| L5 | Seeded finite scenario coverage, independent reference rule, normalized-failure novelty plateau under a declared budget | FINITE_MODEL | A zero-novelty tail proves only the declared model window |
+| L6 | Each explicitly executed One-Run has a portable append-only logical ZIP round, unresolved gap, next action and replay receipt | SOURCE | No invisible background work or invented round |
+| L7 | Final PR source HEAD, test commands, dependencies, environment and CI outcomes attributable to one immutable revision; reverify postmerge SHA | SOURCE + external CI/host | A new commit invalidates prior final-HEAD conclusions |
+| L8 | A new user can actually play and finish LEVEL's game; UX and accessibility tested on target browser | EXTERNAL | Product remains unqualified regardless of source scores |
+| L9 | Independent reviewer, authority, licensing, protected branch rules, rollback and release decision | EXTERNAL | Never self-authorize merge or deployment |
+
+**Global acceptance = L0 AND L1 AND L2 AND L3 AND L4 AND L5 AND L6 AND
+L7 AND L8 AND L9.** The graph itself is a **declared contract**, not a
+measurement that all ten nodes are closed. It remains source-qualified or
+\`BLOCKED_EXTERNAL\` while target, reviewer or host witnesses are absent.
+The same obligations apply whether the target is a platform, a web game
+or a documentation-only PR; inapplicable requirements require a human
+decision and recorded justification, not silent deletion.
+
+### Adaptive continuation, not an invented number N
+
+The **existing** \`cora process-run --one-run --profile comprehensive
+--chat-step ... --chat-bundle ...\` creates one verified-by-source-replay
+portable ZIP round per explicit invocation. The additional *continuation*
+projection of \`verify_chat_bundle\` reuses the existing \`ordered_cut\` and
+\`assess_cut\` logic. It returns the first unresolved DoD, linked next
+falsifiers, actual iteration count and a conservative next-step decision.
+The ZIP schema and prior rounds are **unchanged**; the additional field
+is a read-only projection, not a new agent, daemon, authority or
+automatic Git operation.
+
+| Observed bounded condition | Suggested decision | Important non-inference |
+| --- | --- | --- |
+| First unresolved EXTERNAL prerequisite | \`REQUEST_EXTERNAL_WITNESS\` | A caller cannot certify independence |
+| New exact source revision | \`REVALIDATE_CHANGED_SOURCE\` | New Git SHA alone is not test proof |
+| Contract/goal changed after a round | \`REVIEW_CHANGED_CONTRACT\` | Renaming requirements cannot launder closure |
+| Three matching semantic evidence snapshots despite changed roadmap wording | \`REPLAN_STALLED_REPORTS\` | Rewording, DONE_REPORTED or a synthetic count is not progress |
+| No unresolved leaf in a source-only model | \`REQUEST_INDEPENDENT_ACCEPTANCE\` | Not an enterprise/product PASS |
+| An unblocked SOURCE leaf with a linked falsifier | \`PROPOSE_NEXT_SCOPED_STEP\` | Proposal is not execution permission |
+| Portability bound (128 rounds) reached | \`PAUSE_CAPACITY_AND_REBASE\` | Exhaustion is not convergence |
+
+The assistant's dynamic N is therefore the **eventual number of actually
+executed rounds**, not an oracle that predicts how many future turns are
+needed. No source-only heuristic can prove that the next round will work.
+Do not convert any decision above into an automatic privileged action.
+A new human authorization may be required at a phase edge. Keep archive
+ZIPs outside the repository and retain prior manifest digests separately
+if tamper-detection across untrusted transfers matters.
+
+**Anti-entropy check:** prefer a single existing owner, existing
+execution and reporting mechanisms, one portable ledger and one source
+of truth for each policy. Do not build a second task orchestrator, error
+bus, claims registry, source census or fake reviewer. Record unchanged
+SHA, unchanged DoD and unchanged attributable evidence across three
+rounds as a *replanning signal*. A pure textual paraphrase does not
+create engineering progress; neither does increasing the mutation
+counter without enlarging the declared fault coverage.
+
+### Concrete three-repository method transfer (not shared runtime)
+
+- **CORA:** \`src/cora/reticulum.py\` supplies topological AND assessment;
+  \`src/cora/chat_bundle.py\` supplies strict receipt and ZIP verification;
+  \`src/cora/cli.py\` owns the existing One-Run and replay path.
+- **ICTC:** \`docs/PROCEDURE_INTENT_CONVERGENCE_DOD_2026-08-18.md\` uses
+  seven non-collapsible process models and owner-aware negative
+  requirements. Its \`v3/saturation.mjs\` explicitly *assigns* novelty
+  from 12 declared primitives among 136 fixed scenarios. Its
+  \`v3/release-readiness-e2-product-mutants.mjs\` instead changes real
+  code in a disposable clone and runs an E2 gate. These are distinct
+  levels of evidence; nothing here certifies ICTC runtime as a whole.
+- **iKant_EDU:** \`docs/CORA_PR_A_BACKLOG.md\` keeps unknown dynamic or
+  external consumers UNKNOWN while deriving a read-only review
+  backlog. M3/PR238 commit \`34750a2b2f192758b26919235922c4002ff040c0\`
+  restored the byte-identical protected workflow and moved Git
+  index/TREE/worktree source readback into
+  \`scripts/project-review-callsites.mjs\`. Its
+  \`governance/changes/m3-source-closure-20261108.json\` retains
+  \`required_checks_verified=false\` and \`human_signoffs=0\`.
+  **Protected owner/workflow invariants outrank a convenient new CI job.**
+
+The **minimum interoperable interface** is an expressive A0 goal, an
+immutable target BASE/HEAD, declared owners, a dependency-ordered
+acceptance graph, named negative oracles, source/behavior distinction,
+open gaps, a portable round reference, and separately governed
+postmerge/release decisions. It does **not** require installing CORA
+in ICTC or iKant_EDU, nor does it grant CORA the original products'
+authority. A cross-repository method contract is not a shared
+product/runtime contract.
+
+### LEVEL demonstration: Local Evidence, Verifiable Engineering Lifecycle
+
+A *proposed* new repository (not yet created or executed) will contain
+the original 2D platform game **NILO — La Fabbrica delle Ore**.
+One natural-language contract names story, characters, six levels,
+three bosses, game-state transitions, checkpoint persistence,
+accessibility and asset licenses. The first functional slice is not
+six levels of untested code: it is one playable section with input,
+camera, collision, checkpoint, HUD and a real browser replay test.
+Then each later slice carries its own source SHA, positive and negative
+tests, closed and open obligations, and rollback path.
+
+**What would impress an external CTO:** run the game, select a visible
+checkpoint behavior, inspect the actual test receipt, follow it to
+the specific acceptance requirement and original intent, and return
+to the exact source commit. Require the same proof chain for a mutant
+that intentionally breaks persistence. A screenshot or a 10M finite
+mask counter alone cannot deliver that outcome.
+
+### Enterprise-candidate engineering controls: crosswalk, not certification
+
+| Engineering goal | Concrete CORA/source surface | Gate not automatically satisfied |
+| --- | --- | --- |
+| Controlled software development; NIST SSDF SP 800-218 v1.1 PO/PS/PW/RV | Agent intent and scope, pinned Git artifacts, premerge guard, negative tests and postmerge source audit | Organization-wide secure SDLC, credential isolation, actual vulnerability response |
+| Web-application security; OWASP ASVS v5.0.0 | Negative access/authorization and input cases can be declared and traced for a target | Actual security test of the game's HTTP/web surface; no claim of ASVS conformity |
+| Build provenance; SLSA v1.2 | Pinned Git SHA, explicit build/test receipts and replay boundaries | Authenticated provenance, ephemeral isolation and independent trusted builder |
+| Quality characteristics; ISO/IEC 25010:2023 | Explicit performance, usability, reliability, compatibility and accessibility requirements in product DoD | Observed behavior with real users/devices; no ISO certification |
+
+Official normative references: [NIST SSDF](https://csrc.nist.gov/pubs/sp/800/218/final),
+[OWASP ASVS](https://asvs.owasp.org/),
+[SLSA build requirements](https://slsa.dev/spec/v1.2/build-requirements),
+[ISO/IEC 25010](https://www.iso.org/standard/78176.html).
+All mappings are **engineering analogies/requirements inspirations**,
+not scope-specific conformity assessments.
+
+### Minimal local falsification and qualification
+
+The paired unit tests in \`tests/test_pr46_chat_bundle.py\` reject
+false progress from reworded plans, fabricated independent
+acceptance, changed policy/goal, changed exact source revision and
+self-reported evidence. The original ZIP duplicate/path/size/hash
+tests remain in force. \`tools/verify_documentation.py\` continues
+to bind reader-facing claims to source. Before promoting the PR,
+require its final-HEAD CI and real source replay, not merely an
+assistant-generated PASS. Original host/workflow protections remain
+unaltered. Independent gameplay, accessibility, reviewers and
+license review remain \`BLOCKED_EXTERNAL\`.
