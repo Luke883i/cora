@@ -149,6 +149,17 @@ class ProgressiveDocumentationTests(unittest.TestCase):
                 candidate = self.readme[:anchor] + scope.replace(old, altered, 1)
                 self.assertTrue(DOC.verify_development_method_readme(candidate),
                                 "missed adversarial editorial case: " + label)
+        # Two source citations must survive independently. A shared substring
+        # elsewhere in the README is not an acceptable evidence substitute.
+        duplicate = "v3/release-readiness-e2-product-mutants.mjs"
+        split_at = self.readme.index("**Methodological eras from repository history")
+        case_only = self.readme[:split_at].replace(duplicate, "UNSUPPORTED_CASE.mjs", 1) + self.readme[split_at:]
+        self.assertIn("engineering-method-physical-mutant-provenance-drift",
+                      DOC.verify_development_method_readme(case_only))
+        era_only = self.readme[:split_at] + self.readme[split_at:].replace(
+            duplicate, "UNSUPPORTED_ERA.mjs", 1)
+        self.assertIn("engineering-method-physical-mutant-provenance-drift",
+                      DOC.verify_development_method_readme(era_only))
         cosmetic = self.readme.replace("### Two real engineering reference cases",
                                        "### Two real engineering reference cases  ", 1)
         self.assertEqual(DOC.verify_development_method_readme(cosmetic), [])

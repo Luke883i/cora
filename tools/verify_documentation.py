@@ -276,6 +276,18 @@ def verify_development_method_readme(readme: str) -> list[str]:
         errors.append("engineering-method-terms-before-explanation")
     if section.count(chr(96) * 3 + "mermaid\n") != 1 or section.count("-->") != 6:
         errors.append("engineering-method-acceptance-graph")
+    # Do not let duplicate source identifiers in independent narrative sections
+    # hide a deleted or substituted direct file-level falsification reference.
+    ref = "v3/release-readiness-e2-product-mutants.mjs"
+    if "### Two real engineering reference cases" in section and "**Methodological eras" in section:
+        case_section = section.split("### Two real engineering reference cases", 1)[1].split(
+            "**Methodological eras", 1)[0]
+        era_section = section.split("**Methodological eras", 1)[1].split(
+            "**Internal CORA vocabulary", 1)[0]
+        if ref not in case_section or ref not in era_section:
+            errors.append("engineering-method-physical-mutant-provenance-drift")
+    else:
+        errors.append("engineering-method-case-era-scope-missing")
     if any(s in section for s in (
             "CORA automatically writes all code",
             "ten million independent source mutations",
