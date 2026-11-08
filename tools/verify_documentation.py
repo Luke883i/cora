@@ -328,6 +328,29 @@ def verify_multichannel_intro(readme: str) -> list[str]:
     return sorted(set(errors))
 
 
+def verify_compact_document_bridge(guide: str, index: str, architecture: str) -> list[str]:
+    """Reversible documentation assertion, not independent product acceptance."""
+    errors = []
+    guide_facts = (
+        "## Example contract and evidence ladder",
+        "SQLite with versioned schema migrations",
+        "reporters create actions", "reviewers may verify closure",
+        "actual test receipts on the final PR",
+        "REPLAN_STALLED_REPORTS", "not a universal",
+        "independent reviewer", "## LEVEL: contract-to-product",
+    )
+    if any(t not in guide for t in guide_facts):
+        errors.append("cto-deep-guide-proof-loss")
+    index_facts = ("compressed public front door",
+                   "Implementation and historical detail",
+                   "docs/")
+    if any(t not in index for t in index_facts):
+        errors.append("cto-navigation-hierarchy-drift")
+    if "source merged via PR46" not in architecture:
+        errors.append("cto-version-chronology-drift")
+    return sorted(set(errors))
+
+
 def verify_progressive_readme(readme: str) -> list[str]:
     """Verify finite source navigation; not human usability or semantic completeness."""
     errors: list[str] = []
@@ -488,19 +511,10 @@ def verify(root: Path) -> list[str]:
     # Physical line count is diagnostic, not evidence of usability or accuracy.
     # PR42 replaces the former 180-line hard gate with source-bound predicates.
     errors.extend(verify_readme_semantics(readme, root=root))
-    guide = (root / "docs/CONTINUOUS_DEVELOPMENT.md").read_text("utf-8")
-    if any(k not in guide for k in (
-            "## Example contract and evidence ladder",
-            "SQLite with versioned schema migrations",
-            "REPLAN_STALLED_REPORTS", "not a universal",
-            "independent reviewer")):
-        errors.append("cto-deep-guide-proof-loss")
-    index = (root / "docs/INDEX.md").read_text("utf-8")
-    if "compressed public front door" not in index:
-        errors.append("cto-navigation-hierarchy-drift")
-    arch = (root / "docs/ARCHITECTURE.md").read_text("utf-8")
-    if "source merged via PR46" not in arch:
-        errors.append("cto-version-chronology-drift")
+    errors.extend(verify_compact_document_bridge(
+        (root / "docs/CONTINUOUS_DEVELOPMENT.md").read_text("utf-8"),
+        (root / "docs/INDEX.md").read_text("utf-8"),
+        (root / "docs/ARCHITECTURE.md").read_text("utf-8")))
     for path in ("README.md", "docs/AGENT_ADOPTION.md", "docs/CONVERGENT_ASSURANCE.md"):
         if not (root / path).is_file():
             errors.append("missing-procedure:" + path)
