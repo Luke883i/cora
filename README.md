@@ -49,7 +49,7 @@ The dossier separates `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTERNAL`
 
 **1. Specify the outcome.** Turn natural-language intent into actors, boundaries, expected behavior, affected owners and an **AND-dependency graph** of acceptance conditions. Derive tests *backward*: what must be observable for each condition to count as met? An unknown prerequisite is an open obligation, not a percentage of completion. [Contract-to-product example](docs/CONTINUOUS_DEVELOPMENT.md#level-contract-to-product-development-with-bounded-continuation-pr47-candidate).
 
-**2. Change one coherent unit.** The agent uses its authorized tools to create or modify source, tests, assets and workflow files; Git records content-addressed blobs, directory trees, commits and a proposed PR. CORA evaluates their structure and source lineage. New source SHA means **revalidate**; a new contract means **reassess**. Do not add an owner or CI workflow if the existing owner can perform the task.
+**2. Change one coherent unit.** The agent uses its authorized tools to create or modify source, tests, assets and workflow files; Git records content-addressed blobs, directory trees, commits and a proposed PR. CORA evaluates their structure and source lineage. New source SHA means **revalidate**; a new contract means **reassess**. A hash can identify committed bytes but cannot authenticate a reviewer. Do not add an owner or CI workflow if the existing owner can perform the task.
 
 **3. Try to disprove it, then stop intelligently.** Generate *seeded combinations* of relevant fault conditions; compare outcomes against a **separate expected-result rule**; change real source in an isolated checkout when physical mutation testing is authorized. Count detected, surviving and inconclusive mutations separately. Group new failure signatures and inspect a **fixed scenario catalog and final window**: no new signatures is **bounded convergence**, not proof of complete correctness. The portable round report suggests a next obligation or replanning after repeated no-progress rounds; it does not predict N or execute the next step.
 
@@ -66,7 +66,7 @@ Start from [agent adoption](docs/AGENT_ADOPTION.md) and the [R1–R4 DoD](docs/D
 
 ## Interpret a CORA result
 
-A Git SHA identifies source bytes, not the runtime, the CI host or a person's approval. **A hash can identify committed bytes; it cannot authenticate a human reviewer**. A positive result in a finite oracle is not proof of downstream behavior. `NOT_RUN` and `BLOCKED_EXTERNAL` are not PASS. [Evidence boundaries](docs/CONVERGENT_ASSURANCE.md) explain why proof context, scope and provenance matter more than a large green number.
+A Git SHA identifies source bytes, not the runtime, the CI host or a person's approval. **A source digest does not authenticate a human reviewer**. A positive result in a finite oracle is not proof of downstream behavior. `NOT_RUN` and `BLOCKED_EXTERNAL` are not PASS. [Evidence boundaries](docs/CONVERGENT_ASSURANCE.md) explain why proof context, scope and provenance matter more than a large green number.
 
 ## Final Experimental Baseline — merged PR41
 
