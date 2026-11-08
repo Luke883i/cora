@@ -329,6 +329,7 @@ def verify_contract_to_application_readme(readme: str) -> list[str]:
         "CORA guides and checks; the assistant/operator and Git perform these effects.",
         "Git *blob objects*", "Git *trees*", "a *commit*",
         "the **same final PR HEAD commit SHA**", "each new implementation commit changes HEAD",
+        "test commands, toolchain versions, dependencies, fixtures",
         "After merge, the resulting main SHA is different",
         "a **bounded stopping rule**", "not proof that the app has no unseen defects",
         "first unresolved prerequisite",
