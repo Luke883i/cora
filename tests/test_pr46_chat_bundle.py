@@ -7,7 +7,7 @@ import unittest
 import zipfile
 from pathlib import Path
 from cora.chat_bundle import (append_chat_iteration, verify_chat_bundle,
-                              validate_step, _json)
+                              validate_step, _json, load_chat_step)
 
 
 class ChatBundleTests(unittest.TestCase):
@@ -128,6 +128,17 @@ class ChatBundleTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             append_chat_iteration(self.bundle,repo=self.repo,step=self.step(),receipt=self.receipt())
         self.assertEqual(lock.read_text(),'busy')
+
+    def test_input_json_duplicate_key_and_size_rejected(self):
+        p = self.root/'step.json'
+        p.write_text(_json(self.step()).decode('utf-8'),encoding='utf-8')
+        self.assertEqual(load_chat_step(p)['iteration'],1)
+        p.write_text('{"schema":"x","schema":"y"}',encoding='utf-8')
+        with self.assertRaisesRegex(ValueError,"duplicate JSON"):
+            load_chat_step(p)
+        p.write_bytes(b'x' * (8 * 1024 * 1024 + 1))
+        with self.assertRaisesRegex(ValueError,"oversized"):
+            load_chat_step(p)
 
     def test_replay_latest_receipt_must_match(self):
         append_chat_iteration(self.bundle,repo=self.repo,step=self.step(),receipt=self.receipt())
