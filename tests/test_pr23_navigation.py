@@ -143,8 +143,10 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         )
         for label, old, altered in cases:
             with self.subTest(label=label):
-                self.assertIn(old, self.readme)
-                candidate = self.readme.replace(old, altered, 1)
+                anchor = self.readme.index("## How CORA works")
+                scope = self.readme[anchor:]
+                self.assertIn(old, scope, "falsifier must target its declared method section")
+                candidate = self.readme[:anchor] + scope.replace(old, altered, 1)
                 self.assertTrue(DOC.verify_development_method_readme(candidate),
                                 "missed adversarial editorial case: " + label)
         cosmetic = self.readme.replace("### Two real engineering reference cases",
