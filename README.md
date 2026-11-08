@@ -2,46 +2,62 @@
 
 **CORA (Continuous Ontological Repository Assurance)** — **Engineering evidence for AI-assisted software changes.**
 
-CORA is an **offline-first, Python 3.11+ command-line assurance framework** that helps developers and AI coding assistants inspect a Git repository, derive source-bound Definitions of Done (DoD), challenge claims with counterexamples, and produce reproducible pre/post-merge review reports. An AI assistant can propose or write code; CORA helps establish **what the change must demonstrate** before an accountable person accepts it. CORA is **not a coding agent**, a general runtime-equivalence prover, a universal dead-code detector, an automatic code deleter, or a merge authority.
+**What is CORA?** A local, offline-first Python 3.11+ framework that helps developers and AI coding assistants inspect a Git repository, question claims about software changes, and produce reproducible pre/post-merge review reports. It connects **the proposed change** to **the source evidence**, **tests or counterexamples**, and **the work still needed**. The result is a reviewable dossier, **not** a decision or a certificate. CORA is **not a coding agent**.
 
-**Why it matters:** a successful edit, a green test, a Git hash, and a convincing AI explanation are **different kinds of evidence**. None, alone, demonstrates product correctness, independent operational behavior, or permission to deploy. CORA makes the supported claims, missing evidence, falsifiers, and next review obligations visible.
+**Why it matters:** a code edit, a green test, a Git SHA and an AI explanation are different observations. A reviewer needs to know what each observation supports, what could refute it, and what remains unverified.
 
-**Current status:** `v1.experimental`; **`cora-audit 1.0.0a5` is an unmerged source candidate, not a published release**; the historical `1.0.0a4` release remains a draft. The repository includes **merged PR41** and its *Final Experimental Baseline* contract. This is an integrated experimental **source** baseline, **not a stable API or verified public release**, independently qualified product, production service, or release authorization. The `v1.0.0a4` GitHub pre-release was observed as an **unpublished Draft without assets on 7 November 2026**; that dated observation is not a continuously verified host status. Consult [Release status](docs/RELEASE.md) and the [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) before making a release claim.
+```mermaid
+flowchart LR
+    A["Change intent + Git revision"] --> B["CORA<br/>inspect • plan • challenge"]
+    B --> C["Evidence dossier<br/>observations • falsifiers • gaps"]
+    C --> D["Target tests + independent review"]
+```
 
-**Recommended use:** start with an authorized, read-only inspection of an exact Git `BASE` and `HEAD`; use CORA to organize the repository facts, candidate dependencies, counterexamples, source evidence, and unsatisfied verification obligations. Run real target tests and obtain independent review separately. Do not infer automatic remediation, approval, or safe deletion from a report.
+**Three distinct things:** the **product** is the engineering-assurance workflow; the **software** is the local `cora` CLI (Python package `cora-audit`); the **repository** is [Luke883i/cora](https://github.com/Luke883i/cora), containing source, tests, contracts, CI, documentation and history. See [the engineering map](#engineering-map).
 
-**Audience and conditions:** software engineers, coding-agent operators, reviewers, maintainers, and assurance teams with legitimate repository access. The quickstart requires **Python 3.11+ and Git**. Optional target-side execution, ZIP/runtime/Docker experiments, network access, and user-supplied verifiers require distinct authorization and appropriate isolation. CORA does not provide a hosted service or production SLA.
+**Choose an entry point**
 
-**Open source license:** [MIT](LICENSE). The license permits reuse of CORA's code and documentation; it does not grant access to third-party repositories or authenticate a report. See [Security](SECURITY.md) and [Contributing](CONTRIBUTING.md).
+| You want to… | Start here | Output |
+| --- | --- | --- |
+| Inspect a repository | [First five minutes](#first-five-minutes--quickstart) | Git-bound JSON receipt |
+| Review a change or pull request | [One-Run](#one-run--one-command-one-evidence-dossier) · [AI-assisted review](#use-cora-with-an-ai-coding-assistant) | HTML/JSON dossier and open obligations |
+| Continue work in a ChatGPT conversation | [ChatGPT session workflow](#use-cora-during-a-chatgpt-conversation-experimental) | Portable, verified-by-replay iteration ZIP |
+| Investigate a file, dependency or workflow | [Capabilities](#what-works-today) · [File Lab](docs/FILE_LAB.md) | Source-scoped findings, not a safe-deletion verdict |
+
+**Example — ICTC (illustrative, not a new ICTC execution).** Suppose an ICTC pull request changes release-readiness logic. CORA can pin the Git `BASE`/`HEAD`, map source and workflow references, derive the checks that should still hold, and report which evidence is missing. Target-specific test results, actual downstream effects and release approval must be obtained separately. The [documented ICTC source-lineage pilot](docs/GOLD_ASSURANCE.md) is a bounded reference case, **not** a certification of the running ICTC product.
+
+**Current status:** experimental source `cora-audit 1.0.0a5`, now merged with PR46; **not a stable API or verified public release**. As checked on 8 November 2026, GitHub still showed a draft `v1.0.0a4` release without downloadable assets, not a published `v1.0.0a5` package. See [release status and obligations](docs/RELEASE.md) before making a delivery claim.
+
+**Recommended use:** begin with permission to inspect a repository and an exact Git revision; run CORA read-only, inspect its unknowns, then execute appropriate target tests and independent human review separately. No report grants permission to delete, merge or deploy.
+
+**Audience and conditions:** developers, maintainers, reviewers, coding-agent operators and product/assurance owners. Python 3.11+ and Git are needed; target-side execution, Docker, network operations and untrusted ZIPs require separate authorization and containment. There is no hosted CORA service.
+
+**Open source license:** [MIT](LICENSE). This grants reuse of CORA source, not access to others' repositories or approval authority. See [Security](SECURITY.md) and [Contributing](CONTRIBUTING.md).
 
 ## First five minutes — Quickstart
 
-From an **authorized local checkout of CORA**, install its Python distribution and run a read-only inspection:
+From an **authorized local checkout of CORA**, install the CLI; `.` is the repository being inspected (replace it with an authorized target path for another repository).
 
 ```sh
 python -m pip install -e .
 cora --help
-cora version
 cora audit . --output /tmp/cora-worktree.json
 cora snapshot . --revision HEAD --output /tmp/cora-ledger.json
 cora verify-ledger /tmp/cora-ledger.json --repo .
 ```
 
-**Expected artifacts and meaning:**
+- `cora-worktree.json`: working-tree observation, which can include uncommitted changes.
+- `cora-ledger.json`: pinned original-Git commit inventory.
+- `verify-ledger`: consistency replay against Git objects; not a runtime test or reviewer approval.
 
-- `cora-worktree.json`: a bounded inspection of the working tree; uncommitted material can affect this view.
-- `cora-ledger.json`: the original-Git source inventory of the **pinned commit** `HEAD` resolved at execution time.
-- `verify-ledger`: a consistency/replay check of that scoped Git observation, **not** certification of runtime behavior or reviewer identity.
-
-Keep reports outside the source checkout; `/tmp` is a Unix example—choose an appropriate output directory on Windows. Use [`cora COMMAND --help`](docs/CLI_REFERENCE.md) for precise arguments and [Getting started](docs/GETTING_STARTED.md) for the full newcomer walkthrough.
-
+Keep reports **outside** the inspected repository. `/tmp` is an illustrative Unix path; choose a suitable directory on Windows. For installation, target paths and troubleshooting see [Getting started](docs/GETTING_STARTED.md) and [the parser-checked CLI reference](docs/CLI_REFERENCE.md).
 
 ## Use CORA during a ChatGPT conversation (experimental)
 
-**CORA runs as a local Python program, not inside ChatGPT by itself.** ChatGPT can help describe an engineering goal and prepare the next iteration, but it cannot truthfully record a test, a Git commit or a ZIP unless a connected execution environment actually runs CORA. If the assistant cannot access Python and an authorized repository checkout, run these commands locally and upload the resulting ZIP to the chat.
+**ChatGPT can help formulate the engineering intent; CORA must actually be executed.** A chat is not a Python runtime, nor an automatic source of Git receipts. A connected execution tool or local operator must run the following commands.
 
-1. Start in a permitted Git checkout, with Python 3.11+ and Git. Install CORA as shown above. Copy [the complete example iteration](examples/chat-step.example.json) to an output directory outside the checkout and edit its intent, actions, falsification strategy, roadmap, reticular DoD and explicit gaps; do not paste passwords or raw private conversations into it.
-2. Run the **existing One-Run command** to create the normal source dossier and append a numbered round to a portable ZIP:
+1. Copy [the complete iteration example](examples/chat-step.example.json) to `/tmp/chat-step.json`. Edit the intent, actions, falsifiers, roadmap, reticular Definition of Done (**DoD**), gaps and next step. Never include credentials or entire private conversations.
+2. Produce the existing One-Run dossier **and** append one portable ZIP round:
 
 ```sh
 cora process-run . --revision HEAD --process full --one-run --profile comprehensive \
@@ -51,132 +67,89 @@ cora verify-process /tmp/cora-chat-run.json --repo . --one-run \
   --atlas-html /tmp/cora-chat-run.html --chat-bundle /tmp/cora-chat-session.zip
 ```
 
-3. Upload `cora-chat-session.zip` in the next ChatGPT message and ask: *Read the last handoff and DoD, distinguish observations from claims, list open gaps, and propose iteration 2 without declaring a PASS.* If ZIP reading is unavailable, extract and supply `rounds/000001/handoff.md`. For the next round, set `iteration` to `2` in a new step JSON, rerun the command with the same ZIP, and repeat.
-4. A round may have unresolved obligations: **recording BLOCKED is a valid outcome**, not a failed conversation. A change of Git SHA requires renewed verification; older receipts are historical, not automatically reusable.
+3. Attach `cora-chat-session.zip` to the next ChatGPT turn; ask it to read the latest `handoff.md`, report the open DoD/gaps and propose the next falsification step. Increment `iteration` in a **new** step JSON and run again with the same ZIP.
 
-The bundle is **logically append-only**: prior round entries cannot be overwritten through CORA and manifests form a SHA-256 hash chain. ZIP bytes themselves change on append, and hashes are **not a digital signature or proof of independent reviewer identity**. Files and human-supplied statuses remain untrusted until externally verified. Generation requires an explicit CLI invocation for each round; there is no background capture or automatic hook into every ChatGPT turn. On Windows use a local output path instead of `/tmp`. See [Getting started](docs/GETTING_STARTED.md), [CLI reference](docs/CLI_REFERENCE.md) and [Agent adoption](docs/AGENT_ADOPTION.md).
+Each command invocation adds one round. The ZIP is **logically append-only** with a SHA-256 manifest chain, but neither a cryptographic signature nor immutable storage; caller-reported actions are not independently witnessed. The ZIP can be transferred across chats/machines, while exact source replay still needs the corresponding Git repository. There is **no** automatic capture of every chat message. See [ChatGPT onboarding](docs/GETTING_STARTED.md), [agent handoff rules](docs/AGENT_ADOPTION.md) and [CLI syntax](docs/CLI_REFERENCE.md).
 
 ## What works today
 
-CORA's [capability atlas](.cora/assurance/capability-atlas.json) lists **71 declared CLI commands across eight method families**, with implementation and test-source witnesses. This is **not** a claim that 71 product behaviors have been independently executed or certified. The [parser-checked CLI reference](docs/CLI_REFERENCE.md), [capability DoD](.cora/contracts/dod/capability-dod.json), and [complete documentation index](docs/INDEX.md) distinguish available interfaces from qualified outcomes.
+The [capability atlas](.cora/assurance/capability-atlas.json) records **71 declared CLI commands** across eight families. This is a **source inventory**, not 71 independently validated behaviors. The [complete documentation index](docs/INDEX.md), [capability DoD](.cora/contracts/dod/capability-dod.json) and [parser-checked CLI reference](docs/CLI_REFERENCE.md) distinguish implemented interfaces from executed evidence.
 
-| Engineering task | Implemented mechanisms | Boundary of the result |
+| Engineering question | Source-scoped capabilities | Key limitation |
 | --- | --- | --- |
-| **Understand a repository** | Original-Git `snapshot`, ontology, partial Python import graph, manifest adapters, artifact-role classification | Candidate dependencies and ownership declarations; not exhaustive dynamic usage |
-| **Investigate files and debt** | File Lab, archaeology, holistic forensics, debt signals, conservative selection | No universal safe-deletion proof or independently measured defect rate |
-| **Constrain AI-assisted changes** | Intent-bound reticular DoD, contextual guards, negative controls, finite mutant models | Source obligations are not runtime certification or autonomous coding |
-| **Review PRs and merges** | Exact `BASE`/`HEAD`, pre/post-merge checks, effect-capability analysis, evidence invalidation | Source receipts do not authenticate human approval, host enforcement, or deployment |
-| **Audit CI/CD** | Workflow inventory, local caller/duplicate checks, conservative `BASE → HEAD` rationalization | External consumers and equivalent runtime behavior remain unverified; no automatic retirement |
-| **Correlate assurance methods** | Ontology, source witnesses, Git replay, bounded hypotheses and convergence graphs | Correlation is not independent behavioral proof or causality |
-| **Run separately authorized experiments** | Controlled document/file transformations, staged mutations, optional runtime/ZIP intake | Explicit opt-in, real oracles, and externally verified containment are required |
+| What is in this repository? | Git inventory, declared product/software ontology, Python import graph and artifact roles | Dynamic and external dependencies may be invisible |
+| What changed, and who could be affected? | File Lab, software archaeology, dependency paths, debt and workflow inspection | A missing static reference never proves safe deletion |
+| What must a coding-agent change demonstrate? | Intent-bound DoD, dependency checks, falsifiers, bounded physical and model-based mutations | A synthetic mutant count is not executed target-code coverage |
+| Which checks actually ran? | Comprehensive One-Run, receipts, source replay and portable chat handoff | `NOT_RUN` and `BLOCKED` are never equivalent to PASS |
+| What is ready for review? | Pre/post-merge source reports, evidence lineage, conservative CI impact analysis | No automatic merge, deployment or release authorization |
 
-**Five convergent assurance goals:** Semantic Truth, AI Reasoning, Behavioral Proof, Continuous Semantic Evolution, and Unified Assurance. `method-synthesize --synergic` correlates their bounded source routes; `--integrated` joins documentation, **18 README claim traces**, and the **71 declared interfaces**. It does **not** invoke an AI provider by default or replace One-Run:
+**Five convergent assurance goals:** Semantic Truth, AI Reasoning, Behavioral Proof, Continuous Semantic Evolution and Unified Assurance. They are internal method groupings, not independent proof of correctness. `method-synthesize --synergic` correlates bounded source reports; `--integrated` also links documentation and 18 README source-claim traces. See [Convergent assurance](docs/CONVERGENT_ASSURANCE.md) for the optional command, R1–R4 stages and source/behavior distinction.
 
-```sh
-cora method-synthesize . --synergic --base-sha BASE_SHA \
-  --execute-source-probes --output REPORT --ai-request-output AI_PLAN
-```
-
-Use [Convergent assurance](docs/CONVERGENT_ASSURANCE.md) to interpret the generated plan and its DoD. AI hypotheses remain untrusted until checked against original sources and independent observations.
-
-**Historical and engineering-knowledge capabilities:** merged PR38 supplied an original-Git register of **37 PRs and 305 commit deltas**, including the **unmerged PR34** exception; **28 former paths** are classified as relocated or historical, not automatically removable. It supports PR/commit drill-down, historical path reconciliation, and future-change obligations. That frozen PR01–37 ledger does **not** cover every later PR. Merged PR40 added static/dynamic-boundary knowledge and debt checks: dynamic callsites are **not executed runtime coverage**, and its **10 million** finite scenario evaluations are **not 10 million distinct code mutations**. See the [historical register](.cora/assurance/history/pr01-37-commit-diff-audit.json), [history DoD](.cora/contracts/dod/history-convergence-dod.json), [engineering knowledge DoD](.cora/contracts/dod/engineering-knowledge-dod.json), and [engineering debt guide](docs/ENGINEERING_DEBT.md).
-
-**Independent product qualification framework:** merged PR39 introduced four distinct gates—**behavior, usability, isolation, and effective governance**. The [native-Git reference](tools/independent_git_oracle.py) and [read-only host readback](tools/governance_readback.py) can test bounded properties, but cannot authenticate independent operators, demonstrate maintained-target performance, or approve release. See the [qualification DoD](.cora/contracts/dod/independent-qualification-dod.json).
+**Historical evidence:** the [PR01–37 Git ledger](.cora/assurance/history/pr01-37-commit-diff-audit.json) freezes 37 PRs, 305 commit deltas and the unmerged PR34 exception; it does not continuously cover later PRs. Methods include finite seeded fault models and some disposable physical mutants: large scenario counts are **not** large numbers of real target-code executions. See [engineering debt](docs/ENGINEERING_DEBT.md) and [qualification gates](.cora/contracts/dod/independent-qualification-dod.json).
 
 ## One-Run — one command, one evidence dossier
 
-CORA's primary integrated assurance entry point is the **existing** `process-run --one-run --profile comprehensive`. It inventories known methods, parser/dispatch commands, tests, verifier tools, workflows, DoDs, and genealogy. On its default safe profile, **only eligible PR36 source-analysis methods actually run**; all other registered activities receive explicit `NOT_RUN` or `BLOCKED` reasons. A catalog of 71 commands is not an execution log of 71 commands.
+For a consolidated source-inspection report, use the **existing** orchestration entry point. It records observed eligible methods and explicitly distinguishes those **reused**, `NOT_RUN` or `BLOCKED`; it does **not** execute every declared command.
 
 ```sh
 cora process-run . --revision HEAD --process full --one-run --profile comprehensive \
   --output /tmp/cora-run.json --atlas-json /tmp/cora-run-machine.json \
   --atlas-html /tmp/cora-run.html --evidence-dir /tmp/cora-evidence
-
 cora verify-process /tmp/cora-run.json --repo . --one-run \
   --atlas-json /tmp/cora-run-machine.json --atlas-html /tmp/cora-run.html \
   --evidence-dir /tmp/cora-evidence
 ```
 
-**How to read the result:** open `/tmp/cora-run.html`; start with **Review in three questions** (conclusion, evidence, falsifier), then inspect which activities were **executed, reused, blocked, or not run**; trace a claimed outcome to its Git SHA, receipt and remaining DoD. The files have distinct purposes:
-
-- `cora-run.json` — execution receipt and contextual outcome.
-- `cora-run-machine.json` — machine-readable integrated Atlas.
-- `cora-run.html` — browsable human/AI Atlas and drill-down.
-- `cora-evidence/` — optional local content-addressed artifacts.
-
-`verify-process` checks bounded JSON/HTML/Git replay; matching output does **not** imply external attestation. The smaller original One-Run view can be used without `--profile comprehensive`. CORA-only unit tests require opt-in with `--execute-self-tests`; the comprehensive authorization flow additionally uses `--authorization-file CONSENT.json` tied to the exact commit, tree, and checkout. This is not a hostile-code sandbox or permission to execute untrusted target tests.
-
-References: [One-Run DoD](.cora/contracts/dod/one-run-dod.json), [55-node integrated DoD](.cora/contracts/dod/integrated-one-run-dod.json), [complete CLI syntax](docs/CLI_REFERENCE.md), and [Getting started](docs/GETTING_STARTED.md). The integrated DoD does not become externally accepted merely because its source checks pass.
+Open `/tmp/cora-run.html`: start with the conclusion, its evidence and its falsifier; follow each result back to its commit, method and unresolved DoD. The JSON is the machine-readable receipt; the HTML is an offline reading surface. Replay checks source-derived content, not independent runtime or operator identity. Optional self-tests require explicit authorization. See [the integrated One-Run DoD](.cora/contracts/dod/integrated-one-run-dod.json).
 
 ## How CORA works
 
-```text
-Human engineering intent + exact Git BASE / HEAD
-    ↓
-Git inventory + declared product / software / ownership
-    ↓
-Reverse-derived DoD + bounded intended change + falsifiers
-    ↓
-Actual authorized tests, source outcomes, receipts and replay
-    ↓
-Outstanding runtime, user and governance obligations
-    ↓
-Independent reviewer / host authorization (outside CORA)
-    ↓
-Actual merged SHA + post-merge invalidation / reassessment
-```
+CORA follows one bounded review loop, not a new coding executor:
 
-CORA distinguishes **provenance, inference, runtime observation, and authorization**. A hash can identify committed bytes; it cannot authenticate a human reviewer or demonstrate target behavior. A test source file is not evidence that its tests ran. Source replay is not truth, and a pass within a finite model is not a general product certificate.
+1. **Specify** the intended change, acceptance criterion and independent test oracle.
+2. **Observe** exact Git `BASE` and `HEAD`, declared owners and candidate dependencies.
+3. **Derive and challenge** the DoD: identify conditions that could refute the claim, run only authorized checks and record `PASS_SCOPED`, `REFUTED`, `NOT_RUN` or blockers.
+4. **Reassess** open gaps before independent review; after merge, inspect the actual merged commit instead of reusing stale PR-head evidence.
+
+**A hash can identify committed bytes; it cannot authenticate a human reviewer** or prove runtime behavior. Test files, model-based saturation and source replay are different from observing executed target tests. CORA does not silently elevate a proposed action or a missing dependency to a verified conclusion.
 
 ## Use CORA with an AI coding assistant
 
-Give your assistant an **authorized CORA checkout** and a **separate target repository**. A GitHub URL alone does not install CORA or enforce governance. For contextual source review, the target must include its **own committed** `cora.ontology.json` and `.cora/continuous-policy.json` in the `BASE` revision. Define the engineering intent and the acceptance oracle, then run:
+The assistant can plan, write and propose; CORA provides **independent, source-scoped constraints** for review. Give the assistant authorized access to CORA and a separate target checkout. Contextual pre-merge assessment requires the target's own committed `cora.ontology.json` and `.cora/continuous-policy.json` at `BASE`, plus an explicit engineering intent.
 
 ```sh
-cora convergence-plan --contract /path/to/cora/.cora/contracts/dod/convergence-dod.json
-
 cora dev-premerge /path/to/target --base BASE_SHA --head PR_HEAD_SHA \
-  --contextual --intent "Ship the bounded change with its acceptance tests" \
+  --contextual --intent "Bounded change with acceptance criteria" \
   --convergence-contract /path/to/cora/.cora/contracts/dod/convergence-dod.json \
   --output /tmp/cora-premerge.json
-
 cora verify-contextual-gate /tmp/cora-premerge.json --repo /path/to/target \
-  --intent "Ship the bounded change with its acceptance tests" \
+  --intent "Bounded change with acceptance criteria" \
   --convergence-contract /path/to/cora/.cora/contracts/dod/convergence-dod.json
 ```
 
-**The same intent is required for replay**. Without the matching `--intent`, the contextual gate is `DEBT_BLOCKED`. These source checks do not implicitly execute tests from the target repository or prove that its runtime is correct. Run real tests and obtain independent review separately. Evaluate the **actual merged commit** again rather than reusing the PR-head receipt.
-
-Follow [Agent adoption](docs/AGENT_ADOPTION.md), [Agent instructions](AGENTS.md), [Continuous development](docs/CONTINUOUS_DEVELOPMENT.md), and the [R1–R4 DoD](docs/DOD_PR20_CONVERGENCE.md).
+**The same intent is required for replay.** An absent/mismatched intent remains blocked. Run real tests and obtain independent review separately. The [R1–R4 DoD](docs/DOD_PR20_CONVERGENCE.md), [agent adoption guide](docs/AGENT_ADOPTION.md) and [continuous development method](docs/CONTINUOUS_DEVELOPMENT.md) explain preparatory plans, premerge/postmerge duties and real behavioral oracles.
 
 ## Interpret a CORA result
 
-| Status | What it means | What it does **not** mean |
+| Status | Read it as | Do not infer |
 | --- | --- | --- |
-| `PASS_SCOPED` / `EXECUTED_SCOPED` | A named bounded obligation passed or an eligible activity actually ran | Entire-product correctness or independent runtime validation |
-| `REUSED_SCOPED` | A source-scoped, lineage-compatible receipt was reused | A new execution or universally portable evidence |
-| `NOT_RUN` | An activity is inventoried but has not executed | PASS or failure |
-| `BLOCKED` / `DEBT_BLOCKED` | Necessary context or proof is unavailable or inconsistent | A defect has necessarily occurred |
-| `REFUTED` | A specific claim conflicts with an observed counterexample | All methods or other claims are invalid |
-| `BLOCKED_EXTERNAL` | Independent target, host, reviewer, isolation, or user evidence is missing | Authorization to merge, deploy, delete, or publish |
+| `PASS_SCOPED` / `EXECUTED_SCOPED` | Named bounded source obligation passed or activity ran | Entire product works |
+| `REUSED_SCOPED` | Earlier compatible source receipt reused | Fresh independent test |
+| `NOT_RUN` | Inventoried but not executed | PASS or failure |
+| `BLOCKED` / `DEBT_BLOCKED` | Required context or evidence missing/inconsistent | Proven defect |
+| `REFUTED` | Specific claim has a counterexample | Every related claim is false |
+| `BLOCKED_EXTERNAL` | Real target, user, host, reviewer or isolation proof missing | Permission to deploy, merge or release |
 
-**Example of interpretation (illustrative, not a generated CI receipt):** a report that inventories a target test as `NOT_RUN` has proved the **test was identified**, not that it passed. A matching Git replay can establish continuity of the reported source observation, not who approved it. Only independently obtained evidence can close the applicable external gate. The exact status vocabulary depends on the report schema.
+**Example (illustrative, not a generated CI receipt):** `NOT_RUN` for a target test proves only that the test was identified, not that it passed. Do not conflate the lexical state `PASS_SCOPED` with a product acceptance decision.
 
 ## Final Experimental Baseline — merged PR41
 
-PR41 formalizes a **conclusive experimental source baseline**, not a published or independently qualified final product. Its [30-node noncompensatory DoD](.cora/contracts/dod/final-experimental-dod.json) contains **15 SOURCE leaves, 7 EXTERNAL leaves, and 8 aggregate AND gates**. Three pillars organize the stop point:
+**Merged PR41** established a source-level experimental baseline, **not** independently qualified product behavior or a published release. Its [30-node final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) has **15 SOURCE leaves, 7 EXTERNAL leaves, and 8 aggregate AND gates**. Original-Git document checks, an implementation comparison using **two controlled physical Git repositories**, and host/reviewer governance remain distinct. Tests on those controlled fixtures are not tests on independently maintained external applications.
 
-1. **Git-to-document truth:** the current README, docs, CLI, artifact roles, and evidence claims must agree with committed Git. Expected measurements include **48/48 indexed Markdown files**, classification of all tracked files, **71/71 CLI entries**, zero known false current-state claims, and unmodified historical ADRs/audits.
-2. **Actually observed bounded behavior:** the real CORA CLI is compared with a separately implemented native-Git oracle on **two controlled physical Git repositories**, including changed commits, stale references, and negative controls. This is independent **implementation**, not independent **operator validation** or a benchmark on two maintained external targets.
-3. **Effective governance:** branch restrictions, required checks, distinct non-author review, runtime isolation, and release authorization must be demonstrated **on their actual hosts by authorized independent operators**. Workflow files and source contracts alone cannot enforce these conditions.
+The finite campaign preregisters **16 realistic fault families** and **2,517 preregistered zero-to-fourway masks** among one million deterministic evaluations: these are **not one million independent source mutations**. The independent-qualification framework separates behavior, usability, isolation and effective hosting governance.
 
-The PR41 source campaign includes **1,000,000 deterministic finite-model evaluations**, **four seeds**, **16 realistic fault families**, and **2,517 preregistered zero-to-fourway masks**; it requires zero model/reference disagreements and zero unsafe authorization promotions, with reproducible digest replay. These are not one million independent source mutations, target executions, or user sessions.
+**External acceptance remains `BLOCKED_EXTERNAL`** pending independently maintained target tests, unfamiliar-user usability trials, verified isolation, enforced host rules, independent review and release-manager sign-off. **Release distinction:** the merged `1.0.0a5` source is not a published, approved wheel/sdist/tag. Check [the operator-controlled release procedure](docs/RELEASE.md) for exact current requirements; a source PASS does not authorize publication.
 
-**External acceptance remains `BLOCKED_EXTERNAL`** until at least two independently maintained target repositories are tested against preregistered oracles; host isolation is independently witnessed; **at least eight unfamiliar users** attempt **three tasks each**, with **≥80% successful completion and zero critical evidence-status misinterpretations**; GitHub actually enforces required checks and an authenticated non-author reviewer approves; and a release manager verifies the final merged SHA against the tag, wheel, sdist, provenance, and rollback drill.
-
-**Release distinction:** `1.0.0a5` is a proposed source-package alpha identity, not a publication. Historically, `1.0.0a4` was an alpha package identity. As observed on **7 November 2026**, the existing GitHub `v1.0.0a4` pre-release remained an **unpublished Draft with zero assets** and no verified `refs/tags/v1.0.0a4` ref. This is a dated observation, not a permanent claim about the host. A Draft targeting mutable `main` is not a verified frozen artifact. Any subsequent source change invalidates earlier SHA-bound freeze receipts. CORA cannot self-approve, merge, tag, publish, destructively clean up, or authorize release.
-
-Before a public experimental pre-release, follow the [release operator protocol](docs/RELEASE.md), [experimental product DoD](docs/DOD_V1_EXPERIMENTAL.md), and [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json). A source pass and a human release decision are different events.
 
 ## Documentation by goal
 
