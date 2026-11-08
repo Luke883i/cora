@@ -1,10 +1,10 @@
 # CORA documentation — navigate by goal
 
-Start at the [README](../README.md) for the current product promise, an executable first look and the limits of what CORA proves. This index is **navigation**, not a release authority or an independent witness.
+Start at the [README](../README.md): one product promise, a three-step engineering method and two source-linked project examples. This index routes readers by task, method and evidence class; it is navigation, not a release authority or an independent witness.
 
 ## How to navigate
 
-The [README](../README.md) is the **one public-facing macro-map**: product promise, recommended use, safe limits, MIT licensing and five optional expandable lenses. This file remains the **exhaustive 48-document index**, not a second landing page. Read in the order: README → user task → current method → applicable DoD and source evidence → historical ADR/audit only when needed. Links and document classifications are checked by `tools/verify_documentation.py`; navigation alone does not establish user comprehension.
+The [README](../README.md) is the **compressed public front door**: outcome, method, concrete project histories, first use and boundaries. Implementation and historical detail belongs in the linked guides. This file remains the **exhaustive 48-document index**, not a second landing page. Read in the order: README → user task → current method → applicable DoD and source evidence → historical ADR/audit only when needed. Links and document classifications are checked by `tools/verify_documentation.py`; navigation alone does not establish user comprehension.
 
 ## Choose your path
 

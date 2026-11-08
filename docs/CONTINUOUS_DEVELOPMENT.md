@@ -268,3 +268,43 @@ require its final-HEAD CI and real source replay, not merely an
 assistant-generated PASS. Original host/workflow protections remain
 unaltered. Independent gameplay, accessibility, reviewers and
 license review remain \`BLOCKED_EXTERNAL\`.
+
+
+## Example contract and evidence ladder — portable corrective-action app
+
+**Historical PR47 README example, retained here as a hypothetical design,
+not an executed build.** The user asks for a local corrective-action
+tracker where reporters create actions, owners implement them, and only
+reviewers may verify closure. Progress must survive restart; concurrent
+edits must not silently overwrite state; external effects require consent.
+
+Minimum expressive contract: a local browser UI and JSON API;
+authenticated reporter/owner/reviewer roles; SQLite with versioned schema
+migrations; record `{id, title, owner, status, evidence_ref, revision}`;
+workflow `OPEN → IN_PROGRESS → VERIFIED`; optimistic concurrency and
+persistent readback; no cloud or deployment; test, usage guide and rollback
+included in a PR. An essential unknown is a blocking question, not
+permission to guess.
+
+**Backward engineering:** verify-only-by-reviewer → deny an unauthorized
+transition → persist/reload state → reject stale versions → test restart →
+inspect role permissions → require actual test receipts on the final PR
+HEAD and independent reviewer decision. Each leaf is mandatory and
+noncompensatory; a graph or a green simulation does not close it.
+
+**Source/materialization:** the authorized coding agent writes app,
+migrations, tests and docs → Git records exact blob bytes, directory
+tree, commit and proposed PR → CI and target tests run on the same
+candidate SHA → physical source mutants challenge permission/persistence
+oracles → PR documents actual receipts, survivors, gaps and rollback.
+New commits invalidate prior final-HEAD test conclusions; merged main
+requires its own reinspection. SHA equality never authenticates a test
+host or human.
+
+**Portable round:** an explicitly executed
+`cora process-run --one-run --chat-step ... --chat-bundle ...`
+adds source-scoped ZIP lineage. The read-only continuation projection
+suggests REVALIDATE_CHANGED_SOURCE, REVIEW_CHANGED_CONTRACT or
+REPLAN_STALLED_REPORTS when three consecutive source/evidence
+snapshots are unchanged. This is a replanning signal, not a universal
+semantic convergence theorem, autonomous execution or a product PASS.
