@@ -120,7 +120,7 @@ Each command invocation adds one round. The ZIP is **logically append-only** wit
 
 ## What works today
 
-The [capability atlas](.cora/assurance/capability-atlas.json) records **71 declared CLI commands** across eight families. This is a **source inventory**, not 71 independently validated behaviors. The [complete documentation index](docs/INDEX.md), [capability DoD](.cora/contracts/dod/capability-dod.json) and [parser-checked CLI reference](docs/CLI_REFERENCE.md) distinguish implemented interfaces from executed evidence.
+The [capability atlas](.cora/assurance/capability-atlas.json) records **71 declared CLI commands** across eight families. This is a **source inventory**, not a claim that 71 product behaviors have been independently executed or certified. The [complete documentation index](docs/INDEX.md), [capability DoD](.cora/contracts/dod/capability-dod.json) and [parser-checked CLI reference](docs/CLI_REFERENCE.md) distinguish implemented interfaces from executed evidence.
 
 | Engineering question | Capability and important limit |
 | --- | --- |
@@ -243,7 +243,7 @@ cora verify-contextual-gate /tmp/cora-premerge.json --repo /path/to/target \
 
 ## Final Experimental Baseline — merged PR41
 
-**Merged PR41** established a source-level experimental baseline, **not** independently qualified product behavior or a published release. Its [30-node final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) has **15 SOURCE leaves, 7 EXTERNAL leaves, and 8 aggregate AND gates**. Original-Git document checks, an implementation comparison using **two controlled physical Git repositories**, and host/reviewer governance remain distinct. Tests on those controlled fixtures are not tests on independently maintained external applications.
+**Merged PR41** established a source-level experimental baseline, **not** independently qualified product behavior or a published release. Its 30-node [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) has **15 SOURCE leaves, 7 EXTERNAL leaves, and 8 aggregate AND gates**. Original-Git document checks, an implementation comparison using **two controlled physical Git repositories**, and host/reviewer governance remain distinct. Tests on those controlled fixtures are not tests on independently maintained external applications.
 
 The finite campaign preregisters **16 realistic fault families** and **2,517 preregistered zero-to-fourway masks** among one million deterministic evaluations: these are **not one million independent source mutations**. The independent-qualification framework separates behavior, usability, isolation and effective hosting governance.
 
