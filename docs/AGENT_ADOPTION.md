@@ -56,3 +56,39 @@ Stop claims of acceptance when the target ontology is missing, ownership is ambi
 
 When using CORA in a chat-assisted workflow, distinguish the conversation's proposed actions from actual source evidence. Prepare a strict iteration JSON from `examples/chat-step.example.json`, execute **the same** `cora process-run --one-run --profile comprehensive` with `--chat-step` and `--chat-bundle`, then verify with `cora verify-process --one-run --chat-bundle`. Upload or transfer the ZIP to the next chat, read the latest `handoff.md`, and repeat with the next sequence number. Never claim automatic per-turn capture, external authorization, a genuine test execution, or chat-history completeness. See [Getting started](GETTING_STARTED.md).
 
+
+
+## Phase-gated coding: adapt N without adding a coding agent to CORA
+
+The human provides an adequately expressive A0 contract: intended behavior,
+actors, data and state transitions, constraints, admissible effects and
+acceptance criteria. For the LEVEL web-game demonstration, see
+[the bounded full method](CONTINUOUS_DEVELOPMENT.md#level-contract-to-product-development-with-bounded-continuation-pr47-candidate).
+The coding assistant proposes an AND-DAG of acceptance obligations
+**backwards from the target outcome**, then chooses one reversible,
+reviewable vertical slice. It writes code/files with **its own authorized
+tools**; CORA does not write source, grant policy authority or merge.
+
+After each explicitly invoked source-bound One-Run the **existing**
+portable ZIP includes the current plan and proof gaps; replay now also
+returns read-only continuation advice: first unresolved node,
+candidate falsification action, round capacity, reported-contract drift,
+exact source-change signal or three-round source/evidence stagnation.
+It never predicts a final count N or grants execution permission.
+A human saying **“proceed”** is authority for a previously agreed
+bounded stage only, not general permission to execute untrusted code,
+modify protected workflows, publish, install providers or merge.
+
+In the new game target, make the first slice a playable movement and
+checkpoint demonstration, not an invented six-level PASS. Each slice
+should include positive/negative test oracles, Git commit identity,
+target behavior readback, open gaps and rollback, plus build and
+dependency/environment provenance. Distinguish model-mask saturation
+from real code mutation and browser playback.
+
+**No extra orchestrator:** reuse \`cora convergence-plan\`,
+\`process-run --one-run --chat-step --chat-bundle\`, \`verify-process\`,
+the canonical reticulum and the existing protected-host policy.
+Never overwrite a target product's ontology or an original CI owner
+with CORA's project identity. See also [the README](../README.md),
+[CLI reference](CLI_REFERENCE.md) and [reticular contracts](../.cora/contracts/index.json).

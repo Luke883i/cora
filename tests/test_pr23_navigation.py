@@ -83,6 +83,139 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         self.assertEqual(self.readme.count("<details>"), 5)
         self.assertIn("[MIT](LICENSE)", self.readme)
 
+
+    def test_multichannel_intro_adversarial_and_harmless_edits(self):
+        """Twelve content mutations; no implied human usability certification."""
+        self.assertEqual(DOC.verify_multichannel_intro(self.readme), [])
+        # Formatting variation does not change the product claim.
+        formatted = self.readme.replace(
+            "**Why it matters:**", "*Why it matters:*", 1)
+        issues = DOC.verify_multichannel_intro(formatted)
+        self.assertNotIn("intro-length-out-of-budget", issues)
+        cases = (
+            ("product-object", "the proposed change", "a marketing slogan"),
+            ("no-source", "the source evidence", "unverified assertions"),
+            ("diagram-input", "Change intent + Git revision", "Some user text"),
+            ("diagram-last-gate", "Target tests + independent review", "Automatic approval"),
+            ("route-terminal", "Inspect a repository", "Discover a website"),
+            ("route-review", "Review a change or pull request", "Watch a video"),
+            ("route-chat", "ChatGPT conversation", "An unrelated app"),
+            ("ictc-example", "illustrative, not a new ICTC execution", "certifies ICTC"),
+            ("ictc-proof", "release approval must be obtained separately", "release is approved"),
+            ("merged-source", "now merged with PR46", "unmerged source candidate"),
+            ("chat-bundle", "--chat-bundle", "--chat-magic"),
+            ("chat-capture", "automatic capture of every chat message", "self-running assistant"),
+        )
+        for name, old, new in cases:
+            with self.subTest(name=name):
+                self.assertIn(old, self.readme)
+                changed = self.readme.replace(old, new, 1)
+                self.assertNotEqual(changed, self.readme)
+                self.assertNotEqual(DOC.verify_multichannel_intro(changed), [])
+        first = self.readme.index("--chat-bundle")
+        second = self.readme.index("--chat-bundle", first + 1)
+        replaced = self.readme[:second] + "--missing-chat-bundle" + self.readme[second + len("--chat-bundle"):]
+        self.assertIn("chat-zip-produce-and-replay-binding-incomplete",
+                      DOC.verify_multichannel_intro(replaced))
+
+
+    def test_engineering_method_semantic_falsifiers(self):
+        self.assertEqual(DOC.verify_development_method_readme(self.readme), [])
+        cases = (
+            ("goal", "intention into a testable specification", "a marketing slogan"),
+            ("scope", "scope and exclusions", "marketing scope"),
+            ("graph", "directed acyclic graph", "unordered notes"),
+            ("all-gates", "only when **all** are met", "when one check passes"),
+            ("open-proof", "An unresolved leaf", "An automatically approved leaf"),
+            ("slice", "small, reversible change unit", "an irreversible rewrite"),
+            ("minimum", "mathematically minimal implementation", "magically minimal"),
+            ("physical", "disposable modified checkout", "production environment"),
+            ("survivors", "surviving, timed-out or inconclusive", "all killed"),
+            ("combination", "single faults and selected combinations", "random unrelated text"),
+            ("seed", "recorded seeds", "unrecorded samples"),
+            ("oracle", "expected-result rule", "marketing confidence"),
+            ("saturation", "zero new signatures", "zero real bugs ever"),
+            ("bounded", "fixed catalog and window", "any domain forever"),
+            ("model-source", "ten million Git commits", "ten million verified source commits"),
+            ("ictc", "docs/SATURATION_M_PLUS_100.md", "NO_SATURATION_EVIDENCE.md"),
+            ("ictc-physical", "v3/release-readiness-e2-product-mutants.mjs", "NO_REAL_MUTANTS.mjs"),
+            ("ikant", "docs/CORA_PR_A_BACKLOG.md", "NO_IKANT_EVIDENCE.md"),
+            ("unknown", "UNKNOWN", "CERTIFIED_UNUSED"),
+            ("cli", "not evidence that CORA's CLI executed", "proof that CORA executed"),
+            ("agent", "does not independently write a feature", "independently writes software"),
+            ("human", "Where execution tools are absent", "All execution is automatic"),
+            ("review", "actual merged SHA", "old PR head only"),
+        )
+        for label, old, altered in cases:
+            with self.subTest(label=label):
+                anchor = self.readme.index("## How CORA works")
+                scope = self.readme[anchor:]
+                self.assertIn(old, scope, "falsifier must target its declared method section")
+                candidate = self.readme[:anchor] + scope.replace(old, altered, 1)
+                self.assertTrue(DOC.verify_development_method_readme(candidate),
+                                "missed adversarial editorial case: " + label)
+        # Two source citations must survive independently. A shared substring
+        # elsewhere in the README is not an acceptable evidence substitute.
+        duplicate = "v3/release-readiness-e2-product-mutants.mjs"
+        split_at = self.readme.index("**Methodological eras from repository history")
+        case_only = self.readme[:split_at].replace(duplicate, "UNSUPPORTED_CASE.mjs", 1) + self.readme[split_at:]
+        self.assertIn("engineering-method-physical-mutant-provenance-drift",
+                      DOC.verify_development_method_readme(case_only))
+        era_only = self.readme[:split_at] + self.readme[split_at:].replace(
+            duplicate, "UNSUPPORTED_ERA.mjs", 1)
+        self.assertIn("engineering-method-physical-mutant-provenance-drift",
+                      DOC.verify_development_method_readme(era_only))
+        cosmetic = self.readme.replace("### Two real engineering reference cases",
+                                       "### Two real engineering reference cases  ", 1)
+        self.assertEqual(DOC.verify_development_method_readme(cosmetic), [])
+
+
+    def test_application_contract_phase_gates_and_real_era_examples(self):
+        """Negative editorial controls: not an executed app, human trial or acceptance."""
+        self.assertEqual(DOC.verify_contract_to_application_readme(self.readme), [])
+        cases = (
+            ("roles", "Only a reviewer may mark VERIFIED", "Any actor may mark VERIFIED"),
+            ("unauthorized", "Unauthorized verification is denied; state stays unchanged",
+             "Unauthorized verification persists as verified"),
+            ("identity", "Authenticated local accounts with assigned roles",
+             "Anonymous requests trusted without checking"),
+            ("durability-design", "SQLite with versioned schema migrations",
+             "Unversioned volatile in-memory table"),
+            ("concurrency", "Reject concurrent updates using the record revision",
+             "Concurrent updates silently overwrite one another"),
+            ("consent", "Authorized local checkout; external effects require new consent",
+             "Any cloud or protected effect is preapproved"),
+            ("stage-sequence", "2. **Derive tests backward:**", "2. **Create a logo:**"),
+            ("missing-gates", "first unresolved prerequisite", "automatically accepted prerequisite"),
+            ("blob-precision", "Git *blob objects*", "Magic metadata"),
+            ("commit-identity", "the **same final PR HEAD commit SHA**", "any previous SHA"),
+            ("SHA-drift", "each new implementation commit changes HEAD",
+             "old HEAD always remains valid"),
+            ("postmerge", "After merge, the resulting main SHA is different",
+             "postmerge always equals the original PR HEAD"),
+            ("human-phase", "one scoped, reversible stage",
+             "unlimited autonomous execution"),
+            ("no-blanket", "not blanket consent", "irreversible permissions granted"),
+            ("finite", "a **bounded stopping rule**", "universal proof of correctness"),
+            ("ICTC-intent", "ICTC [#212]", "ICTC origin unknown"),
+            ("ICTC-physical", "spoofs the health/integrity readback", "no real mutant"),
+            ("ikant-hygiene", "unknown dynamic consumers", "confirmed unused code"),
+            ("ikant-recovery", "restoration of 11 unregistered deletions",
+             "automatic approval of all deletions"),
+            ("method-only", "not certify that CORA's CLI ran", "proves CORA CLI ran"),
+        )
+        for label, former, mutated in cases:
+            with self.subTest(label=label):
+                self.assertIn(former, self.readme)
+                candidate = self.readme.replace(former, mutated, 1)
+                self.assertNotEqual(candidate, self.readme)
+                self.assertTrue(DOC.verify_contract_to_application_readme(candidate),
+                                "undetected contract-to-PR editorial mutant: " + label)
+        benign = self.readme.replace(
+            "## Worked example — from a user contract to an application PR",
+            "## Worked example — from a user contract to an application PR  ", 1)
+        self.assertEqual(DOC.verify_contract_to_application_readme(benign), [])
+
     def test_thousand_adversarial_editorial_and_reader_vectors(self):
         family_totals: dict[str, dict[str, int]] = {}
         seen = set()
