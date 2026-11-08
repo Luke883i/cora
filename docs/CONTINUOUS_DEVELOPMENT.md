@@ -279,8 +279,7 @@ reviewers may verify closure. Progress must survive restart; concurrent
 edits must not silently overwrite state; external effects require consent.
 
 Minimum expressive contract: a local browser UI and JSON API;
-authenticated reporter/owner/reviewer roles; SQLite with versioned schema
-migrations; record `{id, title, owner, status, evidence_ref, revision}`;
+authenticated reporter/owner/reviewer roles; SQLite with versioned schema migrations; record `{id, title, owner, status, evidence_ref, revision}`;
 workflow `OPEN → IN_PROGRESS → VERIFIED`; optimistic concurrency and
 persistent readback; no cloud or deployment; test, usage guide and rollback
 included in a PR. An essential unknown is a blocking question, not
