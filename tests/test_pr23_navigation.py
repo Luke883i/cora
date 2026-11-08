@@ -286,7 +286,8 @@ class ProgressiveDocumentationTests(unittest.TestCase):
                 elif family == 6:
                     r = mutation(r, "functional attention", "neural conscious " + suffix)
                 elif family == 7:
-                    g = mutation(g, "REPLAN_STALLED_REPORTS", "autoaccept-" + suffix)
+                    g = mutation(g, "## Example contract and evidence ladder",
+                                 "## Untraceable contract " + suffix)
                 elif family == 8:
                     i = mutation(i, "compressed public front door", "alternative-sot-" + suffix)
                 else:
