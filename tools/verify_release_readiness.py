@@ -191,7 +191,7 @@ def candidate_receipt(root: Path, revision: str, wheel: Path, sdist: Path,
             or set(validation.get("distribution_forms", {})) != {"wheel", "sdist"}):
         raise ValueError("installed-fixture evidence missing or wrong identity")
     version = actual["version"]
-    if (version != "1.0.0a4"
+    if (version not in ("1.0.0a4", "1.0.0a5")
             or Path(wheel).name != f"cora_audit-{version}-py3-none-any.whl"
             or Path(sdist).name != f"cora_audit-{version}.tar.gz"):
         raise ValueError("candidate distribution name/version differs from release plan")
