@@ -328,6 +328,7 @@ def verify_contract_to_application_readme(readme: str) -> list[str]:
         "the **same final PR HEAD commit SHA**", "each new implementation commit changes HEAD",
         "After merge, the resulting main SHA is different",
         "a **bounded stopping rule**", "not proof that the app has no unseen defects",
+        "first unresolved prerequisite",
         "an independent reviewer", "proceed with the next stage",
         "one scoped, reversible stage",
         "not blanket consent", "significant ambiguity", "blocking question",

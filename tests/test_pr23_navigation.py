@@ -164,7 +164,7 @@ class ProgressiveDocumentationTests(unittest.TestCase):
             ("consent", "Authorized local checkout; external effects require new consent",
              "Any cloud or protected effect is preapproved"),
             ("stage-sequence", "2. **Derive tests backward:**", "2. **Create a logo:**"),
-            ("missing-gates", "An unresolved leaf", "An auto-approved leaf"),
+            ("missing-gates", "first unresolved prerequisite", "automatically accepted prerequisite"),
             ("blob-precision", "Git *blob objects*", "Magic metadata"),
             ("commit-identity", "the **same final PR HEAD commit SHA**", "any previous SHA"),
             ("SHA-drift", "each new implementation commit changes HEAD",
