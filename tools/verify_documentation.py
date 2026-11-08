@@ -226,6 +226,54 @@ NAVIGATION_READERS = {
 }
 
 
+
+def verify_multichannel_intro(readme: str) -> list[str]:
+    """Finite usability/editorial guards, not evidence of actual reader comprehension."""
+    errors: list[str] = []
+    intro = readme.split("## First five minutes", 1)[0]
+    if not 130 <= len(intro.split()) <= 440:
+        errors.append("intro-length-out-of-budget")
+    if not all(x in intro for x in (
+            "**What is CORA?**", "**Why it matters:**", "the proposed change",
+            "the source evidence", "tests or counterexamples", "the work still needed",
+            "the **product**", "the **software**", "the **repository**")):
+        errors.append("intro-product-model-incomplete")
+    f = chr(96) * 3
+    m = re.findall(r"^" + f + r"mermaid\n(.*?)\n" + f + r"$",
+                   intro, flags=re.MULTILINE | re.DOTALL)
+    if (len(m) != 1 or m[0].count("-->") != 3
+            or not all(x in m[0] for x in (
+                "flowchart LR", "Change intent + Git revision",
+                "Evidence dossier", "Target tests + independent review"))):
+        errors.append("intro-graph-flow-broken")
+    part = intro.split("**Choose an entry point**", 1)
+    nav = part[1].split("**Example — ICTC", 1)[0] if len(part) == 2 else ""
+    if (len([line for line in nav.splitlines() if line.startswith("|")]) != 6
+            or any(x not in nav for x in (
+                "Inspect a repository", "Review a change or pull request",
+                "ChatGPT conversation", "file, dependency or workflow",
+                "docs/FILE_LAB.md"))):
+        errors.append("intro-four-channel-route-broken")
+    if not all(x in intro for x in (
+            "illustrative, not a new ICTC execution", "docs/GOLD_ASSURANCE.md",
+            "Target-specific test results", "release approval must be obtained separately")):
+        errors.append("intro-ictc-evidence-boundary-missing")
+    if not all(x in intro for x in (
+            "1.0.0a5", "now merged with PR46",
+            "not a stable API or verified public release", "draft")):
+        errors.append("intro-release-status-stale")
+    if "unmerged source candidate" in intro or "certifies ICTC" in intro:
+        errors.append("intro-unwarranted-claim")
+    chat = readme.split("## Use CORA during a ChatGPT conversation", 1)
+    body = chat[1].split("## What works today", 1)[0] if len(chat) == 2 else ""
+    if any(x not in body for x in (
+            "examples/chat-step.example.json", "--chat-step", "--chat-bundle",
+            "cora verify-process", "handoff.md", "SHA-256",
+            "automatic capture of every chat message", "not independently witnessed")):
+        errors.append("chat-workflow-incomplete-or-misleading")
+    return sorted(set(errors))
+
+
 def verify_progressive_readme(readme: str) -> list[str]:
     """Verify finite source navigation; not human usability or semantic completeness."""
     errors: list[str] = []
@@ -274,6 +322,7 @@ def verify_progressive_readme(readme: str) -> list[str]:
     if re.search(r"<(?:script|iframe|object|embed)\b", section, re.I):
         errors.append("navigation-unsupported-interaction")
     errors.extend(verify_readme_semantics(readme))
+    errors.extend(verify_multichannel_intro(readme))
     return sorted(set(errors))
 
 

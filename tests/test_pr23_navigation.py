@@ -83,6 +83,36 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         self.assertEqual(self.readme.count("<details>"), 5)
         self.assertIn("[MIT](LICENSE)", self.readme)
 
+
+    def test_multichannel_intro_adversarial_and_harmless_edits(self):
+        """Twelve content mutations; no implied human usability certification."""
+        self.assertEqual(DOC.verify_multichannel_intro(self.readme), [])
+        # Formatting variation does not change the product claim.
+        formatted = self.readme.replace(
+            "**Why it matters:**", "*Why it matters:*", 1)
+        issues = DOC.verify_multichannel_intro(formatted)
+        self.assertNotIn("intro-length-out-of-budget", issues)
+        cases = (
+            ("product-object", "the proposed change", "a marketing slogan"),
+            ("no-source", "the source evidence", "unverified assertions"),
+            ("diagram-input", "Change intent + Git revision", "Some user text"),
+            ("diagram-last-gate", "Target tests + independent review", "Automatic approval"),
+            ("route-terminal", "Inspect a repository", "Discover a website"),
+            ("route-review", "Review a change or pull request", "Watch a video"),
+            ("route-chat", "ChatGPT conversation", "An unrelated app"),
+            ("ictc-example", "illustrative, not a new ICTC execution", "certifies ICTC"),
+            ("ictc-proof", "release approval must be obtained separately", "release is approved"),
+            ("merged-source", "now merged with PR46", "unmerged source candidate"),
+            ("chat-bundle", "--chat-bundle", "--chat-magic"),
+            ("chat-capture", "automatic capture of every chat message", "self-running assistant"),
+        )
+        for name, old, new in cases:
+            with self.subTest(name=name):
+                self.assertIn(old, self.readme)
+                changed = self.readme.replace(old, new, 1)
+                self.assertNotEqual(changed, self.readme)
+                self.assertNotEqual(DOC.verify_multichannel_intro(changed), [])
+
     def test_thousand_adversarial_editorial_and_reader_vectors(self):
         family_totals: dict[str, dict[str, int]] = {}
         seen = set()
