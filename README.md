@@ -1,6 +1,6 @@
 # CORA — Continuous Ontological Repository Assurance
 
-**CORA (Continuous Ontological Repository Assurance)** — **Engineering evidence for AI-assisted software changes.**
+**CORA (Continuous Ontological Repository Assurance)** — **A source-verifiable method for AI-assisted software development, from requirements to a reviewable pull request.**
 
 **What is CORA?** A local, offline-first Python 3.11+ framework that helps developers and AI coding assistants inspect a Git repository, turn change requests into verifiable acceptance obligations, challenge implementation proposals and produce reproducible pre/post-merge review reports. It connects **the proposed change** to **the source evidence**, **tests or counterexamples**, and **the work still needed**. The result is a reviewable dossier, **not** a decision or a certificate. CORA is **not a coding agent**.
 
@@ -22,13 +22,50 @@ flowchart LR
 | Goal | Start · outcome |
 | --- | --- |
 | Inspect a repository | [First five minutes](#first-five-minutes--quickstart) → pinned Git JSON receipt |
-| Review a change or pull request | [One-Run](#one-run--one-command-one-evidence-dossier) + [AI-assisted review](#use-cora-with-an-ai-coding-assistant) → HTML/JSON and open obligations |
+| Build an application or review a change | [Contract-to-PR example](#worked-example--from-a-user-contract-to-an-application-pr) + [One-Run](#one-run--one-command-one-evidence-dossier) → reviewable slices and evidence |
 | Continue work in a ChatGPT conversation | [ChatGPT session workflow](#use-cora-during-a-chatgpt-conversation-experimental) → portable iteration ZIP |
 | Investigate a file, dependency or workflow | [Capabilities](#what-works-today) + [File Lab](docs/FILE_LAB.md) → source-scoped findings |
 
-**Example — ICTC (illustrative, not a new ICTC execution).** Suppose an ICTC pull request changes release-readiness logic. CORA can pin the Git `BASE`/`HEAD`, map source and workflow references, derive the checks that should still hold, and report which evidence is missing. Target-specific test results, actual downstream effects and release approval must be obtained separately. The [documented ICTC source-lineage pilot](docs/GOLD_ASSURANCE.md) is a bounded reference case, **not** a certification of the running ICTC product.
-
 **Current status:** experimental source `cora-audit 1.0.0a5`, now merged with PR46; **not a stable API or verified public release**. The earlier **merged PR41** established the source-level experimental baseline. As checked on 8 November 2026, GitHub still showed a draft `v1.0.0a4` release without downloadable assets, not a published `v1.0.0a5` package. See [release status and obligations](docs/RELEASE.md) before making a delivery claim.
+
+## Worked example — from a user contract to an application PR
+
+**Hypothetical application, not a report of an executed CORA build.** An operator asks an AI coding assistant, supported by CORA, to develop a small web application for recording corrective actions. The user should describe the *desired behavior and limits*, not have to specify every source file.
+
+**An adequately expressive starting contract** identifies the outcome, users, inputs, state changes, constraints, tests and permissions. For example:
+
+~~~yaml
+goal: "A local web app to track corrective actions"
+users: ["reporter", "owner", "reviewer"]
+record: ["id", "title", "owner", "status", "evidence_ref", "revision"]
+workflow: "OPEN -> IN_PROGRESS -> VERIFIED"
+rules:
+  - "Only a reviewer may mark VERIFIED"
+  - "A transition must persist and survive a new process/read"
+  - "Reject concurrent updates using the record revision"
+acceptance:
+  - "Authorized transition persists after restart"
+  - "Unauthorized verification is denied; state stays unchanged"
+  - "Concurrent stale update is rejected without lost data"
+delivery: ["app", "automated tests", "usage guide", "rollback procedure", "PR"]
+constraints: ["Python 3.11+", "local database", "no cloud", "no deployment"]
+permissions: "Authorized local checkout; external effects require new consent"
+~~~
+
+The contract makes acceptance **testable**, but is not a complete technical design. The assistant should propose an implementation stack, data migration, interface and missing choices; significant ambiguity or a policy conflict is a **blocking question**, not a license to guess. The example names *possible* files such as \`app/api.py\`, \`app/storage.py\` and \`tests/test_transitions.py\`; no claim is made that these files already exist.
+
+**Six bounded stages follow; each has an explicit input, output and falsifier:**
+
+1. **Refine the specification:** separate business invariants, assumptions, constraints and measurable outcomes. *Output:* acceptance criteria and a requirements-to-evidence map. *Stop when:* an essential actor, state transition or permission is undefined.
+2. **Derive tests backward:** start from “the application meets the accepted goal,” decompose it into required behavior, persisted data, security, source correctness and review. Build an **AND-dependency graph** of atomic obligations and identify the first unresolved prerequisite. *Output:* acceptance graph and negative-test oracle. *Stop when:* a required obligation lacks an independent way to observe it.
+3. **Design and implement one reversible unit:** choose the existing owner or a minimal new module, propose filesystem paths, write code/tests/docs using authorized editing tools, and stage exact file contents in Git. **Blobbing** means storing the exact file bytes as Git *blob objects*; Git *trees* describe the directory structure, a *commit* pins that tree and its parent, and a PR proposes those commits for review. CORA guides and checks; the assistant/operator and Git perform these effects. *Stop when:* the proposed change crosses an unapproved scope or privilege boundary.
+4. **Challenge the result:** generate deterministic combinations of modeled faults (for example, forged reviewer, stale revision, lost persistence), compare classifications against an explicit expected-result oracle, then—if authorized—modify **actual files in a disposable copy** and run real targeted tests. *Output:* killed/surviving/inconclusive mutants and real test receipts kept separate from simulated decisions. *Stop when:* a required negative test survives or the baseline is unproven.
+5. **Measure model coverage and convergence:** track distinct normalized failure signatures, replay recorded seeds and inspect a predeclared final window for new signatures. Zero novelty is a **bounded stopping rule**, not proof that the app has no unseen defects. *Output:* covered fault families, oracle mismatches and open obligations. *Stop when:* any mandatory criterion remains unobserved or refuted.
+6. **Materialize and verify the PR on one exact revision:** assemble cohesive commits, open a PR and run source replay, target tests and required CI on the **same final PR HEAD commit SHA**. “Same SHA” means every cited check refers to those **identical committed bytes and revision**; each new implementation commit changes HEAD and invalidates earlier final-SHA claims. After merge, the resulting main SHA is different and requires postmerge reinspection. *Output:* PR with source provenance, evidence, falsifiers, unresolved gaps and rollback; **only** an authorized independent reviewer can approve the merge.
+
+**Low-friction human control:** after approving a sufficiently expressive starting contract and the tool permissions, the operator can simply say **“proceed with the next stage”**. That advances **one scoped, reversible stage** and its stated proof obligations. It is not blanket consent to execute untrusted code, access credentials, delete data, modify protected rules, deploy, approve or merge. If a new essential choice or external authorization is required, the workflow blocks and asks for that decision.
+
+This is an example of **contract-driven, evidence-guided development**. In CORA's terminology, requirement extraction becomes *intent mining*; backward acceptance graphs are *reticular DoDs*; implementation units are *semantic slices*; fault-model perturbations are *semantic mutations*; bounded novelty plateaus are *semantic saturation*; and verified Git-object/PR creation is *materialization*. The labels come **after** their ordinary engineering definitions. For the underlying commands, see [the workflow method](#how-cora-works), [coding-agent instructions](#use-cora-with-an-ai-coding-assistant) and [ChatGPT session handoff](#use-cora-during-a-chatgpt-conversation-experimental).
 
 ## First five minutes — Quickstart
 
