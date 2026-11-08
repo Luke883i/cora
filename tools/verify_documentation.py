@@ -227,6 +227,64 @@ NAVIGATION_READERS = {
 
 
 
+
+def verify_development_method_readme(readme: str) -> list[str]:
+    """Finite engineering-method editorial contract; not independent human usability."""
+    errors: list[str] = []
+    part = readme.split("## How CORA works\n", 1)
+    section = part[1].split("\n## Interpret a CORA result", 1)[0] if len(part) == 2 else ""
+    if not section:
+        return ["engineering-method-missing"]
+    fields = {
+        "requirements": ("intention into a testable specification", "user outcome",
+                         "scope and exclusions", "existing owners/consumers"),
+        "backward-dod": ("Work backward from acceptance", "directed acyclic graph",
+                         "only when **all** are met", "An unresolved leaf"),
+        "slice": ("small, reversible change unit", "Git stores exact file bytes",
+                  "focused pull request", "mathematically minimal implementation"),
+        "falsification": ("Actively try to disprove the change",
+                           "disposable modified checkout", "surviving, timed-out or inconclusive"),
+        "replay": ("actual merged SHA", "The same intent is required for replay",
+                   "Run real tests and obtain independent review separately."),
+        "combinatorial": ("Combinatorial fault testing",
+                          "single faults and selected combinations", "recorded seeds"),
+        "oracle": ("Reference / differential checking", "expected-result rule",
+                    "count disagreements"),
+        "saturation": ("Novelty tracking and bounded saturation",
+                        "zero new signatures", "fixed catalog and window"),
+        "physical": ("Physical mutation testing", "unmutated baseline passes",
+                      "ten million Git commits", "different experiment"),
+        "examples": ("ICTC — preserving meaning", "iKant_EDU — resisting unsafe",
+                      "docs/SATURATION_M_PLUS_100.md",
+                      "v3/release-readiness-e2-product-mutants.mjs",
+                      "docs/CORA_PR_A_BACKLOG.md", "UNKNOWN",
+                      "not evidence that CORA's CLI executed"),
+        "assistant": ("assistant/operator performs the edits and Git/PR operations",
+                       "does not independently write a feature",
+                       "Where execution tools are absent"),
+        "terminology": ("Internal CORA vocabulary", "intent mining", "retrograde reticulum",
+                         "semantic slice", "blobbing", "semantic mutations",
+                         "semantic saturation", "semantic PR"),
+    }
+    for name, strings in fields.items():
+        if any(s not in section for s in strings):
+            errors.append("engineering-method-incomplete:" + name)
+    definition = section.find("### Numerical and semantic testing")
+    examples = section.find("### Two real engineering reference cases")
+    labels = section.find("**Internal CORA vocabulary")
+    if not (0 < definition < examples < labels):
+        errors.append("engineering-method-terms-before-explanation")
+    if section.count(chr(96) * 3 + "mermaid\n") != 1 or section.count("-->") != 6:
+        errors.append("engineering-method-acceptance-graph")
+    if any(s in section for s in (
+            "CORA automatically writes all code",
+            "ten million independent source mutations",
+            "saturation proves complete correctness",
+            "the coding agent independently authorizes merge")):
+        errors.append("engineering-method-false-authority")
+    return sorted(set(errors))
+
+
 def verify_multichannel_intro(readme: str) -> list[str]:
     """Finite usability/editorial guards, not evidence of actual reader comprehension."""
     errors: list[str] = []
@@ -323,6 +381,7 @@ def verify_progressive_readme(readme: str) -> list[str]:
         errors.append("navigation-unsupported-interaction")
     errors.extend(verify_readme_semantics(readme))
     errors.extend(verify_multichannel_intro(readme))
+    errors.extend(verify_development_method_readme(readme))
     return sorted(set(errors))
 
 

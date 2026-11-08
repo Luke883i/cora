@@ -113,6 +113,44 @@ class ProgressiveDocumentationTests(unittest.TestCase):
                 self.assertNotEqual(changed, self.readme)
                 self.assertNotEqual(DOC.verify_multichannel_intro(changed), [])
 
+
+    def test_engineering_method_semantic_falsifiers(self):
+        self.assertEqual(DOC.verify_development_method_readme(self.readme), [])
+        cases = (
+            ("goal", "intention into a testable specification", "a marketing slogan"),
+            ("scope", "scope and exclusions", "marketing scope"),
+            ("graph", "directed acyclic graph", "unordered notes"),
+            ("all-gates", "only when **all** are met", "when one check passes"),
+            ("open-proof", "An unresolved leaf", "An automatically approved leaf"),
+            ("slice", "small, reversible change unit", "an irreversible rewrite"),
+            ("minimum", "mathematically minimal implementation", "magically minimal"),
+            ("physical", "disposable modified checkout", "production environment"),
+            ("survivors", "surviving, timed-out or inconclusive", "all killed"),
+            ("combination", "single faults and selected combinations", "random unrelated text"),
+            ("seed", "recorded seeds", "unrecorded samples"),
+            ("oracle", "expected-result rule", "marketing confidence"),
+            ("saturation", "zero new signatures", "zero real bugs ever"),
+            ("bounded", "fixed catalog and window", "any domain forever"),
+            ("model-source", "ten million Git commits", "ten million verified source commits"),
+            ("ictc", "docs/SATURATION_M_PLUS_100.md", "NO_SATURATION_EVIDENCE.md"),
+            ("ictc-physical", "v3/release-readiness-e2-product-mutants.mjs", "NO_REAL_MUTANTS.mjs"),
+            ("ikant", "docs/CORA_PR_A_BACKLOG.md", "NO_IKANT_EVIDENCE.md"),
+            ("unknown", "UNKNOWN", "CERTIFIED_UNUSED"),
+            ("cli", "not evidence that CORA's CLI executed", "proof that CORA executed"),
+            ("agent", "does not independently write a feature", "independently writes software"),
+            ("human", "Where execution tools are absent", "All execution is automatic"),
+            ("review", "actual merged SHA", "old PR head only"),
+        )
+        for label, old, altered in cases:
+            with self.subTest(label=label):
+                self.assertIn(old, self.readme)
+                candidate = self.readme.replace(old, altered, 1)
+                self.assertTrue(DOC.verify_development_method_readme(candidate),
+                                "missed adversarial editorial case: " + label)
+        cosmetic = self.readme.replace("### Two real engineering reference cases",
+                                       "### Two real engineering reference cases  ", 1)
+        self.assertEqual(DOC.verify_development_method_readme(cosmetic), [])
+
     def test_thousand_adversarial_editorial_and_reader_vectors(self):
         family_totals: dict[str, dict[str, int]] = {}
         seen = set()
