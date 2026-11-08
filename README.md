@@ -28,6 +28,8 @@ flowchart LR
 | Continue work in a ChatGPT conversation | [ChatGPT session workflow](#use-cora-during-a-chatgpt-conversation-experimental) → portable iteration ZIP |
 | Investigate a file, dependency or workflow | [Capabilities](#what-works-today) + [File Lab](docs/FILE_LAB.md) → source-scoped findings |
 
+**LEVEL showcase (proposed):** a coding agent turns a natural-language contract into an original web game; CORA tracks evidence and gaps. [Explore the demo contract](#level--a-playable-contract-to-product-demonstration).
+
 **Current status:** experimental source `cora-audit 1.0.0a5`, now merged with PR46; **not a stable API or verified public release**. The earlier **merged PR41** established the source-level experimental baseline. As checked on 8 November 2026, GitHub still showed a draft `v1.0.0a4` release without downloadable assets, not a published `v1.0.0a5` package. See [release status and obligations](docs/RELEASE.md) before making a delivery claim.
 
 ## Worked example — from a user contract to an application PR
@@ -98,6 +100,43 @@ Keep reports **outside** the inspected repository. `/tmp` is an illustrative Uni
 
 **Open source license:** [MIT](LICENSE). This grants reuse of CORA source, not access to others' repositories or approval authority. See [Security](SECURITY.md) and [Contributing](CONTRIBUTING.md).
 
+
+## LEVEL — a playable contract-to-product demonstration
+
+**Proposed experiment, not an existing downloadable game or a completed CORA run.**
+A CTO should start with **one human contract**, watch a coding agent
+progressively create a web game, and trace a playable feature backward
+through its test, requirement, original request and exact Git commit.
+The original game **NILO — La Fabbrica delle Ore** combines cartoon
+animation and early-2000s side-scrolling mechanics without copying
+modern protected character assets. Its target is a **new repository**,
+not CORA's own product identity.
+
+The first delivery is not six untested levels: it is **one playable
+vertical slice** with movement, camera, collisions, checkpoint and HUD,
+attributable browser tests, an induced failure and a reproduced fix.
+Later slices add six levels, three bosses, a complete story, accessibility
+and asset provenance. Finished gameplay remains an **external product DoD**.
+
+~~~text
+Human contract → backward acceptance graph → next open obligation
+       ↓                  ↓                        ↓
+Authorized agent → code, negative tests → one reversible slice
+       └──────── Git + test receipts + exact PR HEAD ────────┘
+                        portable ZIP
+                             ↓
+                    independent review
+~~~
+
+**N is not predetermined:** the assistant reads CORA's portable-session
+continuation advice to choose the next iteration. Three rounds without
+source/evidence changes trigger replanning; a different commit requires
+revalidation; a changed contract requires review. These are bounded
+signals, not permission for autonomous code edits, target execution,
+deployment or merge. Git source evidence is not proof of player experience.
+
+For deeper detail, use the [full LEVEL DoD, multi-repository archaeology,
+enterprise-candidate crosswalk and anti-entropy rules](docs/CONTINUOUS_DEVELOPMENT.md#level-contract-to-product-development-with-bounded-continuation-pr47-candidate).
 
 ## Use CORA during a ChatGPT conversation (experimental)
 
