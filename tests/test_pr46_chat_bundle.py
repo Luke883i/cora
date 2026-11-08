@@ -93,6 +93,8 @@ class ChatBundleTests(unittest.TestCase):
             lambda a: a['dod']['nodes'][1].update(observation='REPORTED_OBSERVED'),
             lambda a: a['dod']['nodes'][0].update(evidence_refs=[]),
             lambda a: a['roadmap'][0].update(falsifier_refs=[]),
+            lambda a: a['roadmap'][0].update(dod_refs=['D1']),
+            lambda a: a['roadmap'][0].update(status='DONE_REPORTED'),
             lambda a: a['falsifiers'][0].update(status='PASSED'),
             lambda a: a['dod']['nodes'].append({'id':'ORPHAN','depends_on':[],
                            'scope':'SOURCE','acceptance':'orphan','observation':'UNOBSERVED',

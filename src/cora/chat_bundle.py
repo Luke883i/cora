@@ -144,6 +144,10 @@ def validate_step(step: object) -> dict:
         n["scope"] == "EXTERNAL" or n["observation"] != "REPORTED_OBSERVED")}
     if not missing.issubset(covered):
         raise ValueError("unreported blocking DoD gap")
+    actionable = {ref for action in roads if action["status"] != "DONE_REPORTED"
+                  for ref in action["dod_refs"]}
+    if not missing.issubset(actionable):
+        raise ValueError("unresolved DoD obligations missing a live falsification roadmap")
     return step
 
 
@@ -170,6 +174,10 @@ def _derived(step: dict) -> dict:
         "schema": "cora-chat-derived-dod/1", "goal": result["goal"],
         "dependency_order": result["ordered_cut"], "states": result["states"],
         "next_unresolved": result["next_unresolved"],
+        "next_falsification_actions": [
+            {"action_id": r["id"], "falsifier_ids": r["falsifier_refs"]}
+            for r in step["roadmap"] if result["next_unresolved"] in r["dod_refs"]
+            and r["status"] != "DONE_REPORTED"],
         "proof_level": "CALLER_REPORTED_FINITE_MODEL_NOT_ATTESTED",
         "product_status": "BLOCKED_EXTERNAL", "authorization": "NONE",
     }
@@ -183,6 +191,8 @@ def _handoff(step: dict, commit: str, trace: dict) -> bytes:
              "Git source: " + commit, "Intent: " + plain(step["intent"]),
              "DoD goal: " + trace["goal"] + " | status: " + trace["states"][trace["goal"]],
              "Next unresolved DoD: " + str(trace["next_unresolved"]),
+             "Suggested next falsification actions (derived from unresolved DoD): " +
+             ", ".join(v["action_id"] for v in trace["next_falsification_actions"]),
              "", "## Roadmap (caller statements; not verification)"]
     for r in step["roadmap"]:
         lines.append("- " + r["id"] + " [" + r["status"] + "]: " + plain(r["action"]))
