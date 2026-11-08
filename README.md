@@ -47,7 +47,7 @@ The dossier separates `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTERNAL`
 
 ## How CORA works
 
-**1. Specify the outcome.** Turn natural-language intent into actors, boundaries, expected behavior, affected owners and an **AND-dependency graph** of acceptance conditions. Derive tests *backward*: what must be observable for each condition to count as met? An unknown prerequisite is an open obligation, not a percentage of completion. [Contract-to-product example](docs/CONTINUOUS_DEVELOPMENT.md#level-contract-to-product-development-with-bounded-continuation-pr47-candidate).
+**1. Specify the outcome.** Turn natural-language intent into actors, boundaries, expected behavior, affected owners and an **AND-dependency graph** of acceptance conditions. Derive tests *backward*: what must be observable for each condition to count as met? An unknown prerequisite is an open obligation, not a percentage of completion. [Worked application contract](docs/CONTINUOUS_DEVELOPMENT.md#example-contract-and-evidence-ladder--portable-corrective-action-app).
 
 **2. Change one coherent unit.** The agent uses its authorized tools to create or modify source, tests, assets and workflow files; Git records content-addressed blobs, directory trees, commits and a proposed PR. CORA evaluates their structure and source lineage. New source SHA means **revalidate**; a new contract means **reassess**. A hash can identify committed bytes; it cannot authenticate a human reviewer. Do not add an owner or CI workflow if the existing owner can perform the task.
 
