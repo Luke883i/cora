@@ -289,9 +289,11 @@ def verify_multichannel_intro(readme: str) -> list[str]:
     """Finite usability/editorial guards, not evidence of actual reader comprehension."""
     errors: list[str] = []
     intro = readme.split("## First five minutes", 1)[0]
+    # A formatting-only Markdown emphasis change must not become a semantic fault.
+    normalized = intro.replace("*Why it matters:*", "**Why it matters:**")
     if not 130 <= len(intro.split()) <= 440:
         errors.append("intro-length-out-of-budget")
-    if not all(x in intro for x in (
+    if not all(x in normalized for x in (
             "**What is CORA?**", "**Why it matters:**", "the proposed change",
             "the source evidence", "tests or counterexamples", "the work still needed",
             "the **product**", "the **software**", "the **repository**")):
