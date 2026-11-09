@@ -190,6 +190,8 @@ def verify_readme_semantics(readme: str, *, root: Path | None = None) -> list[st
         errors.append("readme-semantic-cli-count")
     if len(readme.split()) > 1800:
         errors.append("cto-readme-overlong")
+    if "CORA is not an eleventh engineering method" not in readme:
+        errors.append("cto-method-positioning-missing")
     for marker in README_SPECIFIC_TRUTHS:
         if marker not in readme:
             errors.append("readme-semantic-required-truth:" + marker[:70])
@@ -349,6 +351,39 @@ def verify_compact_document_bridge(guide: str, index: str, architecture: str) ->
         errors.append("cto-navigation-hierarchy-drift")
     if "source merged via PR46" not in architecture:
         errors.append("cto-version-chronology-drift")
+    return sorted(set(errors))
+
+
+
+def verify_method_crosswalk(readme: str, crosswalk: str, index: str) -> list[str]:
+    """Finite source-only methodology/claim bridge; not method conformance."""
+    errors = []
+    anchor = "docs/CONVERGENT_ASSURANCE.md#method-crosswalk--borrowed-perspectives-not-full-implementations"
+    if f"[method crosswalk]({anchor})" not in readme:
+        errors.append("cto-method-crosswalk-unreachable")
+    if "[Method crosswalk](CONVERGENT_ASSURANCE.md#method-crosswalk--borrowed-perspectives-not-full-implementations)" not in index:
+        errors.append("cto-method-index-route-missing")
+    if "## Method crosswalk — borrowed perspectives, not full implementations" not in crosswalk:
+        errors.append("cto-method-crosswalk-heading-missing")
+    methods = ("C4 / arc42", "Domain-Driven Design", "Static dependency analysis",
+               "Graph theory / SCC", "Event/data lineage",
+               "Formal methods / contracts", "Mutation / metamorphic testing",
+               "Software archaeology", "Threat modeling / assurance",
+               "Architecture fitness functions")
+    for name in methods:
+        if f"| {name} |" not in crosswalk:
+            errors.append("cto-method-crosswalk-entry-missing:" + name)
+    boundaries = ("not a replacement", "not demonstrate", "No claim of biological equivalence",
+                  "not an independently reproduced ChatGPT-container session")
+    if any(term not in crosswalk for term in boundaries):
+        errors.append("cto-method-crosswalk-boundary-lost")
+    projects = ("ictc/blob/e641526", "iKant_EDU/blob/73842",
+                "656-to-12 contract", "Actual source mutants")
+    if any(term not in crosswalk for term in projects):
+        errors.append("cto-method-real-project-bridge-lost")
+    if re.search(r"\\bCORA (?:fully implements|certifies) (?:C4|DDD|formal methods|consciousness)\\b",
+                 readme + "\\n" + crosswalk, flags=re.I):
+        errors.append("cto-method-overclaim")
     return sorted(set(errors))
 
 
@@ -516,6 +551,9 @@ def verify(root: Path) -> list[str]:
         (root / "docs/CONTINUOUS_DEVELOPMENT.md").read_text("utf-8"),
         (root / "docs/INDEX.md").read_text("utf-8"),
         (root / "docs/ARCHITECTURE.md").read_text("utf-8")))
+    errors.extend(verify_method_crosswalk(
+        readme, (root / "docs/CONVERGENT_ASSURANCE.md").read_text("utf-8"),
+        (root / "docs/INDEX.md").read_text("utf-8")))
     for path in ("README.md", "docs/AGENT_ADOPTION.md", "docs/CONVERGENT_ASSURANCE.md"):
         if not (root / path).is_file():
             errors.append("missing-procedure:" + path)
