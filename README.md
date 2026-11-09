@@ -2,7 +2,7 @@
 
 **CORA (Continuous Ontological Repository Assurance)** — **Engineering evidence for AI-assisted software changes.**
 
-CORA is a local, offline-first Python 3.11+ engineering-assurance framework. It helps developers and AI coding assistants inspect a Git repository, translate a product intention into testable obligations, challenge software changes and **produce reproducible pre/post-merge review reports**. It connects **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**. A coding agent can implement the change with authorized tools; CORA governs its evidence. CORA is **not a coding agent** or an automatic reviewer.
+CORA is a local, offline-first Python 3.11+ framework. It helps developers and AI coding assistants inspect a Git repository, turn goals into falsifiable obligations and **produce reproducible pre/post-merge review reports**. It links **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**. Agents edit with authorized tools; CORA evaluates evidence. CORA is **not a coding agent** or an approver.
 
 **Why it matters:** a plausible AI-generated patch is not evidence that the product works. CORA makes *intent, modification, observation and uncertainty* separately inspectable. For a CTO this means reviewable decisions; for a developer, a reproducible next test; for a reviewer, explicit counterexamples and unresolved risk.
 
@@ -14,9 +14,9 @@ Intent → acceptance graph → reversible code slice → adversarial tests
 
 **Product** = the engineering-assurance experience; **software** = the `cora` Python CLI and verifiers; **repository** = their Git source, contracts, tests, docs and CI. None by itself demonstrates target-product readiness.
 
-**Recommended use:** start with a real requirement and an authorized checkout; review an existing change or guide an agent through bounded slices. **Audience and conditions:** developers, CTOs, reviewers and coding agents; Python 3.11+, Git and independently authorized execution tools. **Open source license:** [MIT](LICENSE).
+**Recommended use:** inspect an authorized checkout or review one bounded change. **Audience and conditions:** CTOs, developers, reviewers and coding agents; Python 3.11+, Git and authorized execution tools. **Open source license:** [MIT](LICENSE).
 
-**Current status:** experimental source `cora-audit 1.0.0a5`, **not a stable API or verified public release**; **merged PR41** and PR46 are source milestones. The prior GitHub `v1.0.0a4` release was a draft, not proof of published assets. External user and host qualification remains open.
+**Current status:** experimental `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **merged PR41** and PR46 establish source milestones; the earlier `v1.0.0a4` was a draft. Independent user/host qualification is open.
 
 ## First five minutes — Quickstart
 
@@ -35,7 +35,7 @@ Then run [One-Run](#one-run--one-command-one-evidence-dossier). This identifies 
 
 **71 declared CLI commands** in the [capability atlas](.cora/assurance/capability-atlas.json): a source inventory, **not 71 independently validated product behaviors**. Implemented surfaces include Git/file archaeology, partial static dependencies, typed DoD graphs, bounded debt, modeled fault tests, pre/post-merge reports and portable ChatGPT iteration ZIPs. The [parser-checked CLI reference](docs/CLI_REFERENCE.md) and [complete documentation index](docs/INDEX.md) document source surfaces, not runtime certificates.
 
-**CORA is not an eleventh engineering method.** It correlates bounded observations from established methods; it does not implement any of them in full:
+**CORA is not an eleventh engineering method.** It correlates partial observations; no listed method is implemented in full:
 
 | Lens | What it contributes | What CORA does *not* infer |
 | --- | --- | --- |
@@ -63,22 +63,22 @@ The dossier separates `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTERNAL`
 
 **3. Try to disprove it, then stop intelligently.** Challenge obligations with **seeded combinations** and a **separate expected-result rule**; use **physical mutation testing** on isolated real source only when authorized. Separate killed, **surviving and inconclusive** mutants. A **fixed scenario catalog and final window** with no new failure signatures establishes **bounded convergence**, **not proof of complete correctness**. After repeated **no-progress rounds**, continuation proposes replanning; it **does not predict N** or execute a next step.
 
-**Example — can we safely remove a module?** Static imports and Git history identify candidate consumers; an ownership graph and negative regression tests identify obligations. An unobserved dynamic caller blocks deletion. The outcome can be `BLOCKED` rather than an attractive but unsupported green.
+**Example — delete a module?** Imports and Git history locate candidate consumers; negative tests and owners expose obligations. An unknown dynamic caller means `BLOCKED`, not safe deletion.
 
 **Two concrete engineering histories (methods at different maturity levels, not proof that CORA CLI created these products):**
 
-- **[ICTC](https://github.com/Luke883i/ictc) — UI/UX as observable meaning.** In an authorized browser/container run, an agent can navigate the product, capture screenshots, compare role/viewport behavior and interpret *what the UI appears to promise* against *what the user can actually do*. Its Playwright [Browser witness](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/browser-onto-compliance-v1.py) implements screenshot capture; a separate [visual audit](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/s4-a6-ux4-uiux-mount-audit.md) records **screenshot-derived** semantic faults: read-only controls resembling write actions, technical-first hierarchy and hidden work. The [reconciliation contract](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/uiux-656-absorption-contract.json) maps **656 recorded visual/UX findings to 12 root causes**; separate [physical product mutants](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/release-readiness-e2-product-mutants.mjs) edit real source and run an E2 gate. **A fresh ChatGPT-container run or independent human usability study is not attested here.**
-- **[iKant_EDU](https://github.com/Luke883i/iKant_EDU) — experimental computational cognitive architecture.** A replaceable LLM is embedded in software modeling bounded appraisal, recurrent workspace, **functional attention** and a **self/world state model**: these are **computational constructs**, **not a claim of a conscious biological mind**. Git archaeology preserved dynamic consumers as `UNKNOWN`, recovered **11 unqualified file deletions**, and in [PR238](https://github.com/Luke883i/iKant_EDU/pull/238) restored a protected workflow rather than inventing another owner. **Millions of finite fault vectors** challenge declared models, **not millions of real Git mutations** or host sessions. [Cognitive model](https://github.com/Luke883i/iKant_EDU/blob/73842c1d71ea1b1faa3903b255d00cd09b1b6cb6/docs/IKANT_COGNITIVE_SUBSTRATE.md) · [CORA method backlog](https://github.com/Luke883i/iKant_EDU/blob/73842c1d71ea1b1faa3903b255d00cd09b1b6cb6/docs/CORA_PR_A_BACKLOG.md).
+- **[ICTC](https://github.com/Luke883i/ictc) — UI/UX as observable meaning.** An authorized browser/container agent can capture screenshots across roles/viewports and compare *what the UI promises* with actual controls. The Playwright [Browser witness](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/browser-onto-compliance-v1.py) captures screenshots; the [visual audit](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/s4-a6-ux4-uiux-mount-audit.md) records **screenshot-derived** faults: misleading write affordances, technical-first hierarchy and hidden work. The [reconciliation contract](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/uiux-656-absorption-contract.json) maps **656 recorded visual/UX findings to 12 root causes**; separate [physical product mutants](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/release-readiness-e2-product-mutants.mjs) edit real source and run an E2 gate. **No fresh ChatGPT-container run or independent user study is attested here.**
+- **[iKant_EDU](https://github.com/Luke883i/iKant_EDU) — experimental computational cognitive architecture.** A replaceable LLM accompanies bounded appraisal, recurrent workspace, **functional attention** and a **self/world state model**: **computational constructs**, **not a claim of a conscious biological mind**. Git archaeology retained `UNKNOWN` consumers, recovered **11 unqualified file deletions**, and [PR238](https://github.com/Luke883i/iKant_EDU/pull/238) restored a protected workflow. **Millions of finite fault vectors** challenge declared models, **not millions of real Git mutations** or host sessions. [Cognitive model](https://github.com/Luke883i/iKant_EDU/blob/73842c1d71ea1b1faa3903b255d00cd09b1b6cb6/docs/IKANT_COGNITIVE_SUBSTRATE.md) · [CORA method backlog](https://github.com/Luke883i/iKant_EDU/blob/73842c1d71ea1b1faa3903b255d00cd09b1b6cb6/docs/CORA_PR_A_BACKLOG.md).
 
 **Terminology, only after the engineering method:** CORA calls the extraction *intent mining*, the backward graph a *reticular DoD*, coherent changes *semantic slices*, Git-object writing *blobbing/materialization*, modeled counterexamples *semantic mutations* and the bounded novelty plateau *semantic saturation*. The conventional engineering definitions and limits above govern these labels.
 
 ## Use CORA with an AI coding assistant
 
-Start from [agent adoption](docs/AGENT_ADOPTION.md) and the [R1–R4 DoD](docs/DOD_PR20_CONVERGENCE.md). The existing premerge command accepts `--contextual --intent`; **The same intent is required for replay**. Authorize the assistant's next scoped stage; CORA can report an unresolved node or stagnation but **does not independently write a feature**. **Run real tests and obtain independent review separately.** The [LEVEL / NILO experiment](docs/CONTINUOUS_DEVELOPMENT.md#level-demonstration-local-evidence-verifiable-engineering-lifecycle) proposes a playable platform game whose first vertical slice must pass genuine browser tests; it is not an already delivered game.
+Follow [agent adoption](docs/AGENT_ADOPTION.md) and the [R1–R4 DoD](docs/DOD_PR20_CONVERGENCE.md). Premerge uses `--contextual --intent`; **The same intent is required for replay**. CORA **does not independently write a feature**: authorize bounded agent work. **Run real tests and obtain independent review separately.** The [LEVEL / NILO experiment](docs/CONTINUOUS_DEVELOPMENT.md#level-demonstration-local-evidence-verifiable-engineering-lifecycle) proposes a playable slice requiring genuine browser tests; it is not an already delivered game.
 
 ## Interpret a CORA result
 
-A Git SHA identifies source bytes, not the runtime, the CI host or a person's approval. **A source digest does not authenticate a human reviewer**. A positive result in a finite oracle is not proof of downstream behavior. `NOT_RUN` and `BLOCKED_EXTERNAL` are not PASS. [Evidence boundaries](docs/CONVERGENT_ASSURANCE.md) explain why proof context, scope and provenance matter more than a large green number.
+A Git SHA identifies source bytes, not runtime or human approval. **A source digest does not authenticate a human reviewer**. Finite-model PASS is not target behavior; `NOT_RUN` and `BLOCKED_EXTERNAL` are not PASS. See [evidence boundaries](docs/CONVERGENT_ASSURANCE.md).
 
 ## Final Experimental Baseline — merged PR41
 
@@ -122,8 +122,8 @@ The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) di
 
 ## Operating boundaries
 
-**External acceptance remains `BLOCKED_EXTERNAL`** until an independent target, human reviewer and governed host are observed. **GitHub workflow files alone do not prove** protected rules or independent reviewer identity. CORA cannot infer `safe_deletion` from absent imports; dynamic and external consumers require evidence. Do not treat a source-scoped CI result as release authorization.
+**External acceptance remains `BLOCKED_EXTERNAL`** without independent target, reviewer and host evidence. **GitHub workflow files alone do not prove** enforced rules. Absent imports do not prove `safe_deletion`; source CI does not authorize release.
 
 ## Engineering map
 
-**Product:** explainable assurance and evidence-guided development. **Software:** `cora-engine` (CLI) and `cora-release-verification` (source/build checks). **Repository:** Git, machine contracts, tests, CI, documentation and **historical ADRs**. The **merged PR38** established historical source genealogy; **merged PR39** added source-level qualification gates. Use [the complete index](docs/INDEX.md) for precise ownership, not an invented second registry.
+**Product:** reviewable assurance. **Software:** `cora-engine` CLI and `cora-release-verification` checks. **Repository:** source, contracts, tests, CI and **historical ADRs**. **merged PR38** and **merged PR39** established bounded history/qualification milestones; follow the [complete index](docs/INDEX.md) for owners.
