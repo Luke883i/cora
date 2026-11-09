@@ -377,8 +377,15 @@ def verify_method_crosswalk(readme: str, crosswalk: str, index: str) -> list[str
                   "not an independently reproduced ChatGPT-container session")
     if any(term not in crosswalk for term in boundaries):
         errors.append("cto-method-crosswalk-boundary-lost")
-    projects = ("ictc/blob/e641526", "iKant_EDU/blob/73842",
-                "656-to-12 contract", "Actual source mutants")
+    projects = (
+        "ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/browser-onto-compliance-v1.py",
+        "ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/s4-a6-ux4-uiux-mount-audit.md",
+        "ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/uiux-656-absorption-contract.json",
+        "ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/release-readiness-e2-product-mutants.mjs",
+        "iKant_EDU/blob/73842c1d71ea1b1faa3903b255d00cd09b1b6cb6/docs/IKANT_COGNITIVE_SUBSTRATE.md",
+        "iKant_EDU/blob/73842c1d71ea1b1faa3903b255d00cd09b1b6cb6/docs/CORA_PR_A_BACKLOG.md",
+        "656-to-12 contract", "Actual source mutants")
+
     if any(term not in crosswalk for term in projects):
         errors.append("cto-method-real-project-bridge-lost")
     if re.search(r"\bCORA (?:fully implements|certifies) (?:C4|DDD|formal methods|consciousness)\b",

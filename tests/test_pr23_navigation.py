@@ -412,7 +412,8 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         self.assertEqual(DOC.verify_method_crosswalk(self.readme, cross, index), [])
         for phrase in ("| C4 / arc42 |", "| Graph theory / SCC |",
                        "| Mutation / metamorphic testing |", "| Domain-Driven Design |",
-                       "ictc/blob/e641526", "iKant_EDU/blob/73842",
+                       "ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/browser-onto-compliance-v1.py",
+                       "iKant_EDU/blob/73842c1d71ea1b1faa3903b255d00cd09b1b6cb6/docs/IKANT_COGNITIVE_SUBSTRATE.md",
                        "not an independently reproduced ChatGPT-container session"):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, cross)
