@@ -125,3 +125,17 @@ static assertions nor deterministic lexical mutants measure this.
 `.cora/assurance/documentation-proofs.json`; `docs/INDEX.md`;
 `docs/ARCHITECTURE.md`; `docs/CONTINUOUS_DEVELOPMENT.md`.
 The original PR42 machine DoD is **retained**, not weakened.
+
+## PR48 migration — source-derived clarity/compression and external qualification
+
+This amendment refines the existing R48-A–H AND-gate; it does **not** create a competing DoD or replace the fixed S01–S18 ledger.
+
+- **C / Clarity:** on first scan explain what CORA inspects, why source assurance differs from coding, the path from a falsifiable goal to a scoped decision, and the next command. Structural text checks can reject missing claims; they cannot measure comprehension.
+- **K / Completeness:** preserve all S01–S18, five reader routes, five lenses, exact CLI/One-Run/replay path, and source-versus-runtime/host status. The full ten-method comparison belongs to the existing [convergence guide](CONVERGENT_ASSURANCE.md#method-crosswalk--borrowed-perspectives-not-full-implementations).
+- **X / Compression:** primary README contains the value/method/usage/limits and two concrete examples without duplicating method documentation or PR archaeology. README whitespace words and first-scan bounds are guardrails; eliminate duplicate narrative while keeping verifiable anchors.
+- **V / Multi-audience value:** CTO reads the decision boundary; developer obtains a testable next action; reviewer finds independent falsifiers; forensic engineer traces Git/source lineage; product owner sees external acceptance limitations. Success requires a real first-read study, not word frequency.
+- **E / Evidence:** ICTC has separate (i) role/viewport browser screenshot-producing code, (ii) screenshot-derived semantic UX audit, (iii) 656/12 source contract and (iv) real E2 physical source mutants. iKant_EDU has a bounded functional computational cognitive architecture and a recoverable Git/consumer history. Neither demonstrates a fresh run by CORA, an independent ChatGPT-container test or user acceptance.
+- **F / Falsification:** 100 deterministic *text/document* variations across local README and linked current docs must include 20 meaning-preserving changes accepted and 80 corrupted claims/links/gates rejected, with zero wrong outcomes; retain the original 1k/10k campaigns. One variant is not one physical software mutation or human respondent.
+- **I / Integrity:** use only existing document source owners, preserve historical records, protected CI and product software; recheck on the final PR head and after each subsequent commit. Actual CI, original-Git replay and independent review are different oracles.
+
+**Global obligation = C AND K AND X AND V AND E AND F AND I AND E01 AND E02 AND E03.** Local source tests can support bounded C/K/X/E/F/I; V as *observed human comprehension*, user/target trials and enforced host approval remain **BLOCKED_EXTERNAL** until witnessed. `PASS_SCOPED` must never substitute for them.

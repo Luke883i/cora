@@ -124,3 +124,26 @@ The [maturity contract](../.cora/contracts/dod/maturity-dod.json) derives G1 ide
 The atlas maps all 71 declared CLI command names, eight capability families, 14 original method owners, Python modules, repository tools, workflow files, tests, documentation and contracts at the exact commit. It records common source blob ancestors rather than treating correlated outputs as independent confirmations. HTML escapes input, uses inline CSS/JS only with no remote assets or network fetches, and links to pinned GitHub source paths requiring authorized access. Neither Git source nor CI success certifies effective hosting rules, public releases, independent reviewers, real maintained-target benchmarks, longitudinal validity or operational rollback.
 
 DoD of the PR: exact-HEAD original Git replay of source JSON and HTML; 71/8/14 catalog parity; noncompensatory six-gate assessment; real committed Git reviewer-promotion mutant rejected; altered HTML and shared-origin claims rejected; static source/testing references never promoted to execution proof; full regression tests and CI status inspected on the final candidate SHA. Actual host enforcement, third-party behavior and observed usability remain external debt.
+
+## Method crosswalk — borrowed perspectives, not full implementations
+
+CORA is a **source-evidence correlation framework**, not a replacement for the following methods. The table identifies *the observation transferred into CORA* and the boundary that prevents the observation from becoming an unearned claim. A named method does not establish implementation of the entire method.
+
+| Established method | Bounded CORA use / source owner | Does not demonstrate |
+| --- | --- | --- |
+| C4 / arc42 | Declared product/software/file structure and [architecture](ARCHITECTURE.md), `cora.ontology.json` | Automatically inferred runtime containers, a complete C4 model or arc42 views |
+| Domain-Driven Design | Declared owners, responsibilities and boundaries in [ontology](../cora.ontology.json) and [artifact roles](../cora.artifact-roles.json) | Full bounded-context discovery, ubiquitous language or domain truth |
+| Static dependency analysis | `src/cora/graph.py` / manifest adapters: candidate Python imports, declared package relations | Dynamic imports, runtime invocation or all non-Python consumers |
+| Graph theory / SCC | Typed dependency paths, DoD topological ordering, missing edges and cycle detection | General SCC decomposition, centrality scores or full graph analytics |
+| Event/data lineage | Git objects, history, change receipts and portable [chat iteration](AGENT_ADOPTION.md) | Runtime event causality, certified data origin or signed human events |
+| Formal methods / contracts | AND-dependency DoD, explicit invariants, falsifiable negative conditions | Model checking, theorem proving or exhaustive formal verification |
+| Mutation / metamorphic testing | Finite preseeded fault models, positive/negative oracles, opt-in physical mutants | Model count equaling real target executions or exhaustive metamorphic coverage |
+| Software archaeology | Commits, co-change history, old/new dependency candidates and provenance | Hidden usage inferred from historical co-occurrence |
+| Threat modeling / assurance | Trust boundaries, policy-sensitive actions, negative tests and unverified authority | A full STRIDE model, penetration test or attested host enforcement |
+| Architecture fitness functions | Replayed bounded source DoD, erosion/debt signals and CI-workflow candidates | Global architecture optimality, complete maintainability or approved release |
+
+**Transfer across levels (source-supported examples).** [ICTC browser/role/viewport evidence](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/browser-onto-compliance-v1.py) records screenshot-producing tests; its [UI/UX audit](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/s4-a6-ux4-uiux-mount-audit.md) identifies semantic representation faults; its [656-to-12 contract](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/uiux-656-absorption-contract.json) binds them to candidate owners. [Actual source mutants](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/release-readiness-e2-product-mutants.mjs) are a distinct runtime-related gate. These are repository witnesses, not an independently reproduced ChatGPT-container session.
+
+[iKant_EDU's computational cognitive architecture](https://github.com/Luke883i/iKant_EDU/blob/73842c1d71ea1b1faa3903b255d00cd09b1b6cb6/docs/IKANT_COGNITIVE_SUBSTRATE.md) provides a testable *functional* self/world model with bounded recurrent workspace, appraisal and replaceable LLM; [source-consumer archaeology](https://github.com/Luke883i/iKant_EDU/blob/73842c1d71ea1b1faa3903b255d00cd09b1b6cb6/docs/CORA_PR_A_BACKLOG.md) keeps dynamic consumers UNKNOWN. No claim of biological equivalence, phenomenal consciousness or product acceptance follows.
+
+**One falsifiable claim, three views:** “this file can be deleted safely” is a requirement; missing static import candidates are only one observation; a dynamic consumer, unrun negative test or unrelated Git revision is a falsifier or open obligation. CORA makes the gap reviewable; it cannot authorize removal.
