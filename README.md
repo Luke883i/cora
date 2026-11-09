@@ -59,7 +59,7 @@ The dossier separates `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTERNAL`
 
 **1. Specify the outcome.** Turn natural-language intent into actors, boundaries and an **AND-dependency graph** of acceptance conditions. Work **backward** from each required observation: an unknown prerequisite remains open, never averaged away. [Worked application contract](docs/CONTINUOUS_DEVELOPMENT.md#example-contract-and-evidence-ladder--portable-corrective-action-app).
 
-**2. Change one coherent unit.** An authorized agent, not CORA, edits code and tests. Git records **content-addressed blobs**, **directory trees**, commits and a PR; CORA checks their lineage. **New source SHA** means revalidate. A hash can identify committed bytes; it cannot authenticate a human reviewer.
+**2. Change one coherent unit.** An agent uses authorized tools to edit code and tests; CORA checks source evidence. Git records **content-addressed blobs**, **directory trees**, commits and a PR; CORA checks their lineage. **New source SHA** means revalidate. A hash can identify committed bytes; it cannot authenticate a human reviewer.
 
 **3. Try to disprove it, then stop intelligently.** Challenge obligations with **seeded combinations** and a **separate expected-result rule**; use **physical mutation testing** on isolated real source only when authorized. Separate killed, **surviving and inconclusive** mutants. A **fixed scenario catalog and final window** with no new failure signatures establishes **bounded convergence**, **not proof of complete correctness**. After repeated **no-progress rounds**, continuation proposes replanning; it **does not predict N** or execute a next step.
 
