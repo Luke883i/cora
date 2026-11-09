@@ -381,8 +381,8 @@ def verify_method_crosswalk(readme: str, crosswalk: str, index: str) -> list[str
                 "656-to-12 contract", "Actual source mutants")
     if any(term not in crosswalk for term in projects):
         errors.append("cto-method-real-project-bridge-lost")
-    if re.search(r"\\bCORA (?:fully implements|certifies) (?:C4|DDD|formal methods|consciousness)\\b",
-                 readme + "\\n" + crosswalk, flags=re.I):
+    if re.search(r"\bCORA (?:fully implements|certifies) (?:C4|DDD|formal methods|consciousness)\b",
+                 readme + "\n" + crosswalk, flags=re.I):
         errors.append("cto-method-overclaim")
     return sorted(set(errors))
 

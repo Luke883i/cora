@@ -388,7 +388,7 @@ class ProgressiveDocumentationTests(unittest.TestCase):
             else:
                 a = mutation(a, "source merged via PR46", content)
             self.assertNotEqual((r, g, i, a, c), (root, guide, index, arch, cross))
-            digest = hashlib.sha256("\\n".join((r, g, i, a, c)).encode("utf-8")).digest()
+            digest = hashlib.sha256("\n".join((r, g, i, a, c)).encode("utf-8")).digest()
             self.assertNotIn(digest, fingerprint)
             fingerprint.add(digest)
             stream.update(digest)
@@ -418,7 +418,7 @@ class ProgressiveDocumentationTests(unittest.TestCase):
                 self.assertIn(phrase, cross)
                 candidate = mutation(cross, phrase, "unanchored-method-claim")
                 self.assertTrue(DOC.verify_method_crosswalk(self.readme, candidate, index))
-        false_promotion = cross + "\\nCORA fully implements formal methods.\\n"
+        false_promotion = cross + "\nCORA fully implements formal methods.\n"
         self.assertIn("cto-method-overclaim",
                       DOC.verify_method_crosswalk(self.readme, false_promotion, index))
 
