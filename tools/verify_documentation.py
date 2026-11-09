@@ -151,6 +151,7 @@ README_SPECIFIC_TRUTHS = (
     "merged PR41",
     "two controlled physical Git repositories",
     "GitHub workflow files alone do not prove",
+    "A hash can identify committed bytes; it cannot authenticate a human reviewer",
 )
 README_FALSE_PROMOTIONS = (
     r"\bverified public release and stable API\b",
@@ -187,6 +188,10 @@ def verify_readme_semantics(readme: str, *, root: Path | None = None) -> list[st
         errors.append("readme-semantic-unclosed-code-fence")
     if not re.search(r"(?<!\d)71 declared CLI commands(?!\d)", readme):
         errors.append("readme-semantic-cli-count")
+    if len(readme.split()) > 1800:
+        errors.append("cto-readme-overlong")
+    if "CORA is not an eleventh engineering method" not in readme:
+        errors.append("cto-method-positioning-missing")
     for marker in README_SPECIFIC_TRUTHS:
         if marker not in readme:
             errors.append("readme-semantic-required-truth:" + marker[:70])
@@ -229,196 +234,167 @@ NAVIGATION_READERS = {
 
 
 def verify_development_method_readme(readme: str) -> list[str]:
-    """Finite engineering-method editorial contract; not independent human usability."""
-    errors: list[str] = []
+    """Scoped engineering-fidelity checks, not independent semantic understanding."""
     part = readme.split("## How CORA works\n", 1)
-    section = part[1].split("\n## Interpret a CORA result", 1)[0] if len(part) == 2 else ""
+    section = part[1].split("\n## Use CORA with an AI coding assistant", 1)[0] if len(part) == 2 else ""
     if not section:
-        return ["engineering-method-missing"]
-    fields = {
-        "requirements": ("intention into a testable specification", "user outcome",
-                         "scope and exclusions", "existing owners/consumers"),
-        "backward-dod": ("Work backward from acceptance", "directed acyclic graph",
-                         "only when **all** are met", "An unresolved leaf"),
-        "slice": ("small, reversible change unit", "Git stores exact file bytes",
-                  "focused pull request", "mathematically minimal implementation"),
-        "falsification": ("Actively try to disprove the change",
-                           "disposable modified checkout", "surviving, timed-out or inconclusive"),
-        "replay": ("actual merged SHA", "The same intent is required for replay",
-                   "Run real tests and obtain independent review separately."),
-        "combinatorial": ("Combinatorial fault testing",
-                          "single faults and selected combinations", "recorded seeds"),
-        "oracle": ("Reference / differential checking", "expected-result rule",
-                    "count disagreements"),
-        "saturation": ("Novelty tracking and bounded saturation",
-                        "zero new signatures", "fixed catalog and window"),
-        "physical": ("Physical mutation testing", "unmutated baseline passes",
-                      "ten million Git commits", "different experiment"),
-        "examples": ("ICTC — preserving meaning", "iKant_EDU — resisting unsafe",
-                      "docs/SATURATION_M_PLUS_100.md",
-                      "v3/release-readiness-e2-product-mutants.mjs",
-                      "docs/CORA_PR_A_BACKLOG.md", "UNKNOWN",
-                      "not evidence that CORA's CLI executed"),
-        "assistant": ("assistant/operator performs the edits and Git/PR operations",
-                       "does not independently write a feature",
-                       "Where execution tools are absent"),
-        "terminology": ("Internal CORA vocabulary", "intent mining", "retrograde reticulum",
-                         "semantic slice", "blobbing", "semantic mutations",
-                         "semantic saturation", "semantic PR"),
-    }
-    for name, strings in fields.items():
-        if any(s not in section for s in strings):
-            errors.append("engineering-method-incomplete:" + name)
-    definition = section.find("### Numerical and semantic testing")
-    examples = section.find("### Two real engineering reference cases")
-    labels = section.find("**Internal CORA vocabulary")
-    if not (0 < definition < examples < labels):
-        errors.append("engineering-method-terms-before-explanation")
-    if section.count(chr(96) * 3 + "mermaid\n") != 1 or section.count("-->") != 6:
-        errors.append("engineering-method-acceptance-graph")
-    # Do not let duplicate source identifiers in independent narrative sections
-    # hide a deleted or substituted direct file-level falsification reference.
-    ref = "v3/release-readiness-e2-product-mutants.mjs"
-    if "### Two real engineering reference cases" in section and "**Methodological eras" in section:
-        case_section = section.split("### Two real engineering reference cases", 1)[1].split(
-            "**Methodological eras", 1)[0]
-        era_section = section.split("**Methodological eras", 1)[1].split(
-            "**Internal CORA vocabulary", 1)[0]
-        if ref not in case_section or ref not in era_section:
-            errors.append("engineering-method-physical-mutant-provenance-drift")
-    else:
-        errors.append("engineering-method-case-era-scope-missing")
-    if any(s in section for s in (
-            "CORA automatically writes all code",
-            "ten million independent source mutations",
+        return ["cto-method-absent"]
+    errors = []
+    blocks = (
+        ("outcome", ("**1. Specify the outcome.**", "natural-language intent",
+                     "AND-dependency graph", "backward", "unknown prerequisite")),
+        ("slice", ("**2. Change one coherent unit.**", "authorized tools",
+                   "content-addressed blobs", "directory trees", "New source SHA")),
+        ("falsification", ("**3. Try to disprove it, then stop intelligently.**",
+                           "seeded combinations", "separate expected-result rule",
+                           "physical mutation testing", "surviving and inconclusive")),
+        ("saturation", ("fixed scenario catalog and final window",
+                        "bounded convergence", "not proof of complete correctness",
+                        "no-progress rounds", "does not predict N")),
+        ("ictc-source", ("[ICTC](https://github.com/Luke883i/ictc)", "Browser witness",
+                         "visual audit", "reconciliation contract",
+                         "656 recorded visual/UX findings to 12 root causes",
+                         "physical product mutants", "screenshot-derived")),
+        ("cognitive-source", ("[iKant_EDU](https://github.com/Luke883i/iKant_EDU)",
+                              "experimental computational cognitive architecture",
+                              "functional attention", "self/world state model",
+                              "computational constructs", "UNKNOWN",
+                              "11 unqualified file deletions", "PR238")),
+        ("epistemic-boundary", ("not proof that CORA CLI created these products",
+                                "not a claim of a conscious biological mind",
+                                "Millions of finite fault vectors",
+                                "not millions of real Git mutations")),
+        ("glossary", ("Terminology, only after the engineering method:",
+                      "intent mining", "reticular DoD", "semantic slices",
+                      "blobbing/materialization", "semantic mutations",
+                      "semantic saturation")),
+    )
+    for label, terms in blocks:
+        if any(t not in section for t in terms):
+            errors.append("cto-method-lost:" + label)
+    order = [section.find(m) for m in (
+        "**1. Specify the outcome.**", "**2. Change one coherent unit.**",
+        "**3. Try to disprove it, then stop intelligently.**",
+        "**Two concrete engineering histories",
+        "**Terminology, only after the engineering method:")]
+    if min(order) < 0 or order != sorted(order):
+        errors.append("cto-method-progressive-order")
+    if any(x in section.lower() for x in (
+            "certifies consciousness", "proves ictc compliance",
             "saturation proves complete correctness",
-            "the coding agent independently authorizes merge")):
-        errors.append("engineering-method-false-authority")
+            "a million physical source mutants")):
+        errors.append("cto-method-unearned-promotion")
     return sorted(set(errors))
-
 
 
 def verify_contract_to_application_readme(readme: str) -> list[str]:
-    """Finite example/era claim guard: not target execution or a newcomer study."""
-    errors: list[str] = []
-    title = "## Worked example — from a user contract to an application PR"
-    start = readme.find(title)
-    next_section = readme.find("## First five minutes", max(0, start))
-    if start < 0 or next_section < start:
-        return ["application-first-example-missing"]
-    before = readme[:start]
-    worked = readme[start:next_section]
-    if ("## What works today" in before or
-        "**Example — ICTC" in before or
-        not 200 <= len(worked.split()) <= 1000):
-        errors.append("application-example-not-first-or-overloaded")
-    keys = ("goal:", "users:", "interface:", "authentication:", "storage:",
-            "record:", "workflow:", "rules:",
-            "acceptance:", "delivery:", "constraints:", "permissions:")
-    if any(k not in worked for k in keys) or worked.count("~~~yaml") != 1 or worked.count("~~~") != 2:
-        errors.append("application-user-contract-underdetermined")
-    for label in (
-            "Only a reviewer may mark VERIFIED",
-            "Unauthorized verification is denied; state stays unchanged",
-            "Reject concurrent updates using the record revision",
-            "Authorized local checkout; external effects require new consent",
-            "Authenticated local accounts with assigned roles",
-            "SQLite with versioned schema migrations"):
-        if label not in worked:
-            errors.append("application-acceptance-or-authorization-gap:" + label)
-    stages = (
-        "1. **Refine the specification:**",
-        "2. **Derive tests backward:**",
-        "3. **Design and implement one reversible unit:**",
-        "4. **Challenge the result:**",
-        "5. **Measure model coverage and convergence:**",
-        "6. **Materialize and verify the PR on one exact revision:**",
-    )
-    locations = [worked.find(stage) for stage in stages]
-    if min(locations) < 0 or locations != sorted(locations):
-        errors.append("application-phase-edges-not-ordered")
-    facts = (
-        "CORA guides and checks; the assistant/operator and Git perform these effects.",
-        "Git *blob objects*", "Git *trees*", "a *commit*",
-        "the **same final PR HEAD commit SHA**", "each new implementation commit changes HEAD",
-        "test commands, toolchain versions, dependencies, fixtures",
-        "After merge, the resulting main SHA is different",
-        "a **bounded stopping rule**", "not proof that the app has no unseen defects",
-        "first unresolved prerequisite",
-        "an independent reviewer", "proceed with the next stage",
-        "one scoped, reversible stage",
-        "not blanket consent", "significant ambiguity", "blocking question",
-    )
-    if any(fragment not in worked for fragment in facts):
-        errors.append("application-phase-gate-or-same-sha-overclaim")
-    if "physical source mutation" in worked and "disposable copy" not in worked:
-        errors.append("application-physical-mutants-not-isolated")
-    a = readme.find("**Methodological eras from repository history")
-    z = readme.find("**Internal CORA vocabulary", max(0, a))
-    eras = readme[a:z] if a >= 0 and z >= a else ""
-    era_checks = (
-        "ICTC [#212]", "iKant_EDU [#190]", "[#200]", "ICTC [#232]",
-        "iKant_EDU [#216]", "[#217]", "[#218]", "[#223]", "ICTC [#246]",
-        "methods, not causation", "spoofs the health/integrity readback",
-        "unknown dynamic consumers", "restoration of 11 unregistered deletions",
-        "not certify that CORA's CLI ran",
-        "a real reviewer",
-    )
-    if any(fragment not in eras for fragment in era_checks):
-        errors.append("project-era-provenance-or-falsification-incomplete")
-    return sorted(set(errors))
+    """Short route to application contract and runtime boundaries."""
+    parts = readme.split("## Use CORA with an AI coding assistant\n", 1)
+    body = parts[1].split("\n## Interpret a CORA result", 1)[0] if len(parts) == 2 else ""
+    required = ("[agent adoption](docs/AGENT_ADOPTION.md)",
+                "[R1–R4 DoD](docs/DOD_PR20_CONVERGENCE.md)",
+                "--contextual --intent", "The same intent is required for replay",
+                "Run real tests and obtain independent review separately.",
+                "does not independently write a feature",
+                "LEVEL / NILO experiment", "genuine browser tests",
+                "not an already delivered game",
+                "docs/CONTINUOUS_DEVELOPMENT.md#level-demonstration-local-evidence-verifiable-engineering-lifecycle")
+    return [] if body and all(x in body for x in required) else [
+        "cto-contract-to-application-or-source-link-lost"]
 
 
 def verify_multichannel_intro(readme: str) -> list[str]:
-    """Finite usability/editorial guards, not evidence of actual reader comprehension."""
-    errors: list[str] = []
-    intro = readme.split("## Worked example — from a user contract to an application PR", 1)[0]
-    # A formatting-only Markdown emphasis change must not become a semantic fault.
-    normalized = intro.replace("*Why it matters:*", "**Why it matters:**")
-    if not 130 <= len(intro.split()) <= 440:
-        errors.append("intro-length-out-of-budget")
-    if not all(x in normalized for x in (
-            "**What is CORA?**", "**Why it matters:**", "the proposed change",
-            "the source evidence", "tests or counterexamples", "the work still needed",
-            "the **product**", "the **software**", "the **repository**")):
-        errors.append("intro-product-model-incomplete")
-    f = chr(96) * 3
-    m = re.findall(r"^" + f + r"mermaid\n(.*?)\n" + f + r"$",
-                   intro, flags=re.MULTILINE | re.DOTALL)
-    if (len(m) != 1 or m[0].count("-->") != 3
-            or not all(x in m[0] for x in (
-                "flowchart LR", "Change intent + Git revision",
-                "Evidence dossier", "Target tests + independent review"))):
-        errors.append("intro-graph-flow-broken")
-    part = intro.split("**Choose an entry point**", 1)
-    nav = part[1].split("**Current status:**", 1)[0] if len(part) == 2 else ""
-    if (len([line for line in nav.splitlines() if line.startswith("|")]) != 6
-            or any(x not in nav for x in (
-                "Inspect a repository", "Review a change or pull request",
-                "ChatGPT conversation", "file, dependency or workflow",
-                "docs/FILE_LAB.md"))):
-        errors.append("intro-four-channel-route-broken")
-    if not all(x in readme for x in (
-            "illustrative, not a new ICTC execution", "docs/GOLD_ASSURANCE.md",
-            "Target-specific test results", "release approval must be obtained separately")):
-        errors.append("intro-ictc-evidence-boundary-missing")
-    if not all(x in intro for x in (
-            "1.0.0a5", "now merged with PR46",
-            "not a stable API or verified public release", "draft")):
-        errors.append("intro-release-status-stale")
-    if "unmerged source candidate" in intro or "certifies ICTC" in intro:
-        errors.append("intro-unwarranted-claim")
-    chat = readme.split("## Use CORA during a ChatGPT conversation", 1)
-    body = chat[1].split("## What works today", 1)[0] if len(chat) == 2 else ""
-    if any(x not in body for x in (
-            "examples/chat-step.example.json", "--chat-step", "--chat-bundle",
-            "cora verify-process", "handoff.md", "SHA-256",
-            "automatic capture of every chat message", "not independently witnessed")):
-        errors.append("chat-workflow-incomplete-or-misleading")
-    # The produce and replay commands each need their own bundle binding.
-    # Presence anywhere in the paragraph is insufficient when both are required.
-    if body.count("--chat-bundle") != 2:
-        errors.append("chat-zip-produce-and-replay-binding-incomplete")
+    """CTO first-read contract: compressed and bounded, not reader-tested."""
+    intro = readme.split("## First five minutes", 1)[0]
+    errors = []
+    if not 115 <= len(intro.split()) <= 310:
+        errors.append("cto-intro-compression-budget")
+    groups = {
+        "identity": ("# CORA — Continuous Ontological Repository Assurance",
+                     "**CORA (Continuous Ontological Repository Assurance)**",
+                     "**Engineering evidence for AI-assisted software changes.**"),
+        "chain": ("the proposed change", "the source evidence", "tests or counterexamples",
+                  "the work still needed", "exact Git SHA + evidence dossier"),
+        "boundaries": ("**Product**", "**software**", "**repository**", "not a coding agent"),
+        "audience": ("**Recommended use:**", "**Audience and conditions:**",
+                     "**Open source license:**", "[MIT](LICENSE)", "Python 3.11+"),
+        "release": ("1.0.0a5", "merged PR41", "PR46", "draft",
+                    "not a stable API or verified public release"),
+    }
+    for label, terms in groups.items():
+        if any(x not in intro for x in terms):
+            errors.append("cto-intro-missing:" + label)
+    fence = chr(96) * 3
+    if intro.count(fence + "text\n") != 1 or intro.count(fence + "\n") != 1:
+        errors.append("cto-diagram-structure")
+    if "--chat-step" not in readme or "--chat-bundle" not in readme:
+        errors.append("cto-chat-path-lost")
+    return sorted(set(errors))
+
+
+def verify_compact_document_bridge(guide: str, index: str, architecture: str) -> list[str]:
+    """Reversible documentation assertion, not independent product acceptance."""
+    errors = []
+    contract_anchor = "## Example contract and evidence ladder"
+    contract_sections = guide.split(contract_anchor, 1)
+    contract = contract_sections[1] if len(contract_sections) == 2 else ""
+    contract_facts = (
+        "SQLite with versioned schema migrations",
+        "reporters create actions", "reviewers may verify closure",
+        "actual test receipts on the final PR",
+        "REPLAN_STALLED_REPORTS", "not a universal",
+        "independent reviewer",
+    )
+    if (not contract or "## LEVEL: contract-to-product" not in guide
+            or any(term not in contract for term in contract_facts)):
+        errors.append("cto-deep-guide-proof-loss")
+    index_facts = ("compressed public front door",
+                   "Implementation and historical detail",
+                   "docs/")
+    if any(t not in index for t in index_facts):
+        errors.append("cto-navigation-hierarchy-drift")
+    if "source merged via PR46" not in architecture:
+        errors.append("cto-version-chronology-drift")
+    return sorted(set(errors))
+
+
+
+def verify_method_crosswalk(readme: str, crosswalk: str, index: str) -> list[str]:
+    """Finite source-only methodology/claim bridge; not method conformance."""
+    errors = []
+    anchor = "docs/CONVERGENT_ASSURANCE.md#method-crosswalk--borrowed-perspectives-not-full-implementations"
+    if f"[method crosswalk]({anchor})" not in readme:
+        errors.append("cto-method-crosswalk-unreachable")
+    if "[Method crosswalk](CONVERGENT_ASSURANCE.md#method-crosswalk--borrowed-perspectives-not-full-implementations)" not in index:
+        errors.append("cto-method-index-route-missing")
+    if "## Method crosswalk — borrowed perspectives, not full implementations" not in crosswalk:
+        errors.append("cto-method-crosswalk-heading-missing")
+    methods = ("C4 / arc42", "Domain-Driven Design", "Static dependency analysis",
+               "Graph theory / SCC", "Event/data lineage",
+               "Formal methods / contracts", "Mutation / metamorphic testing",
+               "Software archaeology", "Threat modeling / assurance",
+               "Architecture fitness functions")
+    for name in methods:
+        if f"| {name} |" not in crosswalk:
+            errors.append("cto-method-crosswalk-entry-missing:" + name)
+    boundaries = ("not a replacement", "not demonstrate", "No claim of biological equivalence",
+                  "not an independently reproduced ChatGPT-container session")
+    if any(term not in crosswalk for term in boundaries):
+        errors.append("cto-method-crosswalk-boundary-lost")
+    projects = (
+        "ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/browser-onto-compliance-v1.py",
+        "ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/s4-a6-ux4-uiux-mount-audit.md",
+        "ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/uiux-656-absorption-contract.json",
+        "ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/release-readiness-e2-product-mutants.mjs",
+        "iKant_EDU/blob/73842c1d71ea1b1faa3903b255d00cd09b1b6cb6/docs/IKANT_COGNITIVE_SUBSTRATE.md",
+        "iKant_EDU/blob/73842c1d71ea1b1faa3903b255d00cd09b1b6cb6/docs/CORA_PR_A_BACKLOG.md",
+        "656-to-12 contract", "Actual source mutants")
+
+    if any(term not in crosswalk for term in projects):
+        errors.append("cto-method-real-project-bridge-lost")
+    if re.search(r"\bCORA (?:fully implements|certifies) (?:C4|DDD|formal methods|consciousness)\b",
+                 readme + "\n" + crosswalk, flags=re.I):
+        errors.append("cto-method-overclaim")
     return sorted(set(errors))
 
 
@@ -582,6 +558,13 @@ def verify(root: Path) -> list[str]:
     # Physical line count is diagnostic, not evidence of usability or accuracy.
     # PR42 replaces the former 180-line hard gate with source-bound predicates.
     errors.extend(verify_readme_semantics(readme, root=root))
+    errors.extend(verify_compact_document_bridge(
+        (root / "docs/CONTINUOUS_DEVELOPMENT.md").read_text("utf-8"),
+        (root / "docs/INDEX.md").read_text("utf-8"),
+        (root / "docs/ARCHITECTURE.md").read_text("utf-8")))
+    errors.extend(verify_method_crosswalk(
+        readme, (root / "docs/CONVERGENT_ASSURANCE.md").read_text("utf-8"),
+        (root / "docs/INDEX.md").read_text("utf-8")))
     for path in ("README.md", "docs/AGENT_ADOPTION.md", "docs/CONVERGENT_ASSURANCE.md"):
         if not (root / path).is_file():
             errors.append("missing-procedure:" + path)

@@ -82,3 +82,60 @@ The [machine-readable README refactor DoD](../.cora/contracts/dod/documentation-
 The [PR42 navigation regression](../tests/test_pr23_navigation.py) maintains the original 1,000 adversarial vectors and adds **10,000 deterministic, distinct, preregistered variants** (`seed=883`, 20 families × 500): 4,000 meaning-preserving editorial transformations that must PASS and 6,000 false-authority/claim-count/command/link/traceability changes that must FAIL. Zero incorrect classifications, original-Git 18/18 proof replay, exact-HEAD Python 3.11/3.13 CI and a proofable checksum of the mutant stream are the SOURCE thresholds. A **true unfamiliar engineer**, an external maintained-target agent study and effective protected GitHub non-author review remain separately **BLOCKED_EXTERNAL** without real operator witnesses.
 
 The newest README is a current front door, not a new release or migration of historical truth. The PR42 test source and `README.md` Git blob must be compared to the reviewed candidate, with commit identity invalidated by any subsequent edit. No new orchestrator, auto-merge, release, or paper-only human study is authorized.
+
+
+## PR48 — CTO-facing multi-abstraction front-door DoD (source candidate)
+
+**Goal:** reduce the work required for a new reader to find a defensible,
+source-linked product claim, rather than increasing the apparatus used to
+describe it. The README now states value, an ordinary engineering
+method, two authentic project histories, one practical invocation and
+limits. The supporting docs keep the detailed engineering example,
+architecture, role distinctions and machine contracts.
+
+**Noncompensatory SOURCE leaves (each must pass on the same Git HEAD):**
+
+| Leaf | Required, falsifiable observation |
+| --- | --- |
+| R48-A clarity | First read distinguishes observable product outcome, Python software, Git repository and agent/host roles; technical vocabulary precedes CORA's proprietary labels. |
+| R48-B compression | Root README at most 1,800 whitespace words, introductory promise 115–310 words, with no competing second source-of-truth or deleted supporting contract. Word counts are **guardrails**, not human comprehension proofs. |
+| R48-C source identity | All 18 S01–S18 original claims remain bound to their required README sections and original Git blob/test references; 71 commands remain inventory, not 71 demonstrated behaviors. |
+| R48-D multi-abstraction evidence | ICTC browser role/viewport witness and 656 screenshot-derived issues/12 root causes are separated from synthetic UI campaigns and physical source mutants; iKant_EDU is a **computational cognitive architecture**, not biological/phenomenological cognition, and source history keeps UNKNOWN consumer and protected-workflow constraints. |
+| R48-E method honesty | Backward AND-gate acceptance, bounded slices, seeded fault combinations, independent model oracle, real isolated mutants, novelty-window stopping rule, continuation advice and same-HEAD invalidation remain distinct. |
+| R48-F usability/routing | Five existing readers, five optional lenses, quickstart and One-Run, clean relative links and the comprehensive 48-document index survive. The full corrective-action app contract is preserved in the existing continuous-development guide. |
+| R48-G falsification | 100 additional unique local/global editorial mutations: 20 benign acceptances and 80 planted semantic faults rejected. Original 1k/10k vector campaigns retain 1,000 rejected, 4,000 accepted equivalences and 6,000 rejected dangerous changes, zero survivors. |
+| R48-H integrity | No original tests, protected CI workflows, historical Git blobs, owners or product software rewritten merely to pass editorial review. CI, git diff and replay are checked against the **final candidate SHA**. |
+
+**Global DoD:** R48-A ∧ R48-B ∧ R48-C ∧ R48-D ∧ R48-E ∧
+R48-F ∧ R48-G ∧ R48-H ∧ E01 ∧ E02 ∧ E03. The eight SOURCE
+leaves can be supported by local source and CI receipts; E01 actual
+unfamiliar-reader comprehension, E02 externally maintained target
+behavior and E03 enforceable host/human reviewer gates remain
+**BLOCKED_EXTERNAL** until independently observed.
+
+**Performance criteria proposed for an actual CTO study, not yet
+observed:** first-read identification of value, operating model,
+evidence limits and next action without historical context; shortest
+path to reproduction; questions asked and interpretation errors
+recorded against a deliberately competing long-form baseline. Neither
+static assertions nor deterministic lexical mutants measure this.
+
+**Source owners:** `README.md`; `tools/verify_documentation.py`;
+`tests/test_pr23_navigation.py` (100 new + historical 1k/10k);
+`.cora/assurance/documentation-proofs.json`; `docs/INDEX.md`;
+`docs/ARCHITECTURE.md`; `docs/CONTINUOUS_DEVELOPMENT.md`.
+The original PR42 machine DoD is **retained**, not weakened.
+
+## PR48 migration — source-derived clarity/compression and external qualification
+
+This amendment refines the existing R48-A–H AND-gate; it does **not** create a competing DoD or replace the fixed S01–S18 ledger.
+
+- **C / Clarity:** on first scan explain what CORA inspects, why source assurance differs from coding, the path from a falsifiable goal to a scoped decision, and the next command. Structural text checks can reject missing claims; they cannot measure comprehension.
+- **K / Completeness:** preserve all S01–S18, five reader routes, five lenses, exact CLI/One-Run/replay path, and source-versus-runtime/host status. The full ten-method comparison belongs to the existing [convergence guide](CONVERGENT_ASSURANCE.md#method-crosswalk--borrowed-perspectives-not-full-implementations).
+- **X / Compression:** primary README contains the value/method/usage/limits and two concrete examples without duplicating method documentation or PR archaeology. README whitespace words and first-scan bounds are guardrails; eliminate duplicate narrative while keeping verifiable anchors.
+- **V / Multi-audience value:** CTO reads the decision boundary; developer obtains a testable next action; reviewer finds independent falsifiers; forensic engineer traces Git/source lineage; product owner sees external acceptance limitations. Success requires a real first-read study, not word frequency.
+- **E / Evidence:** ICTC has separate (i) role/viewport browser screenshot-producing code, (ii) screenshot-derived semantic UX audit, (iii) 656/12 source contract and (iv) real E2 physical source mutants. iKant_EDU has a bounded functional computational cognitive architecture and a recoverable Git/consumer history. Neither demonstrates a fresh run by CORA, an independent ChatGPT-container test or user acceptance.
+- **F / Falsification:** 100 deterministic *text/document* variations across local README and linked current docs must include 20 meaning-preserving changes accepted and 80 corrupted claims/links/gates rejected, with zero wrong outcomes; retain the original 1k/10k campaigns. One variant is not one physical software mutation or human respondent.
+- **I / Integrity:** use only existing document source owners, preserve historical records, protected CI and product software; recheck on the final PR head and after each subsequent commit. Actual CI, original-Git replay and independent review are different oracles.
+
+**Global obligation = C AND K AND X AND V AND E AND F AND I AND E01 AND E02 AND E03.** Local source tests can support bounded C/K/X/E/F/I; V as *observed human comprehension*, user/target trials and enforced host approval remain **BLOCKED_EXTERNAL** until witnessed. `PASS_SCOPED` must never substitute for them.

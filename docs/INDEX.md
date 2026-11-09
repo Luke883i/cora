@@ -1,16 +1,17 @@
 # CORA documentation — navigate by goal
 
-Start at the [README](../README.md) for the current product promise, an executable first look and the limits of what CORA proves. This index is **navigation**, not a release authority or an independent witness.
+Start at the [README](../README.md): a source-scoped product promise, a three-step engineering method, a ten-method correlation map and two source-linked project examples. This index routes readers by task, method and evidence class; it is navigation, not a release authority or an independent witness.
 
 ## How to navigate
 
-The [README](../README.md) is the **one public-facing macro-map**: product promise, recommended use, safe limits, MIT licensing and five optional expandable lenses. This file remains the **exhaustive 48-document index**, not a second landing page. Read in the order: README → user task → current method → applicable DoD and source evidence → historical ADR/audit only when needed. Links and document classifications are checked by `tools/verify_documentation.py`; navigation alone does not establish user comprehension.
+The [README](../README.md) is the **compressed public front door**: outcome, method, concrete project histories, first use and boundaries. Implementation and historical detail belongs in the linked guides. This file remains the **exhaustive 48-document index**, not a second landing page. Read in the order: README → user task → current method → applicable DoD and source evidence → historical ADR/audit only when needed. Links and document classifications are checked by `tools/verify_documentation.py`; navigation alone does not establish user comprehension.
 
 ## Choose your path
 
 - **New to CORA:** [Getting started](GETTING_STARTED.md) → [Architecture](ARCHITECTURE.md) → [Understanding evidence and limitations](DOD_V1_EXPERIMENTAL.md).
 - **Using an AI coding assistant:** [Agent adoption](AGENT_ADOPTION.md) → [Agent method](AI_CODE_ASSURANCE.md) → [Convergent assurance](CONVERGENT_ASSURANCE.md) → [complete R1–R4 obligations](DOD_PR20_CONVERGENCE.md).
 - **Auditing an existing repository:** [File Lab](FILE_LAB.md) → [Holistic forensics](HOLISTIC_FORENSICS.md) → [Engineering debt](ENGINEERING_DEBT.md).
+- **Comparing CORA with established engineering methods:** [Method crosswalk](CONVERGENT_ASSURANCE.md#method-crosswalk--borrowed-perspectives-not-full-implementations) → [Architecture](ARCHITECTURE.md) → [Evidence limits](DOD_V1_EXPERIMENTAL.md).
 - **Reviewing a PR or release:** [Continuous development](CONTINUOUS_DEVELOPMENT.md) → [Governance](../GOVERNANCE.md) → [Release procedure](RELEASE.md).
 - **Looking for syntax and inputs:** [CLI reference](CLI_REFERENCE.md), [committed ontology](../cora.ontology.json), [role registry](../cora.artifact-roles.json).
 - **Censusing all implemented command surfaces:** [Capability atlas](../.cora/assurance/capability-atlas.json) → [CLI reference](CLI_REFERENCE.md) → [architecture](ARCHITECTURE.md) → [capability DoD](../.cora/contracts/dod/capability-dod.json). These are source/test witnesses, not behavior certification.

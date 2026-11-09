@@ -54,7 +54,7 @@ def adversarial_case(readme: str, family: int, variant: int) -> tuple[str, str]:
                         f"**Coding assistant or reviewer:** [wrong agent guide](docs/NONEXISTENT-{suffix}.md)"),
                         "navigation-reader-route:Coding assistant or reviewer")
     if family == 7:
-        return (mutation(readme, "engine [\x60src/cora/\x60](src/cora/)",
+        return (mutation(readme, "[Engine \x60src/cora/\x60](src/cora/)",
                         f"engine [\x60unrelated-{suffix}\x60](src/not-a-cora-package-{suffix}/)"),
                         "navigation-lens-target:Software:src/cora/")
     if family == 8:
@@ -85,136 +85,116 @@ class ProgressiveDocumentationTests(unittest.TestCase):
 
 
     def test_multichannel_intro_adversarial_and_harmless_edits(self):
-        """Twelve content mutations; no implied human usability certification."""
+        """Fail closed on identity, audience, evidence and release while allowing styling."""
         self.assertEqual(DOC.verify_multichannel_intro(self.readme), [])
-        # Formatting variation does not change the product claim.
-        formatted = self.readme.replace(
-            "**Why it matters:**", "*Why it matters:*", 1)
-        issues = DOC.verify_multichannel_intro(formatted)
-        self.assertNotIn("intro-length-out-of-budget", issues)
+        cosmetic = self.readme.replace("**Why it matters:**", "*Why it matters:*", 1)
+        self.assertEqual(DOC.verify_multichannel_intro(cosmetic), [])
         cases = (
-            ("product-object", "the proposed change", "a marketing slogan"),
-            ("no-source", "the source evidence", "unverified assertions"),
-            ("diagram-input", "Change intent + Git revision", "Some user text"),
-            ("diagram-last-gate", "Target tests + independent review", "Automatic approval"),
-            ("route-terminal", "Inspect a repository", "Discover a website"),
-            ("route-review", "Review a change or pull request", "Watch a video"),
-            ("route-chat", "ChatGPT conversation", "An unrelated app"),
-            ("ictc-example", "illustrative, not a new ICTC execution", "certifies ICTC"),
-            ("ictc-proof", "release approval must be obtained separately", "release is approved"),
-            ("merged-source", "now merged with PR46", "unmerged source candidate"),
-            ("chat-bundle", "--chat-bundle", "--chat-magic"),
-            ("chat-capture", "automatic capture of every chat message", "self-running assistant"),
+            ("identity", "Continuous Ontological Repository Assurance", "unidentified audit"),
+            ("value", "Engineering evidence for AI-assisted software changes.", "vague confidence"),
+            ("claim", "the proposed change", "an unrelated sales funnel"),
+            ("provenance", "the source evidence", "unverified prose"),
+            ("negative", "tests or counterexamples", "marketing claims"),
+            ("unknown", "the work still needed", "automated certificate"),
+            ("product", "**Product**", "**Ad content**"),
+            ("software", "**software**", "**marketing**"),
+            ("repository", "**repository**", "**brochure**"),
+            ("permissions", "not a coding agent", "an autonomous coding agent"),
+            ("audience", "**Audience and conditions:**", "**No conditions:**"),
+            ("version", "not a stable API or verified public release", "stable commercial release"),
         )
-        for name, old, new in cases:
-            with self.subTest(name=name):
-                self.assertIn(old, self.readme)
-                changed = self.readme.replace(old, new, 1)
-                self.assertNotEqual(changed, self.readme)
-                self.assertNotEqual(DOC.verify_multichannel_intro(changed), [])
-        first = self.readme.index("--chat-bundle")
-        second = self.readme.index("--chat-bundle", first + 1)
-        replaced = self.readme[:second] + "--missing-chat-bundle" + self.readme[second + len("--chat-bundle"):]
-        self.assertIn("chat-zip-produce-and-replay-binding-incomplete",
-                      DOC.verify_multichannel_intro(replaced))
-
+        for label, before, after in cases:
+            with self.subTest(label=label):
+                self.assertIn(before, self.readme)
+                mutant = self.readme.replace(before, after, 1)
+                self.assertTrue(DOC.verify_multichannel_intro(mutant),
+                                "false negative: " + label)
 
     def test_engineering_method_semantic_falsifiers(self):
+        """Source citations and scientific/quantitative boundaries, not mere spellings."""
         self.assertEqual(DOC.verify_development_method_readme(self.readme), [])
         cases = (
-            ("goal", "intention into a testable specification", "a marketing slogan"),
-            ("scope", "scope and exclusions", "marketing scope"),
-            ("graph", "directed acyclic graph", "unordered notes"),
-            ("all-gates", "only when **all** are met", "when one check passes"),
-            ("open-proof", "An unresolved leaf", "An automatically approved leaf"),
-            ("slice", "small, reversible change unit", "an irreversible rewrite"),
-            ("minimum", "mathematically minimal implementation", "magically minimal"),
-            ("physical", "disposable modified checkout", "production environment"),
-            ("survivors", "surviving, timed-out or inconclusive", "all killed"),
-            ("combination", "single faults and selected combinations", "random unrelated text"),
-            ("seed", "recorded seeds", "unrecorded samples"),
-            ("oracle", "expected-result rule", "marketing confidence"),
-            ("saturation", "zero new signatures", "zero real bugs ever"),
-            ("bounded", "fixed catalog and window", "any domain forever"),
-            ("model-source", "ten million Git commits", "ten million verified source commits"),
-            ("ictc", "docs/SATURATION_M_PLUS_100.md", "NO_SATURATION_EVIDENCE.md"),
-            ("ictc-physical", "v3/release-readiness-e2-product-mutants.mjs", "NO_REAL_MUTANTS.mjs"),
-            ("ikant", "docs/CORA_PR_A_BACKLOG.md", "NO_IKANT_EVIDENCE.md"),
-            ("unknown", "UNKNOWN", "CERTIFIED_UNUSED"),
-            ("cli", "not evidence that CORA's CLI executed", "proof that CORA executed"),
-            ("agent", "does not independently write a feature", "independently writes software"),
-            ("human", "Where execution tools are absent", "All execution is automatic"),
-            ("review", "actual merged SHA", "old PR head only"),
+            ("intention", "natural-language intent", "unexplained magic"),
+            ("backward", "AND-dependency graph", "weighted confidence average"),
+            ("unknown", "unknown prerequisite", "closed prerequisite"),
+            ("files", "content-addressed blobs", "untracked output"),
+            ("revision", "New source SHA", "any old HEAD"),
+            ("seed", "seeded combinations", "unbounded sample"),
+            ("oracle", "separate expected-result rule", "self grading oracle"),
+            ("physical", "physical mutation testing", "imaginary mutation testing"),
+            ("survivor", "surviving and inconclusive", "all passes"),
+            ("bounded", "fixed scenario catalog and final window", "all possible scenarios"),
+            ("convergence", "not proof of complete correctness", "guarantees perfection"),
+            ("stagnation", "no-progress rounds", "infinite retries"),
+            ("next", "does not predict N", "predicts every round"),
+            ("ictc", "656 recorded visual/UX findings to 12 root causes", "infinite proven findings"),
+            ("screenshot", "screenshot-derived", "human-certified UX"),
+            ("browser", "Browser witness", "imagined browser"),
+            ("source", "physical product mutants", "symbolic toy only"),
+            ("ikant", "experimental computational cognitive architecture", "biological brain clone"),
+            ("cognitive", "functional attention", "measured biological emotions"),
+            ("world", "self/world state model", "verified inner self"),
+            ("unknown consumers", "UNKNOWN", "UNUSED"),
+            ("recovery", "11 unqualified file deletions", "11 approved deletions"),
+            ("consciousness", "not a claim of a conscious biological mind", "proves consciousness"),
         )
-        for label, old, altered in cases:
+        heading = self.readme.index("## How CORA works")
+        tail = self.readme[heading:]
+        for label, old, new in cases:
             with self.subTest(label=label):
-                anchor = self.readme.index("## How CORA works")
-                scope = self.readme[anchor:]
-                self.assertIn(old, scope, "falsifier must target its declared method section")
-                candidate = self.readme[:anchor] + scope.replace(old, altered, 1)
-                self.assertTrue(DOC.verify_development_method_readme(candidate),
-                                "missed adversarial editorial case: " + label)
-        # Two source citations must survive independently. A shared substring
-        # elsewhere in the README is not an acceptable evidence substitute.
-        duplicate = "v3/release-readiness-e2-product-mutants.mjs"
-        split_at = self.readme.index("**Methodological eras from repository history")
-        case_only = self.readme[:split_at].replace(duplicate, "UNSUPPORTED_CASE.mjs", 1) + self.readme[split_at:]
-        self.assertIn("engineering-method-physical-mutant-provenance-drift",
-                      DOC.verify_development_method_readme(case_only))
-        era_only = self.readme[:split_at] + self.readme[split_at:].replace(
-            duplicate, "UNSUPPORTED_ERA.mjs", 1)
-        self.assertIn("engineering-method-physical-mutant-provenance-drift",
-                      DOC.verify_development_method_readme(era_only))
-        cosmetic = self.readme.replace("### Two real engineering reference cases",
-                                       "### Two real engineering reference cases  ", 1)
-        self.assertEqual(DOC.verify_development_method_readme(cosmetic), [])
-
+                self.assertIn(old, tail)
+                mutant = self.readme[:heading] + tail.replace(old, new, 1)
+                self.assertTrue(DOC.verify_development_method_readme(mutant),
+                                "false negative: " + label)
+        benign = self.readme.replace(
+            "**2. Change one coherent unit.**", "**2. Change one coherent unit.**  ", 1)
+        self.assertEqual(DOC.verify_development_method_readme(benign), [])
 
     def test_application_contract_phase_gates_and_real_era_examples(self):
-        """Negative editorial controls: not an executed app, human trial or acceptance."""
+        """Check root-to-guide transfer without pretending the game executed."""
         self.assertEqual(DOC.verify_contract_to_application_readme(self.readme), [])
-        cases = (
-            ("roles", "Only a reviewer may mark VERIFIED", "Any actor may mark VERIFIED"),
-            ("unauthorized", "Unauthorized verification is denied; state stays unchanged",
-             "Unauthorized verification persists as verified"),
-            ("identity", "Authenticated local accounts with assigned roles",
-             "Anonymous requests trusted without checking"),
-            ("durability-design", "SQLite with versioned schema migrations",
-             "Unversioned volatile in-memory table"),
-            ("concurrency", "Reject concurrent updates using the record revision",
-             "Concurrent updates silently overwrite one another"),
-            ("consent", "Authorized local checkout; external effects require new consent",
-             "Any cloud or protected effect is preapproved"),
-            ("stage-sequence", "2. **Derive tests backward:**", "2. **Create a logo:**"),
-            ("missing-gates", "first unresolved prerequisite", "automatically accepted prerequisite"),
-            ("blob-precision", "Git *blob objects*", "Magic metadata"),
-            ("commit-identity", "the **same final PR HEAD commit SHA**", "any previous SHA"),
-            ("SHA-drift", "each new implementation commit changes HEAD",
-             "old HEAD always remains valid"),
-            ("postmerge", "After merge, the resulting main SHA is different",
-             "postmerge always equals the original PR HEAD"),
-            ("human-phase", "one scoped, reversible stage",
-             "unlimited autonomous execution"),
-            ("no-blanket", "not blanket consent", "irreversible permissions granted"),
-            ("finite", "a **bounded stopping rule**", "universal proof of correctness"),
-            ("ICTC-intent", "ICTC [#212]", "ICTC origin unknown"),
-            ("ICTC-physical", "spoofs the health/integrity readback", "no real mutant"),
-            ("ikant-hygiene", "unknown dynamic consumers", "confirmed unused code"),
-            ("ikant-recovery", "restoration of 11 unregistered deletions",
-             "automatic approval of all deletions"),
-            ("method-only", "not certify that CORA's CLI ran", "proves CORA CLI ran"),
+        guide = (ROOT / "docs/CONTINUOUS_DEVELOPMENT.md").read_text("utf-8")
+        index = (ROOT / "docs/INDEX.md").read_text("utf-8")
+        arch = (ROOT / "docs/ARCHITECTURE.md").read_text("utf-8")
+        self.assertEqual(DOC.verify_compact_document_bridge(guide, index, arch), [])
+        root_cases = (
+            ("agent", "[agent adoption](docs/AGENT_ADOPTION.md)"),
+            ("method", "[R1–R4 DoD](docs/DOD_PR20_CONVERGENCE.md)"),
+            ("intent", "--contextual --intent"),
+            ("replay", "The same intent is required for replay"),
+            ("tests", "Run real tests and obtain independent review separately."),
+            ("agent authority", "does not independently write a feature"),
+            ("game boundary", "not an already delivered game"),
+            ("browser", "genuine browser tests"),
         )
-        for label, former, mutated in cases:
+        for label, phrase in root_cases:
             with self.subTest(label=label):
-                self.assertIn(former, self.readme)
-                candidate = self.readme.replace(former, mutated, 1)
-                self.assertNotEqual(candidate, self.readme)
-                self.assertTrue(DOC.verify_contract_to_application_readme(candidate),
-                                "undetected contract-to-PR editorial mutant: " + label)
-        benign = self.readme.replace(
-            "## Worked example — from a user contract to an application PR",
-            "## Worked example — from a user contract to an application PR  ", 1)
-        self.assertEqual(DOC.verify_contract_to_application_readme(benign), [])
+                self.assertIn(phrase, self.readme)
+                candidate = self.readme.replace(phrase, "UNTRACED-" + label, 1)
+                self.assertTrue(DOC.verify_contract_to_application_readme(candidate))
+        guide_cases = (
+            "SQLite with versioned schema migrations",
+            "reporters create actions", "reviewers may verify closure",
+            "actual test receipts on the final PR", "REPLAN_STALLED_REPORTS",
+            "not a universal", "independent reviewer",
+        )
+        for phrase in guide_cases:
+            with self.subTest(guide_phrase=phrase):
+                self.assertIn(phrase, guide)
+                before, anchor, contract = guide.partition("## Example contract and evidence ladder")
+                self.assertTrue(anchor, "canonical contract subsection missing")
+                candidate = before + anchor + contract.replace(phrase, "UNRECONCILED", 1)
+                self.assertNotEqual(candidate, guide)
+                self.assertIn("cto-deep-guide-proof-loss",
+                              DOC.verify_compact_document_bridge(candidate, index, arch))
+        self.assertIn("cto-navigation-hierarchy-drift",
+                      DOC.verify_compact_document_bridge(
+                          guide, index.replace("compressed public front door", "new SOT"), arch))
+        self.assertIn("cto-version-chronology-drift",
+                      DOC.verify_compact_document_bridge(
+                          guide, index, arch.replace("source merged via PR46", "still unmerged")))
+        # Metadata-independent formatting edits must not be called evidence loss.
+        self.assertEqual(DOC.verify_compact_document_bridge(guide + "\n", index, arch), [])
 
     def test_thousand_adversarial_editorial_and_reader_vectors(self):
         family_totals: dict[str, dict[str, int]] = {}
@@ -272,6 +252,180 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         self.assertFalse(survivors)
 
 
+    def test_cto_100_local_global_editorial_mutations(self):
+        """100 preregistered meaning-level changes, not 100 whitespace edits.
+
+        Ten families x ten distinct assertions. Twenty paraphrases preserve
+        meaning, eighty invert a bounded engineering claim across README,
+        architecture, method, guide and navigation. Seed 20261109 fixes order.
+        This cannot substitute for unfamiliar human-reader testing.
+        """
+        root = self.readme
+        guide = (ROOT / "docs/CONTINUOUS_DEVELOPMENT.md").read_text("utf-8")
+        index = (ROOT / "docs/INDEX.md").read_text("utf-8")
+        arch = (ROOT / "docs/ARCHITECTURE.md").read_text("utf-8")
+        cross = (ROOT / "docs/CONVERGENT_ASSURANCE.md").read_text("utf-8")
+        cto_intro = ("For a CTO this means reviewable decisions; for a developer, "
+                     "a reproducible next test; for a reviewer, explicit counterexamples "
+                     "and unresolved risk.")
+        route_intro = ("This index routes readers by task, method and evidence class; "
+                       "it is navigation, not a release authority or an independent witness.")
+        catalog = (
+            # 0: equivalent multi-user outcome formulations
+            (
+                "For a CTO: a scoped decision; for a developer: the next reproducible check; for a reviewer: open counterexamples.",
+                "CTOs receive reviewable claims; developers receive reproducible tests; reviewers receive unresolved risks.",
+                "The CTO sees decision scope, the developer test scope, and the reviewer the limitations of both.",
+                "Engineering leadership can inspect decisions, implementers can replay checks and reviewers can challenge gaps.",
+                "A decision owner sees limits; a coder sees the next check; an auditor sees the counterevidence.",
+                "For management, the decision is inspectable; for builders, the next test; for reviewers, the unresolved gap.",
+                "CORA offers scoped information for decision makers, repeatable checks for engineers and risk for reviewers.",
+                "The CTO gets limits, the developer gets replay, and the reviewer gets possible counterexamples.",
+                "Leadership sees evidentiary scope, developers see executable next checks, and reviewers see unknowns.",
+                "The same dossier supports CTO decisions, developer reproduction and reviewer falsification.",
+            ),
+            # 1: equivalent navigation boundaries in the linked document
+            (
+                "This index routes by need and evidence type; it neither approves releases nor validates independent reviewers.",
+                "Navigation is grouped by engineering task and evidence; approval and reviewer identity remain external.",
+                "Readers can navigate methods and records here; the index cannot authenticate a release.",
+                "This is a map of current documents, not a decision authority or a human validation.",
+                "Follow task-based routes to evidence; no route is an independent attestation.",
+                "The index organizes engineering references, without conferring authorization or user acceptance.",
+                "This page is a reader map, not proof of runtime, host governance or a release.",
+                "Method, task and evidence navigation does not validate the claims in linked documents.",
+                "The index exposes source owners while leaving independent review and approval outside it.",
+                "These routes aid discovery; they do not independently verify the product or author.",
+            ),
+            # 2: source evidence is replaced by unverifiable material
+            (
+                "an unreviewed model impression", "a seller declaration", "an unattributed summary",
+                "a speculative assistant opinion", "a marketing statement", "an unaudited screenshot caption",
+                "a fabricated repository excerpt", "a guessed test outcome", "an anonymous claim",
+                "an unverifiable dashboard label",
+            ),
+            # 3: agent autonomy or self-issued authorization
+            (
+                "an autonomous production editor", "a self-approving merger", "a release-authorizing bot",
+                "an unsupervised deployment system", "an automatic product creator",
+                "an agent that can bypass reviewers", "a self-certifying authority",
+                "an autonomous refactor-and-delete engine", "a credentialed release decider",
+                "an unconditional code execution agent",
+            ),
+            # 4: synthetic tests masquerade as real executions
+            (
+                "one million actual product mutants", "a million audited human trials",
+                "one million independent executions", "a million certified CI runs",
+                "fully verified runtime fault coverage", "one million on-device tests",
+                "a million authenticated reviews", "a million physical repository edits",
+                "a million real browser sessions", "exhaustive source proof from every scenario",
+            ),
+            # 5: screenshot findings promoted to scientific/human proof
+            (
+                "656 independently observed user sessions", "a certified ergonomics standard",
+                "a proven accessibility pass", "all human cognitive errors eliminated",
+                "a statistically representative UX survey", "a complete visual correctness proof",
+                "an ISO-validated interaction benchmark", "a live user-acceptance certificate",
+                "zero remaining UI inconsistencies", "an externally approved usability study",
+            ),
+            # 6: computational representations promoted to phenomenal biology
+            (
+                "measured first-person experience", "living biological neurons",
+                "verified subjective feelings", "an actual human brain substrate",
+                "phenomenal consciousness certified", "biological neural tissue",
+                "a human embodied nervous system", "measurable sentient awareness",
+                "subjective memory directly experienced", "biological emotional processing",
+            ),
+            # 7: correct role and storage contract replaced by unsound design
+            (
+                "unversioned ephemeral storage", "browser-only memory without disk",
+                "unsafe CSV writes with no revision", "an external unapproved database",
+                "in-memory state without restart tests", "silent last-writer-wins persistence",
+                "untracked plaintext shared folders", "single mutable global JSON without history",
+                "nonpersistent cookies as canonical storage", "a mock-only write interface",
+            ),
+            # 8: navigation promoted to an alternative source of truth
+            (
+                "replacement authority registry", "self-issued release governance",
+                "alternative product truth source", "new independent acceptance ledger",
+                "unreviewed root source-of-truth", "marketing copy as architecture",
+                "synthetic approval document", "duplicated definitive release policy",
+                "separate undocumented owner map", "new immutable certificate",
+            ),
+            # 9: merged source history falsely undone
+            (
+                "still unmerged PR46", "unreleased unreviewed PR46", "PR46 never existed",
+                "PR46 is merely hypothetical", "no actual merge of PR46",
+                "PR46 cannot be traced in Git", "source was only proposed by PR46",
+                "PR46 has no provenance", "PR46 was rejected", "PR46 is an external rumor",
+            ),
+        )
+        fingerprint = set()
+        stream = hashlib.sha256()
+        totals = {"local": 0, "global": 0, "benign": 0, "adversarial": 0}
+        order = list(range(100))
+        random.Random(20261109).shuffle(order)
+        for case in order:
+            family, variant = divmod(case, 10)
+            r, g, i, a, c = root, guide, index, arch, cross
+            content = catalog[family][variant]
+            benign = family < 2
+            if family == 0:
+                r = mutation(r, cto_intro, content)
+            elif family == 1:
+                i = mutation(i, route_intro, content)
+            elif family == 2:
+                r = mutation(r, "the source evidence", content)
+            elif family == 3:
+                r = mutation(r, "not a coding agent", content)
+            elif family == 4:
+                r = mutation(r, "not one million independent source mutations", content)
+            elif family == 5:
+                r = mutation(r, "656 recorded visual/UX findings to 12 root causes", content)
+            elif family == 6:
+                r = mutation(r, "computational constructs", content)
+            elif family == 7:
+                g = mutation(g, "SQLite with versioned schema migrations", content)
+            elif family == 8:
+                i = mutation(i, "compressed public front door", content)
+            else:
+                a = mutation(a, "source merged via PR46", content)
+            self.assertNotEqual((r, g, i, a, c), (root, guide, index, arch, cross))
+            digest = hashlib.sha256("\n".join((r, g, i, a, c)).encode("utf-8")).digest()
+            self.assertNotIn(digest, fingerprint)
+            fingerprint.add(digest)
+            stream.update(digest)
+            problems = (DOC.verify_progressive_readme(r) +
+                        DOC.verify_compact_document_bridge(g, i, a) +
+                        DOC.verify_method_crosswalk(r, c, i))
+            self.assertEqual(not problems, benign, (family, variant, problems))
+            totals["local" if family in (0, 2, 3, 4, 5, 6) else "global"] += 1
+            totals["benign" if benign else "adversarial"] += 1
+        self.assertEqual(totals, {"local": 60, "global": 40,
+                                  "benign": 20, "adversarial": 80})
+        self.assertEqual(len(fingerprint), 100)
+        print("PR48 100 bounded semantic text variants: " +
+              json.dumps({"seed": 20261109, "vectors": 100, "accepted": 20,
+                          "rejected": 80, "sha256": stream.hexdigest(),
+                          "independent_humans": 0}, sort_keys=True))
+
+    def test_ten_methods_and_real_project_source_bridge(self):
+        cross = (ROOT / "docs/CONVERGENT_ASSURANCE.md").read_text("utf-8")
+        index = (ROOT / "docs/INDEX.md").read_text("utf-8")
+        self.assertEqual(DOC.verify_method_crosswalk(self.readme, cross, index), [])
+        for phrase in ("| C4 / arc42 |", "| Graph theory / SCC |",
+                       "| Mutation / metamorphic testing |", "| Domain-Driven Design |",
+                       "ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/browser-onto-compliance-v1.py",
+                       "iKant_EDU/blob/73842c1d71ea1b1faa3903b255d00cd09b1b6cb6/docs/IKANT_COGNITIVE_SUBSTRATE.md",
+                       "not an independently reproduced ChatGPT-container session"):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, cross)
+                candidate = mutation(cross, phrase, "unanchored-method-claim")
+                self.assertTrue(DOC.verify_method_crosswalk(self.readme, candidate, index))
+        false_promotion = cross + "\nCORA fully implements formal methods.\n"
+        self.assertIn("cto-method-overclaim",
+                      DOC.verify_method_crosswalk(self.readme, false_promotion, index))
+
     def test_pr42_preseeded_10000_semantic_variants(self):
         """8 benign and 12 adversarial families, 500 each, seed 883.
 
@@ -316,8 +470,8 @@ class ProgressiveDocumentationTests(unittest.TestCase):
                     m = mutation(src, "## What works today",
                                  "\n" + " " * (i+1) + "\n## What works today")
                 elif family == 6:
-                    literal = "- " + tick + "cora-worktree.json" + tick + ":"
-                    m = mutation(src, literal, "* " + tick + "cora-worktree.json" + tick + ":")
+                    literal = "- **[ICTC]"
+                    m = mutation(src, literal, "* **[ICTC]")
                     m = mutation(m, "## First five minutes",
                                  " " * i + "\n## First five minutes")
                 elif family == 7:
