@@ -33,7 +33,7 @@ Then run [One-Run](#one-run--one-command-one-evidence-dossier). This identifies 
 
 ## What works today
 
-**71 declared CLI commands** in the [capability atlas](.cora/assurance/capability-atlas.json): a source inventory, **not 71 independently validated product behaviors**. Implemented surfaces include Git/file archaeology, partial static dependencies, typed DoD graphs, bounded debt, modeled fault tests, pre/post-merge reports and portable ChatGPT iteration ZIPs. The [parser-checked CLI reference](docs/CLI_REFERENCE.md) and [complete documentation index](docs/INDEX.md) document source surfaces, not runtime certificates.
+**71 declared CLI commands** in the [capability atlas](.cora/assurance/capability-atlas.json): a source inventory, **not a claim that 71 product behaviors have been independently executed or certified**. Implemented surfaces include Git/file archaeology, partial static dependencies, typed DoD graphs, bounded debt, modeled fault tests, pre/post-merge reports and portable ChatGPT iteration ZIPs. The [parser-checked CLI reference](docs/CLI_REFERENCE.md) and [complete documentation index](docs/INDEX.md) document source surfaces, not runtime certificates.
 
 **CORA is not an eleventh engineering method.** It correlates partial observations; no listed method is implemented in full:
 
