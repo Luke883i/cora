@@ -335,15 +335,18 @@ def verify_multichannel_intro(readme: str) -> list[str]:
 def verify_compact_document_bridge(guide: str, index: str, architecture: str) -> list[str]:
     """Reversible documentation assertion, not independent product acceptance."""
     errors = []
-    guide_facts = (
-        "## Example contract and evidence ladder",
+    contract_anchor = "## Example contract and evidence ladder"
+    contract_sections = guide.split(contract_anchor, 1)
+    contract = contract_sections[1] if len(contract_sections) == 2 else ""
+    contract_facts = (
         "SQLite with versioned schema migrations",
         "reporters create actions", "reviewers may verify closure",
         "actual test receipts on the final PR",
         "REPLAN_STALLED_REPORTS", "not a universal",
-        "independent reviewer", "## LEVEL: contract-to-product",
+        "independent reviewer",
     )
-    if any(t not in guide for t in guide_facts):
+    if (not contract or "## LEVEL: contract-to-product" not in guide
+            or any(term not in contract for term in contract_facts)):
         errors.append("cto-deep-guide-proof-loss")
     index_facts = ("compressed public front door",
                    "Implementation and historical detail",

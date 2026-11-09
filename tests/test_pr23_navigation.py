@@ -181,7 +181,10 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         for phrase in guide_cases:
             with self.subTest(guide_phrase=phrase):
                 self.assertIn(phrase, guide)
-                candidate = guide.replace(phrase, "UNRECONCILED", 1)
+                before, anchor, contract = guide.partition("## Example contract and evidence ladder")
+                self.assertTrue(anchor, "canonical contract subsection missing")
+                candidate = before + anchor + contract.replace(phrase, "UNRECONCILED", 1)
+                self.assertNotEqual(candidate, guide)
                 self.assertIn("cto-deep-guide-proof-loss",
                               DOC.verify_compact_document_bridge(candidate, index, arch))
         self.assertIn("cto-navigation-hierarchy-drift",
