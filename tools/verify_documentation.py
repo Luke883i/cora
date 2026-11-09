@@ -310,7 +310,8 @@ def verify_multichannel_intro(readme: str) -> list[str]:
     if not 115 <= len(intro.split()) <= 310:
         errors.append("cto-intro-compression-budget")
     groups = {
-        "identity": ("**CORA (Continuous Ontological Repository Assurance)**",
+        "identity": ("# CORA — Continuous Ontological Repository Assurance",
+                     "**CORA (Continuous Ontological Repository Assurance)**",
                      "**Engineering evidence for AI-assisted software changes.**"),
         "chain": ("the proposed change", "the source evidence", "tests or counterexamples",
                   "the work still needed", "exact Git SHA + evidence dossier"),
