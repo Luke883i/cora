@@ -1,3 +1,14 @@
+<!-- programme-header:v2 -->
+> **ROA Research Programme · A-OSP ecosystem** — [Author & programme hub](https://github.com/Luke883i/academics) · [ROA theory](https://github.com/Luke883i/ROA) · [CORA assurance](https://github.com/Luke883i/cora). Every repository is independently readable. Membership does not imply formal derivation, shared runtime, scientific validation, certification, or production readiness. Repository-local code, evidence, and governance remain authoritative.
+
+## Independent entrypoint
+
+**Purpose:** a Python toolset and falsifiable engineering method for coding assistants and human reviewers to build, audit and repair AI-assisted software. CORA supports Git forensics, acceptance reticula, mutation/fault modelling, One-Run evidence and bounded post-change review. It is neither a coding agent nor a release authority. **No ROA prerequisite.**
+
+**Indicative CORA-Score (provisional, not measured):** Dev_CORA **4/5** · Bonifica_CORA **4/5**. See [scale, evidence obligations and falsifiers](docs/CORA_SCORE.md).
+
+---
+
 # CORA — Continuous Ontological Repository Assurance
 
 **CORA (Continuous Ontological Repository Assurance)** — **Engineering evidence for AI-assisted software changes.**
