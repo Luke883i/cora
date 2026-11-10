@@ -59,7 +59,7 @@ def inspect_source(root: Path) -> dict:
     product_title = "# CORA — "+NAME+"\n"
     marker = "<!-- programme-header:v2 -->"
     legacy = readme.startswith(product_title)
-    header, sep, body = readme.partition("\\n\\n")
+    header, sep, body = readme.partition("\n\n")
     v2 = (header.startswith(marker) and readme.count(marker) == 1
           and bool(sep) and body.startswith(product_title)
           and all(t in header for t in (
