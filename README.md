@@ -1,3 +1,6 @@
+<!-- programme-header:v2 -->
+> **ROA Research Programme · A-OSP ecosystem** — [Author & programme hub](https://github.com/Luke883i/academics) · [ROA theory](https://github.com/Luke883i/ROA) · [CORA assurance](https://github.com/Luke883i/cora). Every repository is independently readable. Membership does not imply formal derivation, shared runtime, scientific validation, certification, or production readiness. Repository-local code, evidence, and governance remain authoritative.
+
 # CORA — Continuous Ontological Repository Assurance
 
 **CORA (Continuous Ontological Repository Assurance)** — **Engineering evidence for AI-assisted software changes.**
@@ -83,6 +86,20 @@ A Git SHA identifies source bytes, not runtime or human approval. **A source dig
 ## Final Experimental Baseline — merged PR41
 
 The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) distinguishes **15 SOURCE leaves, 7 EXTERNAL leaves, and 8 aggregate AND gates**. Its **16 realistic fault families** and **2,517 preregistered zero-to-fourway masks** are finite-model cases, **not one million independent source mutations**. **two controlled physical Git repositories** supply bounded counterexamples, not independent target or user acceptance.
+
+## CORA-Score — indicative assurance bands, not a product certification
+
+Two independent **qualitative, ordinal 1–5 assessments** describe how convincingly a repository supports CORA-style **Dev_CORA** (traceable AI-assisted development, acceptance obligations, Git provenance, tests and adversarial counterexamples) and **Bonifica_CORA** (forensics, safe remediation, regression control and post-change readback). **UNRATED** means evidence missing; do not average axes or mistake self-review for independent acceptance.
+
+| Band | Evidence boundary |
+| --- | --- |
+| 1 | No stable ownership or replayable checks |
+| 2 | Some bounded checks, major gaps |
+| 3 | Repeatable source tests, important unverified execution or recovery |
+| 4 | Integrated, scoped, reproducible tests and falsification; independent target acceptance still open |
+| 5 | Independent end-to-end host/user/recovery confirmation with accountable decisions, **not** scientific or legal certification |
+
+**Provisional hypotheses, not CORA CLI measurements:** CORA Dev **4/5**, Bonifica **4/5**; ICTC **4/5**, **4/5**; iKant_EDU **3/5**, **2/5**; LUMEN, Teddy and NILO **4/5**, **2/5**. To publish a *measured* score record assessor, exact SHA, positive/negative oracles, real host outcomes, mutation survivors, open blockers and independent review. False promotions—NOT_RUN to PASS, simulated mutations to physical tests, Git hashes to human authority—must fail. Research-only ROA, the author hub and closed Juriscribe are UNRATED. The rubric is an editorial evaluation convention, **not a new CORA command or release authority**.
 
 ## Documentation by goal
 

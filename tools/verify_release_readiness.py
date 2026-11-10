@@ -56,7 +56,16 @@ def inspect_source(root: Path) -> dict:
             errors.append("INVALID_UTF8:"+rel)
             return ""
     readme = txt("README.md")
-    if not readme.startswith("# CORA — "+NAME+"\n"):
+    product_title = "# CORA — "+NAME+"\n"
+    marker = "<!-- programme-header:v2 -->"
+    legacy = readme.startswith(product_title)
+    header, sep, body = readme.partition("\n\n")
+    v2 = (header.startswith(marker) and readme.count(marker) == 1
+          and bool(sep) and body.startswith(product_title)
+          and all(t in header for t in (
+            "Luke883i/academics", "Luke883i/ROA", "Luke883i/cora",
+            "Repository-local code, evidence, and governance remain authoritative")))
+    if not (legacy or v2):
         errors.append("PRODUCT_EXPANSION_MISSING")
     if "**CORA ("+NAME+")**" not in readme:
         errors.append("PRODUCT_FIRST_READ_IDENTITY_MISSING")
