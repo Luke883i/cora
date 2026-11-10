@@ -3,7 +3,7 @@
 
 # CORA — Continuous Ontological Repository Assurance
 
-**CORA (Continuous Ontological Repository Assurance)** — **Engineering evidence for AI-assisted software changes.**
+**Engineering evidence for AI-assisted software changes.**
 
 CORA is a local, offline-first Python 3.11+ framework. It helps developers and AI coding assistants inspect a Git repository, turn goals into falsifiable obligations and **produce reproducible pre/post-merge review reports**. It links **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**. Agents edit with authorized tools; CORA evaluates evidence. CORA is **not a coding agent** or an approver.
 
