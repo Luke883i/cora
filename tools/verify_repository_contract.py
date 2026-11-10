@@ -72,11 +72,22 @@ def audit_contract(root: Path, *, readme_override: str | None = None) -> list[st
     for token in ('product', 'software', 'repository', 'not', 'python'):
         if token not in front:
             errors.append('first-read-missing:' + token)
-    if not readme.startswith('# CORA — Continuous Ontological Repository Assurance'):
+    title = '# CORA — Continuous Ontological Repository Assurance'
+    marker = '<!-- programme-header:v2 -->'
+    legacy = readme.startswith(title)
+    header, separator, body = readme.partition('\n\n')
+    # The original title-first source remains a valid historical test fixture.
+    v2 = (separator != '' and header.startswith(marker)
+          and readme.count(marker) == 1
+          and all(token in header for token in (
+              'Luke883i/academics', 'Luke883i/ROA', 'Luke883i/cora',
+              'Repository-local code, evidence, and governance remain authoritative'))
+          and body.startswith(title))
+    if not (legacy or v2):
         errors.append('full-product-name-missing')
     if '**CORA (Continuous Ontological Repository Assurance)**' not in readme:
         errors.append('first-read-acronym-expansion-missing')
-    if not readme.startswith('# CORA'):
+    if not (legacy or v2):
         errors.append('missing-title')
     for heading in ('## First five minutes', '## What works', '## Operating boundaries', '## Engineering map'):
         if heading not in readme:
