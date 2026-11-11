@@ -59,6 +59,12 @@ class ReadinessTest(unittest.TestCase):
                   '"1.0.0a4" "$EXPECTED_SHA" > dist/RELEASE_NOTES_REVIEW.txt')
         self.deny("REVIEW_NOTE_VERSION_OR_SHA_DRIFT")
 
+    def test_review_note_double_escaped_newline_is_refuted(self):
+        self.swap(".github/workflows/ci-release-candidate.yml",
+                  "ONLY" + chr(92) + "nExact commit:",
+                  "ONLY" + chr(92) * 2 + "nExact commit:")
+        self.deny("REVIEW_NOTE_VERSION_OR_SHA_DRIFT")
+
     def test_review_note_exact_commit_check_cannot_be_bypassed(self):
         self.swap(".github/workflows/ci-release-candidate.yml",
                   'grep -Fx "Exact commit: $EXPECTED_SHA" dist/RELEASE_NOTES_REVIEW.txt',

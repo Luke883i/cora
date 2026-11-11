@@ -154,7 +154,10 @@ def inspect_source(root: Path) -> dict:
         'grep -Fx "CORA $CORA_VERSION (alpha) — REVIEW CANDIDATE ONLY" dist/RELEASE_NOTES_REVIEW.txt',
         'grep -Fx "Exact commit: $EXPECTED_SHA" dist/RELEASE_NOTES_REVIEW.txt',
     )
+    note_line = next((line for line in note_workflow.splitlines()
+                      if "printf 'CORA %s (alpha)" in line), "")
     if (any(marker not in note_workflow for marker in note_contract)
+            or (chr(92) * 2 + "n") in note_line
             or re.search(r"printf 'CORA [0-9]+[.][0-9]+[.][0-9]+a[0-9]+", note_workflow)):
         errors.append("REVIEW_NOTE_VERSION_OR_SHA_DRIFT")
     for rel in ("docs/archive/decisions/ADR-PR15.md","docs/RELEASE.md","docs/ARCHITECTURE.md"):
