@@ -165,7 +165,7 @@ def run_portable(repo: Path, revision: str, profile: Path, *,
         "state": "FOREIGN_GIT_SOURCE_UNVERIFIED"
     } for link in doc["method_links"]]
     result = {
-        "schema": SCHEMA, "commit": commit, "tree": provenance["tree"],
+        "schema": SCHEMA, "commit": commit, "tree": git(repo, "rev-parse", commit + "^{tree}").decode().strip(),
         "target_repo": doc["target_repo"],
         "profile_sha256": hashlib.sha256(
             Path(profile).read_bytes()).hexdigest(),

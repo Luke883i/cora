@@ -26,7 +26,7 @@
     {
       "id": "L01",
       "kind": "LOCAL",
-      "scope": "HOST",
+      "scope": "EXTERNAL",
       "depends_on": [],
       "claim": "All applicable original checks succeed on exact final PR SHA and are rechecked after merge",
       "oracle": "GitHub Actions per-job exact-head readback; no skipped/failing required gate",
