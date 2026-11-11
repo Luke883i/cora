@@ -234,7 +234,90 @@ def verify_review_note(path: Path, version: str, commit: str) -> bool:
 # PR55: artifact SBOM is a distribution inventory, never a signed certification.
 # Build dependency constraints are NOT resolved versions and remain unscanned until
 # a separate scanner records actual installed build-tool pins.
-def supply_bom(wheel_path: Path, sdist_path: Path, source: Path) -> dict:
+
+def read_build_pins(path: Path) -> dict[str, str]:
+    """Real installed CI tooling versions, distinct from declared minimum ranges."""
+    if path.is_symlink() or not path.is_file() or path.stat().st_size > 4096:
+        raise ValueError("build tool pin record missing, linked or oversized")
+    x = json.loads(path.read_text("utf-8"))
+    if not isinstance(x, dict) or set(x) != {"schema", "scope", "setuptools", "wheel"} or (
+            x["schema"] != "cora-build-tool-pins/1"
+            or x["scope"] != "INSTALLED_BUILD_RUNNER_VERSIONS"):
+        raise ValueError("invalid build pin provenance envelope")
+    pins = {k: x[k] for k in ("setuptools", "wheel")}
+    for name, version in pins.items():
+        if not isinstance(version, str) or not re.fullmatch(
+                r"[0-9]+(?:[.][0-9]+){1,3}(?:(?:a|b|rc)[0-9]+)?", version):
+            raise ValueError("build tool has no exact PEP440-style version: " + name)
+    if int(pins["setuptools"].split(".")[0]) < 77:
+        raise ValueError("setuptools lower than declared build floor")
+    v = [int(n) for n in pins["wheel"].split(".")[:2]]
+    if v < [0, 45]:
+        raise ValueError("wheel lower than CI build floor")
+    return pins
+
+
+def sca_observation(raw_report: Path, pins_path: Path, scanner_exit: int) -> dict:
+    """Parse real pip-audit feed output; do not assert feed authenticity/coverage."""
+    if type(scanner_exit) is not int or scanner_exit not in (0, 1):
+        raise ValueError("SCA scanner failed/unavailable, never return a fabricated clean result")
+    pins = read_build_pins(pins_path)
+    if raw_report.is_symlink() or not raw_report.is_file() or raw_report.stat().st_size > 2 * 1024 * 1024:
+        raise ValueError("SCA raw evidence unavailable or oversized")
+    raw = raw_report.read_bytes()
+    doc = json.loads(raw)
+    if not isinstance(doc, dict) or not isinstance(doc.get("dependencies"), list):
+        raise ValueError("invalid pip-audit JSON report")
+    deps = doc["dependencies"]
+    if len(deps) != 2 or any(not isinstance(d, dict) for d in deps):
+        raise ValueError("SCA missing some direct build tools")
+    counts = 0
+    found = set()
+    vulnerabilities = []
+    for dep in deps:
+        name = str(dep.get("name", "")).lower().replace("_", "-")
+        if name not in pins or name in found or dep.get("version") != pins[name]:
+            raise ValueError("SCA dependency does not match exact installed tool version")
+        found.add(name)
+        issues = dep.get("vulns")
+        if not isinstance(issues, list):
+            raise ValueError("SCA lacks vulnerability results for a build tool")
+        for issue in issues:
+            if not isinstance(issue, dict) or not isinstance(issue.get("id"), str) or not issue["id"]:
+                raise ValueError("invalid vulnerability id")
+            vulnerabilities.append({"package": name, "version": pins[name], "id": issue["id"]})
+            counts += 1
+    if found != set(pins) or (scanner_exit == 0 and counts) or (scanner_exit == 1 and not counts):
+        raise ValueError("SCA status and report disagree")
+    return {
+        "schema": "cora-scoped-build-sca-observation/1",
+        "status": ("SCANNED_FINDINGS_REVIEW_REQUIRED" if counts
+                   else "SCANNED_NO_REPORTED_VULNS_IN_SCOPED_BUILD_TOOLS"),
+        "scanner": "pip-audit", "scanner_version_claim": "2.10.1",
+        "scanner_exit": scanner_exit,
+        "scan_scope": "DIRECT_INSTALLED_CI_BUILD_TOOLS_ONLY",
+        "dependency_versions": pins,
+        "raw_pip_audit_sha256": sha(raw),
+        "build_pins_sha256": sha(pins_path.read_bytes()),
+        "vulnerabilities": sorted(vulnerabilities, key=lambda x: (x["package"], x["id"])),
+        "scanner_identity": "CI_REPORTED_NOT_EXTERNALLY_AUTHENTICATED",
+        "feed_freshness": "NOT_INDEPENDENTLY_ATTESTED",
+        "runtime_package_scan": "NOT_APPLICABLE_NO_PUBLISHED_CORAAUDIT_PYPI_RELEASE",
+        "transitive_build_dependencies": "NOT_SCANNED",
+        "target_native_dependencies": "NOT_SCANNED",
+        "release_authorization": "NONE",
+    }
+
+
+def assert_sca(path: Path, expected: dict) -> bool:
+    if path.is_symlink() or not path.is_file() or path.stat().st_size > 1024 * 1024:
+        raise ValueError("SCA summary missing or oversized")
+    if json.loads(path.read_bytes()) != expected:
+        raise ValueError("SCA result, vulnerability list or input report lineage altered")
+    return True
+
+
+def supply_bom(wheel_path: Path, sdist_path: Path, source: Path, build_pins: dict | None = None) -> dict:
     source = Path(source).resolve(strict=True)
     checked = verify_release(wheel_path, sdist_path, source)
     data = tomllib.loads((source / "pyproject.toml").read_text("utf-8"))
@@ -248,6 +331,8 @@ def supply_bom(wheel_path: Path, sdist_path: Path, source: Path) -> dict:
     if "'wheel>=0.45'" not in workflow:
         raise ValueError("candidate CI build tooling contract unknown")
     version = checked["version"]
+    if build_pins is not None and set(build_pins) != {"setuptools", "wheel"}:
+        raise ValueError("incomplete resolved build tool pins")
     root = "pkg:pypi/cora-audit@" + version
     artifacts = [
         ("wheel", wheel_path, checked["wheel_sha256"]),
@@ -269,14 +354,19 @@ def supply_bom(wheel_path: Path, sdist_path: Path, source: Path) -> dict:
         if m is None:
             raise ValueError("unparsed build component")
         name, constraint = m.groups()
+        resolved = build_pins.get(name) if build_pins is not None else None
+        purl = "pkg:pypi/" + name.lower().replace("_", "-")
+        if resolved is not None:
+            purl += "@" + resolved
         components.append({
             "type": "library", "name": name,
-            "bom-ref": "pkg:pypi/" + name.lower().replace("_", "-"),
-            "purl": "pkg:pypi/" + name.lower().replace("_", "-"),
+            **({"version": resolved} if resolved is not None else {}),
+            "bom-ref": purl,
+            "purl": purl,
             "properties": [
                 {"name": "cora:phase", "value": category},
                 {"name": "cora:declared_requirement", "value": item},
-                {"name": "cora:resolved_version", "value": "UNKNOWN_NOT_A_PACKAGE_LOCK"}],
+                {"name": "cora:resolved_version", "value": resolved or "UNKNOWN_NOT_A_PACKAGE_LOCK"}],
         })
     refs = [c["bom-ref"] for c in components]
     if len(set(refs)) != len(refs):
@@ -377,12 +467,18 @@ def main(argv=None) -> int:
     parser.add_argument('--verify-provenance', type=Path)
     parser.add_argument('--git-commit')
     parser.add_argument('--review-note', type=Path)
+    parser.add_argument('--build-pins', type=Path)
+    parser.add_argument('--sca-raw', type=Path)
+    parser.add_argument('--sca-exit', type=int)
+    parser.add_argument('--sca-output', type=Path)
+    parser.add_argument('--verify-sca', type=Path)
     args=parser.parse_args(argv)
     try:
         x=verify_release(args.wheel,args.sdist,args.source)
+        pins = read_build_pins(args.build_pins) if args.build_pins else None
         if any((args.sbom_output, args.verify_sbom,
                 args.provenance_output, args.verify_provenance, args.review_note)):
-            bom = supply_bom(args.wheel, args.sdist, args.source)
+            bom = supply_bom(args.wheel, args.sdist, args.source, build_pins=pins)
             if args.sbom_output:
                 args.sbom_output.write_bytes(canonical_bytes(bom))
             if args.verify_sbom:
@@ -409,6 +505,17 @@ def main(argv=None) -> int:
                 if not args.git_commit:
                     raise ValueError("review note needs exact Git SHA")
                 verify_review_note(args.review_note, x["version"], args.git_commit)
+        if any((args.sca_raw, args.sca_output, args.verify_sca)):
+            if not args.sca_raw or not args.build_pins or args.sca_exit is None:
+                raise ValueError("SCA must have raw scanner report, installed pins and exit")
+            scan = sca_observation(args.sca_raw, args.build_pins, args.sca_exit)
+            if args.sca_output:
+                args.sca_output.write_bytes(canonical_bytes(scan))
+            if args.verify_sca:
+                assert_sca(args.verify_sca, scan)
+            x["sca"] = {"status": scan["status"], "scope": scan["scan_scope"],
+                        "report_digest": sha(canonical_bytes(scan)),
+                        "external_authorization": "NONE"}
     except (ValueError,OSError,KeyError,tarfile.TarError,zipfile.BadZipFile) as e:
         parser.exit(2, f'RELEASE FAIL: {e}\n')
     result=json.dumps(x,sort_keys=True,indent=2)+'\n'

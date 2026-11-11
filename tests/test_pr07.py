@@ -12,7 +12,7 @@ import tempfile
 import unittest
 import zipfile
 from pathlib import Path
-from tools.release_verify import verify_release, normalized_wheel_distribution, read_sdist, supply_bom, assert_sbom, canonical_bytes
+from tools.release_verify import verify_release, normalized_wheel_distribution, read_sdist, supply_bom, assert_sbom, canonical_bytes, read_build_pins, sca_observation, assert_sca
 from tools.release_stress import stress, classify_model, independent_oracle, FAMILIES
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -50,7 +50,7 @@ class RealArtifactMutationTests(unittest.TestCase):
             variants = []
             import copy
             mutated = copy.deepcopy(bom)
-            mutated["components"][0]["hashes"][0]["content"] = "0" * 64 if "hashes" in mutated["components"][0] else "0" * 64
+            next(c for c in mutated["components"] if "hashes" in c)["hashes"][0]["content"] = "0" * 64
             variants.append(mutated)
             mutated = copy.deepcopy(bom)
             mutated["components"].pop()
@@ -69,6 +69,52 @@ class RealArtifactMutationTests(unittest.TestCase):
                     note.write_bytes(canonical_bytes(wrong))
                     with self.assertRaisesRegex(ValueError, "SBOM differs"):
                         assert_sbom(note, bom)
+
+
+    def test_pr55_pinned_build_components_and_real_sca_report_grammar(self):
+        import json
+        pins = {"schema": "cora-build-tool-pins/1",
+                "scope": "INSTALLED_BUILD_RUNNER_VERSIONS",
+                "setuptools": "80.1.0", "wheel": "0.45.1"}
+        report = {"dependencies": [
+            {"name": "setuptools", "version": "80.1.0", "vulns": []},
+            {"name": "wheel", "version": "0.45.1", "vulns": []}]}
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            pin_path = root / "pins.json"
+            raw_path = root / "scanner.json"
+            summary = root / "summary.json"
+            pin_path.write_text(json.dumps(pins), encoding="utf-8")
+            raw_path.write_text(json.dumps(report), encoding="utf-8")
+            self.assertEqual(read_build_pins(pin_path), {
+                "setuptools": "80.1.0", "wheel": "0.45.1"})
+            sbom = supply_bom(self.whl, self.sdist, ROOT, read_build_pins(pin_path))
+            components = {x["name"]: x for x in sbom["components"]}
+            self.assertEqual(components["setuptools"]["version"], "80.1.0")
+            self.assertEqual(components["wheel"]["version"], "0.45.1")
+            record = sca_observation(raw_path, pin_path, 0)
+            self.assertEqual(record["scan_scope"], "DIRECT_INSTALLED_CI_BUILD_TOOLS_ONLY")
+            self.assertEqual(record["transitive_build_dependencies"], "NOT_SCANNED")
+            summary.write_bytes(canonical_bytes(record))
+            self.assertTrue(assert_sca(summary, record))
+            mutant = dict(report)
+            mutant["dependencies"] = [dict(x) for x in report["dependencies"]]
+            mutant["dependencies"][0]["version"] = "79.0.0"
+            raw_path.write_text(json.dumps(mutant), encoding="utf-8")
+            with self.assertRaises(ValueError):
+                sca_observation(raw_path, pin_path, 0)
+            raw_path.write_text(json.dumps(report), encoding="utf-8")
+            with self.assertRaises(ValueError):
+                sca_observation(raw_path, pin_path, 2)
+            report["dependencies"][0]["vulns"] = [{"id": "PYSEC-TEST-000"}]
+            raw_path.write_text(json.dumps(report), encoding="utf-8")
+            with self.assertRaises(ValueError):
+                sca_observation(raw_path, pin_path, 0)
+            exposed = sca_observation(raw_path, pin_path, 1)
+            self.assertEqual(exposed["status"], "SCANNED_FINDINGS_REVIEW_REQUIRED")
+            summary.write_bytes(canonical_bytes(record))
+            with self.assertRaises(ValueError):
+                assert_sca(summary, exposed)
 
     def test_unrelated_sdist_has_no_false_identity(self):
         self.assertEqual(len(normalized_wheel_distribution(self.whl)['files']),len(list((ROOT/'src/cora').glob('*.py'))))
