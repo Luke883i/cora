@@ -21,6 +21,7 @@ The [README](../README.md) is the **compressed public front door**: outcome, met
 
 **PR38 history / future change source audit:** [37 PRs and 305 commit deltas](../.cora/assurance/history/pr01-37-commit-diff-audit.json) → [severe 32-node DoD](../.cora/contracts/dod/history-convergence-dod.json) → [CLI guidance](CLI_REFERENCE.md). PR34 is closed without merge, and the 28 former paths require mapping, not deletion. New modules, tests, CI and DoDs must converge with canonical inventories.
 
+**PR52 native Gold pilots:** [original Teddy/ICTC subprocess, LUMEN/NILO negative controls and bounded cost](GOLD_ASSURANCE.md#pr52--native-gold-pilots-and-bounded-cross-repository-result) plus [existing CLI](CLI_REFERENCE.md). Source/local exit is not independent product or release proof.
 **PR51 native Gold witness convergence:** [Original-Git oracle and claim-level native witness bridge](GOLD_ASSURANCE.md#pr51--native-gold-bridge-in-the-existing-portable-one-run) -> [portable One-Run](CONTINUOUS_DEVELOPMENT.md). Qualified source linkage is not a native test execution or third-party approval.
 **Cross-repository portability (PR50 candidate):** [Reticular source/external DoD](../.cora/contracts/dod/crossrepo-convergence-dod.json) -> [portable One-Run method and usage](CONTINUOUS_DEVELOPMENT.md#cross-repository-sourceevidence-convergence-pr50--candidate). Neither target-owned profile nor source byte readback creates runtime or human authority.
 

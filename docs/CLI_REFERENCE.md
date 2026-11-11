@@ -182,3 +182,7 @@ ZIP layout: `meta/session.json`, followed by `rounds/000001/{step.json,receipt.j
 
 CORA cannot automatically observe every ChatGPT message. No assistant should claim that a round was recorded if the host never ran the command.
 
+
+### PR52 native Gold receipts in existing One-Run
+
+With explicit permission, generate one original target native execution receipt outside the target using cora.native_gold.capture_native. Then pass --portable-native-probe PATH to the existing process-run --one-run --portable-profile PROFILE-v2.json; verify-process uses the same flag for exact Git and retained-byte replay. This is a local subprocess outcome, not authenticated host identity, independent browser/remote proof or release approval. See GOLD_ASSURANCE.md PR52.

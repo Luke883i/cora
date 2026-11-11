@@ -107,3 +107,83 @@ replayed; 0 orphan/reused witness; 0 false positive native test/host
 attestations on the declared adversarial tests; original v1 compatibility;
 real pinned Teddy and NILO source readback; exact-head Python 3.11/3.13
 One-Run and full CI. External product and efficiency comparisons remain open.
+
+
+
+## PR52 — Native Gold pilots and bounded cross-repository result
+
+**Post-PR51 finding:** the source-to-claim/oracle/witness bridge is useful
+and replayable but it does not itself execute native target code. PR52
+first preserves negative native witness lineage across dependent DoD cuts,
+then adds a strictly opt-in local subprocess producer for two original
+product tests, using the SAME portable One-Run source and Gold projection.
+
+**Pilot 1, Teddy:** actual Node24 TAP tests of original CORA JS graph
+integration on pinned Git commit 05c31e986d36fb4350867d208c1e4efe7e535ece.
+The fixed command is node --no-warnings --experimental-vm-modules --test-reporter=tap --test
+tests/cora-adoption.test.mjs. Parse, dynamic import, physical bad import
+and receipt tampering behaviors are executed by the existing target test.
+
+**Pilot 2, ICTC:** original seven-process HTTP/SQLite runtime on pinned
+Git commit d478cdd185b433f81127fa3251daebed4f84fd38.
+The fixed command is node
+tests/verification/e2e-cross-process-receipts-check.mjs. Exit zero
+requires the native artifact to attest 12 hashed HTTP write/readback
+commands over seven processes, 7 auditor requests rejected with HTTP
+403, and an unchanged persisted revision after denials. This DOES NOT
+execute the product browser or independently certify the local runner.
+
+**Negative controls:** LUMEN original browser screenshot test is
+read from Git, but Chromium is NOT RUN by this CORA pilot. NILO's
+original conditional Render post-deploy workflow is Git-read but remote
+Render is NOT PROBED. Its reported SKIPPED is a caller-declared
+negative control, not authenticated remote GitHub evidence. Neither
+source check becomes a product or release PASS.
+
+**Execution and replay:** the existing Python package exposes the
+allowlisted, bounded API cora.native_gold.capture_native; this API is
+never called implicitly by process-run or verify-process. With explicit
+operator consent and a disposable target checkout, it checks exact
+HEAD, tracked source cleanliness and the original committed oracle,
+executes with a subprocess argument array (no shell), scrubs inherited
+tokens and captures bounded log bytes outside the target. The ICTC
+native artifact is copied and validated; absence of a required artifact
+is an error, never PASS. Each receipt includes SHA-256, exit code,
+bounded local elapsed_ms, source commit, oracle identity and
+authority NONE. replay_native rereads both the original Git blob and
+the retained bytes but cannot authenticate who ran the command.
+
+Use the original CORA CLI with additional opt-in argument:
+    cora process-run TARGET --one-run --portable-profile PROFILE-v2.json --portable-native-probe OUTSIDE-TARGET/NATIVE-DIR --output RECEIPT.json --atlas-html RECEIPT.html
+
+Replay:
+    cora verify-process RECEIPT.json --repo TARGET --one-run --portable-profile PROFILE-v2.json --portable-native-probe OUTSIDE-TARGET/NATIVE-DIR --atlas-html RECEIPT.html
+
+The native probe must identify ONE existing Gold BEHAVIOR claim with
+matching source revision, original oracle path and oracle SHA. The
+original claim_proven stays false; independent reviewer and
+release authorization remain BLOCKED_EXTERNAL/NONE. A native exit
+failure is a recorded FAIL and the One-Run returns nonzero.
+
+**Static JS graph:** original-Git ESM source imports now distinguish
+resolved exact relative paths, missing exact relative paths,
+unknown extension/directory imports and unresolved package/builtin
+references. Dynamic imports, CommonJS, TS/JSX, and runtime consumers
+remain unknown, and safeDeletion is always NOT_PROVEN.
+
+**Derived single dossier:** native-gold-four-repo-atlas.json is a
+read-only projection of two local native receipts and two original
+source-only controls, not a new authority. No extra command or
+separate approval bus is introduced.
+
+**Reticular DoD:** original Git SHA AND original native oracle AND
+allowlisted explicit subprocess AND retained log AND exit and
+native-artifact checks AND 12 ICTC operations AND 7 denials AND
+byte replay AND one named Gold claim AND two non-promoted external
+controls AND zero self-issued release claims. Original source-only
+PR51/PR50 behavior remains backward compatible.
+
+**Efficiency:** local elapsed_ms is measured, but controlled
+engineering-hours savings against an alternative remain NOT_MEASURED.
+Independent E3/E4 user/reviewer acceptance, authentic CI identity,
+LUMEN browser and NILO remote Render are BLOCKED_EXTERNAL.

@@ -16,6 +16,7 @@ from pathlib import Path
 
 from .evidence import domain_hash, valid_path
 from .gold_bridge import bridge_gold
+from .native_gold import replay_native
 from .git_snapshot import git, snapshot
 from .process_suite import run_suite
 
@@ -154,7 +155,8 @@ def parse_upstream_paths(items: list[str]) -> dict[str, Path]:
 
 def run_portable(repo: Path, revision: str, profile: Path, *,
                  evidence_dir: Path | None = None, parse_js: bool = False,
-                 upstream_paths: dict[str, Path] | None = None) -> dict:
+                 upstream_paths: dict[str, Path] | None = None,
+                 native_probe: Path | None = None) -> dict:
     """Read-only source dossier. No arbitrary target code or target test execution."""
     repo = Path(repo).resolve(strict=True)
     provenance = snapshot(repo, revision)
@@ -249,9 +251,28 @@ def run_portable(repo: Path, revision: str, profile: Path, *,
                      "dynamic callers", "real user acceptance", "release permission"]
     }
     if doc["schema"] == "cora-portable-target/2":
-        # R1-R4 is a typed claim-to-source/evidence linkage projection.
-        # Its per-claim status can NEVER authorize or attest native execution.
+        # R1-R4 remains target-owned with no authority of its own.
         result["gold"] = bridge_gold(repo, commit, doc, evidence)
+        if native_probe is not None:
+            native = replay_native(repo, native_probe)
+            if native["commit"] != commit or native["target_repo"] != doc["target_repo"]:
+                _reject("native runner receipt does not match exact target identity")
+            matches = [x for x in result["gold"]["claims"]
+                       if (x["id"] == native["claim_id"]
+                           and x["oracle_path"] == native["oracle_path"]
+                           and x["oracle_sha256"] == native["oracle_sha256"])]
+            if len(matches) != 1 or matches[0]["scope"] != "BEHAVIOR":
+                _reject("native subprocess does not bind to one behavioral claim")
+            # Runtime claim comes from an opt-in local subprocess. Archived
+            # logs and hashes alone cannot independently authenticate the host.
+            matches[0]["local_runner"] = native
+            result["gold"]["native_local_runner_probes"] = 1
+            result["gold"]["digest"] = domain_hash(
+                "CORA:portable-gold-bridge:1",
+                {k: v for k, v in result["gold"].items() if k != "digest"})
+            result["native_gold"] = native
+    elif native_probe is not None:
+        _reject("native runner correlation requires v2 target-owned Gold profile")
     result["receipt_digest"] = domain_hash("CORA:portable-one-run:1", result)
     return result
 
@@ -289,6 +310,12 @@ def render_portable_html(result: dict) -> str:
                          + " | owner " + esc(claim["owner_id"])
                          + " | oracle " + esc(claim["oracle_path"])
                          + " | " + esc(claim["status"]) + "</li>")
+        if "native_gold" in result:
+            run = result["native_gold"]
+            lines.append("<li>Native local run / " + esc(run["claim_id"])
+                         + " / " + esc(run["report_status"])
+                         + " / " + esc(run["commit"])
+                         + " / Host identity UNATTESTED</li>")
         lines += ["</ul><p>Goal: " + esc(bridge["goal"]) + " — "
                   + esc(bridge["goal_status"]) + "</p>",
                   "<p>Bound witnesses: " + esc(bridge["native_witnesses_bound"])
@@ -305,12 +332,14 @@ def render_portable_html(result: dict) -> str:
 def verify_portable(repo: Path, receipt: dict, profile: Path, *,
                     evidence_dir: Path | None = None,
                     html_page: str | None = None, parse_js: bool = False,
-                    upstream_paths: dict[str, Path] | None = None) -> bool:
+                    upstream_paths: dict[str, Path] | None = None,
+                    native_probe: Path | None = None) -> bool:
     if not isinstance(receipt, dict) or receipt.get("schema") != SCHEMA:
         _reject("wrong report schema")
     fresh = run_portable(repo, receipt.get("commit", ""), profile,
                          evidence_dir=evidence_dir, parse_js=parse_js,
-                         upstream_paths=upstream_paths)
+                         upstream_paths=upstream_paths,
+                         native_probe=native_probe)
     if fresh != receipt:
         _reject("Git/source/profile/receipt replay mismatch")
     if html_page is not None and render_portable_html(fresh) != html_page:

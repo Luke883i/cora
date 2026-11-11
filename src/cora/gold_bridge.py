@@ -131,9 +131,19 @@ def bridge_gold(repo: Path, commit: str, profile: dict,
         _error("orphan claim outside declared goal")
     index = {item["id"]: item for item in validated}
     states: dict[str, str] = {}
+    negative_lineage: dict[str, list[str]] = {}
     for key in ordered:
         node = index[key]
         rows = node["witnesses"]
+        negative_lineage[key] = sorted(set(
+            ([key] if any(w["reported_outcome"] == "FAIL_REPORTED_UNATTESTED"
+                          for w in rows) else []) +
+            [ancestor for dep in node["depends_on"]
+             for ancestor in negative_lineage[dep]]
+        ))
+        node["negative_lineage"] = negative_lineage[key]
+        # A negative native witness must survive every dependent AND cut.
+        # The proof status still cannot authenticate who produced the record.
         if node["scope"] == "EXTERNAL":
             # External approval cannot be sourced from caller-authored reports,
             # even when a reported negative is preserved in the witness rows.
@@ -171,6 +181,12 @@ def bridge_gold(repo: Path, commit: str, profile: dict,
         "reported_counterevidence": sum(
             1 for r in validated for w in r["witnesses"]
             if w["reported_outcome"] == "FAIL_REPORTED_UNATTESTED"),
+        "goal_negative_lineage": negative_lineage[profile["goal"]],
+        "goal_prerequisite_statuses": {
+            key: states[key] for key in ordered if states[key]
+            not in ("SOURCE_LINK_ONLY_UNATTESTED",
+                    "BEHAVIOR_BYTES_ONLY_EXECUTION_UNATTESTED")
+        },
         "goal_status": "BLOCKED_INDEPENDENT_ORACLE_EXECUTION_AND_REVIEW",
         "gold_rails": {
             "R1": "COMMITTED_OWNER_AND_ORACLE_SOURCE_READBACK",

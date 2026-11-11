@@ -337,3 +337,136 @@ jobs:
         env:
           STATUS: ${{ needs.diagnose-comprehensive.outputs.exit_code }}
         run: test "$STATUS" -eq 0
+
+
+  pr52-native-gold-pilots:
+    name: PR52 Teddy+ICTC native runner and LUMEN+NILO source controls
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '24.19.0'
+      - name: Bind CORA exact candidate SHA and run native bounded tests
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          python -m pip install -e .
+          python -m unittest discover -s tests -p 'test_pr52_native_gold.py' -v
+      - name: Pin four original public target checkouts, no persisted credentials
+        run: |
+          mkdir -p /tmp/cora-pr52/targets /tmp/cora-pr52/evidence
+          git clone --quiet https://github.com/Luke883i/teddy.git /tmp/cora-pr52/targets/teddy
+          git -C /tmp/cora-pr52/targets/teddy checkout --quiet --detach 05c31e986d36fb4350867d208c1e4efe7e535ece
+          git clone --quiet https://github.com/Luke883i/ictc.git /tmp/cora-pr52/targets/ictc
+          git -C /tmp/cora-pr52/targets/ictc checkout --quiet --detach d478cdd185b433f81127fa3251daebed4f84fd38
+          git clone --quiet https://github.com/Luke883i/lumen.git /tmp/cora-pr52/targets/lumen
+          git -C /tmp/cora-pr52/targets/lumen checkout --quiet --detach 547e46788e72f1556dc2e32db3621d008032cbd0
+          git clone --quiet https://github.com/Luke883i/NILO.git /tmp/cora-pr52/targets/NILO
+          git -C /tmp/cora-pr52/targets/NILO checkout --quiet --detach 3513ead1cf82dd104d471e20cfc9b11bf81158fb
+          npm --prefix /tmp/cora-pr52/targets/ictc ci --ignore-scripts --no-audit --no-fund
+      - name: Actually run native Teddy TAP and ICTC HTTP SQLite tests in disposable checkouts
+        env:
+          GITHUB_TOKEN: ''
+          GH_TOKEN: ''
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from cora.native_gold import capture_native,replay_native,PILOTS
+          from cora.git_snapshot import git
+          base=Path('/tmp/cora-pr52')
+          for name,head in (
+            ('teddy','05c31e986d36fb4350867d208c1e4efe7e535ece'),
+            ('ictc','d478cdd185b433f81127fa3251daebed4f84fd38')
+          ):
+              repo=base/'targets'/name
+              assert git(repo,'rev-parse','HEAD').decode().strip()==head
+              target='Luke883i/'+name
+              oracle=PILOTS[target][0]
+              receipt=capture_native(repo,target,head,'C_NATIVE',base/'evidence'/name)
+              assert receipt['exit_code']==0,(name,receipt)
+              assert replay_native(repo,base/'evidence'/name)['issuer_authenticated'] is False
+              claim=lambda id,scope,depends: {
+                  'id':id,'claim':'Original native runtime oracle and scoped local evidence',
+                  'scope':scope,'owner_id':'native-owner','source_path':oracle,
+                  'oracle_id':'original-native-oracle','oracle_path':oracle,
+                  'oracle_sha256':receipt['oracle_sha256'],
+                  'witness_ids':[],'depends_on':depends}
+              profile={'schema':'cora-portable-target/2','target_repo':target,
+                       'revision':head,'owners':[{'id':'native-owner','path':oracle}],
+                       'witnesses':[],'method_links':[],'goal':'C_EXTERNAL',
+                       'claims':[claim('C_NATIVE','BEHAVIOR',[]),
+                                 claim('C_EXTERNAL','EXTERNAL',['C_NATIVE'])]}
+              (base/'evidence'/(name+'-profile.json')).write_text(
+                  json.dumps(profile,sort_keys=True,indent=2)+'\n')
+          PY
+      - name: Run existing portable One-Run plus exact Git native Gold replay
+        run: |
+          for target in teddy ictc; do
+            set +e
+            cora process-run "/tmp/cora-pr52/targets/$target" --revision HEAD \
+              --one-run --portable-profile "/tmp/cora-pr52/evidence/$target-profile.json" \
+              --portable-native-probe "/tmp/cora-pr52/evidence/$target" \
+              --output "/tmp/cora-pr52/evidence/$target-one-run.json" \
+              --atlas-html "/tmp/cora-pr52/evidence/$target-atlas.html"
+            scoped_status=$?
+            set -e
+            test "$scoped_status" -eq 0 -o "$scoped_status" -eq 2
+            cora verify-process "/tmp/cora-pr52/evidence/$target-one-run.json" \
+              --repo "/tmp/cora-pr52/targets/$target" --one-run \
+              --portable-profile "/tmp/cora-pr52/evidence/$target-profile.json" \
+              --portable-native-probe "/tmp/cora-pr52/evidence/$target" \
+              --atlas-html "/tmp/cora-pr52/evidence/$target-atlas.html"
+          done
+      - name: Four-source Gold corpus, distinguish actual local tests vs skipped external controls
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from cora.git_snapshot import git
+          from cora.native_gold import replay_native,source_only_control,compose_native_pilots
+          root=Path('/tmp/cora-pr52')
+          native=[replay_native(root/'targets'/name,root/'evidence'/name)
+                  for name in ('teddy','ictc')]
+          controls=[]
+          for name,sha,reported in (
+            ('lumen','547e46788e72f1556dc2e32db3621d008032cbd0','NOT_RUN_REPORTED_UNATTESTED'),
+            ('NILO','3513ead1cf82dd104d471e20cfc9b11bf81158fb','SKIPPED_REPORTED_UNATTESTED')
+          ):
+              target=root/'targets'/name
+              assert git(target,'rev-parse','HEAD').decode().strip()==sha
+              controls.append(source_only_control(target,'Luke883i/'+name,sha,reported))
+          dossier=compose_native_pilots(native,controls)
+          assert dossier['release_authorization']=='NONE'
+          assert dossier['independent_runtime']=='BLOCKED_EXTERNAL'
+          assert dossier['efficiency_baseline']=='NOT_MEASURED'
+          assert dossier['lumen_browser']=='NOT_RUN'
+          assert dossier['nilo_render_remote']=='SKIPPED_REPORTED_UNATTESTED'
+          for name in ('teddy','ictc'):
+              receipt=json.loads((root/'evidence'/(name+'-one-run.json')).read_text())
+              assert receipt['native_gold']['report_status']=='LOCAL_RUNNER_PASS_REPORTED_UNAUTHENTICATED'
+              assert all(c['claim_proven'] is False for c in receipt['gold']['claims'])
+              assert receipt['gold']['goal_status']=='BLOCKED_INDEPENDENT_ORACLE_EXECUTION_AND_REVIEW'
+          (root/'evidence'/'native-gold-four-repo-atlas.json').write_text(
+              json.dumps(dossier,sort_keys=True,indent=2)+'\n')
+          print('PASS_SCOPED two local original native subprocesses and two source-only controls')
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: cora-pr52-native-gold-source-and-local-runtime
+          path: /tmp/cora-pr52/evidence/
+          if-no-files-found: warn
+          retention-days: 14
