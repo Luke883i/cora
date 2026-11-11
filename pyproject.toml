@@ -20,5 +20,8 @@ cora = "cora.cli:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+cora = ["portable_js_imports.mjs"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -1171,6 +1171,21 @@
         "PRODUCT_CONTRACT"
       ],
       "rationale": "Portable novice session input preserving evidence limits and external gaps"
+    },
+    {
+      "pattern": ".cora/contracts/dod/crossrepo-convergence-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Source-only crossrepo noncompensatory acceptance obligations; external approval never originates from a PR."
+    },
+    {
+      "pattern": "src/cora/portable_js_imports.mjs",
+      "roles": [
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Bundled non-executing static ESM parser shipped in installable distribution, never an independent runtime oracle."
     }
   ]
 }

@@ -124,6 +124,35 @@ class RealArtifactMutationTests(unittest.TestCase):
                 digest=hashlib.sha256((wheel if case<12 else sdist).read_bytes()).hexdigest()
                 self.assertNotIn(digest,seen);seen.add(digest)
         self.assertEqual(len(seen),24)
+    def test_bundled_js_resource_tampering_with_valid_wheel_record_is_rejected(self):
+        # Alter an installed ESM parser and recompute RECORD just like a hostile
+        # repackager. Byte-level wheel/SDist/original-source parity must refute it.
+        with zipfile.ZipFile(self.whl) as z:
+            files = {f.filename: z.read(f) for f in z.infolist() if not f.is_dir()}
+        resource = 'cora/portable_js_imports.mjs'
+        self.assertIn(resource, files, 'reviewed JS resource absent from built wheel')
+        files[resource] += b'\n// injected ESM parser mutation\n'
+        rec = next(n for n in files if n.endswith('.dist-info/RECORD'))
+        rows = []
+        for name, _, _ in csv.reader(io.StringIO(files[rec].decode('utf-8'))):
+            if name == rec:
+                rows.append([name, '', ''])
+            else:
+                digest = base64.urlsafe_b64encode(
+                    hashlib.sha256(files[name]).digest()).rstrip(b'=').decode()
+                rows.append([name, 'sha256=' + digest, str(len(files[name]))])
+        out = io.StringIO()
+        csv.writer(out, lineterminator='\n').writerows(rows)
+        files[rec] = out.getvalue().encode()
+        folder = self.out / 'mutant-js-resource'
+        folder.mkdir(exist_ok=True)
+        wheel = folder / self.whl.name
+        with zipfile.ZipFile(wheel, 'w', zipfile.ZIP_DEFLATED) as z:
+            for name, content in sorted(files.items()):
+                z.writestr(name, content)
+        with self.assertRaisesRegex(ValueError, 'packaged JS resource divergence'):
+            verify_release(wheel, self.sdist, ROOT)
+
     def test_release_source_mutation_detected(self):
         with tempfile.TemporaryDirectory() as td:
             src=Path(td)

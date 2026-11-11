@@ -307,3 +307,54 @@ suggests REVALIDATE_CHANGED_SOURCE, REVIEW_CHANGED_CONTRACT or
 REPLAN_STALLED_REPORTS when three consecutive source/evidence
 snapshots are unchanged. This is a replanning signal, not a universal
 semantic convergence theorem, autonomous execution or a product PASS.
+
+
+## Cross-repository source/evidence convergence (PR50 — candidate)
+
+**Abstract goal:** on two independently owned maintained codebases, an engineer
+must be able to reconstruct intent -> accountable owner -> bounded source change
+-> falsifier -> observed outcome -> unresolved blocker -> decision, from exact
+Git objects, with *less combined work* than a controlled alternative. This is
+a product hypothesis, not an established efficiency or usability result.
+
+The canonical machine-readable reticulum is
+[\`crossrepo-convergence-dod.json\`](../.cora/contracts/dod/crossrepo-convergence-dod.json):
+18 typed local obligations, five intermediate AND cuts and two globals.
+\`G_SOURCE_CANDIDATE = I_S0 AND I_S1 AND I_S2 AND I_S3\`;
+\`G_GOVERNED_PORTABILITY = G_SOURCE_CANDIDATE AND I_S4\`.
+The \`I_S2\` and \`I_S3\` cuts include external obligations, so all-source CI
+cannot silently declare \`G_SOURCE_CANDIDATE\` accepted. The current
+target-repository/source-method observations remain independent of user or
+provider validity; the source reticulum and an acceptance receipt are
+different types of artifact.
+
+| Cut | Minimal observable obligation | Metric / falsifier |
+| --- | --- | --- |
+| S0, CI repair | Existing source and claims tests recognize current README and preserve negative mutants | Original exact-head 11-run baseline reconciled; 0 weakened checks; post-merge separately rerun |
+| S1, portable source | Own profile/owner/path identities; source methods on distinct real Git targets; replay | >=2 target Git fixtures, 0 forged SHA/owner/replay acceptance; JS/dynamic UNKNOWN |
+| S2, evidence | Bytes, SHA and named oracle; no caller JSON promoted to execution | 0 tamper/path/false-PASS acceptance; real behavior independently observed later |
+| S3, transfer | Typed method links, original source and target SHAs, provenance and invalidation | 0 stale-source reuse; actual upstream object and adoption readback external |
+| S4, qualification | Independent maintained-target behavior, novice tasks, guarded release, measured efficiency | >=2 live maintained targets; >=8 new-user sessions, >=80% task success, 0 critical false promotions; preregistered time comparison |
+
+**Permitted source-side result:** source paths, Git SHA, declared profile and
+byte-digest replay can be checked locally. Imported HTTP/browser/log evidence
+proves only byte integrity unless the original executor is independently
+attested. No target tests, models or remote URLs execute implicitly. Missing
+source, incomplete dependencies, mismatched SHA, blocked external review or
+insufficient usability data remain explicit blockers.
+
+**Cross-repository roles:** \`teddy\` and \`NILO\` are candidate target
+examples, not CORA-owned products. A repository-local ontology or existing
+consumer map outranks a CORA convenience default. \`LUMEN -> Teddy\` is a
+candidate documented transfer of Render deployment method, while
+\`CORA -> NILO\` is a candidate transfer of engineering discipline;
+both require separate source/adaptation readback for an execution claim.
+Neither relation proves shared runtime or authority.
+
+**Staging / checklist:** first preserve repository and documentation checks;
+then run portable source profiles in a clean, committed checkout; challenge
+paths, owner, SHA, negative-oracle and source mutations; compare exact source
+receipts with independent readback; finally obtain independent studies,
+governed host review and real evidence of effort reduction. If a source gate
+fails, stop and correct that owner. If an external gate is absent, retain
+\`BLOCKED_EXTERNAL\`, not an invented PASS. Recompute after actual merge SHA.

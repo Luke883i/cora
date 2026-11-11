@@ -21,9 +21,11 @@ The [README](../README.md) is the **compressed public front door**: outcome, met
 
 **PR38 history / future change source audit:** [37 PRs and 305 commit deltas](../.cora/assurance/history/pr01-37-commit-diff-audit.json) → [severe 32-node DoD](../.cora/contracts/dod/history-convergence-dod.json) → [CLI guidance](CLI_REFERENCE.md). PR34 is closed without merge, and the 28 former paths require mapping, not deletion. New modules, tests, CI and DoDs must converge with canonical inventories.
 
+**Cross-repository portability (PR50 candidate):** [Reticular source/external DoD](../.cora/contracts/dod/crossrepo-convergence-dod.json) -> [portable One-Run method and usage](CONTINUOUS_DEVELOPMENT.md#cross-repository-sourceevidence-convergence-pr50--candidate). Neither target-owned profile nor source byte readback creates runtime or human authority.
+
 **Integrated source dossier:** the [PR37 v2 contract](../.cora/contracts/dod/integrated-one-run-dod.json) composes the PR36 source gates with a Git-pinned activity census, typed plans, local evidence and an offline forensic atlas. Product acceptance remains external and unverified.
 
-**Contract paths:** the only root-facing JSON contracts are `cora.ontology.json` and `cora.artifact-roles.json`. Find the seventeen internal DoDs, two profiles and two assurance records using the [contract-path index](../.cora/contracts/index.json). Git-baselined path rewrites are source-scoped: they do not attest third-party runtime compatibility or conformance.
+**Contract paths:** the only root-facing JSON contracts are `cora.ontology.json` and `cora.artifact-roles.json`. Find the nineteen internal DoDs, two profiles and two assurance records using the [contract-path index](../.cora/contracts/index.json). Git-baselined path rewrites are source-scoped: they do not attest third-party runtime compatibility or conformance.
 
 **Archive invariant:** `docs/archive/` contains immutable historical Git blobs; [the relocation map](../.cora/layout-migration.json) records original-to-current paths and protected exceptions. Historical text is not rewritten, not product authority and not a safe-deletion signal. Read current procedures above before relying on old decisions.
 

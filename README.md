@@ -3,7 +3,7 @@
 
 # CORA — Continuous Ontological Repository Assurance
 
-**Engineering evidence for AI-assisted software changes.**
+**CORA (Continuous Ontological Repository Assurance)** — **Engineering evidence for AI-assisted software changes.**
 
 CORA is a local, offline-first Python 3.11+ framework. It helps developers and AI coding assistants inspect a Git repository, turn goals into falsifiable obligations and **produce reproducible pre/post-merge review reports**. It links **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**. Agents edit with authorized tools; CORA evaluates evidence. CORA is **not a coding agent** or an approver.
 
@@ -57,6 +57,8 @@ cora verify-process /tmp/cora-run.json --repo . --one-run --atlas-html /tmp/cora
 ```
 
 The dossier separates `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTERNAL`. **The default does not execute arbitrary target tests**. Run permitted target tests separately and keep commands, versions and observed outcomes. [Portable chat handoff](docs/AGENT_ADOPTION.md#portable-chatgpt-handoff-opt-in) uses `--chat-step` and `--chat-bundle`; its ZIP is neither automatic ChatGPT memory nor an approval.
+
+**Cross-repository opt-in:** for a distinct Git target, use `process-run --one-run --portable-profile /path/to/target.json` (and `verify-process --one-run --portable-profile` for replay). This source-only route never transplants CORA's own DoD; `--portable-parse-js` optionally parses static ESM without executing target modules. [Scope, profile and cross-repository DoD](docs/CONTINUOUS_DEVELOPMENT.md#cross-repository-sourceevidence-convergence-pr50--candidate). No external product approval follows from either path.
 
 ## How CORA works
 
