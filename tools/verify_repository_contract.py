@@ -84,8 +84,8 @@ def audit_product_positioning(root: Path, readme: str) -> list[str]:
                    "static JavaScript ESM", "**Teddy Node**", "**ICTC HTTP/SQLite**"),
         "packaging": ("**MIT**", "**Python 3.11+**", "cora-audit 1.0.0a5",
                       "no declared mandatory Python runtime dependencies"),
-        "sbom": ("**SBOM (SPDX/CycloneDX): NOT_GENERATED_BY_CI**",),
-        "sca": ("**SCA/CVE: NOT_ATTESTED**",),
+        "sbom": ("**SBOM (CycloneDX 1.6): GENERATION_IN_CANDIDATE_CI**",),
+        "sca": ("**SCA/CVE: SCAN_CI_BUILD_TOOLS_ONLY**",),
         "signing": ("**artifact signing / SLSA provenance: NOT_ATTESTED**",),
         "governance": ("**Independent reviewer, enforced branch rules, release: BLOCKED_EXTERNAL**",
                        "no production security SLA"),
@@ -137,18 +137,19 @@ def audit_product_positioning(root: Path, readme: str) -> list[str]:
                 "process-run", "verify-process", "--portable-profile",
                 "--portable-native-probe")):
             errors.append("positioning-cli-boundary-drift")
-        if (not all(token in candidate for token in (
+        if not all(token in candidate for token in (
                 "tools/build_candidate.py", "tools/release_verify.py",
-                "tools/external_validate.py", "sha256sum", "SHA256SUMS"))
-                or re.search(r"\b(?:cyclonedx|syft|sbom-tool|spdx-tools)\b",
-                             candidate, re.I)):
+                "tools/external_validate.py", "sha256sum", "SHA256SUMS",
+                "pip-audit==2.10.1", "--sbom-output", "--verify-sbom",
+                "--provenance-output", "--verify-provenance",
+                "--sca-raw", "--verify-sca", "build-tool-pins.json")):
             errors.append("positioning-build-sbom-truth-drift")
         if (not all(token in release for token in (
-                "Post-PR52 CTO procurement", "NOT_GENERATED_BY_CI",
+                "Post-PR52 CTO procurement", "CONFIGURED_IN_PR55_CANDIDATE_CI",
                 "SLSA/in-toto", "BLOCKED_EXTERNAL", "not a self-issued"))
                 or not all(token in security for token in (
                     "Supply-chain and enterprise evaluation disclosure",
-                    "SPDX/CycloneDX SBOM", "no supported production release",
+                    "CycloneDX 1.6 SBOM", "no supported production release",
                     "NOT_ATTESTED"))):
             errors.append("positioning-security-release-truth-drift")
         if (not all(token in architecture for token in (
@@ -267,7 +268,7 @@ def main(argv=None) -> int:
                       'checks': 'readme-first-read, cli, paths, ontology, package, regressions, cto-positioning',
                       'positioning': {
                           'verdict': 'SOURCE_CROSSCHECK_ONLY',
-                          'sbom': 'NOT_GENERATED_BY_CI',
+                          'sbom': 'GENERATED_IN_CANDIDATE_CI_SCOPED',
                           'independent_assurance': 'BLOCKED_EXTERNAL',
                           'release_authorization': 'NONE',
                           'enterprise_ready': False,

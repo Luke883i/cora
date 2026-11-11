@@ -39,7 +39,7 @@ jobs:
           assert r['schema']=='cora-repository-contract/1'
           assert r['status']=='PASS_SCOPED' and not r['errors']
           assert r['positioning']['verdict']=='SOURCE_CROSSCHECK_ONLY'
-          assert r['positioning']['sbom']=='NOT_GENERATED_BY_CI'
+          assert r['positioning']['sbom']=='GENERATED_IN_CANDIDATE_CI_SCOPED'
           assert r['positioning']['independent_assurance']=='BLOCKED_EXTERNAL'
           assert r['positioning']['release_authorization']=='NONE'
           PY

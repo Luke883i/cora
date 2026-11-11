@@ -12,7 +12,7 @@ import tempfile
 import unittest
 import zipfile
 from pathlib import Path
-from tools.release_verify import verify_release, normalized_wheel_distribution, read_sdist
+from tools.release_verify import verify_release, normalized_wheel_distribution, read_sdist, supply_bom, assert_sbom, canonical_bytes, read_build_pins, sca_observation, assert_sca, build_observation, assert_build_observation
 from tools.release_stress import stress, classify_model, independent_oracle, FAMILIES
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -33,6 +33,133 @@ class RealArtifactMutationTests(unittest.TestCase):
         self.assertEqual(result['status'],'VERIFIED_SCOPED')
         self.assertEqual(result['version'],__import__('tomllib').loads((ROOT/'pyproject.toml').read_text())['project']['version'])
         self.assertEqual(result['entrypoint'],'cora=cora.cli:main')
+
+
+    def test_pr55_sbom_generation_scope_and_components(self):
+        bom = supply_bom(self.whl, self.sdist, ROOT)
+        self.assertEqual((bom["bomFormat"], bom["specVersion"]), ("CycloneDX", "1.6"))
+        self.assertEqual(bom["metadata"]["component"]["name"], "cora-audit")
+        self.assertEqual(bom["metadata"]["component"]["version"], VERSION)
+        self.assertEqual(bom["dependencies"][0]["dependsOn"], [])
+        self.assertEqual(len(bom["components"]), 4)
+        self.assertEqual(bom["compositions"][0]["aggregate"], "incomplete")
+
+    def test_pr55_sbom_exact_original_artifact_replay(self):
+        bom = supply_bom(self.whl, self.sdist, ROOT)
+        with tempfile.TemporaryDirectory() as td:
+            note = Path(td) / "bom.cdx.json"
+            note.write_bytes(canonical_bytes(bom))
+            self.assertTrue(assert_sbom(note, supply_bom(self.whl, self.sdist, ROOT)))
+
+    def test_pr55_sbom_five_physical_negative_mutants(self):
+        import copy
+        bom = supply_bom(self.whl, self.sdist, ROOT)
+        variants = []
+        mutated = copy.deepcopy(bom)
+        next(c for c in mutated["components"] if "hashes" in c)["hashes"][0]["content"] = "0" * 64
+        variants.append(mutated)
+        mutated = copy.deepcopy(bom)
+        mutated["components"].pop()
+        variants.append(mutated)
+        mutated = copy.deepcopy(bom)
+        mutated["metadata"]["properties"] = []
+        variants.append(mutated)
+        mutated = copy.deepcopy(bom)
+        mutated["compositions"][0]["aggregate"] = "complete"
+        variants.append(mutated)
+        mutated = copy.deepcopy(bom)
+        mutated["metadata"]["component"]["version"] = "9.9.9"
+        variants.append(mutated)
+        with tempfile.TemporaryDirectory() as td:
+            note = Path(td) / "bom.cdx.json"
+            for i, wrong in enumerate(variants):
+                with self.subTest(i=i):
+                    note.write_bytes(canonical_bytes(wrong))
+                    with self.assertRaisesRegex(ValueError, "SBOM differs"):
+                        assert_sbom(note, bom)
+
+    def test_pr55_pinned_build_components_and_real_sca_report_grammar(self):
+        import json
+        pins = {"schema": "cora-build-tool-pins/1",
+                "scope": "INSTALLED_BUILD_RUNNER_VERSIONS",
+                "setuptools": "80.1.0", "wheel": "0.45.1"}
+        report = {"dependencies": [
+            {"name": "setuptools", "version": "80.1.0", "vulns": []},
+            {"name": "wheel", "version": "0.45.1", "vulns": []}]}
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            pin_path = root / "pins.json"
+            raw_path = root / "scanner.json"
+            summary = root / "summary.json"
+            pin_path.write_text(json.dumps(pins), encoding="utf-8")
+            raw_path.write_text(json.dumps(report), encoding="utf-8")
+            self.assertEqual(read_build_pins(pin_path), {
+                "setuptools": "80.1.0", "wheel": "0.45.1"})
+            sbom = supply_bom(self.whl, self.sdist, ROOT, read_build_pins(pin_path))
+            components = {x["name"]: x for x in sbom["components"]}
+            self.assertEqual(components["setuptools"]["version"], "80.1.0")
+            self.assertEqual(components["wheel"]["version"], "0.45.1")
+            record = sca_observation(raw_path, pin_path, 0)
+            self.assertEqual(record["scan_scope"], "DIRECT_INSTALLED_CI_BUILD_TOOLS_ONLY")
+            self.assertEqual(record["transitive_build_dependencies"], "NOT_SCANNED")
+            summary.write_bytes(canonical_bytes(record))
+            self.assertTrue(assert_sca(summary, record))
+            mutant = dict(report)
+            mutant["dependencies"] = [dict(x) for x in report["dependencies"]]
+            mutant["dependencies"][0]["version"] = "79.0.0"
+            raw_path.write_text(json.dumps(mutant), encoding="utf-8")
+            with self.assertRaises(ValueError):
+                sca_observation(raw_path, pin_path, 0)
+            raw_path.write_text(json.dumps(report), encoding="utf-8")
+            with self.assertRaises(ValueError):
+                sca_observation(raw_path, pin_path, 2)
+            report["dependencies"][0]["vulns"] = [{"id": "PYSEC-TEST-000"}]
+            raw_path.write_text(json.dumps(report), encoding="utf-8")
+            with self.assertRaises(ValueError):
+                sca_observation(raw_path, pin_path, 0)
+            exposed = sca_observation(raw_path, pin_path, 1)
+            self.assertEqual(exposed["status"], "SCANNED_FINDINGS_REVIEW_REQUIRED")
+            summary.write_bytes(canonical_bytes(record))
+            with self.assertRaises(ValueError):
+                assert_sca(summary, exposed)
+
+
+    def test_pr55_unsigned_git_build_observation_real_and_mutants(self):
+        import copy, json
+        if not (ROOT / ".git").exists():
+            self.skipTest("Original Git checkout required for provenance readback")
+        sha = subprocess.check_output(
+            ["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True).strip()
+        bom = supply_bom(self.whl, self.sdist, ROOT)
+        original = build_observation(ROOT, sha, self.whl, self.sdist, bom)
+        self.assertEqual(original["git_commit"], sha)
+        self.assertEqual(original["signatures"], "NONE")
+        self.assertEqual(original["slsa_attestation"], "NOT_ATTESTED")
+        self.assertFalse(original["publication_authorized"])
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / "build.json"
+            path.write_bytes(canonical_bytes(original))
+            self.assertTrue(assert_build_observation(path,
+                build_observation(ROOT, sha, self.whl, self.sdist, bom)))
+            cases = [
+                ("source-commit", ("git_commit", "0"*40)),
+                ("artifact-subject", ("subject", [])),
+                ("sbom-binding", ("sbom_sha256", "0"*64)),
+                ("forged-slsa", ("slsa_attestation", "SIGNED_ATTESTED")),
+                ("forged-issuer", ("builder_issuer", "TRUSTED_SLSA_BUILDER")),
+                ("release-promotion", ("publication_authorized", True)),
+            ]
+            for name, (key, value) in cases:
+                with self.subTest(name=name):
+                    mutant = copy.deepcopy(original)
+                    mutant[key] = value
+                    path.write_bytes(canonical_bytes(mutant))
+                    with self.assertRaises(ValueError):
+                        assert_build_observation(path, original)
+            path.write_bytes(canonical_bytes(original))
+            with self.assertRaises(ValueError):
+                build_observation(ROOT, "0"*40, self.whl, self.sdist, bom)
+
     def test_unrelated_sdist_has_no_false_identity(self):
         self.assertEqual(len(normalized_wheel_distribution(self.whl)['files']),len(list((ROOT/'src/cora').glob('*.py'))))
     def test_stress_oracle_at_edge_bits(self):

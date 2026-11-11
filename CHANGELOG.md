@@ -1,3 +1,9 @@
+## Unreleased — PR55 scoped software supply-chain assurance (candidate)
+
+- Extend the original wheel/sdist release verifier with physical PR54 note inspection, CycloneDX 1.6 inventory, observed CI build-tool pin reconciliation, and digest-linked **unsigned** Git build records.
+- Run pinned pip-audit against direct installed setuptools/wheel tools, retain raw JSON and a scope-limited SCA summary; fail on scanner errors, accept reported vulnerabilities only as explicit review debt.
+- Replay all emitted supply-chain records against original artifacts and Git in the existing CI; add physical negative mutations. No SPDX output, SLSA/signature, full transitive scan, independent review, or release authority is claimed.
+
 ## Unreleased — candidate release-note identity hardening (PR54 candidate)
 
 - Correct review-only release-note version to derive from `pyproject.toml` instead of stale historical `1.0.0a4`; require exact candidate Git SHA in the note.

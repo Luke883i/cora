@@ -53,8 +53,8 @@ class RepositoryContract(unittest.TestCase):
             ('scope', 'partial Python AST', 'complete Python semantics'),
             ('pilot', '**Teddy Node**', '**Universal Node**'),
             ('package', 'cora-audit 1.0.0a5', 'cora-audit 2.0.0'),
-            ('sbom', 'NOT_GENERATED_BY_CI', 'GENERATED_AND_CERTIFIED'),
-            ('sca', '**SCA/CVE: NOT_ATTESTED**', '**SCA/CVE: CERTIFIED**'),
+            ('sbom', 'GENERATION_IN_CANDIDATE_CI', 'GENERATED_AND_CERTIFIED'),
+            ('sca', '**SCA/CVE: SCAN_CI_BUILD_TOOLS_ONLY**', '**SCA/CVE: CERTIFIED**'),
             ('signing', 'SLSA provenance: NOT_ATTESTED', 'SLSA provenance: CERTIFIED'),
             ('approval', 'release: BLOCKED_EXTERNAL', 'release: APPROVED'),
         )
@@ -94,8 +94,11 @@ class RepositoryContract(unittest.TestCase):
                  '"Luke883i/unknown"', 'positioning-native-runtime-allowlist-drift'),
                 ('build', '.github/workflows/ci-release-candidate.yml',
                  'sha256sum dist/', 'NO_SHA256 dist/', 'positioning-build-sbom-truth-drift'),
-                ('supply-chain', 'docs/RELEASE.md', 'NOT_GENERATED_BY_CI',
+                ('supply-chain', 'docs/RELEASE.md', 'CONFIGURED_IN_PR55_CANDIDATE_CI',
                  'SBOM_CERTIFIED', 'positioning-security-release-truth-drift'),
+                ('scanner-gate', '.github/workflows/ci-release-candidate.yml',
+                 'pip-audit==2.10.1', 'pip-audit==0.0.0',
+                 'positioning-build-sbom-truth-drift'),
                 ('navigation', 'docs/ARCHITECTURE.md', 'CORA-METHOD',
                  'UNKNOWN-METHOD', 'positioning-architecture-navigation-drift'),
             )
