@@ -11,6 +11,7 @@ import json
 import os
 import re
 import subprocess
+from time import monotonic
 from pathlib import Path
 
 from .evidence import domain_hash
@@ -116,6 +117,7 @@ def capture_native(repo: Path, target_repo: str, commit: str,
     if output.is_symlink() or output.exists() or repo == output.resolve() or repo in output.resolve().parents:
         _reject("fresh evidence output must be outside target and not a symlink")
     output.mkdir(parents=True, exist_ok=False)
+    start = monotonic()
     try:
         execution = subprocess.run(
             list(command), cwd=repo, env=_safe_env(),
@@ -123,6 +125,7 @@ def capture_native(repo: Path, target_repo: str, commit: str,
             timeout=120, check=False)
     except (FileNotFoundError, subprocess.TimeoutExpired, OSError) as exc:
         _reject("native subprocess unavailable/timeout: " + str(exc)[:100])
+    elapsed_ms = max(0, int((monotonic() - start) * 1000))
     if len(execution.stdout) > MAX_LOG:
         _reject("native process log too large")
     log = execution.stdout
@@ -147,6 +150,7 @@ def capture_native(repo: Path, target_repo: str, commit: str,
         "source_commit": commit, "claim_id": claim_id,
         "oracle_path": oracle, "oracle_sha256": oracle_hash,
         "command": list(command), "exit_code": execution.returncode,
+        "elapsed_ms": elapsed_ms, "time_basis": "CORA_LOCAL_MONOTONIC_UNATTESTED",
         "log_file": "run.log", "log_sha256": _hash(log),
         "artifact_file": "artifact.json" if artifact_sha else None,
         "artifact_sha256": artifact_sha,
@@ -175,7 +179,7 @@ def replay_native(repo: Path, evidence_dir: Path,
         "schema", "target_repo", "source_commit", "claim_id",
         "oracle_path", "oracle_sha256", "command", "exit_code",
         "log_file", "log_sha256", "artifact_file", "artifact_sha256",
-        "node_test", "runtime_scope", "issuer_authentication",
+        "node_test", "elapsed_ms", "time_basis", "runtime_scope", "issuer_authentication",
         "independent_review", "release_authorization", "digest"
     } or declared["schema"] != SCHEMA:
         _reject("invalid native receipt envelope")
@@ -184,6 +188,9 @@ def replay_native(repo: Path, evidence_dir: Path,
         _reject("unrecognized pilot or claim")
     oracle, command, artifact_path = PILOTS[declared["target_repo"]]
     if (declared["oracle_path"] != oracle or declared["command"] != list(command)
+            or type(declared["elapsed_ms"]) is not int
+            or not 0 <= declared["elapsed_ms"] <= 120500
+            or declared["time_basis"] != "CORA_LOCAL_MONOTONIC_UNATTESTED"
             or declared["runtime_scope"] != "LOCAL_PROCESS_EXIT_OBSERVED_BY_THIS_INVOCATION"
             or declared["issuer_authentication"] != "NONE"
             or declared["independent_review"] != "BLOCKED_EXTERNAL"
@@ -224,6 +231,7 @@ def replay_native(repo: Path, evidence_dir: Path,
                           if declared["exit_code"] == 0 else "LOCAL_RUNNER_FAIL_REPORTED"),
         "log_sha256": declared["log_sha256"],
         "artifact_sha256": declared["artifact_sha256"],
+        "elapsed_ms_reported": declared["elapsed_ms"],
         "execution_replay": "NOT_PERFORMED_SOURCE_AND_BYTE_READBACK_ONLY",
         "issuer_authenticated": False,
         "independent_oracle": "BLOCKED_EXTERNAL", "authorization": "NONE",
