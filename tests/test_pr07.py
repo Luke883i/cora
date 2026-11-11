@@ -34,42 +34,49 @@ class RealArtifactMutationTests(unittest.TestCase):
         self.assertEqual(result['version'],__import__('tomllib').loads((ROOT/'pyproject.toml').read_text())['project']['version'])
         self.assertEqual(result['entrypoint'],'cora=cora.cli:main')
 
-    def test_pr55_real_cyclonedx_bom_and_original_artifact_binding(self):
+
+    def test_pr55_sbom_generation_scope_and_components(self):
         bom = supply_bom(self.whl, self.sdist, ROOT)
-        self.assertEqual((bom["bomFormat"], bom["specVersion"]),
-                         ("CycloneDX", "1.6"))
+        self.assertEqual((bom["bomFormat"], bom["specVersion"]), ("CycloneDX", "1.6"))
         self.assertEqual(bom["metadata"]["component"]["name"], "cora-audit")
         self.assertEqual(bom["metadata"]["component"]["version"], VERSION)
         self.assertEqual(bom["dependencies"][0]["dependsOn"], [])
         self.assertEqual(len(bom["components"]), 4)
         self.assertEqual(bom["compositions"][0]["aggregate"], "incomplete")
+
+    def test_pr55_sbom_exact_original_artifact_replay(self):
+        bom = supply_bom(self.whl, self.sdist, ROOT)
         with tempfile.TemporaryDirectory() as td:
             note = Path(td) / "bom.cdx.json"
             note.write_bytes(canonical_bytes(bom))
             self.assertTrue(assert_sbom(note, supply_bom(self.whl, self.sdist, ROOT)))
-            variants = []
-            import copy
-            mutated = copy.deepcopy(bom)
-            next(c for c in mutated["components"] if "hashes" in c)["hashes"][0]["content"] = "0" * 64
-            variants.append(mutated)
-            mutated = copy.deepcopy(bom)
-            mutated["components"].pop()
-            variants.append(mutated)
-            mutated = copy.deepcopy(bom)
-            mutated["metadata"]["properties"] = []
-            variants.append(mutated)
-            mutated = copy.deepcopy(bom)
-            mutated["compositions"][0]["aggregate"] = "complete"
-            variants.append(mutated)
-            mutated = copy.deepcopy(bom)
-            mutated["metadata"]["component"]["version"] = "9.9.9"
-            variants.append(mutated)
+
+    def test_pr55_sbom_five_physical_negative_mutants(self):
+        import copy
+        bom = supply_bom(self.whl, self.sdist, ROOT)
+        variants = []
+        mutated = copy.deepcopy(bom)
+        next(c for c in mutated["components"] if "hashes" in c)["hashes"][0]["content"] = "0" * 64
+        variants.append(mutated)
+        mutated = copy.deepcopy(bom)
+        mutated["components"].pop()
+        variants.append(mutated)
+        mutated = copy.deepcopy(bom)
+        mutated["metadata"]["properties"] = []
+        variants.append(mutated)
+        mutated = copy.deepcopy(bom)
+        mutated["compositions"][0]["aggregate"] = "complete"
+        variants.append(mutated)
+        mutated = copy.deepcopy(bom)
+        mutated["metadata"]["component"]["version"] = "9.9.9"
+        variants.append(mutated)
+        with tempfile.TemporaryDirectory() as td:
+            note = Path(td) / "bom.cdx.json"
             for i, wrong in enumerate(variants):
                 with self.subTest(i=i):
                     note.write_bytes(canonical_bytes(wrong))
                     with self.assertRaisesRegex(ValueError, "SBOM differs"):
                         assert_sbom(note, bom)
-
 
     def test_pr55_pinned_build_components_and_real_sca_report_grammar(self):
         import json
