@@ -19,7 +19,7 @@ Intent → acceptance graph → reversible code slice → adversarial tests
 
 **Recommended use:** inspect an authorized checkout or review one bounded change. **Audience and conditions:** CTOs, developers, reviewers and coding agents; Python 3.11+, Git and authorized execution tools. **Open source license:** [MIT](LICENSE).
 
-**Current status:** experimental `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **merged PR41** and PR46 establish source milestones; the earlier `v1.0.0a4` was a draft. Independent user/host qualification is open. **Category:** agent-agnostic developer tooling / engineering assurance.
+**Current status:** experimental `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **merged PR41** and PR46 establish source milestones; the earlier `v1.0.0a4` was a draft. External assurance is unverified; it is not required for experimental use. **Category:** agent-agnostic developer tooling / engineering assurance.
 
 ## First five minutes — Quickstart
 
@@ -47,6 +47,8 @@ Then run [One-Run](#one-run--one-command-one-evidence-dossier). This identifies 
 | **Software supply chain** | Candidate build parity and `SHA256SUMS` exist; **SBOM (CycloneDX 1.6): GENERATION_IN_CANDIDATE_CI**; **SCA/CVE: SCAN_CI_BUILD_TOOLS_ONLY**; **artifact signing / SLSA provenance: NOT_ATTESTED**. |
 | **Security / procurement gates** | Execution needs authorization and suitable isolation. **Independent reviewer, enforced branch rules, release: BLOCKED_EXTERNAL**; no production security SLA. [Security](SECURITY.md) · [Release](docs/RELEASE.md). |
 
+**Assurance levels:** **L1** = Git/source checks and explicitly reported local tests; **L2** = bounded product experiments with target-specific oracles; **L3** = optional external assurance for independently governed acceptance. L1/L2 may be useful without L3. A Git SHA or CI PASS cannot approve a release.
+
 **71 declared CLI commands** in the [capability atlas](.cora/assurance/capability-atlas.json): a source inventory, **not a claim that 71 product behaviors have been independently executed or certified**. Implemented surfaces include Git/file archaeology, partial static dependencies, typed DoD graphs, bounded debt, modeled fault tests, pre/post-merge reports and portable ChatGPT iteration ZIPs. The [parser-checked CLI reference](docs/CLI_REFERENCE.md) and [complete documentation index](docs/INDEX.md) document source surfaces, not runtime certificates.
 
 **CORA is not an eleventh engineering method.** It correlates partial observations; no listed method is implemented in full:
@@ -71,7 +73,7 @@ The dossier separates `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTERNAL`
 
 **Native Gold pilots (PR52):** with explicit test-execution consent, CORA binds real Teddy Node and ICTC HTTP/SQLite outcomes to original Git/Gold claims in the existing One-Run. LUMEN browser and NILO remote remain unobserved controls. The local test exit does not authenticate a runner, approve a release or prove engineer-hours savings. [Method and limitations](docs/GOLD_ASSURANCE.md#pr52--native-gold-pilots-and-bounded-cross-repository-result).
 
-**Gold witness linkage (PR51):** target-owned portable profiles v2 can correlate committed source, original native test oracles, retained observation bytes and a claim-level DoD in the same One-Run Atlas, without treating an untrusted PASS as test execution. [Semantics and negative oracles](docs/GOLD_ASSURANCE.md#pr51--native-gold-bridge-in-the-existing-portable-one-run).
+**Gold linkage (PR51):** portable profiles v2 associate source, native-test records and scoped DoD. An untrusted PASS is not execution. [Oracles and limits](docs/GOLD_ASSURANCE.md#pr51--native-gold-bridge-in-the-existing-portable-one-run).
 
 **Cross-repository opt-in:** for a distinct Git target, use `process-run --one-run --portable-profile /path/to/target.json` (and `verify-process --one-run --portable-profile` for replay). This source-only route never transplants CORA's own DoD; `--portable-parse-js` optionally parses static ESM without executing target modules. [Scope, profile and cross-repository DoD](docs/CONTINUOUS_DEVELOPMENT.md#cross-repository-sourceevidence-convergence-pr50--candidate). No external product approval follows from either path.
 

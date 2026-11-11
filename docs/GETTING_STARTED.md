@@ -38,9 +38,9 @@ mutations or human reviews.
 2. **Evidence:** Find the pinned commit, relevant activity, source paths and
    retained artifact. A digest establishes a scoped byte relationship,
    not human approval or universal correctness.
-3. **Challenge:** Inspect the unresolved gaps and external qualification.
-   `BLOCKED_EXTERNAL` means independent operator, target, isolation, host
-   or user evidence remains unavailable; no source result grants release.
+3. **Challenge:** Separate technical gaps from optional external assurance.
+   `BLOCKED_EXTERNAL` applies to **L3 external assurance**, not L1 source
+   checks or L2 experimental use; no source result grants release.
 
 For a particular PR, select its actual `BASE` and `HEAD` commits. To compare
 **declared obligation occurrences** (not verified closures), use the existing
