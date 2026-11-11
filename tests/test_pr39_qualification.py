@@ -246,6 +246,52 @@ class IndependentQualificationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,"identity"):
             host.probe("../..","main","private")
 
+
+    def test_pr56_two_original_git_references_with_counterexample_replay(self):
+        native=module_from_tool("independent_git_oracle")
+        with tempfile.TemporaryDirectory(prefix="pr56-native-pair-") as tmp:
+            roots=[]
+            for index in (0,1):
+                repo=Path(tmp)/("public-fixture-"+str(index))
+                repo.mkdir()
+                run_git(repo,"init","-q")
+                run_git(repo,"config","user.name","Fixture Native Oracle")
+                run_git(repo,"config","user.email","reference@example.invalid")
+                for n in range(30):
+                    (repo/f"sample-{n:03d}.txt").write_text(
+                        f"target={index};path={n};bytes={n*n}\n",encoding="utf-8")
+                run_git(repo,"add",".")
+                run_git(repo,"commit","-qm","controlled original Git fixture")
+                roots.append((repo,run_git(repo,"rev-parse","HEAD")))
+            pins={"teddy": ("Luke883i/teddy",roots[0][1]),
+                  "ictc": ("Luke883i/ictc",roots[1][1])}
+            with patch.dict(native.PUBLIC_TARGETS,pins):
+                report=native.public_pair(roots[0][0],roots[1][0])
+                self.assertEqual(report["case_count"],2)
+                self.assertEqual([c["sample_size"] for c in report["cases"]],[24,24])
+                self.assertTrue(all(c["sample_agrees"] for c in report["cases"]))
+                self.assertFalse(report["independent_oracle_owner_authenticated"])
+                self.assertEqual(report["cost_benefit"],"NOT_MEASURED")
+                self.assertTrue(native.verify_public_pair(roots[0][0],roots[1][0],report))
+                mutants=(
+                    lambda x:x.update(product_status="QUALIFIED"),
+                    lambda x:x.update(cost_benefit="CORA_FASTER_PROVEN"),
+                    lambda x:x["cases"][0].update(target_commit="0"*40),
+                    lambda x:x["cases"][1].update(cora_sample_digest="0"*64),
+                    lambda x:x["cases"][0].update(time_scope="FASTER"),
+                    lambda x:x["cases"][1].update(native_git_elapsed_ns=-1),
+                )
+                for mutate in mutants:
+                    modified=copy.deepcopy(report)
+                    mutate(modified)
+                    with self.subTest(mutation=mutate.__code__.co_firstlineno):
+                        with self.assertRaises(ValueError):
+                            native.verify_public_pair(roots[0][0],roots[1][0],modified)
+                with (roots[0][0]/"sample-001.txt").open("a",encoding="utf-8") as file:
+                    file.write("tracked modification must block\n")
+                with self.assertRaisesRegex(ValueError, "clean checkout"):
+                    native.public_pair(roots[0][0],roots[1][0])
+
     def test_08_physical_git_external_state_mutant_is_rejected(self):
         with tempfile.TemporaryDirectory() as temp:
             local=Path(temp)/"clone"
