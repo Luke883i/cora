@@ -146,22 +146,22 @@ jobs:
           python -m unittest discover -s tests -p 'test_pr50_portable.py' -v
       - name: PR51 diagnostic 1 test_two_original_git_targets_and_four_gold_rails
         if: always()
-        run: python -m unittest tests.test_pr51_gold_bridge.PR51NativeGoldBridge.test_two_original_git_targets_and_four_gold_rails -v
+        run: PYTHONPATH=tests python -m unittest test_pr51_gold_bridge.PR51NativeGoldBridge.test_two_original_git_targets_and_four_gold_rails -v
       - name: PR51 diagnostic 2 test_no_retained_bytes_and_skip_cannot_become_pass
         if: always()
-        run: python -m unittest tests.test_pr51_gold_bridge.PR51NativeGoldBridge.test_no_retained_bytes_and_skip_cannot_become_pass -v
+        run: PYTHONPATH=tests python -m unittest test_pr51_gold_bridge.PR51NativeGoldBridge.test_no_retained_bytes_and_skip_cannot_become_pass -v
       - name: PR51 diagnostic 3 test_hostile_claim_and_oracle_mutations
         if: always()
-        run: python -m unittest tests.test_pr51_gold_bridge.PR51NativeGoldBridge.test_hostile_claim_and_oracle_mutations -v
+        run: PYTHONPATH=tests python -m unittest test_pr51_gold_bridge.PR51NativeGoldBridge.test_hostile_claim_and_oracle_mutations -v
       - name: PR51 diagnostic 4 test_mutation_changes_original_oracle_git_and_fails_closed
         if: always()
-        run: python -m unittest tests.test_pr51_gold_bridge.PR51NativeGoldBridge.test_mutation_changes_original_oracle_git_and_fails_closed -v
+        run: PYTHONPATH=tests python -m unittest test_pr51_gold_bridge.PR51NativeGoldBridge.test_mutation_changes_original_oracle_git_and_fails_closed -v
       - name: PR51 diagnostic 5 test_cli_portable_single_atlas_and_old_receipt_replay
         if: always()
-        run: python -m unittest tests.test_pr51_gold_bridge.PR51NativeGoldBridge.test_cli_portable_single_atlas_and_old_receipt_replay -v
+        run: PYTHONPATH=tests python -m unittest test_pr51_gold_bridge.PR51NativeGoldBridge.test_cli_portable_single_atlas_and_old_receipt_replay -v
       - name: PR51 diagnostic 6 test_html_escapes_target_authored_claims
         if: always()
-        run: python -m unittest tests.test_pr51_gold_bridge.PR51NativeGoldBridge.test_html_escapes_target_authored_claims -v
+        run: PYTHONPATH=tests python -m unittest test_pr51_gold_bridge.PR51NativeGoldBridge.test_html_escapes_target_authored_claims -v
       - name: PR51 Gold claim, oracle, evidence and adversarial replay
         if: always()
         run: python -m unittest discover -s tests -p 'test_pr51_gold_bridge.py' -v
