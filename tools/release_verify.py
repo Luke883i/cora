@@ -19,6 +19,10 @@ from pathlib import Path
 MAX_FILE = 8 * 1024 * 1024
 MAX_TOTAL = 64 * 1024 * 1024
 MAX_ENTRIES = 5000
+# Deliberate non-executable package resource; no generic JS/wheel payload allowance.
+JS_PACKAGE_RESOURCE = 'portable_js_imports.mjs'
+JS_WHEEL_PATH = 'cora/' + JS_PACKAGE_RESOURCE
+JS_SDIST_PATH = 'src/cora/' + JS_PACKAGE_RESOURCE
 
 
 def sha(data: bytes) -> str:
@@ -115,7 +119,7 @@ def normalized_wheel_distribution(path: Path) -> dict:
     ep = info+'entry_points.txt'
     if record not in wheel or ep not in wheel or info+'WHEEL' not in wheel:
         raise ValueError('wheel metadata incomplete')
-    if any(not (n.startswith('cora/') and n.endswith('.py') or n.startswith(info)) for n in wheel):
+    if any(not (n.startswith('cora/') and n.endswith('.py') or n == JS_WHEEL_PATH or n.startswith(info)) for n in wheel):
         raise ValueError('unknown install payload')
     if b'Tag: py3-none-any' not in wheel[info+'WHEEL']:
         raise ValueError('unsupported wheel compatibility tag')
@@ -138,9 +142,11 @@ def normalized_wheel_distribution(path: Path) -> dict:
     if not re.search(r'^cora\s*=\s*cora\.cli:main\s*$', entries, flags=re.M) or entries.count('=') != 1:
         raise ValueError('multiple or wrong entrypoints')
     py = {n.removeprefix('cora/'): raw for n, raw in wheel.items() if n.startswith('cora/') and n.endswith('.py')}
-    if not py or any(n.startswith('cora/') and not n.endswith('.py') for n in wheel):
+    if not py or any(n.startswith('cora/') and not n.endswith('.py') and n != JS_WHEEL_PATH for n in wheel):
         raise ValueError('unexpected installed CORA payload')
-    return {'files': py, 'metadata': get_metadata(wheel[metadata[0]]), 'wheel': wheel}
+    resources = {JS_PACKAGE_RESOURCE: wheel[JS_WHEEL_PATH]} if JS_WHEEL_PATH in wheel else {}
+    return {'files': py, 'resources': resources,
+            'metadata': get_metadata(wheel[metadata[0]]), 'wheel': wheel}
 
 
 def verify_release(wheel_path: Path, sdist_path: Path, source: Path) -> dict:
@@ -169,6 +175,21 @@ def verify_release(wheel_path: Path, sdist_path: Path, source: Path) -> dict:
     sdist_files = {p.removeprefix('src/cora/'): v for p,v in s.items() if p.startswith('src/cora/') and p.endswith('.py')}
     if not src_files or a['files'] != src_files or sdist_files != src_files:
         raise ValueError('sdist/wheel/source Python payload divergence')
+    # Source, installed wheel and source distribution must carry *identical*
+    # reviewed ESM parser bytes, beyond RECORD integrity (which an attacker can
+    # rewrite). Do not widen this whitelist to arbitrary scripts/asset files.
+    resource_path = source / JS_SDIST_PATH
+    if not resource_path.is_file() or resource_path.is_symlink():
+        raise ValueError('packaged JS source resource missing or symbolic link')
+    resource_bytes = resource_path.read_bytes()
+    expected_resource = {JS_PACKAGE_RESOURCE: resource_bytes}
+    sdist_resource = {JS_PACKAGE_RESOURCE: s[JS_SDIST_PATH]} if JS_SDIST_PATH in s else {}
+    if (a['resources'] != expected_resource or sdist_resource != expected_resource
+            or any(p.startswith('src/cora/') and p.endswith(('.js', '.mjs'))
+                   and p != JS_SDIST_PATH for p in s)
+            or any(p.name.endswith(('.js', '.mjs')) and p.name != JS_PACKAGE_RESOURCE
+                   for p in (source / 'src/cora').iterdir())):
+        raise ValueError('sdist/wheel/source packaged JS resource divergence')
     if s['pyproject.toml'] != (source/'pyproject.toml').read_bytes():
         raise ValueError('source build contract divergence')
     if s['LICENSE'] != (source/'LICENSE').read_bytes() or not any(n.endswith('.dist-info/licenses/LICENSE') and v == s['LICENSE'] for n,v in a['wheel'].items()):
@@ -178,6 +199,7 @@ def verify_release(wheel_path: Path, sdist_path: Path, source: Path) -> dict:
          'sdist_sha256':sha(sdist_path.read_bytes()),'wheel_files':len(a['wheel']),
          'source_modules':len(src_files),'python_payload_sha256':sha(json.dumps({n:sha(v) for n,v in sorted(src_files.items())},sort_keys=True).encode()),
          'source_modules_sha256':{n:sha(v) for n,v in sorted(src_files.items())},
+         'packaged_js_resource_sha256':sha(resource_bytes),
          'entrypoint':'cora=cora.cli:main',
          'limitations':['no artifact signing or remote provenance attestation',
              'source/wheel/sdist parity does not prove runtime behavioral correctness',
