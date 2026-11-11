@@ -1179,6 +1179,14 @@
         "PRODUCT_CONTRACT"
       ],
       "rationale": "Source-only crossrepo noncompensatory acceptance obligations; external approval never originates from a PR."
+    },
+    {
+      "pattern": "tools/portable_js_imports.mjs",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "RELEASE_TOOL"
+      ],
+      "rationale": "Explicit parser-only original Git ESM candidate imports; does not execute target modules."
     }
   ]
 }

@@ -10,6 +10,7 @@ import hashlib
 import html
 import json
 import re
+import subprocess
 from pathlib import Path
 
 from .evidence import domain_hash, valid_path
@@ -132,7 +133,7 @@ def _bytes(root: Path, rel: str, target_repo: Path) -> bytes:
 
 
 def run_portable(repo: Path, revision: str, profile: Path, *,
-                 evidence_dir: Path | None = None) -> dict:
+                 evidence_dir: Path | None = None, parse_js: bool = False) -> dict:
     """Read-only source dossier. No arbitrary target code or target test execution."""
     repo = Path(repo).resolve(strict=True)
     provenance = snapshot(repo, revision)
@@ -157,6 +158,24 @@ def run_portable(repo: Path, revision: str, profile: Path, *,
             "reported_outcome": w["reported_outcome"], "state": state
         })
     suite = run_suite(repo, commit, process="full", max_commits=64)
+    js_candidates = "NOT_OBSERVED_NONPYTHON_CONSUMERS_UNKNOWN"
+    if parse_js:
+        parser = Path(__file__).resolve().parents[2] / "tools" / "portable_js_imports.mjs"
+        if not parser.is_file():
+            _reject("trusted JS parser not available; source unknown")
+        proc = subprocess.run(
+            ["node", "--experimental-vm-modules", str(parser), str(repo), commit],
+            capture_output=True, text=True, timeout=120, check=False)
+        if proc.returncode:
+            _reject("bounded JS parser failed: " + proc.stderr[-160:])
+        parsed = json.loads(proc.stdout)
+        if (parsed.get("schema") != "cora-js-static-source/1"
+                or parsed.get("commit") != commit
+                or parsed.get("authorization") != "NONE"
+                or parsed.get("runtimeObserved") is not False
+                or parsed.get("syntaxErrors")):
+            _reject("invalid bounded JS source parser output")
+        js_candidates = parsed
     transfer = [{
         "id": link["id"], "kind": link["kind"],
         "source_repo": link["source_repo"], "source_commit": link["source_commit"],
@@ -171,7 +190,7 @@ def run_portable(repo: Path, revision: str, profile: Path, *,
             Path(profile).read_bytes()).hexdigest(),
         "owners": doc["owners"], "source_process": suite,
         "evidence": evidence, "method_links": transfer,
-        "js_import_graph": "NOT_OBSERVED_NONPYTHON_CONSUMERS_UNKNOWN",
+        "js_import_graph": js_candidates,
         "source_status": "DEBT_BLOCKED" if suite["status"] == "DEBT_BLOCKED"
                          else "PASS_SCOPED_GIT_SOURCE_ONLY",
         "behavior_status": "BLOCKED_EXTERNAL",
@@ -216,10 +235,11 @@ def render_portable_html(result: dict) -> str:
 
 def verify_portable(repo: Path, receipt: dict, profile: Path, *,
                     evidence_dir: Path | None = None,
-                    html_page: str | None = None) -> bool:
+                    html_page: str | None = None, parse_js: bool = False) -> bool:
     if not isinstance(receipt, dict) or receipt.get("schema") != SCHEMA:
         _reject("wrong report schema")
-    fresh = run_portable(repo, receipt.get("commit", ""), profile, evidence_dir=evidence_dir)
+    fresh = run_portable(repo, receipt.get("commit", ""), profile,
+                         evidence_dir=evidence_dir, parse_js=parse_js)
     if fresh != receipt:
         _reject("Git/source/profile/receipt replay mismatch")
     if html_page is not None and render_portable_html(fresh) != html_page:
