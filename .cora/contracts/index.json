@@ -34,6 +34,11 @@
       "scope": "INTERNAL_DOD"
     },
     {
+      "logical": "cora.crossrepo-convergence-dod.json",
+      "canonical": ".cora/contracts/dod/crossrepo-convergence-dod.json",
+      "scope": "INTERNAL_DOD"
+    },
+    {
       "logical": "cora.documentation-dod.json",
       "canonical": ".cora/contracts/dod/documentation-dod.json",
       "scope": "INTERNAL_DOD"

@@ -1,0 +1,332 @@
+{
+  "schema": "cora-crossrepo-convergence-dod/1",
+  "authority": "NONE",
+  "origin": "crossrepo-PR50",
+  "intent": "Portable software-change assurance across independently owned products with less review work and no loss of epistemic integrity",
+  "baselines": {
+    "cora_main": "cbae1fae8db92d44b6ed0d91c4d4d697e7f65585",
+    "target_sample_repositories": [
+      "Luke883i/teddy",
+      "Luke883i/NILO"
+    ],
+    "source_observation": "2026-11-11"
+  },
+  "source_goal": "G_SOURCE_CANDIDATE",
+  "global_goal": "G_GOVERNED_PORTABILITY",
+  "nodes": [
+    {
+      "id": "L00",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "claim": "Current first-read identity and documentation remain compatible with original immutable source assertions",
+      "oracle": "Original repository and documentation verifiers plus negative README mutants",
+      "status": "NOT_ATTESTED"
+    },
+    {
+      "id": "L01",
+      "kind": "LOCAL",
+      "scope": "HOST",
+      "depends_on": [],
+      "claim": "All applicable original checks succeed on exact final PR SHA and are rechecked after merge",
+      "oracle": "GitHub Actions per-job exact-head readback; no skipped/failing required gate",
+      "status": "NOT_ATTESTED"
+    },
+    {
+      "id": "L02",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "claim": "No weakened original no-auto-authority test, no broken local link or deprecated cross-repo authority claim",
+      "oracle": "Original tests plus negative replacement of control phrases",
+      "status": "NOT_ATTESTED"
+    },
+    {
+      "id": "L10",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "claim": "Independent target accepts target-owned owners and git sources without CORA's own product profile",
+      "oracle": "Run source-only on two different committed Git target fixtures",
+      "status": "NOT_ATTESTED"
+    },
+    {
+      "id": "L11",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "claim": "Observed Git SHA and target owner source paths are checked, never silently inferred",
+      "oracle": "Change commit/owner target and reject physical negative Git fixture",
+      "status": "NOT_ATTESTED"
+    },
+    {
+      "id": "L12",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "claim": "The source dossier replays exactly from a committed target revision and declared profile",
+      "oracle": "Recompute from Git; reject modified report, profile or changed files",
+      "status": "NOT_ATTESTED"
+    },
+    {
+      "id": "L13",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "claim": "Unavailable JS/TS/dynamic consumers remain UNKNOWN; no safe-delete inference",
+      "oracle": "Source-graph control with import/dynamic unknown cases",
+      "status": "NOT_ATTESTED"
+    },
+    {
+      "id": "L20",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "claim": "Retained evidence has an independently recomputed digest and safe relative path",
+      "oracle": "Binary/text tamper, symlink and traversal rejection",
+      "status": "NOT_ATTESTED"
+    },
+    {
+      "id": "L21",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "claim": "Evidence is pinned to the same source revision and named negative oracle",
+      "oracle": "Wrong source SHA, absent oracle and bogus witness fail closed",
+      "status": "NOT_ATTESTED"
+    },
+    {
+      "id": "L22",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "claim": "Reported HTTP/browser/test events do not become independently attested behavioral outcomes",
+      "oracle": "Caller-supplied PASS cannot change governed outcome or authorization",
+      "status": "NOT_ATTESTED"
+    },
+    {
+      "id": "L23",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "claim": "Real user/browser/HTTP behavior is independently observed on target environment",
+      "oracle": "Operator-owned original telemetry and negative tests, not a JSON claim",
+      "status": "NOT_ATTESTED"
+    },
+    {
+      "id": "L30",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "claim": "Method-transfer links have typed source/target/commit/owner/evidence coordinates",
+      "oracle": "Reject unknown link types, missing owner and mismatched target SHA",
+      "status": "NOT_ATTESTED"
+    },
+    {
+      "id": "L31",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "claim": "Changed source commit invalidates relevant transferred evidence",
+      "oracle": "Repo-specific exact-commit mismatch mutation",
+      "status": "NOT_ATTESTED"
+    },
+    {
+      "id": "L32",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "claim": "Foreign source Git objects and actual adoption behavior are independently verified",
+      "oracle": "Separate source checkout/reviewer and real adaptation tests",
+      "status": "NOT_ATTESTED"
+    },
+    {
+      "id": "L40",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "claim": "Two actively maintained targets with independently owned behavioral reference oracles",
+      "oracle": "Original target behavior, non-author oracle and matched SHA",
+      "status": "NOT_ATTESTED"
+    },
+    {
+      "id": "L41",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "claim": "At least eight new users across two tasks/personas reach 80 percent task success with zero critical false proof",
+      "oracle": "Predeclared participant protocol, results and consent",
+      "status": "NOT_ATTESTED"
+    },
+    {
+      "id": "L42",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "claim": "Host enforces independently configured required checks, reviewer separation, release and rollback",
+      "oracle": "Administrator observed rules/review identity and approved tag/assets",
+      "status": "NOT_ATTESTED"
+    },
+    {
+      "id": "L43",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "claim": "Controlled A/B benchmark demonstrates reduced median total engineering effort without worse false acceptance",
+      "oracle": "Preregistered comparable tasks, blinded assessment, time and quality accounting",
+      "status": "NOT_ATTESTED"
+    },
+    {
+      "id": "I_S0",
+      "kind": "INTERMEDIATE",
+      "scope": "MIXED",
+      "depends_on": [
+        "L00",
+        "L01",
+        "L02"
+      ],
+      "claim": "CI/source reconciliation",
+      "oracle": "Every required leaf must be verified independently; absent evidence blocks"
+    },
+    {
+      "id": "I_S1",
+      "kind": "INTERMEDIATE",
+      "scope": "MIXED",
+      "depends_on": [
+        "L10",
+        "L11",
+        "L12",
+        "L13"
+      ],
+      "claim": "Portable One-Run",
+      "oracle": "Every required leaf must be verified independently; absent evidence blocks"
+    },
+    {
+      "id": "I_S2",
+      "kind": "INTERMEDIATE",
+      "scope": "MIXED",
+      "depends_on": [
+        "L20",
+        "L21",
+        "L22",
+        "L23"
+      ],
+      "claim": "Evidence and behavioral boundary",
+      "oracle": "Every required leaf must be verified independently; absent evidence blocks"
+    },
+    {
+      "id": "I_S3",
+      "kind": "INTERMEDIATE",
+      "scope": "MIXED",
+      "depends_on": [
+        "L30",
+        "L31",
+        "L32"
+      ],
+      "claim": "Cross-repository transfer",
+      "oracle": "Every required leaf must be verified independently; absent evidence blocks"
+    },
+    {
+      "id": "I_S4",
+      "kind": "INTERMEDIATE",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "L40",
+        "L41",
+        "L42",
+        "L43"
+      ],
+      "claim": "Independent qualification and efficiency",
+      "oracle": "Every required leaf must be verified independently; absent evidence blocks"
+    },
+    {
+      "id": "G_SOURCE_CANDIDATE",
+      "kind": "GLOBAL",
+      "scope": "MIXED",
+      "depends_on": [
+        "I_S0",
+        "I_S1",
+        "I_S2",
+        "I_S3"
+      ],
+      "claim": "Portable bounded source evidence cut",
+      "oracle": "AND; no averaging or source-to-external promotion"
+    },
+    {
+      "id": "G_GOVERNED_PORTABILITY",
+      "kind": "GLOBAL",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "G_SOURCE_CANDIDATE",
+        "I_S4"
+      ],
+      "claim": "Externally accepted and more efficient evidence-backed software change",
+      "oracle": "AND; no averaging or source-to-external promotion"
+    }
+  ],
+  "metrics": {
+    "expected_original_workflows": 11,
+    "source_target_fixtures": 2,
+    "required_negative_families": 12,
+    "allowed_unauthorized_promotions": 0,
+    "required_report_replay": true,
+    "verified_live_target_benchmarks": 2,
+    "min_new_user_sessions": 8,
+    "min_user_task_success_rate": 0.8,
+    "max_critical_false_proof_promotions": 0,
+    "efficiency_metric": "median total engineering+review time versus preregistered no-CORA baseline",
+    "release_authorized": false
+  },
+  "checklist": [
+    {
+      "stage": "I_S0",
+      "checks": [
+        "L00",
+        "L01",
+        "L02"
+      ]
+    },
+    {
+      "stage": "I_S1",
+      "checks": [
+        "L10",
+        "L11",
+        "L12",
+        "L13"
+      ]
+    },
+    {
+      "stage": "I_S2",
+      "checks": [
+        "L20",
+        "L21",
+        "L22",
+        "L23"
+      ]
+    },
+    {
+      "stage": "I_S3",
+      "checks": [
+        "L30",
+        "L31",
+        "L32"
+      ]
+    },
+    {
+      "stage": "I_S4",
+      "checks": [
+        "L40",
+        "L41",
+        "L42",
+        "L43"
+      ]
+    }
+  ],
+  "nonclaims": [
+    "No local software oracle authenticates a human reviewer",
+    "Finite mutations do not validate unrestricted semantic completeness",
+    "A source-link between repos is not a verified runtime dependency",
+    "No auto-release, auto-delete, or agent/target-code execution",
+    "Human, browser and host proof cannot be created by editing this PR"
+  ]
+}

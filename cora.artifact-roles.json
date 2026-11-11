@@ -1171,6 +1171,14 @@
         "PRODUCT_CONTRACT"
       ],
       "rationale": "Portable novice session input preserving evidence limits and external gaps"
+    },
+    {
+      "pattern": ".cora/contracts/dod/crossrepo-convergence-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Source-only crossrepo noncompensatory acceptance obligations; external approval never originates from a PR."
     }
   ]
 }
