@@ -131,6 +131,46 @@ jobs:
           assert a["sca"]["external_authorization"]=="NONE"
           assert a["status"]=="VERIFIED_SCOPED"
           PY
+      - name: PR55 independently validate CycloneDX 1.6 JSON schema and negative mutants
+        run: |
+          python - <<'PY'
+          import copy, hashlib, importlib.metadata, json
+          from pathlib import Path
+          from cyclonedx.schema import SchemaVersion
+          from cyclonedx.validation.json import JsonStrictValidator
+          raw = Path("dist/cora.cdx.json").read_bytes()
+          doc = json.loads(raw)
+          schema = JsonStrictValidator(SchemaVersion.V1_6)
+          error = schema.validate_str(raw.decode("utf-8"))
+          if error is not None:
+              raise ValueError("CycloneDX 1.6 strict schema violation: " + str(error)[:500])
+          mutants = []
+          case = copy.deepcopy(doc)
+          case["bomFormat"] = "Unrecognized"
+          mutants.append(case)
+          case = copy.deepcopy(doc)
+          case["metadata"]["component"]["type"] = "not-a-cdx-type"
+          mutants.append(case)
+          case = copy.deepcopy(doc)
+          case["components"][0]["hashes"] = [{"alg": "UNSUPPORTED", "content": "0"*64}]
+          mutants.append(case)
+          for i, altered in enumerate(mutants):
+              if schema.validate_str(json.dumps(altered)) is None:
+                  raise ValueError("CycloneDX external validator accepted invalid mutant: "+str(i))
+          receipt = {
+              "schema": "cora-pr55-cyclonedx-schema-validation/1",
+              "bom_sha256": hashlib.sha256(raw).hexdigest(),
+              "validator_package": "cyclonedx-python-lib",
+              "validator_version": importlib.metadata.version("cyclonedx-python-lib"),
+              "cyclonedx_spec": "1.6",
+              "status": "PASS_SCHEMA_VALIDATION_ONLY",
+              "negative_schema_mutants_rejected": len(mutants),
+              "external_review": "BLOCKED_EXTERNAL",
+              "authorization": "NONE",
+          }
+          Path("dist/cora-cdx-validation.json").write_text(
+              json.dumps(receipt, sort_keys=True, indent=2)+"\n", encoding="utf-8")
+          PY
       - name: PR55 falsify physical artifact SBOM and scoped scanner evidence
         run: |
           python -m unittest discover -s tests -p 'test_pr07.py' -v
@@ -159,6 +199,7 @@ jobs:
             dist/release-source.json
             dist/RELEASE_NOTES_REVIEW.txt
             dist/cora.cdx.json
+            dist/cora-cdx-validation.json
             dist/cora-unsigned-build.json
             dist/cora-scoped-sca.json
             dist/pip-audit-raw.json
