@@ -36,6 +36,7 @@ from .debt import debt_scan, verify_debt, compare_debt
 from .debt_stress import stress_debt
 from .process_suite import process_catalog, run_suite, verify_suite, PROCESSES
 from .one_run import run_one, verify_one, render_one_html
+from .portable_assurance import run_portable, verify_portable, render_portable_html
 from .integrated_run import run_integrated, verify_integrated as verify_integrated_one_run
 from .integrated_html import render_integrated_html
 from .chat_bundle import append_chat_iteration, verify_chat_bundle, load_chat_step
@@ -371,6 +372,8 @@ def main(argv: list[str] | None = None) -> int:
     pr.add_argument('--test-timeout',type=int,default=240)
     pr.add_argument('--model-stress-cases',type=int,choices=(0,100000),default=0,help='Opt-in bounded 100k preseeded receipt mutants, not physical code changes')
     pr.add_argument('--profile',choices=('comprehensive',),help='PR37: account for every discovered CORA activity; source-only by default')
+    pr.add_argument('--portable-profile',type=Path,help='Opt-in target-owned external source profile; not the CORA self-DoD')
+    pr.add_argument('--portable-evidence-dir',type=Path,help='Optional retained observation bytes, never implicit execution')
     pr.add_argument('--evidence-dir',type=Path,help='Outside-repo directory for the integrated evidence manifest and optional test log')
     pr.add_argument('--authorization-file',type=Path,help='Explicit exact-SHA local consent for optional untrusted self-tests, not sandbox attestation')
     pr.add_argument('--chat-step',type=Path,help='Caller-authored, non-authoritative per-round JSON plan and gaps')
@@ -382,6 +385,8 @@ def main(argv: list[str] | None = None) -> int:
     pv.add_argument('--one-run',action='store_true',help='Verify original Git source, metrics and optional HTML')
     pv.add_argument('--atlas-json',type=Path)
     pv.add_argument('--atlas-html',type=Path)
+    pv.add_argument('--portable-profile',type=Path,help='Original caller profile for exact-source replay')
+    pv.add_argument('--portable-evidence-dir',type=Path,help='Original immutable observed artifact bytes')
     pv.add_argument('--evidence-dir',type=Path,help='Recompute byte hashes against retained integrated evidence files')
     pv.add_argument('--chat-bundle',type=Path,help='Replay ZIP chain and match latest comprehensive One-Run receipt')
     dsx = sub.add_parser('stress-debt',help='1M seeded debt-policy model mutations')
@@ -767,8 +772,23 @@ def main(argv: list[str] | None = None) -> int:
             if args.chat_bundle and (not args.one_run or args.profile != 'comprehensive'):
                 raise ValueError('chat bundle requires --one-run --profile comprehensive')
             chat_step = load_chat_step(args.chat_step) if args.chat_step else None
+            if args.portable_profile and (not args.one_run or args.profile or args.chat_step
+                                          or args.chat_bundle or args.execute_self_tests
+                                          or args.model_stress_cases or args.authorization_file
+                                          or args.evidence_dir):
+                raise ValueError('portable profile requires unprivileged --one-run only')
+            if args.portable_evidence_dir and not args.portable_profile:
+                raise ValueError('portable evidence requires portable profile')
             if args.one_run:
-                if args.profile == 'comprehensive':
+                if args.portable_profile:
+                    result = run_portable(args.repo,args.revision,args.portable_profile,
+                                          evidence_dir=args.portable_evidence_dir)
+                    if args.atlas_json:
+                        args.atlas_json.write_text(json.dumps(result,sort_keys=True,indent=2)+'\n',encoding='utf-8')
+                    if args.atlas_html:
+                        args.atlas_html.write_text(render_portable_html(result),encoding='utf-8')
+                    code = 2 if result['source_status']=='DEBT_BLOCKED' else 0
+                elif args.profile == 'comprehensive':
                     result = run_integrated(args.repo,args.revision,process=args.process,
                         max_commits=args.max_commits,focus=args.focus,
                         execute_self_tests=args.execute_self_tests,
@@ -812,9 +832,21 @@ def main(argv: list[str] | None = None) -> int:
         elif args.cmd == 'verify-process':
             item = json.loads(args.report.read_text(encoding='utf-8'))
             if args.one_run:
+                if args.portable_evidence_dir and not args.portable_profile:
+                    raise ValueError('portable evidence requires original profile')
                 if args.atlas_json and json.loads(args.atlas_json.read_text('utf-8')) != item:
                     raise ValueError('one-run JSON atlas is not the source receipt')
-                if item.get('schema') == 'cora-integrated-one-run/2':
+                if item.get('schema') == 'cora-portable-one-run/1':
+                    if not args.portable_profile or args.evidence_dir or args.chat_bundle:
+                        raise ValueError('portable replay requires original profile and no integrated effects')
+                    verify_portable(args.repo,item,args.portable_profile,
+                         evidence_dir=args.portable_evidence_dir,
+                         html_page=args.atlas_html.read_text('utf-8') if args.atlas_html else None)
+                    result = {'schema':'cora-portable-one-run-replay/1',
+                        'status':'GIT_SOURCE_REPLAYED_EXTERNAL_NOT_ATTESTED',
+                        'receipt_digest':item['receipt_digest'],'commit':item['commit'],
+                        'authorization':'NONE','product_status':'BLOCKED_EXTERNAL'}
+                elif item.get('schema') == 'cora-integrated-one-run/2':
                     verify_integrated_one_run(args.repo,item,
                         html_page=args.atlas_html.read_text('utf-8') if args.atlas_html else None,
                         evidence_dir=args.evidence_dir)
@@ -833,8 +865,9 @@ def main(argv: list[str] | None = None) -> int:
                               'receipt_digest':item['receipt_digest'],'commit':item['commit'],
                               'authorization':'NONE'}
             else:
-                if args.atlas_json or args.atlas_html or args.evidence_dir or args.chat_bundle:
-                    raise ValueError('one-run atlas/chat replay requires --one-run')
+                if (args.atlas_json or args.atlas_html or args.evidence_dir or args.chat_bundle
+                        or args.portable_profile or args.portable_evidence_dir):
+                    raise ValueError('one-run atlas/chat/portable replay requires --one-run')
                 verify_suite(args.repo,item)
                 result = {'schema':'cora-process-verification/1','status':'SOURCE_REPLAY_VERIFIED',
                           'run_digest':item['run_digest'],'commit':item['commit']}
