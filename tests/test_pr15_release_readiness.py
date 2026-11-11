@@ -59,6 +59,32 @@ class ReadinessTest(unittest.TestCase):
                   '"1.0.0a4" "$EXPECTED_SHA" > dist/RELEASE_NOTES_REVIEW.txt')
         self.deny("REVIEW_NOTE_VERSION_OR_SHA_DRIFT")
 
+
+    def test_pr55_review_note_emitted_bytes_not_only_yaml(self):
+        from tools.release_verify import verify_review_note
+        commit = "a" * 40
+        version = "1.0.0a5"
+        original = (f"CORA {version} (alpha) — REVIEW CANDIDATE ONLY\\n"
+                    f"Exact commit: {commit}\\n"
+                    "Unsigned, unpublished; not approved for release.\\n"
+                    "Required before publish: green final main CI; independently authenticated reviewer and release manager; protected main and required checks; independently verified artifact provenance, real pilot and rollback.\\n")
+        with tempfile.TemporaryDirectory() as td:
+            note = Path(td) / "RELEASE_NOTES_REVIEW.txt"
+            note.write_text(original, encoding="utf-8")
+            self.assertTrue(verify_review_note(note, version, commit))
+            mutants = (
+                original.replace(version, "1.0.0a4", 1),
+                original.replace(commit, "b" * 40, 1),
+                original.replace("ONLY\\n", "ONLY" + chr(92) + "n", 1),
+                original + "Public release approved.\\n",
+                original.replace("Unsigned, unpublished", "Signed, published", 1),
+            )
+            for i, mutant in enumerate(mutants):
+                with self.subTest(mutant=i):
+                    note.write_text(mutant, encoding="utf-8")
+                    with self.assertRaises(ValueError):
+                        verify_review_note(note, version, commit)
+
     def test_review_note_double_escaped_newline_is_refuted(self):
         self.swap(".github/workflows/ci-release-candidate.yml",
                   "ONLY" + chr(92) + "nExact commit:",

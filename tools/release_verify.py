@@ -207,6 +207,27 @@ def verify_release(wheel_path: Path, sdist_path: Path, source: Path) -> dict:
     return result
 
 
+
+def verify_review_note(path: Path, version: str, commit: str) -> bool:
+    """Verify emitted PR54 review-note bytes, not just workflow source text."""
+    if not re.fullmatch(r"[0-9a-f]{40}", commit):
+        raise ValueError("review note needs an exact Git revision")
+    if path.is_symlink() or not path.is_file() or path.stat().st_size > 8192:
+        raise ValueError("missing, linked or oversized review note")
+    raw = path.read_bytes()
+    if b"\\\\n" in raw or b"\\n" in raw:
+        raise ValueError("review note retains literal backslash-newline escapes")
+    lines = raw.decode("utf-8").splitlines()
+    if (len(lines) != 4 or lines[0] != f"CORA {version} (alpha) — REVIEW CANDIDATE ONLY"
+            or lines[1] != f"Exact commit: {commit}"
+            or lines[2] != "Unsigned, unpublished; not approved for release."
+            or not lines[3].startswith("Required before publish: green final main CI;")
+            or not lines[3].endswith("real pilot and rollback.")
+            or not raw.endswith(b"\\n")):
+        raise ValueError("review note version, commit, boundaries or line encoding drift")
+    return True
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description='Verify CORA PR07 wheel/sdist payload and metadata')
     parser.add_argument('--wheel',type=Path,required=True)
