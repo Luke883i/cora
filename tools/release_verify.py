@@ -417,14 +417,14 @@ def build_observation(source: Path, commit: str, wheel: Path, sdist: Path, sbom:
         raise ValueError("build observation requires exact commit")
     def git(*args: str) -> bytes:
         return subprocess.check_output(["git", "-C", str(source), *args],
-                                       timeout=20, stderr=subprocess.DEVNULL).strip()
-    if git("rev-parse", "HEAD") != commit.encode():
+                                       timeout=20, stderr=subprocess.DEVNULL)
+    if git("rev-parse", "HEAD").strip() != commit.encode():
         raise ValueError("source Git HEAD not at build observation revision")
     if git("status", "--porcelain", "--untracked-files=no"):
         raise ValueError("tracked build inputs modified after source checkout")
     for path in ("pyproject.toml", "LICENSE",
                  ".github/workflows/ci-release-candidate.yml"):
-        if git("show", commit + ":" + path) != (source / path).read_bytes().strip():
+        if git("show", commit + ":" + path) != (source / path).read_bytes():
             raise ValueError("build material differs from original Git revision")
     report = verify_release(wheel, sdist, source)
     record = {
@@ -433,10 +433,14 @@ def build_observation(source: Path, commit: str, wheel: Path, sdist: Path, sbom:
             {"name": wheel.name, "sha256": report["wheel_sha256"]},
             {"name": sdist.name, "sha256": report["sdist_sha256"]}],
         "git_commit": commit,
-        "git_tree": git("rev-parse", "HEAD^{tree}").decode(),
+        "git_tree": git("rev-parse", "HEAD^{tree}").decode().strip(),
         "sbom_sha256": sha(canonical_bytes(sbom)),
         "source_materials": [
             "pyproject.toml", "LICENSE", ".github/workflows/ci-release-candidate.yml"],
+        "source_material_sha256": {
+            path: sha(git("show", commit + ":" + path))
+            for path in ("pyproject.toml", "LICENSE",
+                         ".github/workflows/ci-release-candidate.yml")},
         "builder_issuer": "UNAUTHENTICATED_LOCAL_PROCESS",
         "signatures": "NONE", "slsa_attestation": "NOT_ATTESTED",
         "independent_review": "BLOCKED_EXTERNAL",
