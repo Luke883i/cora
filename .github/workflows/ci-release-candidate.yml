@@ -64,6 +64,69 @@ jobs:
           printf 'CORA %s (alpha) — REVIEW CANDIDATE ONLY\nExact commit: %s\nUnsigned, unpublished; not approved for release.\nRequired before publish: green final main CI; independently authenticated reviewer and release manager; protected main and required checks; independently verified artifact provenance, real pilot and rollback.\n' "$CORA_VERSION" "$EXPECTED_SHA" > dist/RELEASE_NOTES_REVIEW.txt
           grep -Fx "CORA $CORA_VERSION (alpha) — REVIEW CANDIDATE ONLY" dist/RELEASE_NOTES_REVIEW.txt
           grep -Fx "Exact commit: $EXPECTED_SHA" dist/RELEASE_NOTES_REVIEW.txt
+      - name: PR55 generate and replay real wheel/sdist CycloneDX, scoped SCA and unsigned provenance
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python - <<'PY'
+          import json
+          from importlib.metadata import version
+          from pathlib import Path
+          pins={"schema":"cora-build-tool-pins/1",
+                "scope":"INSTALLED_BUILD_RUNNER_VERSIONS",
+                "setuptools":version("setuptools"),"wheel":version("wheel")}
+          Path("dist/build-tool-pins.json").write_text(json.dumps(pins,sort_keys=True)+"\n")
+          Path("dist/build-tool-scannable.txt").write_text(
+              "".join(k+"=="+pins[k]+"\n" for k in ("setuptools","wheel")))
+          PY
+          python -m pip install 'pip-audit==2.10.1'
+          python -m pip_audit --version | grep -F '2.10.1'
+          set +e
+          python -m pip_audit -r dist/build-tool-scannable.txt --no-deps --disable-pip \
+            --format=json --output=dist/pip-audit-raw.json
+          AUDIT_EXIT=$?
+          set -e
+          if [ "$AUDIT_EXIT" -gt 1 ]; then
+            echo "pip-audit feed/tool error is not a clean SCA result" >&2
+            exit 2
+          fi
+          python tools/release_verify.py --source . \
+            --wheel dist/cora_audit-$CORA_VERSION-py3-none-any.whl \
+            --sdist dist/cora_audit-$CORA_VERSION.tar.gz \
+            --git-commit "$EXPECTED_SHA" \
+            --review-note dist/RELEASE_NOTES_REVIEW.txt \
+            --build-pins dist/build-tool-pins.json \
+            --sbom-output dist/cora.cdx.json \
+            --provenance-output dist/cora-unsigned-build.json \
+            --sca-raw dist/pip-audit-raw.json --sca-exit "$AUDIT_EXIT" \
+            --sca-output dist/cora-scoped-sca.json \
+            --output dist/supply-chain-source.json
+          python tools/release_verify.py --source . \
+            --wheel dist/cora_audit-$CORA_VERSION-py3-none-any.whl \
+            --sdist dist/cora_audit-$CORA_VERSION.tar.gz \
+            --git-commit "$EXPECTED_SHA" \
+            --review-note dist/RELEASE_NOTES_REVIEW.txt \
+            --build-pins dist/build-tool-pins.json \
+            --verify-sbom dist/cora.cdx.json \
+            --verify-provenance dist/cora-unsigned-build.json \
+            --sca-raw dist/pip-audit-raw.json --sca-exit "$AUDIT_EXIT" \
+            --verify-sca dist/cora-scoped-sca.json \
+            --output dist/supply-chain-replay.json
+          python - <<'PY'
+          import json
+          a=json.load(open("dist/supply-chain-source.json"))
+          b=json.load(open("dist/supply-chain-replay.json"))
+          assert a==b and a["supply_chain_bom"]["standard"]=="CycloneDX 1.6"
+          assert a["build_observation"]["signature"]=="NONE"
+          assert a["build_observation"]["slsa"]=="NOT_ATTESTED"
+          assert a["sca"]["scope"]=="DIRECT_INSTALLED_CI_BUILD_TOOLS_ONLY"
+          assert a["sca"]["external_authorization"]=="NONE"
+          assert a["status"]=="VERIFIED_SCOPED"
+          PY
+      - name: PR55 falsify physical artifact SBOM and scoped scanner evidence
+        run: |
+          python -m unittest discover -s tests -p 'test_pr07.py' -v
+          python -m unittest discover -s tests -p 'test_pr15_release_readiness.py' -v
       - name: Falsify one million release-risk states twice
         run: |
           python tools/release_stress.py --seed 883 --cases 1000000 --output dist/stress-a.json
@@ -87,6 +150,14 @@ jobs:
             dist/candidate-receipt.json
             dist/release-source.json
             dist/RELEASE_NOTES_REVIEW.txt
+            dist/cora.cdx.json
+            dist/cora-unsigned-build.json
+            dist/cora-scoped-sca.json
+            dist/pip-audit-raw.json
+            dist/build-tool-pins.json
+            dist/build-tool-scannable.txt
+            dist/supply-chain-source.json
+            dist/supply-chain-replay.json
             dist/cora-v1-experimental-review.zip
           if-no-files-found: error
           retention-days: 7
