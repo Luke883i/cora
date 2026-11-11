@@ -225,7 +225,7 @@ def verify_review_note(path: Path, version: str, commit: str) -> bool:
             or lines[2] != "Unsigned, unpublished; not approved for release."
             or not lines[3].startswith("Required before publish: green final main CI;")
             or not lines[3].endswith("real pilot and rollback.")
-            or not raw.endswith(bytes((10,))):
+            or not raw.endswith(bytes((10,)))):
         raise ValueError("review note version, commit, boundaries or line encoding drift")
     return True
 
