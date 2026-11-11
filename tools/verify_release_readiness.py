@@ -143,6 +143,20 @@ def inspect_source(root: Path) -> dict:
             not re.search(r"uses:\s+actions/checkout@[a-f0-9]{40}\b",raw) or
             not re.search(r"uses:\s+actions/setup-python@[a-f0-9]{40}\b",raw)):
             errors.append("WORKFLOW_SOURCE_POLICY_DRIFT:"+rel)
+    # PR54: candidate review notes must use the current package version and
+    # candidate Git SHA, not a stale (possibly successful) historical release.
+    # Static source verification checks the declared producer/guards; the
+    # workflow's grep lines also verify the emitted bytes at execution time.
+    note_workflow = txt(".github/workflows/ci-release-candidate.yml")
+    note_contract = (
+        "printf 'CORA %s (alpha) — REVIEW CANDIDATE ONLY",
+        '"$CORA_VERSION" "$EXPECTED_SHA" > dist/RELEASE_NOTES_REVIEW.txt',
+        'grep -Fx "CORA $CORA_VERSION (alpha) — REVIEW CANDIDATE ONLY" dist/RELEASE_NOTES_REVIEW.txt',
+        'grep -Fx "Exact commit: $EXPECTED_SHA" dist/RELEASE_NOTES_REVIEW.txt',
+    )
+    if (any(marker not in note_workflow for marker in note_contract)
+            or re.search(r"printf 'CORA 1\\.0\\.0a[0-9]+ \\(alpha\\)", note_workflow)):
+        errors.append("REVIEW_NOTE_VERSION_OR_SHA_DRIFT")
     for rel in ("docs/archive/decisions/ADR-PR15.md","docs/RELEASE.md","docs/ARCHITECTURE.md"):
         if NAME not in txt(rel):
             errors.append("NAME_NOT_CONSISTENT:"+rel)

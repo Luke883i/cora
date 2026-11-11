@@ -47,6 +47,24 @@ class ReadinessTest(unittest.TestCase):
     def test_package_counterexample(self):
         self.swap("pyproject.toml",'name = "cora-audit"','name = "cora-unrelated"')
         self.deny("PACKAGE_METADATA_DRIFT")
+    def test_stale_review_note_label_is_rejected(self):
+        self.swap(".github/workflows/ci-release-candidate.yml",
+                  "printf 'CORA %s (alpha) — REVIEW CANDIDATE ONLY",
+                  "printf 'CORA 1.0.0a4 (alpha) — REVIEW CANDIDATE ONLY")
+        self.deny("REVIEW_NOTE_VERSION_OR_SHA_DRIFT")
+
+    def test_review_note_version_cannot_be_hardcoded_instead_of_package_metadata(self):
+        self.swap(".github/workflows/ci-release-candidate.yml",
+                  '"$CORA_VERSION" "$EXPECTED_SHA" > dist/RELEASE_NOTES_REVIEW.txt',
+                  '"1.0.0a4" "$EXPECTED_SHA" > dist/RELEASE_NOTES_REVIEW.txt')
+        self.deny("REVIEW_NOTE_VERSION_OR_SHA_DRIFT")
+
+    def test_review_note_exact_commit_check_cannot_be_bypassed(self):
+        self.swap(".github/workflows/ci-release-candidate.yml",
+                  'grep -Fx "Exact commit: $EXPECTED_SHA" dist/RELEASE_NOTES_REVIEW.txt',
+                  'echo "Exact commit: $EXPECTED_SHA"')
+        self.deny("REVIEW_NOTE_VERSION_OR_SHA_DRIFT")
+
     def test_dod_absent(self):
         (self.repo/"docs/DOD_RELEASE_READINESS.md").unlink()
         self.deny("MISSING_OR_SYMLINK:docs/DOD_RELEASE_READINESS.md")
