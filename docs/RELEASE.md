@@ -122,12 +122,20 @@ The public product is CORA, the installed Python distribution is `cora-audit 1.0
 | --- | --- | --- |
 | Open-source license | MIT file and package metadata | Legal and license compatibility review for the adopter |
 | Version / install / compatibility | Python 3.11+, local CLI, zero declared runtime Python deps; source-only candidate | Host install smoke and compatibility matrix |
-| SBOM (SPDX or CycloneDX) | **NOT_GENERATED_BY_CI** | Versioned wheel/sdist-component inventory bound to exact published digest; include build, optional and target-native boundaries |
-| SCA / CVE, secrets and artifact malware checks | **NOT_ATTESTED** as a comprehensive release control | Scanner identity, policy, results, suppressions and remediation owners |
+| SBOM (CycloneDX 1.6) | **CONFIGURED_IN_PR55_CANDIDATE_CI**: actual wheel/sdist hashes, package and build-tool pins; deterministic replay | Verify exact-run artifact outputs; transitive and optional target-native inventory still open |
+| SCA / CVE, secrets and artifact malware checks | **PR55 SCOPED PIP-AUDIT CI**: setuptools/wheel only; raw scanner JSON preserved; no comprehensive scan attested | Review vulnerabilities, feed trust, transitive tooling, target-native scope, secrets and malware separately |
 | Reproducible build / checksums | Candidate parity and SHA256SUMS in defined CI workflow | Verified exact release assets and independent replay |
-| Signed provenance (SLSA/in-toto), artifact signatures | **NOT_ATTESTED** | Trusted issuer, signed predicate, digest match and consumer verification |
+| Signed provenance (SLSA/in-toto), artifact signatures | **NOT_ATTESTED**; PR55 produces unsigned original-Git/sha256 build observation | Trusted issuer, signed statement, digest verification and policy-enforced consumer verification |
 | GitHub governance / independent reviewer | **BLOCKED_EXTERNAL** | Effective required checks, protected branch rules and non-author human review |
 | Native product / deployment acceptance | Teddy/ICTC local CI pilot; LUMEN browser and NILO remote not executed by CORA PR52 | Independently attributable end-to-end target and operational evidence |
 | Security and support SLA / rollback | No supported production security SLA | Accountable response policy, deployment/rollback owner, accepted support scope |
 
 This table is a **gap disclosure**, not a self-issued SOC 2 / ISO 27001 / SLSA certification, security guarantee, SBOM or release approval.
+
+## PR55 — artifact-native software supply-chain candidate evidence
+
+The existing `tools/release_verify.py` is the single owner. After the PR54 note gate, the release-candidate CI captures the actually installed setuptools/wheel versions before introducing the separately pinned `pip-audit==2.10.1` scanner, builds `dist/cora.cdx.json` (CycloneDX 1.6), `dist/cora-scoped-sca.json` with its original `pip-audit-raw.json`, and `dist/cora-unsigned-build.json`. Every SBOM artifact hash is recomputed from **verified original wheel/sdist**, the declared package and build metadata are reconciled, and a second invocation must replay the same objects against original Git and actual artifacts.
+
+**Scope boundaries:** declared runtime Python dependencies are empty; the two direct build tools are scanned at their observed versions, *not* their unconstrained transitives or any target-native Node/browser/remote environment. Scanner feed authenticity, vulnerability remediation, GitHub issuer identity and host protections remain independent review gates. The build record has `signatures=NONE` and `slsa_attestation=NOT_ATTESTED`; hashes are not signatures. No source result approves publication. If the scanner fails or cannot obtain vulnerability information, CI must fail rather than emit a false clean scan.
+
+The DoD for PR55 is **SOURCE_AND_CI_ARTIFACT_EVIDENCE**, not `ENTERPRISE_READY`. Actual CI success and retained outputs are required for a scoped positive result; independent release qualification remains `BLOCKED_EXTERNAL`.
