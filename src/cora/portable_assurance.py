@@ -185,7 +185,7 @@ def run_portable(repo: Path, revision: str, profile: Path, *,
         parsed = json.loads(proc.stdout)
         if (parsed.get("schema") != "cora-js-static-source/1"
                 or parsed.get("commit") != commit
-                or parsed.get("authorization") != "NONE"
+                or parsed.get("authority") != "NONE"
                 or parsed.get("runtimeObserved") is not False
                 or not isinstance(parsed.get("syntaxErrors"), list)
                 or not isinstance(parsed.get("imports"), list)
