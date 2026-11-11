@@ -109,3 +109,21 @@ At that same historic observation, GitHub reported main.protected=false, no PR39
 **Existing GitHub release draft:** GitHub Release ID `435292303`, named `CORA v1.0.0a4 — First Alpha Release`, was created on 5 November 2026. A read-only host observation on 7 November reports `draft=true`, `prerelease=true`, `published_at=null`, `target_commitish=main` and zero uploaded assets. The `refs/tags/v1.0.0a4` Git reference returned HTTP **404** with the available read access. This is a dated external observation, **not** a continuously authenticated release record or proof that no other release state exists. An associated draft page is not a verified Git tag, independently approved artifact, final release or publication.
 
 The accountable release manager must reconcile **this existing draft** with the final PR41/main reviewed commit, explicitly decide whether to update it to the conclusive experimental release, create and verify the intended protected version tag, compare the real built wheel/sdist SHA-256 digests, record independent approvals and rollback, and publish the reviewed **pre-release** only after every EXTERNAL gate. Do not open a duplicate release with the same version and do not treat the mutable `main` target name as an immutable reviewed SHA. If host access or tag readback fails, keep the release draft unpublished and `G_FINAL_EXPERIMENTAL = BLOCKED_EXTERNAL`.
+
+## Post-PR52 CTO procurement and software supply-chain status (source-scoped)
+
+The public product is CORA, the installed Python distribution is `cora-audit 1.0.0a5`, and `cora` is its CLI. The repository does not constitute an independently certified enterprise distribution. Existing build workflows can produce and compare candidate wheel/sdist, verify archive parity, test separate installation environments and record SHA256SUMS. These are review-only artifacts; release signing and hosted publication are not asserted.
+
+| Evidence requirement | Current source-observable status | Minimum next evidence |
+| --- | --- | --- |
+| Open-source license | MIT file and package metadata | Legal and license compatibility review for the adopter |
+| Version / install / compatibility | Python 3.11+, local CLI, zero declared runtime Python deps; source-only candidate | Host install smoke and compatibility matrix |
+| SBOM (SPDX or CycloneDX) | **NOT_GENERATED_BY_CI** | Versioned wheel/sdist-component inventory bound to exact published digest; include build, optional and target-native boundaries |
+| SCA / CVE, secrets and artifact malware checks | **NOT_ATTESTED** as a comprehensive release control | Scanner identity, policy, results, suppressions and remediation owners |
+| Reproducible build / checksums | Candidate parity and SHA256SUMS in defined CI workflow | Verified exact release assets and independent replay |
+| Signed provenance (SLSA/in-toto), artifact signatures | **NOT_ATTESTED** | Trusted issuer, signed predicate, digest match and consumer verification |
+| GitHub governance / independent reviewer | **BLOCKED_EXTERNAL** | Effective required checks, protected branch rules and non-author human review |
+| Native product / deployment acceptance | Teddy/ICTC local CI pilot; LUMEN browser and NILO remote not executed by CORA PR52 | Independently attributable end-to-end target and operational evidence |
+| Security and support SLA / rollback | No supported production security SLA | Accountable response policy, deployment/rollback owner, accepted support scope |
+
+This table is a **gap disclosure**, not a self-issued SOC 2 / ISO 27001 / SLSA certification, security guarantee, SBOM or release approval.

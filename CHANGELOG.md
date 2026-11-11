@@ -1,4 +1,10 @@
-## 1.0.0a5 — portable chat source candidate (unmerged; not published)
+## Unreleased — product identity and CTO procurement disclosure (PR53 candidate)
+
+- Reposition README as an agent-agnostic engineering-assurance product with explicit CORA-METHOD / CORA-ENGINE target, compatibility and pilot boundaries; remove provisional unmeasured product scores from the public front door.
+- Disclose MIT, Python/packaging, review-only candidate builds, SBOM, SCA, signing/SLSA and independent release/governance states without fabricating enterprise certification.
+- Extend existing repository-contract negative checks and the original CI path; no new engine, CLI command, artificial approval bus or independently published release.
+
+## 1.0.0a5 — portable chat source candidate (merged via PR46; not published)
 
 - Extend the existing comprehensive One-Run and source replay with opt-in, portable chat-iteration ZIP append/verify.
 - Preserve caller intent, actions, linked roadmap/falsifiers, reverse-derived reticular DoD, evidence references, explicit gaps, immutable-by-contract prior entries, handoff and SHA-256 manifest chain.

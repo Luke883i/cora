@@ -1,6 +1,6 @@
 # CORA documentation — navigate by goal
 
-Start at the [README](../README.md): a source-scoped product promise, a three-step engineering method, a ten-method correlation map and two source-linked project examples. This index routes readers by task, method and evidence class; it is navigation, not a release authority or an independent witness.
+Start at the [README](../README.md): a source-scoped product promise, a three-step engineering cycle, eight declared CLI families and two source-linked project examples. This index routes readers by task, method and evidence class; it is navigation, not a release authority or an independent witness.
 
 ## How to navigate
 
