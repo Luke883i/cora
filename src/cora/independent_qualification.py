@@ -261,12 +261,21 @@ def evaluate_paired_work(packet: dict, commit: str) -> dict:
             totals[arm] += sum(times)
             complete[arm] += int(x["task_completed"])
             critical[arm] += x["critical_false_passes"]
+    # Balance must hold within target and persona, not merely globally.
+    # Otherwise treatment order can be perfectly confounded with target.
+    def balanced(subset):
+        ab = sum(row["sequence"] == "baseline-cora" for row in subset)
+        ba = sum(row["sequence"] == "cora-baseline" for row in subset)
+        return ab >= 2 and ba >= 2 and abs(ab - ba) <= 1
     if (len(repositories) != 2 or len(personas) != 2 or
             any(sum(1 for u in users if u["persona"] == p) < 4
                 for p in personas) or
-            min(sequences.count("baseline-cora"),
-                sequences.count("cora-baseline")) < 4):
-        raise ValueError("PR56 crossover lacks personas, targets or balanced arm order")
+            not balanced(users) or
+            any(not balanced([u for u in users if u["persona"] == p])
+                for p in personas) or
+            any(not balanced([u for u in users if u["repo_id"] == rid])
+                for rid in repositories)):
+        raise ValueError("PR56 crossover order confounded with target or persona")
     n = len(users)
     return {
         "schema": "cora-pr56-paired-work-analysis/1", "subject_commit": commit,

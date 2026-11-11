@@ -221,7 +221,7 @@ class IndependentQualificationTests(unittest.TestCase):
         users=[]
         for i in range(8):
             arms=[]
-            sequence="baseline-cora" if i % 2 == 0 else "cora-baseline"
+            sequence="baseline-cora" if (i // 2) % 2 == 0 else "cora-baseline"
             for arm in sequence.split("-"):
                 arms.append({
                     "arm":arm, "setup_minutes":2,
@@ -260,6 +260,13 @@ class IndependentQualificationTests(unittest.TestCase):
             with self.subTest(mutant=mutate.__code__.co_firstlineno):
                 with self.assertRaises(ValueError):
                     evaluate_paired_work(bad,self.sha)
+        confounded=copy.deepcopy(data)
+        # Same global participant count and valid arm pairs; break target balance.
+        moved=confounded["participants"][2]
+        moved["sequence"]="baseline-cora"
+        moved["arms"].reverse()
+        with self.assertRaisesRegex(ValueError, "confounded"):
+            evaluate_paired_work(confounded,self.sha)
         low=copy.deepcopy(data)
         low["participants"][0]["arms"][1]["critical_false_passes"]=1
         self.assertEqual(evaluate_paired_work(low,self.sha)["numerical_criterion"],
