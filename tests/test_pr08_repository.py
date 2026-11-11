@@ -64,8 +64,9 @@ class RepositoryContract(unittest.TestCase):
                 mutant = prefix + panel.replace(old, new, 1) + suffix
                 self.assertTrue(audit_product_positioning(ROOT, mutant))
         cosmetic = prefix + panel.replace(
-            '**CTO evaluation snapshot', '**CTO evaluation snapshot', 1
-        ).replace('Developer tooling for CTOs', 'Developer tooling for CTOs', 1) + suffix
+            '| Decision question | Current answer |',
+            '| Decision question | Current source-scoped answer |', 1
+        ) + suffix
         self.assertEqual(audit_product_positioning(ROOT, cosmetic), [])
 
     def test_cto_cross_source_mutants_fail_closed(self):

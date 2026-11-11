@@ -264,7 +264,15 @@ def main(argv=None) -> int:
     a = p.parse_args(argv)
     errors = audit_contract(a.repo)
     print(json.dumps({'schema': 'cora-repository-contract/1', 'status': 'PASS_SCOPED' if not errors else 'FAIL',
-                      'checks': 'readme-first-read, cli, paths, ontology, package, regressions', 'errors': errors},
+                      'checks': 'readme-first-read, cli, paths, ontology, package, regressions, cto-positioning',
+                      'positioning': {
+                          'verdict': 'SOURCE_CROSSCHECK_ONLY',
+                          'sbom': 'NOT_GENERATED_BY_CI',
+                          'independent_assurance': 'BLOCKED_EXTERNAL',
+                          'release_authorization': 'NONE',
+                          'enterprise_ready': False,
+                      },
+                      'errors': errors},
                      indent=2, sort_keys=True))
     return 0 if not errors else 2
 
