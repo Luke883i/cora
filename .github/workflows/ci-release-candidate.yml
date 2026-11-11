@@ -88,6 +88,13 @@ jobs:
               "".join(k+"=="+pins[k]+"\n" for k in ("setuptools","wheel")))
           PY
           python -m pip install 'pip-audit==2.10.1'
+          python - <<'PY'
+          import json
+          from importlib.metadata import version
+          pins=json.load(open("dist/build-tool-pins.json"))
+          if any(version(k)!=pins[k] for k in ("setuptools","wheel")):
+              raise ValueError("SCA scanner installation changed original build-tool versions")
+          PY
           python -m pip_audit --version | grep -F '2.10.1'
           set +e
           python -m pip_audit -r dist/build-tool-scannable.txt --no-deps --disable-pip \

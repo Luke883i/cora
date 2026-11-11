@@ -12,7 +12,7 @@ import tempfile
 import unittest
 import zipfile
 from pathlib import Path
-from tools.release_verify import verify_release, normalized_wheel_distribution, read_sdist, supply_bom, assert_sbom, canonical_bytes, read_build_pins, sca_observation, assert_sca
+from tools.release_verify import verify_release, normalized_wheel_distribution, read_sdist, supply_bom, assert_sbom, canonical_bytes, read_build_pins, sca_observation, assert_sca, build_observation, assert_build_observation
 from tools.release_stress import stress, classify_model, independent_oracle, FAMILIES
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -122,6 +122,43 @@ class RealArtifactMutationTests(unittest.TestCase):
             summary.write_bytes(canonical_bytes(record))
             with self.assertRaises(ValueError):
                 assert_sca(summary, exposed)
+
+
+    def test_pr55_unsigned_git_build_observation_real_and_mutants(self):
+        import copy, json
+        if not (ROOT / ".git").exists():
+            self.skipTest("Original Git checkout required for provenance readback")
+        sha = subprocess.check_output(
+            ["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True).strip()
+        bom = supply_bom(self.whl, self.sdist, ROOT)
+        original = build_observation(ROOT, sha, self.whl, self.sdist, bom)
+        self.assertEqual(original["git_commit"], sha)
+        self.assertEqual(original["signatures"], "NONE")
+        self.assertEqual(original["slsa_attestation"], "NOT_ATTESTED")
+        self.assertFalse(original["publication_authorized"])
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / "build.json"
+            path.write_bytes(canonical_bytes(original))
+            self.assertTrue(assert_build_observation(path,
+                build_observation(ROOT, sha, self.whl, self.sdist, bom)))
+            cases = [
+                ("source-commit", ("git_commit", "0"*40)),
+                ("artifact-subject", ("subject", [])),
+                ("sbom-binding", ("sbom_sha256", "0"*64)),
+                ("forged-slsa", ("slsa_attestation", "SIGNED_ATTESTED")),
+                ("forged-issuer", ("builder_issuer", "TRUSTED_SLSA_BUILDER")),
+                ("release-promotion", ("publication_authorized", True)),
+            ]
+            for name, (key, value) in cases:
+                with self.subTest(name=name):
+                    mutant = copy.deepcopy(original)
+                    mutant[key] = value
+                    path.write_bytes(canonical_bytes(mutant))
+                    with self.assertRaises(ValueError):
+                        assert_build_observation(path, original)
+            path.write_bytes(canonical_bytes(original))
+            with self.assertRaises(ValueError):
+                build_observation(ROOT, "0"*40, self.whl, self.sdist, bom)
 
     def test_unrelated_sdist_has_no_false_identity(self):
         self.assertEqual(len(normalized_wheel_distribution(self.whl)['files']),len(list((ROOT/'src/cora').glob('*.py'))))
