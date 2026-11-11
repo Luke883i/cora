@@ -155,7 +155,7 @@ def inspect_source(root: Path) -> dict:
         'grep -Fx "Exact commit: $EXPECTED_SHA" dist/RELEASE_NOTES_REVIEW.txt',
     )
     if (any(marker not in note_workflow for marker in note_contract)
-            or re.search(r"printf 'CORA 1\\.0\\.0a[0-9]+ \\(alpha\\)", note_workflow)):
+            or re.search(r"printf 'CORA [0-9]+[.][0-9]+[.][0-9]+a[0-9]+", note_workflow)):
         errors.append("REVIEW_NOTE_VERSION_OR_SHA_DRIFT")
     for rel in ("docs/archive/decisions/ADR-PR15.md","docs/RELEASE.md","docs/ARCHITECTURE.md"):
         if NAME not in txt(rel):
