@@ -179,6 +179,25 @@ class PortableCrossRepo(unittest.TestCase):
                     run_portable(self.repos[0][0], "HEAD", self.profile)
         self.assertEqual(evaluate(ROOT)["product_status"], "BLOCKED_EXTERNAL")
 
+    def test_upstream_original_git_readback_and_source_staleness(self):
+        doc = self.contract(0)
+        source_repo, source_sha, _ = self.repos[1]
+        doc["method_links"][0]["source_commit"] = source_sha
+        self.write(doc)
+        result = run_portable(self.repos[0][0], "HEAD", self.profile,
+                              upstream_paths={"Luke883i/lumen": source_repo})
+        self.assertEqual(result["method_links"][0]["state"],
+                         "FOREIGN_COMMIT_READ_BACK_METHOD_ADOPTION_UNATTESTED")
+        self.assertTrue(verify_portable(self.repos[0][0], result, self.profile,
+                        upstream_paths={"Luke883i/lumen": source_repo}))
+        with self.assertRaisesRegex(ValueError, "replay mismatch"):
+            verify_portable(self.repos[0][0], result, self.profile)
+        doc["method_links"][0]["source_commit"] = "1" * 40
+        self.write(doc)
+        with self.assertRaisesRegex(ValueError, "upstream source commit not read back"):
+            run_portable(self.repos[0][0], "HEAD", self.profile,
+                         upstream_paths={"Luke883i/lumen": source_repo})
+
     def test_new_git_revision_invalidates_old_profile(self):
         result = self.run_it()
         repo = self.repos[0][0]

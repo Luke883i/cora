@@ -144,6 +144,67 @@ jobs:
           python tools/verify_crossrepo_convergence.py --repo . --output /tmp/cora-pr50/reticulum.json
           python tools/verify_crossrepo_convergence.py --repo . --verify /tmp/cora-pr50/reticulum.json
           python -m unittest discover -s tests -p 'test_pr50_portable.py' -v
+      - name: PR50 real public Git target source-only replay (Teddy and NILO)
+        run: |
+          mkdir -p /tmp/cora-pr50/targets
+          git clone --quiet https://github.com/Luke883i/teddy.git /tmp/cora-pr50/targets/teddy
+          git -C /tmp/cora-pr50/targets/teddy checkout --quiet --detach 9d82b7feb1770c0f8e2e854a9ad1b26c13e2140f
+          git clone --quiet https://github.com/Luke883i/NILO.git /tmp/cora-pr50/targets/NILO
+          git -C /tmp/cora-pr50/targets/NILO checkout --quiet --detach 3513ead1cf82dd104d471e20cfc9b11bf81158fb
+          git clone --quiet https://github.com/Luke883i/lumen.git /tmp/cora-pr50/targets/lumen
+          git -C /tmp/cora-pr50/targets/lumen cat-file -e a180956b65f6f1d992a7df1aa2ca06834efecf30^{commit}
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          targets=Path('/tmp/cora-pr50/targets')
+          cases=[
+            ('teddy','Luke883i/teddy','9d82b7feb1770c0f8e2e854a9ad1b26c13e2140f',
+             'server/lib/semantic-spine.mjs','Luke883i/lumen','a180956b65f6f1d992a7df1aa2ca06834efecf30','https://github.com/Luke883i/lumen/pull/24'),
+            ('NILO','Luke883i/NILO','3513ead1cf82dd104d471e20cfc9b11bf81158fb',
+             'web/core.mjs','Luke883i/cora','cbae1fae8db92d44b6ed0d91c4d4d697e7f65585','https://github.com/Luke883i/cora/pull/46')
+          ]
+          for name,r,sha,path,src,source_sha,url in cases:
+            doc={'schema':'cora-portable-target/1','target_repo':r,'revision':sha,
+              'owners':[{'id':'original-owner','path':path}],
+              'witnesses':[],
+              'method_links':[{'id':'transfer-candidate','kind':'METHOD_TRANSFER',
+                'source_repo':src,'source_commit':source_sha,
+                'target_owner':'original-owner','target_commit':sha,'source_reference':url}]}
+            (targets/(name+'-profile.json')).write_text(json.dumps(doc,indent=2)+'\n')
+          PY
+          for target in teddy NILO; do
+            if test "$target" = teddy; then
+              upstream="Luke883i/lumen=/tmp/cora-pr50/targets/lumen"
+            else
+              upstream="Luke883i/cora=."
+            fi
+            set +e
+            cora process-run "/tmp/cora-pr50/targets/$target" --revision HEAD \
+              --one-run --portable-profile "/tmp/cora-pr50/targets/$target-profile.json" \
+              --portable-upstream "$upstream" --portable-parse-js \
+              --output "/tmp/cora-pr50/$target.json" \
+              --atlas-html "/tmp/cora-pr50/$target.html"
+            source_exit=$?
+            set -e
+            test "$source_exit" -eq 0 -o "$source_exit" -eq 2
+            test -f "/tmp/cora-pr50/$target.json"
+            cora verify-process "/tmp/cora-pr50/$target.json" \
+              --repo "/tmp/cora-pr50/targets/$target" --one-run \
+              --portable-profile "/tmp/cora-pr50/targets/$target-profile.json" \
+              --portable-upstream "$upstream" --portable-parse-js \
+              --atlas-html "/tmp/cora-pr50/$target.html"
+          done
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          for name in ('teddy','NILO'):
+            r=json.loads((Path('/tmp/cora-pr50')/(name+'.json')).read_text())
+            assert r['target_repo']=='Luke883i/'+name
+            assert r['governed_status']=='BLOCKED_EXTERNAL'
+            assert r['authorization']=='NONE'
+            assert r['js_import_graph']['scope']=='PARSED_ESM_ONLY_DYNAMIC_AND_RUNTIME_UNKNOWN'
+            assert r['method_links'][0]['state']=='FOREIGN_COMMIT_READ_BACK_METHOD_ADOPTION_UNATTESTED'
+          PY
       - name: Preserve local source evidence without claiming independent attestation
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
