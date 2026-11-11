@@ -169,3 +169,49 @@ jobs:
             dist/cora-v1-experimental-review.zip
           if-no-files-found: error
           retention-days: 7
+
+  pr55_probe:
+    name: PR55 temporary diagnostic original artifact
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    outputs:
+      signature: ${{ steps.probe.outputs.signature }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.11'
+      - name: Prepare original artifact fixture with no privileged credentials
+        run: |
+          python -m pip install 'setuptools>=77' 'wheel>=0.45'
+          python tools/build_candidate.py --source . --outdir /tmp/cora-pr55-probe/
+      - name: Expose only bounded typed failure signature, not source or secrets
+        id: probe
+        run: |
+          python - <<'PY' > /tmp/cora-pr55-probe-diagnostic.txt
+          import re,traceback
+          from pathlib import Path
+          try:
+              from tools.release_verify import supply_bom
+              root=Path(".")
+              wheel=next(Path("/tmp/cora-pr55-probe").glob("*.whl"))
+              sdist=next(Path("/tmp/cora-pr55-probe").glob("*.tar.gz"))
+              b=supply_bom(wheel, sdist, root)
+              assert b["bomFormat"]=="CycloneDX"
+              assert len(b["components"])==4
+              print("PASS_SBOM_SOURCE")
+          except Exception as exc:
+              line=type(exc).__name__+"_"+str(exc)[:110]
+              print(re.sub(r"[^A-Za-z0-9_.-]", "-", line)[:125])
+          PY
+          echo "signature=$(cat /tmp/cora-pr55-probe-diagnostic.txt)" >> "$GITHUB_OUTPUT"
+  pr55_probe_result:
+    needs: pr55_probe
+    name: "PR55-source-result-${{ needs.pr55_probe.outputs.signature }}"
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "bounded diagnostic reported in this job name, not an approval"
