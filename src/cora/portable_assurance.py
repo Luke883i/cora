@@ -11,6 +11,7 @@ import html
 import json
 import re
 import subprocess
+from importlib.resources import as_file, files as package_files
 from pathlib import Path
 
 from .evidence import domain_hash, valid_path
@@ -174,12 +175,15 @@ def run_portable(repo: Path, revision: str, profile: Path, *,
     suite = run_suite(repo, commit, process="full", max_commits=64)
     js_candidates = "NOT_OBSERVED_NONPYTHON_CONSUMERS_UNKNOWN"
     if parse_js:
-        parser = Path(__file__).resolve().parents[2] / "tools" / "portable_js_imports.mjs"
-        if not parser.is_file():
-            _reject("trusted JS parser not available; source unknown")
-        proc = subprocess.run(
-            ["node", "--experimental-vm-modules", str(parser), str(repo), commit],
-            capture_output=True, text=True, timeout=120, check=False)
+        parser_resource = package_files("cora").joinpath("portable_js_imports.mjs")
+        if not parser_resource.is_file():
+            _reject("packaged JS source parser not available; source unknown")
+        # Resolve package resource inside the installed wheel, never relative to
+        # an arbitrary checkout or writable target repository.
+        with as_file(parser_resource) as parser:
+            proc = subprocess.run(
+                ["node", "--experimental-vm-modules", str(parser), str(repo), commit],
+                capture_output=True, text=True, timeout=120, check=False)
         if proc.returncode:
             _reject("bounded JS parser failed: " + proc.stderr[-160:])
         parsed = json.loads(proc.stdout)

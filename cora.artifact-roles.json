@@ -1181,12 +1181,11 @@
       "rationale": "Source-only crossrepo noncompensatory acceptance obligations; external approval never originates from a PR."
     },
     {
-      "pattern": "tools/portable_js_imports.mjs",
+      "pattern": "src/cora/portable_js_imports.mjs",
       "roles": [
-        "CONTRACT_VERIFIER",
-        "RELEASE_TOOL"
+        "SOFTWARE_SOURCE"
       ],
-      "rationale": "Explicit parser-only original Git ESM candidate imports; does not execute target modules."
+      "rationale": "Bundled non-executing static ESM parser shipped in installable distribution, never an independent runtime oracle."
     }
   ]
 }

@@ -97,6 +97,12 @@ class PortableCrossRepo(unittest.TestCase):
                 self.assertEqual(result["js_import_graph"],
                                  "NOT_OBSERVED_NONPYTHON_CONSUMERS_UNKNOWN")
 
+    def test_js_parser_ships_with_installed_distribution(self):
+        from importlib.resources import files
+        parser = files("cora").joinpath("portable_js_imports.mjs")
+        self.assertTrue(parser.is_file(), "parser missing from installed Python distribution")
+        self.assertIn("SourceTextModule", parser.read_text(encoding="utf-8"))
+
     def test_opt_in_js_static_parser_and_dynamic_unknown(self):
         repo = self.repos[0][0]
         (repo / "web" / "app.mjs").write_text(
