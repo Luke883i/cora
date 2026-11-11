@@ -15,6 +15,7 @@ from importlib.resources import as_file, files as package_files
 from pathlib import Path
 
 from .evidence import domain_hash, valid_path
+from .gold_bridge import bridge_gold
 from .git_snapshot import git, snapshot
 from .process_suite import run_suite
 
@@ -25,7 +26,8 @@ TARGET = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\Z")
 ID = re.compile(r"[A-Za-z][A-Za-z0-9_.-]{1,63}\Z")
 KINDS = {"TEST_LOG", "HTTP", "BROWSER", "SCREENSHOT"}
 LINKS = {"METHOD_TRANSFER", "METHODOLOGY_REFERENCE"}
-OUTCOMES = {"PASS_REPORTED_UNATTESTED", "FAIL_REPORTED_UNATTESTED"}
+OUTCOMES = {"PASS_REPORTED_UNATTESTED", "FAIL_REPORTED_UNATTESTED",
+            "SKIPPED_REPORTED_UNATTESTED", "NOT_RUN_REPORTED_UNATTESTED"}
 
 
 def _sha(value: object) -> bool:
@@ -41,9 +43,13 @@ def _reject(message: str) -> None:
 
 
 def _profile(data: object, commit: str) -> dict:
-    if not isinstance(data, dict) or set(data) != {
-        "schema", "target_repo", "revision", "owners", "witnesses", "method_links"
-    } or data["schema"] != PROFILE:
+    if not isinstance(data, dict):
+        _reject("invalid target-owned identity contract")
+    keys = {"schema", "target_repo", "revision", "owners", "witnesses", "method_links"}
+    schema = data.get("schema")
+    if schema == "cora-portable-target/2":
+        keys |= {"goal", "claims"}
+    if set(data) != keys or schema not in (PROFILE, "cora-portable-target/2"):
         _reject("invalid target-owned identity contract")
     if not isinstance(data["target_repo"], str) or not TARGET.fullmatch(data["target_repo"]):
         _reject("invalid target repo")
@@ -242,6 +248,10 @@ def run_portable(repo: Path, revision: str, profile: Path, *,
         "excluded": ["target execution", "host rights", "reviewer identity",
                      "dynamic callers", "real user acceptance", "release permission"]
     }
+    if doc["schema"] == "cora-portable-target/2":
+        # R1-R4 is a typed claim-to-source/evidence linkage projection.
+        # Its per-claim status can NEVER authorize or attest native execution.
+        result["gold"] = bridge_gold(repo, commit, doc, evidence)
     result["receipt_digest"] = domain_hash("CORA:portable-one-run:1", result)
     return result
 
@@ -268,6 +278,23 @@ def render_portable_html(result: dict) -> str:
     lines += ["</ul><h2>External method relations</h2><ul>"]
     for item in result["method_links"]:
         lines.append("<li>" + esc(item["id"]) + ": " + esc(item["state"]) + "</li>")
+    if "gold" in result:
+        bridge = result["gold"]
+        lines += ["</ul><h2>Gold R1-R4 claim-to-native-witness trace</h2>",
+                  "<p>Git/oracle and retained bytes only; no verified native execution.</p>",
+                  "<ul>"]
+        for claim in bridge["claims"]:
+            lines.append("<li><strong>" + esc(claim["id"]) + "</strong> "
+                         + esc(claim["claim"]) + " | " + esc(claim["scope"])
+                         + " | owner " + esc(claim["owner_id"])
+                         + " | oracle " + esc(claim["oracle_path"])
+                         + " | " + esc(claim["status"]) + "</li>")
+        lines += ["</ul><p>Goal: " + esc(bridge["goal"]) + " — "
+                  + esc(bridge["goal_status"]) + "</p>",
+                  "<p>Bound witnesses: " + esc(bridge["native_witnesses_bound"])
+                  + "; verified retained bytes: "
+                  + esc(bridge["native_witness_bytes_verified"]) + "</p>",
+                  "<ul>"]
     lines += ["</ul><h2>Unclosed gates</h2><p>Browser, human acceptance, host,",
               "foreign source readback and release remain BLOCKED_EXTERNAL.</p>",
               "<p>Authorization: NONE. Dynamic and non-Python callers: UNKNOWN.</p>",

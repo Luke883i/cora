@@ -1186,6 +1186,21 @@
         "SOFTWARE_SOURCE"
       ],
       "rationale": "Bundled non-executing static ESM parser shipped in installable distribution, never an independent runtime oracle."
+    },
+    {
+      "pattern": "src/cora/gold_bridge.py",
+      "roles": [
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "PR51 original-Git claim/oracle/native witness correlation over portable One-Run; no effectful runner or authority."
+    },
+    {
+      "pattern": "tests/test_pr51_gold_bridge.py",
+      "roles": [
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "PR51 physical original Git and native witness negative/positive test vectors; no external attestation."
     }
   ]
 }

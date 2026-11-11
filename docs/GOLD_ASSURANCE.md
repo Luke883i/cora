@@ -35,3 +35,75 @@ PR-19 initially attempted three GitHub Actions checkouts: CORA and public ICTC s
 ## Docker optional oracle and filesystem permissions
 
 The initial Docker oracle forced user 65534 but the private temporary source root is 0700, commonly preventing traversals. The hardened implementation runs only for a non-root host user and uses that UID/GID for the container without making the temporary workspace world-readable. The image remains digest-pinned and no network or image pull is allowed. Tests falsify root-host execution, missing opt-in and unpinned images using mocked Docker calls; actual sandbox security and host portability are not attested.
+
+
+
+## PR51 — Native Gold bridge in the existing portable One-Run
+
+**Intent and status:** link a *target-owned* product/source claim to its actual
+committed source owner, original native oracle source, named native witness
+and exact Git revision, then expose the bounded proof/debt in the same offline
+One-Run HTML and JSON. This extends Gold R1–R4 source traceability; **it does
+not execute a foreign test, certify an independent issuer, or close S4**.
+
+Use the *existing* `cora process-run TARGET --one-run --portable-profile
+/path/target-v2.json --portable-evidence-dir /outside/target/artifacts --output
+/out/receipt.json --atlas-html /out/atlas.html`. Omit
+`--portable-evidence-dir` to document absent bytes honestly. Replay with
+`cora verify-process /out/receipt.json --repo TARGET --one-run
+--portable-profile /path/target-v2.json --portable-evidence-dir
+/outside/target/artifacts --atlas-html /out/atlas.html`.
+The original v1 profiles still work unchanged.
+
+A v2 target-owned profile adds exactly `schema: cora-portable-target/2`,
+`goal` and `claims` to the existing v1 keys. Each claim specifies
+`id, claim, scope, owner_id, source_path, oracle_id, oracle_path,
+oracle_sha256, witness_ids, depends_on`; every path/owner/oracle/witness must
+be rooted in the original Git/profile and each retained witness is consumed
+by exactly one claim. Scopes are SOURCE, BEHAVIOR and EXTERNAL. Native
+witnesses retain PR50 fields including `reported_outcome`:
+`PASS_REPORTED_UNATTESTED`, `FAIL_REPORTED_UNATTESTED`,
+`SKIPPED_REPORTED_UNATTESTED`, or `NOT_RUN_REPORTED_UNATTESTED`.
+These are caller reports, never independent test verdicts.
+
+**Machine conditions:**
+
+1. **R1 original context:** a tracked regular owner file exists in the exact
+   target commit; `oracle_path` is another tracked regular original Git
+   blob, and its SHA-256 matches `oracle_sha256`.
+2. **R2 falsifier identity:** a noncompensatory, cycle-free and orphan-free
+   DAG has a single named goal. An original oracle's *presence* is **not
+   execution**; no artificial executed-oracle status is issued.
+3. **R3 bounded native witness:** each profile witness is bound to one
+   claim, its declared `oracle_id` and Git revision; provided bytes are
+   hashed and checked outside the target. Counterevidence, skipped tests,
+   missing bytes and tampering have separate failure outcomes.
+4. **R4 no authority promotion:** all claim rows carry
+   `claim_proven: false`; independent issuer, browser comprehension,
+   production deployment, reviewer and release still
+   `BLOCKED_EXTERNAL`. `goal_status` is always
+   `BLOCKED_INDEPENDENT_ORACLE_EXECUTION_AND_REVIEW`.
+5. **Replay and falsification:** same profile, original Git objects,
+   retained witness bytes and optional HTML must reproduce exactly.
+   The PR51 native regression executes two distinct Git fixture targets,
+   twenty independent contract mutations, a physical oracle-source
+   change, HTML/script injection, byte tamper, FAIL, SKIPPED and NOT_RUN.
+6. **Real public pilot:** the *existing* integrated One-Run CI analyzes
+   exact historical Teddy and NILO commits, independently hashes each
+   repository's native test file and emits a v2 Gold trace. Their native
+   test execution remains **NOT_OBSERVED** because the source pilot
+   intentionally does not execute them. PR52 owns true
+   runner-produced browser/SQLite/HTTP/kinematic evidence integration.
+
+**Nonclaims:** no Gold bridge entry is a valid deletion permission; no
+caller-supplied PASS is native behavior proof. SHA-256 alone establishes
+byte agreement, not who ran or authorized a test. This feature adds no
+new command, repository-local release authority, shadow workflow, target
+writer, second Gold bus or network transport. The existing source
+reticulum, original process-run and existing Gold R1–R4 remain owners.
+
+**Metrics / DoD:** 100% claims reachable from goal; 100% oracle Git hashes
+replayed; 0 orphan/reused witness; 0 false positive native test/host
+attestations on the declared adversarial tests; original v1 compatibility;
+real pinned Teddy and NILO source readback; exact-head Python 3.11/3.13
+One-Run and full CI. External product and efficiency comparisons remain open.
