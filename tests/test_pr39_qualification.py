@@ -77,6 +77,8 @@ class IndependentQualificationTests(unittest.TestCase):
         self.assertIn("L1 engineering evidence", page)
         self.assertIn("L2 experimental product validation", page)
         self.assertIn("L3 external assurance: BLOCKED_EXTERNAL", page)
+        self.assertIn("External product acceptance: <strong>BLOCKED_EXTERNAL", page)
+        self.assertNotIn("&middot; Product: <strong>BLOCKED_EXTERNAL", page)
         self.assertIn("Optional for experimental use", page)
         for family in ("BEHAVIOR", "USABILITY", "ISOLATION", "GOVERNANCE"):
             self.assertIn(family, page)

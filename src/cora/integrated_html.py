@@ -116,7 +116,7 @@ def render_integrated_html(receipt: dict) -> str:
         '<p>Git commit <code>' + _h(receipt["commit"]) + '</code> &middot; ' +
         'tree <code>' + _h(receipt["tree"]) + '</code></p>',
         '<p>Source: <strong>' + _h(receipt["source_status"]) +
-        '</strong> &middot; Product: <strong>' + _h(receipt["product_status"]) +
+        '</strong> &middot; External product acceptance: <strong>' + _h(receipt["product_status"]) +
         '</strong> &middot; Authorization: NONE</p>',
         "<nav aria-label=\"Dossier sections\">" +
         " ".join('<a href="#' + anchor + '">' + _h(label) + "</a>" for anchor,label in links) +
