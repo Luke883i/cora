@@ -174,6 +174,10 @@ class PR51NativeGoldBridge(unittest.TestCase):
         self.assertEqual(counter["reported_counterevidence"], 1)
         self.assertEqual(counter["claims"][1]["status"],
                          "COUNTEREVIDENCE_REPORTED_UNATTESTED")
+        self.assertEqual(counter["goal_negative_lineage"], ["C_BEHAVIOR"])
+        self.assertEqual(counter["claims"][2]["negative_lineage"], ["C_BEHAVIOR"])
+        self.assertNotEqual(counter["goal_status"], "PASS")
+
 
     def test_hostile_claim_and_oracle_mutations(self):
         original = self.profile()
