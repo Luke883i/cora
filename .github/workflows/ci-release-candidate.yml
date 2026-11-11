@@ -61,7 +61,9 @@ jobs:
             --candidate-output dist/candidate-receipt.json
           sha256sum dist/cora_audit-$CORA_VERSION-py3-none-any.whl dist/cora_audit-$CORA_VERSION.tar.gz > dist/SHA256SUMS
           python -c 'import json; p=json.load(open("dist/candidate-receipt.json")); assert p["source_commit"]=="'${EXPECTED_SHA}'" and p["external_gate"]=="BLOCKED_EXTERNAL" and p["authorization"]=="NONE" and p["publication_authorized"] is False and p["signed_provenance"]=="NOT_ATTESTED"'
-          printf 'CORA 1.0.0a4 (alpha) — REVIEW CANDIDATE ONLY\\nExact commit: %s\\nUnsigned, unpublished; not approved for release.\\nRequired before publish: green final main CI; independently authenticated reviewer and release manager; protected main and required checks; independently verified artifact provenance, real pilot and rollback.\\n' "$EXPECTED_SHA" > dist/RELEASE_NOTES_REVIEW.txt
+          printf 'CORA %s (alpha) — REVIEW CANDIDATE ONLY\nExact commit: %s\nUnsigned, unpublished; not approved for release.\nRequired before publish: green final main CI; independently authenticated reviewer and release manager; protected main and required checks; independently verified artifact provenance, real pilot and rollback.\n' "$CORA_VERSION" "$EXPECTED_SHA" > dist/RELEASE_NOTES_REVIEW.txt
+          grep -Fx "CORA $CORA_VERSION (alpha) — REVIEW CANDIDATE ONLY" dist/RELEASE_NOTES_REVIEW.txt
+          grep -Fx "Exact commit: $EXPECTED_SHA" dist/RELEASE_NOTES_REVIEW.txt
       - name: Falsify one million release-risk states twice
         run: |
           python tools/release_stress.py --seed 883 --cases 1000000 --output dist/stress-a.json
