@@ -1201,6 +1201,21 @@
         "TEST"
       ],
       "rationale": "PR51 physical original Git and native witness negative/positive test vectors; no external attestation."
+    },
+    {
+      "pattern": "src/cora/native_gold.py",
+      "roles": [
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "PR52 narrow opt-in local Node subprocess capture, exact-Git oracle and retained-log replay, nonpromotable visual/remote controls; no independent CI or release authority."
+    },
+    {
+      "pattern": "tests/test_pr52_native_gold.py",
+      "roles": [
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "PR52 physical Node RED/GREEN tests, Git/log/authority mutations, ICTC HTTP/SQLite oracle falsifiers and bounded JS graph."
     }
   ]
 }
