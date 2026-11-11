@@ -109,9 +109,12 @@ def _profile(data: object, commit: str) -> dict:
 def _source_owners(repo: Path, commit: str, owners: list[dict]) -> None:
     for owner in owners:
         try:
-            git(repo, "cat-file", "-e", commit + ":" + owner["path"], max_output=1024)
+            row = git(repo, "ls-tree", commit, "--", owner["path"], max_output=4096)
+            rows = [line for line in row.decode("utf-8").splitlines() if line.endswith("\t" + owner["path"])]
+            if len(rows) != 1 or not rows[0].startswith(("100644 blob ", "100755 blob ")):
+                _reject("owner is absent or non-regular committed source: " + owner["id"])
         except (ValueError, OSError):
-            _reject("owner not in committed source: " + owner["id"])
+            _reject("owner not qualified as original Git source: " + owner["id"])
 
 
 def _bytes(root: Path, rel: str, target_repo: Path) -> bytes:
@@ -215,6 +218,7 @@ def run_portable(repo: Path, revision: str, profile: Path, *,
     result = {
         "schema": SCHEMA, "commit": commit, "tree": git(repo, "rev-parse", commit + "^{tree}").decode().strip(),
         "target_repo": doc["target_repo"],
+        "target_name_scope": "CALLER_DECLARED_UNAUTHENTICATED",
         "profile_sha256": hashlib.sha256(
             Path(profile).read_bytes()).hexdigest(),
         "owners": doc["owners"], "source_process": suite,

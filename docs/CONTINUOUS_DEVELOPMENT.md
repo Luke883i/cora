@@ -358,8 +358,3 @@ receipts with independent readback; finally obtain independent studies,
 governed host review and real evidence of effort reduction. If a source gate
 fails, stop and correct that owner. If an external gate is absent, retain
 \`BLOCKED_EXTERNAL\`, not an invented PASS. Recompute after actual merge SHA.
-
-**Genealogy:** method experiments include historical CORA-beta work formerly
-hosted elsewhere; unavailable historical repositories are not evidence of
-their own current contents. No linear-origin inference is required to use
-this protocol.

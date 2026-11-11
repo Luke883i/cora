@@ -142,6 +142,16 @@ class PortableCrossRepo(unittest.TestCase):
             verify_portable(self.repos[0][0], result, self.profile,
                             evidence_dir=self.evidence, html_page=html.replace("BLOCKED_EXTERNAL", "PASS"))
 
+    def test_symlink_owner_is_not_source_implementation(self):
+        repo = self.repos[0][0]
+        (repo / "web" / "linked.mjs").symlink_to("app.mjs")
+        git(repo, "add", ".")
+        git(repo, "commit", "-qm", "symlink cannot become owner")
+        self.repos[0] = (repo, git(repo, "rev-parse", "HEAD"), "web/linked.mjs")
+        self.write(self.contract())
+        with self.assertRaisesRegex(ValueError, "qualified as original Git source"):
+            run_portable(repo, "HEAD", self.profile)
+
     def test_tampered_bytes_and_symlink_rejected(self):
         result = self.run_it(evidence=True)
         (self.evidence / "observed.txt").write_bytes(b"modified")
