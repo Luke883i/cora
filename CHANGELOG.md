@@ -1,3 +1,8 @@
+## Unreleased — candidate release-note identity hardening (PR54 candidate)
+
+- Correct review-only release-note version to derive from `pyproject.toml` instead of stale historical `1.0.0a4`; require exact candidate Git SHA in the note.
+- Extend existing source-only release readiness gates to reject stale/hardcoded version text or missing runtime validation; never treat a passed note as publication authority.
+
 ## Unreleased — product identity and CTO procurement disclosure (PR53 candidate)
 
 - Reposition README as an agent-agnostic engineering-assurance product with explicit CORA-METHOD / CORA-ENGINE target, compatibility and pilot boundaries; remove provisional unmeasured product scores from the public front door.

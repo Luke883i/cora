@@ -110,6 +110,10 @@ At that same historic observation, GitHub reported main.protected=false, no PR39
 
 The accountable release manager must reconcile **this existing draft** with the final PR41/main reviewed commit, explicitly decide whether to update it to the conclusive experimental release, create and verify the intended protected version tag, compare the real built wheel/sdist SHA-256 digests, record independent approvals and rollback, and publish the reviewed **pre-release** only after every EXTERNAL gate. Do not open a duplicate release with the same version and do not treat the mutable `main` target name as an immutable reviewed SHA. If host access or tag readback fails, keep the release draft unpublished and `G_FINAL_EXPERIMENTAL = BLOCKED_EXTERNAL`.
 
+## Release-candidate note identity (PR54 hardening)
+
+Review-only `RELEASE_NOTES_REVIEW.txt` must name the **current `pyproject.toml` package version** and exact inspected Git SHA. `SHA256SUMS` binds candidate bytes, not a release approval. A green build with a stale release-note version is contradictory source evidence and must fail; the original `v1.0.0a4` historical draft remains an archive fact, not the current `1.0.0a5` candidate identity.
+
 ## Post-PR52 CTO procurement and software supply-chain status (source-scoped)
 
 The public product is CORA, the installed Python distribution is `cora-audit 1.0.0a5`, and `cora` is its CLI. The repository does not constitute an independently certified enterprise distribution. Existing build workflows can produce and compare candidate wheel/sdist, verify archive parity, test separate installation environments and record SHA256SUMS. These are review-only artifacts; release signing and hosted publication are not asserted.
