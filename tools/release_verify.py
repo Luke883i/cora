@@ -215,7 +215,7 @@ def verify_review_note(path: Path, version: str, commit: str) -> bool:
     if path.is_symlink() or not path.is_file() or path.stat().st_size > 8192:
         raise ValueError("missing, linked or oversized review note")
     raw = path.read_bytes()
-    if b"\\\\n" in raw or b"\\n" in raw:
+    if (chr(92) * 2 + "n").encode() in raw or (chr(92) + "n").encode() in raw:
         raise ValueError("review note retains literal backslash-newline escapes")
     lines = raw.decode("utf-8").splitlines()
     if (len(lines) != 4 or lines[0] != f"CORA {version} (alpha) — REVIEW CANDIDATE ONLY"
@@ -223,7 +223,7 @@ def verify_review_note(path: Path, version: str, commit: str) -> bool:
             or lines[2] != "Unsigned, unpublished; not approved for release."
             or not lines[3].startswith("Required before publish: green final main CI;")
             or not lines[3].endswith("real pilot and rollback.")
-            or not raw.endswith(b"\\n")):
+            or not raw.endswith(bytes((10,))):
         raise ValueError("review note version, commit, boundaries or line encoding drift")
     return True
 

@@ -64,10 +64,13 @@ class ReadinessTest(unittest.TestCase):
         from tools.release_verify import verify_review_note
         commit = "a" * 40
         version = "1.0.0a5"
-        original = (f"CORA {version} (alpha) — REVIEW CANDIDATE ONLY\\n"
-                    f"Exact commit: {commit}\\n"
-                    "Unsigned, unpublished; not approved for release.\\n"
-                    "Required before publish: green final main CI; independently authenticated reviewer and release manager; protected main and required checks; independently verified artifact provenance, real pilot and rollback.\\n")
+        original = chr(10).join((
+            f"CORA {version} (alpha) — REVIEW CANDIDATE ONLY",
+            f"Exact commit: {commit}",
+            "Unsigned, unpublished; not approved for release.",
+            "Required before publish: green final main CI; independently authenticated reviewer and release manager; protected main and required checks; independently verified artifact provenance, real pilot and rollback.",
+            "",
+        ))
         with tempfile.TemporaryDirectory() as td:
             note = Path(td) / "RELEASE_NOTES_REVIEW.txt"
             note.write_text(original, encoding="utf-8")
@@ -75,8 +78,8 @@ class ReadinessTest(unittest.TestCase):
             mutants = (
                 original.replace(version, "1.0.0a4", 1),
                 original.replace(commit, "b" * 40, 1),
-                original.replace("ONLY\\n", "ONLY" + chr(92) + "n", 1),
-                original + "Public release approved.\\n",
+                original.replace("ONLY" + chr(10), "ONLY" + chr(92) + "n", 1),
+                original + "Public release approved." + chr(10),
                 original.replace("Unsigned, unpublished", "Signed, published", 1),
             )
             for i, mutant in enumerate(mutants):
