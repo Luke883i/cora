@@ -160,6 +160,29 @@ class RealArtifactMutationTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 build_observation(ROOT, "0"*40, self.whl, self.sdist, bom)
 
+    def test_pr56_pr55_provenance_materials_byte_exact(self):
+        if not (ROOT / ".git").is_dir():
+            self.skipTest("original Git checkout required")
+        from tools.release_verify import build_observation
+        import copy
+        revision = subprocess.check_output(
+            ["git", "-C", str(ROOT), "rev-parse", "HEAD"],
+            text=True, timeout=20).strip()
+        receipt = build_observation(
+            ROOT, revision, self.whl, self.sdist,
+            supply_bom(self.whl, self.sdist, ROOT))
+        self.assertEqual(set(receipt["source_material_sha256"]),
+                         {"pyproject.toml", "LICENSE",
+                          ".github/workflows/ci-release-candidate.yml"})
+        for name, digest in receipt["source_material_sha256"].items():
+            raw = subprocess.check_output(
+                ["git", "-C", str(ROOT), "show", revision + ":" + name],
+                timeout=20)
+            self.assertEqual(digest, hashlib.sha256(raw).hexdigest())
+        self.assertEqual(receipt["signatures"], "NONE")
+        self.assertEqual(receipt["slsa_attestation"], "NOT_ATTESTED")
+        self.assertFalse(receipt["publication_authorized"])
+
     def test_unrelated_sdist_has_no_false_identity(self):
         self.assertEqual(len(normalized_wheel_distribution(self.whl)['files']),len(list((ROOT/'src/cora').glob('*.py'))))
     def test_stress_oracle_at_edge_bits(self):

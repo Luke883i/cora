@@ -203,6 +203,101 @@ def verify_qualification(repo: Path, receipt: dict) -> bool:
     return True
 
 
+
+def evaluate_paired_work(packet: dict, commit: str) -> dict:
+    """PR56 blinded crossover arithmetic; never authentication of real subjects.
+
+    The user study must be pre-registered externally and observed by an
+    independent facilitator. Supplied measurements are untrusted assertions.
+    """
+    if (not isinstance(packet, dict) or
+            set(packet) != {"schema", "subject_commit", "protocol", "participants"} or
+            packet["schema"] != "cora-pr56-paired-work/1" or
+            packet["protocol"] != "CROSSOVER_AB_BA_EIGHT_TWO_REPOSITORIES" or
+            packet["subject_commit"] != commit or not SHA.fullmatch(str(commit))):
+        raise ValueError("PR56 crossover identity or preregistered protocol drift")
+    users = packet["participants"]
+    if not isinstance(users, list) or not 8 <= len(users) <= 100:
+        raise ValueError("PR56 participant count outside preregistered limits")
+    seen, personas, repositories, sequences = set(), set(), set(), []
+    totals = {"baseline": 0.0, "cora": 0.0}
+    complete = {"baseline": 0, "cora": 0}
+    critical = {"baseline": 0, "cora": 0}
+    for user in users:
+        if (not isinstance(user, dict) or
+                set(user) != {"participant_id", "persona", "repo_id",
+                              "sequence", "arms"}):
+            raise ValueError("PR56 incomplete participant or arm envelope")
+        pid, persona, rid = (user["participant_id"], user["persona"], user["repo_id"])
+        if (not isinstance(pid, str) or not re.fullmatch(r"[A-Za-z0-9_-]{3,64}", pid)
+                or pid in seen
+                or persona not in ("first_time_developer", "independent_assurance_reviewer")
+                or rid not in ("teddy", "ictc")
+                or user["sequence"] not in ("baseline-cora", "cora-baseline")
+                or not isinstance(user["arms"], list)
+                or len(user["arms"]) != 2):
+            raise ValueError("PR56 wrong participant identity, persona or target")
+        seen.add(pid); personas.add(persona); repositories.add(rid)
+        sequences.append(user["sequence"])
+        expected = user["sequence"].split("-")
+        if [x.get("arm") for x in user["arms"] if isinstance(x, dict)] != expected:
+            raise ValueError("PR56 unbalanced or duplicated trial arm")
+        for x in user["arms"]:
+            if (not isinstance(x, dict) or set(x) != {
+                    "arm", "setup_minutes", "execution_minutes", "review_minutes",
+                    "task_completed", "critical_false_passes"} or
+                    type(x["task_completed"]) is not bool or
+                    type(x["critical_false_passes"]) is not int or
+                    not 0 <= x["critical_false_passes"] <= 10):
+                raise ValueError("PR56 missing cost segment or false-pass measurement")
+            times = [x[y] for y in (
+                "setup_minutes", "execution_minutes", "review_minutes")]
+            if any(type(t) not in (int, float) or not 0 <= t <= 120
+                   for t in times):
+                raise ValueError("PR56 invalid or non-finite observed task time")
+            if not 0 < sum(times) <= 240:
+                raise ValueError("PR56 impossible completed trial duration")
+            arm = x["arm"]
+            totals[arm] += sum(times)
+            complete[arm] += int(x["task_completed"])
+            critical[arm] += x["critical_false_passes"]
+    # Balance must hold within target and persona, not merely globally.
+    # Otherwise treatment order can be perfectly confounded with target.
+    def balanced(subset):
+        ab = sum(row["sequence"] == "baseline-cora" for row in subset)
+        ba = sum(row["sequence"] == "cora-baseline" for row in subset)
+        return ab >= 2 and ba >= 2 and abs(ab - ba) <= 1
+    if (len(repositories) != 2 or len(personas) != 2 or
+            any(sum(1 for u in users if u["persona"] == p) < 4
+                for p in personas) or
+            not balanced(users) or
+            any(not balanced([u for u in users if u["persona"] == p])
+                for p in personas) or
+            any(not balanced([u for u in users if u["repo_id"] == rid])
+                for rid in repositories)):
+        raise ValueError("PR56 crossover order confounded with target or persona")
+    n = len(users)
+    return {
+        "schema": "cora-pr56-paired-work-analysis/1", "subject_commit": commit,
+        "participant_count_supplied": n,
+        "two_original_target_ids_supplied": sorted(repositories),
+        "reported_completions": complete, "reported_critical_false_passes": critical,
+        "reported_total_minutes": {k: round(v, 5) for k, v in totals.items()},
+        "reported_cora_minus_baseline_minutes": round(totals["cora"] - totals["baseline"], 5),
+        "reported_cora_to_baseline_cost_ratio": round(
+            totals["cora"] / totals["baseline"], 5),
+        "reported_cora_completion_fraction": round(complete["cora"] / n, 5),
+        "numerical_criterion": ("MET_IN_SUBMITTED_DATA"
+            if complete["cora"] / n >= 0.8 and critical["cora"] == 0 else "NOT_MET"),
+        "causal_superiority_proven": False,
+        "subject_identity_authenticated": False,
+        "independent_observer_authenticated": False,
+        "operator_review": "NOT_ATTESTED",
+        "measurement_scope": "UNVERIFIED_HUMAN_SUPPLIED_CROSSOVER_VALUES",
+        "product_status": "BLOCKED_EXTERNAL", "authorization": "NONE",
+    }
+
+
 def evaluate_study_packet(packet: dict, commit: str) -> dict:
     """A bounded usability *analysis*, never independent identity attestation.
 

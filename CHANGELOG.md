@@ -1,3 +1,9 @@
+## Unreleased — PR56 independently falsifiable qualification pilot (candidate)
+
+- Harden PR55 unsigned provenance so exact original Git material bytes, including trailing line endings, are hashed and compared without whitespace normalization.
+- Reuse PR39's 29-node independent qualification reticulum and PR52's pinned Teddy/ICTC checkouts: add 24-blob native Git versus CORA snapshot comparison with replay, source-only costs and no product acceptance.
+- Add an eight-participant, two-persona paired-work cost/quality analysis with synthetic negative fixtures explicitly unauthorized; retain host, real human, isolation and independent reviewer gates as BLOCKED_EXTERNAL.
+
 ## Unreleased — PR55 scoped software supply-chain assurance (candidate)
 
 - Extend the original wheel/sdist release verifier with physical PR54 note inspection, CycloneDX 1.6 inventory, observed CI build-tool pin reconciliation, and digest-linked **unsigned** Git build records.

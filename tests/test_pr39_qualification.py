@@ -215,6 +215,64 @@ class IndependentQualificationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,"commit"):
             evaluate_study_packet(packet,"0"*40)
 
+
+    def test_pr56_eight_person_crossover_is_numerical_not_independent_proof(self):
+        from cora.independent_qualification import evaluate_paired_work
+        users=[]
+        for i in range(8):
+            arms=[]
+            sequence="baseline-cora" if (i // 2) % 2 == 0 else "cora-baseline"
+            for arm in sequence.split("-"):
+                arms.append({
+                    "arm":arm, "setup_minutes":2,
+                    "execution_minutes":4 if arm=="baseline" else 3,
+                    "review_minutes":2 if arm=="baseline" else 1,
+                    "task_completed":True, "critical_false_passes":0})
+            users.append({
+                "participant_id":f"synthetic_{i}",
+                "persona":("first_time_developer" if i<4 else
+                           "independent_assurance_reviewer"),
+                "repo_id":("teddy" if i%2 == 0 else "ictc"),
+                "sequence":sequence,"arms":arms})
+        data={"schema":"cora-pr56-paired-work/1","subject_commit":self.sha,
+              "protocol":"CROSSOVER_AB_BA_EIGHT_TWO_REPOSITORIES",
+              "participants":users}
+        measured=evaluate_paired_work(data,self.sha)
+        self.assertEqual(measured["participant_count_supplied"],8)
+        self.assertLess(measured["reported_cora_to_baseline_cost_ratio"],1)
+        self.assertEqual(measured["numerical_criterion"],"MET_IN_SUBMITTED_DATA")
+        self.assertFalse(measured["causal_superiority_proven"])
+        self.assertFalse(measured["subject_identity_authenticated"])
+        self.assertFalse(measured["independent_observer_authenticated"])
+        self.assertEqual(measured["product_status"],"BLOCKED_EXTERNAL")
+        mutations=(
+            lambda d:d["participants"].pop(),
+            lambda d:d["participants"][0]["arms"].pop(),
+            lambda d:d["participants"][0]["arms"][0].update(setup_minutes=-3),
+            lambda d:d["participants"][0].update(repo_id="nonexistent"),
+            lambda d:d["participants"][0].update(sequence="cora-baseline"),
+            lambda d:d.update(subject_commit="0"*40),
+            lambda d:d["participants"][1].update(participant_id="synthetic_0"),
+        )
+        for mutate in mutations:
+            bad=copy.deepcopy(data)
+            mutate(bad)
+            with self.subTest(mutant=mutate.__code__.co_firstlineno):
+                with self.assertRaises(ValueError):
+                    evaluate_paired_work(bad,self.sha)
+        confounded=copy.deepcopy(data)
+        # Same global participant count and valid arm pairs; break target balance.
+        moved=confounded["participants"][2]
+        moved["sequence"]="baseline-cora"
+        moved["arms"].reverse()
+        with self.assertRaisesRegex(ValueError, "confounded"):
+            evaluate_paired_work(confounded,self.sha)
+        low=copy.deepcopy(data)
+        low["participants"][0]["arms"][1]["critical_false_passes"]=1
+        self.assertEqual(evaluate_paired_work(low,self.sha)["numerical_criterion"],
+                         "NOT_MET")
+        self.assertFalse(evaluate_paired_work(low,self.sha)["causal_superiority_proven"])
+
     def test_07_readonly_github_host_probe_denies_403_and_unverified_success(self):
         host=module_from_tool("governance_readback")
         self.assertEqual(host.probe("Luke883i/cora","main")["observation"],
@@ -245,6 +303,52 @@ class IndependentQualificationTests(unittest.TestCase):
             host.probe("some/../other","main","private")
         with self.assertRaisesRegex(ValueError,"identity"):
             host.probe("../..","main","private")
+
+
+    def test_pr56_two_original_git_references_with_counterexample_replay(self):
+        native=module_from_tool("independent_git_oracle")
+        with tempfile.TemporaryDirectory(prefix="pr56-native-pair-") as tmp:
+            roots=[]
+            for index in (0,1):
+                repo=Path(tmp)/("public-fixture-"+str(index))
+                repo.mkdir()
+                run_git(repo,"init","-q")
+                run_git(repo,"config","user.name","Fixture Native Oracle")
+                run_git(repo,"config","user.email","reference@example.invalid")
+                for n in range(30):
+                    (repo/f"sample-{n:03d}.txt").write_text(
+                        f"target={index};path={n};bytes={n*n}\n",encoding="utf-8")
+                run_git(repo,"add",".")
+                run_git(repo,"commit","-qm","controlled original Git fixture")
+                roots.append((repo,run_git(repo,"rev-parse","HEAD")))
+            pins={"teddy": ("Luke883i/teddy",roots[0][1]),
+                  "ictc": ("Luke883i/ictc",roots[1][1])}
+            with patch.dict(native.PUBLIC_TARGETS,pins):
+                report=native.public_pair(roots[0][0],roots[1][0])
+                self.assertEqual(report["case_count"],2)
+                self.assertEqual([c["sample_size"] for c in report["cases"]],[24,24])
+                self.assertTrue(all(c["sample_agrees"] for c in report["cases"]))
+                self.assertFalse(report["independent_oracle_owner_authenticated"])
+                self.assertEqual(report["cost_benefit"],"NOT_MEASURED")
+                self.assertTrue(native.verify_public_pair(roots[0][0],roots[1][0],report))
+                mutants=(
+                    lambda x:x.update(product_status="QUALIFIED"),
+                    lambda x:x.update(cost_benefit="CORA_FASTER_PROVEN"),
+                    lambda x:x["cases"][0].update(target_commit="0"*40),
+                    lambda x:x["cases"][1].update(cora_sample_digest="0"*64),
+                    lambda x:x["cases"][0].update(time_scope="FASTER"),
+                    lambda x:x["cases"][1].update(native_git_elapsed_ns=-1),
+                )
+                for mutate in mutants:
+                    modified=copy.deepcopy(report)
+                    mutate(modified)
+                    with self.subTest(mutation=mutate.__code__.co_firstlineno):
+                        with self.assertRaises(ValueError):
+                            native.verify_public_pair(roots[0][0],roots[1][0],modified)
+                with (roots[0][0]/"sample-001.txt").open("a",encoding="utf-8") as file:
+                    file.write("tracked modification must block\n")
+                with self.assertRaisesRegex(ValueError, "clean checkout"):
+                    native.public_pair(roots[0][0],roots[1][0])
 
     def test_08_physical_git_external_state_mutant_is_rejected(self):
         with tempfile.TemporaryDirectory() as temp:

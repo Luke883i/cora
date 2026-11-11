@@ -376,6 +376,48 @@ jobs:
           git clone --quiet https://github.com/Luke883i/NILO.git /tmp/cora-pr52/targets/NILO
           git -C /tmp/cora-pr52/targets/NILO checkout --quiet --detach 3513ead1cf82dd104d471e20cfc9b11bf81158fb
           npm --prefix /tmp/cora-pr52/targets/ictc ci --ignore-scripts --no-audit --no-fund
+      - name: PR56 two real public Git targets, native-reference comparison and replay (no owner attestation)
+        env:
+          GITHUB_TOKEN: ''
+          GH_TOKEN: ''
+        run: |
+          python tools/independent_git_oracle.py \
+            --teddy /tmp/cora-pr52/targets/teddy \
+            --ictc /tmp/cora-pr52/targets/ictc \
+            --output /tmp/cora-pr52/evidence/pr56-public-git-pair.json
+          python tools/independent_git_oracle.py \
+            --teddy /tmp/cora-pr52/targets/teddy \
+            --ictc /tmp/cora-pr52/targets/ictc \
+            --verify-pair /tmp/cora-pr52/evidence/pr56-public-git-pair.json \
+            --output /tmp/cora-pr52/evidence/pr56-public-git-replay.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('/tmp/cora-pr52/evidence')
+          pair=json.loads((root/'pr56-public-git-pair.json').read_text())
+          replay=json.loads((root/'pr56-public-git-replay.json').read_text())
+          assert pair['case_count']==2 and all(c['sample_size']==24 and
+              c['sample_agrees'] for c in pair['cases'])
+          assert replay['status']=='MATCHED_NATIVE_GIT_SAMPLED_SOURCE_ONLY'
+          assert pair['target_ownership_independently_verified'] is False
+          assert pair['independent_oracle_owner_authenticated'] is False
+          assert pair['cost_benefit']=='NOT_MEASURED'
+          assert pair['authorization']=='NONE'
+          PY
+      - name: PR56 GitHub host without privileged token remains blocked, never approval
+        run: |
+          env -u GITHUB_TOKEN python tools/governance_readback.py \
+            --repo Luke883i/cora --branch main \
+            --output /tmp/cora-pr52/evidence/pr56-host-no-authority.json
+          python - <<'PY'
+          import json
+          x=json.load(open('/tmp/cora-pr52/evidence/pr56-host-no-authority.json'))
+          assert x['observation']=='BLOCKED_NO_HOST_TOKEN'
+          assert not x['host_enforcement_attested']
+          assert not x['merge_authorized']
+          assert not x['release_authorized']
+          assert x['authority']=='NONE'
+          PY
       - name: Actually run native Teddy TAP and ICTC HTTP SQLite tests in disposable checkouts
         env:
           GITHUB_TOKEN: ''

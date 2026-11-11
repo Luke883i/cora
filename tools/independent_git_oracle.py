@@ -14,6 +14,7 @@ import os
 import subprocess
 import sys
 import tempfile
+from time import perf_counter_ns
 from pathlib import Path
 
 
@@ -305,14 +306,168 @@ def reviewer_brief(report: dict, challenge: dict) -> str:
 
 
 
+
+# PR56: original public Git targets, distinct algorithm from CORA snapshot.
+# The *operator and reference ownership* are NOT independently authenticated.
+PUBLIC_TARGETS = {
+    "teddy": ("Luke883i/teddy", "05c31e986d36fb4350867d208c1e4efe7e535ece"),
+    "ictc": ("Luke883i/ictc", "d478cdd185b433f81127fa3251daebed4f84fd38"),
+}
+MAX_SAMPLE = 24
+MAX_TREE = 120_000
+MAX_TOTAL_BYTES = 12 * 1024 * 1024
+
+
+def native_sample(repo: Path, revision: str) -> dict:
+    """Git's own tree/blob interface; deterministic 24-file diversity-limited subset."""
+    sha = git(repo, "rev-parse", "HEAD").decode().strip()
+    if sha != revision or git(repo, "status", "--porcelain", "--untracked-files=no").strip():
+        raise ValueError("public target HEAD or clean checkout differs from preregistered revision")
+    listing = git(repo, "ls-tree", "-rz", "--full-tree", sha)
+    if len(listing) > 12 * 1024 * 1024:
+        raise ValueError("target tree exceeds bounded source oracle")
+    candidates = []
+    for item in listing.split(b"\0"):
+        if not item:
+            continue
+        hdr, rawpath = item.split(b"\t", 1)
+        mode, kind, oid = hdr.decode("ascii").split()
+        if kind == "blob" and mode in ("100644", "100755"):
+            path = rawpath.decode("utf-8")
+            candidates.append((hashlib.sha256(path.encode()).digest(), path, mode, oid))
+        if len(candidates) > MAX_TREE:
+            raise ValueError("source candidate inventory too large")
+    if len(candidates) < MAX_SAMPLE:
+        raise ValueError("target has fewer regular source files than preregistered sample")
+    selected = sorted(candidates)[:MAX_SAMPLE]
+    total = 0
+    records = {}
+    for _, path, mode, oid in selected:
+        raw = git(repo, "cat-file", "blob", oid)
+        total += len(raw)
+        if total > MAX_TOTAL_BYTES:
+            raise ValueError("native Git reference sample exceeded byte budget")
+        if raw.startswith(b"version https://git-lfs.github.com/spec/v1\n"):
+            row = {"mode": mode, "git_oid": oid,
+                   "status": "lfs_pointer_unresolved", "size": None, "sha256": None}
+        else:
+            row = {"mode": mode, "git_oid": oid,
+                   "status": "observed_git_blob", "size": len(raw),
+                   "sha256": hashlib.sha256(raw).hexdigest()}
+        records[path] = row
+    return {"commit": sha, "sample": records,
+            "sample_size": len(records), "regular_paths": len(candidates)}
+
+
+def _stable_case(case: dict) -> dict:
+    return {k: case[k] for k in (
+        "target_repo", "target_commit", "sample_size", "regular_paths",
+        "independent_reference_digest", "cora_sample_digest", "sample_agrees")}
+
+
+def public_case(name: str, repo: Path) -> dict:
+    if name not in PUBLIC_TARGETS:
+        raise ValueError("target not in frozen original public target allowlist")
+    target, sha = PUBLIC_TARGETS[name]
+    repo = Path(repo).resolve(strict=True)
+    first = perf_counter_ns()
+    original = native_sample(repo, sha)
+    native_ns = perf_counter_ns() - first
+    start = perf_counter_ns()
+    cora = observe_cora_cli(repo, sha)
+    cora_ns = perf_counter_ns() - start
+    sampled = {path: cora["records"].get(path)
+               for path in original["sample"]}
+    if sampled != original["sample"]:
+        missing = sorted(path for path in sampled if sampled[path] is None)
+        wrong = sorted(path for path in sampled
+                       if sampled[path] is not None and sampled[path] != original["sample"][path])
+        raise ValueError("CORA differs from native Git original source: " +
+                         json.dumps({"missing": missing[:8], "different": wrong[:8]}))
+    def digest(x):
+        return hashlib.sha256(json.dumps(
+            x, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()).hexdigest()
+    return {
+        "target_repo": target, "target_commit": sha,
+        "sample_size": original["sample_size"],
+        "regular_paths": original["regular_paths"],
+        "independent_reference_digest": digest(original["sample"]),
+        "cora_sample_digest": digest(sampled),
+        "sample_agrees": True,
+        "native_git_elapsed_ns": native_ns,
+        "cora_cli_elapsed_ns": cora_ns,
+        "time_scope": "NON_COMPARABLE_SAMPLE_VS_WHOLE_REPOSITORY",
+    }
+
+
+def public_pair(teddy: Path, ictc: Path) -> dict:
+    cases = [public_case("teddy", teddy), public_case("ictc", ictc)]
+    return {
+        "schema": "cora-pr56-public-target-pair/1",
+        "cases": cases, "case_count": 2,
+        "reference": "NATIVE_GIT_LS_TREE_AND_CAT_FILE_SEPARATE_IMPLEMENTATION",
+        "behavioral_scope": "SAMPLED_GIT_SOURCE_NOT_TARGET_RUNTIME_OR_ACCEPTANCE",
+        "target_ownership_independently_verified": False,
+        "independent_oracle_owner_authenticated": False,
+        "time_comparison": "NOT_COMPARABLE_NO_HUMAN_TIME_OR_NORMALIZED_WORK",
+        "cost_benefit": "NOT_MEASURED",
+        "product_status": "BLOCKED_EXTERNAL",
+        "authorization": "NONE", "release_authorized": False,
+    }
+
+
+def verify_public_pair(teddy: Path, ictc: Path, reported: dict) -> bool:
+    if (not isinstance(reported, dict) or reported.get("schema") !=
+            "cora-pr56-public-target-pair/1" or reported.get("case_count") != 2
+            or reported.get("product_status") != "BLOCKED_EXTERNAL"
+            or reported.get("authorization") != "NONE"
+            or reported.get("release_authorized") is not False
+            or reported.get("independent_oracle_owner_authenticated") is not False
+            or reported.get("target_ownership_independently_verified") is not False
+            or reported.get("cost_benefit") != "NOT_MEASURED"):
+        raise ValueError("public pair source observation promoted into product assurance")
+    actual = public_pair(teddy, ictc)
+    if set(reported) != set(actual) or len(reported.get("cases", [])) != 2:
+        raise ValueError("wrong public pair envelope")
+    for expected, found in zip(actual["cases"], reported["cases"]):
+        if _stable_case(expected) != _stable_case(found):
+            raise ValueError("native Git source sample or target identity changed")
+        for name in ("native_git_elapsed_ns", "cora_cli_elapsed_ns"):
+            if (type(found.get(name)) is not int or
+                    not 0 <= found[name] <= 180 * 1_000_000_000):
+                raise ValueError("impossible or forged runtime telemetry")
+        if found.get("time_scope") != expected["time_scope"]:
+            raise ValueError("cost comparison scope promoted")
+    for key in actual:
+        if key != "cases" and reported.get(key) != actual[key]:
+            raise ValueError("public pilot evidence status altered")
+    return True
+
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Safe independent-Git source fixture oracle")
     parser.add_argument("--output", type=Path)
     parser.add_argument("--repo", type=Path, default=Path("."))
     parser.add_argument("--closure-report", type=Path, help="independently re-evaluate PR43 source accounting")
     parser.add_argument("--reader-brief", type=Path, help="plain-English three-task review guide")
+    parser.add_argument("--teddy", type=Path, help="pinned public Teddy checkout")
+    parser.add_argument("--ictc", type=Path, help="pinned public ICTC checkout")
+    parser.add_argument("--verify-pair", type=Path, help="recompute public pair from original Git")
     args = parser.parse_args()
-    if args.closure_report:
+    if any((args.teddy, args.ictc, args.verify_pair)):
+        if not args.teddy or not args.ictc or args.closure_report or args.reader_brief:
+            raise ValueError("PR56 requires both pinned public targets, no mixed modes")
+        if args.verify_pair:
+            packet = json.loads(args.verify_pair.read_text("utf-8"))
+            verify_public_pair(args.teddy, args.ictc, packet)
+            result = {"schema": "cora-pr56-public-pair-replay/1",
+                      "status": "MATCHED_NATIVE_GIT_SAMPLED_SOURCE_ONLY",
+                      "public_target_count": 2, "product_status": "BLOCKED_EXTERNAL",
+                      "cost_benefit": "NOT_MEASURED", "authorization": "NONE"}
+        else:
+            result = public_pair(args.teddy, args.ictc)
+    elif args.closure_report:
         report = json.loads(args.closure_report.read_text("utf-8"))
         result = independent_closure_challenge(args.repo, report)
         if args.reader_brief:
