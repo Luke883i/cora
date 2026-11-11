@@ -132,8 +132,19 @@ def _bytes(root: Path, rel: str, target_repo: Path) -> bytes:
     return path.read_bytes()
 
 
+def parse_upstream_paths(items: list[str]) -> dict[str, Path]:
+    result: dict[str, Path] = {}
+    for item in items:
+        key, sep, root = item.partition("=")
+        if not sep or not TARGET.fullmatch(key) or not root or key in result:
+            _reject("invalid or duplicate upstream checkout")
+        result[key] = Path(root)
+    return result
+
+
 def run_portable(repo: Path, revision: str, profile: Path, *,
-                 evidence_dir: Path | None = None, parse_js: bool = False) -> dict:
+                 evidence_dir: Path | None = None, parse_js: bool = False,
+                 upstream_paths: dict[str, Path] | None = None) -> dict:
     """Read-only source dossier. No arbitrary target code or target test execution."""
     repo = Path(repo).resolve(strict=True)
     provenance = snapshot(repo, revision)
@@ -176,13 +187,31 @@ def run_portable(repo: Path, revision: str, profile: Path, *,
                 or parsed.get("syntaxErrors")):
             _reject("invalid bounded JS source parser output")
         js_candidates = parsed
-    transfer = [{
+    upstream_paths = upstream_paths or {}
+    if any(name not in {x["source_repo"] for x in doc["method_links"]} for name in upstream_paths):
+        _reject("unbound upstream checkout")
+    transfer = []
+    for link in doc["method_links"]:
+        status = "FOREIGN_GIT_SOURCE_UNVERIFIED"
+        if link["source_repo"] in upstream_paths:
+            upstream = Path(upstream_paths[link["source_repo"]]).resolve(strict=True)
+            if not upstream.is_dir():
+                _reject("missing upstream Git checkout")
+            try:
+                observed_type = git(upstream, "cat-file", "-t", link["source_commit"],
+                                    max_output=128).decode().strip()
+            except (ValueError, OSError):
+                _reject("upstream source commit not read back")
+            if observed_type != "commit":
+                _reject("upstream source is not original commit object")
+            status = "FOREIGN_COMMIT_READ_BACK_METHOD_ADOPTION_UNATTESTED"
+        transfer.append({
         "id": link["id"], "kind": link["kind"],
         "source_repo": link["source_repo"], "source_commit": link["source_commit"],
         "target_owner": link["target_owner"], "target_commit": commit,
         "source_reference": link["source_reference"],
-        "state": "FOREIGN_GIT_SOURCE_UNVERIFIED"
-    } for link in doc["method_links"]]
+        "state": status
+    })
     result = {
         "schema": SCHEMA, "commit": commit, "tree": git(repo, "rev-parse", commit + "^{tree}").decode().strip(),
         "target_repo": doc["target_repo"],
@@ -235,11 +264,13 @@ def render_portable_html(result: dict) -> str:
 
 def verify_portable(repo: Path, receipt: dict, profile: Path, *,
                     evidence_dir: Path | None = None,
-                    html_page: str | None = None, parse_js: bool = False) -> bool:
+                    html_page: str | None = None, parse_js: bool = False,
+                    upstream_paths: dict[str, Path] | None = None) -> bool:
     if not isinstance(receipt, dict) or receipt.get("schema") != SCHEMA:
         _reject("wrong report schema")
     fresh = run_portable(repo, receipt.get("commit", ""), profile,
-                         evidence_dir=evidence_dir, parse_js=parse_js)
+                         evidence_dir=evidence_dir, parse_js=parse_js,
+                         upstream_paths=upstream_paths)
     if fresh != receipt:
         _reject("Git/source/profile/receipt replay mismatch")
     if html_page is not None and render_portable_html(fresh) != html_page:
