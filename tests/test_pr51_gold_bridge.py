@@ -42,7 +42,7 @@ class PR51NativeGoldBridge(unittest.TestCase):
             git(repo, "config", "user.name", "Gold fixture")
             git(repo, "config", "user.email", "gold@example.invalid")
             source = repo / entry
-            source.parent.mkdir(parents=True)
+            source.parent.mkdir(parents=True, exist_ok=True)
             source.write_text("raise RuntimeError('DO_NOT_EXECUTE')\n" if idx == 0
                               else "throw new Error('DO_NOT_EXECUTE');\n")
             for name in ("source", "browser"):
