@@ -596,6 +596,7 @@
       "src/cora/genealogy.py",
       "src/cora/git_snapshot.py",
       "src/cora/gold_assurance.py",
+      "src/cora/gold_bridge.py",
       "src/cora/gold_effects.py",
       "src/cora/gold_mutations.py",
       "src/cora/gold_saturation.py",
@@ -769,6 +770,7 @@
       "tests/test_pr41_final_experimental.py",
       "tests/test_pr46_chat_bundle.py",
       "tests/test_pr50_portable.py",
+      "tests/test_pr51_gold_bridge.py",
       "tests/test_selection.py"
     ],
     "internal_dod": [

@@ -144,6 +144,8 @@ jobs:
           python tools/verify_crossrepo_convergence.py --repo . --output /tmp/cora-pr50/reticulum.json
           python tools/verify_crossrepo_convergence.py --repo . --verify /tmp/cora-pr50/reticulum.json
           python -m unittest discover -s tests -p 'test_pr50_portable.py' -v
+      - name: PR51 Gold claim, oracle, evidence and adversarial replay
+        run: python -m unittest discover -s tests -p 'test_pr51_gold_bridge.py' -v
       - name: PR50 real public Git target source-only replay (Teddy and NILO)
         run: |
           mkdir -p /tmp/cora-pr50/targets
@@ -154,7 +156,7 @@ jobs:
           git clone --quiet https://github.com/Luke883i/lumen.git /tmp/cora-pr50/targets/lumen
           git -C /tmp/cora-pr50/targets/lumen cat-file -e a180956b65f6f1d992a7df1aa2ca06834efecf30^{commit}
           python - <<'PY'
-          import json
+          import json,hashlib,subprocess
           from pathlib import Path
           targets=Path('/tmp/cora-pr50/targets')
           cases=[
@@ -164,9 +166,22 @@ jobs:
              'web/core.mjs','Luke883i/cora','cbae1fae8db92d44b6ed0d91c4d4d697e7f65585','https://github.com/Luke883i/cora/pull/46')
           ]
           for name,r,sha,path,src,source_sha,url in cases:
-            doc={'schema':'cora-portable-target/1','target_repo':r,'revision':sha,
+            # Source-only pilot: the real target owns its original test source.
+            # The test is NOT executed here: both claims correctly remain open.
+            oracle='tests/cora-adoption.test.mjs' if name=='teddy' else 'tests/delivery.test.mjs'
+            digest=hashlib.sha256(subprocess.check_output(
+              ['git','-C',str(targets/name),'show',sha+':'+oracle])).hexdigest()
+            def claim(cid,scope,dependencies):
+              return {'id':cid,'claim':('Original native test source readback '
+                if scope=='SOURCE' else 'Independent behavior and human acceptance required'),
+                'scope':scope,'owner_id':'original-owner','source_path':path,
+                'oracle_id':'original-native-test','oracle_path':oracle,
+                'oracle_sha256':digest,'witness_ids':[],'depends_on':dependencies}
+            doc={'schema':'cora-portable-target/2','target_repo':r,'revision':sha,
               'owners':[{'id':'original-owner','path':path}],
-              'witnesses':[],
+              'witnesses':[],'goal':'C_EXTERNAL',
+              'claims':[claim('C_SOURCE','SOURCE',[]),
+                        claim('C_EXTERNAL','EXTERNAL',['C_SOURCE'])],
               'method_links':[{'id':'transfer-candidate','kind':'METHOD_TRANSFER',
                 'source_repo':src,'source_commit':source_sha,
                 'target_owner':'original-owner','target_commit':sha,'source_reference':url}]}
@@ -204,6 +219,13 @@ jobs:
             assert r['authorization']=='NONE'
             assert r['js_import_graph']['scope']=='PARSED_ESM_ONLY_DYNAMIC_AND_RUNTIME_UNKNOWN'
             assert r['method_links'][0]['state']=='FOREIGN_COMMIT_READ_BACK_METHOD_ADOPTION_UNATTESTED'
+            assert r['gold']['schema']=='cora-portable-gold-bridge/1'
+            assert r['gold']['source_oracle_bytes_replayed']==2
+            assert r['gold']['native_witnesses_bound']==0
+            assert r['gold']['goal_status']=='BLOCKED_INDEPENDENT_ORACLE_EXECUTION_AND_REVIEW'
+            assert r['gold']['claims'][0]['status']=='BLOCKED_NO_NATIVE_WITNESS'
+            assert r['gold']['claims'][1]['status']=='BLOCKED_EXTERNAL'
+            assert r['gold']['authorization']=='NONE'
           PY
       - name: Preserve local source evidence without claiming independent attestation
         if: always()
