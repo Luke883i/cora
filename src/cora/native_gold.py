@@ -228,3 +228,88 @@ def replay_native(repo: Path, evidence_dir: Path,
         "issuer_authenticated": False,
         "independent_oracle": "BLOCKED_EXTERNAL", "authorization": "NONE",
     }
+
+
+# These read ONLY original test/workflow source, not the visual or remote target.
+CONTROLS = {
+    "Luke883i/lumen": ("browser/tests/role-audit.spec.mjs",
+                      "VISUAL_BROWSER_NOT_EXECUTED_BY_CORA"),
+    "Luke883i/NILO": (".github/workflows/render-live.yml",
+                     "REMOTE_SKIP_REPORTED_NOT_AUTHENTICATED"),
+}
+
+
+def source_only_control(repo: Path, target_repo: str, commit: str,
+                        reported_outcome: str) -> dict:
+    """Prove that an original source contract exists, not that it ran."""
+    if target_repo not in CONTROLS:
+        _reject("source-only control not allowlisted")
+    allowed = ("NOT_RUN_REPORTED_UNATTESTED" if target_repo == "Luke883i/lumen"
+               else "SKIPPED_REPORTED_UNATTESTED")
+    if reported_outcome != allowed:
+        _reject("source-only control cannot be promoted by caller outcome")
+    path, state = CONTROLS[target_repo]
+    root = Path(repo).resolve(strict=True)
+    sha = _git_source(root, commit, path)
+    source = git(root, "show", commit + ":" + path, max_output=1024 * 1024).decode(
+        "utf-8", "replace")
+    if target_repo == "Luke883i/lumen" and not (
+            "screenshot" in source and "page" in source):
+        _reject("visual contract source not present")
+    if target_repo == "Luke883i/NILO" and not (
+            "NILO_RENDER_URL" in source and "workflow_dispatch" in source
+            and "if:" in source):
+        _reject("remote gate source not present")
+    result = {
+        "schema": "cora-native-gold-source-control/1",
+        "target_repo": target_repo, "commit": commit,
+        "source_path": path, "source_sha256": sha,
+        "reported_outcome": reported_outcome,
+        "state": state,
+        "runtime_observed": False, "independent_issuer": False,
+        "external_proof": "BLOCKED_EXTERNAL", "authorization": "NONE"
+    }
+    result["digest"] = domain_hash("CORA:native-gold-control:1", result)
+    return result
+
+
+def compose_native_pilots(replayed: list[dict], controls: list[dict]) -> dict:
+    """A read-only projection of four separate original owner receipts."""
+    if not isinstance(replayed, list) or len(replayed) != 2:
+        _reject("two native product pilots required")
+    if {x.get("target_repo") for x in replayed} != set(PILOTS):
+        _reject("native target set/owner mismatch")
+    if not isinstance(controls, list) or len(controls) != 2:
+        _reject("two distinct external controls required")
+    if {x.get("target_repo") for x in controls} != set(CONTROLS):
+        _reject("visual/remote control set mismatch")
+    if any(x.get("authorization") != "NONE" or
+           x.get("issuer_authenticated") is not False or
+           x.get("independent_oracle") != "BLOCKED_EXTERNAL" or
+           x.get("report_status") != "LOCAL_RUNNER_PASS_REPORTED_UNAUTHENTICATED"
+           for x in replayed):
+        _reject("native failure or unsupported promotion in pilot corpus")
+    for x in controls:
+        digest = x.get("digest")
+        if (x.get("authorization") != "NONE"
+                or x.get("runtime_observed") is not False
+                or x.get("external_proof") != "BLOCKED_EXTERNAL"
+                or not isinstance(digest, str)
+                or domain_hash("CORA:native-gold-control:1",
+                               {k:v for k,v in x.items() if k != "digest"}) != digest):
+            _reject("control source integrity or authority invalid")
+    result = {
+        "schema": "cora-native-gold-pilots/1",
+        "pilots": sorted(replayed, key=lambda x: x["target_repo"]),
+        "controls": sorted(controls, key=lambda x: x["target_repo"]),
+        "native_exit_zero_reported": 2,
+        "independent_runtime": "BLOCKED_EXTERNAL",
+        "lumen_browser": "NOT_RUN",
+        "nilo_render_remote": "SKIPPED_REPORTED_UNATTESTED",
+        "crossrepo_aggregation": "SOURCE_AND_LOCAL_RECEIPT_REPLAY_NOT_ONE_PRODUCT_AUTHORITY",
+        "human_review": "BLOCKED_EXTERNAL",
+        "efficiency_baseline": "NOT_MEASURED",
+        "release_authorization": "NONE"
+    }
+    result["digest"] = domain_hash("CORA:native-gold-pilots:1", result)
+    return result
