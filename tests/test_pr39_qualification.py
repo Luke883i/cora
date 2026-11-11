@@ -215,6 +215,57 @@ class IndependentQualificationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,"commit"):
             evaluate_study_packet(packet,"0"*40)
 
+
+    def test_pr56_eight_person_crossover_is_numerical_not_independent_proof(self):
+        from cora.independent_qualification import evaluate_paired_work
+        users=[]
+        for i in range(8):
+            arms=[]
+            sequence="baseline-cora" if i % 2 == 0 else "cora-baseline"
+            for arm in sequence.split("-"):
+                arms.append({
+                    "arm":arm, "setup_minutes":2,
+                    "execution_minutes":4 if arm=="baseline" else 3,
+                    "review_minutes":2 if arm=="baseline" else 1,
+                    "task_completed":True, "critical_false_passes":0})
+            users.append({
+                "participant_id":f"synthetic_{i}",
+                "persona":("first_time_developer" if i<4 else
+                           "independent_assurance_reviewer"),
+                "repo_id":("teddy" if i%2 == 0 else "ictc"),
+                "sequence":sequence,"arms":arms})
+        data={"schema":"cora-pr56-paired-work/1","subject_commit":self.sha,
+              "protocol":"CROSSOVER_AB_BA_EIGHT_TWO_REPOSITORIES",
+              "participants":users}
+        measured=evaluate_paired_work(data,self.sha)
+        self.assertEqual(measured["participant_count_supplied"],8)
+        self.assertLess(measured["reported_cora_to_baseline_cost_ratio"],1)
+        self.assertEqual(measured["numerical_criterion"],"MET_IN_SUBMITTED_DATA")
+        self.assertFalse(measured["causal_superiority_proven"])
+        self.assertFalse(measured["subject_identity_authenticated"])
+        self.assertFalse(measured["independent_observer_authenticated"])
+        self.assertEqual(measured["product_status"],"BLOCKED_EXTERNAL")
+        mutations=(
+            lambda d:d["participants"].pop(),
+            lambda d:d["participants"][0]["arms"].pop(),
+            lambda d:d["participants"][0]["arms"][0].update(setup_minutes=-3),
+            lambda d:d["participants"][0].update(repo_id="nonexistent"),
+            lambda d:d["participants"][0].update(sequence="cora-baseline"),
+            lambda d:d.update(subject_commit="0"*40),
+            lambda d:d["participants"][1].update(participant_id="synthetic_0"),
+        )
+        for mutate in mutations:
+            bad=copy.deepcopy(data)
+            mutate(bad)
+            with self.subTest(mutant=mutate.__code__.co_firstlineno):
+                with self.assertRaises(ValueError):
+                    evaluate_paired_work(bad,self.sha)
+        low=copy.deepcopy(data)
+        low["participants"][0]["arms"][1]["critical_false_passes"]=1
+        self.assertEqual(evaluate_paired_work(low,self.sha)["numerical_criterion"],
+                         "NOT_MET")
+        self.assertFalse(evaluate_paired_work(low,self.sha)["causal_superiority_proven"])
+
     def test_07_readonly_github_host_probe_denies_403_and_unverified_success(self):
         host=module_from_tool("governance_readback")
         self.assertEqual(host.probe("Luke883i/cora","main")["observation"],
