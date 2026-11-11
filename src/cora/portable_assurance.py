@@ -224,8 +224,10 @@ def run_portable(repo: Path, revision: str, profile: Path, *,
         "owners": doc["owners"], "source_process": suite,
         "evidence": evidence, "method_links": transfer,
         "js_import_graph": js_candidates,
-        "source_status": "DEBT_BLOCKED" if suite["status"] == "DEBT_BLOCKED"
-                         else "PASS_SCOPED_GIT_SOURCE_ONLY",
+        "source_status": "DEBT_BLOCKED" if (
+            suite["status"] == "DEBT_BLOCKED" or
+            (isinstance(js_candidates, dict) and js_candidates["syntaxErrors"])
+        ) else "PASS_SCOPED_GIT_SOURCE_ONLY",
         "behavior_status": "BLOCKED_EXTERNAL",
         "crossrepo_runtime_status": "BLOCKED_EXTERNAL",
         "governed_status": "BLOCKED_EXTERNAL",

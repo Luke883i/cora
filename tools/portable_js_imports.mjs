@@ -38,5 +38,7 @@ try{
   }else if(action==='--output'){writeFileSync(file,JSON.stringify(r,null,2)+'\n');}
   else if(action)throw Error('unexpected option');
   process.stdout.write(JSON.stringify(r)+'\n');
-  if(r.syntaxErrors.length)process.exitCode=2;
+  // Preserve a replayable partial dossier; the Python caller marks it
+  // DEBT_BLOCKED, never a complete source analysis or runtime PASS.
+  // Refuse only fatal parser/process errors above.
 }catch(e){process.stderr.write('CORA_JS_BLOCKED: '+String(e.message).slice(0,240)+'\n');process.exitCode=2;}

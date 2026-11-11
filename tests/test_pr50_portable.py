@@ -126,8 +126,11 @@ class PortableCrossRepo(unittest.TestCase):
         git(repo, "commit", "-qm", "syntax-negative")
         self.repos[0] = (repo, git(repo, "rev-parse", "HEAD"), "web/app.mjs")
         self.write(self.contract())
-        with self.assertRaisesRegex(ValueError, "JS parser failed"):
-            run_portable(repo, "HEAD", self.profile, parse_js=True)
+        result = run_portable(repo, "HEAD", self.profile, parse_js=True)
+        self.assertEqual(result["source_status"], "DEBT_BLOCKED")
+        self.assertEqual(len(result["js_import_graph"]["syntaxErrors"]), 1)
+        self.assertTrue(verify_portable(repo, result, self.profile, parse_js=True))
+        self.assertEqual(result["authorization"], "NONE")
 
     def test_tampered_receipt_and_html_rejected(self):
         result = self.run_it(evidence=True)
@@ -216,8 +219,10 @@ class PortableCrossRepo(unittest.TestCase):
         git(repo, "commit", "-qm", "new source revision")
         with self.assertRaisesRegex(ValueError, "stale source revision"):
             run_portable(repo, "HEAD", self.profile)
-        with self.assertRaises(ValueError):
-            verify_portable(repo, result, self.profile)
+        # Historical immutable receipts MUST replay for their *old* commit;
+        # they must not be promoted to observations about the new HEAD.
+        self.assertTrue(verify_portable(repo, result, self.profile))
+        self.assertNotEqual(result["commit"], git(repo, "rev-parse", "HEAD"))
 
     def test_cli_one_run_transport(self):
         self.write(self.contract())
