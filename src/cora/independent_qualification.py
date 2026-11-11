@@ -204,6 +204,73 @@ def verify_qualification(repo: Path, receipt: dict) -> bool:
 
 
 
+
+def project_assurance_levels(qualification: dict, tests: dict) -> dict:
+    """L1/L2/L3 is a display projection, never a new signed receipt.
+
+    The original PR39 JSON contract remains unchanged. Source paths do not
+    establish runtime; a local reported test is not target acceptance; neither
+    grants independent reviewer authority or release consent.
+    """
+    if (not isinstance(qualification, dict)
+            or qualification.get("schema") != SCHEMA
+            or qualification.get("product_status") != "BLOCKED_EXTERNAL"
+            or qualification.get("authorization") != "NONE"
+            or qualification.get("release_authorized") is not False
+            or qualification.get("external_gates_unclosed") != 4
+            or qualification.get("source_status") not in (
+                "SOURCE_WITNESSES_PRESENT_NOT_EXECUTED",
+                "DEBT_BLOCKED_SOURCE_WITNESSES_MISSING")
+            or not isinstance(qualification.get("gates"), list)
+            or len(qualification["gates"]) != 4
+            or {g.get("family") for g in qualification["gates"]
+                if isinstance(g, dict)} != set(FAMILIES)
+            or any(g.get("state") != "BLOCKED_EXTERNAL" for g in
+                   qualification["gates"] if isinstance(g, dict))):
+        raise ValueError("external qualification is not a technical PASS")
+    if (not isinstance(tests, dict)
+            or tests.get("authority") != "NONE"
+            or tests.get("state") not in ("NOT_RUN", "RUN_REPORTED_UNATTESTED", "FAIL")
+            or tests.get("proof_scope") not in (
+                "NO_RUNTIME_OBSERVATION", "LOCAL_RUNTIME_OBSERVATION_UNATTESTED")):
+        raise ValueError("missing or falsely promoted local test evidence")
+    state = tests["state"]
+    if (state == "NOT_RUN" and (
+            tests["proof_scope"] != "NO_RUNTIME_OBSERVATION"
+            or tests.get("log_sha256") is not None
+            or tests.get("returncode") is not None)):
+        raise ValueError("not-run observations cannot carry test receipts")
+    if state != "NOT_RUN" and (
+            tests["proof_scope"] != "LOCAL_RUNTIME_OBSERVATION_UNATTESTED"
+            or not isinstance(tests.get("log_sha256"), str)
+            or not re.fullmatch(r"[0-9a-f]{64}", tests["log_sha256"])
+            or type(tests.get("returncode")) is not int
+            or (tests["returncode"] == 0) != (state == "RUN_REPORTED_UNATTESTED")):
+        raise ValueError("local test claim lacks its bounded original receipt")
+    return {
+        "schema": "cora-assurance-level-projection/1",
+        "source": "EXISTING_ONE_RUN_TESTS_AND_PR39_QUALIFICATION_RECEIPT",
+        "receipt_mutated": False,
+        "L1_engineering": {
+            "source": qualification["source_status"],
+            "local_tests": state,
+            "local_test_log_sha256": tests.get("log_sha256"),
+            "scope": "SOURCE_WITNESS_AND_REPORTED_LOCAL_EXECUTION_ONLY",
+        },
+        "L2_experimental": {
+            "state": "NOT_ASSESSED_BY_THIS_QUALIFICATION_RECEIPT",
+            "eligibility": "EXPERIMENTAL_USE_WITH_AUTHORIZED_TARGET_AND_ORACLE",
+            "scope": "NO_CROSS_TARGET_ACCEPTANCE_FROM_SOURCE_OR_LOCAL_TESTS",
+        },
+        "L3_external": {
+            "state": "BLOCKED_EXTERNAL",
+            "applicability": "OPTIONAL_FOR_EXPERIMENTAL_USE",
+            "required_for": "INDEPENDENTLY_GOVERNED_ACCEPTANCE_OR_RELEASE",
+            "authority": "NONE",
+        },
+    }
+
+
 def evaluate_paired_work(packet: dict, commit: str) -> dict:
     """PR56 blinded crossover arithmetic; never authentication of real subjects.
 

@@ -5,6 +5,7 @@ import hashlib
 import html
 import json
 from urllib.parse import quote
+from .independent_qualification import project_assurance_levels
 
 SCHEMA = "cora-integrated-one-run/2"
 SCRIPT = r"""(function(){
@@ -105,7 +106,7 @@ def render_integrated_html(receipt: dict) -> str:
     if "genealogy" in receipt:
         links.insert(3, ("history", "PR / commit genealogy"))
     if "qualification" in receipt:
-        links.insert(4, ("qualification", "Independent qualification"))
+        links.insert(4, ("qualification", "Assurance levels L1 / L2 / L3"))
     head = [
         "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\">",
         "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">",
@@ -358,13 +359,24 @@ def render_integrated_html(receipt: dict) -> str:
                 or qualification.get("authorization") != "NONE"
                 or qualification.get("external_gates_unclosed") != 4):
             raise ValueError("unsupported independent product claim in atlas")
+        layers = project_assurance_levels(qualification, receipt["tests"])
         head.append('<section class="panel" id="qualification">'
-                    '<h2>Independent qualification — four mandatory gates</h2>'
-                    '<p class="note-trust"><strong>BLOCKED_EXTERNAL.</strong> '
-                    'Source witness paths and synthetic Git fixtures do not attest '
-                    'maintained-target behavior, real user comprehension, runtime '
-                    'containment or host-enforced release controls.</p>'
-                    '<div class="tiles">')
+                    '<h2>Assurance levels — separate evidence, experiments and external acceptance</h2>'
+                    '<p><strong>L1 engineering evidence:</strong> '
+                    + _h(layers["L1_engineering"]["source"]) +
+                    ' · local test: ' + _h(layers["L1_engineering"]["local_tests"]) +
+                    ' · test log: ' + _h(layers["L1_engineering"]["local_test_log_sha256"] or "NONE") +
+                    '</p><p><strong>L2 experimental product validation:</strong> '
+                    + _h(layers["L2_experimental"]["state"]) +
+                    '. Authorized product experiments remain possible without L3; '
+                    'a Git check or reported local test is not target acceptance.</p>'
+                    '<p class="note-trust"><strong>L3 external assurance: BLOCKED_EXTERNAL.</strong> '
+                    'Optional for experimental use, required for independently governed '
+                    'acceptance or release. No external reviewer, host authority or human '
+                    'study is authenticated by this dossier.</p>'
+                    '<p>Historical PR39 contract: <code>Independent qualification</code> '
+                    '(29-node lineage retained). Its four external gates are not '
+                    'prerequisites for experimental CORA use.</p><div class="tiles">')
         for gate in qualification["gates"]:
             head.append('<article class="tile"><h3>' + _h(gate["family"]) +
                         '</h3><p class="status BLOCKED">' + _h(gate["state"]) +
@@ -380,7 +392,7 @@ def render_integrated_html(receipt: dict) -> str:
                         _h(", ".join(gate["missing_source_paths"]) or "NONE") +
                         '</code></p><p>' + _h(gate["next_action"]) +
                         '</p></details></article>')
-        head.append('</div><p>External acceptance requires separately '
+        head.append('</div><p>Only L3 external acceptance requires separately '
                     'operated behavioral tests, observed usability sessions, '
                     'host isolation attestation and host-authorized review. '
                     'Nothing in this Atlas grants permission to release.</p></section>')
