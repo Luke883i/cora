@@ -25,7 +25,7 @@ PILOTS = {
     "Luke883i/teddy": (
         "tests/cora-adoption.test.mjs",
         ("node", "--no-warnings", "--experimental-vm-modules",
-         "--test", "tests/cora-adoption.test.mjs"), None
+         "--test-reporter=tap", "--test", "tests/cora-adoption.test.mjs"), None
     ),
     "Luke883i/ictc": (
         "tests/verification/e2e-cross-process-receipts-check.mjs",
