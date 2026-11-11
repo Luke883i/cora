@@ -319,7 +319,7 @@ a product hypothesis, not an established efficiency or usability result.
 
 The canonical machine-readable reticulum is
 [\`crossrepo-convergence-dod.json\`](../.cora/contracts/dod/crossrepo-convergence-dod.json):
-21 typed local obligations, five intermediate AND cuts and two globals.
+18 typed local obligations, five intermediate AND cuts and two globals.
 \`G_SOURCE_CANDIDATE = I_S0 AND I_S1 AND I_S2 AND I_S3\`;
 \`G_GOVERNED_PORTABILITY = G_SOURCE_CANDIDATE AND I_S4\`.
 The \`I_S2\` and \`I_S3\` cuts include external obligations, so all-source CI

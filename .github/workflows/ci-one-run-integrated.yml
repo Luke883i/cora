@@ -135,6 +135,12 @@ jobs:
           PY
       - name: PR46 hostile bundle negative regression
         run: python -m unittest discover -s tests -p 'test_pr46_chat_bundle.py' -v
+      - name: PR50 portable reticular source contract and real negative target fixtures
+        run: |
+          mkdir -p /tmp/cora-pr50
+          python tools/verify_crossrepo_convergence.py --repo . --output /tmp/cora-pr50/reticulum.json
+          python tools/verify_crossrepo_convergence.py --repo . --verify /tmp/cora-pr50/reticulum.json
+          python -m unittest discover -s tests -p 'test_pr50_portable.py' -v
       - name: Preserve local source evidence without claiming independent attestation
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
