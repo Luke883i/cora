@@ -58,6 +58,109 @@ COMMANDS = (
 )
 
 
+
+def audit_product_positioning(root: Path, readme: str) -> list[str]:
+    """Source-derived CTO disclosure gate, NOT enterprise/user/runtime certification.
+
+    Uses independent package metadata, product ontology, original native allowlist,
+    release-candidate CI, security/release policy and the canonical capability
+    inventory. Text evidence is explicitly untrusted for external authority.
+    """
+    errors: list[str] = []
+    marker = "**CTO evaluation snapshot"
+    if readme.count(marker) != 1 or "## What works today" not in readme:
+        return ["positioning-frontdoor-missing"]
+    start = readme.index(marker)
+    end = readme.find("**71 declared CLI commands**", start)
+    if end < start:
+        return ["positioning-frontdoor-not-before-capabilities"]
+    panel = readme[start:end]
+    required = {
+        "category": ("**Who / what?**", "CTOs", "reviewers", "AI coding-agent operators"),
+        "method-engine": ("**CORA-METHOD**", "**CORA-ENGINE**", "third-party agents",
+                          "not approval"),
+        "unit": ("bounded software change", "falsifiable DoD", "unresolved obligations"),
+        "target": ("Git-bound source inspection", "partial Python AST",
+                   "static JavaScript ESM", "**Teddy Node**", "**ICTC HTTP/SQLite**"),
+        "packaging": ("**MIT**", "**Python 3.11+**", "cora-audit 1.0.0a5",
+                      "no declared mandatory Python runtime dependencies"),
+        "sbom": ("**SBOM (SPDX/CycloneDX): NOT_GENERATED_BY_CI**",),
+        "sca": ("**SCA/CVE: NOT_ATTESTED**",),
+        "signing": ("**artifact signing / SLSA provenance: NOT_ATTESTED**",),
+        "governance": ("**Independent reviewer, enforced branch rules, release: BLOCKED_EXTERNAL**",
+                       "no production security SLA"),
+        "safety": ("not an enterprise-readiness certificate", "Execution needs authorization"),
+        "routes": ("[Security](SECURITY.md)", "[Release](docs/RELEASE.md)"),
+    }
+    for label, phrases in required.items():
+        if any(phrase not in panel for phrase in phrases):
+            errors.append("positioning-missing:" + label)
+    if re.search(r"\b(?:enterprise[- ]ready|SBOM generated|SCA passed|release approved|"
+                 r"independently certified|SLSA certified)\b", panel, re.I):
+        errors.append("positioning-unearned-authority")
+    try:
+        import tomllib
+        package = tomllib.loads((root / "pyproject.toml").read_text("utf-8"))["project"]
+        ontology = json.loads((root / "cora.ontology.json").read_text("utf-8"))
+        catalog = json.loads((root / ".cora/assurance/capability-atlas.json").read_text("utf-8"))
+        cli = (root / "src/cora/cli.py").read_text("utf-8")
+        native = ast.parse((root / "src/cora/native_gold.py").read_text("utf-8"))
+        security = (root / "SECURITY.md").read_text("utf-8")
+        release = (root / "docs/RELEASE.md").read_text("utf-8")
+        architecture = (root / "docs/ARCHITECTURE.md").read_text("utf-8")
+        index = (root / "docs/INDEX.md").read_text("utf-8")
+        candidate = (root / ".github/workflows/ci-release-candidate.yml").read_text("utf-8")
+        licence = (root / "LICENSE").read_text("utf-8")
+        if (package.get("name") != "cora-audit" or package.get("version") != "1.0.0a5"
+                or package.get("requires-python") != ">=3.11" or
+                package.get("license") != "MIT" or package.get("dependencies") != [] or
+                package.get("description") !=
+                "Agent-agnostic engineering assurance for Git-based software changes" or
+                not licence.startswith("MIT License")):
+            errors.append("positioning-package-license-drift")
+        if (ontology.get("schema") != "cora-ontology/1"
+                or {p["id"] for p in ontology["products"]} != {"cora"}
+                or {p["id"] for p in ontology["software"]}
+                   != {"cora-engine", "cora-release-verification"}):
+            errors.append("positioning-product-software-ontology-drift")
+        if (len(catalog.get("families", [])) != 8
+                or len(catalog.get("commands", [])) != 71
+                or "eight declared CLI families" not in index):
+            errors.append("positioning-capability-inventory-drift")
+        pilots = [n.value for n in native.body
+                  if isinstance(n, ast.Assign) and any(
+                      isinstance(t, ast.Name) and t.id == "PILOTS" for t in n.targets)]
+        if len(pilots) != 1 or set(ast.literal_eval(pilots[0])) != {
+                "Luke883i/teddy", "Luke883i/ictc"}:
+            errors.append("positioning-native-runtime-allowlist-drift")
+        if not all(token in cli for token in (
+                "process-run", "verify-process", "--portable-profile",
+                "--portable-native-probe")):
+            errors.append("positioning-cli-boundary-drift")
+        if (not all(token in candidate for token in (
+                "tools/build_candidate.py", "tools/release_verify.py",
+                "tools/external_validate.py", "sha256sum", "SHA256SUMS"))
+                or re.search(r"\b(?:cyclonedx|syft|sbom-tool|spdx-tools)\b",
+                             candidate, re.I)):
+            errors.append("positioning-build-sbom-truth-drift")
+        if (not all(token in release for token in (
+                "Post-PR52 CTO procurement", "NOT_GENERATED_BY_CI",
+                "SLSA/in-toto", "BLOCKED_EXTERNAL", "not a self-issued"))
+                or not all(token in security for token in (
+                    "Supply-chain and enterprise evaluation disclosure",
+                    "SPDX/CycloneDX SBOM", "no supported production release",
+                    "NOT_ATTESTED"))):
+            errors.append("positioning-security-release-truth-drift")
+        if (not all(token in architecture for token in (
+                "Product category, target and evidence boundaries",
+                "CORA-METHOD", "CORA-ENGINE", "not an independent approval authority"))
+                or "[README](../README.md)" not in index):
+            errors.append("positioning-architecture-navigation-drift")
+    except (OSError, ValueError, KeyError, TypeError, SyntaxError) as exc:
+        errors.append("positioning-source-unreadable:" + type(exc).__name__)
+    return errors
+
+
 def audit_contract(root: Path, *, readme_override: str | None = None) -> list[str]:
     root = root.resolve()
     errors: list[str] = []
@@ -68,6 +171,7 @@ def audit_contract(root: Path, *, readme_override: str | None = None) -> list[st
         return errors
     readme = readme_override if readme_override is not None else (root / 'README.md').read_text('utf-8')
     lines = readme.splitlines()
+    errors.extend(audit_product_positioning(root, readme))
     front = '\n'.join(lines[:38]).lower()
     for token in ('product', 'software', 'repository', 'not', 'python'):
         if token not in front:
@@ -160,7 +264,15 @@ def main(argv=None) -> int:
     a = p.parse_args(argv)
     errors = audit_contract(a.repo)
     print(json.dumps({'schema': 'cora-repository-contract/1', 'status': 'PASS_SCOPED' if not errors else 'FAIL',
-                      'checks': 'readme-first-read, cli, paths, ontology, package, regressions', 'errors': errors},
+                      'checks': 'readme-first-read, cli, paths, ontology, package, regressions, cto-positioning',
+                      'positioning': {
+                          'verdict': 'SOURCE_CROSSCHECK_ONLY',
+                          'sbom': 'NOT_GENERATED_BY_CI',
+                          'independent_assurance': 'BLOCKED_EXTERNAL',
+                          'release_authorization': 'NONE',
+                          'enterprise_ready': False,
+                      },
+                      'errors': errors},
                      indent=2, sort_keys=True))
     return 0 if not errors else 2
 

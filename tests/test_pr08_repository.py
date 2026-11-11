@@ -33,6 +33,82 @@ class RepositoryContract(unittest.TestCase):
         lines=changed.splitlines()
         changed='\n'.join(s.replace('product', 'capability').replace('Product', 'Capability') for s in lines[:38] )+'\n'+'\n'.join(lines[38:])
         self.assertIn('first-read-missing:product', audit_contract(ROOT, readme_override=changed))
+
+    def test_cto_positioning_source_contract(self):
+        from verify_repository_contract import audit_product_positioning
+        readme = (ROOT / 'README.md').read_text('utf-8')
+        self.assertEqual(audit_product_positioning(ROOT, readme), [])
+
+    def test_cto_falsification_11_realistic_false_promotions(self):
+        from verify_repository_contract import audit_product_positioning
+        readme = (ROOT / 'README.md').read_text('utf-8')
+        start = readme.index('**CTO evaluation snapshot')
+        end = readme.index('**71 declared CLI commands**', start)
+        prefix, panel, suffix = readme[:start], readme[start:end], readme[end:]
+        hostile = (
+            ('actor', '**Who / what?**', '**Who / what? UNKNOWN**'),
+            ('method', '**CORA-METHOD**', '**AUTONOMOUS-AGENT**'),
+            ('engine', '**CORA-ENGINE**', '**AGENT-WRITER**'),
+            ('oracle', 'falsifiable DoD', 'unqualified judgement'),
+            ('scope', 'partial Python AST', 'complete Python semantics'),
+            ('pilot', '**Teddy Node**', '**Universal Node**'),
+            ('package', 'cora-audit 1.0.0a5', 'cora-audit 2.0.0'),
+            ('sbom', 'NOT_GENERATED_BY_CI', 'GENERATED_AND_CERTIFIED'),
+            ('sca', '**SCA/CVE: NOT_ATTESTED**', '**SCA/CVE: CERTIFIED**'),
+            ('signing', 'SLSA provenance: NOT_ATTESTED', 'SLSA provenance: CERTIFIED'),
+            ('approval', 'release: BLOCKED_EXTERNAL', 'release: APPROVED'),
+        )
+        for label, old, new in hostile:
+            with self.subTest(label=label):
+                self.assertIn(old, panel)
+                mutant = prefix + panel.replace(old, new, 1) + suffix
+                self.assertTrue(audit_product_positioning(ROOT, mutant))
+        cosmetic = prefix + panel.replace(
+            '| Decision question | Current answer |',
+            '| Decision question | Current source-scoped answer |', 1
+        ) + suffix
+        self.assertEqual(audit_product_positioning(ROOT, cosmetic), [])
+
+    def test_cto_cross_source_mutants_fail_closed(self):
+        import shutil
+        from verify_repository_contract import audit_product_positioning
+        paths = (
+            'README.md', 'pyproject.toml', 'cora.ontology.json',
+            '.cora/assurance/capability-atlas.json', 'LICENSE',
+            'src/cora/cli.py', 'src/cora/native_gold.py',
+            'docs/ARCHITECTURE.md', 'docs/INDEX.md', 'docs/RELEASE.md',
+            'SECURITY.md', '.github/workflows/ci-release-candidate.yml',
+        )
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            for rel in paths:
+                dest = root / rel
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(ROOT / rel, dest)
+            readme = (root / 'README.md').read_text('utf-8')
+            self.assertEqual(audit_product_positioning(root, readme), [])
+            cases = (
+                ('package', 'pyproject.toml', 'version = "1.0.0a5"',
+                 'version = "9.9.9"', 'positioning-package-license-drift'),
+                ('pilot', 'src/cora/native_gold.py', '"Luke883i/teddy"',
+                 '"Luke883i/unknown"', 'positioning-native-runtime-allowlist-drift'),
+                ('build', '.github/workflows/ci-release-candidate.yml',
+                 'sha256sum dist/', 'NO_SHA256 dist/', 'positioning-build-sbom-truth-drift'),
+                ('supply-chain', 'docs/RELEASE.md', 'NOT_GENERATED_BY_CI',
+                 'SBOM_CERTIFIED', 'positioning-security-release-truth-drift'),
+                ('navigation', 'docs/ARCHITECTURE.md', 'CORA-METHOD',
+                 'UNKNOWN-METHOD', 'positioning-architecture-navigation-drift'),
+            )
+            for label, rel, before, after, expected in cases:
+                with self.subTest(label=label):
+                    original = (root / rel).read_text('utf-8')
+                    self.assertIn(before, original)
+                    (root / rel).write_text(original.replace(before, after, 1),
+                                            encoding='utf-8')
+                    errors = audit_product_positioning(root, readme)
+                    self.assertIn(expected, errors)
+                    (root / rel).write_text(original, encoding='utf-8')
+
     def test_committed_self_ontology_is_valid(self):
         self.assertTrue(validate_ontology(json.loads((ROOT / 'cora.ontology.json').read_text('utf-8'))))
     def test_all_commands_accounted_for(self):

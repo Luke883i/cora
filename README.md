@@ -19,7 +19,7 @@ Intent → acceptance graph → reversible code slice → adversarial tests
 
 **Recommended use:** inspect an authorized checkout or review one bounded change. **Audience and conditions:** CTOs, developers, reviewers and coding agents; Python 3.11+, Git and authorized execution tools. **Open source license:** [MIT](LICENSE).
 
-**Current status:** experimental `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **merged PR41** and PR46 establish source milestones; the earlier `v1.0.0a4` was a draft. Independent user/host qualification is open.
+**Current status:** experimental `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **merged PR41** and PR46 establish source milestones; the earlier `v1.0.0a4` was a draft. Independent user/host qualification is open. **Category:** agent-agnostic developer tooling / engineering assurance.
 
 ## First five minutes — Quickstart
 
@@ -35,6 +35,17 @@ cora verify-ledger /tmp/cora-ledger.json --repo .
 Then run [One-Run](#one-run--one-command-one-evidence-dossier). This identifies source and replayable assertions; it does not test an arbitrary external product. [Getting started](docs/GETTING_STARTED.md) explains setup, bounded output and failure handling.
 
 ## What works today
+
+**CTO evaluation snapshot — source-scoped, not an enterprise-readiness certificate**
+
+| Decision question | Current answer |
+| --- | --- |
+| **Who / what?** | Developer tooling for CTOs, developers, maintainers, reviewers and AI coding-agent operators. Unit: one bounded software change with a falsifiable DoD and unresolved obligations. |
+| **Method / engine** | **CORA-METHOD** guides third-party agents; **CORA-ENGINE** is the local Python `cora` CLI. The agent implements; CORA records scoped evidence, not approval. |
+| **Targets / runtime** | Git-bound source inspection across languages, partial Python AST and static JavaScript ESM; native runtime pilots only **Teddy Node** and **ICTC HTTP/SQLite**. Browser and remote deployment remain unobserved by PR52. |
+| **Delivery / compatibility** | **MIT**, **Python 3.11+**, `cora-audit 1.0.0a5`, no declared mandatory Python runtime dependencies; wheel/sdist review candidates, not a supported published release. |
+| **Software supply chain** | Candidate build parity and `SHA256SUMS` exist; **SBOM (SPDX/CycloneDX): NOT_GENERATED_BY_CI**; **SCA/CVE: NOT_ATTESTED**; **artifact signing / SLSA provenance: NOT_ATTESTED**. |
+| **Security / procurement gates** | Execution needs authorization and suitable isolation. **Independent reviewer, enforced branch rules, release: BLOCKED_EXTERNAL**; no production security SLA. [Security](SECURITY.md) · [Release](docs/RELEASE.md). |
 
 **71 declared CLI commands** in the [capability atlas](.cora/assurance/capability-atlas.json): a source inventory, **not a claim that 71 product behaviors have been independently executed or certified**. Implemented surfaces include Git/file archaeology, partial static dependencies, typed DoD graphs, bounded debt, modeled fault tests, pre/post-merge reports and portable ChatGPT iteration ZIPs. The [parser-checked CLI reference](docs/CLI_REFERENCE.md) and [complete documentation index](docs/INDEX.md) document source surfaces, not runtime certificates.
 
@@ -92,20 +103,6 @@ A Git SHA identifies source bytes, not runtime or human approval. **A source dig
 ## Final Experimental Baseline — merged PR41
 
 The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) distinguishes **15 SOURCE leaves, 7 EXTERNAL leaves, and 8 aggregate AND gates**. Its **16 realistic fault families** and **2,517 preregistered zero-to-fourway masks** are finite-model cases, **not one million independent source mutations**. **two controlled physical Git repositories** supply bounded counterexamples, not independent target or user acceptance.
-
-## CORA-Score — indicative assurance bands, not a product certification
-
-Two independent **qualitative, ordinal 1–5 assessments** describe how convincingly a repository supports CORA-style **Dev_CORA** (traceable AI-assisted development, acceptance obligations, Git provenance, tests and adversarial counterexamples) and **Bonifica_CORA** (forensics, safe remediation, regression control and post-change readback). **UNRATED** means evidence missing; do not average axes or mistake self-review for independent acceptance.
-
-| Band | Evidence boundary |
-| --- | --- |
-| 1 | No stable ownership or replayable checks |
-| 2 | Some bounded checks, major gaps |
-| 3 | Repeatable source tests, important unverified execution or recovery |
-| 4 | Integrated, scoped, reproducible tests and falsification; independent target acceptance still open |
-| 5 | Independent end-to-end host/user/recovery confirmation with accountable decisions, **not** scientific or legal certification |
-
-**Provisional hypotheses, not CORA CLI measurements:** CORA Dev **4/5**, Bonifica **4/5**; ICTC **4/5**, **4/5**; iKant_EDU **3/5**, **2/5**; LUMEN, Teddy and NILO **4/5**, **2/5**. To publish a *measured* score record assessor, exact SHA, positive/negative oracles, real host outcomes, mutation survivors, open blockers and independent review. False promotions—NOT_RUN to PASS, simulated mutations to physical tests, Git hashes to human authority—must fail. Research-only ROA, the author hub and closed Juriscribe are UNRATED. The rubric is an editorial evaluation convention, **not a new CORA command or release authority**.
 
 ## Documentation by goal
 
