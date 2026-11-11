@@ -1,3 +1,9 @@
+## Unreleased — PR57 assurance-level semantic separation (candidate)
+
+- Clarify CORA L1 reproducible engineering evidence, L2 bounded product experimentation and L3 optional third-party external assurance. External reviewer/user study is not a prerequisite to trying CORA.
+- Preserve the PR39 29-node DoD, `cora-independent-qualification/1` receipts, exact SHA lineage and legacy replay. Existing One-Run JSON keeps its original `tests` and `qualification` fields; the Atlas renders a pure, non-authoritative L1/L2/L3 projection.
+- Falsify forged source/test PASS, target acceptance, external reviewer/host authority and README mispositioning with dedicated regressions in existing CI. No new CLI, schema version, release authority or unobserved user study.
+
 ## Unreleased — PR56 independently falsifiable qualification pilot (candidate)
 
 - Harden PR55 unsigned provenance so exact original Git material bytes, including trailing line endings, are hashed and compared without whitespace normalization.
