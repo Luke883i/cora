@@ -134,15 +134,21 @@ def bridge_gold(repo: Path, commit: str, profile: dict,
     for key in ordered:
         node = index[key]
         rows = node["witnesses"]
-        if not rows:
+        if node["scope"] == "EXTERNAL":
+            # External approval cannot be sourced from caller-authored reports,
+            # even when a reported negative is preserved in the witness rows.
+            status = "BLOCKED_EXTERNAL"
+        elif not rows:
             status = "BLOCKED_NO_NATIVE_WITNESS"
         elif any(w["reported_outcome"] == "FAIL_REPORTED_UNATTESTED" for w in rows):
             status = "COUNTEREVIDENCE_REPORTED_UNATTESTED"
+        elif any(w["reported_outcome"] in (
+                "SKIPPED_REPORTED_UNATTESTED", "NOT_RUN_REPORTED_UNATTESTED")
+                for w in rows):
+            status = "BLOCKED_NATIVE_SKIPPED_OR_NOT_RUN"
         elif any(w["observed"] != "INTEGRITY_VERIFIED_EXECUTION_UNATTESTED"
                  for w in rows):
             status = "BLOCKED_NATIVE_BYTES_NOT_OBSERVED"
-        elif node["scope"] == "EXTERNAL":
-            status = "BLOCKED_EXTERNAL"
         elif any(states[dep] != "SOURCE_LINK_ONLY_UNATTESTED"
                  for dep in node["depends_on"]):
             status = "BLOCKED_PREREQUISITE"
