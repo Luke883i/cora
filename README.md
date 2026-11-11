@@ -58,6 +58,8 @@ cora verify-process /tmp/cora-run.json --repo . --one-run --atlas-html /tmp/cora
 
 The dossier separates `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTERNAL`. **The default does not execute arbitrary target tests**. Run permitted target tests separately and keep commands, versions and observed outcomes. [Portable chat handoff](docs/AGENT_ADOPTION.md#portable-chatgpt-handoff-opt-in) uses `--chat-step` and `--chat-bundle`; its ZIP is neither automatic ChatGPT memory nor an approval.
 
+**Cross-repository opt-in:** for a distinct Git target, use `process-run --one-run --portable-profile /path/to/target.json` (and `verify-process --one-run --portable-profile` for replay). This source-only route never transplants CORA's own DoD; `--portable-parse-js` optionally parses static ESM without executing target modules. [Scope, profile and cross-repository DoD](docs/CONTINUOUS_DEVELOPMENT.md#cross-repository-sourceevidence-convergence-pr50--candidate). No external product approval follows from either path.
+
 ## How CORA works
 
 **1. Specify the outcome.** Turn natural-language intent into actors, boundaries and an **AND-dependency graph** of acceptance conditions. Work **backward** from each required observation: an unknown prerequisite remains open, never averaged away. [Worked application contract](docs/CONTINUOUS_DEVELOPMENT.md#example-contract-and-evidence-ladder--portable-corrective-action-app).
