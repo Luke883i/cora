@@ -364,21 +364,6 @@ jobs:
           test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
           python -m pip install -e .
           python -m unittest discover -s tests -p 'test_pr52_native_gold.py' -v
-      - name: PR52 diagnostic 1 test_actual_node_subprocess_captured_and_gold_one_run_replayed
-        if: always()
-        run: PYTHONPATH=tests python -m unittest test_pr52_native_gold.PR52NativeGold.test_actual_node_subprocess_captured_and_gold_one_run_replayed -v
-      - name: PR52 diagnostic 2 test_native_producer_and_receipt_mutations
-        if: always()
-        run: PYTHONPATH=tests python -m unittest test_pr52_native_gold.PR52NativeGold.test_native_producer_and_receipt_mutations -v
-      - name: PR52 diagnostic 3 test_genuine_native_test_failure_is_not_promoted
-        if: always()
-        run: PYTHONPATH=tests python -m unittest test_pr52_native_gold.PR52NativeGold.test_genuine_native_test_failure_is_not_promoted -v
-      - name: PR52 diagnostic 4 test_ictc_12_write_7_denial_semantic_oracle_fails_closed
-        if: always()
-        run: PYTHONPATH=tests python -m unittest test_pr52_native_gold.PR52NativeGold.test_ictc_12_write_7_denial_semantic_oracle_fails_closed -v
-      - name: PR52 diagnostic 5 test_js_exact_relative_graph_missing_and_unknown
-        if: always()
-        run: PYTHONPATH=tests python -m unittest test_pr52_native_gold.PR52NativeGold.test_js_exact_relative_graph_missing_and_unknown -v
       - name: Pin four original public target checkouts, no persisted credentials
         run: |
           mkdir -p /tmp/cora-pr52/targets /tmp/cora-pr52/evidence

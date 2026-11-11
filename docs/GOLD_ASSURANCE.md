@@ -120,7 +120,7 @@ product tests, using the SAME portable One-Run source and Gold projection.
 
 **Pilot 1, Teddy:** actual Node24 TAP tests of original CORA JS graph
 integration on pinned Git commit 05c31e986d36fb4350867d208c1e4efe7e535ece.
-The fixed command is node --no-warnings --experimental-vm-modules --test
+The fixed command is node --no-warnings --experimental-vm-modules --test-reporter=tap --test
 tests/cora-adoption.test.mjs. Parse, dynamic import, physical bad import
 and receipt tampering behaviors are executed by the existing target test.
 
