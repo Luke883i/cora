@@ -46,43 +46,43 @@ and exact Git revision, then expose the bounded proof/debt in the same offline
 One-Run HTML and JSON. This extends Gold R1–R4 source traceability; **it does
 not execute a foreign test, certify an independent issuer, or close S4**.
 
-Use the *existing* \`cora process-run TARGET --one-run --portable-profile
+Use the *existing* `cora process-run TARGET --one-run --portable-profile
 /path/target-v2.json --portable-evidence-dir /outside/target/artifacts --output
-/out/receipt.json --atlas-html /out/atlas.html\`. Omit
-\`--portable-evidence-dir\` to document absent bytes honestly. Replay with
-\`cora verify-process /out/receipt.json --repo TARGET --one-run
+/out/receipt.json --atlas-html /out/atlas.html`. Omit
+`--portable-evidence-dir` to document absent bytes honestly. Replay with
+`cora verify-process /out/receipt.json --repo TARGET --one-run
 --portable-profile /path/target-v2.json --portable-evidence-dir
-/outside/target/artifacts --atlas-html /out/atlas.html\`.
+/outside/target/artifacts --atlas-html /out/atlas.html`.
 The original v1 profiles still work unchanged.
 
-A v2 target-owned profile adds exactly \`schema: cora-portable-target/2\`,
-\`goal\` and \`claims\` to the existing v1 keys. Each claim specifies
-\`id, claim, scope, owner_id, source_path, oracle_id, oracle_path,
-oracle_sha256, witness_ids, depends_on\`; every path/owner/oracle/witness must
+A v2 target-owned profile adds exactly `schema: cora-portable-target/2`,
+`goal` and `claims` to the existing v1 keys. Each claim specifies
+`id, claim, scope, owner_id, source_path, oracle_id, oracle_path,
+oracle_sha256, witness_ids, depends_on`; every path/owner/oracle/witness must
 be rooted in the original Git/profile and each retained witness is consumed
 by exactly one claim. Scopes are SOURCE, BEHAVIOR and EXTERNAL. Native
-witnesses retain PR50 fields including \`reported_outcome\`:
-\`PASS_REPORTED_UNATTESTED\`, \`FAIL_REPORTED_UNATTESTED\`,
-\`SKIPPED_REPORTED_UNATTESTED\`, or \`NOT_RUN_REPORTED_UNATTESTED\`.
+witnesses retain PR50 fields including `reported_outcome`:
+`PASS_REPORTED_UNATTESTED`, `FAIL_REPORTED_UNATTESTED`,
+`SKIPPED_REPORTED_UNATTESTED`, or `NOT_RUN_REPORTED_UNATTESTED`.
 These are caller reports, never independent test verdicts.
 
 **Machine conditions:**
 
 1. **R1 original context:** a tracked regular owner file exists in the exact
-   target commit; \`oracle_path\` is another tracked regular original Git
-   blob, and its SHA-256 matches \`oracle_sha256\`.
+   target commit; `oracle_path` is another tracked regular original Git
+   blob, and its SHA-256 matches `oracle_sha256`.
 2. **R2 falsifier identity:** a noncompensatory, cycle-free and orphan-free
    DAG has a single named goal. An original oracle's *presence* is **not
    execution**; no artificial executed-oracle status is issued.
 3. **R3 bounded native witness:** each profile witness is bound to one
-   claim, its declared \`oracle_id\` and Git revision; provided bytes are
+   claim, its declared `oracle_id` and Git revision; provided bytes are
    hashed and checked outside the target. Counterevidence, skipped tests,
    missing bytes and tampering have separate failure outcomes.
 4. **R4 no authority promotion:** all claim rows carry
-   \`claim_proven: false\`; independent issuer, browser comprehension,
+   `claim_proven: false`; independent issuer, browser comprehension,
    production deployment, reviewer and release still
-   \`BLOCKED_EXTERNAL\`. \`goal_status\` is always
-   \`BLOCKED_INDEPENDENT_ORACLE_EXECUTION_AND_REVIEW\`.
+   `BLOCKED_EXTERNAL`. `goal_status` is always
+   `BLOCKED_INDEPENDENT_ORACLE_EXECUTION_AND_REVIEW`.
 5. **Replay and falsification:** same profile, original Git objects,
    retained witness bytes and optional HTML must reproduce exactly.
    The PR51 native regression executes two distinct Git fixture targets,
