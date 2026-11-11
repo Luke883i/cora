@@ -135,6 +135,9 @@ jobs:
           PY
       - name: PR46 hostile bundle negative regression
         run: python -m unittest discover -s tests -p 'test_pr46_chat_bundle.py' -v
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '24.19.0'
       - name: PR50 portable reticular source contract and real negative target fixtures
         run: |
           mkdir -p /tmp/cora-pr50

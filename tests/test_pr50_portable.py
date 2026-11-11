@@ -97,6 +97,38 @@ class PortableCrossRepo(unittest.TestCase):
                 self.assertEqual(result["js_import_graph"],
                                  "NOT_OBSERVED_NONPYTHON_CONSUMERS_UNKNOWN")
 
+    def test_opt_in_js_static_parser_and_dynamic_unknown(self):
+        repo = self.repos[0][0]
+        (repo / "web" / "app.mjs").write_text(
+            "import { value } from './module.mjs';\n"
+            "throw new Error('NEVER_EXECUTED'); import('./dynamic.mjs');\n",
+            encoding="utf-8")
+        (repo / "web" / "module.mjs").write_text("export const value = 1;\n", encoding="utf-8")
+        git(repo, "add", ".")
+        git(repo, "commit", "-qm", "static import and dangerous top-level trap")
+        self.repos[0] = (repo, git(repo, "rev-parse", "HEAD"), "web/app.mjs")
+        self.write(self.contract())
+        r = run_portable(repo, "HEAD", self.profile, parse_js=True)
+        self.assertEqual(r["js_import_graph"]["scope"],
+                         "PARSED_ESM_ONLY_DYNAMIC_AND_RUNTIME_UNKNOWN")
+        self.assertIn("./module.mjs",
+                      [x["specifier"] for x in r["js_import_graph"]["imports"]])
+        self.assertTrue(r["js_import_graph"]["unknown"])
+        self.assertFalse(r["js_import_graph"]["runtimeObserved"])
+        self.assertTrue(verify_portable(repo, r, self.profile, parse_js=True))
+        with self.assertRaisesRegex(ValueError, "replay mismatch"):
+            verify_portable(repo, r, self.profile, parse_js=False)
+
+    def test_js_syntax_error_is_not_false_green(self):
+        repo = self.repos[0][0]
+        (repo / "web" / "invalid.js").write_text("import {\n", encoding="utf-8")
+        git(repo, "add", ".")
+        git(repo, "commit", "-qm", "syntax-negative")
+        self.repos[0] = (repo, git(repo, "rev-parse", "HEAD"), "web/app.mjs")
+        self.write(self.contract())
+        with self.assertRaisesRegex(ValueError, "JS parser failed"):
+            run_portable(repo, "HEAD", self.profile, parse_js=True)
+
     def test_tampered_receipt_and_html_rejected(self):
         result = self.run_it(evidence=True)
         html = render_portable_html(result)
