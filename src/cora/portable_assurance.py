@@ -187,7 +187,10 @@ def run_portable(repo: Path, revision: str, profile: Path, *,
                 or parsed.get("commit") != commit
                 or parsed.get("authorization") != "NONE"
                 or parsed.get("runtimeObserved") is not False
-                or parsed.get("syntaxErrors")):
+                or not isinstance(parsed.get("syntaxErrors"), list)
+                or not isinstance(parsed.get("imports"), list)
+                or not isinstance(parsed.get("unknown"), list)
+                or parsed.get("scope") != "PARSED_ESM_ONLY_DYNAMIC_AND_RUNTIME_UNKNOWN"):
             _reject("invalid bounded JS source parser output")
         js_candidates = parsed
     upstream_paths = upstream_paths or {}
