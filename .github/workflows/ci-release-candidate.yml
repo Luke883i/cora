@@ -140,6 +140,7 @@ jobs:
           PY
       - name: PR55 independently validate CycloneDX 1.6 JSON schema and negative mutants
         run: |
+          python -m pip install 'cyclonedx-python-lib[json-validation]==11.12.0'
           python - <<'PY'
           import copy, hashlib, importlib.metadata, json
           from pathlib import Path
