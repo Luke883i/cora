@@ -34,6 +34,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_pr38_genealogy.py' -v
       - name: PR39 four-gate DoD, native Git reference, study and 403 host falsifiers
         run: python -m unittest discover -s tests -p 'test_pr39_*.py' -v
+      - name: PR57 L1/L2/L3 presentation cannot promote source, local tests or external assurance
+        run: python -m unittest discover -s tests -p 'test_pr39_qualification.py' -k pr57 -v
       - name: Produce source-only native Git oracle and no-token host blocker on PR
         run: |
           mkdir -p /tmp/cora-pr39

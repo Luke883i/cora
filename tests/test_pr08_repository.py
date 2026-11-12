@@ -69,6 +69,25 @@ class RepositoryContract(unittest.TestCase):
         ) + suffix
         self.assertEqual(audit_product_positioning(ROOT, cosmetic), [])
 
+
+    def test_pr57_assurance_level_false_promotion_is_falsified_at_front_door(self):
+        from verify_repository_contract import audit_product_positioning
+        readme=(ROOT / "README.md").read_text("utf-8")
+        self.assertEqual(audit_product_positioning(ROOT,readme),[])
+        mutations=(
+            ("**L1** = Git/source checks","**L1** = certified product"),
+            ("**L2** = bounded product experiments","**L2** = universal production proof"),
+            ("**L3** = optional external assurance","**L3** = mandatory for any use"),
+            ("L1/L2 may be useful without L3","L1/L2 prohibited without L3"),
+            ("cannot approve a release","automatically approves a release"),
+        )
+        for original,forgery in mutations:
+            with self.subTest(original=original):
+                self.assertIn(original,readme)
+                changed=readme.replace(original,forgery,1)
+                self.assertTrue(any("positioning-missing:assurance-levels" in x
+                                    for x in audit_product_positioning(ROOT,changed)))
+
     def test_cto_cross_source_mutants_fail_closed(self):
         import shutil
         from verify_repository_contract import audit_product_positioning

@@ -90,6 +90,10 @@ def audit_product_positioning(root: Path, readme: str) -> list[str]:
         "governance": ("**Independent reviewer, enforced branch rules, release: BLOCKED_EXTERNAL**",
                        "no production security SLA"),
         "safety": ("not an enterprise-readiness certificate", "Execution needs authorization"),
+        "assurance-levels": ("**L1** = Git/source checks", "**L2** = bounded product experiments",
+                             "**L3** = optional external assurance",
+                             "L1/L2 may be useful without L3",
+                             "cannot approve a release"),
         "routes": ("[Security](SECURITY.md)", "[Release](docs/RELEASE.md)"),
     }
     for label, phrases in required.items():
@@ -154,7 +158,11 @@ def audit_product_positioning(root: Path, readme: str) -> list[str]:
             errors.append("positioning-security-release-truth-drift")
         if (not all(token in architecture for token in (
                 "Product category, target and evidence boundaries",
-                "CORA-METHOD", "CORA-ENGINE", "not an independent approval authority"))
+                "CORA-METHOD", "CORA-ENGINE", "not an independent approval authority",
+                "L1 engineering evidence", "L2 experimental product validation",
+                "L3 optional external assurance"))
+                or not all(token in release for token in (
+                    "L1", "L2", "L3", "optional for experimental use"))
                 or "[README](../README.md)" not in index):
             errors.append("positioning-architecture-navigation-drift")
     except (OSError, ValueError, KeyError, TypeError, SyntaxError) as exc:

@@ -103,6 +103,9 @@ The single canonical CLI and original `process_suite.run_suite` remain owners of
 
 ## PR39 — independent product qualification
 
+**Current interpretation (post-PR56):** the heading and `cora-independent-qualification/1` are **historical contract identities**, not evidence of an independent evaluator. Assurance is separated into **L1 engineering evidence** (source checks and actually reported test execution), **L2 experimental product validation** (bounded target behavior, with a qualified oracle), and **L3 optional external assurance** (third-party evaluation and governed release). L3 is **not a prerequisite to running CORA experimentally**; it is mandatory only for independently governed acceptance. A test run does not automatically establish L2 target acceptance, and L2 does not authenticate L3. Existing JSON schemas and digests are preserved.
+
+
 The versioned [four-gate product DoD](../.cora/contracts/dod/independent-qualification-dod.json) is a noncompensatory sibling of the PR38 history reticulum. It extends the same PR37 One-Run runner, evidence manifest, JSON and offline Atlas. It does not add a second executor or run any target or host process by default. The Git-replayed qualification receipt shows source witness paths and explicit blockers for real maintained targets, human study, runtime host attestation and branch protection. The native-Git oracle is a distinct implementation but is not a distinct human owner; the GitHub host probe is an optional read-only observation but does not authenticate an independent reviewer. External acceptance and release authority are deliberately outside the source code.
 
 ## Alpha5 candidate: portable chat session as an artifact, not a second product

@@ -17,7 +17,7 @@ from cora.evidence import domain_hash
 from cora.git_snapshot import git
 from cora.independent_qualification import (
     CONTRACT, BASE, build_qualification, evaluate_study_packet,
-    verify_contract, verify_qualification)
+    verify_contract, verify_qualification, project_assurance_levels)
 from cora.integrated_run import run_integrated, verify_integrated
 from cora.integrated_html import render_integrated_html
 
@@ -74,6 +74,12 @@ class IndependentQualificationTests(unittest.TestCase):
         page = render_integrated_html(bundle)
         self.assertIn('id="qualification"', page)
         self.assertIn("Independent qualification", page)
+        self.assertIn("L1 engineering evidence", page)
+        self.assertIn("L2 experimental product validation", page)
+        self.assertIn("L3 external assurance: BLOCKED_EXTERNAL", page)
+        self.assertIn("External product acceptance: <strong>BLOCKED_EXTERNAL", page)
+        self.assertNotIn("&middot; Product: <strong>BLOCKED_EXTERNAL", page)
+        self.assertIn("Optional for experimental use", page)
         for family in ("BEHAVIOR", "USABILITY", "ISOLATION", "GOVERNANCE"):
             self.assertIn(family, page)
         self.assertTrue(verify_integrated(ROOT, bundle, html_page=page))
@@ -85,6 +91,59 @@ class IndependentQualificationTests(unittest.TestCase):
             {k: v for k,v in tampered.items() if k != "receipt_digest"})
         with self.assertRaisesRegex(ValueError, "qualification"):
             verify_integrated(ROOT, tampered)
+
+
+    def test_pr57_l1_l2_l3_projection_rejects_twelve_false_promotions(self):
+        tests={"authority":"NONE","state":"NOT_RUN",
+               "proof_scope":"NO_RUNTIME_OBSERVATION",
+               "returncode":None,"log_sha256":None}
+        original=project_assurance_levels(self.report,tests)
+        self.assertEqual(original["L1_engineering"]["source"],
+                         "SOURCE_WITNESSES_PRESENT_NOT_EXECUTED")
+        self.assertEqual(original["L1_engineering"]["local_tests"],"NOT_RUN")
+        self.assertIsNone(original["L1_engineering"]["local_test_log_sha256"])
+        self.assertEqual(original["L2_experimental"]["state"],
+                         "NOT_ASSESSED_BY_THIS_QUALIFICATION_RECEIPT")
+        self.assertEqual(original["L3_external"]["state"],"BLOCKED_EXTERNAL")
+        self.assertEqual(original["L3_external"]["applicability"],
+                         "OPTIONAL_FOR_EXPERIMENTAL_USE")
+        self.assertFalse(original["receipt_mutated"])
+        local=dict(tests, state="RUN_REPORTED_UNATTESTED",
+                   proof_scope="LOCAL_RUNTIME_OBSERVATION_UNATTESTED",
+                   returncode=0, log_sha256="a"*64)
+        observed=project_assurance_levels(self.report, local)
+        self.assertEqual(observed["L1_engineering"]["local_tests"],"RUN_REPORTED_UNATTESTED")
+        self.assertEqual(observed["L2_experimental"]["state"],
+                         original["L2_experimental"]["state"])
+        self.assertEqual(observed["L3_external"],original["L3_external"])
+        failed=dict(local, state="FAIL", returncode=7)
+        self.assertEqual(project_assurance_levels(self.report,failed)
+                         ["L1_engineering"]["local_tests"],"FAIL")
+        attacks=[
+            ("external-product",lambda q,t:q.update(product_status="PASS")),
+            ("external-review",lambda q,t:q["gates"][0].update(state="PASS")),
+            ("external-count",lambda q,t:q.update(external_gates_unclosed=0)),
+            ("release",lambda q,t:q.update(release_authorized=True)),
+            ("authority",lambda q,t:q.update(authorization="GRANTED")),
+            ("source-run-launder",lambda q,t:q.update(
+                source_status="SOURCE_AND_RUNTIME_PASS")),
+            ("test-pass",lambda q,t:t.update(state="PASS")),
+            ("test-authority",lambda q,t:t.update(authority="APPROVED")),
+            ("not-run-with-log",lambda q,t:t.update(log_sha256="a"*64)),
+            ("not-run-with-exit",lambda q,t:t.update(returncode=0)),
+            ("test-no-proof",lambda q,t:t.update(
+                state="RUN_REPORTED_UNATTESTED")),
+            ("bad-receipt",lambda q,t:t.update(
+                state="RUN_REPORTED_UNATTESTED",
+                proof_scope="LOCAL_RUNTIME_OBSERVATION_UNATTESTED",
+                returncode=0,log_sha256="bad")),
+        ]
+        for label,mutate in attacks:
+            q,t=copy.deepcopy(self.report),copy.deepcopy(tests)
+            mutate(q,t)
+            with self.subTest(label=label):
+                with self.assertRaises(ValueError):
+                    project_assurance_levels(q,t)
 
     def test_03_reject_proof_promotion_even_after_receipt_rehash(self):
         for change in (
