@@ -288,7 +288,8 @@ def _plain_receipt(report: dict) -> dict:
 def run_one(repo: Path, revision: str = "HEAD", *,
             process: str = "full", max_commits: int = 64,
             focus: str | None = None, execute_self_tests: bool = False,
-            test_timeout: int = 240, model_stress_cases: int = 0) -> dict:
+            test_timeout: int = 240, model_stress_cases: int = 0,
+            change_base: str | None = None) -> dict:
     if (type(execute_self_tests) is not bool or not 30 <= test_timeout <= 900
             or type(model_stress_cases) is not int or model_stress_cases not in (0, 100000)):
         raise ValueError("bounded and explicitly authorized test operation required")
@@ -300,7 +301,8 @@ def run_one(repo: Path, revision: str = "HEAD", *,
                                git(repo, "rev-parse", "HEAD").decode().strip() != commit):
         raise ValueError("opt-in self-tests require exact CORA checkout HEAD")
     proc = run_suite(repo, commit, process=process,
-                     max_commits=max_commits, focus=focus, measure=True)
+                     max_commits=max_commits, focus=focus, measure=True,
+                     change_base=change_base)
     activities = [_row(row, commit) for row in proc["results"]]
     validate_execution_rows(activities, expected_commit=commit)
     catalog = build_atlas(repo, unified_assurance(repo, commit)) if cora else None
