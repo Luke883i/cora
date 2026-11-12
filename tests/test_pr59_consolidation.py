@@ -95,3 +95,49 @@ class PracticeRangeTests(unittest.TestCase):
         self.assertEqual(untouched["changed_paths"], [])
         self.assertTrue(all(not o["applicable"] for o in untouched["obligations"]))
         self.assertEqual(untouched["external_approval"], "NONE")
+
+    def test_process_and_one_run_use_same_pinned_change_range(self):
+        from cora.process_suite import run_suite, verify_suite
+        from cora.one_run import run_one, verify_one, render_one_html
+        head = commit(self.root, {"src/app.js": "export const a = 4;\n"})
+        basic = run_suite(self.root, head, process="history",
+                          max_commits=2, change_base=self.base)
+        self.assertEqual(basic["change_base"], self.base)
+        self.assertEqual(basic["practice_obligations"]["schema"], "cora-practice-obligations/2")
+        self.assertTrue(verify_suite(self.root, basic))
+        one = run_one(self.root, head, process="history", max_commits=2,
+                      change_base=self.base)
+        self.assertEqual(one["source_process"]["change_base"], self.base)
+        self.assertTrue(verify_one(self.root, one))
+        html = render_one_html(one)
+        self.assertIn("Change obligations", html)
+        self.assertIn(self.base, html)
+        altered = copy.deepcopy(basic)
+        altered["practice_obligations"]["external_approval"] = "APPROVED"
+        with self.assertRaises(ValueError):
+            verify_suite(self.root, altered)
+
+
+class LegacyProcessReceiptTests(unittest.TestCase):
+    def test_old_git_source_replay_without_invented_pr58_field(self):
+        from cora.evidence import domain_hash
+        from cora.process_suite import PRE_PR58_MAIN, run_suite, verify_suite
+        root = Path(__file__).resolve().parents[1]
+        if not (root / ".git").exists():
+            self.skipTest("original Git history required")
+        try:
+            git(root, "cat-file", "-e", PRE_PR58_MAIN + "^{commit}")
+        except subprocess.CalledProcessError:
+            self.skipTest("original PR57 commit not present in shallow checkout")
+        original = run_suite(root, PRE_PR58_MAIN, process="history", max_commits=2)
+        legacy = copy.deepcopy(original)
+        legacy.pop("practice_obligations")
+        legacy.pop("run_digest")
+        legacy["run_digest"] = domain_hash("CORA:process-run:1", legacy)
+        self.assertTrue(verify_suite(root, legacy))
+        tampered = copy.deepcopy(legacy)
+        tampered["authorized_action"] = "APPROVED"
+        tampered.pop("run_digest")
+        tampered["run_digest"] = domain_hash("CORA:process-run:1", tampered)
+        with self.assertRaises(ValueError):
+            verify_suite(root, tampered)
