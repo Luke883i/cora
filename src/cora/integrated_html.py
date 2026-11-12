@@ -103,6 +103,8 @@ def render_integrated_html(receipt: dict) -> str:
              ("test-cases","Individual tests"),("gaps","Unresolved gaps"),
              ("dod","DoD reticulum"),("artifacts","Evidence manifest"),
              ("provenance","Provenance")]
+    if receipt.get("baseline_pr36", {}).get("source_process", {}).get("practice_obligations"):
+        links.insert(2, ("practices", "Change obligations"))
     if "genealogy" in receipt:
         links.insert(3, ("history", "PR / commit genealogy"))
     if "qualification" in receipt:
@@ -225,6 +227,25 @@ def render_integrated_html(receipt: dict) -> str:
             head.append('<tr><td>' + title + '</td><td>' + _h(ev["state"]) +
                         '</td><td>' + _h(ev["outcome"]) + '</td></tr>')
         head.append("</tbody></table>")
+    practices = receipt.get("baseline_pr36", {}).get("source_process", {}).get("practice_obligations")
+    if practices:
+        head.append('</section><section class="panel" id="practices"><h2>Change obligations (not execution)</h2>')
+        head.append('<p>Git scope: <strong>' + _h(practices["comparison"]) +
+                    '</strong> · declared BASE: <code>' + _h(practices.get("change_base", "NOT_DECLARED")) +
+                    '</code> · approval: <strong>' + _h(practices["external_approval"]) + '</strong>. '
+                    'This is a source-derived review checklist, not a behavioral PASS.</p>')
+        head.append('<ul>')
+        for row in practices["obligations"]:
+            if row["applicable"]:
+                head.append('<li><strong>' + _h(row["id"]) + '</strong>: ' +
+                            _h(row["requirement"]) + ' — ' + _h(row["state"]) + '</li>')
+        head.append('</ul><p><strong>Editorial review:</strong> ' +
+                    _h(practices["editorial_refactor"]["state"]) + '</p><ul>')
+        for name in practices["editorial_refactor"]["surfaces"]:
+            head.append('<li><code>' + _h(name) + '</code></li>')
+        head.append('</ul><p>Unlisted tracked documents: ' +
+                    _h(practices["editorial_refactor"].get("unlisted_tracked_documents", "NOT_ASSESSED")) +
+                    '</p>')
     head.append('</section><section class="panel" id="gaps"><h2>Gap and blocker register</h2>')
     head.append('<p>Unknown, skipped and unauthorized activities remain visible; '
                 'no blocked item is converted into PASS.</p>')

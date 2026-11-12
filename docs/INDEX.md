@@ -1,5 +1,7 @@
 # CORA documentation — navigate by goal
 
+**Current review:** [agent instructions](../AGENTS.md) and [getting started](GETTING_STARTED.md) explain how an explicit BASE identifies the complete Git change range in existing One-Run. These obligations do not create a new product, runner or approval authority.
+
 Start at the [README](../README.md): a source-scoped product promise, a three-step engineering cycle, eight declared CLI families and two source-linked project examples. This index routes readers by task, method and evidence class; it is navigation, not a release authority or an independent witness.
 
 ## How to navigate

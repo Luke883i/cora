@@ -361,6 +361,7 @@ def main(argv: list[str] | None = None) -> int:
     pr = sub.add_parser('process-run',help='Run one bounded process or full source-only suite')
     pr.add_argument('repo',type=Path)
     pr.add_argument('--revision',default='HEAD')
+    pr.add_argument('--change-base',help='Explicit ancestor BASE SHA for complete source change range; no host PR attestation')
     pr.add_argument('--process',choices=PROCESSES,default='full')
     pr.add_argument('--max-commits',type=int,default=64)
     pr.add_argument('--focus')
@@ -778,7 +779,7 @@ def main(argv: list[str] | None = None) -> int:
             if args.chat_bundle and (not args.one_run or args.profile != 'comprehensive'):
                 raise ValueError('chat bundle requires --one-run --profile comprehensive')
             chat_step = load_chat_step(args.chat_step) if args.chat_step else None
-            if args.portable_profile and (not args.one_run or args.profile or args.chat_step
+            if args.portable_profile and (args.change_base or not args.one_run or args.profile or args.chat_step
                                           or args.chat_bundle or args.execute_self_tests
                                           or args.model_stress_cases or args.authorization_file
                                           or args.evidence_dir):
@@ -805,7 +806,8 @@ def main(argv: list[str] | None = None) -> int:
                         execute_self_tests=args.execute_self_tests,
                         authorization_file=args.authorization_file,
                         evidence_dir=args.evidence_dir,test_timeout=args.test_timeout,
-                        model_stress_cases=args.model_stress_cases)
+                        model_stress_cases=args.model_stress_cases,
+                        change_base=args.change_base)
                     if args.atlas_json:
                         args.atlas_json.write_text(json.dumps(result,sort_keys=True,indent=2)+'\n',encoding='utf-8')
                     if args.atlas_html:
@@ -824,7 +826,8 @@ def main(argv: list[str] | None = None) -> int:
                                      max_commits=args.max_commits,focus=args.focus,
                                      execute_self_tests=args.execute_self_tests,
                                      test_timeout=args.test_timeout,
-                                     model_stress_cases=args.model_stress_cases)
+                                     model_stress_cases=args.model_stress_cases,
+                                     change_base=args.change_base)
                     if args.atlas_json:
                         args.atlas_json.write_text(json.dumps(result,sort_keys=True,indent=2)+'\n',encoding='utf-8')
                     if args.atlas_html:
@@ -838,7 +841,8 @@ def main(argv: list[str] | None = None) -> int:
                         or args.authorization_file):
                     raise ValueError('integrated/HTML/JSON/optional execution flags require --one-run')
                 result = run_suite(args.repo,args.revision,process=args.process,
-                                   max_commits=args.max_commits,focus=args.focus)
+                                   max_commits=args.max_commits,focus=args.focus,
+                                   change_base=args.change_base)
                 code = 0 if result['status']!='DEBT_BLOCKED' else 2
         elif args.cmd == 'verify-process':
             item = json.loads(args.report.read_text(encoding='utf-8'))

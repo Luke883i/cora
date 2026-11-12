@@ -59,7 +59,7 @@ Then run [One-Run](#one-run--one-command-one-evidence-dossier). This identifies 
 | Static dependencies, typed graphs, lineage, Git archaeology | Candidate consumers, paths, changes and provenance | Every dynamic consumer, SCC/centrality analysis or runtime causality |
 | Contracts, mutation/metamorphic tests, threat modeling, fitness functions | Invariants, negative cases and change risks | Formal correctness, full security coverage or globally minimal design |
 
-The [method crosswalk](docs/CONVERGENT_ASSURANCE.md#method-crosswalk--borrowed-perspectives-not-full-implementations) distinguishes implemented source observations, analogies and external evidence.
+[method crosswalk](docs/CONVERGENT_ASSURANCE.md#method-crosswalk--borrowed-perspectives-not-full-implementations): implemented source observations, analogies and external evidence remain distinct.
 
 ## One-Run — one command, one evidence dossier
 
@@ -71,11 +71,13 @@ cora verify-process /tmp/cora-run.json --repo . --one-run --atlas-html /tmp/cora
 
 The dossier separates `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTERNAL`. **The default does not execute arbitrary target tests**. Run permitted target tests separately and keep commands, versions and observed outcomes. [Portable chat handoff](docs/AGENT_ADOPTION.md#portable-chatgpt-handoff-opt-in) uses `--chat-step` and `--chat-bundle`; its ZIP is neither automatic ChatGPT memory nor an approval.
 
+**Change scope (PR58–59):** `--change-base BASE_SHA` covers a declared BASE–HEAD diff; otherwise one commit. Editorial review is not automatic rewriting, target execution or approval.
+
 **Native Gold pilots (PR52):** with explicit test-execution consent, CORA binds real Teddy Node and ICTC HTTP/SQLite outcomes to original Git/Gold claims in the existing One-Run. LUMEN browser and NILO remote remain unobserved controls. The local test exit does not authenticate a runner, approve a release or prove engineer-hours savings. [Method and limitations](docs/GOLD_ASSURANCE.md#pr52--native-gold-pilots-and-bounded-cross-repository-result).
 
-**Gold linkage (PR51):** portable profiles v2 associate source, native-test records and scoped DoD. An untrusted PASS is not execution. [Oracles and limits](docs/GOLD_ASSURANCE.md#pr51--native-gold-bridge-in-the-existing-portable-one-run).
+**Gold linkage (PR51):** portable v2 profiles bind source, native-test records and scoped DoD; reported PASS is not execution. [Oracles and limits](docs/GOLD_ASSURANCE.md#pr51--native-gold-bridge-in-the-existing-portable-one-run).
 
-**Cross-repository opt-in:** for a distinct Git target, use `process-run --one-run --portable-profile /path/to/target.json` (and `verify-process --one-run --portable-profile` for replay). This source-only route never transplants CORA's own DoD; `--portable-parse-js` optionally parses static ESM without executing target modules. [Scope, profile and cross-repository DoD](docs/CONTINUOUS_DEVELOPMENT.md#cross-repository-sourceevidence-convergence-pr50--candidate). No external product approval follows from either path.
+**Cross-repository opt-in:** on another Git target, use `process-run --one-run --portable-profile /path/to/target.json`; replay with `verify-process --one-run --portable-profile`. This source-only path never transplants CORA's DoD. `--portable-parse-js` parses static ESM without executing modules. [Scope and DoD](docs/CONTINUOUS_DEVELOPMENT.md#cross-repository-sourceevidence-convergence-pr50--candidate). No product approval follows.
 
 ## How CORA works
 
@@ -92,7 +94,7 @@ The dossier separates `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTERNAL`
 - **[ICTC](https://github.com/Luke883i/ictc) — UI/UX as observable meaning.** An authorized browser/container agent can capture screenshots across roles/viewports and compare *what the UI promises* with actual controls. The Playwright [Browser witness](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/browser-onto-compliance-v1.py) captures screenshots; the [visual audit](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/s4-a6-ux4-uiux-mount-audit.md) records **screenshot-derived** faults: misleading write affordances, technical-first hierarchy and hidden work. The [reconciliation contract](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/uiux-656-absorption-contract.json) maps **656 recorded visual/UX findings to 12 root causes**; separate [physical product mutants](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/release-readiness-e2-product-mutants.mjs) edit real source and run an E2 gate. **No fresh ChatGPT-container run or independent user study is attested here.**
 - **[iKant_EDU](https://github.com/Luke883i/iKant_EDU) — experimental computational cognitive architecture.** A replaceable LLM accompanies bounded appraisal, recurrent workspace, **functional attention** and a **self/world state model**: **computational constructs**, **not a claim of a conscious biological mind**. Git archaeology retained `UNKNOWN` consumers, recovered **11 unqualified file deletions**, and [PR238](https://github.com/Luke883i/iKant_EDU/pull/238) restored a protected workflow. **Millions of finite fault vectors** challenge declared models, **not millions of real Git mutations** or host sessions. [Cognitive model](https://github.com/Luke883i/iKant_EDU/blob/73842c1d71ea1b1faa3903b255d00cd09b1b6cb6/docs/IKANT_COGNITIVE_SUBSTRATE.md) · [CORA method backlog](https://github.com/Luke883i/iKant_EDU/blob/73842c1d71ea1b1faa3903b255d00cd09b1b6cb6/docs/CORA_PR_A_BACKLOG.md).
 
-**Terminology, only after the engineering method:** CORA calls the extraction *intent mining*, the backward graph a *reticular DoD*, coherent changes *semantic slices*, Git-object writing *blobbing/materialization*, modeled counterexamples *semantic mutations* and the bounded novelty plateau *semantic saturation*. The conventional engineering definitions and limits above govern these labels.
+**Terminology, only after the engineering method:** CORA calls the extraction *intent mining*, the backward graph a *reticular DoD*, coherent changes *semantic slices*, Git-object writing *blobbing/materialization*, modeled counterexamples *semantic mutations* and the bounded novelty plateau *semantic saturation*. Engineering definitions and limits above govern these labels.
 
 ## Use CORA with an AI coding assistant
 
@@ -148,4 +150,4 @@ The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) di
 
 ## Engineering map
 
-**Product:** reviewable assurance. **Software:** `cora-engine` CLI and `cora-release-verification` checks. **Repository:** source, contracts, tests, CI and **historical ADRs**. **merged PR38** and **merged PR39** established bounded history/qualification milestones; follow the [complete index](docs/INDEX.md) for owners.
+**Product:** assurance. **Software:** `cora-engine` and `cora-release-verification`. **Repository:** source, tests, CI and **historical ADRs**. **merged PR38** and **merged PR39** established bounded history/qualification milestones; follow the [complete index](docs/INDEX.md) for owners.

@@ -1,3 +1,17 @@
+# Changelog — CORA
+
+Repository source milestones, not evidence of a published or independently approved release.
+
+## Unreleased — PR59 full-scope method and editorial consolidation (candidate)
+
+- Add explicit Git BASE–HEAD review obligations to existing process/One-Run; preserve original PR58 single-commit receipts.
+- Show nonauthorizing editorial review in existing HTML, add Git counterexamples and bounded legacy replay, reconcile current documentation.
+
+## Unreleased — PR58 integrated engineering practices (merged source)
+
+- Merge ten Git-pinned advisory practices into the original `process-run` and agent instructions.
+- Physical path/digest/authority mutants and canonical census; 13/13 PR-head workflows passed. External release authority remains NONE.
+
 ## Unreleased — PR57 assurance-level semantic separation (candidate)
 
 - Clarify CORA L1 reproducible engineering evidence, L2 bounded product experimentation and L3 optional third-party external assurance. External reviewer/user study is not a prerequisite to trying CORA.
@@ -34,7 +48,6 @@
 - Provide a complete novice input example and terminal-to-ChatGPT upload/replay instructions; no automatic capture or external signature.
 - Source-only and local isolated tests are not independent product qualification, release approval, or publication; the historical v1.0.0a4 draft remains separate.
 
-# Changelog — CORA
 
 ## PR41 — final experimental source-freeze method (publication separately governed)
 

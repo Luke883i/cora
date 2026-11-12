@@ -312,7 +312,8 @@ def run_integrated(repo: Path, revision: str = "HEAD", *, process: str = "full",
                    execute_self_tests: bool = False,
                    authorization_file: Path | None = None,
                    evidence_dir: Path | None = None,
-                   test_timeout: int = 240, model_stress_cases: int = 0) -> dict:
+                   test_timeout: int = 240, model_stress_cases: int = 0,
+                   change_base: str | None = None) -> dict:
     repo = Path(repo).resolve(strict=True)
     sha = snapshot(repo, revision)["commit"]
     tree = git(repo, "rev-parse", sha + "^{tree}").decode("ascii").strip()
@@ -325,7 +326,7 @@ def run_integrated(repo: Path, revision: str = "HEAD", *, process: str = "full",
     registry = build_registry(repo, sha)
     base = run_one(repo, sha, process=process, max_commits=max_commits,
                    focus=focus, execute_self_tests=False,
-                   model_stress_cases=model_stress_cases)
+                   model_stress_cases=model_stress_cases,change_base=change_base)
     test, log = _test_observation(repo, sha, tree,
                                   authorized=authorization_file if execute_self_tests else None,
                                   evidence_dir=out, timeout=test_timeout)

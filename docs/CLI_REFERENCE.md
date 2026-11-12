@@ -24,6 +24,8 @@ The [complete capability atlas](../.cora/assurance/capability-atlas.json) enumer
 - `workflow-audit` — source-bound workflow inventory, reusable callers, risks and conservative adjustment/retirement candidates; run `cora workflow-audit REPO --revision HEAD --base BASE_SHA --output /tmp/workflows.json`. Never edits workflow files or attests external consumers.
 - `verify-workflows` — rederive the exact source report: `cora verify-workflows /tmp/workflows.json --repo REPO`. See [continuous development](CONTINUOUS_DEVELOPMENT.md) for the review-only DoD and the host prerequisites.
 
+**Full change range (PR59):** `cora process-run . --revision HEAD --change-base BASE_SHA` also works with existing `--one-run --profile comprehensive`. BASE must be a full, original-Git ancestor of HEAD. `verify-process` replays the pinned report. Default PR58 v1 remains first-parent single-commit; explicit v2 includes rename paths and actual tracked documents. Neither provides authenticated PR metadata, runtime behavior or release authority.
+
 ## Cross-method inference and source case
 
 - `method-synthesize` — correlate source-verifiable role, workflow and optional process receipts on one Git commit. Use `cora method-synthesize REPO --revision HEAD --output /tmp/cora-method-case.json --analyst-request /tmp/cora-questions.json`. Optional `--artifacts`, `--workflows`, `--process` and `--hypotheses` retain original provenance and are revalidated; hypotheses never authorize actions.

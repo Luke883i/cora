@@ -775,6 +775,7 @@
       "tests/test_pr51_gold_bridge.py",
       "tests/test_pr52_native_gold.py",
       "tests/test_pr58_practice_contract.py",
+      "tests/test_pr59_consolidation.py",
       "tests/test_selection.py"
     ],
     "internal_dod": [

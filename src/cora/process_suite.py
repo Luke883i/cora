@@ -7,7 +7,7 @@ from __future__ import annotations
 from pathlib import Path
 from time import monotonic
 from .evidence import domain_hash, valid_path
-from .git_snapshot import snapshot
+from .git_snapshot import snapshot, git
 from .artifact_roles import artifact_audit
 from .adapters import adapter_audit
 from .archaeology import mine_history
@@ -41,7 +41,8 @@ def process_catalog() -> dict:
 
 
 def run_suite(repo:Path,revision:str='HEAD',*,process:str='full',
-              max_commits:int=64,focus:str|None=None,measure:bool=False)->dict:
+              max_commits:int=64,focus:str|None=None,measure:bool=False,
+              change_base:str|None=None)->dict:
     if process not in PROCESSES or type(max_commits) is not int or not 1<=max_commits<=1000:
         raise ValueError('unknown CORA process or invalid history limit')
     if focus is not None and not valid_path(focus):
@@ -133,7 +134,9 @@ def run_suite(repo:Path,revision:str='HEAD',*,process:str='full',
             'excluded_unsafe_methods':process_catalog()['excluded_unsafe_methods'],
             'coverage':'Selected read-only source methods only; full does not mean all real-world behavior',
             'authorized_action':'NONE',
-            'practice_obligations':practice_project(repo, commit)}
+            'practice_obligations':practice_project(repo, commit, change_base=change_base)}
+    if change_base is not None:
+        result['change_base']=result['practice_obligations']['change_base']
     if measure:
         result['timing']={'wall_ms':max(0,int((monotonic()-started)*1000)),
                           'basis':'MONOTONIC_LOCAL_OBSERVATION_NOT_REPLAYABLE'}
@@ -141,10 +144,33 @@ def run_suite(repo:Path,revision:str='HEAD',*,process:str='full',
     return result
 
 
+# Last exact CORA main before the PR58 projection first existed.
+# Only receipts from this original CORA lineage may use the historical shape.
+PRE_PR58_MAIN = '0ddb9024d0d6b31dd7734793173906c9c4d38a48'
+
+
 def verify_suite(repo:Path,report:dict)->bool:
     if not isinstance(report,dict) or report.get('schema')!='cora-process-run/1':
         raise ValueError('invalid process report')
-    if run_suite(repo,report['commit'],process=report['process'],
-                 max_commits=report['history_limit'],focus=report['focus']) != report:
+    repo=Path(repo).resolve(strict=True)
+    has_practices='practice_obligations' in report
+    if not has_practices and 'change_base' in report:
+        raise ValueError('legacy receipt cannot declare new range')
+    expected=run_suite(repo,report['commit'],process=report['process'],
+                       max_commits=report['history_limit'],focus=report['focus'],
+                       change_base=report.get('change_base'))
+    if not has_practices:
+        # An old, source-replayed receipt does not magically acquire the
+        # implementation added after its commit; historical bytes stay intact.
+        # Check the immutable Git ancestry, not a caller-supplied "legacy" flag.
+        try:
+            git(repo,'merge-base','--is-ancestor',
+                report['commit'],PRE_PR58_MAIN,max_output=128)
+        except ValueError as exc:
+            raise ValueError('missing practices on non-legacy Git source') from exc
+        expected.pop('practice_obligations')
+        expected.pop('run_digest')
+        expected['run_digest']=domain_hash('CORA:process-run:1',expected)
+    if expected != report:
         raise ValueError('process report differs from immutable Git evidence')
     return True

@@ -37,6 +37,8 @@ the expected impact paths separately: the committed receipt describes only the
 observed Git delta. This is a method integrated into the existing process, not a
 new certification gate, command, runtime test or independent approval authority.
 
+**Full PR scope:** supply `--change-base BASE_SHA` to the existing `process-run` for a multi-commit change. The BASE must be a real ancestor of the examined HEAD, but is not authenticated GitHub PR metadata. Without it, first-parent obligations cover one commit only. Inspect One-Run obligations and justify each editorial change; do not automatically rewrite every suggested document. Historical receipts remain historical, not new evidence.
+
 ## Stop and boundary rules
 
 - Missing/ambiguous owner, ontology, baseline policy, SHA, change intent, independent behavioral oracle, protected reviewer identity or required host controls remain **BLOCKED** or **BLOCKED_EXTERNAL**. Bootstrap cannot approve itself.
