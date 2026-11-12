@@ -1,4 +1,4 @@
-# CORA — governed prerelease procedure
+# CORA — Continuous Ontological Repository Assurance: governed prerelease procedure
 
 **Current source:** `cora-audit 1.0.0a5` (Python 3.11+, one `cora` CLI). PR59 is merged to `main@a01e0b121ac3734fd4ec1afa22781c90dbed1260`. This is a source change, **not a stable API, supported production release or independently approved distribution**. No public candidate is published. **Release = BLOCKED_EXTERNAL** pending the separately accountable operator gates below.
 
