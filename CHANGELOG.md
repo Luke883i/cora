@@ -2,7 +2,12 @@
 
 Repository source milestones, not evidence of a published or independently approved release.
 
-## Unreleased — PR59 full-scope method and editorial consolidation (candidate)
+## Unreleased — PR60 current documentation consolidation (Draft)
+
+- Compress the CTO-facing README, current release procedure and engineering guides; preserve original method/claim falsifiers, link routes and historic Git objects.
+- Eliminate superseded PR-stage prose from operational instructions, while retaining historically classified original documents. Machine semantic tests are reproducible *proxies*, not actual independent reader studies.
+
+## Unreleased — PR59 full-scope method and editorial consolidation (merged source)
 
 - Add explicit Git BASE–HEAD review obligations to existing process/One-Run; preserve original PR58 single-commit receipts.
 - Show nonauthorizing editorial review in existing HTML, add Git counterexamples and bounded legacy replay, reconcile current documentation.

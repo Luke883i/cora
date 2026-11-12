@@ -4,6 +4,8 @@ CORA is the independent **engineering evidence and governance framework**, not t
 
 Start at the [README](README.md), [agent adoption tutorial](docs/AGENT_ADOPTION.md), [continuous method](docs/CONTINUOUS_DEVELOPMENT.md), [convergent assurance](docs/CONVERGENT_ASSURANCE.md), and [governance](GOVERNANCE.md). Existing historic PR-level DoDs and audits remain source-context records, not parallel engines.
 
+**PR60 editorial discipline:** read the [README](README.md) first, then only the task-owner document from [index](docs/INDEX.md). The root README is the product front door, not an accumulating PR log; do not reinsert obsolete milestone prose when editing code. Put dated implementation facts in [CHANGELOG](CHANGELOG.md) and immutable Git history. Preserve the 17 historical Markdown blob identities and explicit SOURCE/L1, experimental L2, externally governed L3 boundaries. Every editorial rewrite needs negative/meaning-preserving tests and exact HEAD source checks; the coding agent's own interpretation is a machine proxy, not a human usability trial or third-party certification.
+
 ## Mandatory current workflow
 
 1. **Intent** — obtain the user's material product outcome, acceptance criteria, target owner, impact and independent test oracle. Treat caller-supplied intent as a claim, not authenticated approval.
