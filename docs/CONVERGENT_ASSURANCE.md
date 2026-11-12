@@ -1,5 +1,12 @@
 # CORA PR-20 — canonical convergent assurance
 
+**Document status:** CURRENT
+**Current scope:** Typed noncompensatory source-to-obligation convergence.
+**Operational use:** Correlate intent, Git change, unknown dependencies and negative source tests.
+**Evidence:** Reticulum implementation, contextual policies, source receipts and oracles.
+**Limits:** Borrowed methodologies and seeded models are not independent standards certifications.
+
+
 ## Product/software/repository intent
 
 The single **CORA** product continues to comprise `cora-engine` and `cora-release-verification`; this change does not create another agent or trust authority. Existing agent and Gold models share `reticulum.ordered_cut`, but retain their prior fixed vocabulary and output formats. The new profile `.cora/contracts/dod/convergence-dod.json` distinguishes source implementation from full real-world R1–R4 obligations and governed acceptance.

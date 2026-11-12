@@ -1,5 +1,12 @@
 # Backward-derived DoD — debt discovery and CORA process orchestration
 
+**Document status:** CURRENT
+**Current scope:** Evidence-bound acceptance of debt and process analysis.
+**Operational use:** Test retained debt signals on a pinned Git revision.
+**Evidence:** Debt scanner and process suite with original-Git source replay.
+**Limits:** Debt counts are not calibrated defects, financial liabilities or closure proof.
+
+
 **G-scoped (demonstrable):** For a pinned commit and optional original bounded SARIF input, CORA creates a reproducible *read-only* multiscale debt-signal inventory with source IDs, type labels, uncertainty, human-review priorities, non-executable remediation instructions, and interoperable trend/process receipts. Individual processes and a coherent `full` read-only process can be enumerated and replayed. No finding authorizes deletion or unreviewed edits.
 
 **G+ (NOT demonstrated):** universal technical-debt detection, calibrated precision/recall or confidence, certified ISO/SSDF compliance, scanner authenticity, verified runtime/cross-repo closure, economic savings, fully guarded automatic remediation or proof of no regressions on arbitrary software.

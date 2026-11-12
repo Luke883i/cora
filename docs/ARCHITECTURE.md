@@ -1,5 +1,12 @@
 # Architecture — CORA as product, software and repository
 
+**Document status:** CURRENT
+**Current scope:** Actual CORA product, two software boundaries and Git evidence topology.
+**Operational use:** Locate original owners, method entrypoints and epistemic boundaries.
+**Evidence:** Committed ontology, CLI source modules, tests and release-verifier code.
+**Limits:** A static component map is neither complete dynamic reachability nor release approval.
+
+
 **Scope:** CORA — Continuous Ontological Repository Assurance, v1.experimental (`1.0.0a5` source merged via PR46, not independently published or product-qualified; `1.0.0a4` historical draft), source includes merged PR36–44, including PR39 independent qualification, PR40 engineering knowledge, and PR43–44 source-only closure checks, using the existing comprehensive one-run activity dossier; source integration is not independently qualified product acceptance. PR-21–22 established document-to-source mapping; PR-23–31 added navigation, methodology convergence, the 71-command atlas and the six-gate maturity DoD. Both remain separate from external user acceptance, maintained-target pilots and independent hosting governance, which are unresolved. This document describes the current architecture; historical ADRs preserve earlier milestone decisions. The [README](../README.md) is the front door; this document is the engineering explanation. The [committed ontology](../cora.ontology.json) is a *declaration* by project maintainers, not an inference from folder names.
 
 **Final experimental qualification:** PR41 reuses the existing CLI, original-Git source owners, PR39 native-Git reference and PR40 historical/capability/debt catalogs. The [30-node final DoD](../.cora/contracts/dod/final-experimental-dod.json) distinguishes a closed source candidate from seven externally observed conditions; no extra product, agent, or orchestrator is introduced. The actual PR merge and subsequent tag/asset checks determine immutable release identity, not document phrasing.

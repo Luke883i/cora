@@ -1,5 +1,12 @@
 # Artifact roles — overlapping declarations, not filename classification
 
+**Document status:** CURRENT
+**Current scope:** Current multi-role source classification for Git-tracked artifacts.
+**Operational use:** Inspect role overlap and unresolved coverage without inferring unused code.
+**Evidence:** cora.artifact-roles.json, audit command and original Git paths.
+**Limits:** A declared role or absence of imports never authorizes deletion.
+
+
 **v1 experimental contract:** `cora.artifact-roles/1`, source-traced to a committed Git revision. Repository, product, software, deployable, artifact, test and contract are distinct ontology dimensions. Roles can **overlap**, and a path can be source **and** test **and** contract verifier **and** fixture. Conversely, a file called `test_*.py` need not be a working test or even imported by CI. `*.json` does not imply contract semantics, and a file named `legacy` is not evidence that it is obsolete.
 
 ## Operational interface

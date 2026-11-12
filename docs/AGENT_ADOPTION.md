@@ -1,5 +1,12 @@
 # Adopt CORA in an AI coding workflow
 
+**Document status:** CURRENT
+**Current scope:** Using CORA as evidence infrastructure around a separate coding agent.
+**Operational use:** Prepare a real target, pin BASE and HEAD, replay receipts after authorized changes.
+**Evidence:** Target-owned ontology, contextual source receipts and real test logs.
+**Limits:** Neither a chat handoff nor a receipt authenticates reviewers or deployment.
+
+
 CORA **governs evidence and review** for a coding assistant; it does not write product code or authorize merging. A GitHub URL is a reading location, not an installation or a protected policy. Start with the [product README](../README.md), [agent rules](../AGENTS.md) and [method](AI_CODE_ASSURANCE.md).
 
 ## 1. Prepare the two repositories
