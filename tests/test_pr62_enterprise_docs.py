@@ -122,7 +122,7 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
             need("product**" in g and "software**" in g and "repository**" in g,
                  "ontology-collapsed")
             need("not live ChatGPT memory" in g
-                 and "not automatic chat memory" in r,
+                 and "**not** automatic chat memory" in r,
                  "handoff-overpromoted")
             need("iterations/{i:06d}" in engine
                  and "iterations/000001/handoff.md" in s,
