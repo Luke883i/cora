@@ -79,8 +79,81 @@ def classify(paths: list[str]) -> dict:
         "external_approval": "NONE",
     }
 
-def project(repo: Path, commit: str) -> dict:
-    """Inspect exact Git commit against its first parent (or root empty tree)."""
+def _full_change(repo: Path, commit: str, base: str) -> dict:
+    """Exact original-Git diff, including rename source and destination.
+
+    The caller's selected BASE is a declaration, never a GitHub PR-base
+    attestation. NUL-delimited name-status protects legal newline paths.
+    """
+    from .evidence import HEX, valid_path
+    if not isinstance(base, str) or not HEX.fullmatch(base):
+        raise ValueError("change base must be an exact Git commit SHA")
+    resolved = git(repo, "rev-parse", "--verify", "--end-of-options",
+                   base + "^{commit}", max_output=256).decode("ascii").strip()
+    if resolved != base:
+        raise ValueError("change base must be a full resolved commit")
+    git(repo, "merge-base", "--is-ancestor", base, commit, max_output=256)
+    raw = git(repo, "diff", "--name-status", "-z", "--find-renames",
+              base, commit, max_output=16 * 1024 * 1024)
+    parts = raw.split(b"\0")
+    if parts[-1:] != [b""]:
+        raise ValueError("unterminated original Git diff")
+    parts.pop()
+    entries = []
+    i = 0
+    while i < len(parts):
+        status = parts[i].decode("ascii")
+        i += 1
+        if (not status or status[0] not in "ACDMRTUXB"
+                or (len(status) > 1 and
+                    (status[0] not in "RC" or not status[1:].isdigit()))):
+            raise ValueError("unrecognized Git change status")
+        count = 2 if status[0] in "RC" else 1
+        if i + count > len(parts):
+            raise ValueError("incomplete original Git rename/copy")
+        paths = [p.decode("utf-8", "strict") for p in parts[i:i + count]]
+        if not all(valid_path(p) for p in paths):
+            raise ValueError("unsupported original Git path")
+        entries.append({"status": status, "paths": paths})
+        i += count
+    paths = sorted({p for entry in entries for p in entry["paths"]})
+    raw_tree = git(repo, "ls-tree", "-rz", "--full-tree", commit,
+                   max_output=32 * 1024 * 1024)
+    docs = set()
+    for obj in raw_tree.split(b"\0"):
+        if not obj:
+            continue
+        mode_kind_oid, name = obj.split(b"\t", 1)
+        mode = mode_kind_oid.split(b" ", 1)[0]
+        p = name.decode("utf-8", "strict")
+        if mode in (b"100644", b"100755") and _is_doc(p):
+            docs.add(p)
+    # Prefer current front doors and files actually changed; never invent a
+    # CORA-specific path in a third-party target repository.
+    preferred = ("README.md", "AGENTS.md", "CHANGELOG.md", "SECURITY.md",
+                 "docs/ARCHITECTURE.md", "docs/INDEX.md", "docs/RELEASE.md")
+    selected = [p for p in preferred if p in docs]
+    selected += [p for p in paths if p in docs and p not in selected]
+    selected += [p for p in sorted(docs) if p not in selected]
+    # The bound is explicit: a partial list cannot claim complete coverage.
+    surfaces = selected[:64]
+    result = classify(paths)
+    result["editorial_refactor"]["surfaces"] = surfaces if (
+        result["editorial_refactor"]["state"] == "REVIEW_REQUIRED") else []
+    result["editorial_refactor"]["candidate_coverage"] = "TRACKED_REGULAR_DOCUMENTS_ONLY"
+    result["editorial_refactor"]["unlisted_tracked_documents"] = max(0, len(selected) - len(surfaces))
+    for obligation in result["obligations"]:
+        obligation["basis"] = "GIT_PATH_TRIGGER_ONLY"
+        obligation["evidence"] = "NOT_ASSESSED_BY_THIS_PROJECTION"
+    return {"schema": "cora-practice-obligations/2", "commit": commit,
+            "change_base": base, "comparison": "EXPLICIT_BASE_TO_HEAD",
+            "scope_authority": "CALLER_DECLARED_BASE_NOT_PR_HOST_ATTESTED",
+            "path_changes": entries, **result,
+            "proof_scope": "GIT_CHANGE_RANGE_NOT_RUNTIME_OR_SEMANTIC_COMPLETENESS"}
+
+
+def project(repo: Path, commit: str, *, change_base: str | None = None) -> dict:
+    """Git-pinned PR58 compatibility or explicit BASE..HEAD projection."""
     repo = Path(repo)
     parents = git(repo, "rev-list", "--parents", "-n", "1", commit).decode().split()
     if not parents or parents[0] != commit:
@@ -93,6 +166,10 @@ def project(repo: Path, commit: str) -> dict:
         paths = [p for p in raw.decode("utf-8").splitlines() if p]
     except UnicodeDecodeError as exc:
         raise ValueError("unsupported non-UTF8 changed paths") from exc
+    if change_base is not None:
+        report = _full_change(repo, commit, change_base)
+        report["digest"] = domain_hash("CORA:practice-obligations:2", report)
+        return report
     classified = classify(paths)
     report = {"schema": SCHEMA, "commit": commit, "comparison":
               "FIRST_PARENT" if len(parents) > 1 else "ROOT",
@@ -101,8 +178,11 @@ def project(repo: Path, commit: str) -> dict:
     return report
 
 def verify(repo: Path, report: dict) -> bool:
-    if (not isinstance(report, dict) or report.get("schema") != SCHEMA or
-            not isinstance(report.get("commit"), str) or
-            project(repo, report["commit"]) != report):
+    if (not isinstance(report, dict) or
+            report.get("schema") not in (SCHEMA, "cora-practice-obligations/2")
+            or not isinstance(report.get("commit"), str)):
+        raise ValueError("invalid practice receipt")
+    base = report.get("change_base") if report["schema"].endswith("/2") else None
+    if project(repo, report["commit"], change_base=base) != report:
         raise ValueError("practice report differs from Git source")
     return True
