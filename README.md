@@ -32,7 +32,7 @@ cora snapshot . --revision HEAD --output /tmp/cora-ledger.json
 cora verify-ledger /tmp/cora-ledger.json --repo .
 ```
 
-Then run [One-Run](#one-run--one-command-one-evidence-dossier). This identifies source and replayable assertions; it does not test an arbitrary external product. [Getting started](docs/GETTING_STARTED.md) explains setup, bounded output and failure handling.
+For one bounded review dossier, run [One-Run](#one-run--one-command-one-evidence-dossier) and its verifier. The snapshot above is the smaller Git-only path; neither executes arbitrary target tests. [Getting started](docs/GETTING_STARTED.md) explains setup, bounded output and failure handling.
 
 ## What works today
 
@@ -71,9 +71,9 @@ cora verify-process /tmp/cora-run.json --repo . --one-run --atlas-html /tmp/cora
 
 The dossier distinguishes `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTERNAL`. **The default does not execute arbitrary target tests**. Retain separate native-test commands and outcomes. [Chat handoff](docs/AGENT_ADOPTION.md#portable-chatgpt-handoff-opt-in) uses `--chat-step` / `--chat-bundle`; a ZIP is not memory or approval.
 
-**Full change:** `--change-base BASE_SHA` compares a caller-declared BASE with HEAD; default one commit. Neither authenticated PR metadata nor automatic rewriting.
+**Change range:** `--change-base BASE_SHA` compares an explicit base against HEAD; without it, the default covers one commit. Neither mode authenticates PR metadata or rewrites code.
 
-**Native Gold pilots:** Teddy Node and ICTC HTTP/SQLite have bounded consented tests; LUMEN browser and NILO remote remain unobserved. Local PASS does not authenticate runners or productivity. [PR52 evidence](docs/GOLD_ASSURANCE.md#pr52--native-gold-pilots-and-bounded-cross-repository-result) · [PR51 linkage](docs/GOLD_ASSURANCE.md#pr51--native-gold-bridge-in-the-existing-portable-one-run).
+**Native Gold pilots:** Teddy Node and ICTC HTTP/SQLite have bounded consented tests; LUMEN browser and NILO remote remain unobserved. Local PASS does not authenticate runners or productivity. [Native pilot evidence](docs/GOLD_ASSURANCE.md#pr52--native-gold-pilots-and-bounded-cross-repository-result) · [source-to-oracle linkage](docs/GOLD_ASSURANCE.md#pr51--native-gold-bridge-in-the-existing-portable-one-run).
 
 **Other Git repos:** `--one-run --portable-profile /path/to/target.json` enables source replay, not transplanted DoD. `--portable-parse-js` parses static ESM without execution. [Cross-repository limits](docs/CONTINUOUS_DEVELOPMENT.md#cross-repository-sourceevidence-convergence-pr50--candidate).
 
@@ -102,7 +102,7 @@ Follow [agent adoption](docs/AGENT_ADOPTION.md) and the [R1–R4 DoD](docs/DOD_P
 
 A Git SHA identifies source bytes, not runtime or human approval. **A source digest does not authenticate a human reviewer**. Finite-model PASS is not target behavior; `NOT_RUN` and `BLOCKED_EXTERNAL` are not PASS. See [evidence boundaries](docs/CONVERGENT_ASSURANCE.md).
 
-## Final Experimental Baseline — merged PR41
+## Final Experimental Baseline — bounded evidence
 
 The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) distinguishes **15 SOURCE leaves, 7 EXTERNAL leaves, and 8 aggregate AND gates**. Its **16 realistic fault families** and **2,517 preregistered zero-to-fourway masks** are finite-model cases, **not one million independent source mutations**. **two controlled physical Git repositories** supply bounded counterexamples, not independent target or user acceptance.
 
@@ -148,4 +148,4 @@ The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) di
 
 ## Engineering map
 
-**Product:** assurance. **Software:** `cora-engine` and `cora-release-verification`. **Repository:** source, tests, CI and **historical ADRs**. **merged PR38** and **merged PR39** are source milestones; [index](docs/INDEX.md) lists owners.
+**Product:** assurance. **Software:** `cora-engine` and `cora-release-verification`. **Repository:** source, tests, CI and **historical ADRs**. [Index](docs/INDEX.md) identifies current document owners; original Git retains decision history.

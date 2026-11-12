@@ -7,7 +7,7 @@
 **Limits:** Current source is staged not published; no source verifier can authorize release.
 
 
-**Status: staged, not published. Current source:** `cora-audit 1.0.0a5` (Python 3.11+, one `cora` CLI). The source baseline is merged PR60 `main@861a9f4fdc847dff9bbaa4d1cfaefd8d33a48c33`; any later source change requires fresh exact-HEAD checks. This is a source change, **not a stable API, supported production release or independently approved distribution**. No public candidate is published. **Release = BLOCKED_EXTERNAL** pending the separately accountable operator gates below.
+**Status: staged, not published. Current source:** `cora-audit 1.0.0a5` (Python 3.11+, one `cora` CLI). The authoritative candidate identity is the exact Git HEAD supplied to the current release verification; a previous PR or static SHA never qualifies a later checkout. Any source change invalidates earlier receipts. This is a source change, **not a stable API, supported production release or independently approved distribution**. No public candidate is published. **Release = BLOCKED_EXTERNAL** pending the separately accountable operator gates below.
 
 **Decision boundary:** L1 Git/source CI and local tests are valuable engineering evidence; bounded L2 pilots do not prove broad product acceptance; L3 external qualification, when claimed, requires real people, host controls, reproducible artifacts and accountable decisions. A source report is **not a self-issued** approval, certificate, signed provenance or permission to publish. A PASS for one level cannot complete the others.
 
@@ -22,7 +22,7 @@
 
 **On failure:** retain original diagnostic evidence, mark the source or external gate `FAIL`, `NOT_RUN` or `BLOCKED_EXTERNAL`, and do not automatically merge, tag or publish. Restore from an authorized known-good commit and re-qualify the changed SHA. Existing build scripts do not create releases, publish to PyPI or sign statements.
 
-## Post-PR52 CTO procurement and software supply-chain status (source-scoped)
+## Supply-chain and procurement evaluation (source-scoped)
 
 | Item | What currently exists | What is still required |
 | --- | --- | --- |
@@ -37,7 +37,7 @@
 
 **Scope:** `tools/release_verify.py` owns original wheel/sdist verification; the PR55 supply-chain pipeline produces `cora.cdx.json`, `cora-scoped-sca.json`, `cora-unsigned-build.json` and schema validation receipts. Their digest binding is not third-party identity, software completeness, a SOC 2/ISO 27001 certificate or authorization. Scanner failures must not be interpreted as vulnerability-free results.
 
-## Historical source and release identity — not current operating instructions
+## Source evidence lineage — historical, not operational
 
 **PR40 merged source knowledge** on 7 November 2026; PR41 established a bounded 30-node final-experimental source baseline. PR32/PR34 were procedure and candidate-build stages; PR39 merged a source-only independent acceptance protocol, not a release; PR54/PR55 added version/SBOM/SCA checks; PR56 separated L1/L2/L3 and documented the optional external study protocol. These milestones are preserved in [CHANGELOG](../CHANGELOG.md), original Git commits, [architecture](ARCHITECTURE.md) and the [independent qualification DoD](../.cora/contracts/dod/independent-qualification-dod.json), not alternative release instructions.
 
