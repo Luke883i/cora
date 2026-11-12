@@ -7,7 +7,7 @@
 
 CORA is a local, offline-first Python 3.11+ framework. It helps developers and AI coding assistants inspect a Git repository, turn goals into falsifiable obligations and **produce reproducible pre/post-merge review reports**. It links **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**. Agents edit with authorized tools; CORA evaluates evidence. CORA is **not a coding agent** or an approver.
 
-**Why it matters:** a plausible AI-generated patch is not evidence that the product works. CORA separates *intent, modification, observation and uncertainty*: CTOs review decisions, developers select the next test, reviewers find counterexamples and unresolved risk.
+**Why it matters:** a plausible AI-generated patch is not evidence that the product works. CORA makes *intent, modification, observation and uncertainty* separately inspectable. For a CTO this means reviewable decisions; for a developer, a reproducible next test; for a reviewer, explicit counterexamples and unresolved risk.
 
 ```text
 Intent → acceptance graph → reversible code slice → adversarial tests
@@ -71,7 +71,7 @@ cora verify-process /tmp/cora-run.json --repo . --one-run --atlas-html /tmp/cora
 
 The dossier separates `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTERNAL`. **The default does not execute arbitrary target tests**. Run permitted target tests separately and keep commands, versions and observed outcomes. [Portable chat handoff](docs/AGENT_ADOPTION.md#portable-chatgpt-handoff-opt-in) uses `--chat-step` and `--chat-bundle`; its ZIP is neither automatic ChatGPT memory nor an approval.
 
-**Change scope (PR58–59):** use `--change-base BASE_SHA` to cover a declared BASE–HEAD range. Without it, practice obligations concern one commit. The dossier flags editorial review, not automatic rewriting, target test execution or approval.
+**Change scope (PR58–59):** `--change-base BASE_SHA` covers a declared BASE–HEAD diff; otherwise one commit. Editorial review is not automatic rewriting, target execution or approval.
 
 **Native Gold pilots (PR52):** with explicit test-execution consent, CORA binds real Teddy Node and ICTC HTTP/SQLite outcomes to original Git/Gold claims in the existing One-Run. LUMEN browser and NILO remote remain unobserved controls. The local test exit does not authenticate a runner, approve a release or prove engineer-hours savings. [Method and limitations](docs/GOLD_ASSURANCE.md#pr52--native-gold-pilots-and-bounded-cross-repository-result).
 
