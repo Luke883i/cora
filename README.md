@@ -7,7 +7,7 @@
 
 CORA is a local, offline-first Python 3.11+ framework. It helps developers and AI coding assistants inspect a Git repository and **produce reproducible pre/post-merge review reports**. It connects **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**. Authorized agents edit; CORA evaluates evidence. It is **not a coding agent** or an approver.
 
-**Why it matters:** plausible AI-generated patches are not proof. CORA makes *intent, change, observation and uncertainty* inspectable: a CTO sees reviewable decisions; developers see the next test; reviewers see unresolved risks.
+**Why it matters:** plausible patches are not proof: a CTO sees reviewable decisions; developers see the next test; reviewers see unresolved risks.
 
 ```text
 Intent → acceptance graph → reversible code slice → adversarial tests
@@ -32,7 +32,9 @@ cora snapshot . --revision HEAD --output /tmp/cora-ledger.json
 cora verify-ledger /tmp/cora-ledger.json --repo .
 ```
 
-For one bounded review dossier, run [One-Run](#one-run--one-command-one-evidence-dossier) and its verifier. The snapshot above is the smaller Git-only path; neither executes arbitrary target tests. [Getting started](docs/GETTING_STARTED.md) explains setup, bounded output and failure handling.
+For a scoped dossier, run [One-Run](#one-run--one-command-one-evidence-dossier). The snapshot is Git-only; neither command tests target runtime. [Getting started](docs/GETTING_STARTED.md) covers setup.
+
+**ChatGPT Project beta (Plus/Edu recipe):** ChatGPT's GitHub app can **read** [CORA](https://github.com/Luke883i/cora) and authorized target repositories; it cannot push code. To edit, authorize a separate write-capable tool (e.g. Codex) on your target; running CORA requires Python. See the [canonical Project prompt](docs/AGENT_ADOPTION.md#chatgpt-project-beta-adapter).
 
 ## What works today
 
@@ -61,7 +63,7 @@ cora process-run . --revision HEAD --process full --one-run --profile comprehens
 cora verify-process /tmp/cora-run.json --repo . --one-run --atlas-html /tmp/cora-run.html
 ```
 
-The dossier distinguishes `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTERNAL`. **The default does not execute arbitrary target tests**. Retain separate native-test commands and outcomes. [Chat handoff](docs/AGENT_ADOPTION.md#portable-chatgpt-handoff-opt-in) uses `--chat-step` / `--chat-bundle`; a ZIP is not memory or approval.
+The dossier distinguishes `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTERNAL`. **The default does not execute arbitrary target tests**. Keep native test receipts separate. [Chat handoff](docs/AGENT_ADOPTION.md#portable-chatgpt-handoff-opt-in) uses `--chat-step` / `--chat-bundle`: a temporary, operator-produced ZIP of numbered steps, evidence gaps and handoffs, **not** automatic chat memory, a signature or approval.
 
 **Change range:** `--change-base BASE_SHA` compares an explicit base against HEAD; without it, the default covers one commit. Neither mode authenticates PR metadata or rewrites code.
 
@@ -84,7 +86,7 @@ The dossier distinguishes `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTER
 - **[ICTC](https://github.com/Luke883i/ictc)** — An authorized [Browser witness](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/browser-onto-compliance-v1.py) captures screenshots; the [visual audit](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/s4-a6-ux4-uiux-mount-audit.md) contains **screenshot-derived** UX faults. A [reconciliation contract](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/uiux-656-absorption-contract.json) maps **656 recorded visual/UX findings to 12 root causes**; [physical product mutants](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/release-readiness-e2-product-mutants.mjs) test actual source. No independent user study is attested.
 - **[iKant_EDU](https://github.com/Luke883i/iKant_EDU)** — An **experimental computational cognitive architecture** uses a replaceable LLM, **functional attention** and a **self/world state model**: **computational constructs**, **not a claim of a conscious biological mind**. Git forensics retained **UNKNOWN** consumers, found **11 unqualified file deletions**, and [PR238](https://github.com/Luke883i/iKant_EDU/pull/238) restored a workflow. **Millions of finite fault vectors**, **not millions of real Git mutations**. [Model](https://github.com/Luke883i/iKant_EDU/blob/73842c1d71ea1b1faa3903b255d00cd09b1b6cb6/docs/IKANT_COGNITIVE_SUBSTRATE.md) · [backlog](https://github.com/Luke883i/iKant_EDU/blob/73842c1d71ea1b1faa3903b255d00cd09b1b6cb6/docs/CORA_PR_A_BACKLOG.md).
 
-**Terminology, only after the engineering method:** *intent mining* = extracting obligations; *reticular DoD* = dependencies; *semantic slices* = bounded changes; *blobbing/materialization* = writing Git objects; *semantic mutations* = falsifiers; *semantic saturation* = bounded absence of new findings.
+**Terminology, only after the engineering method:** *intent mining* = extracting obligations; *reticular DoD* = dependencies; *semantic slices* = bounded changes; *blobbing/materialization* = writing Git objects; *semantic mutations* = falsifiers; *semantic saturation* = bounded absence of new findings. Specifically, blobs hold bytes; trees and commits record revisions. Saturation covers finite scenarios, never universal correctness.
 
 ## Use CORA with an AI coding assistant
 

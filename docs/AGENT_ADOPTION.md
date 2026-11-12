@@ -65,6 +65,80 @@ When using CORA in a chat-assisted workflow, distinguish the conversation's prop
 
 
 
+## ChatGPT Project beta adapter
+
+**Canonical prompt and owner:** this section is the single beta Project instruction source. The root README links here; `AGENTS.md` governs coding contributions and the target repository keeps its own product/software/runtime authority. This is an opt-in **CORA-METHOD** adapter, not a deployed CORA service or a replacement for `CORA-ENGINE`.
+
+### Beginner setup: understand, modify, prove
+
+1. **ChatGPT access:** the supported baseline for *this beta recipe* is **Plus or Edu**, subject to workspace and tool availability; a subscription alone is not proof of GitHub or code-execution entitlements. The local CORA Python CLI itself does **not** require ChatGPT.
+2. **Authorize reading:** connect GitHub in ChatGPT, allow read access to [Luke883i/cora](https://github.com/Luke883i/cora) and the intended target repository, and confirm both are selectable. Never grant blanket repository access just for the tutorial.
+3. **Authorize writing separately:** to implement a feature, the operator needs a **separate write-capable tool** with explicit permission on their own target repository, e.g. an authorized Codex environment or suitable GitHub write actions. The **standard ChatGPT GitHub app is read-only**; connecting it does not grant commits, pushes or PR creation. Do not infer tool support from a plan label. See [OpenAI's GitHub connection instructions](https://help.openai.com/en/articles/11145903-connecting-github-to-chatgpt).
+4. **Create a ChatGPT Project:** paste the canonical prompt below, name the target and goal, and distinguish observation from execution. A Project chat is not a CORA subprocess or an independently authenticated reviewer.
+5. **Change and test:** have an authorized tool produce a bounded branch and commit, run CORA-ENGINE and target-native tests in a trusted checkout if available, inspect negative oracles, then propose a PR with exact-head evidence and unresolved conditions. Without runner access, report `NOT_RUN`; without write access, deliver only a draft, never a fictional commit.
+6. **Continue later:** the opt-in [ChatGPT handoff](#portable-chatgpt-handoff-opt-in) is an **operator-generated temporary ZIP**. It contains numbered, locally produced step records, source receipts, DoD, evidence gaps, a handoff document and manifest; it is not live ChatGPT memory, encrypted evidence, a signature, or automatic transcript capture. Treat it as untrusted, verify it, and avoid secrets.
+
+**Three objects, no authority transfer:** **product** = the target's observable value and acceptance criteria; **software** = its actual runtime plus CORA's optional local Python CLI; **repository** = that target's Git files, contracts, CI and provenance. CORA-METHOD guides the assistant; CORA-ENGINE only emits results when executed; target owners and humans approve.
+
+### Paste into Project instructions — CORA local adapter beta v1
+
+```text
+CORA LOCAL PROJECT ADAPTER — BETA v1 (METHOD_ONLY BY DEFAULT)
+
+Mission: Help develop and review the user's explicitly authorized target repository
+using CORA-METHOD. Read Luke883i/cora as methodological reference only.
+Do not transplant CORA's product ontology, policy, DoD or approvals into the target.
+
+First: identify the exact Git repo/branch/HEAD, target product outcome,
+software owners, consumer boundaries, relevant documents, test oracles,
+tool capabilities and actual read/write/run permissions. If inaccessible,
+declare UNKNOWN or NOT_RUN rather than inventing observations.
+
+For each request:
+1. State the product change, its audience and the minimal observable result.
+2. Derive a backward AND-DoD: source, runtime, counterexamples, governance.
+3. Inspect Git archaeology, documents, imports, dynamic/HTTP consumers and risks.
+4. Select the smallest reversible semantic change and preserve original owners.
+5. Use write tools only after authorization; bind blob/tree/commit/PR to real SHAs.
+6. Falsify with independent expected outcomes and targeted native tests.
+7. Replay source evidence with CORA-ENGINE only if it was actually executed.
+8. Report PASS_SCOPED, REFUTED, NOT_RUN, UNKNOWN and BLOCKED_EXTERNAL faithfully.
+9. Provide SHA, changed paths, test commands/results, survivors, debt and rollback.
+10. Do not merge, release, delete or claim enterprise-ready by your own authority.
+
+Modes: METHOD_ONLY (plan/chat), ENGINE_VERIFIED (real CORA CLI receipt),
+TARGET_NATIVE (actual target tests), PR_MATERIALIZED (read-back GitHub objects).
+A mode is earned by evidence, never by fluency or self-report.
+The temporary CORA chat ZIP is an explicit opt-in handoff, not chat memory.
+```
+
+### Practical engineering vocabulary (without magic)
+
+- **Blobbing:** writing content-addressed **file blobs** to Git. A blob hash identifies bytes; it is **not** a tree, commit, reviewed change or executed test.
+- **Materialization:** connecting blobs in a Git **tree**, creating a **commit** with parent history, and updating a branch ref; a PR is a review request, not a merge or independent approval.
+- **Semantic commit:** a reversible change with one identifiable engineering intent, changed owners, acceptance oracle and rollback. A descriptive message alone does not prove cohesion.
+- **Retrograde AND-DoD:** start from the intended product result and enumerate *all* necessary source, runtime, negative and governed conditions backwards; an open prerequisite blocks the stronger verdict.
+- **Semantic diff:** compare preserved product contracts, consumers, authority, behavior and evidence **in addition to** textual file differences; similar text is not proof of behavioral equivalence.
+- **Falsification / semantic mutation:** introduce controlled counterexamples and check a separately specified expected verdict. Count killed, surviving and inconclusive mutants distinctly.
+- **Saturation:** stop only after a predeclared finite family, budget, repeatable final window and no new counterexample in that scope. Millions of in-memory masks are **not** millions of physical source changes or real users.
+- **Unknown consumer:** lack of a static import does not prove that a dynamic call, URL, loader, runtime or outside process never uses a file. Retain the original until that risk is qualified.
+
+### Seven traceable engineering changes for a CTO
+
+These are historical Git PRs, **not** evidence that CORA-ENGINE authored or certified each product. Read the exact source/diff and distinguish Git from runtime and human results.
+
+| Case | Semantic outcome | Engineering lesson |
+| --- | --- | --- |
+| [CORA #46](https://github.com/Luke883i/cora/pull/46) · [commit 0c70053](https://github.com/Luke883i/cora/commit/0c700530899446dc27b972c44979ed43b425cebf) | Portable per-iteration chat handoff | A chat plan becomes an inspectable, non-authorizing artifact. |
+| [CORA #52](https://github.com/Luke883i/cora/pull/52) · [commit 094294a](https://github.com/Luke883i/cora/commit/094294a3c051fb0a63c4efe19c467845cbb9e393) | Native Teddy Node and ICTC HTTP/SQLite pilots | Target-owned runtime evidence differs from source-only replay. |
+| [ICTC #274](https://github.com/Luke883i/ictc/pull/274) · [commit cc4d5dc](https://github.com/Luke883i/ictc/commit/cc4d5dc7209823c85cbf170bef27f09f506b3df1) | Physical `v3/` to `src/`, `public/`, `tests/` migration | Move consumers and entrypoints together; history stays history. |
+| [ICTC #275](https://github.com/Luke883i/ictc/pull/275) · [commit 2aec423](https://github.com/Luke883i/ictc/commit/2aec4230a2f290089894a042fd900b6fa989f595) | Post-cutover owner/path hardening | A tidy tree requires negative reachability checks. |
+| [Teddy #56](https://github.com/Luke883i/teddy/pull/56) · [commit 767e844](https://github.com/Luke883i/teddy/commit/767e844ddba865a3bc1dab1d98182c76a10d326a) | CORA source assurance in its native Node repository | Reuse CORA without replacing Teddy's engine or product identity. |
+| [iKant_EDU #242](https://github.com/Luke883i/iKant_EDU/pull/242) · [commit 953caf5](https://github.com/Luke883i/iKant_EDU/commit/953caf5f79648600ff2a69595dfb6e2b05ae915c) | Runtime evidence and DoD-of-DoD | Source receipts do not attest Host or MCP behavior. |
+| [iKant_EDU #243](https://github.com/Luke883i/iKant_EDU/pull/243) · [commit b88cea0](https://github.com/Luke883i/iKant_EDU/commit/b88cea03129ac39b994769cab75c9ff6ee5ee166) | Root contraction with historical provenance and consumer DoD | No deletion by absence of a static reference alone. |
+
+Other public **examples**, not blanket CORA-ENGINE qualifications: [academics](https://github.com/Luke883i/academics) (research entry), [ROA](https://github.com/Luke883i/ROA) (theory), [Juriscribe](https://github.com/Luke883i/juriscribe), [LUMEN](https://github.com/Luke883i/lumen) (browser target), and [NILO](https://github.com/Luke883i/NILO) (game/remote target). The seven cases above also link CORA, ICTC, Teddy and iKant_EDU.
+
 ## Phase-gated coding: adapt N without adding a coding agent to CORA
 
 The human provides an adequately expressive A0 contract: intended behavior,

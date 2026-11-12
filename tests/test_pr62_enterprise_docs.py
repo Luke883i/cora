@@ -88,6 +88,100 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
         self.assertTrue(any(e.startswith("broken-link:README.md:") for e in broken["errors"]))
         self.assertIn("worktree-git-parity:README.md", broken["errors"])
 
+    def test_pr63_project_adapter_source_truth_and_mutants(self):
+        """Finite text/source adversaries; not a human Project or GitHub run."""
+        readme = (ROOT / "README.md").read_text("utf-8")
+        guide = (ROOT / "docs/AGENT_ADOPTION.md").read_text("utf-8")
+        start = (ROOT / "docs/GETTING_STARTED.md").read_text("utf-8")
+        dod = (ROOT / "docs/DOCUMENTATION_DOD.md").read_text("utf-8")
+        implementation = (ROOT / "src/cora/chat_bundle.py").read_text("utf-8")
+        links = (
+            "cora/pull/46", "cora/pull/52",
+            "ictc/pull/274", "ictc/pull/275",
+            "teddy/pull/56", "iKant_EDU/pull/242",
+            "iKant_EDU/pull/243",
+        )
+        commits = (
+            "cora/commit/0c700530899446dc27b972c44979ed43b425cebf",
+            "cora/commit/094294a3c051fb0a63c4efe19c467845cbb9e393",
+            "ictc/commit/cc4d5dc7209823c85cbf170bef27f09f506b3df1",
+            "ictc/commit/2aec4230a2f290089894a042fd900b6fa989f595",
+            "teddy/commit/767e844ddba865a3bc1dab1d98182c76a10d326a",
+            "iKant_EDU/commit/953caf5f79648600ff2a69595dfb6e2b05ae915c",
+            "iKant_EDU/commit/b88cea03129ac39b994769cab75c9ff6ee5ee166",
+        )
+
+        def source_errors(r, g, s, d, engine):
+            errors = []
+            def need(condition, code):
+                if not condition:
+                    errors.append(code)
+            need(g.count("## ChatGPT Project beta adapter") == 1,
+                 "duplicate-or-missing-adapter")
+            need(g.count("CORA LOCAL PROJECT ADAPTER — BETA v1") == 1,
+                 "missing-canonical-project-prompt")
+            need("Plus or Edu" in g and "Plus/Edu recipe" in r,
+                 "undocumented-beta-plan-assumption")
+            need("standard ChatGPT GitHub app is read-only" in g,
+                 "read-vs-write-capability-confused")
+            need("separate write-capable tool" in g and "cannot push code" in r,
+                 "missing-independent-write-authorization")
+            need("METHOD_ONLY BY DEFAULT" in g and "ENGINE_VERIFIED" in g
+                 and "PR_MATERIALIZED" in g, "simulated-execution")
+            need("product**" in g and "software**" in g and "repository**" in g,
+                 "ontology-collapsed")
+            need("not live ChatGPT memory" in g
+                 and "**not** automatic chat memory" in r,
+                 "handoff-overpromoted")
+            need("iterations/{i:06d}" in engine
+                 and "iterations/000001/handoff.md" in s,
+                 "wrong-real-ZIP-path")
+            need("#chatgpt-project-beta-adapter" in r
+                 and "AGENT_ADOPTION.md#chatgpt-project-beta-adapter" in s,
+                 "broken-canonical-route")
+            need(all(link in g for link in links + commits), "untraceable-pr-history")
+            need(all(term in g for term in (
+                "Blobbing:", "Materialization:", "Semantic commit:",
+                "Retrograde AND-DoD:", "Semantic diff:",
+                "Falsification / semantic mutation:", "Saturation:",
+                "Unknown consumer:")), "missing-engineering-vocabulary")
+            need("R63_SOURCE =" in d and "R63_ACCEPTED =" in d
+                 and "E01_FIRST_READ_HUMAN" in d
+                 and "E03_ENFORCED_HOST_AND_NON_AUTHOR_REVIEW" in d,
+                 "source-promoted-to-human-governance")
+            return errors
+
+        parts = (readme, guide, start, dod, implementation)
+        self.assertEqual(source_errors(*parts), [])
+        # One controlled contradiction per distinct reader-risk family.
+        mutants = [
+            (readme, guide.replace(
+                "standard ChatGPT GitHub app is read-only",
+                "standard ChatGPT GitHub app can automatically push code", 1),
+             start, dod, implementation),
+            (readme, guide.replace("separate write-capable tool",
+                                   "the same read-only app", 1),
+             start, dod, implementation),
+            (readme, guide.replace("CORA LOCAL PROJECT ADAPTER — BETA v1",
+                                   "unversioned informal instructions", 1),
+             start, dod, implementation),
+            (readme, guide + "\n## ChatGPT Project beta adapter\nDuplicate.\n",
+             start, dod, implementation),
+            (readme, guide, start.replace("iterations/000001/handoff.md",
+                                          "rounds/000001/handoff.md", 1),
+             dod, implementation),
+            (readme, guide, start, dod.replace("R63_ACCEPTED =",
+                                               "R63_ACCEPTED_IS_AUTOMATIC ="),
+             implementation),
+            (readme, guide.replace("teddy/pull/56",
+                                   "teddy/pull/999999", 1),
+             start, dod, implementation),
+        ]
+        for i, mutant in enumerate(mutants):
+            with self.subTest(family=i):
+                self.assertTrue(source_errors(*mutant),
+                                "semantic corruption survived: " + str(i))
+
     def test_one_million_distinct_noncompensatory_contract_vectors(self):
         """Exactly 1,000,000 unique 20-bit states and an independent bit oracle."""
         self.assertEqual(len(DOC.ENTERPRISE_SOURCE_LEAVES), 12)

@@ -163,3 +163,26 @@ This amendment refines the existing R48-A–H AND-gate; it does **not** create a
 **DoD-of-DoD:** each obligation must name a source, an independent oracle or concrete falsifier, the owning verifier, the exact revision invalidating prior evidence and whether the observation is SOURCE or EXTERNAL. The 20-bit AND-cut is stressed with 1,000,000 deterministic distinct finite vectors, plus physical Markdown/claim corruption controls in [PR62 regression tests](../tests/test_pr62_enterprise_docs.py). The vectors exercise *contract semantics*, not a million independent repository edits, people or real product executions. The original 10,000 README counterexamples remain separately required. Failures must remain distinguishable from `NOT_RUN`; every new source revision requires fresh candidate-SHA CI.
 
 **Minimality rule:** prefer one existing authoritative owner over a new parallel registry, engine, framework or dashboard. Archive identity is retained; index-only visibility is not evidence of current operational use. No document may claim that Git hashes, SBOM generation or green source CI establish reviewer identity, supply-chain signing, protected hosting or enterprise readiness.
+
+## Reader-first engineering transfer — minimal source DoD (post-PR62)
+
+**Goal:** an unfamiliar CTO or engineer can locate what CORA does, reproduce a source-scoped command, challenge an overclaim, and see what remains blocked, without learning its development chronology first. This is a *source/documentation candidate* measure; no documentation unit test establishes actual human comprehension or external readiness. Reuse the original `S01–S18` documentation contract, verifier, Chat bundle source and R48/PR62 budgets. No second registry, product, software engine, approval gate or "enterprise-ready" designation.
+
+| ID | Necessary source condition | Measurable bound / owner / falsifier |
+| --- | --- | --- |
+| R63-01 | Product / software / repository boundaries not conflated | README names all three; `docs/ARCHITECTURE.md` owns scope, no second engine; existing source verifier |
+| R63-02 | First command, verification and verdict visible | Quickstart and One-Run both retain executable CLI invocation; `PASS_SCOPED`, `NOT_RUN`, `REFUTED`, `BLOCKED_EXTERNAL` stay discriminable |
+| R63-03 | One canonical ChatGPT Project adapter | Exactly one paste-ready beta prompt under `docs/AGENT_ADOPTION.md`; README and `GETTING_STARTED.md` link it, not duplicate its instructions |
+| R63-04 | Least-privilege permissions and host boundary | Plus/Edu is a *recipe baseline*, not a guaranteed entitlement; normal ChatGPT GitHub connector is read-only; write access requires a distinct authorized tool; local CLI needs real execution |
+| R63-05 | Temporary handoff accurately described | `src/cora/chat_bundle.py` retains ZIP/source receipt, `iterations/000001/handoff.md`, finite limits and no signature/memory/approval claim |
+| R63-06 | Evidence-backed crossrepo narrative | Seven real historical PR links across CORA, ICTC, Teddy, iKant_EDU; no assertion that CORA independently validated their products |
+| R63-07 | Terms are discriminating | Blobbing, materialization, falsification, AND-DoD and finite saturation distinguish source objects, outcomes and inferential limits |
+| R63-08 | Preservation and bounded complexity | 48 registered Markdown, 31 active/17 historical, historic byte identity and zero broken local links; root README **at most 1,450 words**, existing PR62 and PR23 bound |
+| R63-09 | Negative controls catch narrative corruption | Existing 1k, 10k and PR62 finite source falsifiers; targeted physical text mutants for read-only/write claims, prompt duplication, wrong handoff path, and invented approval |
+| R63-10 | Exact-head review and no self-approval | Candidate exact Git SHA, repository/documentation/claim verification, relevant native tests and CI; effective host protection, independent review and user trials remain separate |
+
+**Source cut:** `R63_SOURCE = R63-01 ∧ R63-02 ∧ ... ∧ R63-10`. **Governed cut:** `R63_ACCEPTED = R63_SOURCE ∧ E01_FIRST_READ_HUMAN ∧ E02_AGENT_ON_EXTERNAL_MAINTAINED_TARGET ∧ E03_ENFORCED_HOST_AND_NON_AUTHOR_REVIEW`. A missing obligation is `BLOCKED_EXTERNAL` or `REFUTED`, never averaged away.
+
+**Budget decision:** keep the existing 1,450-word README bound for now. An arbitrary numerical expansion is not an engineering standard or independent readability evidence; the conventional reader-first approach is progressive disclosure through one concise front door and one task-owned deep guide. Change this limit and the corresponding test **together** only after a concrete reader-task deficiency survives falsification. These limits are automated navigation proxies, not objective optimal-word-count science.
+
+**Checklist before PR acceptance:** snapshot exact BASE/HEAD; verify zero deleted/renamed runtime objects; read-back canonical prompt and source ZIP path; run `python tools/verify_documentation.py --repo .`, `python tools/verify_claim_evidence.py --repo . --revision HEAD --output /tmp/cora-reader-proofs.json` and `--verify-report /tmp/cora-reader-proofs.json`; execute `test_pr23_navigation.py`, `test_pr62_enterprise_docs.py` (including R63 negatives), and `test_pr46_chat_bundle.py`; inspect exact-HEAD GitHub checks and record external gates without claiming they passed.
