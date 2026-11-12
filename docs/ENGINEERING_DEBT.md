@@ -1,5 +1,12 @@
 # CORA engineering debt: a multiscale, evidence-bounded operating model
 
+**Document status:** CURRENT
+**Current scope:** Multi-scale debt discovery and bounded mitigation decisions.
+**Operational use:** Inspect debt-signals, compare revisions and prioritize explicit unknowns.
+**Evidence:** Original Git, optional input analyzers and the process suite.
+**Limits:** Findings are not certified defect counts or verified remediation.
+
+
 **Status: experimental.** An inventory of observations, *not* a certified defect register, a measured financial liability, a runtime dependency graph, or a license to modify software.
 
 ## Purpose, inputs and boundaries

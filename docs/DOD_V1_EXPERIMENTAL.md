@@ -1,5 +1,12 @@
 # CORA v1.experimental — global, intermediate and local DoD
 
+**Document status:** CURRENT
+**Current scope:** The current experimental source DoD and distinct external acceptance.
+**Operational use:** Derive source acceptance from real tests without converting external unknowns.
+**Evidence:** DoD JSON, source Git and package/release tests.
+**Limits:** An experimental PASS does not create supported enterprise release.
+
+
 **Candidate package:** the pinned commit's `pyproject.toml` `project.version`, cross-checked against the Python package, wheel, sdist, and unpublished review bundle (pre-release; no stable v1 API or distribution promised). A terminal global PASS is prohibited when an independent human or external hosting proof remains absent. Each gate has a responsible human and a reproducible witness; a large synthetic run never substitutes for source evidence.
 
 ## Global gate G-v1 (AND-composition)

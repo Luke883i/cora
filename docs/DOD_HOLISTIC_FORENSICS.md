@@ -1,5 +1,12 @@
 # Backward semantic DoD — CORA holistic archaeology
 
+**Document status:** CURRENT
+**Current scope:** Acceptance obligations for read-only Git archaeology and partial grouping.
+**Operational use:** Run the actual source forensic methods and retain unresolved edges.
+**Evidence:** Pinned Git history, bounded graph and original source tests.
+**Limits:** Cochange is not runtime causality or proof of safe removal.
+
+
 **G scoped:** On a pinned Git revision, produce an explainable, source-replayable, non-destructive map of product/software/repository, historical change episodes and current file/development groups. No absence-as-proof, no automatic deletion, no AI authority.
 
 **G+ NOT achieved:** cross-language/CFG/dataflow and external consumer closure, independently authenticated PR provenance, verified runtime coverage, calibrated AI confidence, protective GitHub rulesets, production-repository precision/recall and controlled transformation proof.

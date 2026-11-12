@@ -1,5 +1,12 @@
 # PR-16 semantic assurance lattice — falsifiable DoD
 
+**Document status:** SCOPED_CURRENT
+**Current scope:** The source-only semantic-lattice contract implemented within CORA.
+**Operational use:** Reproduce C5–C9 cuts and falsify hostile archive or reported claims.
+**Evidence:** Original Git objects, typed receipts, physical/finite negative tests.
+**Limits:** Contract PASS does not authenticate a Docker host, reviewer or merge.
+
+
 **Scope:** candidate branch only; source assurance is not independent sandbox, merge, or release permission. Every status is SHA-scoped and may be invalidated by a changed input or implementation.
 
 ## Global obligations, non-compensatory

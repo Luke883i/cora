@@ -1,5 +1,12 @@
 # PR-20 — Complete R1–R4 semantic reticular DoD
 
+**Document status:** SCOPED_CURRENT
+**Current scope:** R1–R4 noncompensatory convergence obligations in the existing engine.
+**Operational use:** Compare BASE/HEAD and isolate invalidated observations or debt.
+**Evidence:** Reticulum, continuous Python source and original Git replay.
+**Limits:** Missing runtime, dynamic dependencies and human authority remain open.
+
+
 ## Backward-derived global contract
 
 User intent: converge imported gold into **one** operational chain from real engineering intent to proof, falsification, pre/postmerge decisions and independently governed PR. Avoid adding duplicate analysis owners. `G_SOURCE_CONVERGENCE = AND(S01..S10)`; `G_R1_R4_COMPLETE = G_SOURCE_CONVERGENCE AND R1_CONTEXTUAL AND R2_PHYSICAL AND R3_EFFECTFUL AND R4_CONTINUOUS`; `G_GOVERNED = G_R1_R4_COMPLETE AND E_REVIEW`. Machine profile: 10 source leaves, 10 externally witnessed leaves, five intermediate cuts and three global roots = **28 nodes**. The COMPLETE cut contains nine external prerequisites; GOVERNED contains ten. No compensatory scoring, self waiver or source-to-runtime promotion.
