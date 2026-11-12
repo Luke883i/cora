@@ -622,6 +622,7 @@
       "src/cora/one_run_stress.py",
       "src/cora/ontology.py",
       "src/cora/portable_assurance.py",
+      "src/cora/practice_contract.py",
       "src/cora/process_suite.py",
       "src/cora/reticulum.py",
       "src/cora/runtime_observation.py",
@@ -773,6 +774,7 @@
       "tests/test_pr50_portable.py",
       "tests/test_pr51_gold_bridge.py",
       "tests/test_pr52_native_gold.py",
+      "tests/test_pr58_practice_contract.py",
       "tests/test_selection.py"
     ],
     "internal_dod": [

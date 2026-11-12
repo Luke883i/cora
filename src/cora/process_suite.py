@@ -15,6 +15,7 @@ from .graph import graph_from_commit
 from .holistic import holistic_audit
 from .selection import select_file
 from .debt import debt_scan
+from .practice_contract import project as practice_project
 
 PROCESSES = ('source', 'history', 'architecture', 'forensics', 'debt', 'verification', 'full')
 IMPLEMENTED = {
@@ -131,7 +132,8 @@ def run_suite(repo:Path,revision:str='HEAD',*,process:str='full',
             'methods_not_invoked':sorted(set(IMPLEMENTED['full'])-set(methods)),
             'excluded_unsafe_methods':process_catalog()['excluded_unsafe_methods'],
             'coverage':'Selected read-only source methods only; full does not mean all real-world behavior',
-            'authorized_action':'NONE'}
+            'authorized_action':'NONE',
+            'practice_obligations':practice_project(repo, commit)}
     if measure:
         result['timing']={'wall_ms':max(0,int((monotonic()-started)*1000)),
                           'basis':'MONOTONIC_LOCAL_OBSERVATION_NOT_REPLAYABLE'}
