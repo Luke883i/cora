@@ -30,6 +30,8 @@ reported observations. The optional `--model-stress-cases 100000` uses the
 **existing** deterministic finite source model, not 100,000 physical Git
 mutations or human reviews.
 
+**Multi-commit review:** choose the intended Git ancestor BASE, then run `cora process-run . --revision HEAD --change-base BASE_SHA --one-run --profile comprehensive --output /tmp/cora-range.json --atlas-html /tmp/cora-range.html` and `cora verify-process /tmp/cora-range.json --repo . --one-run --atlas-html /tmp/cora-range.html`. Without BASE, obligations cover one commit, not necessarily the entire PR. The caller's BASE is not host-authenticated, and source inspection does not execute target tests.
+
 ## What to check before accepting any claim
 
 1. **Conclusion:** What is actually observed, reused, blocked or not run?
