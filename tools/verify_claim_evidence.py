@@ -357,8 +357,13 @@ def _semantic_oracles(store: SourceStore, errors: list[str]) -> None:
     _ok("GETTING_STARTED.md" in index and
         "AGENT_ADOPTION.md" in index and "CLI_REFERENCE.md" in index,
         errors, "S18:reader-path-not-present")
-    _ok("PR-21" in r("CHANGELOG.md") and "PR-21" in r("docs/ARCHITECTURE.md"),
-        errors, "H2:post-pr21-chronology-stale")
+    # Current documentation must identify the actual package version and
+    # registered owner surface. Historical PR tokens live in original Git;
+    # requiring them as prose would perpetuate a stale-document failure.
+    _ok(meta["version"] in r("CHANGELOG.md") and
+        "## Current documentation ownership" in r("docs/ARCHITECTURE.md") and
+        "documentation-registry.json" in r("docs/ARCHITECTURE.md"),
+        errors, "H2:current-documentation-source-identity-drift")
 
 
 def inspect(repo: Path, revision: str = "HEAD") -> dict:
