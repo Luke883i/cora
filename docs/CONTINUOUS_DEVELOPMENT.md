@@ -73,52 +73,18 @@ When the target has its own committed ontology and a trusted BASE-committed `.co
 
 Source candidates and witness invalidations are not authenticated consumer, host or runtime observations. Missing intent yields DEBT_BLOCKED, even if deterministic local source checks can otherwise run. See [agent adoption](AGENT_ADOPTION.md) and [convergent assurance](CONVERGENT_ASSURANCE.md).
 
-## CI workflow rationalization (PR-24 proposal)
+## Current supporting operations (original owners, no parallel runner)
 
-CORA adapts the iKant_EDU PR-201/202 inventory, PR-205 historical preservation, and draft PR-215 consolidation proposals. Those observations are engineering precedents, not an authorization to delete workflows.
+The following operations supplement the primary `process-run` / `verify-process` review path. They do not retire checks, execute unknown target code without consent, or certify enterprise readiness.
 
-Run `cora workflow-audit . --revision HEAD --output /tmp/workflows.json` and `cora verify-workflows /tmp/workflows.json --repo .`. Compare with `--base BASE_SHA` to inspect additions, modifications and removals. This read-only analysis identifies partial trigger/job syntax, local workflow callers, source references and duplicate checks; it cannot prove absent external consumers or equivalent runs.
+| Goal | Original command / source | Boundary |
+| --- | --- | --- |
+| Inspect workflow consumers | `cora workflow-audit . --revision HEAD --output /tmp/workflows.json` then `cora verify-workflows /tmp/workflows.json --repo .` | A duplicate-looking workflow is not safe to delete; callers and actual hosted enforcement must be reviewed. |
+| Correlate method/agent hypotheses | `cora method-synthesize . --revision HEAD --output /tmp/cora-case.json` and `cora verify-method-synthesis /tmp/cora-case.json --repo .` | Typed observations remain separate from unauthenticated AI hypotheses and target runtime. |
+| Diagnose repeatability | `python -m cora.ci_repro --repo . --sha "$(git rev-parse HEAD)" --repetitions 3 --output /tmp/cora-ci-repro.json` | All PR25/PR26 failures and timeouts count; a green repeat cannot prove root cause or eliminate flakiness. |
+| Execute One-Run | `cora process-run . --revision HEAD --process full --one-run --profile comprehensive --output /tmp/one.json` | The 71-command atlas is a catalog; at most eight safe methods run, without automatic target tests or release authority. |
 
-`.cora/contracts/dod/workflow-dod.json` specifies `G_WORKFLOW_SOURCE` and `G_WORKFLOW_GOVERNED` with external E01-E04 evidence open. A reviewer must establish replacement behavior and actual platform controls before separately approving retirement. A source receipt never executes or modifies target workflows.
-
-## Method synthesis and governed AI hypotheses (PR-25)
-
-`cora method-synthesize . --revision HEAD --output /tmp/cora-case.json --analyst-request /tmp/cora-questions.json` reuses the original Git-bound artifact and workflow auditors, software ontology, process catalog and reticulum. `cora verify-method-synthesis /tmp/cora-case.json --repo .` replays the exact committed source. Optional `--artifacts`, `--workflows` and `--process` inputs must be independently reverified and share one commit; optional `--hypotheses` claims are never execution evidence.
-
-The [method atlas](../.cora/contracts/profiles/method-atlas.json) connects fourteen CORA procedures to nine industry methods as inspiration, **not standards certification**. The [AND DoD](../.cora/contracts/dod/method-synthesis-dod.json) keeps seven source obligations distinct from four external requirements. A workflow role disagreement is `SOURCE_CONTRADICTION`; a shared caller is `OBSERVED_SOURCE_RELATION`; a proposed workflow adjustment is `INFERRED_REVIEW_ONLY`; unavailable process evidence is `OBSERVED_SOURCE_GAP`. The analyst request embeds bounded questions rather than source code or a purported LLM conclusion.
-
-Do not interpret shared inputs as equivalent executions, source proofs as release attestation, or typed AI suggestions as authenticated facts. Real usability, maintained-target behavior, independent host/reviewer authority and postmerge effects remain outside this source-only case.
-
-## PR33 — measurable post-merge forensics, not synthetic release approval
-
-**Objective:** diagnose the recurring post-merge PR25 and PR26 original-Git falsifier failures using complete, attributable repeated observations, rather than one green rerun. Use `python -m cora.ci_repro --repo . --sha "$(git rev-parse HEAD)" --repetitions 3 --output /tmp/cora-pr33-measured.json` from a clean, authorized CORA checkout. The runner executes the two original test cohorts (PR25 and PR26) in three separate child interpreters each, without `shell=True` and without forwarding GitHub API tokens. All outcomes, including failed attempts and timeouts, are counted; later PASS cannot erase any FAIL.
-
-### Quantitative checklist and gate ownership
-
-| Gate | Metric or condition | Evidence / acceptance |
-|---|---|---|
-| R1 — Git identity | Full source `commit`, Git `tree`, exact checkout HEAD | Git original object reads; a tree match does not equate distinct commits |
-| R2 — Environment parity | Python 3.11 & 3.13, Git version, coverage version, dependency SHA-256 | Per-job report and human check for parity; no environment assumptions |
-| R3 — Git mutation coverage | PR25 and PR26 cohorts, >=3 invocations each per Python | Six samples per matrix job; runner reports every return code |
-| R4 — No masked failures | 0 failed or timed-out attempts; sample failure rate 0 | Any nonzero or timeout => `FAIL_OBSERVED` and nonzero CI exit |
-| R5 — Traceability | Failed test IDs, stderr fingerprint, elapsed min/max/p95 | Attribution to exact SHA, job and source. Original trace in Actions logs |
-| R6 — Independent RCA and delivery | Reproduction + validated counterexample, reviewed final-main CI, protected main, independent reviewer | External gate; cannot be closed by a probe report |
-
-**Limit:** `PASS_SCOPED_REPEATABILITY_SAMPLE` means only the observed cohorts passed in that finite sample; it is not statistical proof that a flaky test no longer exists or that a root cause was found. `original_contract()` rechecks the Git-committed 21-node, noncompensatory [postmerge DoD](../.cora/contracts/dod/postmerge-repro-dod.json); source/model observations remain separate from independently observed merge, human approval and real release. Report's status never grants authorization. Compare unmodified CI logs across jobs before filing an independent root-cause conclusion.
-
-## PR36 — an operational execution atlas, not an inflated command catalog
-
-The one-run experience deliberately extends `process-run` and `verify-process`: it does not create a second command hierarchy. The execution receipt captures original Git commit/tree, the selected read-only source methods, each method's state and measured duration or explicit reuse/unmeasured marker, and separately declared excluded activities. The existing PR31 maturity and capability atlas remains the 71-command source catalog, **not proof of 71 executions**. Optional unit tests require explicit execution consent, never produce independent runtime authority and do not automatically become per-command PASS.
-
-**Acceptance checklist:** G_EXECUTION = commit/tree source, bounded method scope, measured or explicitly unmeasured time and status; G_PRESENTATION = complete declaration/observed-run separation, readable searchable offline HTML, one JSON receipt, escaping, test consent; G_SOURCE_REPLAY = re-run source against immutable Git objects, reject altered HTML, 100k preseeded receipt mutations (2 positive + 30 negative families, zero oracle disagreements) and physical committed Git DoD falsifiers; G_GOVERNED_ONE_RUN and G_ONE_RUN_PRODUCT remain BLOCKED_EXTERNAL pending human acceptance, independent target execution, newcomer UX, host enforcement, release and rollback.
-
-**Metrics and thresholds:** 71 declared/0 independently invoked CLI commands per source-only run; at most eight safe process methods, classified individually; every executed activity requires a duration; shared work must not be counted twice; no false PASS for BLOCKED or NOT_RUN; 100000 unique preseeded model inputs (6250 positive, 93750 negative), 0 disagreements and 0 unauthorized promotions, byte-identical same-seed replay. The 100k cases are **finite-model mutations of reports**, not 100k real Git changes or validated target defects. Exact original-Git DoD and artifact role registries form the provenance chain. Raw execution timings and unit-test exits cannot be independently authenticated through deterministic source replay alone.
-
-
-## PR39 rule for future feature convergence
-
-A future source engine, benchmark, runtime runner, UI, publication mechanism or governance claim must update the canonical feature atlas and artifact roles, introduce independent negative oracles, extend the existing One-Run lineage and explicit blockers, revise operator docs, and pass tests on exact HEAD. Changes to the four product proof boundaries must alter the versioned independent qualification DoD deliberately, with an independent reviewer. PR36–38 identities and earlier receipts remain immutable historical witnesses; no local green test may substitute for a missing external authority.
-
+**Scope and iteration:** preserve original Git/test witnesses for every method, negative mutant, and new feature; record exact BASE/HEAD, actual execution or `NOT_RUN`, blockers and postmerge rechecks. The [method atlas](../.cora/contracts/profiles/method-atlas.json), [workflow DoD](../.cora/contracts/dod/workflow-dod.json) and [postmerge DoD](../.cora/contracts/dod/postmerge-repro-dod.json) retain formal owners. PR24/25/33/36/39 development details remain in the [changelog](../CHANGELOG.md), their source commits and associated DoDs; these are not alternate instructions or proof of independent hosting.
 
 ## LEVEL: contract-to-product development with bounded continuation (PR47 candidate)
 

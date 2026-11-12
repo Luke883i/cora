@@ -40,26 +40,26 @@ Then run [One-Run](#one-run--one-command-one-evidence-dossier). This identifies 
 
 | Decision question | Current answer |
 | --- | --- |
-| **Who / what?** | Developer tooling for CTOs, developers, maintainers, reviewers and AI coding-agent operators. Unit: one bounded software change with a falsifiable DoD and unresolved obligations. |
-| **Method / engine** | **CORA-METHOD** guides third-party agents; **CORA-ENGINE** is the local Python `cora` CLI. The agent implements; CORA records scoped evidence, not approval. |
-| **Targets / runtime** | Git-bound source inspection across languages, partial Python AST and static JavaScript ESM; native runtime pilots only **Teddy Node** and **ICTC HTTP/SQLite**. Browser and remote deployment remain unobserved by PR52. |
-| **Delivery / compatibility** | **MIT**, **Python 3.11+**, `cora-audit 1.0.0a5`, no declared mandatory Python runtime dependencies; wheel/sdist review candidates, not a supported published release. |
-| **Software supply chain** | Candidate build parity and `SHA256SUMS` exist; **SBOM (CycloneDX 1.6): GENERATION_IN_CANDIDATE_CI**; **SCA/CVE: SCAN_CI_BUILD_TOOLS_ONLY**; **artifact signing / SLSA provenance: NOT_ATTESTED**. |
-| **Security / procurement gates** | Execution needs authorization and suitable isolation. **Independent reviewer, enforced branch rules, release: BLOCKED_EXTERNAL**; no production security SLA. [Security](SECURITY.md) · [Release](docs/RELEASE.md). |
+| **Who / what?** | CTOs, developers, reviewers and AI coding-agent operators assess one bounded software change, its falsifiable DoD and unresolved obligations. |
+| **Method / engine** | **CORA-METHOD** guides third-party agents; **CORA-ENGINE** is the local Python CLI. The agent edits; CORA checks evidence, not approval. |
+| **Targets / runtime** | Git-bound source inspection, partial Python AST and static JavaScript ESM; native pilots **Teddy Node** and **ICTC HTTP/SQLite**. Browser/remote unobserved. |
+| **Delivery / compatibility** | **MIT**, **Python 3.11+**, `cora-audit 1.0.0a5`, no declared mandatory Python runtime dependencies. Wheel/sdist candidates; no supported public release. |
+| **Supply chain** | **SBOM (CycloneDX 1.6): GENERATION_IN_CANDIDATE_CI**; **SCA/CVE: SCAN_CI_BUILD_TOOLS_ONLY**; **artifact signing / SLSA provenance: NOT_ATTESTED**. |
+| **Governance** | Execution needs authorization and isolation. **Independent reviewer, enforced branch rules, release: BLOCKED_EXTERNAL**; no production security SLA. [Security](SECURITY.md) · [Release](docs/RELEASE.md). |
 
-**Assurance levels:** **L1** = Git/source checks and explicitly reported local tests; **L2** = bounded product experiments with target-specific oracles; **L3** = optional external assurance for independently governed acceptance. L1/L2 may be useful without L3. A Git SHA or CI PASS cannot approve a release.
+**Assurance levels:** **L1** = Git/source checks; **L2** = bounded product experiments; **L3** = optional external assurance. L1/L2 may be useful without L3. CI PASS cannot approve a release.
 
-**71 declared CLI commands** in the [capability atlas](.cora/assurance/capability-atlas.json): a source inventory, **not a claim that 71 product behaviors have been independently executed or certified**. Implemented surfaces include Git/file archaeology, partial static dependencies, typed DoD graphs, bounded debt, modeled fault tests, pre/post-merge reports and portable ChatGPT iteration ZIPs. The [parser-checked CLI reference](docs/CLI_REFERENCE.md) and [complete documentation index](docs/INDEX.md) document source surfaces, not runtime certificates.
+**71 declared CLI commands** in [capability atlas](.cora/assurance/capability-atlas.json) are inventory, not 71 independently proven features. [parser-checked CLI reference](docs/CLI_REFERENCE.md) · [complete documentation index](docs/INDEX.md).
 
-**CORA is not an eleventh engineering method.** It correlates partial observations; no listed method is implemented in full:
+**CORA is not an eleventh engineering method.** It correlates partial observations, not whole disciplines:
 
-| Lens | What it contributes | What CORA does *not* infer |
+| Lens | Observation | Not established |
 | --- | --- | --- |
-| C4/arc42, DDD | Architectural boundaries and accountable owners | A complete architecture or true runtime ownership |
-| Static dependencies, typed graphs, lineage, Git archaeology | Candidate consumers, paths, changes and provenance | Every dynamic consumer, SCC/centrality analysis or runtime causality |
-| Contracts, mutation/metamorphic tests, threat modeling, fitness functions | Invariants, negative cases and change risks | Formal correctness, full security coverage or globally minimal design |
+| C4/arc42, DDD | Architectural boundaries | Complete architecture or runtime ownership |
+| Static dependencies, typed graphs, lineage, Git archaeology | Candidate consumers and provenance | Dynamic callers or runtime causality |
+| Contracts, mutation/metamorphic tests, threat modeling, fitness functions | Invariants and negative cases | Formal correctness or full security |
 
-[method crosswalk](docs/CONVERGENT_ASSURANCE.md#method-crosswalk--borrowed-perspectives-not-full-implementations): implemented source observations, analogies and external evidence remain distinct.
+The [method crosswalk](docs/CONVERGENT_ASSURANCE.md#method-crosswalk--borrowed-perspectives-not-full-implementations) separates implemented evidence and analogies.
 
 ## One-Run — one command, one evidence dossier
 
@@ -69,32 +69,30 @@ cora process-run . --revision HEAD --process full --one-run --profile comprehens
 cora verify-process /tmp/cora-run.json --repo . --one-run --atlas-html /tmp/cora-run.html
 ```
 
-The dossier separates `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTERNAL`. **The default does not execute arbitrary target tests**. Run permitted target tests separately and keep commands, versions and observed outcomes. [Portable chat handoff](docs/AGENT_ADOPTION.md#portable-chatgpt-handoff-opt-in) uses `--chat-step` and `--chat-bundle`; its ZIP is neither automatic ChatGPT memory nor an approval.
+The dossier distinguishes `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTERNAL`. **The default does not execute arbitrary target tests**. Retain separate native-test commands and outcomes. [Chat handoff](docs/AGENT_ADOPTION.md#portable-chatgpt-handoff-opt-in) uses `--chat-step` / `--chat-bundle`; a ZIP is not memory or approval.
 
-**Change scope (PR58–59):** `--change-base BASE_SHA` covers a declared BASE–HEAD diff; otherwise one commit. Editorial review is not automatic rewriting, target execution or approval.
+**Full change:** `--change-base BASE_SHA` compares a caller-declared ancestor with HEAD; otherwise one commit. This is not authenticated PR metadata or automatic documentation rewriting.
 
-**Native Gold pilots (PR52):** with explicit test-execution consent, CORA binds real Teddy Node and ICTC HTTP/SQLite outcomes to original Git/Gold claims in the existing One-Run. LUMEN browser and NILO remote remain unobserved controls. The local test exit does not authenticate a runner, approve a release or prove engineer-hours savings. [Method and limitations](docs/GOLD_ASSURANCE.md#pr52--native-gold-pilots-and-bounded-cross-repository-result).
+**Native Gold pilots:** Teddy Node and ICTC HTTP/SQLite were exercised with bounded consent. LUMEN browser and NILO remote remain unobserved. Local PASS cannot authenticate a runner or show productivity gain. [PR52 evidence](docs/GOLD_ASSURANCE.md#pr52--native-gold-pilots-and-bounded-cross-repository-result) · [PR51 linkage](docs/GOLD_ASSURANCE.md#pr51--native-gold-bridge-in-the-existing-portable-one-run).
 
-**Gold linkage (PR51):** portable v2 profiles bind source, native-test records and scoped DoD; reported PASS is not execution. [Oracles and limits](docs/GOLD_ASSURANCE.md#pr51--native-gold-bridge-in-the-existing-portable-one-run).
-
-**Cross-repository opt-in:** on another Git target, use `process-run --one-run --portable-profile /path/to/target.json`; replay with `verify-process --one-run --portable-profile`. This source-only path never transplants CORA's DoD. `--portable-parse-js` parses static ESM without executing modules. [Scope and DoD](docs/CONTINUOUS_DEVELOPMENT.md#cross-repository-sourceevidence-convergence-pr50--candidate). No product approval follows.
+**Other repositories:** `--one-run --portable-profile /path/to/target.json` enables scoped portable replay, not a transferred CORA DoD. `--portable-parse-js` parses static ESM; it does not execute code. [Cross-repository limits](docs/CONTINUOUS_DEVELOPMENT.md#cross-repository-sourceevidence-convergence-pr50--candidate).
 
 ## How CORA works
 
-**1. Specify the outcome.** Turn natural-language intent into actors, boundaries and an **AND-dependency graph** of acceptance conditions. Work **backward** from each required observation: an unknown prerequisite remains open, never averaged away. [Worked application contract](docs/CONTINUOUS_DEVELOPMENT.md#example-contract-and-evidence-ladder--portable-corrective-action-app).
+**1. Specify the outcome.** Turn natural-language intent into an **AND-dependency graph** of observable conditions. Reason **backward**: an unknown prerequisite stays open. [Worked application contract](docs/CONTINUOUS_DEVELOPMENT.md#example-contract-and-evidence-ladder--portable-corrective-action-app).
 
-**2. Change one coherent unit.** An agent uses authorized tools to edit code and tests; CORA checks source evidence. Git records **content-addressed blobs**, **directory trees**, commits and a PR; CORA checks their lineage. **New source SHA** means revalidate. A hash can identify committed bytes; it cannot authenticate a human reviewer.
+**2. Change one coherent unit.** The agent uses authorized tools; CORA inspects committed evidence. Git preserves **content-addressed blobs**, **directory trees**, commits and PR lineage. **New source SHA** means revalidate. A hash can identify committed bytes; it cannot authenticate a human reviewer.
 
-**3. Try to disprove it, then stop intelligently.** Challenge obligations with **seeded combinations** and a **separate expected-result rule**; use **physical mutation testing** on isolated real source only when authorized. Separate killed, **surviving and inconclusive** mutants. A **fixed scenario catalog and final window** with no new failure signatures establishes **bounded convergence**, **not proof of complete correctness**. After repeated **no-progress rounds**, continuation proposes replanning; it **does not predict N** or execute a next step.
+**3. Try to disprove it, then stop intelligently.** Use **seeded combinations**, a **separate expected-result rule** and authorized **physical mutation testing**. Keep killed, **surviving and inconclusive** mutants distinct. A **fixed scenario catalog and final window** can establish **bounded convergence**, **not proof of complete correctness**. After **no-progress rounds**, replan; CORA **does not predict N**.
 
-**Example — delete a module?** Imports and Git history locate candidate consumers; negative tests and owners expose obligations. An unknown dynamic caller means `BLOCKED`, not safe deletion.
+**Delete a module?** Candidate consumers and negative tests inform review; an unknown dynamic caller means `BLOCKED`, not safe deletion.
 
 **Two concrete engineering histories (methods at different maturity levels, not proof that CORA CLI created these products):**
 
-- **[ICTC](https://github.com/Luke883i/ictc) — UI/UX as observable meaning.** An authorized browser/container agent can capture screenshots across roles/viewports and compare *what the UI promises* with actual controls. The Playwright [Browser witness](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/browser-onto-compliance-v1.py) captures screenshots; the [visual audit](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/s4-a6-ux4-uiux-mount-audit.md) records **screenshot-derived** faults: misleading write affordances, technical-first hierarchy and hidden work. The [reconciliation contract](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/uiux-656-absorption-contract.json) maps **656 recorded visual/UX findings to 12 root causes**; separate [physical product mutants](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/release-readiness-e2-product-mutants.mjs) edit real source and run an E2 gate. **No fresh ChatGPT-container run or independent user study is attested here.**
-- **[iKant_EDU](https://github.com/Luke883i/iKant_EDU) — experimental computational cognitive architecture.** A replaceable LLM accompanies bounded appraisal, recurrent workspace, **functional attention** and a **self/world state model**: **computational constructs**, **not a claim of a conscious biological mind**. Git archaeology retained `UNKNOWN` consumers, recovered **11 unqualified file deletions**, and [PR238](https://github.com/Luke883i/iKant_EDU/pull/238) restored a protected workflow. **Millions of finite fault vectors** challenge declared models, **not millions of real Git mutations** or host sessions. [Cognitive model](https://github.com/Luke883i/iKant_EDU/blob/73842c1d71ea1b1faa3903b255d00cd09b1b6cb6/docs/IKANT_COGNITIVE_SUBSTRATE.md) · [CORA method backlog](https://github.com/Luke883i/iKant_EDU/blob/73842c1d71ea1b1faa3903b255d00cd09b1b6cb6/docs/CORA_PR_A_BACKLOG.md).
+- **[ICTC](https://github.com/Luke883i/ictc)** — An authorized [Browser witness](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/browser-onto-compliance-v1.py) captures screenshots; the [visual audit](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/s4-a6-ux4-uiux-mount-audit.md) contains **screenshot-derived** UX faults. A [reconciliation contract](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/uiux-656-absorption-contract.json) maps **656 recorded visual/UX findings to 12 root causes**; [physical product mutants](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/release-readiness-e2-product-mutants.mjs) test actual source. No independent user study is attested.
+- **[iKant_EDU](https://github.com/Luke883i/iKant_EDU)** — An **experimental computational cognitive architecture** uses a replaceable LLM, **functional attention** and a **self/world state model**: **computational constructs**, **not a claim of a conscious biological mind**. Git forensics retained **UNKNOWN** consumers, found **11 unqualified file deletions**, and [PR238](https://github.com/Luke883i/iKant_EDU/pull/238) restored a workflow. **Millions of finite fault vectors**, **not millions of real Git mutations**. [Model](https://github.com/Luke883i/iKant_EDU/blob/73842c1d71ea1b1faa3903b255d00cd09b1b6cb6/docs/IKANT_COGNITIVE_SUBSTRATE.md) · [backlog](https://github.com/Luke883i/iKant_EDU/blob/73842c1d71ea1b1faa3903b255d00cd09b1b6cb6/docs/CORA_PR_A_BACKLOG.md).
 
-**Terminology, only after the engineering method:** CORA calls the extraction *intent mining*, the backward graph a *reticular DoD*, coherent changes *semantic slices*, Git-object writing *blobbing/materialization*, modeled counterexamples *semantic mutations* and the bounded novelty plateau *semantic saturation*. Engineering definitions and limits above govern these labels.
+**Terminology, only after the engineering method:** *intent mining* = extracting obligations; *reticular DoD* = dependencies; *semantic slices* = bounded changes; *blobbing/materialization* = writing Git objects; *semantic mutations* = falsifiers; *semantic saturation* = bounded absence of new findings.
 
 ## Use CORA with an AI coding assistant
 
@@ -116,7 +114,7 @@ The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) di
 **Product or release owner:** [Governance](GOVERNANCE.md) · [Security](SECURITY.md) · [Release](docs/RELEASE.md).
 **Full documentation, history and contracts:** [Index](docs/INDEX.md) · [Documentation DoD](docs/DOCUMENTATION_DOD.md).
 
-**Decision rights are external:** only authorized humans and trustworthy host controls can approve or release. **Source of record:** the committed Git revision, not a chat. **Why:** model tests cannot certify external behavior. **Runtime:** local Python CLI by default. **Read in order:** README → one task guide → applicable contract → exact source evidence.
+**Decision rights are external:** humans and host controls approve. **Source of record:** committed Git, not chat. **Why:** model tests cannot certify external behavior. **Runtime:** local CLI. **Read in order:** README → task guide → contract → evidence.
 
 <details>
 <summary>Product | Outcome and limits</summary>
@@ -150,4 +148,4 @@ The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) di
 
 ## Engineering map
 
-**Product:** assurance. **Software:** `cora-engine` and `cora-release-verification`. **Repository:** source, tests, CI and **historical ADRs**. **merged PR38** and **merged PR39** established bounded history/qualification milestones; follow the [complete index](docs/INDEX.md) for owners.
+**Product:** assurance. **Software:** `cora-engine` and `cora-release-verification`. **Repository:** source, tests, CI and **historical ADRs**. **merged PR38** and **merged PR39** are source milestones; [index](docs/INDEX.md) lists owners.

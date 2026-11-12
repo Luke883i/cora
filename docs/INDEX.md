@@ -33,6 +33,12 @@ The [README](../README.md) is the **compressed public front door**: outcome, met
 
 **Archive invariant:** `docs/archive/` contains immutable historical Git blobs; [the relocation map](../.cora/layout-migration.json) records original-to-current paths and protected exceptions. Historical text is not rewritten, not product authority and not a safe-deletion signal. Read current procedures above before relying on old decisions.
 
+## Current documentation ownership and legacy decision
+
+The [README](../README.md) answers *what, for whom, first run and limits*. [Getting started](GETTING_STARTED.md) contains the shortest reproducible path; [architecture](ARCHITECTURE.md) owns current module/data/evidence boundaries; [continuous development](CONTINUOUS_DEVELOPMENT.md) owns developer and agent operation; [release](RELEASE.md) owns operator gates. [CHANGELOG](../CHANGELOG.md) and original Git revisions own the implementation chronology.
+
+**Retention audit (PR60):** the 17 `HISTORICAL` Markdown records are immutably referenced by the [registry](documentation-registry.json), historical source checks and this index. Other current documents also have declared routes or contract consumers. No whole-document deletion has a sufficiently demonstrated nonconsumer/retention oracle; therefore PR60 deliberately deletes **zero files**. Superseded PR narrative is removed from current guides, not rewritten into new historical "truth". A review may later retire a source only after evidence of consumers, alternative reachability and reversible migration.
+
 ## Document semantics
 
 **CURRENT** means active source documentation; **SCOPED_CURRENT** is active only in its named domain; **HISTORICAL** records a specific earlier state and must not override current product claims. A DoD is a declared obligation, not evidence that the requirement has been satisfied. A Git SHA or a deterministic replay proves a bounded source relationship, not runtime correctness, review authority or release approval.
