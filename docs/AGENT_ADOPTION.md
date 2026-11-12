@@ -112,6 +112,17 @@ A mode is earned by evidence, never by fluency or self-report.
 The temporary CORA chat ZIP is an explicit opt-in handoff, not chat memory.
 ```
 
+### Practical engineering vocabulary (without magic)
+
+- **Blobbing:** writing content-addressed **file blobs** to Git. A blob hash identifies bytes; it is **not** a tree, commit, reviewed change or executed test.
+- **Materialization:** connecting blobs in a Git **tree**, creating a **commit** with parent history, and updating a branch ref; a PR is a review request, not a merge or independent approval.
+- **Semantic commit:** a reversible change with one identifiable engineering intent, changed owners, acceptance oracle and rollback. A descriptive message alone does not prove cohesion.
+- **Retrograde AND-DoD:** start from the intended product result and enumerate *all* necessary source, runtime, negative and governed conditions backwards; an open prerequisite blocks the stronger verdict.
+- **Semantic diff:** compare preserved product contracts, consumers, authority, behavior and evidence **in addition to** textual file differences; similar text is not proof of behavioral equivalence.
+- **Falsification / semantic mutation:** introduce controlled counterexamples and check a separately specified expected verdict. Count killed, surviving and inconclusive mutants distinctly.
+- **Saturation:** stop only after a predeclared finite family, budget, repeatable final window and no new counterexample in that scope. Millions of in-memory masks are **not** millions of physical source changes or real users.
+- **Unknown consumer:** lack of a static import does not prove that a dynamic call, URL, loader, runtime or outside process never uses a file. Retain the original until that risk is qualified.
+
 ### Seven traceable engineering changes for a CTO
 
 These are historical Git PRs, **not** evidence that CORA-ENGINE authored or certified each product. Read the exact source/diff and distinguish Git from runtime and human results.

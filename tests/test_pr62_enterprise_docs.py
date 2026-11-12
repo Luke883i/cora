@@ -140,6 +140,11 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
                  and "AGENT_ADOPTION.md#chatgpt-project-beta-adapter" in s,
                  "broken-canonical-route")
             need(all(link in g for link in links + commits), "untraceable-pr-history")
+            need(all(term in g for term in (
+                "Blobbing:", "Materialization:", "Semantic commit:",
+                "Retrograde AND-DoD:", "Semantic diff:",
+                "Falsification / semantic mutation:", "Saturation:",
+                "Unknown consumer:")), "missing-engineering-vocabulary")
             need("R63_SOURCE =" in d and "R63_ACCEPTED =" in d
                  and "E01_FIRST_READ_HUMAN" in d
                  and "E03_ENFORCED_HOST_AND_NON_AUTHOR_REVIEW" in d,
