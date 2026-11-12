@@ -196,6 +196,77 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         # Metadata-independent formatting edits must not be called evidence loss.
         self.assertEqual(DOC.verify_compact_document_bridge(guide + "\n", index, arch), [])
 
+    def test_pr60_machine_reader_and_current_document_budget(self):
+        """Machine-observable proxies only; NOT independent human-reader acceptance."""
+        from pathlib import Path
+        from tools.verify_documentation import verify_readme_semantics
+        release = (ROOT / "docs/RELEASE.md").read_text("utf-8")
+        arch = (ROOT / "docs/ARCHITECTURE.md").read_text("utf-8")
+        intro = self.readme.split("## First five minutes", 1)[0]
+        self.assertIn("Engineering evidence for AI-assisted software changes.", intro)
+        self.assertIn("the proposed change", intro)
+        self.assertIn("the source evidence", intro)
+        self.assertIn("tests or counterexamples", intro)
+        self.assertIn("the work still needed", intro)
+        # Editorial budgets are review proxies, never evidence of comprehension.
+        self.assertLessEqual(len(self.readme.split()), 1500)
+        self.assertLessEqual(len(release.split()), 1900)
+        self.assertLessEqual(len(arch.split()), 2300)
+        self.assertNotIn("## PR32 —", release)
+        self.assertNotIn("## PR34 —", release)
+        self.assertNotIn("## PR40 —", release)
+        self.assertIn("G_GOVERNANCE", release)
+        self.assertIn("G_ISOLATION", release)
+        self.assertIn("BLOCKED_EXTERNAL", release)
+        self.assertIn("published_at=null", release)
+        self.assertIn("refs/tags/v1.0.0a4", release)
+        self.assertIn("PR40 merged source knowledge", release)
+        self.assertEqual(verify_readme_semantics(self.readme, root=ROOT), [])
+
+    def test_pr60_counterexample_mutations_preserve_decision_boundaries(self):
+        """Bounded semantic perturbations; no claim of a human usability study."""
+        initial = self.readme
+        from tools.verify_documentation import verify_readme_semantics
+        failures = (
+            ("not a stable API or verified public release", "certified enterprise release"),
+            ("The default does not execute arbitrary target tests",
+             "The default automatically executes untrusted target tests"),
+            ("not a coding agent", "is an autonomous coding agent"),
+            ("**External acceptance remains " + chr(96) + "BLOCKED_EXTERNAL" + chr(96) + "**",
+             "**External acceptance has been approved**"),
+        )
+        for honest, forged in failures:
+            with self.subTest(original=honest):
+                self.assertIn(honest, initial)
+                altered = initial.replace(honest, forged, 1)
+                self.assertNotEqual(altered, initial)
+                self.assertTrue(verify_readme_semantics(altered, root=ROOT) or
+                                DOC.verify_progressive_readme(altered))
+        # Cosmetic positive control: change no claims, links or operating commands.
+        benign = initial.replace("**Why it matters:**", "*Why it matters:*", 1)
+        self.assertEqual(verify_readme_semantics(benign, root=ROOT), [])
+
+    def test_pr60_histories_are_retained_not_repackaged_as_current_rules(self):
+        """Archive identities stay byte-stable from original Git, not README text."""
+        import subprocess
+        import json
+        registry = json.loads((ROOT/"docs/documentation-registry.json").read_text("utf-8"))
+        archived = [entry["path"] for entry in registry["documents"]
+                    if entry["status"] == "HISTORICAL"]
+        self.assertEqual(len(archived), 17)
+        self.assertTrue(all((ROOT/p).is_file() for p in archived))
+        self.assertIn("[History](CHANGELOG.md)", self.readme)
+        if (ROOT / ".git").exists():
+            base = "a01e0b121ac3734fd4ec1afa22781c90dbed1260"
+            for path in archived:
+                before = subprocess.run(["git", "-C", str(ROOT), "rev-parse",
+                    base+":"+path], capture_output=True, text=True)
+                after = subprocess.run(["git", "-C", str(ROOT), "rev-parse",
+                    "HEAD:"+path], capture_output=True, text=True)
+                if before.returncode != 0:
+                    self.skipTest("original post-PR59 base not available")
+                self.assertEqual(before.stdout.strip(), after.stdout.strip(), path)
+
     def test_thousand_adversarial_editorial_and_reader_vectors(self):
         family_totals: dict[str, dict[str, int]] = {}
         seen = set()
