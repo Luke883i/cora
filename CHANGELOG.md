@@ -6,127 +6,20 @@
 **Evidence:** pyproject.toml version, original commits and merged CI results.
 **Limits:** Changelog entries are not published releases or runtime acceptance.
 
+The repository carries the experimental `cora-audit 1.0.0a5` source candidate. This document is a compact **current change summary**, not an alternative Git history, a published distribution, an enterprise certification or a claim of production readiness. Trace prior decisions and historical diffs to original Git commits, [architecture](docs/ARCHITECTURE.md) and the [document registry](docs/documentation-registry.json).
 
-Repository source milestones, not evidence of a published or independently approved release.
+## Present engineering capabilities
 
-## Current source changes — documentation consolidated on main
+CORA offers one Python `cora` CLI with 71 **declared** commands in eight families, original Git evidence and replay, partial language/source graph analysis, conservative file triage, evidence-bound engineering debt, scoped One-Run and JSON/HTML reports, a typed noncompensatory DoD, mutation and finite-model falsifiers, opt-in native Teddy/ICTC experiments, and explicit agent-support and portable handoff. Source checks do not certify 71 independently executed behaviors or complete dynamic consumers.
 
-- Compress the CTO-facing README, current release procedure and engineering guides; preserve original method/claim falsifiers, link routes and historic Git objects.
-- Eliminate superseded PR-stage prose from operational instructions, while retaining historically classified original documents. Machine semantic tests are reproducible *proxies*, not actual independent reader studies.
+## Source assurance and release limits
 
-## Unreleased — PR59 full-scope method and editorial consolidation (merged source)
+The repository includes exact-SHA CI, candidate wheel/sdist reproducibility, SHA256SUMS, a CycloneDX 1.6 candidate SBOM and restricted build-tool pip-audit scanning. No signed SLSA/in-toto provenance, independently authenticated non-author reviewer, verified protected-host enforcement, supported production SLA or published stable release is attested. Git commits and tests do not confer approval. L1 source, selected L2 experiments and L3 independent acceptance must stay separate.
 
-- Add explicit Git BASE–HEAD review obligations to existing process/One-Run; preserve original PR58 single-commit receipts.
-- Show nonauthorizing editorial review in existing HTML, add Git counterexamples and bounded legacy replay, reconcile current documentation.
+## Current documentation and change review
 
-## Unreleased — PR58 integrated engineering practices (merged source)
+The README is the product front door. [Getting started](docs/GETTING_STARTED.md) is the shortest local path, [CLI](docs/CLI_REFERENCE.md) the parser-linked interface, [continuous development](docs/CONTINUOUS_DEVELOPMENT.md) the source review process, [release](docs/RELEASE.md) the operator gate and [index](docs/INDEX.md) the authoritative 48-document registry. Current content must report outcomes and unresolved controls, not advertise a candidate PR as a product.
 
-- Merge ten Git-pinned advisory practices into the original `process-run` and agent instructions.
-- Physical path/digest/authority mutants and canonical census; 13/13 PR-head workflows passed. External release authority remains NONE.
+**Compatibility source IDs, not operative instructions:** PR-21 (documentation registry), PR-25 (method synthesis), and **PR40 engineering knowledge source convergence — merged source**. The exact historical implementation records and any superseded release version claims are located in Git and the 17 archival Markdown blobs; they are **not** current operational guidance.
 
-## Unreleased — PR57 assurance-level semantic separation (candidate)
-
-- Clarify CORA L1 reproducible engineering evidence, L2 bounded product experimentation and L3 optional third-party external assurance. External reviewer/user study is not a prerequisite to trying CORA.
-- Preserve the PR39 29-node DoD, `cora-independent-qualification/1` receipts, exact SHA lineage and legacy replay. Existing One-Run JSON keeps its original `tests` and `qualification` fields; the Atlas renders a pure, non-authoritative L1/L2/L3 projection.
-- Falsify forged source/test PASS, target acceptance, external reviewer/host authority and README mispositioning with dedicated regressions in existing CI. No new CLI, schema version, release authority or unobserved user study.
-
-## Unreleased — PR56 independently falsifiable qualification pilot (candidate)
-
-- Harden PR55 unsigned provenance so exact original Git material bytes, including trailing line endings, are hashed and compared without whitespace normalization.
-- Reuse PR39's 29-node independent qualification reticulum and PR52's pinned Teddy/ICTC checkouts: add 24-blob native Git versus CORA snapshot comparison with replay, source-only costs and no product acceptance.
-- Add an eight-participant, two-persona paired-work cost/quality analysis with synthetic negative fixtures explicitly unauthorized; retain host, real human, isolation and independent reviewer gates as BLOCKED_EXTERNAL.
-
-## Unreleased — PR55 scoped software supply-chain assurance (candidate)
-
-- Extend the original wheel/sdist release verifier with physical PR54 note inspection, CycloneDX 1.6 inventory, observed CI build-tool pin reconciliation, and digest-linked **unsigned** Git build records.
-- Run pinned pip-audit against direct installed setuptools/wheel tools, retain raw JSON and a scope-limited SCA summary; fail on scanner errors, accept reported vulnerabilities only as explicit review debt.
-- Replay all emitted supply-chain records against original artifacts and Git in the existing CI; add physical negative mutations. No SPDX output, SLSA/signature, full transitive scan, independent review, or release authority is claimed.
-
-## Unreleased — candidate release-note identity hardening (PR54 candidate)
-
-- Correct review-only release-note version to derive from `pyproject.toml` instead of stale historical `1.0.0a4`; require exact candidate Git SHA in the note.
-- Extend existing source-only release readiness gates to reject stale/hardcoded version text or missing runtime validation; never treat a passed note as publication authority.
-
-## Unreleased — product identity and CTO procurement disclosure (PR53 candidate)
-
-- Reposition README as an agent-agnostic engineering-assurance product with explicit CORA-METHOD / CORA-ENGINE target, compatibility and pilot boundaries; remove provisional unmeasured product scores from the public front door.
-- Disclose MIT, Python/packaging, review-only candidate builds, SBOM, SCA, signing/SLSA and independent release/governance states without fabricating enterprise certification.
-- Extend existing repository-contract negative checks and the original CI path; no new engine, CLI command, artificial approval bus or independently published release.
-
-## 1.0.0a5 — portable chat source candidate (merged via PR46; not published)
-
-- Extend the existing comprehensive One-Run and source replay with opt-in, portable chat-iteration ZIP append/verify.
-- Preserve caller intent, actions, linked roadmap/falsifiers, reverse-derived reticular DoD, evidence references, explicit gaps, immutable-by-contract prior entries, handoff and SHA-256 manifest chain.
-- Provide a complete novice input example and terminal-to-ChatGPT upload/replay instructions; no automatic capture or external signature.
-- Source-only and local isolated tests are not independent product qualification, release approval, or publication; the historical v1.0.0a4 draft remains separate.
-
-
-## PR41 — final experimental source-freeze method (publication separately governed)
-
-A three-pillar, noncompensatory 30-node DoD and 16-family preregistered million-case finite semantic model bind current documentation to merged Git, execute two native-Git independent-implementation reference fixtures against the real CLI, and reject fabricated host/reviewer/release authority. The last experimental package name remains `cora-audit 1.0.0a4`; no public final experimental release, stable API, external maintained-target approval, user-study completion or host isolation is claimed. A postmerge exact-SHA freeze and human release decision are separate mandatory acts.
-
-## PR40 engineering knowledge source convergence — merged source, not final product acceptance
-
-Retrograde 19-node noncompensatory engineering knowledge DoD; original-Git static/dynamic-boundary report with replay; 14 fault families and 10×1M preseeded finite-model checks; real Git-committed external-scope and chronology falsifiers; diagnostic PR25 clone isolation; updated CI and source-era guidance. No external RCA, host enforcement, real-target behavior or product/release approval is claimed.
-
-## PR38 history/retention and future-feature source dossier — merged source, not external acceptance
-
-The original PR01–37 commit delta corpus (305 commit units, 37 PRs) is preserved as one machine-readable original-Git source register. PR34 is closed without merge. A 32-node severe DoD, Git/tree verifier, bounded negative models, physical fixtures and a searchable HTML genealogy extend the existing PR37 One-Run dossier without another primary executable. The 28 old paths are migration/archive items, not source code safely removable. Independent real-target, host, consumer and release acceptance remain external.
-
-
-## Experimental integrated activity dossier — PR37 source candidate (not independently accepted)
-
-The existing `process-run --one-run` gains an opt-in `--profile comprehensive` source dossier: Git-pinned command, test, method and workflow registry; non-executed activity accounting; typed test observation consent; evidence hashes and source replay; search-and-drilldown HTML. PR36 source executor and its 27-node DoD stay preserved. The new 55-node reticulum remains debt-blocked for incomplete source controls and all external acceptance. No GitHub action, arbitrary test, AI call, write or release is performed by default.
-
-## Candidate source refactor — root and historical archive (PR draft)
-
-The thematic migration now leaves **11 files in root versus 25 at baseline**, of which only **two are CORA JSONs**: `cora.ontology.json` and `cora.artifact-roles.json`, retained for adoption-facing compatibility. Nine internal DoDs, two profiles and two assurance registers reside under `.cora/contracts/dod/`, `.cora/contracts/profiles/` and `.cora/assurance/`; a committed [path index](.cora/contracts/index.json) resolves all 15 logical contracts. Ten internal contract DoDs/profiles preserve exact Git blobs (including the two first moved earlier); three inventory/evidence/profile JSONs were rewritten solely for bounded canonical path and inventory changes, tested against original Git. Independent external consumer compatibility and real runtime behavior remain unobserved.
-
-
-CORA-on-CORA lossless navigation change: 14 historical Markdown documents move to `docs/archive/{decisions,audits,dod}` without changing their Git blob identities; the finite five-synergy mutation corpus moves from root to `.cora/fixtures/`. Three relative-link-dependent historical records remain untouched. README describes root conventions; the canonical registry, role inventory and existing test/CLI links are reconciled. The layout DoD is source-only, with 10k deterministic preseeded semantic cases (not 10k physical Git rewrites). Release/host and external consumer behavior remain blocked.
-
-## Candidate PR — five synergic source-assurance developments (unmerged)
-
-A 29-node retrograde DoD binds source-only README claim/test tracing, an explicitly authorized AI callback adapter, original CORA behavioral source probes, BASE-policy semantic delta/consumer triage and one reproducible service report using the existing 71-command CLI. A preseeded 1M finite semantic fault campaign is distinct from real Git source mutants and external product approval. This is a branch/PR candidate, not a public release.
-
-## Candidate change (unmerged) — integrated source assurance
-
-The new candidate extends the existing `method-synthesize` entrypoint with bounded document/code claim correlation, AI request/response fencing, original 71-command parity and a 10M finite semantic falsification option. This is a PR candidate, not a published release or automatic product acceptance. PR #27 has merged into main; its source checks passed, while independent product/runtime gate claims remain separate.
-
-All entries distinguish **merged source**, a **version declared in the repository**, and an actually **published release**. Merged PRs 01–25 do not themselves establish a public package, tagged GitHub Release, signed provenance, or production fitness. Current Python version: `1.0.0a4` (alpha, not published).
-
-## Current merged source — PR-19 to PR-25 (unreleased, verified 4 November 2026)
-
-**PR-25:** Added same-commit cross-method receipt synthesis and untrusted AI case handling. Documentation, CI, mutation tests and source obligations are distinct from independent external acceptance.
-
-**PR-24:** Added read-only Git-backed CI workflow inventory, consumer clues and retirement *candidates*; no automatic dismission, required-check proof or behavioral parity.
-
-**PR-23:** Added progressive README disclosure and reader-route falsifiers while retaining all 48 Markdown records and external E01–E03 acceptance boundaries.
-
-
-**PR-22:** Added revision-bound S01–S18 documentation source proofs, physical Git mutation oracles and CI receipt replay. The README claim/source chain is bounded to named predicates; E01–E03 independent acceptance remains open. The integration is merged source, **not** a published release or verified host approval.
-
-
-**PR-21:** Reorganized README, registered 48 Markdown documents (43 retained), added user/agent onboarding, verified CLI parser reference and source-only documentation AND lattice. The external unfamiliar-engineer, real target-pilot and host-review gates remain open. The separate claim/proof extension was subsequently merged in PR-22.
-
-
-**PR-20:** Share reverse-DoD kernel across previous agent/Gold profiles; bind contextual pre/postmerge source evidence and selective witness invalidations, with 10×1M preseeded finite failure-class models. Full R1–R4 behavioral, private pilot, host readback and governance claims remain blocked.
-
-**PR-19:** CORA adds R1–R4 contextual source/DoD, physical staged mutants, potential-effect audit, SHA-bound pilot contract (CI verifies public ICTC 1/3; private ikant/aosp1 readbacks remain blocked) and 10M finite semantic-model tests under one CLI. Fixed private CI token-access assumption and Docker temporary UID compatibility. External runtime, full private source pilot, independent review and release remain blocked.
-
-## Earlier versioned source history
-
-## [1.0.0a4] — proposed in PR-15 (unreleased)
-- Formalized current product expansion: **Continuous Ontological Repository Assurance**.
-- Aligned README, architecture and alpha package metadata with the merged PR-14 baseline.
-- Added independent, falsifiable source release-readiness checks and explicit blocked external release gates.
-- Documented GitHub-native PR, protected check/reviewer, tag, pre-release and artifact workflow.
-
-## [1.0.0a3] — merged PR-14 (not published)
-- Base-anchored pre/post-merge change review, agent proposal reconciliation, post-merge debt drift and CI lifecycle checks.
-
-## [1.0.0a2] — merged PR-13 (not published)
-- Multi-scale technical debt signals and seven reproducible, read-only process modes.
-
-## [1.0.0a1] — previous experimental baseline (not published)
-- Consolidated immutable Git evidence, typed product/software ontology, manifest adapters, bounded closure, human-governed per-file forensics, conservative selection, history/group archaeology and candidate packaging. See PR-01–12 and the historical ADRs.
+**Current version:** `1.0.0a5` is source-only and **not published**; the historical `v1.0.0a4` GitHub draft is not release evidence.
