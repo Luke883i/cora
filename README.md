@@ -47,7 +47,7 @@ Then run [One-Run](#one-run--one-command-one-evidence-dossier). This identifies 
 | **Supply chain** | **SBOM (CycloneDX 1.6): GENERATION_IN_CANDIDATE_CI**; **SCA/CVE: SCAN_CI_BUILD_TOOLS_ONLY**; **artifact signing / SLSA provenance: NOT_ATTESTED**. |
 | **Governance** | Execution needs authorization and isolation. **Independent reviewer, enforced branch rules, release: BLOCKED_EXTERNAL**; no production security SLA. [Security](SECURITY.md) · [Release](docs/RELEASE.md). |
 
-**Assurance levels:** **L1** = Git/source checks; **L2** = bounded product experiments; **L3** = optional external assurance. L1/L2 may be useful without L3. A Git SHA or CI PASS cannot approve a release.
+**Assurance levels:** **L1** = Git/source checks; **L2** = bounded product experiments; **L3** = optional external assurance. L1/L2 may be useful without L3. CI PASS cannot approve a release.
 
 **71 declared CLI commands** in the [capability atlas](.cora/assurance/capability-atlas.json) are an inventory, not proof of 71 executions. [CLI reference](docs/CLI_REFERENCE.md) · [complete documentation index](docs/INDEX.md).
 
@@ -79,20 +79,20 @@ The dossier distinguishes `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTER
 
 ## How CORA works
 
-**1. Specify the outcome.** Turn natural-language intent into actors, boundaries and an **AND-dependency graph** of acceptance conditions. Work **backward** from each required observation: an unknown prerequisite remains open, never averaged away. [Worked application contract](docs/CONTINUOUS_DEVELOPMENT.md#example-contract-and-evidence-ladder--portable-corrective-action-app).
+**1. Specify the outcome.** Turn natural-language intent into an **AND-dependency graph** of observable conditions. Reason **backward**: an unknown prerequisite stays open. [Worked application contract](docs/CONTINUOUS_DEVELOPMENT.md#example-contract-and-evidence-ladder--portable-corrective-action-app).
 
-**2. Change one coherent unit.** An agent uses authorized tools to edit code and tests; CORA checks source evidence. Git records **content-addressed blobs**, **directory trees**, commits and a PR; CORA checks their lineage. **New source SHA** means revalidate. A hash can identify committed bytes; it cannot authenticate a human reviewer.
+**2. Change one coherent unit.** The agent uses authorized tools; CORA inspects committed evidence. Git preserves **content-addressed blobs**, **directory trees**, commits and PR lineage. **New source SHA** means revalidate. A hash can identify committed bytes; it cannot authenticate a human reviewer.
 
-**3. Try to disprove it, then stop intelligently.** Challenge obligations with **seeded combinations** and a **separate expected-result rule**; use **physical mutation testing** on isolated real source only when authorized. Separate killed, **surviving and inconclusive** mutants. A **fixed scenario catalog and final window** with no new failure signatures establishes **bounded convergence**, **not proof of complete correctness**. After repeated **no-progress rounds**, continuation proposes replanning; it **does not predict N** or execute a next step.
+**3. Try to disprove it, then stop intelligently.** Use **seeded combinations**, a **separate expected-result rule** and authorized **physical mutation testing**. Keep killed, **surviving and inconclusive** mutants distinct. A **fixed scenario catalog and final window** can establish **bounded convergence**, **not proof of complete correctness**. After **no-progress rounds**, replan; CORA **does not predict N**.
 
-**Example — delete a module?** Imports and Git history locate candidate consumers; negative tests and owners expose obligations. An unknown dynamic caller means `BLOCKED`, not safe deletion.
+**Delete a module?** Candidate consumers and negative tests inform review; an unknown dynamic caller means `BLOCKED`, not safe deletion.
 
 **Two concrete engineering histories (methods at different maturity levels, not proof that CORA CLI created these products):**
 
-- **[ICTC](https://github.com/Luke883i/ictc) — UI/UX as observable meaning.** An authorized browser/container agent can capture screenshots across roles/viewports and compare *what the UI promises* with actual controls. The Playwright [Browser witness](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/browser-onto-compliance-v1.py) captures screenshots; the [visual audit](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/s4-a6-ux4-uiux-mount-audit.md) records **screenshot-derived** faults: misleading write affordances, technical-first hierarchy and hidden work. The [reconciliation contract](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/uiux-656-absorption-contract.json) maps **656 recorded visual/UX findings to 12 root causes**; separate [physical product mutants](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/release-readiness-e2-product-mutants.mjs) edit real source and run an E2 gate. **No fresh ChatGPT-container run or independent user study is attested here.**
-- **[iKant_EDU](https://github.com/Luke883i/iKant_EDU) — experimental computational cognitive architecture.** A replaceable LLM accompanies bounded appraisal, recurrent workspace, **functional attention** and a **self/world state model**: **computational constructs**, **not a claim of a conscious biological mind**. Git archaeology retained `UNKNOWN` consumers, recovered **11 unqualified file deletions**, and [PR238](https://github.com/Luke883i/iKant_EDU/pull/238) restored a protected workflow. **Millions of finite fault vectors** challenge declared models, **not millions of real Git mutations** or host sessions. [Cognitive model](https://github.com/Luke883i/iKant_EDU/blob/73842c1d71ea1b1faa3903b255d00cd09b1b6cb6/docs/IKANT_COGNITIVE_SUBSTRATE.md) · [CORA method backlog](https://github.com/Luke883i/iKant_EDU/blob/73842c1d71ea1b1faa3903b255d00cd09b1b6cb6/docs/CORA_PR_A_BACKLOG.md).
+- **[ICTC](https://github.com/Luke883i/ictc)** — An authorized [Browser witness](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/browser-onto-compliance-v1.py) captures screenshots; the [visual audit](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/s4-a6-ux4-uiux-mount-audit.md) contains **screenshot-derived** UX faults. A [reconciliation contract](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/uiux-656-absorption-contract.json) maps **656 recorded visual/UX findings to 12 root causes**; [physical product mutants](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/release-readiness-e2-product-mutants.mjs) test actual source. No independent user study is attested.
+- **[iKant_EDU](https://github.com/Luke883i/iKant_EDU)** — An **experimental computational cognitive architecture** uses a replaceable LLM, **functional attention** and a **self/world state model**: **computational constructs**, **not a claim of a conscious biological mind**. Git forensics retained **UNKNOWN** consumers, found **11 unqualified file deletions**, and [PR238](https://github.com/Luke883i/iKant_EDU/pull/238) restored a workflow. **Millions of finite fault vectors**, **not millions of real Git mutations**. [Model](https://github.com/Luke883i/iKant_EDU/blob/73842c1d71ea1b1faa3903b255d00cd09b1b6cb6/docs/IKANT_COGNITIVE_SUBSTRATE.md) · [backlog](https://github.com/Luke883i/iKant_EDU/blob/73842c1d71ea1b1faa3903b255d00cd09b1b6cb6/docs/CORA_PR_A_BACKLOG.md).
 
-**Terminology, only after the engineering method:** CORA calls the extraction *intent mining*, the backward graph a *reticular DoD*, coherent changes *semantic slices*, Git-object writing *blobbing/materialization*, modeled counterexamples *semantic mutations* and the bounded novelty plateau *semantic saturation*. Engineering definitions and limits above govern these labels.
+**Terminology, only after the engineering method:** *intent mining* = extracting obligations; *reticular DoD* = dependencies; *semantic slices* = bounded changes; *blobbing/materialization* = writing Git objects; *semantic mutations* = falsifiers; *semantic saturation* = bounded absence of new findings.
 
 ## Use CORA with an AI coding assistant
 
@@ -114,7 +114,7 @@ The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) di
 **Product or release owner:** [Governance](GOVERNANCE.md) · [Security](SECURITY.md) · [Release](docs/RELEASE.md).
 **Full documentation, history and contracts:** [Index](docs/INDEX.md) · [Documentation DoD](docs/DOCUMENTATION_DOD.md).
 
-**Decision rights are external:** only authorized humans and trustworthy host controls can approve or release. **Source of record:** the committed Git revision, not a chat. **Why:** model tests cannot certify external behavior. **Runtime:** local Python CLI by default. **Read in order:** README → one task guide → applicable contract → exact source evidence.
+**Decision rights are external:** humans and host controls approve. **Source of record:** committed Git, not chat. **Why:** model tests cannot certify external behavior. **Runtime:** local CLI. **Read in order:** README → task guide → contract → evidence.
 
 <details>
 <summary>Product | Outcome and limits</summary>
@@ -148,4 +148,4 @@ The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) di
 
 ## Engineering map
 
-**Product:** assurance. **Software:** `cora-engine` and `cora-release-verification`. **Repository:** source, tests, CI and **historical ADRs**. **merged PR38** and **merged PR39** established bounded history/qualification milestones; follow the [complete index](docs/INDEX.md) for owners.
+**Product:** assurance. **Software:** `cora-engine` and `cora-release-verification`. **Repository:** source, tests, CI and **historical ADRs**. **merged PR38** and **merged PR39** are source milestones; [index](docs/INDEX.md) lists owners.
