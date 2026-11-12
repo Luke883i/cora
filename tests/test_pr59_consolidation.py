@@ -85,6 +85,16 @@ class PracticeRangeTests(unittest.TestCase):
             with self.subTest(key=key), self.assertRaises(ValueError):
                 verify(self.root, mutant)
 
+    def test_document_path_is_escaped_in_existing_one_run_html(self):
+        from cora.one_run import run_one, render_one_html
+        hostile = "docs/<svg onload=alert(1)>.md"
+        head = commit(self.root, {hostile: "# Allowed Git filename\n"})
+        one = run_one(self.root, head, process="history", max_commits=2,
+                      change_base=self.base)
+        page = render_one_html(one)
+        self.assertNotIn("<svg onload=alert(1)>", page)
+        self.assertIn("&lt;svg onload=alert(1)&gt;", page)
+
     def test_pr58_default_contract_preserved_and_no_empty_scope_pass(self):
         head = commit(self.root, {"src/app.js": "export const a = 3;\n"})
         old = project(self.root, head)
@@ -141,3 +151,28 @@ class LegacyProcessReceiptTests(unittest.TestCase):
         tampered["run_digest"] = domain_hash("CORA:process-run:1", tampered)
         with self.assertRaises(ValueError):
             verify_suite(root, tampered)
+
+    def test_real_cora_integrated_one_run_explicit_base_replays(self):
+        from cora.process_suite import PRE_PR58_MAIN
+        from cora.integrated_run import run_integrated, verify_integrated
+        from cora.integrated_html import render_integrated_html
+        root = Path(__file__).resolve().parents[1]
+        if not (root / ".git").exists():
+            self.skipTest("original Git checkout required")
+        try:
+            git(root, "cat-file", "-e", PRE_PR58_MAIN + "^{commit}")
+        except subprocess.CalledProcessError:
+            self.skipTest("full history required for a Git range witness")
+        report = run_integrated(root, "HEAD", process="history",
+                                max_commits=2, change_base=PRE_PR58_MAIN)
+        self.assertEqual(report["baseline_pr36"]["source_process"]["change_base"], PRE_PR58_MAIN)
+        self.assertTrue(verify_integrated(root, report))
+        rendered = render_integrated_html(report)
+        self.assertIn("Change obligations", rendered)
+        self.assertIn(PRE_PR58_MAIN, rendered)
+        self.assertIn("CALLER_DECLARED_BASE_NOT_PR_HOST_ATTESTED",
+                      json.dumps(report))
+        tampered = copy.deepcopy(report)
+        tampered["baseline_pr36"]["source_process"]["practice_obligations"]["external_approval"] = "APPROVED"
+        with self.assertRaises(ValueError):
+            verify_integrated(root, tampered)
