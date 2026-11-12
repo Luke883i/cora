@@ -20,6 +20,23 @@ Start at the [README](README.md), [agent adoption tutorial](docs/AGENT_ADOPTION.
 
 For documentation changes, also run the Git-bound S01–S18 proof verifier against the candidate HEAD and replay the receipt with the same exact Git revision. The profile is a source proposition register, not a substitute for review or the independent E01–E03 acceptance gates. See [documentation DoD](docs/DOCUMENTATION_DOD.md).
 
+## Automatic engineering-practice obligations (PR48–PR57)
+
+Every `cora process-run` (including the One-Run source pipeline) now carries
+`practice_obligations`, derived from the exact Git commit versus its first parent.
+Read this field *before* planning a semantic slice: apply all applicable ten
+historical methods as questions that require independent evidence, not as
+automatic PASS verdicts. In particular, a source, workflow, package or
+documentation edit triggers `editorial_refactor=REVIEW_REQUIRED`: check the
+README, product positioning, architecture, security, release, navigation and
+agent instructions for actual necessary changes. Do not automatically modify
+files, generate decorative text, or claim editorial completeness from path
+heuristics. Document the decision, negative control and unresolved acceptance
+oracle. If a target's proposed change has not yet been committed, first inspect
+the expected impact paths separately: the committed receipt describes only the
+observed Git delta. This is a method integrated into the existing process, not a
+new certification gate, command, runtime test or independent approval authority.
+
 ## Stop and boundary rules
 
 - Missing/ambiguous owner, ontology, baseline policy, SHA, change intent, independent behavioral oracle, protected reviewer identity or required host controls remain **BLOCKED** or **BLOCKED_EXTERNAL**. Bootstrap cannot approve itself.
