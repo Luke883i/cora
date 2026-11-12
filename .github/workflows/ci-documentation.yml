@@ -77,6 +77,8 @@ jobs:
           retention-days: 14
       - name: Falsify real disposable Markdown and JSON contract mutations
         run: python -m unittest discover -s tests -p 'test_pr21_documentation.py' -v
+      - name: PR61 independent markdown graph, positive and negative source mutants
+        run: python -m unittest discover -s tests -p 'test_pr23_navigation.py' -k pr61 -v
       - name: Falsify original 1k and new 10k README semantic vectors (twice)
         env:
           CORA_NAV_REPORT: /tmp/cora-readme-nav-1000.json
