@@ -1,5 +1,12 @@
 # CORA contextual gold assurance — user and coding-agent method
 
+**Document status:** CURRENT
+**Current scope:** Current contextual Gold contracts and bounded native pilot observations.
+**Operational use:** Join sourced Gold/DoD claims with explicitly authorized native tests.
+**Evidence:** Gold source paths, pinned repositories and original runner receipts.
+**Limits:** Teddy/ICTC observations do not imply browser, remote or universal acceptance.
+
+
 This is one **existing CORA product**, not a second AI coding assistant or authority. R1 contextual DoD, R2 physical mutation, R3 effect observation and R4 three-source pilot are distinct from external host/release validation.
 
 ## Portable origins and adaptation

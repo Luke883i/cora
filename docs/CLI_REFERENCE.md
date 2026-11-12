@@ -1,5 +1,12 @@
 # CORA CLI reference — current parser inventory
 
+**Document status:** CURRENT
+**Current scope:** Parser-checked command interface of the single existing cora CLI.
+**Operational use:** Select an implemented command and read its parameters and output contract.
+**Evidence:** src/cora/cli.py parser, command atlas and CI coverage receipts.
+**Limits:** 71 declared commands are not 71 independently qualified product behaviors.
+
+
 This is the complete inventory of the single `cora` CLI from `src/cora/cli.py`, maintained against its real `argparse` parser. Use `cora COMMAND --help` for exact flags and inputs; this is not evidence of test execution or a guarantee of behavioral correctness. Start with [Getting started](GETTING_STARTED.md) or [Agent adoption](AGENT_ADOPTION.md).
 
 The [complete capability atlas](../.cora/assurance/capability-atlas.json) enumerates all **71 parser commands** with eight method families, implementation and test-source paths, classified side effects and non-CLI repository surfaces. This reference explains command entrypoints; the atlas describes source witnesses. Neither proves 71 independently qualified features, executed tests or real-target behavior. See the [capability DoD](../.cora/contracts/dod/capability-dod.json) for source-versus-external obligations.

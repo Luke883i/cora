@@ -1,5 +1,12 @@
 # CORA File Lab — one artifact at a time
 
+**Document status:** CURRENT
+**Current scope:** One-artifact investigation spanning bytes, consumers and human obligations.
+**Operational use:** Inspect a pinned file with conservative static and optional runtime annotations.
+**Evidence:** Original Git objects, role declarations and candidate import edges.
+**Limits:** Unknown dynamic callers and untrusted AI hypotheses cannot authorize deletion.
+
+
 **Design name:** *visione a volo d'uccello multi-scala* (*multi-scale bird's-eye forensic lens*). The operator zooms from byte/Git identity to imports, software, product contract, repository history and operational consumers, then returns to a **single file** with explicit evidence and epistemic debt. This is not a model of total program semantics, and not the colloquial expression *occhio di porco*.
 
 ## Quick start

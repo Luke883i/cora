@@ -1,5 +1,12 @@
 # CORA documentation semantic DoD
 
+**Document status:** CURRENT
+**Current scope:** Source-checkable documentation graph and independently unverified reader gates.
+**Operational use:** Apply source/provenance, anchor and status checks to every registered document.
+**Evidence:** Markdown registry, claim-to-Git profile and negative tests.
+**Limits:** Finite machine readability is not a human study or external approval.
+
+
 The [machine contract](../.cora/contracts/dod/documentation-dod.json) defines 28 nodes: 18 source obligations, three independent external obligations, five intermediate cuts, and two global roots.
 
 **G_DOC_SOURCE** requires all of I_VALUE, I_ACCESS, I_CONSISTENCY, I_OPERATION, and I_EVIDENCE. **G_DOC_ACCEPTED** requires G_DOC_SOURCE and E01, E02, and E03. Every dependency is AND-composed.
