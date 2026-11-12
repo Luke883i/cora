@@ -494,12 +494,28 @@ def render_one_html(receipt: dict) -> str:
                         safe(gates[name])+'</span></div>' for name in gate_order if name in gates)
     check_html = "".join('<li><strong>'+safe(c["id"])+'</strong> · '+safe(c["criterion"])+'</li>'
                          for c in receipt["dod"]["checklist"])
+    practice = receipt["source_process"].get("practice_obligations")
+    practice_html = ""
+    if practice:
+        obligations = "".join(
+            '<li><strong>' + safe(x["id"]) + '</strong> · ' + safe(x["state"]) +
+            ' · ' + safe(x["requirement"]) + '</li>'
+            for x in practice["obligations"] if x["applicable"])
+        docs = "".join('<li><code>' + safe(p) + '</code></li>'
+                       for p in practice["editorial_refactor"]["surfaces"])
+        practice_html = ('<section id="practices"><h3>Change obligations, not a PASS</h3>'
+                         '<p>Git scope: ' + safe(practice["comparison"]) +
+                         ' · BASE: ' + safe(practice.get("change_base", "NOT_DECLARED")) +
+                         ' · authority: ' + safe(practice["external_approval"]) +
+                         '</p><ul>' + obligations + '</ul><p>Editorial: ' +
+                         safe(practice["editorial_refactor"]["state"]) +
+                         '</p><ul>' + docs + '</ul></section>')
     panel = (f'<section id="run-execution"><h2>00 · Esiti realmente osservati</h2>'
              f'<p>Commit <code>{safe(receipt["commit"])}</code> · tree '
              f'<code>{safe(receipt["tree"])}</code> · processo <strong>{safe(receipt["process"])}</strong>. '
              'I risultati sorgente eseguiti, riutilizzati e non eseguiti non sono equivalenti.</p>'
              f'<div class="metrics" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr))">{metric_html}</div>'
-             '<h3>Attività sorgente</h3>'+''.join(rows)+test_row+model_html+
+             '<h3>Attività sorgente</h3>'+''.join(rows)+test_row+model_html+practice_html+
              '<h3>Attività escluse / non eseguite</h3><div class="panel"><ul>'+excluded+
              '</ul></div><h3>Reticolo DoD e checklist</h3><div class="panel">'+gate_html+
              '<p class="small">Il reticolo sorgente è un modello, non prova '
