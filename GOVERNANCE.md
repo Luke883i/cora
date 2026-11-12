@@ -70,7 +70,7 @@ The **coding agent is an implementer and proposer, never a reviewer of its own c
 
 Policy bootstrap is `BOOTSTRAP_REVIEW_REQUIRED` and must be accepted under an external administrator-controlled process. Even after merge, an `OBSERVED_REVIEW_REQUIRED` receipt remains nonauthoritative. Independent branch protection, required reviews/checks, signed supply-chain provenance and incident monitoring require controls outside the source tree. See [continuous method](docs/CONTINUOUS_DEVELOPMENT.md) and [DoD](docs/DOD_CONTINUOUS.md).
 
-<a id="current-agent-and-documentation-authority-pr-20-documentation-convergence"></a>
+<a id="current-agent-and-documentation-authority-pr-20--documentation-convergence"></a>
 ## Agent authority and documentation ownership
 
 The coding agent is an implementer and source-evidence proposer, not an independent reviewer. The current lifecycle uses the BASE policy and an explicit change-specific intent with the contextual pre/postmerge gate; caller intent is bounded and SHA-linked, never authenticated as product approval. A source-only reticular DoD cannot promote the externally blocked R1–R4 obligations or independently controlled release. See [agent rules](AGENTS.md), [convergent method](docs/CONVERGENT_ASSURANCE.md) and [full R1–R4 DoD](docs/DOD_PR20_CONVERGENCE.md).

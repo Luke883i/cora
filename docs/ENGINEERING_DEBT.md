@@ -72,7 +72,7 @@ cora stress-debt --seed 883 --cases 1000000
 
 The engineering owner labels/triages; product owner evaluates impact; QA validates reproducer/coverage; security owner handles SARIF; platform owner validates build and independent CI; a second reviewer approves any future transformation. Weekly: review newly introduced `P1_REVIEW` and unresolved coverage. Monthly: compare bounded hotspot/cochange baselines, record closure evidence and reprioritize. Per release: check signed provenance/reproducibility with separate release gates. No actor identity is cryptographically verified by this CLI; the repository owner must configure protected required checks outside versioned YAML.
 
-<a id="pr40-retained-dynamicstatic-debt-and-falsification-method"></a>
+<a id="pr40--retained-dynamicstatic-debt-and-falsification-method"></a>
 ## Static/dynamic debt controls and bounded falsifiers
 
 `python tools/verify_engineering_closure.py --repo . --revision HEAD --output /tmp/ekc.json` extracts the exact committed Git source identity, parser/atlas census, Python static relative imports and executable callsite indicators. Replay with `--verify-report /tmp/ekc.json`. Callsite presence is not proof of runtime execution, and absence is not proof of safe deletion. The primary integrated execution remains `cora process-run --one-run --profile comprehensive` and its existing `verify-process` counterpart; the PR40 verifier is a source diagnostic, not a second orchestrator.

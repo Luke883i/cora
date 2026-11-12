@@ -147,7 +147,7 @@ The canonical original-owner command is `cora method-synthesize REPO --synergic`
 
 The atlas maps all **71 declared commands** to original source and test file witnesses, eight families, 14 method owners, workflow/document/test inventories and the [six-gate maturity DoD](../.cora/contracts/dod/maturity-dod.json). It is a Git source viewer: test paths are not test execution, independently demonstrated usability or an authorization decision. The release, host, human reviewer, maintained target and longitudinal gates remain `BLOCKED_EXTERNAL`. Report output must live outside the checkout. The CLI does **not** execute target tests or AI automatically.
 
-<a id="one-run-assurance-one-existing-command-executed-results-pr36"></a>
+<a id="one-run-assurance--one-existing-command-executed-results-pr36"></a>
 ## One-Run execution and result interpretation
 
 From a complete authorized CORA Git checkout, generate one **actual execution dossier**, not merely the 71-command index:

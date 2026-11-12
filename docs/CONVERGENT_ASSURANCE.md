@@ -50,7 +50,7 @@ Source tests/CI can be `PASS_SCOPED` on an exact head. The complete global goal 
 The contextual DevOps opt-in accepts `--intent 'human-described bounded change and acceptance criteria'` and binds its digest to the exact BASE/HEAD. A missing per-change intent makes the source gate `DEBT_BLOCKED`; an explicit one is `CALLER_SUPPLIED_UNVERIFIED_BOUND_TO_BASE_HEAD`, **not** actual owner authority. Replay must provide the identical `--intent`; mismatched text, base or head refutes the receipt. When source files are deleted, renamed or change object type, CORA uses both the BASE and HEAD static candidate import graphs so removed modules do not silently lose their pre-change import consumers; a missing required BASE graph is debt-blocked. Legacy PR-16 evidence-lattice topology also uses the shared cycle/dangling-edge validator, retaining its separate evidence status vocabulary.
 
 
-<a id="reflection-33-typed-method-convergence-and-code-durability-contract"></a>
+<a id="reflection-33--typed-method-convergence-and-code-durability-contract"></a>
 ## Typed method convergence and code-durability contract
 
 The [bounded typed crosswalk](../.cora/contracts/profiles/type-assurance-profile.json) specializes the *existing* method-atlas, artifact-role, ontology and reticulum owners. It declares 20 types in seven planes, links 14 current procedures, 10 methodological references (three ISO standards and seven non-ISO references), nine ISO/IEC 25010:2023 quality characteristics and 12 proposed durability invariants. **The crosswalk is a closed-world candidate, not a measurement of quality, ISO conformity, complete runtime use, or an authority to change/delete source.** The current independent checker is [verify_type_assurance.py](../tools/verify_type_assurance.py), within `cora-release-verification`; it checks exact Git blob bytes at the candidate HEAD and that the baseline is an ancestor.
@@ -107,7 +107,7 @@ The generated AI request contains source-bound IDs and instructions to reverse-i
 **Ownership and closure.** `src/cora/integrated_service.py` composes `method_synthesis.py`, Git source, original claim evidence, type profile and reticulum, not an alternative source of truth. The capability inventory and artifact roles include the new module and contract. `ci-documentation.yml` runs original checkout source replay, tests, physical mutants and the 10M finite model; check the actual GitHub Actions run **at the final PR HEAD**. An independent reviewer must still assess possible doc false positives, unknown dynamic/external consumers, actual 71-command operational fitness, safety and release readiness. Postmerge rerun must use the actual merged SHA.
 
 
-<a id="five-synergic-developments-retrograde-mechanized-dod-pr29-candidate"></a>
+<a id="five-synergic-developments--retrograde-mechanized-dod-pr29-candidate"></a>
 ## Five synergic assurance cuts
 
 The five developments are **one minimal dependency lattice**: Semantic Truth Engine (G_TRUTH) → bounded AI Reasoning Engine (G_AI); a parallel original-source Behavioral Proof Engine (G_BEHAVIOR) and continuous cross-revision Semantic Evolution (G_EVOLUTION); all converge to G_UNIFIED. The governed root G_GOVERNED additionally requires real AI-provider execution where claimed, operational qualification of all commands, independent review, real target runtime and host authorization. Source success cannot compensate for those external leaves.
@@ -126,7 +126,7 @@ The canonical [five-synergies contract](../.cora/contracts/dod/five-synergies-do
 
 **Reviewer acceptance:** exact-head full unit regressions, the original source tests, the 1M model twice, and explicit claim-coverage/CI receipts on the same SHA. G_GOVERNED stays externally blocked; a PR author cannot self-approve protected branch rules, reviewer independence, target execution, hosted AI credentials or deploy/rollback.
 
-<a id="pr31-unified-humanai-atlas-and-backward-derived-maturity-dod"></a>
+<a id="pr31--unified-humanai-atlas-and-backward-derived-maturity-dod"></a>
 ## Unified human/agent atlas and maturity cuts
 
 **Abstract goal:** Humans and AI agents can use one canonical entry point to discover all declared CORA capabilities, navigate to original source/test/method owners, interpret bounded evidence and identify unresolved conditions for responsible adoption. The source integration remains `cora method-synthesize . --synergic`; optional `--atlas-json` and `--atlas-html` materialize machine-readable and self-contained offline views. The existing `--ai-request-output` remains provider-free. Replay with `verify-method-synthesis --synergic --atlas-json ... --atlas-html ...` re-derives the view from original Git and the verified synergic source report.
