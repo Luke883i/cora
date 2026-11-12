@@ -5,9 +5,9 @@
 
 **CORA (Continuous Ontological Repository Assurance)** — **Engineering evidence for AI-assisted software changes.**
 
-CORA is a local, offline-first Python 3.11+ framework. It helps developers and AI coding assistants inspect a Git repository, turn goals into falsifiable obligations and **produce reproducible pre/post-merge review reports**. It links **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**. Agents edit with authorized tools; CORA evaluates evidence. CORA is **not a coding agent** or an approver.
+CORA is a local, offline-first Python 3.11+ framework. It helps developers and AI coding assistants inspect a Git repository and **produce reproducible pre/post-merge review reports**. It connects **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**. Authorized agents edit; CORA evaluates evidence. It is **not a coding agent** or an approver.
 
-**Why it matters:** a plausible AI-generated patch is not evidence that the product works. CORA makes *intent, modification, observation and uncertainty* separately inspectable. For a CTO this means reviewable decisions; for a developer, a reproducible next test; for a reviewer, explicit counterexamples and unresolved risk.
+**Why it matters:** plausible AI-generated patches are not proof. CORA makes *intent, change, observation and uncertainty* inspectable: a CTO sees reviewable decisions; developers see the next test; reviewers see unresolved risks.
 
 ```text
 Intent → acceptance graph → reversible code slice → adversarial tests
@@ -15,11 +15,11 @@ Intent → acceptance graph → reversible code slice → adversarial tests
        open obligations ← exact Git SHA + evidence dossier
 ```
 
-**Product** = the engineering-assurance experience; **software** = the `cora` Python CLI and verifiers; **repository** = their Git source, contracts, tests, docs and CI. None by itself demonstrates target-product readiness.
+**Product** = engineering assurance; **software** = the `cora` CLI and verifiers; **repository** = Git source, contracts and CI. None proves target-product readiness.
 
 **Recommended use:** inspect an authorized checkout or review one bounded change. **Audience and conditions:** CTOs, developers, reviewers and coding agents; Python 3.11+, Git and authorized execution tools. **Open source license:** [MIT](LICENSE).
 
-**Current status:** experimental `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **Document status:** CURRENT. **Current scope:** Git source review. **Operational use:** inspect commits. **Evidence:** Git and scoped tests. **Limits:** external acceptance `BLOCKED_EXTERNAL`. **merged PR41** and PR46 remain source milestones; `v1.0.0a4` was a draft. **Category:** agent-agnostic developer tooling / engineering assurance.
+**Current status:** experimental `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **Document status:** CURRENT. **Current scope:** Git source review. **Operational use:** inspect commits. **Evidence:** Git and scoped tests. **Limits:** `BLOCKED_EXTERNAL`. Source lineage: **merged PR41**, PR46; `v1.0.0a4` draft. **Category:** agent-agnostic engineering assurance.
 
 ## First five minutes — Quickstart
 
@@ -32,7 +32,7 @@ cora snapshot . --revision HEAD --output /tmp/cora-ledger.json
 cora verify-ledger /tmp/cora-ledger.json --repo .
 ```
 
-Then run [One-Run](#one-run--one-command-one-evidence-dossier). This identifies source and replayable assertions; it does not test an arbitrary external product. [Getting started](docs/GETTING_STARTED.md) explains setup, bounded output and failure handling.
+For one bounded review dossier, run [One-Run](#one-run--one-command-one-evidence-dossier) and its verifier. The snapshot above is the smaller Git-only path; neither executes arbitrary target tests. [Getting started](docs/GETTING_STARTED.md) explains setup, bounded output and failure handling.
 
 ## What works today
 
@@ -51,15 +51,7 @@ Then run [One-Run](#one-run--one-command-one-evidence-dossier). This identifies 
 
 **71 declared CLI commands** in [capability atlas](.cora/assurance/capability-atlas.json) are inventory, not 71 independently proven features. [parser-checked CLI reference](docs/CLI_REFERENCE.md) · [complete documentation index](docs/INDEX.md).
 
-**CORA is not an eleventh engineering method.** It correlates partial observations, not whole disciplines:
-
-| Lens | Observation | Not established |
-| --- | --- | --- |
-| C4/arc42, DDD | Architectural boundaries | Complete architecture or runtime ownership |
-| Static dependencies, typed graphs, lineage, Git archaeology | Candidate consumers and provenance | Dynamic callers or runtime causality |
-| Contracts, mutation/metamorphic tests, threat modeling, fitness functions | Invariants and negative cases | Formal correctness or full security |
-
-The [method crosswalk](docs/CONVERGENT_ASSURANCE.md#method-crosswalk--borrowed-perspectives-not-full-implementations) separates implemented evidence and analogies.
+**CORA is not an eleventh engineering method.** Architecture models, source graphs, Git lineage, contracts and mutation tests offer partial perspectives—not complete runtime causality, formal correctness or security proof. The [method crosswalk](docs/CONVERGENT_ASSURANCE.md#method-crosswalk--borrowed-perspectives-not-full-implementations) separates implemented evidence and analogies.
 
 ## One-Run — one command, one evidence dossier
 
@@ -71,11 +63,11 @@ cora verify-process /tmp/cora-run.json --repo . --one-run --atlas-html /tmp/cora
 
 The dossier distinguishes `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTERNAL`. **The default does not execute arbitrary target tests**. Retain separate native-test commands and outcomes. [Chat handoff](docs/AGENT_ADOPTION.md#portable-chatgpt-handoff-opt-in) uses `--chat-step` / `--chat-bundle`; a ZIP is not memory or approval.
 
-**Full change:** `--change-base BASE_SHA` compares a caller-declared BASE with HEAD; default one commit. Neither authenticated PR metadata nor automatic rewriting.
+**Change range:** `--change-base BASE_SHA` compares an explicit base against HEAD; without it, the default covers one commit. Neither mode authenticates PR metadata or rewrites code.
 
-**Native Gold pilots:** Teddy Node and ICTC HTTP/SQLite have bounded consented tests; LUMEN browser and NILO remote remain unobserved. Local PASS does not authenticate runners or productivity. [PR52 evidence](docs/GOLD_ASSURANCE.md#pr52--native-gold-pilots-and-bounded-cross-repository-result) · [PR51 linkage](docs/GOLD_ASSURANCE.md#pr51--native-gold-bridge-in-the-existing-portable-one-run).
+**Native Gold pilots:** Teddy Node and ICTC HTTP/SQLite have bounded consented tests; LUMEN browser and NILO remote remain unobserved. Local PASS is not an authenticated runner or productivity claim. [Pilot evidence and linkage](docs/GOLD_ASSURANCE.md).
 
-**Other Git repos:** `--one-run --portable-profile /path/to/target.json` enables source replay, not transplanted DoD. `--portable-parse-js` parses static ESM without execution. [Cross-repository limits](docs/CONTINUOUS_DEVELOPMENT.md#cross-repository-sourceevidence-convergence-pr50--candidate).
+**Other Git repos:** `--one-run --portable-profile /path/to/target.json` enables source replay, not transplanted DoD. `--portable-parse-js` parses static ESM without execution. [Cross-repository limits](docs/CONTINUOUS_DEVELOPMENT.md).
 
 ## How CORA works
 
@@ -100,9 +92,9 @@ Follow [agent adoption](docs/AGENT_ADOPTION.md) and the [R1–R4 DoD](docs/DOD_P
 
 ## Interpret a CORA result
 
-A Git SHA identifies source bytes, not runtime or human approval. **A source digest does not authenticate a human reviewer**. Finite-model PASS is not target behavior; `NOT_RUN` and `BLOCKED_EXTERNAL` are not PASS. See [evidence boundaries](docs/CONVERGENT_ASSURANCE.md).
+**A source digest does not authenticate a human reviewer** or target runtime. `NOT_RUN` and `BLOCKED_EXTERNAL` are not PASS. See [evidence boundaries](docs/CONVERGENT_ASSURANCE.md).
 
-## Final Experimental Baseline — merged PR41
+## Final Experimental Baseline — bounded evidence
 
 The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) distinguishes **15 SOURCE leaves, 7 EXTERNAL leaves, and 8 aggregate AND gates**. Its **16 realistic fault families** and **2,517 preregistered zero-to-fourway masks** are finite-model cases, **not one million independent source mutations**. **two controlled physical Git repositories** supply bounded counterexamples, not independent target or user acceptance.
 
@@ -148,4 +140,4 @@ The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) di
 
 ## Engineering map
 
-**Product:** assurance. **Software:** `cora-engine` and `cora-release-verification`. **Repository:** source, tests, CI and **historical ADRs**. **merged PR38** and **merged PR39** are source milestones; [index](docs/INDEX.md) lists owners.
+**Product:** assurance. **Software:** `cora-engine` and `cora-release-verification`. **Repository:** source, tests, CI and **historical ADRs**. [Index](docs/INDEX.md) identifies current document owners; original Git retains decision history.

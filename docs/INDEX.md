@@ -7,8 +7,6 @@
 **Limits:** Archived ADRs are nonnormative and links do not certify reader comprehension.
 
 
-**Current review:** [agent instructions](../AGENTS.md) and [getting started](GETTING_STARTED.md) explain how an explicit BASE identifies the complete Git change range in existing One-Run. These obligations do not create a new product, runner or approval authority.
-
 Start at the [README](../README.md): a source-scoped product promise, a three-step engineering cycle, eight declared CLI families and two source-linked project examples. This index routes readers by task, method and evidence class; it is navigation, not a release authority or an independent witness.
 
 ## How to navigate
@@ -26,13 +24,7 @@ The [README](../README.md) is the **compressed public front door**: outcome, met
 - **Censusing all implemented command surfaces:** [Capability atlas](../.cora/assurance/capability-atlas.json) → [CLI reference](CLI_REFERENCE.md) → [architecture](ARCHITECTURE.md) → [capability DoD](../.cora/contracts/dod/capability-dod.json). These are source/test witnesses, not behavior certification.
 - **Tracing the five synergic goals:** [Convergent assurance](CONVERGENT_ASSURANCE.md) → [five-goal reticulum](../.cora/contracts/dod/five-synergies-dod.json) → [preseeded semantic mutants](../.cora/fixtures/five-synergies-mutants.json). Results are source-scoped; runtime and approval remain separately governed.
 - **Running integrated source-to-document convergence:** [Convergent assurance service](CONVERGENT_ASSURANCE.md) → [typed lattice](../.cora/contracts/profiles/type-assurance-profile.json) → [canonical CLI](CLI_REFERENCE.md). Original software owners remain responsible; model-supplied hypotheses are untrusted.
-- **Auditing code tenuta by object type:** [Typed assurance crosswalk](../.cora/contracts/profiles/type-assurance-profile.json) → [bounded method and R3 DoD](CONVERGENT_ASSURANCE.md) → [Git-bound verifier](../tools/verify_type_assurance.py). This is a source-candidate analysis, not an ISO certificate or product-ready claim.
-
-**PR38 history / future change source audit:** [37 PRs and 305 commit deltas](../.cora/assurance/history/pr01-37-commit-diff-audit.json) → [severe 32-node DoD](../.cora/contracts/dod/history-convergence-dod.json) → [CLI guidance](CLI_REFERENCE.md). PR34 is closed without merge, and the 28 former paths require mapping, not deletion. New modules, tests, CI and DoDs must converge with canonical inventories.
-
-**PR52 native Gold pilots:** [original Teddy/ICTC subprocess, LUMEN/NILO negative controls and bounded cost](GOLD_ASSURANCE.md#pr52--native-gold-pilots-and-bounded-cross-repository-result) plus [existing CLI](CLI_REFERENCE.md). Source/local exit is not independent product or release proof.
-**PR51 native Gold witness convergence:** [Original-Git oracle and claim-level native witness bridge](GOLD_ASSURANCE.md#pr51--native-gold-bridge-in-the-existing-portable-one-run) -> [portable One-Run](CONTINUOUS_DEVELOPMENT.md). Qualified source linkage is not a native test execution or third-party approval.
-**Cross-repository portability (PR50 candidate):** [Reticular source/external DoD](../.cora/contracts/dod/crossrepo-convergence-dod.json) -> [portable One-Run method and usage](CONTINUOUS_DEVELOPMENT.md#cross-repository-sourceevidence-convergence-pr50--candidate). Neither target-owned profile nor source byte readback creates runtime or human authority.
+- **Auditing code tenuta by object type:** [Typed assurance crosswalk](../.cora/contracts/profiles/type-assurance-profile.json) → [bounded method and R3 DoD](CONVERGENT_ASSURANCE.md) → [Git-bound verifier](../tools/verify_type_assurance.py). This is a source-candidate analysis, not an ISO certificate or product-ready claim.**Cross-repository portability (PR50 candidate):** [Reticular source/external DoD](../.cora/contracts/dod/crossrepo-convergence-dod.json) -> [portable One-Run method and usage](CONTINUOUS_DEVELOPMENT.md#cross-repository-sourceevidence-convergence-pr50--candidate). Neither target-owned profile nor source byte readback creates runtime or human authority.
 
 **Integrated source dossier:** the [PR37 v2 contract](../.cora/contracts/dod/integrated-one-run-dod.json) composes the PR36 source gates with a Git-pinned activity census, typed plans, local evidence and an offline forensic atlas. Product acceptance remains external and unverified.
 

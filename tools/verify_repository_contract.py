@@ -149,7 +149,7 @@ def audit_product_positioning(root: Path, readme: str) -> list[str]:
                 "--sca-raw", "--verify-sca", "build-tool-pins.json")):
             errors.append("positioning-build-sbom-truth-drift")
         if (not all(token in release for token in (
-                "Post-PR52 CTO procurement", "CONFIGURED_IN_PR55_CANDIDATE_CI",
+                "Supply-chain and procurement evaluation", "CONFIGURED_IN_PR55_CANDIDATE_CI",
                 "SLSA/in-toto", "BLOCKED_EXTERNAL", "not a self-issued"))
                 or not all(token in security for token in (
                     "Supply-chain and enterprise evaluation disclosure",

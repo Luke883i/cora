@@ -705,6 +705,18 @@ def census_markdown(root: Path, *, revision: str = "HEAD",
     for row in rows:
         row["inbound"] = sum(sum(1 for dest, _ in edges if dest == row["path"])
                              for edges in references.values())
+        # An index entry is discoverability, not proof of operational use.
+        row["inbound_active_nonindex"] = sum(
+            sum(1 for dest, _ in edges if dest == row["path"])
+            for source, edges in references.items()
+            if source != "docs/INDEX.md" and
+            registered.get(source, {}).get("status") in ("CURRENT", "SCOPED_CURRENT"))
+        row["evaluation_route"] = (
+            "ARCHIVAL_NON_NORMATIVE" if row["status"] == "HISTORICAL" else
+            "ACTIVE_REFERENCED" if row["inbound_active_nonindex"] else
+            "INDEX_ONLY_REVIEW")
+        row["pr_history_mentions"] = len(re.findall(
+            r"\bPR[- #]?\d+\b", bodies[row["path"]], flags=re.I))
     # Readback may execute from an uncommitted mutation. Never promote it to
     # source truth; zero errors and Git parity are jointly necessary.
     return {
@@ -721,11 +733,44 @@ def census_markdown(root: Path, *, revision: str = "HEAD",
             "missing_current_contracts": sum(x.startswith("standalone-") for x in errors),
             "original_git_parity": sum(x["source_parity"] for x in rows),
             "edges": sum(x["outbound_local"] for x in rows),
+            "active_index_only": sum(x["evaluation_route"] == "INDEX_ONLY_REVIEW" for x in rows),
+            "active_history_mentions": sum(x["pr_history_mentions"] for x in rows if x["status"] != "HISTORICAL"),
         },
         "documents": rows,
         "errors": sorted(set(errors)),
         "status": "PASS_SCOPED" if not errors else "REFUTED",
     }
+
+
+
+# Enterprise-evaluable means eligible for an external decision, never approved.
+# This 20-bit finite model does not execute third-party targets.
+ENTERPRISE_SOURCE_LEAVES = (
+    "exact_git_revision", "markdown_inventory", "original_blob_parity",
+    "standalone_active_docs", "local_links", "reader_routes",
+    "current_product_identity", "readme_minimality", "method_nonpromotion",
+    "candidate_sbom_scope", "bounded_sca_scope", "exact_head_release",
+)
+ENTERPRISE_EXTERNAL_LEAVES = (
+    "first_read_user_study", "maintained_target_experiment",
+    "independent_human_review", "enforced_host_controls",
+    "verified_signed_provenance", "security_owner_acceptance",
+    "release_manager_decision", "independent_operational_review",
+)
+
+
+def assess_enterprise_cut(mask: int) -> str:
+    """Noncompensatory finite DoD model: never grants product or release authority."""
+    if isinstance(mask, bool) or not isinstance(mask, int) or not 0 <= mask < (1 << 20):
+        raise ValueError("enterprise-mask-invalid")
+    source_required = (1 << len(ENTERPRISE_SOURCE_LEAVES)) - 1
+    external_required = ((1 << len(ENTERPRISE_EXTERNAL_LEAVES)) - 1) << len(ENTERPRISE_SOURCE_LEAVES)
+    if mask & source_required != source_required:
+        return "REFUTED_SOURCE"
+    if mask & external_required != external_required:
+        return "BLOCKED_EXTERNAL"
+    return "EVALUATION_ELIGIBLE"
+
 
 
 def main() -> int:

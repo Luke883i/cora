@@ -411,9 +411,8 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         index = (ROOT / "docs/INDEX.md").read_text("utf-8")
         arch = (ROOT / "docs/ARCHITECTURE.md").read_text("utf-8")
         cross = (ROOT / "docs/CONVERGENT_ASSURANCE.md").read_text("utf-8")
-        cto_intro = ("For a CTO this means reviewable decisions; for a developer, "
-                     "a reproducible next test; for a reviewer, explicit counterexamples "
-                     "and unresolved risk.")
+        cto_intro = ("a CTO sees reviewable decisions; developers see the next test; "
+                     "reviewers see unresolved risks.")
         route_intro = ("This index routes readers by task, method and evidence class; "
                        "it is navigation, not a release authority or an independent witness.")
         catalog = (

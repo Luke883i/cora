@@ -51,6 +51,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_pr59_consolidation.py' -v
       - name: Verify documentation inventory and links
         run: python tools/verify_documentation.py --repo .
+      - name: PR62 enterprise-evaluable DoD, negative Markdown witnesses and million finite vectors
+        run: python -m unittest discover -s tests -p 'test_pr62_enterprise_docs.py' -v
       - name: PR61 exhaustive Git Markdown census and scoped reader contract
         run: |
           python tools/verify_documentation.py --repo . --census-output /tmp/cora-md-census.json > /tmp/cora-md-verification.json
