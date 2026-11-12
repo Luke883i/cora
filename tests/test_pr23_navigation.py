@@ -72,6 +72,14 @@ class ProgressiveDocumentationTests(unittest.TestCase):
     def setUpClass(cls):
         cls.readme = (ROOT / "README.md").read_text("utf-8")
 
+    def test_pr61_compatibility_anchor_is_explicit_and_falsifiable(self):
+        """Stable local links may outlive PR-centric visible headings."""
+        x = '<a id="legacy-pr-anchor"></a>\n## Current owner and interface\n'
+        self.assertIn("legacy-pr-anchor", DOC.heading_slugs(x))
+        self.assertIn("current-owner-and-interface", DOC.heading_slugs(x))
+        forged = '<a id="legacy-pr-anchor" onclick="approve()"></a>\n## Current owner\n'
+        self.assertNotIn("legacy-pr-anchor", DOC.heading_slugs(forged))
+
     def test_pr61_complete_markdown_census_and_current_document_contract(self):
         """48/48 documented Git blobs; machine reader proxy, not human evaluation."""
         report = DOC.census_markdown(ROOT)
