@@ -101,7 +101,8 @@ def project(repo: Path, commit: str) -> dict:
     return report
 
 def verify(repo: Path, report: dict) -> bool:
-    if not isinstance(report, dict) or report.get("schema") != SCHEMA or (
+    if (not isinstance(report, dict) or report.get("schema") != SCHEMA or
+            not isinstance(report.get("commit"), str) or
             project(repo, report["commit"]) != report):
         raise ValueError("practice report differs from Git source")
     return True
