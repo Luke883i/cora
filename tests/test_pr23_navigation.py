@@ -106,14 +106,14 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         for mutated in (
             source.replace("**Limits:**", "**Certified:**", 1),
             source.replace("**Evidence:**", "**Marketing:**", 1),
-            source + "\\nCORA automatically approves merges.\\n",
+            source + "\nCORA automatically approves merges.\n",
             source.replace("**Current scope:**", "**Historical authority:**", 1),
         ):
             self.assertTrue(check("docs/GETTING_STARTED.md", mutated))
         benign = source.replace("**Operational use:**", "**Operational use:** ", 1)
         self.assertEqual(check("docs/GETTING_STARTED.md", benign), [])
         bad = DOC.census_markdown(ROOT, overrides={
-            "docs/GETTING_STARTED.md": source+"\\n[broken](NONEXISTENT-PR61.md)\\n"})
+            "docs/GETTING_STARTED.md": source+"\n[broken](NONEXISTENT-PR61.md)\n"})
         self.assertEqual(bad["status"], "REFUTED")
         self.assertTrue(any("broken-link:" in x for x in bad["errors"]))
         self.assertTrue(any("worktree-git-parity:" in x for x in bad["errors"]))

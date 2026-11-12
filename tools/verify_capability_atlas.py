@@ -201,10 +201,14 @@ def check(repo, revision="HEAD"):
     if ("../.cora/assurance/capability-atlas.json" not in texts["docs/INDEX.md"]
             or "../.cora/contracts/dod/capability-dod.json" not in texts["docs/DOCUMENTATION_DOD.md"]):
         raise ValueError("capability evidence is not navigable")
-    if ("merged PR-25" not in texts["docs/ARCHITECTURE.md"]
-            or "PR-25" not in texts["CHANGELOG.md"]
-            or "PR-23 source (merged)" not in texts["docs/DOCUMENTATION_DOD.md"]):
-        raise ValueError("current documentation chronology contradicted")
+    # Verify present-day documentation ownership instead of requiring PR-era
+    # headings. Historical lineage remains in original Git and the registry.
+    if ("## Current documentation ownership" not in texts["docs/ARCHITECTURE.md"]
+            or "documentation-registry.json" not in texts["docs/ARCHITECTURE.md"]
+            or "1.0.0a5" not in texts["CHANGELOG.md"]
+            or "## Progressive navigation and five reader paths" not in texts["docs/DOCUMENTATION_DOD.md"]
+            or "S01–S18" not in texts["docs/DOCUMENTATION_DOD.md"]):
+        raise ValueError("current documentation ownership or source identity contradicted")
     receipts = [{"command":row["command"], "family":row["family"],
                  "interaction":row["interaction"],
                  "implementation_oid":tree[row["method_source"]][1],
