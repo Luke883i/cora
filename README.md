@@ -7,7 +7,7 @@
 
 CORA is a local, offline-first Python 3.11+ framework. It helps developers and AI coding assistants inspect a Git repository, turn goals into falsifiable obligations and **produce reproducible pre/post-merge review reports**. It links **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**. Agents edit with authorized tools; CORA evaluates evidence. CORA is **not a coding agent** or an approver.
 
-**Why it matters:** a plausible AI-generated patch is not evidence that the product works. CORA makes *intent, modification, observation and uncertainty* separately inspectable. For a CTO this means reviewable decisions; for a developer, a reproducible next test; for a reviewer, explicit counterexamples and unresolved risk.
+**Why it matters:** a convincing patch is not runtime evidence. CORA separates *intent, modification, observation and uncertainty* for review, next tests and unresolved risk.
 
 ```text
 Intent → acceptance graph → reversible code slice → adversarial tests
@@ -19,7 +19,7 @@ Intent → acceptance graph → reversible code slice → adversarial tests
 
 **Recommended use:** inspect an authorized checkout or review one bounded change. **Audience and conditions:** CTOs, developers, reviewers and coding agents; Python 3.11+, Git and authorized execution tools. **Open source license:** [MIT](LICENSE).
 
-**Current status:** experimental `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **merged PR41** and PR46 establish source milestones; the earlier `v1.0.0a4` was a draft. External assurance is unverified; it is not required for experimental use. **Category:** agent-agnostic developer tooling / engineering assurance.
+**Current status:** experimental `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **Document status:** CURRENT. **Current scope:** Git engineering assurance. **Operational use:** inspect authorized changes. **Evidence:** original Git and scoped tests. **Limits:** external acceptance `BLOCKED_EXTERNAL`; not certified. **merged PR41** and PR46 remain source milestones; `v1.0.0a4` was a draft. **Category:** agent-agnostic developer tooling / engineering assurance.
 
 ## First five minutes — Quickstart
 

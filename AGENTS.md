@@ -1,5 +1,12 @@
 # CORA instructions for coding agents
 
+**Document status:** CURRENT
+**Current scope:** Instructions for third-party coding agents.
+**Operational use:** Plan, test and propose reversible changes under one Git identity.
+**Evidence:** Existing CLI commands, reticular contracts and falsification receipts.
+**Limits:** No self-approved reviewer, deletion or release.
+
+
 CORA is the independent **engineering evidence and governance framework**, not the AI coding assistant that implements features. The agent may plan, write, test and propose a PR; it may not certify its own source claims as runtime truth, authenticate reviewers, grant its own authorization, merge, deploy, publish or delete source under CORA authority.
 
 Start at the [README](README.md), [agent adoption tutorial](docs/AGENT_ADOPTION.md), [continuous method](docs/CONTINUOUS_DEVELOPMENT.md), [convergent assurance](docs/CONVERGENT_ASSURANCE.md), and [governance](GOVERNANCE.md). Existing historic PR-level DoDs and audits remain source-context records, not parallel engines.

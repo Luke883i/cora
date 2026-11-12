@@ -1,8 +1,15 @@
 # Changelog — CORA
 
+**Document status:** CURRENT
+**Current scope:** Source changes at the current repository version.
+**Operational use:** Locate current capabilities and use original Git for earlier versions.
+**Evidence:** pyproject.toml version, original commits and merged CI results.
+**Limits:** Changelog entries are not published releases or runtime acceptance.
+
+
 Repository source milestones, not evidence of a published or independently approved release.
 
-## Unreleased — PR60 current documentation consolidation (Draft)
+## Current source changes — documentation consolidated on main
 
 - Compress the CTO-facing README, current release procedure and engineering guides; preserve original method/claim falsifiers, link routes and historic Git objects.
 - Eliminate superseded PR-stage prose from operational instructions, while retaining historically classified original documents. Machine semantic tests are reproducible *proxies*, not actual independent reader studies.

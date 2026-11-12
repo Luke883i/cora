@@ -1,5 +1,12 @@
 # CORA human governance — source of decision authority
 
+**Document status:** CURRENT
+**Current scope:** Human decision rights and actual hosting gaps.
+**Operational use:** Identify accountable decision points for change, deletion and release.
+**Evidence:** Source policy and separately observed GitHub settings.
+**Limits:** Declared roles are not verified appointments or enforced review.
+
+
 **Status:** normative proposal for the repository; roles are functions, not verified staff appointments. The GitHub repository owner currently controls the platform, but no independent reviewer, ruleset, or branch protection has been verified. This document does **not** claim that two-person approval is already technically enforced.
 
 ## Decision rights — human-in-command
