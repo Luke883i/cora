@@ -118,13 +118,13 @@ These are historical Git PRs, **not** evidence that CORA-ENGINE authored or cert
 
 | Case | Semantic outcome | Engineering lesson |
 | --- | --- | --- |
-| [CORA #46](https://github.com/Luke883i/cora/pull/46) | Portable per-iteration chat handoff | A chat plan becomes an inspectable, non-authorizing artifact. |
-| [CORA #52](https://github.com/Luke883i/cora/pull/52) | Native Teddy Node and ICTC HTTP/SQLite pilots | Target-owned runtime evidence differs from source-only replay. |
-| [ICTC #274](https://github.com/Luke883i/ictc/pull/274) | Physical `v3/` to `src/`, `public/`, `tests/` migration | Move consumers and entrypoints together; history stays history. |
-| [ICTC #275](https://github.com/Luke883i/ictc/pull/275) | Post-cutover owner/path hardening | A tidy tree requires negative reachability checks. |
-| [Teddy #56](https://github.com/Luke883i/teddy/pull/56) | CORA source assurance in its native Node repository | Reuse CORA without replacing Teddy's engine or product identity. |
-| [iKant_EDU #242](https://github.com/Luke883i/iKant_EDU/pull/242) | Runtime evidence and DoD-of-DoD | Source receipts do not attest Host or MCP behavior. |
-| [iKant_EDU #243](https://github.com/Luke883i/iKant_EDU/pull/243) | Root contraction with historical provenance and consumer DoD | No deletion by absence of a static reference alone. |
+| [CORA #46](https://github.com/Luke883i/cora/pull/46) · [commit 0c70053](https://github.com/Luke883i/cora/commit/0c700530899446dc27b972c44979ed43b425cebf) | Portable per-iteration chat handoff | A chat plan becomes an inspectable, non-authorizing artifact. |
+| [CORA #52](https://github.com/Luke883i/cora/pull/52) · [commit 094294a](https://github.com/Luke883i/cora/commit/094294a3c051fb0a63c4efe19c467845cbb9e393) | Native Teddy Node and ICTC HTTP/SQLite pilots | Target-owned runtime evidence differs from source-only replay. |
+| [ICTC #274](https://github.com/Luke883i/ictc/pull/274) · [commit cc4d5dc](https://github.com/Luke883i/ictc/commit/cc4d5dc7209823c85cbf170bef27f09f506b3df1) | Physical `v3/` to `src/`, `public/`, `tests/` migration | Move consumers and entrypoints together; history stays history. |
+| [ICTC #275](https://github.com/Luke883i/ictc/pull/275) · [commit 2aec423](https://github.com/Luke883i/ictc/commit/2aec4230a2f290089894a042fd900b6fa989f595) | Post-cutover owner/path hardening | A tidy tree requires negative reachability checks. |
+| [Teddy #56](https://github.com/Luke883i/teddy/pull/56) · [commit 767e844](https://github.com/Luke883i/teddy/commit/767e844ddba865a3bc1dab1d98182c76a10d326a) | CORA source assurance in its native Node repository | Reuse CORA without replacing Teddy's engine or product identity. |
+| [iKant_EDU #242](https://github.com/Luke883i/iKant_EDU/pull/242) · [commit 953caf5](https://github.com/Luke883i/iKant_EDU/commit/953caf5f79648600ff2a69595dfb6e2b05ae915c) | Runtime evidence and DoD-of-DoD | Source receipts do not attest Host or MCP behavior. |
+| [iKant_EDU #243](https://github.com/Luke883i/iKant_EDU/pull/243) · [commit b88cea0](https://github.com/Luke883i/iKant_EDU/commit/b88cea03129ac39b994769cab75c9ff6ee5ee166) | Root contraction with historical provenance and consumer DoD | No deletion by absence of a static reference alone. |
 
 Other public **examples**, not blanket CORA-ENGINE qualifications: [academics](https://github.com/Luke883i/academics) (research entry), [ROA](https://github.com/Luke883i/ROA) (theory), [Juriscribe](https://github.com/Luke883i/juriscribe), [LUMEN](https://github.com/Luke883i/lumen) (browser target), and [NILO](https://github.com/Luke883i/NILO) (game/remote target). The seven cases above also link CORA, ICTC, Teddy and iKant_EDU.
 

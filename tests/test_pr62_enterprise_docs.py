@@ -101,6 +101,15 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
             "teddy/pull/56", "iKant_EDU/pull/242",
             "iKant_EDU/pull/243",
         )
+        commits = (
+            "cora/commit/0c700530899446dc27b972c44979ed43b425cebf",
+            "cora/commit/094294a3c051fb0a63c4efe19c467845cbb9e393",
+            "ictc/commit/cc4d5dc7209823c85cbf170bef27f09f506b3df1",
+            "ictc/commit/2aec4230a2f290089894a042fd900b6fa989f595",
+            "teddy/commit/767e844ddba865a3bc1dab1d98182c76a10d326a",
+            "iKant_EDU/commit/953caf5f79648600ff2a69595dfb6e2b05ae915c",
+            "iKant_EDU/commit/b88cea03129ac39b994769cab75c9ff6ee5ee166",
+        )
 
         def source_errors(r, g, s, d, engine):
             errors = []
@@ -130,7 +139,7 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
             need("#chatgpt-project-beta-adapter" in r
                  and "AGENT_ADOPTION.md#chatgpt-project-beta-adapter" in s,
                  "broken-canonical-route")
-            need(all(link in g for link in links), "untraceable-pr-history")
+            need(all(link in g for link in links + commits), "untraceable-pr-history")
             need("R63_SOURCE =" in d and "R63_ACCEPTED =" in d
                  and "E01_FIRST_READ_HUMAN" in d
                  and "E03_ENFORCED_HOST_AND_NON_AUTHOR_REVIEW" in d,
