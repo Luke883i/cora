@@ -31,21 +31,23 @@ ICTC `56362f1b`: `docs/authority-matrix.yaml` plus `v3/release-readiness-e2-prod
 
 Remaining unknowns: genuine owner/consumer equivalence, real external behavioral mutators, trusted host CI effect readback, sandbox attestation, actual target runtime, reviewer identity, rollback and release authority. **All remain BLOCKED_EXTERNAL or NOT_EXECUTED, never inferred from model success.**
 
-## PR-19 receipt and image-pinning hardening
+<a id="pr-19-receipt-and-image-pinning-hardening"></a>
+## Pilot-source validation and image-pinning constraints
 
 A supplied `--pilot-report` is a claim, **never** authenticated source observation. `gold-plan --ictc-root ... --ikant-root ... --aosp1-root ...` performs a fresh Git-object readback in the same operation and marks owner semantics still unverified. Explicit Docker execution requires a **preloaded digest-pinned image** of form `python@sha256:HEX64` or `node@sha256:HEX64`, with no image pull, network or privileged capabilities. This reduces source/image substitution risk but does not provide independently certified sandbox isolation.
 
 ## Private-source access is a separate authority
 
-PR-19 initially attempted three GitHub Actions checkouts: CORA and public ICTC succeeded, then the checkout of private ikant failed, and aosp1 was never attempted. The CORA workflow token is not a read credential for other private repositories. Never inject broad private tokens into PR-controlled workflows to change a red access gate to green. The hardened CI verifies **real frozen ICTC Git object bytes (1/3)**, runs `gold-pilot` with a deliberately missing private checkout, requires its exit status 2 and records both absent private repositories as `NOT_OBSERVED` / `BLOCKED_INCOMPLETE`. This green boundary check does **not** establish 3/3 evidence. A trusted maintainer may independently provide approved local checkouts of all three pinned commits to `gold-pilot` outside PR-controlled CI. See [closure audit](archive/audits/AUDIT_PR19_CLOSURE.md).
+The current source-only Gold probe validates **real frozen ICTC Git object bytes (1/3)** and refuses to claim evidence from the private ikant/aosp1 targets: missing authorized checkouts are `NOT_OBSERVED` / `BLOCKED_INCOMPLETE` and the `gold-pilot` exit is 2. Do not give PR-controlled workflows broad private tokens. An authorized independent operator may supply local pinned checkouts; until then 3/3 verification remains unproven.
 
 ## Docker optional oracle and filesystem permissions
 
-The initial Docker oracle forced user 65534 but the private temporary source root is 0700, commonly preventing traversals. The hardened implementation runs only for a non-root host user and uses that UID/GID for the container without making the temporary workspace world-readable. The image remains digest-pinned and no network or image pull is allowed. Tests falsify root-host execution, missing opt-in and unpinned images using mocked Docker calls; actual sandbox security and host portability are not attested.
+Optional Docker execution requires a non-root host user and reuses that UID/GID inside the disposable container, without making private source directories world-readable. The image remains digest-pinned and no network or image pull is allowed. Tests falsify root-host execution, missing opt-in and unpinned images using mocked Docker calls; actual sandbox security and host portability are not attested.
 
 
 
-## PR51 — Native Gold bridge in the existing portable One-Run
+<a id="pr51-native-gold-bridge-in-the-existing-portable-one-run"></a>
+## Portable Gold claim-to-oracle linkage
 
 **Intent and status:** link a *target-owned* product/source claim to its actual
 committed source owner, original native oracle source, named native witness
@@ -117,13 +119,10 @@ One-Run and full CI. External product and efficiency comparisons remain open.
 
 
 
-## PR52 — Native Gold pilots and bounded cross-repository result
+<a id="pr52-native-gold-pilots-and-bounded-cross-repository-result"></a>
+## Native Gold pilots and negative execution controls
 
-**Post-PR51 finding:** the source-to-claim/oracle/witness bridge is useful
-and replayable but it does not itself execute native target code. PR52
-first preserves negative native witness lineage across dependent DoD cuts,
-then adds a strictly opt-in local subprocess producer for two original
-product tests, using the SAME portable One-Run source and Gold projection.
+The portable claim-to-oracle bridge alone does not execute native target code. Explicit opt-in local subprocess execution supports only two original target tests under the existing One-Run and Gold projection, preserving missing or negative evidence as blockers.
 
 **Pilot 1, Teddy:** actual Node24 TAP tests of original CORA JS graph
 integration on pinned Git commit 05c31e986d36fb4350867d208c1e4efe7e535ece.

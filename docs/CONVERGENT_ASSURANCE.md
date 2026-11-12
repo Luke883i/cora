@@ -1,4 +1,4 @@
-# CORA PR-20 — canonical convergent assurance
+# CORA — convergent source and claim assurance
 
 **Document status:** CURRENT
 **Current scope:** Typed noncompensatory source-to-obligation convergence.
@@ -9,7 +9,7 @@
 
 ## Product/software/repository intent
 
-The single **CORA** product continues to comprise `cora-engine` and `cora-release-verification`; this change does not create another agent or trust authority. Existing agent and Gold models share `reticulum.ordered_cut`, but retain their prior fixed vocabulary and output formats. The new profile `.cora/contracts/dod/convergence-dod.json` distinguishes source implementation from full real-world R1–R4 obligations and governed acceptance.
+The single **CORA** product comprises `cora-engine` and `cora-release-verification`; the source reticulum does not create another agent or trust authority. Existing agent and Gold models share `reticulum.ordered_cut`, but retain their prior fixed vocabulary and output formats. The existing profile `.cora/contracts/dod/convergence-dod.json` distinguishes source implementation from full real-world R1–R4 obligations and governed acceptance.
 
 ## Exact Git and context workflow
 
@@ -44,12 +44,14 @@ R1 requires an independently qualified real owner map and non-Python/dynamic con
 
 Source tests/CI can be `PASS_SCOPED` on an exact head. The complete global goal remains `BLOCKED_EXTERNAL` until the above independently collected evidence converges.
 
-## PR-20 hardening: intent and deleted-source causality
+<a id="pr-20-hardening-intent-and-deleted-source-causality"></a>
+## Intent binding and deleted-source candidate consumers
 
 The contextual DevOps opt-in accepts `--intent 'human-described bounded change and acceptance criteria'` and binds its digest to the exact BASE/HEAD. A missing per-change intent makes the source gate `DEBT_BLOCKED`; an explicit one is `CALLER_SUPPLIED_UNVERIFIED_BOUND_TO_BASE_HEAD`, **not** actual owner authority. Replay must provide the identical `--intent`; mismatched text, base or head refutes the receipt. When source files are deleted, renamed or change object type, CORA uses both the BASE and HEAD static candidate import graphs so removed modules do not silently lose their pre-change import consumers; a missing required BASE graph is debt-blocked. Legacy PR-16 evidence-lattice topology also uses the shared cycle/dangling-edge validator, retaining its separate evidence status vocabulary.
 
 
-## Reflection 3/3 — typed method convergence and code-durability contract
+<a id="reflection-33-typed-method-convergence-and-code-durability-contract"></a>
+## Typed method convergence and code-durability contract
 
 The [bounded typed crosswalk](../.cora/contracts/profiles/type-assurance-profile.json) specializes the *existing* method-atlas, artifact-role, ontology and reticulum owners. It declares 20 types in seven planes, links 14 current procedures, 10 methodological references (three ISO standards and seven non-ISO references), nine ISO/IEC 25010:2023 quality characteristics and 12 proposed durability invariants. **The crosswalk is a closed-world candidate, not a measurement of quality, ISO conformity, complete runtime use, or an authority to change/delete source.** The current independent checker is [verify_type_assurance.py](../tools/verify_type_assurance.py), within `cora-release-verification`; it checks exact Git blob bytes at the candidate HEAD and that the baseline is an ancestor.
 
@@ -83,7 +85,8 @@ R3-G0–G5 are constrained source checks; the full claim is an AND of R3-G0…R3
 
 Preserve the exact BASE/HEAD and original method-atlas/blob hashes; run `python -m unittest discover -s tests -v` and the checker on the *same* candidate SHA; inspect target-specific consumer and data flow effects for all changed source and documentation roles, plus the actual CI completion state. Perform a separate human review before merge. After a real merge, pin the *actual* merged SHA and run fresh `dev-postmerge`, source regression and the relevant behavioral oracles. Rollback means a separate, explicitly authorized reverse change with new readback; the mere presence of a source `git revert` path is not deployment recovery proof.
 
-## Integrated service: original source-to-document-to-AI lattice (candidate)
+<a id="integrated-service-original-source-to-document-to-ai-lattice-candidate"></a>
+## Integrated source-to-document-to-AI lattice
 
 **Intent.** CORA retains its single product and its original `cora-engine` and `cora-release-verification` software boundaries. The canonical `method-synthesize` command gains a strictly opt-in `--integrated` mode; no new agent, reviewer, execution authority, CI workflow, or 72nd command is introduced. This joins the existing source synthesis receipt, the full 71-command CLI inventory (eight families), original 14 procedure owners, 20 declared object types, 12 multi-abstraction dimensions, current document registry and original 18 README claim/evidence/falsifier relations. Each join is pinned to **one immutable Git revision** and checked by source replay. The resulting 20-row **semantic_crosswalk** binds each object type to its original method owner, source path, declared standards, quality axes, current-document path references and canonical README claim IDs; a missing owner path or an owner/standard mapping inconsistent with the canonical method atlas is a source contradiction, while an empty document reference is an explicit uncovered link rather than a false proof of compliance.
 
@@ -104,7 +107,8 @@ The generated AI request contains source-bound IDs and instructions to reverse-i
 **Ownership and closure.** `src/cora/integrated_service.py` composes `method_synthesis.py`, Git source, original claim evidence, type profile and reticulum, not an alternative source of truth. The capability inventory and artifact roles include the new module and contract. `ci-documentation.yml` runs original checkout source replay, tests, physical mutants and the 10M finite model; check the actual GitHub Actions run **at the final PR HEAD**. An independent reviewer must still assess possible doc false positives, unknown dynamic/external consumers, actual 71-command operational fitness, safety and release readiness. Postmerge rerun must use the actual merged SHA.
 
 
-## Five synergic developments — retrograde mechanized DoD (PR29 candidate)
+<a id="five-synergic-developments-retrograde-mechanized-dod-pr29-candidate"></a>
+## Five synergic assurance cuts
 
 The five developments are **one minimal dependency lattice**: Semantic Truth Engine (G_TRUTH) → bounded AI Reasoning Engine (G_AI); a parallel original-source Behavioral Proof Engine (G_BEHAVIOR) and continuous cross-revision Semantic Evolution (G_EVOLUTION); all converge to G_UNIFIED. The governed root G_GOVERNED additionally requires real AI-provider execution where claimed, operational qualification of all commands, independent review, real target runtime and host authorization. Source success cannot compensate for those external leaves.
 
@@ -122,7 +126,8 @@ The canonical [five-synergies contract](../.cora/contracts/dod/five-synergies-do
 
 **Reviewer acceptance:** exact-head full unit regressions, the original source tests, the 1M model twice, and explicit claim-coverage/CI receipts on the same SHA. G_GOVERNED stays externally blocked; a PR author cannot self-approve protected branch rules, reviewer independence, target execution, hosted AI credentials or deploy/rollback.
 
-## PR31 — Unified human/AI atlas and backward-derived maturity DoD
+<a id="pr31-unified-humanai-atlas-and-backward-derived-maturity-dod"></a>
+## Unified human/agent atlas and maturity cuts
 
 **Abstract goal:** Humans and AI agents can use one canonical entry point to discover all declared CORA capabilities, navigate to original source/test/method owners, interpret bounded evidence and identify unresolved conditions for responsible adoption. The source integration remains `cora method-synthesize . --synergic`; optional `--atlas-json` and `--atlas-html` materialize machine-readable and self-contained offline views. The existing `--ai-request-output` remains provider-free. Replay with `verify-method-synthesis --synergic --atlas-json ... --atlas-html ...` re-derives the view from original Git and the verified synergic source report.
 
@@ -130,7 +135,7 @@ The [maturity contract](../.cora/contracts/dod/maturity-dod.json) derives G1 ide
 
 The atlas maps all 71 declared CLI command names, eight capability families, 14 original method owners, Python modules, repository tools, workflow files, tests, documentation and contracts at the exact commit. It records common source blob ancestors rather than treating correlated outputs as independent confirmations. HTML escapes input, uses inline CSS/JS only with no remote assets or network fetches, and links to pinned GitHub source paths requiring authorized access. Neither Git source nor CI success certifies effective hosting rules, public releases, independent reviewers, real maintained-target benchmarks, longitudinal validity or operational rollback.
 
-DoD of the PR: exact-HEAD original Git replay of source JSON and HTML; 71/8/14 catalog parity; noncompensatory six-gate assessment; real committed Git reviewer-promotion mutant rejected; altered HTML and shared-origin claims rejected; static source/testing references never promoted to execution proof; full regression tests and CI status inspected on the final candidate SHA. Actual host enforcement, third-party behavior and observed usability remain external debt.
+Current source DoD: exact-HEAD original Git replay of source JSON and HTML; 71/8/14 catalog parity; noncompensatory six-gate assessment; real committed Git reviewer-promotion mutant rejected; altered HTML and shared-origin claims rejected; static source/testing references never promoted to execution proof; full regression tests and CI status inspected on the final candidate SHA. Actual host enforcement, third-party behavior and observed usability remain external debt.
 
 ## Method crosswalk — borrowed perspectives, not full implementations
 

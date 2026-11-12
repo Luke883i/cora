@@ -7,11 +7,11 @@
 **Limits:** A static component map is neither complete dynamic reachability nor release approval.
 
 
-**Scope:** CORA — Continuous Ontological Repository Assurance, v1.experimental (`1.0.0a5` source merged via PR46, not independently published or product-qualified; `1.0.0a4` historical draft), source includes merged PR36–44, including PR39 independent qualification, PR40 engineering knowledge, and PR43–44 source-only closure checks, using the existing comprehensive one-run activity dossier; source integration is not independently qualified product acceptance. PR-21–22 established document-to-source mapping; PR-23–31 added navigation, methodology convergence, the 71-command atlas and the six-gate maturity DoD. Both remain separate from external user acceptance, maintained-target pilots and independent hosting governance, which are unresolved. This document describes the current architecture; historical ADRs preserve earlier milestone decisions. The [README](../README.md) is the front door; this document is the engineering explanation. The [committed ontology](../cora.ontology.json) is a *declaration* by project maintainers, not an inference from folder names.
+**Scope:** CORA — Continuous Ontological Repository Assurance is an experimental local Git evidence tool. Package `1.0.0a5` is source merged via PR46; the registered architectural baseline includes merged PR36–44. Neither milestone authenticates a public release. The [README](../README.md) is the product entry and the [committed ontology](../cora.ontology.json) declares component ownership. Real maintained-target acceptance and effective host review remain `BLOCKED_EXTERNAL`. Historical decisions remain original Git evidence, not alternate current architecture.
 
-**Final experimental qualification:** PR41 reuses the existing CLI, original-Git source owners, PR39 native-Git reference and PR40 historical/capability/debt catalogs. The [30-node final DoD](../.cora/contracts/dod/final-experimental-dod.json) distinguishes a closed source candidate from seven externally observed conditions; no extra product, agent, or orchestrator is introduced. The actual PR merge and subsequent tag/asset checks determine immutable release identity, not document phrasing.
+**Final experimental qualification:** the existing source-reticulum and independent Git oracle reuse the canonical CLI, original source owners and debt/capability catalogs. The [30-node final DoD](../.cora/contracts/dod/final-experimental-dod.json) distinguishes a closed source candidate from seven externally observed conditions; no extra product, agent, or orchestrator is introduced. The actual PR merge and subsequent tag/asset checks determine immutable release identity, not document phrasing.
 
-**Post-PR58 integration:** `process_suite.run_suite` projects advisory `practice_obligations` from original Git. The opt-in `--change-base BASE_SHA` enables an explicit complete Git change range under the v2 projection; default v1 is single-commit first-parent. Both One-Run renderers display review obligations without a ninth source method or second executor. Documentation candidates for other repositories come from their own tracked Git trees, not CORA's directory assumptions. Source evidence never grants runtime or release authority.
+**Current One-Run integration:** `process_suite.run_suite` projects advisory `practice_obligations` from original Git. The opt-in `--change-base BASE_SHA` enables an explicit complete Git change range under the v2 projection; default v1 is single-commit first-parent. Both One-Run renderers display review obligations without a ninth source method or second executor. Documentation candidates for other repositories come from their own tracked Git trees, not CORA's directory assumptions. Source evidence never grants runtime or release authority.
 
 ## Three non-equivalent boundaries
 
@@ -21,7 +21,8 @@
 
 Deployables: **wheel** and **sdist**, presently review-only, not public releases. Runtime: on-demand CLI process in a user's environment. Artifact: content-addressed file/record/certificate associated with a commit. No daemon, SaaS backend, central registry, dashboard or scheduled runtime is provided.
 
-## Product category, target and evidence boundaries (post-PR52)
+<a id="product-category-target-and-evidence-boundaries-post-pr52"></a>
+## Product category, target and evidence boundaries
 
 **Category:** agent-agnostic developer tooling / engineering assurance. **Primary task:** assess a bounded software change from intent and falsifiable acceptance conditions through Git source, target-native observations and unresolved debt. **Primary readers:** developers, AI coding-agent operators, maintainers, reviewers and CTOs. The research method (CORA-METHOD) can guide an external agent without invoking this package; the executable (CORA-ENGINE) is the existing local Python CLI, not an autonomous feature writer. The repository is the versioned source and evidence boundary, not the runtime product and not an independent approval authority.
 
@@ -73,7 +74,8 @@ Starting at the root, an engineer should find answers without prior PR history: 
 
 `cora.artifact-roles.json` declares overlapping artifact roles for the immutable Git tree. A file may simultaneously be implementation, executable test, contract verifier, fixture and governance mechanism. The role declaration is not proof that the test passes, that a contract is enforced in CI, or that runtime consumers have been observed. The `artifact-audit` command reports unclassified files and unused rules; `verify-artifacts` independently recomputes the report from Git. An incomplete role registry is **not** a deletion oracle.
 
-## Cross-cutting source owners (PR16–PR20 lineage)
+<a id="cross-cutting-source-owners-pr16pr20-lineage"></a>
+## Shared source owners and proof boundaries
 
 The architecture has one `cora` CLI and no second orchestrator. Earlier PR16–PR20 stages are now summarized by their surviving source owners, **not** competing product identities or current release decisions:
 
@@ -83,29 +85,34 @@ The architecture has one `cora` CLI and no second orchestrator. Earlier PR16–P
 
 Historical reasoning and original claims remain at their immutable Git revisions, not copied into this current architecture map.
 
-## Current documentation topology (merged PR-25 baseline)
+<a id="current-documentation-topology-merged-pr-25-baseline"></a>
+## Current documentation ownership
 
 The [README](../README.md) is the product entry point. The [documentation index](INDEX.md) connects reader-oriented [onboarding](GETTING_STARTED.md), [AI agent adoption](AGENT_ADOPTION.md), methods, [CLI reference](CLI_REFERENCE.md), DoDs and historical ADR/audit material. The [documentation registry](documentation-registry.json) declares one role/status for every Markdown and retains the original baseline blob identity for historical source. This declaration is checked by `tools/verify_documentation.py` and the [documentation DoD](DOCUMENTATION_DOD.md); it does not establish human comprehension or authenticated reviewer approval.
 
-The active architecture remains **one CORA product and one Python CLI**. `reticulum.py` supplies common dependency topology, `continuous.py` the BASE-pinned contextual adapter, and the original source/runtime/Gold packages preserve their domain-specific evidence boundaries. The prior PR-16, PR-17 and PR-19 sections above are historical implementation lineage, not alternative current product identities.
+The active architecture remains **one CORA product and one Python CLI**. `reticulum.py` supplies common dependency topology, `continuous.py` the BASE-pinned contextual adapter, and the original source/runtime/Gold packages preserve their domain-specific evidence boundaries. Historical implementation records do not define another product identity.
 
-## Experimental comprehensive One-Run activity dossier (PR37)
+<a id="experimental-comprehensive-one-run-activity-dossier-pr37"></a>
+## Comprehensive One-Run evidence dossier
 
 The single canonical CLI and original `process_suite.run_suite` remain owners of source execution. `integrated_registry.py` discovers parser/dispatch, source methods, test cases, tools and workflows from the exact Git commit. `integrated_run.py` extends the original PR36 receipt into a typed plan, all-activity ledger, blocker register, environment statement and byte-addressed local evidence manifest. `integrated_html.py` renders one escaped offline forensic view with per-activity and per-test navigation. The `--profile comprehensive` flag is opt-in; it does not turn all 71 parser commands, external workflows or untrusted code into automatically executable work. Local self-tests require separate exact-checkout consent; without externally proven isolation their exit states remain unauthenticated. The [55-node contract](../.cora/contracts/dod/integrated-one-run-dod.json) differentiates SOURCE witnesses from EXTERNAL acceptance and remains debt-blocked while its uncovered gates are addressed.
 
-## PR38: historical genealogy and future semantic convergence
+<a id="pr38-historical-genealogy-and-future-semantic-convergence"></a>
+## Git genealogy and change invalidation
 
 `genealogy.py` validates the [PR1–37 corpus of 305 commit deltas](../.cora/assurance/history/pr01-37-commit-diff-audit.json) against original Git commit trees and parents where reachable, preserving PR34 as closed/unmerged. Former root contract names and archived documents are retained as lineage, not evidence of unused runtime code. Exact BASE/HEAD source differences trigger registration obligations for new modules, tests, workflows and DoDs; runtime/consumer gaps remain debt. `integrated_run.py` stores genealogy in the existing JSON and evidence manifest; `integrated_html.py` provides searchable PR → commit → changed file → required check navigation. The [32-node DoD](../.cora/contracts/dod/history-convergence-dod.json) separates source properties from independent review, real-target benchmarking, isolation, human comprehension, GitHub host enforcement and deletion-consumer proof.
 
 
-## PR39 — independent product qualification
+<a id="pr39-independent-product-qualification"></a>
+## Independent acceptance boundaries and assurance levels
 
 **Current interpretation (post-PR56):** the heading and `cora-independent-qualification/1` are **historical contract identities**, not evidence of an independent evaluator. Assurance is separated into **L1 engineering evidence** (source checks and actually reported test execution), **L2 experimental product validation** (bounded target behavior, with a qualified oracle), and **L3 optional external assurance** (third-party evaluation and governed release). L3 is **not a prerequisite to running CORA experimentally**; it is mandatory only for independently governed acceptance. A test run does not automatically establish L2 target acceptance, and L2 does not authenticate L3. Existing JSON schemas and digests are preserved.
 
 
 The versioned [four-gate product DoD](../.cora/contracts/dod/independent-qualification-dod.json) is a noncompensatory sibling of the PR38 history reticulum. It extends the same PR37 One-Run runner, evidence manifest, JSON and offline Atlas. It does not add a second executor or run any target or host process by default. The Git-replayed qualification receipt shows source witness paths and explicit blockers for real maintained targets, human study, runtime host attestation and branch protection. The native-Git oracle is a distinct implementation but is not a distinct human owner; the GitHub host probe is an optional read-only observation but does not authenticate an independent reviewer. External acceptance and release authority are deliberately outside the source code.
 
-## Alpha5 candidate: portable chat session as an artifact, not a second product
+<a id="alpha5-candidate-portable-chat-session-as-an-artifact-not-a-second-product"></a>
+## Portable chat session as a bounded artifact
 
 The existing `cora-engine` owns `src/cora/chat_bundle.py`, integrated only through `process-run --one-run --profile comprehensive` and `verify-process`. The portable ZIP contains strictly ordered, caller-authored steps, the existing comprehensive One-Run receipt, a reticularly derived DoD, a reader handoff, and a SHA-256 chained manifest. The output resides outside the inspected repository; appends are checked and atomically replaced. No additional coding agent, hosted service, external reviewer, command family, or source truth is introduced. The ZIP is append-only **as a sequence of validated records**, not bit-for-bit WORM storage or a cryptographically signed attestation.
 
