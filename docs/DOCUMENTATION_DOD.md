@@ -33,7 +33,8 @@ A passing static document verifier is a source-contract observation, **not** pro
 
 Negative fixtures must reject missing files, duplicated identities, broken links, wrong history classification, missing CLI references, incomplete contextual intent, altered DoD prerequisites and claims of release authorization from source checks alone. The test results must be bound to the exact final Git SHA. Synthetic model coverage and local fixtures are not human usability tests.
 
-## Revision-bound claim-to-evidence profile (merged PR-22)
+<a id="revision-bound-claim-to-evidence-profile-merged-pr-22"></a>
+## Revision-bound claim-to-evidence profile
 
 The separate [claim/proof profile](../.cora/assurance/documentation-proofs.json) binds each S01–S18 leaf to one README proposition in its actual section, a named implementation/contract file, an existing test source and a concrete falsifier. The [source verifier](../tools/verify_claim_evidence.py) reads each witness as a Git blob from the **same pinned commit**, checks fixed semantic boundary oracles (including CLI parser, intent digest, declaration IDs, legacy blob identity, source-vs-external DoD and cross-document contradiction patterns), and emits a replayable SHA- and blob-attributed receipt.
 
@@ -48,7 +49,8 @@ A source receipt means **PASS_SCOPED_SOURCE** for the implemented *finite* predi
 
 Adversarial Git fixtures physically commit contradicting current-doc claims, detached intent wiring, parser drift, DoD edge changes, historical blob rewrites, CI proof omissions and stale receipt forgeries. They exercise falsifier sensitivity rather than assert exhaustive semantic proof. The source-oracle code and its profile are PR-editable and cannot approve changes to themselves.
 
-## Progressive navigation micro-DoD — PR-23 source (merged)
+<a id="progressive-navigation-micro-dod-pr-23-source-merged"></a>
+## Progressive navigation and five reader paths
 
 No parallel documentation engine is introduced. Reuse the PR-21 source leaves **S01–S18**, the PR-22 revision-bound claim profile and the existing `verify_documentation.py` entrypoint. The following **editorial DoD is a proposed non-compensatory cut**, not a new certificate of human understanding:
 
@@ -80,7 +82,8 @@ python tools/verify_capability_atlas.py --repo . --verify-report /tmp/cora-capab
 
 Every generated receipt binds method and test-source Git blob OIDs to a revision. The verifier checks `argparse` entrypoints, source-import/dispatch relationships, test-file syntax/role, current method documentation, repository-surface completeness, sensitive interaction labels, DoD edges and critical README/architecture/changelog consistency. A reported test OID is a **source witness only**: no execution, branch protection, release, reviewer or functional correctness is authenticated. Actual required CI status must be observed on the exact final SHA outside the source receipt; external behavior must be tested separately.
 
-## PR42 README semantic refactor amendment (source-bound, not human acceptance)
+<a id="pr42-readme-semantic-refactor-amendment-source-bound-not-human-acceptance"></a>
+## README semantic preservation and falsification
 
 The former **≤180 physical-line** gate has been falsified: adding harmless Markdown whitespace can fail it, while compact lines can contain false claims. A numeric line budget is **not** a valid proxy for clarity, safe onboarding, correctness or semantic preservation. The rule is retired as a blocking predicate; line/word counts remain optional diagnostics. This amendment does not change the original 28-node documentation evidence DAG or promote E01–E03.
 
@@ -88,10 +91,11 @@ The [machine-readable README refactor DoD](../.cora/contracts/dod/documentation-
 
 The [PR42 navigation regression](../tests/test_pr23_navigation.py) maintains the original 1,000 adversarial vectors and adds **10,000 deterministic, distinct, preregistered variants** (`seed=883`, 20 families × 500): 4,000 meaning-preserving editorial transformations that must PASS and 6,000 false-authority/claim-count/command/link/traceability changes that must FAIL. Zero incorrect classifications, original-Git 18/18 proof replay, exact-HEAD Python 3.11/3.13 CI and a proofable checksum of the mutant stream are the SOURCE thresholds. A **true unfamiliar engineer**, an external maintained-target agent study and effective protected GitHub non-author review remain separately **BLOCKED_EXTERNAL** without real operator witnesses.
 
-The newest README is a current front door, not a new release or migration of historical truth. The PR42 test source and `README.md` Git blob must be compared to the reviewed candidate, with commit identity invalidated by any subsequent edit. No new orchestrator, auto-merge, release, or paper-only human study is authorized.
+The README is the current product entry; a source-document pass cannot approve a release. The PR42 test source and `README.md` Git blob must be compared to the reviewed candidate, with commit identity invalidated by any subsequent edit. No new orchestrator, auto-merge, release, or paper-only human study is authorized.
 
 
-## PR48 — CTO-facing multi-abstraction front-door DoD (source candidate)
+<a id="pr48-cto-facing-multi-abstraction-front-door-dod-source-candidate"></a>
+## CTO first-read clarity and source-bound front door
 
 **Goal:** reduce the work required for a new reader to find a defensible,
 source-linked product claim, rather than increasing the apparatus used to
@@ -133,7 +137,8 @@ static assertions nor deterministic lexical mutants measure this.
 `docs/ARCHITECTURE.md`; `docs/CONTINUOUS_DEVELOPMENT.md`.
 The original PR42 machine DoD is **retained**, not weakened.
 
-## PR48 migration — source-derived clarity/compression and external qualification
+<a id="pr48-migration-source-derived-claritycompression-and-external-qualification"></a>
+## Source-derived clarity, compression and external acceptance
 
 This amendment refines the existing R48-A–H AND-gate; it does **not** create a competing DoD or replace the fixed S01–S18 ledger.
 

@@ -54,7 +54,8 @@ Any artifact can combine implementation/test/contract/workflow roles. The commit
 A proposed quarantine or archive requires its own non-destructive experiment record and an independently reviewed restore plan. A negative search result, an uncalibrated AI confidence interval or even a matching SHA-256 is not a substitute for evidence of absence. **Selection receipts do not unlock transformation APIs**, and v1.experimental remains incapable of certified automatic code deletion.
 
 
-## Historical groups and AI governance
+<a id="historical-groups-and-ai-governance"></a>
+## Git-associated groups and reviewer responsibility
 
 Development groups are **review subjects**. Maintainer validates Git history; product owner verifies capability; software/runtime owner reviews tests, deployment and consumers; independent approver controls subsequent transformation under a separate contract. Roles are functions, not confirmed personnel. Cochange, an absent import or self-reported AI confidence never authorizes archive, quarantine, rename or deletion. External operational closure and independently protected GitHub checks remain required.
 
@@ -62,13 +63,15 @@ Development groups are **review subjects**. Maintainer validates Git history; pr
 
 `debt-scan` and `process-run` are source-bound **review instruments**, not authority to repair, delete or change repository policy. The engineering owner validates structural/historical signals; the product owner evaluates capability impact; QA supplies real test/coverage evidence; security independently challenges untrusted SARIF; the platform/release owner validates build, deployment and required checks. An independent human approver reviews any future transformation. Review priority is an ordinal queue, not confidence, business impact or money. Weekly inspect P1 signals and evidence gaps; monthly compare source-bound trends without interpreting disappearance as proven resolution. No CLI field authenticates personnel or branch protection.
 
-## Continuous development and AI agent review (PR-14)
+<a id="continuous-development-and-ai-agent-review-pr-14"></a>
+## Continuous change and independent AI-agent review
 
 The **coding agent is an implementer and proposer, never a reviewer of its own change**. CORA binds pre/post merge evidence to immutable commits and a policy from the base commit. The maintainer evaluates functional changes; the product owner accepts scope; an independently empowered security reviewer vetoes changes to policy, CI, guard, release or repository trust controls; the runtime owner evaluates deployment and rollback; the release manager authorizes distribution. These roles are only *required function labels*: CORA does not authenticate people or enforce GitHub permissions.
 
 Policy bootstrap is `BOOTSTRAP_REVIEW_REQUIRED` and must be accepted under an external administrator-controlled process. Even after merge, an `OBSERVED_REVIEW_REQUIRED` receipt remains nonauthoritative. Independent branch protection, required reviews/checks, signed supply-chain provenance and incident monitoring require controls outside the source tree. See [continuous method](docs/CONTINUOUS_DEVELOPMENT.md) and [DoD](docs/DOD_CONTINUOUS.md).
 
-## Current agent and documentation authority (PR-20 / documentation convergence)
+<a id="current-agent-and-documentation-authority-pr-20-documentation-convergence"></a>
+## Agent authority and documentation ownership
 
 The coding agent is an implementer and source-evidence proposer, not an independent reviewer. The current lifecycle uses the BASE policy and an explicit change-specific intent with the contextual pre/postmerge gate; caller intent is bounded and SHA-linked, never authenticated as product approval. A source-only reticular DoD cannot promote the externally blocked R1–R4 obligations or independently controlled release. See [agent rules](AGENTS.md), [convergent method](docs/CONVERGENT_ASSURANCE.md) and [full R1–R4 DoD](docs/DOD_PR20_CONVERGENCE.md).
 

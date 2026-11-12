@@ -31,7 +31,7 @@ The [complete capability atlas](../.cora/assurance/capability-atlas.json) enumer
 - `workflow-audit` — source-bound workflow inventory, reusable callers, risks and conservative adjustment/retirement candidates; run `cora workflow-audit REPO --revision HEAD --base BASE_SHA --output /tmp/workflows.json`. Never edits workflow files or attests external consumers.
 - `verify-workflows` — rederive the exact source report: `cora verify-workflows /tmp/workflows.json --repo REPO`. See [continuous development](CONTINUOUS_DEVELOPMENT.md) for the review-only DoD and the host prerequisites.
 
-**Full change range (PR59):** `cora process-run . --revision HEAD --change-base BASE_SHA` also works with existing `--one-run --profile comprehensive`. BASE must be a full, original-Git ancestor of HEAD. `verify-process` replays the pinned report. Default PR58 v1 remains first-parent single-commit; explicit v2 includes rename paths and actual tracked documents. Neither provides authenticated PR metadata, runtime behavior or release authority.
+**Full Git change range:** `cora process-run . --revision HEAD --change-base BASE_SHA` also works with existing `--one-run --profile comprehensive`. BASE must be a full, original-Git ancestor of HEAD. `verify-process` replays the pinned report. Default PR58 v1 remains first-parent single-commit; explicit v2 includes rename paths and actual tracked documents. Neither provides authenticated PR metadata, runtime behavior or release authority.
 
 ## Cross-method inference and source case
 
@@ -140,13 +140,15 @@ The five-goal report binds the original 18 README claim/source/test traces, opt-
 
 `--execute-source-probes` runs **three safe CORA source operations** (Git snapshot, original method-synthesis replay and integrated report replay). It does not execute arbitrary target code, attest a deployed application or test all 71 behaviors. Without the flag, behavior remains NOT_RUN. The preseeded million-case stress suite is a deterministic **finite semantic model** (two positive controls and thirty negative fault classes repeated); **zero physical code mutations** are performed by that stress command. Original physical Git mutants are in the separate source test suite. `G_GOVERNED` is always `BLOCKED_EXTERNAL` until independently observed.
 
-## Unified maturity and HTML atlas (PR31)
+<a id="unified-maturity-and-html-atlas-pr31"></a>
+## Unified maturity and HTML atlas
 
 The canonical original-owner command is `cora method-synthesize REPO --synergic`, not a new parallel scanner. Use `--base-sha SHA` to include source-diff context; `--atlas-html PATH` writes a self-contained responsive offline HTML atlas and `--atlas-json PATH` writes the exact-commit machine-readable version. `--ai-request-output PATH` remains a source-grounded AI question plan, **not a provider invocation**. Supply `--output PATH` for the original unified source report, then replay with `cora verify-method-synthesis REPORT --repo REPO --synergic --atlas-json PATH --atlas-html PATH`.
 
 The atlas maps all **71 declared commands** to original source and test file witnesses, eight families, 14 method owners, workflow/document/test inventories and the [six-gate maturity DoD](../.cora/contracts/dod/maturity-dod.json). It is a Git source viewer: test paths are not test execution, independently demonstrated usability or an authorization decision. The release, host, human reviewer, maintained target and longitudinal gates remain `BLOCKED_EXTERNAL`. Report output must live outside the checkout. The CLI does **not** execute target tests or AI automatically.
 
-## One-run assurance — one existing command, executed results (PR36)
+<a id="one-run-assurance-one-existing-command-executed-results-pr36"></a>
+## One-Run execution and result interpretation
 
 From a complete authorized CORA Git checkout, generate one **actual execution dossier**, not merely the 71-command index:
 
@@ -166,16 +168,19 @@ Physical committed DoD mutants and other anti-tamper tests are in `tests/test_pr
 
 The same **one-run** command can add `--model-stress-cases 100000` to run and display the preseeded semantic receipt benchmark inside the HTML execution results. The report and the replay then verify the 100k model digest and 32 fault-family counts. This opt-in is safe model testing, not external application testing or 100k real Git mutations.
 
-## Integrated One-Run source candidate (PR37)
+<a id="integrated-one-run-source-candidate-pr37"></a>
+## Comprehensive One-Run source dossier
 
 `cora process-run . --revision HEAD --process full --one-run --profile comprehensive --output /tmp/cora-run.json --atlas-html /tmp/cora-run.html --evidence-dir /tmp/cora-evidence` extends the existing PR36 command; no second orchestrator or CLI entry is created. The integrated JSON/HTML reports every discovered activity, including tests, tools, workflow calls and 71 declared parser commands, but only the eight bounded source methods are eligible to run by default. It records why every other activity is NOT_RUN, BLOCKED or unobserved. Verify original-Git portions and evidence bytes with `cora verify-process /tmp/cora-run.json --repo . --one-run --atlas-html /tmp/cora-run.html --evidence-dir /tmp/cora-evidence`. Optional local unittest subprocesses require both `--execute-self-tests` and an `--authorization-file` containing schema `cora-explicit-execution-consent/1`, exact commit, tree, operation `CORA_LOCAL_SELF_TESTS`, and absolute checkout path. No self-issued consent authenticates the user, provisions a sandbox, attests the runtime or authorizes a release. The integrated [source/EXTERNAL DoD](../.cora/contracts/dod/integrated-one-run-dod.json) is a source candidate with open gates.
 
-## PR38 historical and adaptive evidence in the existing One-Run Atlante
+<a id="pr38-historical-and-adaptive-evidence-in-the-existing-one-run-atlante"></a>
+## Git history and adaptive obligations in One-Run
 
 `cora process-run . --revision HEAD --process full --one-run --profile comprehensive --output /tmp/run.json --atlas-html /tmp/atlas.html --evidence-dir /tmp/evidence` now includes the original-Git genealogy when the inspected commit contains the [PR1–37 history corpus](../.cora/assurance/history/pr01-37-commit-diff-audit.json). It navigates 37 PRs, 305 commit deltas, the unmerged PR34 exception, 28 old/relocated paths and future feature-registration obligations. `cora verify-process /tmp/run.json --repo . --one-run --atlas-html /tmp/atlas.html --evidence-dir /tmp/evidence` rechecks the genealogy against committed Git and verifies content-addressed evidence including genealogy.json. Existing PR37 receipts at older Git revisions remain in their original provenance scope. This capability neither executes every catalogued command nor certifies a removed source module as safe to delete. See the [PR38 source/external DoD](../.cora/contracts/dod/history-convergence-dod.json).
 
 
-## PR39 source reference and host readback: auxiliary tools, not new CLI commands
+<a id="pr39-source-reference-and-host-readback-auxiliary-tools-not-new-cli-commands"></a>
+## Native Git oracle and optional host readback
 
 The existing cora process-run . --revision HEAD --process full --one-run --profile comprehensive --output /tmp/run.json --atlas-html /tmp/atlas.html --evidence-dir /tmp/evidence attaches a read-only qualification receipt when the candidate Git commit has the PR39 contract. Verify it using cora verify-process /tmp/run.json --repo . --one-run --atlas-html /tmp/atlas.html --evidence-dir /tmp/evidence. The evidence manifest includes qualification.json with four BLOCKED_EXTERNAL product gates.
 
@@ -192,6 +197,7 @@ ZIP layout: `meta/session.json`, followed by `rounds/000001/{step.json,receipt.j
 CORA cannot automatically observe every ChatGPT message. No assistant should claim that a round was recorded if the host never ran the command.
 
 
-### PR52 native Gold receipts in existing One-Run
+#<a id="pr52-native-gold-receipts-in-existing-one-run"></a>
+## Optional native Gold receipts
 
 With explicit permission, generate one original target native execution receipt outside the target using cora.native_gold.capture_native. Then pass --portable-native-probe PATH to the existing process-run --one-run --portable-profile PROFILE-v2.json; verify-process uses the same flag for exact Git and retained-byte replay. This is a local subprocess outcome, not authenticated host identity, independent browser/remote proof or release approval. See GOLD_ASSURANCE.md PR52.
