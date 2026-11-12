@@ -162,7 +162,7 @@ class CapabilityAtlasTests(unittest.TestCase):
             path.write_text(text,encoding="utf-8")
             g(local,"add","docs/ARCHITECTURE.md")
             g(local,"commit","-qm","historical claim promoted to current")
-            with self.assertRaisesRegex(ValueError,"current documentation chronology"):
+            with self.assertRaisesRegex(ValueError,"current documentation ownership"):
                 CAP.check(local)
 
     def test_06_physical_removed_workflow_and_reader_claim(self):
