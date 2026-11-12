@@ -46,7 +46,7 @@ Optional Docker execution requires a non-root host user and reuses that UID/GID 
 
 
 
-<a id="pr51-native-gold-bridge-in-the-existing-portable-one-run"></a>
+<a id="pr51--native-gold-bridge-in-the-existing-portable-one-run"></a>
 ## Portable Gold claim-to-oracle linkage
 
 **Intent and status:** link a *target-owned* product/source claim to its actual
@@ -119,7 +119,7 @@ One-Run and full CI. External product and efficiency comparisons remain open.
 
 
 
-<a id="pr52-native-gold-pilots-and-bounded-cross-repository-result"></a>
+<a id="pr52--native-gold-pilots-and-bounded-cross-repository-result"></a>
 ## Native Gold pilots and negative execution controls
 
 The portable claim-to-oracle bridge alone does not execute native target code. Explicit opt-in local subprocess execution supports only two original target tests under the existing One-Run and Gold projection, preserving missing or negative evidence as blockers.

@@ -289,7 +289,7 @@ snapshots are unchanged. This is a replanning signal, not a universal
 semantic convergence theorem, autonomous execution or a product PASS.
 
 
-<a id="cross-repository-sourceevidence-convergence-pr50-candidate"></a>
+<a id="cross-repository-sourceevidence-convergence-pr50--candidate"></a>
 ## Cross-repository source and evidence convergence
 
 **Abstract goal:** on two independently owned maintained codebases, an engineer

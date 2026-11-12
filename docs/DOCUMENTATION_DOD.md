@@ -49,7 +49,7 @@ A source receipt means **PASS_SCOPED_SOURCE** for the implemented *finite* predi
 
 Adversarial Git fixtures physically commit contradicting current-doc claims, detached intent wiring, parser drift, DoD edge changes, historical blob rewrites, CI proof omissions and stale receipt forgeries. They exercise falsifier sensitivity rather than assert exhaustive semantic proof. The source-oracle code and its profile are PR-editable and cannot approve changes to themselves.
 
-<a id="progressive-navigation-micro-dod-pr-23-source-merged"></a>
+<a id="progressive-navigation-micro-dod--pr-23-source-merged"></a>
 ## Progressive navigation and five reader paths
 
 No parallel documentation engine is introduced. Reuse the PR-21 source leaves **S01–S18**, the PR-22 revision-bound claim profile and the existing `verify_documentation.py` entrypoint. The following **editorial DoD is a proposed non-compensatory cut**, not a new certificate of human understanding:
@@ -94,7 +94,7 @@ The [PR42 navigation regression](../tests/test_pr23_navigation.py) maintains the
 The README is the current product entry; a source-document pass cannot approve a release. The PR42 test source and `README.md` Git blob must be compared to the reviewed candidate, with commit identity invalidated by any subsequent edit. No new orchestrator, auto-merge, release, or paper-only human study is authorized.
 
 
-<a id="pr48-cto-facing-multi-abstraction-front-door-dod-source-candidate"></a>
+<a id="pr48--cto-facing-multi-abstraction-front-door-dod-source-candidate"></a>
 ## CTO first-read clarity and source-bound front door
 
 **Goal:** reduce the work required for a new reader to find a defensible,
@@ -137,7 +137,7 @@ static assertions nor deterministic lexical mutants measure this.
 `docs/ARCHITECTURE.md`; `docs/CONTINUOUS_DEVELOPMENT.md`.
 The original PR42 machine DoD is **retained**, not weakened.
 
-<a id="pr48-migration-source-derived-claritycompression-and-external-qualification"></a>
+<a id="pr48-migration--source-derived-claritycompression-and-external-qualification"></a>
 ## Source-derived clarity, compression and external acceptance
 
 This amendment refines the existing R48-A–H AND-gate; it does **not** create a competing DoD or replace the fixed S01–S18 ledger.
