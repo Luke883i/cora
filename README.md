@@ -49,7 +49,7 @@ Then run [One-Run](#one-run--one-command-one-evidence-dossier). This identifies 
 
 **Assurance levels:** **L1** = Git/source checks; **L2** = bounded product experiments; **L3** = optional external assurance. L1/L2 may be useful without L3. CI PASS cannot approve a release.
 
-**71 declared CLI commands** in [capability atlas](.cora/assurance/capability-atlas.json) are inventory, not proof of 71 executions. [parser-checked CLI reference](docs/CLI_REFERENCE.md) · [complete documentation index](docs/INDEX.md).
+**71 declared CLI commands** in [capability atlas](.cora/assurance/capability-atlas.json) are inventory, not 71 independently proven features. [parser-checked CLI reference](docs/CLI_REFERENCE.md) · [complete documentation index](docs/INDEX.md).
 
 **CORA is not an eleventh engineering method.** It correlates partial observations, not whole disciplines:
 
