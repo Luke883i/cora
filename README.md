@@ -7,7 +7,7 @@
 
 CORA is a local, offline-first Python 3.11+ framework. It helps developers and AI coding assistants inspect a Git repository and **produce reproducible pre/post-merge review reports**. It connects **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**. Authorized agents edit; CORA evaluates evidence. It is **not a coding agent** or an approver.
 
-**Why it matters:** plausible patches are not proof. CORA makes source changes and open risks inspectable.
+**Why it matters:** plausible patches are not proof: a CTO sees reviewable decisions; developers see the next test; reviewers see unresolved risks.
 
 ```text
 Intent → acceptance graph → reversible code slice → adversarial tests
@@ -34,7 +34,7 @@ cora verify-ledger /tmp/cora-ledger.json --repo .
 
 For a scoped dossier, run [One-Run](#one-run--one-command-one-evidence-dossier). The snapshot is Git-only; neither command tests target runtime. [Getting started](docs/GETTING_STARTED.md) covers setup.
 
-**ChatGPT Project beta (Plus/Edu recipe):** ChatGPT's standard GitHub app can **read** authorized [CORA](https://github.com/Luke883i/cora) and target repositories; it cannot push code. To develop a change, authorize a separate write-capable tool (such as Codex) on **your target**; actual CORA Python/tests need a runner. Start with the [canonical Project prompt](docs/AGENT_ADOPTION.md#chatgpt-project-beta-adapter).
+**ChatGPT Project beta (Plus/Edu recipe):** ChatGPT's GitHub app can **read** [CORA](https://github.com/Luke883i/cora) and authorized target repositories; it cannot push code. To edit, authorize a separate write-capable tool (e.g. Codex) on your target; running CORA requires Python. See the [canonical Project prompt](docs/AGENT_ADOPTION.md#chatgpt-project-beta-adapter).
 
 ## What works today
 
