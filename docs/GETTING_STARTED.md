@@ -70,6 +70,8 @@ equivalent wording is only a candidate for human reconciliation.
 
 ## In a ChatGPT session: the shortest reproducible path
 
+**New to Projects?** Start with the [canonical CORA Project beta adapter and paste-ready prompt](AGENT_ADOPTION.md#chatgpt-project-beta-adapter): this recipe assumes Plus or Edu and authorized GitHub reading, but the standard ChatGPT GitHub app is read-only. Editing or PR creation needs a separately authorized write-capable tool; source or target tests need a real runner. Do not infer these capabilities from the subscription or the connected read app.
+
 A **conversation is not a CORA runtime**. A chat can draft a plan or read a ZIP, but a source observation only exists after the Python CLI runs against a repository the operator may access.
 
 - Start with a local checkout of CORA and a target repository you are authorized to inspect. Keep outputs outside the repository. No credentials, entire private chat transcripts, or private source files belong in the portable ZIP by default.
