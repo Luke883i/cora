@@ -72,6 +72,44 @@ class ProgressiveDocumentationTests(unittest.TestCase):
     def setUpClass(cls):
         cls.readme = (ROOT / "README.md").read_text("utf-8")
 
+    def test_pr61_complete_markdown_census_and_current_document_contract(self):
+        """48/48 documented Git blobs; machine reader proxy, not human evaluation."""
+        report = DOC.census_markdown(ROOT)
+        self.assertEqual(report["schema"], "cora-markdown-census/1")
+        self.assertEqual(report["status"], "PASS_SCOPED", report["errors"])
+        self.assertEqual(report["authority"], "NONE")
+        self.assertEqual(report["external_acceptance"], "BLOCKED_EXTERNAL")
+        self.assertEqual(report["counts"]["markdown"], 48)
+        self.assertEqual(report["counts"]["active"], 31)
+        self.assertEqual(report["counts"]["historical"], 17)
+        self.assertEqual(report["counts"]["missing_current_contracts"], 0)
+        self.assertEqual(report["counts"]["broken_local_links"], 0)
+        self.assertEqual(len(report["documents"]), 48)
+        self.assertTrue(all(row["original_git_blob"] and row["source_parity"]
+                            for row in report["documents"]))
+        self.assertTrue(all(row["lifecycle"] == "ARCHIVAL_NON_NORMATIVE"
+                            for row in report["documents"] if row["status"] == "HISTORICAL"))
+
+    def test_pr61_reader_and_link_counterexamples(self):
+        """Positive control permits typography; negative claims do not self-certify."""
+        source = (ROOT/"docs/GETTING_STARTED.md").read_text("utf-8")
+        check = DOC.check_current_contract
+        self.assertEqual(check("docs/GETTING_STARTED.md", source), [])
+        for mutated in (
+            source.replace("**Limits:**", "**Certified:**", 1),
+            source.replace("**Evidence:**", "**Marketing:**", 1),
+            source + "\\nCORA automatically approves merges.\\n",
+            source.replace("**Current scope:**", "**Historical authority:**", 1),
+        ):
+            self.assertTrue(check("docs/GETTING_STARTED.md", mutated))
+        benign = source.replace("**Operational use:**", "**Operational use:** ", 1)
+        self.assertEqual(check("docs/GETTING_STARTED.md", benign), [])
+        bad = DOC.census_markdown(ROOT, overrides={
+            "docs/GETTING_STARTED.md": source+"\\n[broken](NONEXISTENT-PR61.md)\\n"})
+        self.assertEqual(bad["status"], "REFUTED")
+        self.assertTrue(any("broken-link:" in x for x in bad["errors"]))
+        self.assertTrue(any("worktree-git-parity:" in x for x in bad["errors"]))
+
     def test_baseline_completeness_and_single_frontdoor(self):
         self.assertEqual(DOC.verify_progressive_readme(self.readme), [])
         self.assertEqual(DOC.verify(ROOT), [])
