@@ -2,6 +2,10 @@
 
 **Status:** v1.experimental, evidence and review framework, **not** a coding assistant or a GitHub administrator. The supported package remains `cora-audit` with one CLI, `cora`. The source of truth is a Git commit; CI and review attestations require separately trusted GitHub controls.
 
+## Current change-range discipline (PR59)
+
+Record explicit original-Git BASE and HEAD for a multi-commit change, then run the **existing** `process-run --change-base BASE_SHA --one-run --profile comprehensive` and replay the receipt. Do not infer complete PR coverage from a single-commit diff; a supplied base is not authenticated GitHub metadata. Review obligations are path-triggered hypotheses and may require semantic/editorial evaluation, runtime oracles and human decisions. Historical v1 receipts stay source-bounded; no execution or release approval is implicit.
+
 ## Operating model
 
 1. **Plan and change:** Human product/technical owners define desired behavior and blast radius. A coding agent may propose a patch but must read [AGENTS.md](../AGENTS.md) and may not approve it.

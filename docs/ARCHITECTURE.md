@@ -4,6 +4,8 @@
 
 **Final experimental qualification:** PR41 reuses the existing CLI, original-Git source owners, PR39 native-Git reference and PR40 historical/capability/debt catalogs. The [30-node final DoD](../.cora/contracts/dod/final-experimental-dod.json) distinguishes a closed source candidate from seven externally observed conditions; no extra product, agent, or orchestrator is introduced. The actual PR merge and subsequent tag/asset checks determine immutable release identity, not document phrasing.
 
+**Post-PR58 integration:** `process_suite.run_suite` projects advisory `practice_obligations` from original Git. The opt-in `--change-base BASE_SHA` enables an explicit complete Git change range under the v2 projection; default v1 is single-commit first-parent. Both One-Run renderers display review obligations without a ninth source method or second executor. Documentation candidates for other repositories come from their own tracked Git trees, not CORA's directory assumptions. Source evidence never grants runtime or release authority.
+
 ## Three non-equivalent boundaries
 
 - **Product `cora`:** externally usable capability and observable contract of a local evidence-first CLI. Its ownership may encompass multiple software components and repositories in the future; its *current* canonical source is this Git repository.
