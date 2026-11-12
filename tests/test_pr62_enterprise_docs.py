@@ -53,7 +53,7 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
         self.assertIn("Implementation and historical detail", index)
         self.assertIn("compressed public front door", index)
         self.assertIn("SLSA provenance: NOT_ATTESTED", readme)
-        self.assertIn("External acceptance remains \`BLOCKED_EXTERNAL\`", readme)
+        self.assertIn("External acceptance remains `BLOCKED_EXTERNAL`", readme)
         self.assertIn("not one million independent source mutations", readme)
 
     def test_supply_chain_candidate_not_independent_attestation(self):
@@ -80,7 +80,7 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
             "docs/GETTING_STARTED.md",
             guide.replace("**Evidence:**", "**Approval:**", 1)))
         self.assertTrue(DOC.verify_readme_semantics(readme.replace(
-            "**External acceptance remains \`BLOCKED_EXTERNAL\`**",
+            "**External acceptance remains `BLOCKED_EXTERNAL`**",
             "**External acceptance has been approved**", 1)))
         broken = DOC.census_markdown(ROOT, overrides={
             "README.md": readme + "\n[phantom](docs/never-existed-enterprise.md)\n"})

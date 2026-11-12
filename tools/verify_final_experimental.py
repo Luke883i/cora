@@ -242,7 +242,7 @@ def analyze(repo: Path, revision: str = "HEAD", *, run_behavior: bool = False) -
         r"(?m)^Merge pull request #44\b", subjects) else "merged PR36–40")
     expected = {
         "CHANGELOG.md": "PR40 engineering knowledge source convergence — merged source",
-        "AGENTS.md": "PR40 knowledge-convergence gate (merged source",
+        "AGENTS.md": "Knowledge-convergence gate (source-only; independent gates outstanding)",
         "docs/ARCHITECTURE.md": architecture_era,
         "docs/RELEASE.md": "Existing GitHub release draft",
         "README.md": "[final experimental DoD](.cora/contracts/dod/final-experimental-dod.json)",

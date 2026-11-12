@@ -222,8 +222,12 @@ def analyze(repo: Path, revision: str = "HEAD") -> dict:
     ]
     if stale:
         raise ValueError("current documentation chronology drift: " + ",".join(stale))
-    if "merged PR38" not in readme or "merged PR39" not in readme:
-        raise ValueError("README lacks current merged source chronology")
+    # Product/software/repository truth is current; original Git is the historical oracle.
+    if not all(token in readme for token in (
+            "**Product:** assurance",
+            "**Software:** `cora-engine` and `cora-release-verification`",
+            "**Repository:** source, tests, CI and **historical ADRs**")):
+        raise ValueError("README current product/software/repository boundaries missing")
     if "PR39 merged" not in release:
         raise ValueError("release status lacks PR39 merged/source-not-release distinction")
     report = {
