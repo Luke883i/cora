@@ -59,7 +59,7 @@ Then run [One-Run](#one-run--one-command-one-evidence-dossier). This identifies 
 | Static dependencies, typed graphs, lineage, Git archaeology | Candidate consumers, paths, changes and provenance | Every dynamic consumer, SCC/centrality analysis or runtime causality |
 | Contracts, mutation/metamorphic tests, threat modeling, fitness functions | Invariants, negative cases and change risks | Formal correctness, full security coverage or globally minimal design |
 
-[Method crosswalk](docs/CONVERGENT_ASSURANCE.md#method-crosswalk--borrowed-perspectives-not-full-implementations): implemented source observations, analogies and external evidence remain distinct.
+[method crosswalk](docs/CONVERGENT_ASSURANCE.md#method-crosswalk--borrowed-perspectives-not-full-implementations): implemented source observations, analogies and external evidence remain distinct.
 
 ## One-Run — one command, one evidence dossier
 
