@@ -246,6 +246,35 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         benign = initial.replace("**Why it matters:**", "*Why it matters:*", 1)
         self.assertEqual(verify_readme_semantics(benign, root=ROOT), [])
 
+    def test_pr60_actual_cora_base_head_range_replays_editorial_obligations(self):
+        """Use the original CORA engine on this PR, not a surrogate regex assessor."""
+        import subprocess
+        from cora.process_suite import run_suite, verify_suite
+        if not (ROOT / ".git").exists():
+            self.skipTest("full original-Git source checkout required")
+        base = "a01e0b121ac3734fd4ec1afa22781c90dbed1260"
+        present = subprocess.run(["git", "-C", str(ROOT), "cat-file", "-e",
+                                  base + "^{commit}"], capture_output=True)
+        if present.returncode:
+            self.skipTest("pre-PR60 original BASE missing")
+        report = run_suite(ROOT, "HEAD", process="history",
+                           max_commits=2, change_base=base)
+        self.assertTrue(verify_suite(ROOT, report))
+        obligations = report["practice_obligations"]
+        self.assertEqual(obligations["comparison"], "EXPLICIT_BASE_TO_HEAD")
+        self.assertEqual(obligations["change_base"], base)
+        self.assertEqual(obligations["external_approval"], "NONE")
+        self.assertFalse(obligations["runtime_observed"])
+        self.assertEqual(obligations["editorial_refactor"]["state"], "REVIEW_REQUIRED")
+        self.assertTrue({"README.md", "docs/RELEASE.md",
+                         "docs/ARCHITECTURE.md", "docs/CONTINUOUS_DEVELOPMENT.md"}
+                        .issubset(set(obligations["changed_paths"])))
+        self.assertIn("README.md", obligations["editorial_refactor"]["surfaces"])
+        self.assertEqual(report["authorized_action"], "NONE")
+        replay = run_suite(ROOT, "HEAD", process="history",
+                           max_commits=2, change_base=base)
+        self.assertEqual(report["run_digest"], replay["run_digest"])
+
     def test_pr60_histories_are_retained_not_repackaged_as_current_rules(self):
         """Archive identities stay byte-stable from original Git, not README text."""
         import subprocess
