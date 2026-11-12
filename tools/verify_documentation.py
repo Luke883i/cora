@@ -84,6 +84,10 @@ def heading_slugs(text: str) -> set[str]:
         n = counts.get(slug, 0)
         counts[slug] = n + 1
         slugs.add(slug + (f"-{n}" if n else ""))
+    # A historical deep link may survive as a bounded, explicit HTML anchor
+    # without forcing the visible current heading to report PR chronology.
+    for m in re.finditer(r'(?m)^<a id="([a-z0-9][a-z0-9-]{1,120})"></a>$', text):
+        slugs.add(m.group(1))
     return slugs
 
 
@@ -573,14 +577,167 @@ def verify(root: Path) -> list[str]:
     if "not a stable" not in readme.lower() and "not a stable api" not in readme.lower():
         errors.append("release-claim-regression")
     validate_dod(root, errors)
+    try:
+        errors.extend(census_markdown(root)["errors"])
+    except (OSError, ValueError, KeyError) as exc:
+        errors.append("markdown-census-unavailable:" + type(exc).__name__)
     return sorted(set(errors))
+
+
+
+def check_current_contract(path: str, content: str, *,
+                           expected_status: str = "CURRENT") -> list[str]:
+    """Finite textual checks. They do not certify clarity, truth or a reader."""
+    errors: list[str] = []
+    intro = content.split("\n## ", 1)[0][:3000]
+    if not re.search(r"(?m)^# [^\n]{8,}", content[:550]):
+        errors.append("standalone-title:" + path)
+    required = ("**Document status:**", "**Current scope:**",
+                "**Operational use:**", "**Evidence:**", "**Limits:**")
+    for field in required:
+        if intro.count(field) != 1:
+            errors.append("standalone-field:" + path + ":" + field)
+        else:
+            line = next((s for s in intro.splitlines() if field in s), "")
+            tail = line.split(field, 1)[1].strip(" |.*")
+            if len(tail) < 5:
+                errors.append("standalone-empty-field:" + path + ":" + field)
+    match = re.search(r"\*\*Document status:\*\*\s*(CURRENT|SCOPED_CURRENT)\b", intro)
+    if not match or match.group(1) != expected_status:
+        errors.append("standalone-scope-promotion:" + path)
+    if re.search(r"\bCORA (?:automatically approves merges|certifies reviewers|"
+                 r"is independently enterprise[- ]ready|automatically deletes source code)\b",
+                 content, re.I):
+        errors.append("standalone-false-authority:" + path)
+    return errors
+
+
+def census_markdown(root: Path, *, revision: str = "HEAD",
+                    overrides: dict[str, str] | None = None) -> dict:
+    """Exhaustive current Markdown graph from real Git, not a self-issued DoD.
+
+    A worktree override is exclusively a falsification input. It must fail
+    Git blob parity and therefore can never become an observed original blob.
+    Links and headings are local observations; external HTTP is NOT_PROBED.
+    """
+    import subprocess
+
+    root = Path(root).resolve(strict=True)
+    def git(*args: str) -> bytes:
+        proc = subprocess.run(("git", "-C", str(root), *args),
+                              capture_output=True, timeout=45, check=False)
+        if proc.returncode:
+            raise ValueError("census-original-git-unavailable")
+        return proc.stdout
+
+    sha = git("rev-parse", "--verify", revision + "^{commit}").decode().strip()
+    raw = git("ls-tree", "-rz", sha)
+    tree: dict[str, str] = {}
+    for item in raw.split(b"\0"):
+        if item:
+            header, filename = item.split(b"\t", 1)
+            mode, kind, oid = header.decode().split(" ")
+            if kind == "blob":
+                tree[filename.decode("utf-8")] = oid
+    reg = json.loads((root / "docs/documentation-registry.json").read_text("utf-8"))
+    registered = {entry["path"]: entry for entry in reg["documents"]}
+    tracked = sorted(path for path in tree if path.lower().endswith(".md"))
+    errors: list[str] = []
+    if set(tracked) != set(registered):
+        errors.append("census-registry-tree-drift")
+    bodies: dict[str, str] = {}
+    rows: list[dict] = []
+    references: dict[str, list[tuple[str, str]]] = {}
+    overrides = overrides or {}
+    for path in tracked:
+        data = (root / path).read_bytes()
+        content = overrides.get(path, data.decode("utf-8"))
+        original_oid = tree[path]
+        parity = git_blob_sha(content.encode("utf-8")) == original_oid
+        if not parity:
+            errors.append("worktree-git-parity:" + path)
+        bodies[path] = content
+        entry = registered.get(path, {})
+        status = entry.get("status", "UNCLASSIFIED")
+        lifecycle = ("ARCHIVAL_NON_NORMATIVE" if status == "HISTORICAL"
+                     else "ACTIVE_SCOPED" if status == "SCOPED_CURRENT"
+                     else "ACTIVE" if status == "CURRENT" else "UNKNOWN")
+        if lifecycle == "UNKNOWN":
+            errors.append("census-unclassified:" + path)
+        if status != "HISTORICAL":
+            errors.extend(check_current_contract(path, content, expected_status=status))
+        heads = [m.group(1).strip() for m in
+                 re.finditer(r"(?m)^#{1,6}\s+(.+)$", content)]
+        local, remote, anchors = [], [], []
+        for link in markdown_links(content):
+            target = resolve(path, link)
+            if target is None:
+                if link.startswith(("https://", "http://")):
+                    remote.append(link)
+                continue
+            location, fragment = target
+            local.append((location, fragment))
+            if fragment:
+                anchors.append(location + "#" + fragment)
+            if not (root / location).exists():
+                errors.append("broken-link:" + path + ":" + location)
+            elif fragment and location in tracked and (
+                    fragment not in heading_slugs(
+                        overrides.get(location, (root / location).read_text("utf-8")))):
+                errors.append("broken-anchor:" + path + ":" + location + "#" + fragment)
+        references[path] = local
+        rows.append({
+            "path": path, "status": status, "kind": entry.get("kind"),
+            "lifecycle": lifecycle, "original_git_blob": original_oid,
+            "source_parity": parity, "bytes": len(content.encode("utf-8")),
+            "words": len(content.split()), "title": heads[0] if heads else "",
+            "heading_count": len(heads), "inbound": 0,
+            "outbound_local": len(local), "outbound_external_unprobed": len(remote),
+            "local_target_paths": sorted({p for p, _ in local}),
+            "local_anchors": sorted(set(anchors)),
+            "history_headings": [h for h in heads if
+                                 re.search(r"\bPR[- ]?\d+\b|historical|candidate|"
+                                           r"earlier version", h, re.I)],
+            "standalone_contract": "NOT_APPLICABLE_ARCHIVE" if status == "HISTORICAL"
+                                    else "SOURCE_CHECKED",
+            "interpretation": "MACHINE_SOURCE_HEURISTIC_NOT_HUMAN_COMPREHENSION",
+        })
+    for row in rows:
+        row["inbound"] = sum(sum(1 for dest, _ in edges if dest == row["path"])
+                             for edges in references.values())
+    # Readback may execute from an uncommitted mutation. Never promote it to
+    # source truth; zero errors and Git parity are jointly necessary.
+    return {
+        "schema": "cora-markdown-census/1", "source_commit": sha,
+        "source": "ORIGINAL_GIT_TREE_AND_WORKTREE_PARITY",
+        "authority": "NONE", "external_acceptance": "BLOCKED_EXTERNAL",
+        "external_links": "NOT_PROBED",
+        "counts": {
+            "markdown": len(tracked),
+            "active": sum(x["status"] in ("CURRENT", "SCOPED_CURRENT") for x in rows),
+            "historical": sum(x["status"] == "HISTORICAL" for x in rows),
+            "broken_local_links": sum(x.startswith(("broken-link:", "broken-anchor:"))
+                                      for x in errors),
+            "missing_current_contracts": sum(x.startswith("standalone-") for x in errors),
+            "original_git_parity": sum(x["source_parity"] for x in rows),
+            "edges": sum(x["outbound_local"] for x in rows),
+        },
+        "documents": rows,
+        "errors": sorted(set(errors)),
+        "status": "PASS_SCOPED" if not errors else "REFUTED",
+    }
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--repo", type=Path, default=Path("."))
+    parser.add_argument("--census-output", type=Path, help="write exhaustive Git-bound Markdown graph receipt")
     args = parser.parse_args()
     errors = verify(args.repo)
+    if args.census_output:
+        report = census_markdown(args.repo)
+        args.census_output.parent.mkdir(parents=True, exist_ok=True)
+        args.census_output.write_text(json.dumps(report, indent=2, sort_keys=True)+"\n", encoding="utf-8")
     print(json.dumps({"schema": "cora-documentation-verification/1",
                       "status": "PASS_SCOPED_STATIC" if not errors else "FAIL",
                       "source_ci": "NOT_ATTESTED_BY_THIS_PROCESS",

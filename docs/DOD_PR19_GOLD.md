@@ -1,5 +1,12 @@
 # PR-19 retrograde R1–R4 / P01–P12 semantic DoD
 
+**Document status:** SCOPED_CURRENT
+**Current scope:** Source-bounded Gold assurance obligations now integrated into CORA.
+**Operational use:** Evaluate the declared Gold tests with explicit runtime consent.
+**Evidence:** Gold receipt/DoD source and actual owner-specific pilot outcomes.
+**Limits:** A synthetic oracle or one accessible target is not universal product evidence.
+
+
 Global human contract: `potenzia cora con gold mining; aggiorna prodotto, repository e software`. Preserve one CORA product, two canonical software IDs, one CLI, explicit evidence classes and non-authorizing change governance.
 
 **R1 source**: G_GOLD_SOURCE = I_CONTEXT AND I_PHYSICAL AND I_EFFECT AND I_PILOT. **Governed**: G_GOLD_GOVERNED = G_GOLD_SOURCE AND I_EXTERNAL. The versioned graph has 16 local leaves L01–L16, five intermediate cuts and two global roots, 23 nodes total; L01–L12 are source obligations; L13–L16 require external host/human/runtime/rollback authority. Each local node has a named falsifier; P01–P12 are mapped to specific rails. No score averaging or self-issued waiver.

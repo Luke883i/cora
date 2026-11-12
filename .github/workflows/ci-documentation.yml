@@ -51,8 +51,34 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_pr59_consolidation.py' -v
       - name: Verify documentation inventory and links
         run: python tools/verify_documentation.py --repo .
+      - name: PR61 exhaustive Git Markdown census and scoped reader contract
+        run: |
+          python tools/verify_documentation.py --repo . --census-output /tmp/cora-md-census.json > /tmp/cora-md-verification.json
+          python - <<'PY'
+          import json, subprocess
+          j=json.load(open('/tmp/cora-md-census.json'))
+          sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          assert j['schema']=='cora-markdown-census/1'
+          assert j['source_commit']==sha and j['status']=='PASS_SCOPED', j['errors']
+          assert j['counts']['markdown']==48 and j['counts']['active']==31
+          assert j['counts']['historical']==17 and j['counts']['original_git_parity']==48
+          assert j['counts']['broken_local_links']==0
+          assert j['counts']['missing_current_contracts']==0
+          assert j['external_acceptance']=='BLOCKED_EXTERNAL'
+          assert j['authority']=='NONE' and j['external_links']=='NOT_PROBED'
+          PY
+      - name: Preserve exact-head Markdown graph for review (not a usability study)
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: cora-md-census-${{ matrix.python-version }}-${{ github.sha }}
+          path: /tmp/cora-md-census.json
+          if-no-files-found: warn
+          retention-days: 14
       - name: Falsify real disposable Markdown and JSON contract mutations
         run: python -m unittest discover -s tests -p 'test_pr21_documentation.py' -v
+      - name: PR61 independent markdown graph, positive and negative source mutants
+        run: python -m unittest discover -s tests -p 'test_pr23_navigation.py' -k pr61 -v
       - name: Falsify original 1k and new 10k README semantic vectors (twice)
         env:
           CORA_NAV_REPORT: /tmp/cora-readme-nav-1000.json

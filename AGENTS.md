@@ -1,10 +1,17 @@
 # CORA instructions for coding agents
 
+**Document status:** CURRENT
+**Current scope:** Instructions for third-party coding agents.
+**Operational use:** Plan, test and propose reversible changes under one Git identity.
+**Evidence:** Existing CLI commands, reticular contracts and falsification receipts.
+**Limits:** No self-approved reviewer, deletion or release.
+
+
 CORA is the independent **engineering evidence and governance framework**, not the AI coding assistant that implements features. The agent may plan, write, test and propose a PR; it may not certify its own source claims as runtime truth, authenticate reviewers, grant its own authorization, merge, deploy, publish or delete source under CORA authority.
 
 Start at the [README](README.md), [agent adoption tutorial](docs/AGENT_ADOPTION.md), [continuous method](docs/CONTINUOUS_DEVELOPMENT.md), [convergent assurance](docs/CONVERGENT_ASSURANCE.md), and [governance](GOVERNANCE.md). Existing historic PR-level DoDs and audits remain source-context records, not parallel engines.
 
-**PR60 editorial discipline:** read the [README](README.md) first, then only the task-owner document from [index](docs/INDEX.md). The root README is the product front door, not an accumulating PR log; do not reinsert obsolete milestone prose when editing code. Put dated implementation facts in [CHANGELOG](CHANGELOG.md) and immutable Git history. Preserve the 17 historical Markdown blob identities and explicit SOURCE/L1, experimental L2, externally governed L3 boundaries. Every editorial rewrite needs negative/meaning-preserving tests and exact HEAD source checks; the coding agent's own interpretation is a machine proxy, not a human usability trial or third-party certification.
+**Editorial and documentation discipline:** read the [README](README.md) first, then only the task-owner document from [index](docs/INDEX.md). The root README is the product front door, not an accumulating PR log; do not reinsert obsolete milestone prose when editing code. Put source chronology in original Git and keep current operational guides task-specific. Preserve the 17 historical Markdown blob identities and explicit SOURCE/L1, experimental L2, externally governed L3 boundaries. Every editorial rewrite needs negative/meaning-preserving tests and exact HEAD source checks; the coding agent's own interpretation is a machine proxy, not a human usability trial or third-party certification.
 
 ## Mandatory current workflow
 
@@ -22,7 +29,8 @@ Start at the [README](README.md), [agent adoption tutorial](docs/AGENT_ADOPTION.
 
 For documentation changes, also run the Git-bound S01–S18 proof verifier against the candidate HEAD and replay the receipt with the same exact Git revision. The profile is a source proposition register, not a substitute for review or the independent E01–E03 acceptance gates. See [documentation DoD](docs/DOCUMENTATION_DOD.md).
 
-## Automatic engineering-practice obligations (PR48–PR57)
+<a id="automatic-engineering-practice-obligations-pr48pr57"></a>
+## Automatic source-practice review obligations
 
 Every `cora process-run` (including the One-Run source pipeline) now carries
 `practice_obligations`, derived from the exact Git commit versus its first parent.
@@ -51,14 +59,17 @@ new certification gate, command, runtime test or independent approval authority.
 - Ten-million-case campaigns are finite **synthetic fault-model evaluations**, not independent maintained-repository mutations or calibrated software quality measurements.
 - AI hypotheses and user-provided runtime annotations remain untrusted until separately validated. Source hashes are not digital signatures; a green workflow does not show GitHub-required checks are enforced.
 
-## Technical and historical references
+<a id="technical-and-historical-references"></a>
+## Method and evidence references
 
 Use [AI agent method](docs/AI_CODE_ASSURANCE.md), [PR-17 scoped DoD](docs/archive/dod/DOD_PR17_AGENT.md), [PR-18 counterexample](docs/archive/audits/AUDIT_PR18_MAIN.md), [Gold method](docs/GOLD_ASSURANCE.md), [PR-19 DoD](docs/DOD_PR19_GOLD.md), [PR-19 closure audit](docs/archive/audits/AUDIT_PR19_CLOSURE.md), [PR-16 ZIP/runtime DoD](docs/DOD_PR16_SEMANTIC_LATTICE.md) and [R1–R4 convergence DoD](docs/DOD_PR20_CONVERGENCE.md) for domain-specific responsibilities. [Documentation DoD](docs/DOCUMENTATION_DOD.md) governs the separation between current product information and historical source records.
 
-## PR40 knowledge-convergence gate (merged source, independent gates outstanding)
+<a id="pr40-knowledge-convergence-gate-merged-source-independent-gates-outstanding"></a>
+## Git knowledge and test qualification
 
-Before claiming current CI success, inspect the exact candidate SHA's GitHub Actions, including failed diagnostics and skipped jobs. Treat GitHub required-check rules, reviewer identities and ruleset read failures as separate external observations. Run `python tools/verify_engineering_closure.py --repo . --revision HEAD --output /tmp/ekc.json` and its Git-bound `--verify-report`; pass `--stress-10m` only when the bounded 10-million-case finite campaign is intended. The report scans static AST callsites but does not execute runtime targets or independently validate behavior. PR25 clone failures must preserve their original stderr without retry or invented RCA. Use the original `process-run --one-run --profile comprehensive` for the integrated activity dossier; new tools must not grant merge, deletion or release authority.
+PR40 knowledge-convergence gate (merged source, independent gates outstanding): before claiming current CI success, inspect the exact candidate SHA's GitHub Actions, including failed diagnostics and skipped jobs. Treat GitHub required-check rules, reviewer identities and ruleset read failures as separate external observations. Run `python tools/verify_engineering_closure.py --repo . --revision HEAD --output /tmp/ekc.json` and its Git-bound `--verify-report`; pass `--stress-10m` only when the bounded 10-million-case finite campaign is intended. The report scans static AST callsites but does not execute runtime targets or independently validate behavior. PR25 clone failures must preserve their original stderr without retry or invented RCA. Use the original `process-run --one-run --profile comprehensive` for the integrated activity dossier; new tools must not grant merge, deletion or release authority.
 
-## PR41 — final experimental release freeze is not permission
+<a id="pr41--final-experimental-release-freeze-is-not-permission"></a>
+## Release boundary and source freeze
 
 The final experimental source baseline must be pinned to the actual post-PR40 main ancestry and the [noncompensatory final DoD](.cora/contracts/dod/final-experimental-dod.json). Run `python tools/verify_final_experimental.py --repo . --revision HEAD --run-behavior --output /tmp/cora-final-source.json`, replay it, then separately run the 1M finite model. Actual independent maintained-target oracles, 8-person usability study, isolated hostile-code host, effective protected-branch checks, a distinct human reviewer and authenticated release manager are outside the source test. Until all seven EXTERNAL obligations and SHA-matched wheel/sdist/tag/rollback are witnessed by qualified operators, **do not approve, merge on the verifier's authority, tag, publish, rename to stable, or deprecate components**. A source-local report is never an administrator or human signature.

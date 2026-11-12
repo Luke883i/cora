@@ -1,5 +1,12 @@
 # Security policy — CORA alpha
 
+**Document status:** CURRENT
+**Current scope:** Security disclosure and execution trust boundaries.
+**Operational use:** Report issues and isolate explicitly authorized target tests.
+**Evidence:** Local security checks and attributable operator observations.
+**Limits:** No supported production SLA or independently validated sandbox.
+
+
 CORA is an experimental local repository-analysis and scoped-maintenance tool. There is **no supported production release or security-update SLA** at this time. Security claims are scoped to tests and documented code paths, not blanket guarantees.
 
 ## Report a vulnerability

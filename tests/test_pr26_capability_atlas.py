@@ -158,11 +158,11 @@ class CapabilityAtlasTests(unittest.TestCase):
             g(local,"commit","-qm","restore DoD before chronology test")
             self.assertEqual(CAP.check(local)["source_status"],"PASS_SCOPED_SOURCE")
             path=local/"docs/ARCHITECTURE.md"
-            text=path.read_text("utf-8").replace("merged PR-25","merged PR-22")
+            text=path.read_text("utf-8").replace("## Current documentation ownership","## Unverified product ownership")
             path.write_text(text,encoding="utf-8")
             g(local,"add","docs/ARCHITECTURE.md")
             g(local,"commit","-qm","historical claim promoted to current")
-            with self.assertRaisesRegex(ValueError,"current documentation chronology"):
+            with self.assertRaisesRegex(ValueError,"current documentation ownership"):
                 CAP.check(local)
 
     def test_06_physical_removed_workflow_and_reader_claim(self):

@@ -1,5 +1,12 @@
 # PR-15 Definition of Done — product, software, repository and governed release
 
+**Document status:** CURRENT
+**Current scope:** Noncompensatory candidate build and release-governance requirements.
+**Operational use:** Verify package artifacts and separately demand real host/reviewer approvals.
+**Evidence:** pyproject.toml, release workflow and exact-artifact hashes.
+**Limits:** Candidate CI cannot sign provenance or authorize publication.
+
+
 ## Global DoD (AND, no averaging)
 **G-source:** I1 AND I2 AND I3 AND I4 AND I5. Supported source/CI checks can produce `PASS_SCOPED`, never authority. **G-release:** G-source AND I6 AND I7. G-release remains `BLOCKED_EXTERNAL` unless independently authenticated GitHub/human and external validation witnesses are supplied. A false PASS from unknown evidence violates the DoD.
 

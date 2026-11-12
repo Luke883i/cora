@@ -1,5 +1,12 @@
 # Getting started with CORA
 
+**Document status:** CURRENT
+**Current scope:** Minimal local installation, source replay and first-read interpretation.
+**Operational use:** Install from an authorized checkout and verify one exact Git snapshot.
+**Evidence:** Actual cora CLI and readback reports with pinned revision.
+**Limits:** A ChatGPT conversation alone is not executed CORA or target-runtime proof.
+
+
 CORA is a local, read-only-by-default **source assurance** framework, not an autonomous
 coding agent, a sandbox attestation, a merge approver or a product certificate.
 Start from an authorized checkout with Python 3.11+ and Git. Use an output

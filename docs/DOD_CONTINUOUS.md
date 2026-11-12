@@ -1,5 +1,12 @@
 # Backward DoD lattice — continuous development framework
 
+**Document status:** CURRENT
+**Current scope:** Acceptance cuts for contextual engineering-change governance.
+**Operational use:** Check pre/postmerge source invariants and identify independent review gates.
+**Evidence:** Reticular DoD, contextual receipts and source regressions.
+**Limits:** Human approval and actual host enforcement remain separately unverified.
+
+
 **G (scoped and falsifiable):** For any two accessible commits with bounded Git changes, CORA produces an immutable/replayable source-bound pre-merge or post-merge review receipt. An agent can submit its change claims for reconciliation without acquiring authority. The framework neither silently treats missing policy as approved nor falsely attests human/CI trust, execution or runtime equivalence.
 
 **G+ (not demonstrated):** independent GitHub rulesets/required approvals and attestation of reviewer identities; real-world scanner authenticity and patch quality; production deployment/rollback/SLO observability; universally regression-free development; SLSA compliance. These require *external* controls and evidence.

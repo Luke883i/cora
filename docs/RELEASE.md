@@ -1,6 +1,13 @@
 # CORA — Continuous Ontological Repository Assurance: governed prerelease procedure
 
-**Status: staged, not published. Current source:** `cora-audit 1.0.0a5` (Python 3.11+, one `cora` CLI). PR59 is merged to `main@a01e0b121ac3734fd4ec1afa22781c90dbed1260`. This is a source change, **not a stable API, supported production release or independently approved distribution**. No public candidate is published. **Release = BLOCKED_EXTERNAL** pending the separately accountable operator gates below.
+**Document status:** CURRENT
+**Current scope:** Operator-only candidate validation and unpublished release conditions.
+**Operational use:** Check candidate bytes, required reviews, hosting and rollback before any tag.
+**Evidence:** Actual wheel/sdist receipts, CI, SCA limits and independently verified host state.
+**Limits:** Current source is staged not published; no source verifier can authorize release.
+
+
+**Status: staged, not published. Current source:** `cora-audit 1.0.0a5` (Python 3.11+, one `cora` CLI). The source baseline is merged PR60 `main@861a9f4fdc847dff9bbaa4d1cfaefd8d33a48c33`; any later source change requires fresh exact-HEAD checks. This is a source change, **not a stable API, supported production release or independently approved distribution**. No public candidate is published. **Release = BLOCKED_EXTERNAL** pending the separately accountable operator gates below.
 
 **Decision boundary:** L1 Git/source CI and local tests are valuable engineering evidence; bounded L2 pilots do not prove broad product acceptance; L3 external qualification, when claimed, requires real people, host controls, reproducible artifacts and accountable decisions. A source report is **not a self-issued** approval, certificate, signed provenance or permission to publish. A PASS for one level cannot complete the others.
 

@@ -1,5 +1,12 @@
 # CORA — Global, intermediate and local Definition of Done for selection
 
+**Document status:** CURRENT
+**Current scope:** Conservative file-triage and deletion-veto semantics.
+**Operational use:** Investigate candidate consumers and retain unknown edges before removal.
+**Evidence:** Git graph, declared roles, negative mutation and reviewer decision.
+**Limits:** No universal dead-code proof or automatic safe deletion.
+
+
 **Baseline:** CORA v1.experimental after merged PR-10. **Decision:** selection means **human investigation triage**, not proof of globally dead code or authority for deletion. A file is a versioned Git artifact with potentially overlapping software, test, verifier, workflow and retention roles. Absence of a parsed edge is not absence of a dependency.
 
 ## G* — requested strongest claim: IMPOSSIBLE AS A UNIVERSAL GUARANTEE

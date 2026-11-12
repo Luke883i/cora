@@ -1,8 +1,16 @@
 # CORA continuous development — pre-merge, post-merge, agent constraints
 
+**Document status:** CURRENT
+**Current scope:** Premerge, postmerge and controlled agent-review operations.
+**Operational use:** Pin original Git BASE/HEAD, run relevant checks and verify actual merge revision.
+**Evidence:** Source policies, continuous.py receipts, separately executed CI and tests.
+**Limits:** A source PASS does not enforce GitHub branch protection or human decisions.
+
+
 **Status:** v1.experimental, evidence and review framework, **not** a coding assistant or a GitHub administrator. The supported package remains `cora-audit` with one CLI, `cora`. The source of truth is a Git commit; CI and review attestations require separately trusted GitHub controls.
 
-## Current change-range discipline (PR59)
+<a id="current-change-range-discipline-pr59"></a>
+## Current change-range discipline
 
 Record explicit original-Git BASE and HEAD for a multi-commit change, then run the **existing** `process-run --change-base BASE_SHA --one-run --profile comprehensive` and replay the receipt. Do not infer complete PR coverage from a single-commit diff; a supplied base is not authenticated GitHub metadata. Review obligations are path-triggered hypotheses and may require semantic/editorial evaluation, runtime oracles and human decisions. Historical v1 receipts stay source-bounded; no execution or release approval is implicit.
 
@@ -67,7 +75,8 @@ Post-merge without real CI/deployment telemetry is not an end-to-end operational
 
 The PR workflow uploads only JSON review receipts and deterministic model reports for **14 days**; the post-merge job uploads its JSON drift receipt for **30 days**. These are expiring review artefacts, not authoritative durable records, signatures, SLSA attestations or a replacement for an approved record system. Output paths and CI artifacts can still disclose repository metadata, so use repository-appropriate access controls. The workflow never includes source files in these uploads.
 
-## Current PR-20 opt-in contextual workflow
+<a id="current-pr-20-opt-in-contextual-workflow"></a>
+## Contextual source gate and declared intent
 
 When the target has its own committed ontology and a trusted BASE-committed `.cora/continuous-policy.json`, pass a bounded `--intent` to `cora dev-premerge TARGET --base BASE --head HEAD --contextual --intent "Specific change with acceptance tests" --convergence-contract PATH --output REPORT`. Verify with `cora verify-contextual-gate REPORT --repo TARGET --intent "Specific change with acceptance tests" --convergence-contract PATH`. Run the equivalent `dev-postmerge --contextual` against the **actual merged** revision, not the former PR SHA. The legacy gate remains available without `--contextual`.
 
@@ -86,7 +95,8 @@ The following operations supplement the primary `process-run` / `verify-process`
 
 **Scope and iteration:** preserve original Git/test witnesses for every method, negative mutant, and new feature; record exact BASE/HEAD, actual execution or `NOT_RUN`, blockers and postmerge rechecks. The [method atlas](../.cora/contracts/profiles/method-atlas.json), [workflow DoD](../.cora/contracts/dod/workflow-dod.json) and [postmerge DoD](../.cora/contracts/dod/postmerge-repro-dod.json) retain formal owners. PR24/25/33/36/39 development details remain in the [changelog](../CHANGELOG.md), their source commits and associated DoDs; these are not alternate instructions or proof of independent hosting.
 
-## LEVEL: contract-to-product development with bounded continuation (PR47 candidate)
+<a id="level-contract-to-product-development-with-bounded-continuation-pr47-candidate"></a>
+## LEVEL: contract-to-product development with bounded continuation
 
 **One promise:** convert an expressive human goal into successive, testable software
 changes while preserving provenance, negative controls and an honest stopping
@@ -279,7 +289,8 @@ snapshots are unchanged. This is a replanning signal, not a universal
 semantic convergence theorem, autonomous execution or a product PASS.
 
 
-## Cross-repository source/evidence convergence (PR50 — candidate)
+<a id="cross-repository-sourceevidence-convergence-pr50--candidate"></a>
+## Cross-repository source and evidence convergence
 
 **Abstract goal:** on two independently owned maintained codebases, an engineer
 must be able to reconstruct intent -> accountable owner -> bounded source change

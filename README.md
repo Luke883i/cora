@@ -19,7 +19,7 @@ Intent → acceptance graph → reversible code slice → adversarial tests
 
 **Recommended use:** inspect an authorized checkout or review one bounded change. **Audience and conditions:** CTOs, developers, reviewers and coding agents; Python 3.11+, Git and authorized execution tools. **Open source license:** [MIT](LICENSE).
 
-**Current status:** experimental `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **merged PR41** and PR46 establish source milestones; the earlier `v1.0.0a4` was a draft. External assurance is unverified; it is not required for experimental use. **Category:** agent-agnostic developer tooling / engineering assurance.
+**Current status:** experimental `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **Document status:** CURRENT. **Current scope:** Git source review. **Operational use:** inspect commits. **Evidence:** Git and scoped tests. **Limits:** external acceptance `BLOCKED_EXTERNAL`. **merged PR41** and PR46 remain source milestones; `v1.0.0a4` was a draft. **Category:** agent-agnostic developer tooling / engineering assurance.
 
 ## First five minutes — Quickstart
 
@@ -71,11 +71,11 @@ cora verify-process /tmp/cora-run.json --repo . --one-run --atlas-html /tmp/cora
 
 The dossier distinguishes `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTERNAL`. **The default does not execute arbitrary target tests**. Retain separate native-test commands and outcomes. [Chat handoff](docs/AGENT_ADOPTION.md#portable-chatgpt-handoff-opt-in) uses `--chat-step` / `--chat-bundle`; a ZIP is not memory or approval.
 
-**Full change:** `--change-base BASE_SHA` compares a caller-declared ancestor with HEAD; otherwise one commit. This is not authenticated PR metadata or automatic documentation rewriting.
+**Full change:** `--change-base BASE_SHA` compares a caller-declared BASE with HEAD; default one commit. Neither authenticated PR metadata nor automatic rewriting.
 
-**Native Gold pilots:** Teddy Node and ICTC HTTP/SQLite were exercised with bounded consent. LUMEN browser and NILO remote remain unobserved. Local PASS cannot authenticate a runner or show productivity gain. [PR52 evidence](docs/GOLD_ASSURANCE.md#pr52--native-gold-pilots-and-bounded-cross-repository-result) · [PR51 linkage](docs/GOLD_ASSURANCE.md#pr51--native-gold-bridge-in-the-existing-portable-one-run).
+**Native Gold pilots:** Teddy Node and ICTC HTTP/SQLite have bounded consented tests; LUMEN browser and NILO remote remain unobserved. Local PASS does not authenticate runners or productivity. [PR52 evidence](docs/GOLD_ASSURANCE.md#pr52--native-gold-pilots-and-bounded-cross-repository-result) · [PR51 linkage](docs/GOLD_ASSURANCE.md#pr51--native-gold-bridge-in-the-existing-portable-one-run).
 
-**Other repositories:** `--one-run --portable-profile /path/to/target.json` enables scoped portable replay, not a transferred CORA DoD. `--portable-parse-js` parses static ESM; it does not execute code. [Cross-repository limits](docs/CONTINUOUS_DEVELOPMENT.md#cross-repository-sourceevidence-convergence-pr50--candidate).
+**Other Git repos:** `--one-run --portable-profile /path/to/target.json` enables source replay, not transplanted DoD. `--portable-parse-js` parses static ESM without execution. [Cross-repository limits](docs/CONTINUOUS_DEVELOPMENT.md#cross-repository-sourceevidence-convergence-pr50--candidate).
 
 ## How CORA works
 
@@ -114,7 +114,7 @@ The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) di
 **Product or release owner:** [Governance](GOVERNANCE.md) · [Security](SECURITY.md) · [Release](docs/RELEASE.md).
 **Full documentation, history and contracts:** [Index](docs/INDEX.md) · [Documentation DoD](docs/DOCUMENTATION_DOD.md).
 
-**Decision rights are external:** humans and host controls approve. **Source of record:** committed Git, not chat. **Why:** model tests cannot certify external behavior. **Runtime:** local CLI. **Read in order:** README → task guide → contract → evidence.
+**Decision rights are external:** people/host controls approve. **Source of record:** committed Git, not chat. **Why:** models cannot certify external behavior. **Runtime:** local CLI. **Read in order:** README → task guide → contract → evidence.
 
 <details>
 <summary>Product | Outcome and limits</summary>

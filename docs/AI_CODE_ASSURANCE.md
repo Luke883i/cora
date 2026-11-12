@@ -1,5 +1,12 @@
 # CORA for AI coding assistants — engineering method
 
+**Document status:** CURRENT
+**Current scope:** Current agent-assurance method and falsifiable R1–R4 obligations.
+**Operational use:** Derive bounded tests and rejection criteria before an agent edits source.
+**Evidence:** Existing agent-assurance Python implementation and typed DoD source.
+**Limits:** Finite simulations cannot certify external behavior or calculate all possible mutations.
+
+
 ## Intent, product truth and scope
 
 CORA governs the coding agent; it is not a second agent and confers no merge, release or deletion authority. The user owns product intent, material acceptance and genuine outside decisions. An AI agent is responsible for reproducing the source identity, proposing the minimal material implementation slice, generating counterexamples and exposing unknowns. Source artifact identity, runtime execution, semantic correctness and human governance are distinct epistemic objects.

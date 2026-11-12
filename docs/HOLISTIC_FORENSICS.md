@@ -1,5 +1,12 @@
 # CORA holistic forensic archaeology
 
+**Document status:** CURRENT
+**Current scope:** Cross-scale Git archaeology without changing target source.
+**Operational use:** Inventory original history, declared roles and source dependency candidates.
+**Evidence:** Git SHA, commit episodes and bounded AST/manifest adapters.
+**Limits:** Historical cochange does not prove present runtime usage.
+
+
 **Experimental, read-only.** A pinned Git commit is source truth; PR identity is not reconstructible from Git alone after squash/rebase and the optional `--pr-index` is an *unverified operator assertion*. Development groups are not business product identities, and co-change is **not** a runtime edge.
 
 ## Top-down multiscale inference

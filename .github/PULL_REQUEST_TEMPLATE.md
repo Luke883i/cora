@@ -1,3 +1,12 @@
+# CORA pull request — bounded evidence record
+
+**Document status:** CURRENT
+**Current scope:** CORA PRs as bounded change proposals.
+**Operational use:** Specify source changes, acceptance oracles, rollback and real reviewers.
+**Evidence:** Exact Git SHA, CI logs and explicit human decisions.
+**Limits:** Template fields cannot prove protected hosting or independent approval.
+
+
 ## Product impact and contract
 Explain product, software and repository boundaries affected; cite the contract/ADR.
 

@@ -1,5 +1,12 @@
 # CORA engineering debt: a multiscale, evidence-bounded operating model
 
+**Document status:** CURRENT
+**Current scope:** Multi-scale debt discovery and bounded mitigation decisions.
+**Operational use:** Inspect debt-signals, compare revisions and prioritize explicit unknowns.
+**Evidence:** Original Git, optional input analyzers and the process suite.
+**Limits:** Findings are not certified defect counts or verified remediation.
+
+
 **Status: experimental.** An inventory of observations, *not* a certified defect register, a measured financial liability, a runtime dependency graph, or a license to modify software.
 
 ## Purpose, inputs and boundaries
@@ -65,7 +72,8 @@ cora stress-debt --seed 883 --cases 1000000
 
 The engineering owner labels/triages; product owner evaluates impact; QA validates reproducer/coverage; security owner handles SARIF; platform owner validates build and independent CI; a second reviewer approves any future transformation. Weekly: review newly introduced `P1_REVIEW` and unresolved coverage. Monthly: compare bounded hotspot/cochange baselines, record closure evidence and reprioritize. Per release: check signed provenance/reproducibility with separate release gates. No actor identity is cryptographically verified by this CLI; the repository owner must configure protected required checks outside versioned YAML.
 
-## PR40 — retained dynamic/static debt and falsification method
+<a id="pr40--retained-dynamicstatic-debt-and-falsification-method"></a>
+## Static/dynamic debt controls and bounded falsifiers
 
 `python tools/verify_engineering_closure.py --repo . --revision HEAD --output /tmp/ekc.json` extracts the exact committed Git source identity, parser/atlas census, Python static relative imports and executable callsite indicators. Replay with `--verify-report /tmp/ekc.json`. Callsite presence is not proof of runtime execution, and absence is not proof of safe deletion. The primary integrated execution remains `cora process-run --one-run --profile comprehensive` and its existing `verify-process` counterpart; the PR40 verifier is a source diagnostic, not a second orchestrator.
 
@@ -74,7 +82,8 @@ The [PR40 noncompensatory DoD](../.cora/contracts/dod/engineering-knowledge-dod.
 `python tools/verify_engineering_closure.py --repo . --revision HEAD --stress-10m --output /tmp/ekc-10m.json` executes ten seeds × one million bounded semantic vectors, preregistering all zero/single/pair/triple/quadruple combinations across 14 fault families. A separately worded Boolean reference detects source-state disagreements, and any synthetic reviewer/host PASS fails closed. Retained SHA-256 streams make campaigns reproducible. Exactly 1,471 distinct fault masks are preregistered and reused; ten million **case evaluations are not ten million unique source mutations**. Physical Git-committed mutants and the PR25 original source fixture are tested separately; no external target code is automatically executed.
 
 
-## Post-PR44: efficiency without evidence promotion
+<a id="post-pr44-efficiency-without-evidence-promotion"></a>
+## Efficient source review without evidence promotion
 
 **Backward DoD (source scope).** A useful review must have **one primary
 entry point**, an immediately readable **claim → Git evidence → falsifier**
