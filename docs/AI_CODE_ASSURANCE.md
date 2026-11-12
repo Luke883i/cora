@@ -52,10 +52,12 @@ The negative unittest writes and rejects 34 physical mutated contract JSON files
 
 STOP/BLOCKED on ambiguous product intent, missing canonical owner, inability to reproduce the pinned source, no independent behavioral oracle for a claimed runtime fix, missing required CI on the final HEAD, an uncovered critical family, an unsafe promotion, or an unauthenticated external reviewer. Use the current CORA AGENTS.md, GOVERNANCE.md, continuous policy and PR-16 source/runtime boundary. Release governance must remain external, and main protection must be checked in GitHub rather than inferred from repository source files.
 
-## PR-18 historical correction
+<a id="pr-18-historical-correction"></a>
+## Evidence correction — historical boundary
 
 PR-17 counted the first 24 individual faults and 276 pairs by index even when a mutated `_scenario` could return the wrong mask. PR-18 counts only actual prespecified masks, asserts scenario diversity and includes six physical Python source mutants of CORA's finite model. `dod-assess` now identifies `next_unresolved_falsifier`, refuses whitespace-only witnesses and never treats L19–L24 caller claims as independently authenticated. This is better source-model falsification, **not** real target-repository semantic validity; see [the historiographic audit](archive/audits/AUDIT_PR18_MAIN.md).
 
-## Current reader path after PR-20
+<a id="current-reader-path-after-pr-20"></a>
+## Current reader path
 
 This page explains the method and preserves the PR-17/18 agent-DoD semantics. For a newly adopting coding assistant, start with the [reader-first workflow](AGENT_ADOPTION.md) and the [current contextual assurance method](CONVERGENT_ASSURANCE.md); use the existing canonical reticular kernel, not a second plan engine. A real change requires an explicit `--intent` at `dev-premerge --contextual`, passed unchanged for `verify-contextual-gate`. A missing intent is debt-blocked, and a supplied intent remains caller-reported, not authenticated product acceptance. Real behavioral oracles and independent hosting are still external.

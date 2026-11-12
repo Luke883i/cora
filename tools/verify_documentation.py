@@ -705,6 +705,18 @@ def census_markdown(root: Path, *, revision: str = "HEAD",
     for row in rows:
         row["inbound"] = sum(sum(1 for dest, _ in edges if dest == row["path"])
                              for edges in references.values())
+        # An index entry is discoverability, not proof of operational use.
+        row["inbound_active_nonindex"] = sum(
+            sum(1 for dest, _ in edges if dest == row["path"])
+            for source, edges in references.items()
+            if source != "docs/INDEX.md" and
+            registered.get(source, {}).get("status") in ("CURRENT", "SCOPED_CURRENT"))
+        row["evaluation_route"] = (
+            "ARCHIVAL_NON_NORMATIVE" if row["status"] == "HISTORICAL" else
+            "ACTIVE_REFERENCED" if row["inbound_active_nonindex"] else
+            "INDEX_ONLY_REVIEW")
+        row["pr_history_mentions"] = len(re.findall(
+            r"\bPR[- #]?\d+\b", bodies[row["path"]], flags=re.I))
     # Readback may execute from an uncommitted mutation. Never promote it to
     # source truth; zero errors and Git parity are jointly necessary.
     return {
@@ -721,6 +733,8 @@ def census_markdown(root: Path, *, revision: str = "HEAD",
             "missing_current_contracts": sum(x.startswith("standalone-") for x in errors),
             "original_git_parity": sum(x["source_parity"] for x in rows),
             "edges": sum(x["outbound_local"] for x in rows),
+            "active_index_only": sum(x["evaluation_route"] == "INDEX_ONLY_REVIEW" for x in rows),
+            "active_history_mentions": sum(x["pr_history_mentions"] for x in rows if x["status"] != "HISTORICAL"),
         },
         "documents": rows,
         "errors": sorted(set(errors)),
