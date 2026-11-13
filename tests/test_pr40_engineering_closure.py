@@ -385,6 +385,30 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         with self.assertRaises(SyntaxError):
             ekc.structural_units("def broken(\n", "synthetic.py")
 
+    def test_actual_wrapper_consolidation_has_original_git_behavioral_parity(self):
+        """Execute former source owner on the same Git inputs, not just compare labels."""
+        from types import ModuleType
+        former = "c03de9376b0de8455adf196a16e2f76cdbc95f0b"
+        source_code = git(ROOT, "show",
+                          former + ":tools/verify_engineering_closure.py")
+        self.assertIn("def static_test_consumers(", source_code)
+        previous = ModuleType("previous_component_closure")
+        exec(compile(source_code, "previous_component_closure.py", "exec"),
+             previous.__dict__)
+        paths = git(ROOT, "ls-tree", "-r", "--name-only", self.sha).splitlines()
+        modules = [p for p in paths if p.startswith("src/cora/")
+                   and p.count("/") == 2 and p.endswith(".py")]
+        tests = [p for p in paths if p.startswith("tests/test_")
+                 and p.count("/") == 1 and p.endswith(".py")]
+        old_edges = previous.static_test_consumers(ROOT, self.sha, tests, modules)
+        new_edges = ekc.static_python_consumers(ROOT, self.sha, tests, modules)
+        self.assertEqual(old_edges, new_edges)
+        self.assertGreater(len(new_edges), 0)
+        self.assertEqual(new_edges, ekc.static_python_consumers(
+            ROOT, self.sha, list(reversed(tests)), list(reversed(modules))))
+        self.assertFalse(hasattr(ekc, "static_test_consumers"),
+                         "redundant compatibility wrapper should stay removed")
+
     def test_component_denominator_negative_omission_and_duplicate_falsifiers(self):
         cli = "src/cora/cli.py"
         module = "src/cora/example.py"
