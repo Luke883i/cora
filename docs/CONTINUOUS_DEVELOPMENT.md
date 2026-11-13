@@ -90,10 +90,10 @@ The following operations supplement the primary `process-run` / `verify-process`
 | --- | --- | --- |
 | Inspect workflow consumers | `cora workflow-audit . --revision HEAD --output /tmp/workflows.json` then `cora verify-workflows /tmp/workflows.json --repo .` | A duplicate-looking workflow is not safe to delete; callers and actual hosted enforcement must be reviewed. |
 | Correlate method/agent hypotheses | `cora method-synthesize . --revision HEAD --output /tmp/cora-case.json` and `cora verify-method-synthesis /tmp/cora-case.json --repo .` | Typed observations remain separate from unauthenticated AI hypotheses and target runtime. |
-| Diagnose repeatability | `python -m cora.ci_repro --repo . --sha "$(git rev-parse HEAD)" --repetitions 3 --output /tmp/cora-ci-repro.json` | All PR25/PR26 failures and timeouts count; a green repeat cannot prove root cause or eliminate flakiness. |
+| Diagnose repeatability | `python -m cora.ci_repro --repo . --sha "$(git rev-parse HEAD)" --repetitions 3 --output /tmp/cora-ci-repro.json` | All actual failures and timeouts count; a green repeat cannot prove root cause or eliminate flakiness. |
 | Execute One-Run | `cora process-run . --revision HEAD --process full --one-run --profile comprehensive --output /tmp/one.json` | The 71-command atlas is a catalog; at most eight safe methods run, without automatic target tests or release authority. |
 
-**Scope and iteration:** preserve original Git/test witnesses for every method, negative mutant, and new feature; record exact BASE/HEAD, actual execution or `NOT_RUN`, blockers and postmerge rechecks. The [method atlas](../.cora/contracts/profiles/method-atlas.json), [workflow DoD](../.cora/contracts/dod/workflow-dod.json) and [postmerge DoD](../.cora/contracts/dod/postmerge-repro-dod.json) retain formal owners. PR24/25/33/36/39 development details remain in the [changelog](../CHANGELOG.md), their source commits and associated DoDs; these are not alternate instructions or proof of independent hosting.
+**Scope and iteration:** preserve original Git/test witnesses for every method, negative mutant, and new feature; record exact BASE/HEAD, actual execution or `NOT_RUN`, blockers and postmerge rechecks. The [method atlas](../.cora/contracts/profiles/method-atlas.json), [workflow DoD](../.cora/contracts/dod/workflow-dod.json) and [postmerge DoD](../.cora/contracts/dod/postmerge-repro-dod.json) retain formal owners. Earlier development events remain in the [changelog](../CHANGELOG.md) and original Git. They are not alternate instructions or proof of independent hosting.
 
 <a id="level-contract-to-product-development-with-bounded-continuation-pr47-candidate"></a>
 ## LEVEL: contract-to-product development with bounded continuation
@@ -252,7 +252,7 @@ license review remain \`BLOCKED_EXTERNAL\`.
 
 ## Example contract and evidence ladder — portable corrective-action app
 
-**Historical PR47 README example, retained here as a hypothetical design,
+**Hypothetical design example (not a shipped product),
 not an executed build.** The user asks for a local corrective-action
 tracker where reporters create actions, owners implement them, and only
 reviewers may verify closure. Progress must survive restart; concurrent
