@@ -297,7 +297,7 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
             (readme, guide.replace("separate write-capable tool",
                                    "the same read-only app", 1),
              start, dod, implementation),
-            (readme, guide.replace("CORA LOCAL PROJECT ADAPTER — BETA v1",
+            (readme, guide.replace("CORA LOCAL PROJECT ADAPTER — BETA v2",
                                    "unversioned informal instructions", 1),
              start, dod, implementation),
             (readme, guide + "\n## ChatGPT Project beta adapter\nDuplicate.\n",
