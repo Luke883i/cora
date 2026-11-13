@@ -417,6 +417,22 @@ class FullSurfaceExecutionTests(unittest.TestCase):
         self.assertEqual(counts, expected)
         self.assertEqual(len(ledger["records"]), len(paths))
         self.assertEqual(counts["markdown"], 48)  # existing registry contract
+        # The installed interpreter package is the runtime source of the CLI;
+        # compare its shipped .py and optional ESM bytes to every original
+        # Git source object, not only to the prerelease version string.
+        import cora
+        package_root = Path(cora.__file__).resolve().parent
+        for row in ledger["records"]:
+            p = row["path"]
+            if not (p.startswith("src/cora/") and
+                    p.endswith((".py", ".mjs"))):
+                continue
+            self.assertEqual(row["status"], "observed_git_blob", p)
+            installed = package_root / p[len("src/cora/"):]
+            self.assertTrue(installed.is_file(), "package omits: " + p)
+            self.assertEqual(hashlib.sha256(installed.read_bytes()).hexdigest(),
+                             row["sha256"], "wheel/source byte drift: " + p)
+
         self.assertEqual(_strict_json(b'{"unique":true}'), {"unique": True})
         with self.assertRaisesRegex(ValueError, "duplicate JSON field"):
             _strict_json(b'{"authority":"NONE","authority":"APPROVED"}')
