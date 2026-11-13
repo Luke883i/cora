@@ -216,10 +216,9 @@ def inspect_source(root: Path) -> dict:
     )
     if any(term in txt(rel) for rel in boundaries for term in forbidden):
         errors.append("CLOSURE_UNEARNED_APPROVAL")
-    source_closure_ok = not any(
-        e.startswith(("CLOSURE_BOUNDARY_DRIFT:", "CLOSURE_UNEARNED_APPROVAL",
-                      "PRODUCT_SOFTWARE_ONTOLOGY", "PACKAGE_METADATA",
-                      "WORKFLOW_SOURCE_POLICY")) for e in errors)
+    # A missing original source, invalid policy, or unrelated failed release
+    # check invalidates the *global* closure too. No partial PASS laundering.
+    source_closure_ok = not errors
     object_closeout = {
         "schema": "cora-source-object-closeout/1",
         "product": {"id": "cora", "state": "SOURCE_SCOPE_DEFINED"},

@@ -93,6 +93,39 @@ class ReadinessTest(unittest.TestCase):
         report = inspect_source(self.repo)
         self.assertEqual(report["source_status"], "PASS_SCOPED")
 
+    def test_source_closure_cannot_hide_other_blockers_or_forged_authority(self):
+        baseline = inspect_source(self.repo)
+        self.assertEqual(baseline["object_closeout"]["closure_status"],
+                         "SOURCE_CONTRACT_RECONCILED")
+        # Even a valid-looking prose matrix cannot repair an absent real
+        # source or permitted reviewer object.
+        codeowners = self.repo / ".github/CODEOWNERS"
+        original = codeowners.read_bytes()
+        codeowners.unlink()
+        try:
+            observed = inspect_source(self.repo)
+            self.assertEqual(observed["source_status"], "BLOCKED_SOURCE")
+            self.assertEqual(observed["object_closeout"]["closure_status"],
+                             "BLOCKED_SOURCE")
+            self.assertIn("MISSING_OR_SYMLINK:.github/CODEOWNERS",
+                          observed["source_errors"])
+        finally:
+            codeowners.write_bytes(original)
+
+        # Keep every legitimate 'BLOCKED_EXTERNAL' sentence intact and append
+        # a second forged authority assertion: contradictions must not average.
+        path = self.repo / "docs/RELEASE.md"
+        original = path.read_text("utf-8")
+        path.write_text(original + "\nrelease_authorized=true\n",
+                        encoding="utf-8")
+        try:
+            report = inspect_source(self.repo)
+            self.assertIn("CLOSURE_UNEARNED_APPROVAL", report["source_errors"])
+            self.assertEqual(report["object_closeout"]["closure_status"],
+                             "BLOCKED_SOURCE")
+        finally:
+            path.write_text(original, encoding="utf-8")
+
     def test_title_counterexample(self):
         self.swap("README.md","Continuous Ontological Repository Assurance","Code Ontology Repo Audit")
         self.deny("PRODUCT_EXPANSION_MISSING")
