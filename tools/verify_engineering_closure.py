@@ -157,6 +157,9 @@ def _engine_source_manifest(repo: Path, commit: str) -> dict[str, str]:
             path = pathname.decode("utf-8")
         except (ValueError, UnicodeDecodeError) as exc:
             raise ValueError("unparseable committed engine tree") from exc
+        if path.startswith("src/cora/") and path.endswith(".py") and not (
+                re.fullmatch(r"src/cora/[^/]+\.py", path)):
+            raise ValueError("nested engine Python module outside declared finite universe")
         if not re.fullmatch(r"src/cora/[^/]+\.py", path):
             continue
         if (kind != "blob" or mode not in ("100644", "100755")
@@ -221,6 +224,8 @@ def git_engine_source_universe(repo: Path, base: str, head: str) -> dict:
     head_sha = git(repo, "rev-parse", "--verify", head + "^{commit}", max_bytes=128).decode().strip()
     if not SHA.fullmatch(base_sha) or not SHA.fullmatch(head_sha):
         raise ValueError("invalid exact Git source universe revision")
+    if base_sha == head_sha:
+        raise ValueError("source universality requires two distinct Git revisions")
     ancestry = subprocess.run(["git", "-C", str(repo), "merge-base",
                                "--is-ancestor", base_sha, head_sha],
                               capture_output=True, timeout=30, check=False)
@@ -252,6 +257,7 @@ def git_engine_source_universe(repo: Path, base: str, head: str) -> dict:
         if result["source_byte_identity"] == "PASS_SCOPED_EXHAUSTIVE"
         and equal == result["denominator"] and not unequal
         else "REFUTED_SOURCE_CONTENT_PARITY")
+    result["baseline_authority"] = "CALLER_SELECTED_ANCESTRAL_GIT_NOT_AUTHENTICATED_PR_BASE"
     result["base"] = base_sha
     result["head"] = head_sha
     return result
