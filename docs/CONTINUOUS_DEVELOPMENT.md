@@ -184,7 +184,7 @@ counter without enlarging the declared fault coverage.
   levels of evidence; nothing here certifies ICTC runtime as a whole.
 - **iKant_EDU:** \`docs/CORA_PR_A_BACKLOG.md\` keeps unknown dynamic or
   external consumers UNKNOWN while deriving a read-only review
-  backlog. M3/PR238 commit \`34750a2b2f192758b26919235922c4002ff040c0\`
+  backlog. M3 original Git commit \`34750a2b2f192758b26919235922c4002ff040c0\`
   restored the byte-identical protected workflow and moved Git
   index/TREE/worktree source readback into
   \`scripts/project-review-callsites.mjs\`. Its
