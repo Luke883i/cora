@@ -190,7 +190,8 @@ def inspect_source(root: Path) -> dict:
         "docs/DOD_RELEASE_READINESS.md": (
             "## Three-boundary closeout interpretation",
             "Product `cora`", "cora-engine", "cora-release-verification",
-            "Repository `Luke883i/cora`", "I6", "I7", "BLOCKED_EXTERNAL",
+            "repository `Luke883i/cora`", "I6 for effective host governance",
+            "I7", "BLOCKED_EXTERNAL",
             "release_authorized=false", "authorization=NONE"),
         "docs/RELEASE.md": (
             "## Three-boundary closure and acceptance",
@@ -201,7 +202,7 @@ def inspect_source(root: Path) -> dict:
             "Module existence does not authenticate runtime"),
         "SECURITY.md": (
             "Repository visibility does not establish protected-branch controls",
-            "No supported production release", "NOT_ATTESTED"),
+            "no supported production release", "NOT_ATTESTED"),
     }
     for rel, tokens in boundaries.items():
         source = txt(rel)
