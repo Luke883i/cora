@@ -186,6 +186,12 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             metrics["python_modules"])
         roles = {row["path"]: row.get("declared_capability_role")
                  for row in rows if row["surface"] == "PYTHON_MODULE"}
+        self.assertEqual(roles["src/cora/cli.py"],
+                         "CLI_ENTRYPOINT_ORCHESTRATOR_SOURCE")
+        self.assertGreater(metrics["static_tool_import_edges"], 0)
+        self.assertIn("tools/verify_capability_atlas.py",
+                      next(row["static_tool_import_candidates"] for row in rows
+                           if row["path"] == "src/cora/reticulum.py"))
         self.assertEqual(roles["src/cora/gold_saturation.py"],
                          "FINITE_MODEL_ASSURANCE_DECLARED_NOT_RUNTIME_VALIDATED")
         self.assertEqual(roles["src/cora/continuous.py"],
@@ -348,6 +354,58 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             code, "synthetic.py", test_only=True)], ["Outer.test_async"])
         with self.assertRaises(SyntaxError):
             ekc.structural_units("def broken(\n", "synthetic.py")
+
+    def test_static_tool_consumer_unknown_and_negative_contract(self):
+        cli = "src/cora/cli.py"
+        module = "src/cora/reticulum.py"
+        tool = "tools/verify.py"
+        rows = ekc.contribution_index(
+            [cli, module, tool], [cli, module], [tool], [],
+            [(cli, module)], {"commands": []},
+            tool_imports=[(tool, module)])
+        by = {row["path"]: row for row in rows["rows"]}
+        self.assertEqual(by[module]["static_tool_import_candidates"], [tool])
+        self.assertEqual(by[module]["causal_effect"], "NOT_MEASURED")
+        self.assertEqual(by[cli]["declared_capability_role"],
+                         "CLI_ENTRYPOINT_ORCHESTRATOR_SOURCE")
+        self.assertEqual(rows["metrics"]["static_tool_import_edges"], 1)
+        with self.assertRaisesRegex(ValueError, "tool import edge"):
+            ekc.contribution_index(
+                [cli, module, tool], [cli, module], [tool], [], [],
+                {"commands": []}, tool_imports=[("tools/missing.py", module)])
+        with self.assertRaisesRegex(ValueError, "tool import edge"):
+            ekc.contribution_index(
+                [cli, module, tool], [cli, module], [tool], [], [],
+                {"commands": []}, tool_imports=[(tool, "src/cora/missing.py")])
+
+    def test_physical_committed_tool_consumer_disconnection(self):
+        with tempfile.TemporaryDirectory() as folder:
+            clone = Path(folder) / "source"
+            git(ROOT, "clone", "--no-local", "-q", "--", str(ROOT), str(clone))
+            git(clone, "checkout", "-q", self.sha)
+            before = ekc.analyze(clone, "HEAD")
+            def consumers(report):
+                return next(row["static_tool_import_candidates"] for row in
+                            report["component_contribution"]["rows"]
+                            if row["path"] == "src/cora/reticulum.py")
+            witness = "tools/verify_capability_atlas.py"
+            self.assertIn(witness, consumers(before))
+            path = clone / witness
+            text = path.read_text("utf-8")
+            original = "from cora.reticulum import ordered_cut"
+            self.assertEqual(text.count(original), 1)
+            path.write_text(text.replace(original,
+                 "# mutant: disconnect statically imported reticulum"), "utf-8")
+            self.assertEqual(ekc.analyze(clone, "HEAD"), before)
+            git(clone, "add", witness)
+            git(clone, "-c", "user.name=fixture", "-c",
+                "user.email=fixture@example.invalid", "commit", "-qm",
+                "mutant: remove source tool consumer edge")
+            after = ekc.analyze(clone, "HEAD")
+            self.assertNotIn(witness, consumers(after))
+            self.assertTrue(ekc.verify_report(clone, after))
+            self.assertEqual(after["component_contribution"]["metrics"][
+                "safe_consolidations_attested"], 0)
 
     def test_native_reticular_external_guard_fails_on_committed_ablation(self):
         """One real subprocess counterfactual, not a universal causal proof."""
