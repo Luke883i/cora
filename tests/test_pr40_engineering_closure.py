@@ -464,6 +464,37 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             self.assertEqual(run.returncode, 3, run.stdout + run.stderr)
             self.assertIn("component DoD orphan", run.stdout + run.stderr)
 
+    def test_original_git_product_source_oids_unchanged_across_pr69(self):
+        """All CORA engine module bytes match base; not a runtime equivalence claim."""
+        base = "57dd5c4fb6317d9a9e951fcbebac9c7aa5560b6f"
+        def module_oids(revision):
+            paths = [p for p in git(ROOT, "ls-tree", "-r", "--name-only",
+                                    revision, "--", "src/cora").splitlines()
+                     if p.startswith("src/cora/") and p.endswith(".py")]
+            return {p: git(ROOT, "rev-parse", revision + ":" + p)
+                    for p in paths}
+        before, after = module_oids(base), module_oids(self.sha)
+        self.assertEqual(set(before), set(after))
+        self.assertGreaterEqual(len(before), 60)
+        self.assertEqual(before, after)
+        # The assurance verifier does change; do not call the entire repo equal.
+        verifier = "tools/verify_engineering_closure.py"
+        self.assertNotEqual(git(ROOT, "rev-parse", base + ":" + verifier),
+                            git(ROOT, "rev-parse", self.sha + ":" + verifier))
+        with tempfile.TemporaryDirectory() as folder:
+            clone = Path(folder) / "source"
+            git(ROOT, "clone", "--no-local", "-q", "--", str(ROOT), str(clone))
+            git(clone, "checkout", "-q", self.sha)
+            unit = clone / "src/cora/reticulum.py"
+            content = unit.read_text("utf-8")
+            unit.write_text(content + "\\n# simulated intentional product change\\n", "utf-8")
+            git(clone, "add", "src/cora/reticulum.py")
+            git(clone, "-c", "user.name=fixture", "-c",
+                "user.email=fixture@example.invalid", "commit", "-qm",
+                "mutant: change a real engine implementation")
+            self.assertNotEqual(git(ROOT, "rev-parse", base + ":src/cora/reticulum.py"),
+                                git(clone, "rev-parse", "HEAD:src/cora/reticulum.py"))
+
     def test_actual_wrapper_consolidation_has_original_git_behavioral_parity(self):
         """Execute former source owner on the same Git inputs, not just compare labels."""
         from types import ModuleType
