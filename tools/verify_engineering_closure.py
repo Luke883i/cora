@@ -144,6 +144,74 @@ def contract_at(repo: Path, sha: str) -> dict:
     return doc
 
 
+def component_dod_assessment(index: dict) -> dict:
+    """Noncompensatory evidence-bound DoD, never CI/runtime/host self-approval."""
+    from cora.reticulum import ordered_cut
+    metrics, rows = index["metrics"], index["rows"]
+    if (metrics["tracked_paths"] != metrics["indexed_paths"] != len(rows)):
+        raise ValueError("component DoD source denominator contradiction")
+    if (metrics["tracked_paths"] != len(rows) or
+            metrics["python_modules"] != sum(r["surface"] == "PYTHON_MODULE" for r in rows)
+            or metrics["test_sources"] != sum(r["surface"] == "TEST_SOURCE" for r in rows)
+            or metrics["source_tools"] != sum(r["surface"] == "OPERATIONAL_TOOL_SOURCE" for r in rows)
+            or any(r["causal_effect"] != "NOT_MEASURED" or
+                   r["consolidation"] != "NOT_AUTHORIZED_UNTESTED" for r in rows)
+            or metrics["safe_consolidations_attested"] != 0
+            or metrics["causal_effects_measured"] != 0):
+        raise ValueError("component DoD cannot promote incomplete source or false authority")
+
+    edges = {
+        "I1_TRACE": ["L1_INVENTORY", "L2_CONSUMERS", "L3_SEPARATION", "L5_REPLAY"],
+        "I2_CAUSALITY": ["L4_NEGATIVE_ORACLES", "E2_INDEPENDENT_ABLATION"],
+        "I3_EQUIVALENCE": ["E1_NATIVE_BEHAVIOR_PARITY"],
+        "I4_GOVERNANCE": ["E3_INDEPENDENT_HOST_REVIEW"],
+        "G_COMPONENT_SOURCE": ["L1_INVENTORY", "L2_CONSUMERS", "L3_SEPARATION",
+                               "L4_NEGATIVE_ORACLES", "L5_REPLAY"],
+        "G_COMPONENT": ["I1_TRACE", "I2_CAUSALITY", "I3_EQUIVALENCE", "I4_GOVERNANCE"],
+    }
+    source = {
+        "L1_INVENTORY": "SOURCE_CENSUS_COMPUTED_NOT_INDEPENDENTLY_ATTESTED",
+        "L2_CONSUMERS": "STATIC_CANDIDATES_DYNAMIC_UNKNOWN",
+        "L3_SEPARATION": "SOURCE_NONPROMOTION_COMPUTED",
+        "L4_NEGATIVE_ORACLES": "NATIVE_TEST_EXECUTION_NOT_ATTESTED_BY_REPORT",
+        "L5_REPLAY": "INDEPENDENT_EXACT_HEAD_REPLAY_REQUIRED",
+    }
+    external = (
+        "E1_NATIVE_BEHAVIOR_PARITY", "E2_INDEPENDENT_ABLATION",
+        "E3_INDEPENDENT_HOST_REVIEW",
+    )
+    nodes = [{
+        "id": key,
+        "scope": "EXTERNAL" if key in external or key in (
+            "I2_CAUSALITY", "I3_EQUIVALENCE", "I4_GOVERNANCE", "G_COMPONENT"
+        ) else "SOURCE",
+        "depends_on": edges.get(key, []),
+        "status": ("BLOCKED_EXTERNAL" if key in external else
+                   source[key] if key in source else "NONCOMPENSATORY_NOT_ATTESTED"),
+    } for key in (*source, *external, *edges)]
+    by_id = {n["id"]: n for n in nodes}
+    ordered = ordered_cut(nodes, "G_COMPONENT")
+    if set(ordered) != set(by_id) or len(ordered) != len(nodes):
+        raise ValueError("component DoD orphan, cycle or hidden obligation")
+    if (by_id["G_COMPONENT"]["scope"] != "EXTERNAL" or
+            any(by_id[e]["scope"] != "EXTERNAL" for e in external)):
+        raise ValueError("component DoD external leaf promoted to source")
+    return {
+        "schema": "cora-component-dod-assessment/1",
+        "abstract_goal": "EVIDENCE_BOUND_CAUSAL_CONTRIBUTION_AND_NO_LOSS_CONSOLIDATION",
+        "source_goal": "G_COMPONENT_SOURCE",
+        "global_goal": "G_COMPONENT",
+        "logic": "NONCOMPENSATORY_AND",
+        "nodes": nodes,
+        "ordered_cut": ordered,
+        "source_status": "IMPLEMENTATION_CANDIDATE_REPLAY_AND_NATIVE_TEST_PENDING",
+        "global_status": "BLOCKED_EXTERNAL",
+        "authority": "NONE",
+        "behavioral_equivalence": "NOT_ATTESTED",
+        "safe_consolidation_authorized": False,
+    }
+
+
 def _call_name(node: ast.AST) -> str:
     if isinstance(node, ast.Name):
         return node.id
@@ -537,6 +605,7 @@ def analyze(repo: Path, revision: str = "HEAD") -> dict:
                    "dynamic_callsite_indicators": len(dynamic)},
         "static_import_edges": [list(x) for x in sorted(set(imports))],
         "component_contribution": contribution,
+        "component_dod": component_dod_assessment(contribution),
         "dynamic_callsites": sorted(dynamic, key=lambda d: (d["path"], d["line"], d["call"])),
         "debt_register": [
             {"id": "P0_CI_GIT_CLONE", "layer": "REPOSITORY",
