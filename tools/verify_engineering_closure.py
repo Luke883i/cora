@@ -209,7 +209,8 @@ def engine_source_universe(before: dict[str, str], after: dict[str, str]) -> dic
         "changed_blobs": counts["CHANGED_BLOB"],
         "added_blobs": counts["ADDED"],
         "removed_blobs": counts["REMOVED"],
-        "source_byte_identity": "PASS_SCOPED_EXHAUSTIVE" if exact else "REFUTED",
+        "source_oid_identity": "PASS_SCOPED_EXHAUSTIVE" if exact else "REFUTED",
+        "source_byte_identity": "NOT_ATTESTED_BY_OIDS_ONLY",
         "source_coverage": "ALL_TRACKED_ENGINE_PYTHON_MODULES_IN_BOTH_REVISIONS",
         "conditional_behavior": "UNOBSERVED_DEPENDENCIES_AND_ENVIRONMENT",
         "full_runtime_behavior_equivalence": "NOT_ATTESTED",
@@ -254,9 +255,13 @@ def git_engine_source_universe(repo: Path, base: str, head: str) -> dict:
     result["content_readback_scope"] = "EVERY_SHARED_ENGINE_MODULE_FROM_ORIGINAL_GIT"
     result["exact_content_parity"] = (
         "PASS_SCOPED_EXHAUSTIVE"
-        if result["source_byte_identity"] == "PASS_SCOPED_EXHAUSTIVE"
+        if result["source_oid_identity"] == "PASS_SCOPED_EXHAUSTIVE"
         and equal == result["denominator"] and not unequal
         else "REFUTED_SOURCE_CONTENT_PARITY")
+    result["source_byte_identity"] = (
+        "PASS_SCOPED_EXHAUSTIVE"
+        if result["exact_content_parity"] == "PASS_SCOPED_EXHAUSTIVE"
+        else "REFUTED")
     result["baseline_authority"] = "CALLER_SELECTED_ANCESTRAL_GIT_NOT_AUTHENTICATED_PR_BASE"
     result["base"] = base_sha
     result["head"] = head_sha
