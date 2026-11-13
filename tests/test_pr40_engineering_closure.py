@@ -222,7 +222,7 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "denominator"):
             ekc.contribution_index(paths + [cli], [cli, direct, indirect, unknown],
                                    [tool], [test], [], {"commands": []})
-        with self.assertRaisesRegex(ValueError, "missing source"):
+        with self.assertRaisesRegex(ValueError, "missing module"):
             ekc.contribution_index(paths, [cli, direct, indirect, unknown],
                                    [tool], [test], [(cli, "src/cora/absent.py")],
                                    {"commands": []})
