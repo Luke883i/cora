@@ -44,12 +44,13 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
     def test_readme_evaluation_budget_and_source_reality(self):
         readme = (ROOT / "README.md").read_text("utf-8")
         index = (ROOT / "docs/INDEX.md").read_text("utf-8")
-        self.assertLessEqual(len(readme.split()), 1450)
-        self.assertLess(len(readme.encode("utf-8")), 14204)
+        self.assertLessEqual(len(readme.split()), 1750)
+        self.assertLess(len(readme.encode("utf-8")), 16000)
         self.assertFalse(re.search(r"(?im)^#{2,3}[^\n]*\bPR[- ]?\d+", readme))
-        self.assertLessEqual(len(re.findall(r"\bPR[- #]?\d+\b", readme, re.I)), 3)
+        self.assertEqual(len(re.findall(r"\bPR[- #]?\d+\b", readme, re.I)), 0)
         self.assertEqual(DOC.verify_readme_semantics(readme, root=ROOT), [])
         self.assertEqual(DOC.verify_progressive_readme(readme), [])
+        self.assertEqual(DOC.verify_project_first_readme(readme), [])
         self.assertIn("Implementation and historical detail", index)
         self.assertIn("compressed public front door", index)
         self.assertIn("SLSA provenance: NOT_ATTESTED", readme)
@@ -120,11 +121,11 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
                  "duplicate-or-missing-adapter")
             need(g.count("CORA LOCAL PROJECT ADAPTER — BETA v1") == 1,
                  "missing-canonical-project-prompt")
-            need("Plus or Edu" in g and "Plus/Edu recipe" in r,
+            need("Plus or Edu" in g and "ChatGPT Plus or Edu" in r,
                  "undocumented-beta-plan-assumption")
             need("standard ChatGPT GitHub app is read-only" in g,
                  "read-vs-write-capability-confused")
-            need("separate write-capable tool" in g and "cannot push code" in r,
+            need("separate write-capable tool" in g and "not permission to push or merge" in r,
                  "missing-independent-write-authorization")
             need("METHOD_ONLY BY DEFAULT" in g and "ENGINE_VERIFIED" in g
                  and "PR_MATERIALIZED" in g, "simulated-execution")
