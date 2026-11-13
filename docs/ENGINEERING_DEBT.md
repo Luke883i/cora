@@ -75,11 +75,11 @@ The engineering owner labels/triages; product owner evaluates impact; QA validat
 <a id="pr40--retained-dynamicstatic-debt-and-falsification-method"></a>
 ## Static/dynamic debt controls and bounded falsifiers
 
-`python tools/verify_engineering_closure.py --repo . --revision HEAD --output /tmp/ekc.json` extracts the exact committed Git source identity, parser/atlas census, Python static relative imports and executable callsite indicators. Replay with `--verify-report /tmp/ekc.json`. Callsite presence is not proof of runtime execution, and absence is not proof of safe deletion. The primary integrated execution remains `cora process-run --one-run --profile comprehensive` and its existing `verify-process` counterpart; the PR40 verifier is a source diagnostic, not a second orchestrator.
+`python tools/verify_engineering_closure.py --repo . --revision HEAD --output /tmp/ekc.json` extracts the exact committed Git source identity, parser/atlas census, Python static relative imports and executable callsite indicators. Replay with `--verify-report /tmp/ekc.json`. Callsite presence is not proof of runtime execution, and absence is not proof of safe deletion. The primary integrated execution remains `cora process-run --one-run --profile comprehensive` and its existing `verify-process` counterpart; the engineering-closure verifier is a source diagnostic, not a second orchestrator.
 
-The [PR40 noncompensatory DoD](../.cora/contracts/dod/engineering-knowledge-dod.json) retains distinct debt observations: P0 physical Git fixture CI failure (RCA pending), P0 host-protection/reviewer enforcement (independent administrative check), P1 live/historical document chronology, P1 dynamic Python and subprocess boundaries, P1 frozen PR01–37 history (not post-PR37 complete history), P1 maintained-target oracle gap and P2 finite mutation model extrapolation risk. A source report cannot close an external gate.
+The [noncompensatory engineering-knowledge DoD](../.cora/contracts/dod/engineering-knowledge-dod.json) retains distinct debt observations: P0 physical Git fixture CI failure (RCA pending), P0 host-protection/reviewer enforcement (independent administrative check), P1 live/historical document chronology, P1 dynamic Python and subprocess boundaries, P1 bounded versioned Git genealogy (not complete later history), P1 maintained-target oracle gap and P2 finite mutation model extrapolation risk. A source report cannot close an external gate.
 
-`python tools/verify_engineering_closure.py --repo . --revision HEAD --stress-10m --output /tmp/ekc-10m.json` executes ten seeds × one million bounded semantic vectors, preregistering all zero/single/pair/triple/quadruple combinations across 14 fault families. A separately worded Boolean reference detects source-state disagreements, and any synthetic reviewer/host PASS fails closed. Retained SHA-256 streams make campaigns reproducible. Exactly 1,471 distinct fault masks are preregistered and reused; ten million **case evaluations are not ten million unique source mutations**. Physical Git-committed mutants and the PR25 original source fixture are tested separately; no external target code is automatically executed.
+`python tools/verify_engineering_closure.py --repo . --revision HEAD --stress-10m --output /tmp/ekc-10m.json` executes ten seeds × one million bounded semantic vectors, preregistering all zero/single/pair/triple/quadruple combinations across 14 fault families. A separately worded Boolean reference detects source-state disagreements, and any synthetic reviewer/host PASS fails closed. Retained SHA-256 streams make campaigns reproducible. Exactly 1,471 distinct fault masks are preregistered and reused; ten million **case evaluations are not ten million unique source mutations**. Physical Git-committed mutants and the original Git source fixture are tested separately; no external target code is automatically executed.
 
 
 <a id="post-pr44-efficiency-without-evidence-promotion"></a>
@@ -93,16 +93,16 @@ existing `cora process-run --one-run --profile comprehensive` followed by
 `cora verify-process --one-run`; it does not add a second executor or
 claim that the 71 declared commands ran.
 
-PR43's **original-Git obligation delta** remains available through
+The **original-Git obligation delta** remains available through
 `tools/verify_engineering_closure.py --closure-base BASE_SHA --revision HEAD_SHA`.
-PR44's **separately implemented comparator** remains available through
+The **separately implemented comparator** remains available through
 `tools/independent_git_oracle.py --closure-report RECEIPT.json`.
 The two algorithms serve different trust boundaries and are optional for
 the normal One-Run review. A removed node, a rewritten claim or a self-reported
 PASS never counts as a verified closure. The CI comparison now uses the
-actual PR Git merge-base (or the preceding push commit), not the historical
-PR42 SHA. The duplicate PR39 test invocation is retired from engineering-debt
-CI; PR39 remains covered by the existing One-Run workflow.
+actual Git merge-base (or the preceding push commit), not a fixed historical
+SHA. The duplicate qualification test invocation is omitted from engineering-debt
+CI; the existing One-Run workflow retains coverage.
 
 **Efficiency proof is bounded:** inspect the exact PR diff for reduced active
 onboarding text, no new CLI command, no new DoD, no new workflow, and no lost

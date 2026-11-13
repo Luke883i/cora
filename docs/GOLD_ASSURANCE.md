@@ -70,7 +70,7 @@ A v2 target-owned profile adds exactly `schema: cora-portable-target/2`,
 oracle_sha256, witness_ids, depends_on`; every path/owner/oracle/witness must
 be rooted in the original Git/profile and each retained witness is consumed
 by exactly one claim. Scopes are SOURCE, BEHAVIOR and EXTERNAL. Native
-witnesses retain PR50 fields including `reported_outcome`:
+witnesses retain portable-profile fields including `reported_outcome`:
 `PASS_REPORTED_UNATTESTED`, `FAIL_REPORTED_UNATTESTED`,
 `SKIPPED_REPORTED_UNATTESTED`, or `NOT_RUN_REPORTED_UNATTESTED`.
 These are caller reports, never independent test verdicts.
@@ -94,15 +94,15 @@ These are caller reports, never independent test verdicts.
    `BLOCKED_INDEPENDENT_ORACLE_EXECUTION_AND_REVIEW`.
 5. **Replay and falsification:** same profile, original Git objects,
    retained witness bytes and optional HTML must reproduce exactly.
-   The PR51 native regression executes two distinct Git fixture targets,
+   The native regression executes two distinct Git fixture targets,
    twenty independent contract mutations, a physical oracle-source
    change, HTML/script injection, byte tamper, FAIL, SKIPPED and NOT_RUN.
 6. **Real public pilot:** the *existing* integrated One-Run CI analyzes
    exact historical Teddy and NILO commits, independently hashes each
    repository's native test file and emits a v2 Gold trace. Their native
    test execution remains **NOT_OBSERVED** because the source pilot
-   intentionally does not execute them. PR52 owns true
-   runner-produced browser/SQLite/HTTP/kinematic evidence integration.
+   intentionally does not execute them. Separately authorized native Gold
+   pilots observe Teddy Node and ICTC HTTP/SQLite; browser and remote controls remain unobserved.
 
 **Nonclaims:** no Gold bridge entry is a valid deletion permission; no
 caller-supplied PASS is native behavior proof. SHA-256 alone establishes
@@ -187,7 +187,7 @@ allowlisted explicit subprocess AND retained log AND exit and
 native-artifact checks AND 12 ICTC operations AND 7 denials AND
 byte replay AND one named Gold claim AND two non-promoted external
 controls AND zero self-issued release claims. Original source-only
-PR51/PR50 behavior remains backward compatible.
+Original portable-profile and source-only behavior remains backward compatible.
 
 **Efficiency:** local elapsed_ms is measured, but controlled
 engineering-hours savings against an alternative remain NOT_MEASURED.
