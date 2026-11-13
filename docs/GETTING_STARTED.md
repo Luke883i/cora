@@ -77,13 +77,13 @@ A **conversation is not a CORA runtime**. A chat can draft a plan or read a ZIP,
 - **Chat-only / METHOD_ONLY:** connecting GitHub in read mode permits planning, evidence questions and a proposed DoD; no local checkout, write permission, installation or fictitious runtime execution is needed. Use the [Project walkthrough](../README.md#use-cora-in-a-chatgpt-project--beginner-walkthrough).
 - **Engine / actual tests:** use a real, authorized local checkout of CORA and a target repository plus a Python runner. GitHub read permission alone is insufficient. Keep outputs outside the repository; no credentials, private chat transcripts or private source files belong in the portable ZIP by default.
 - Copy `examples/chat-step.example.json` to `/tmp/chat-step.json`; edit `session_id`, `intent`, `actions`, `falsifiers`, `roadmap`, `dod` and `gaps`. The sample is intentionally blocked pending an independent runtime/reviewer oracle.
-- From CORA's checkout, run:
+- From a shell with CORA-ENGINE installed, run against the **actual target checkout** (use `.` only if intentionally auditing CORA itself). This is a source dossier, not target-native test execution:
 
 ```sh
-cora process-run . --revision HEAD --one-run --profile comprehensive \
+cora process-run /path/to/target --revision TARGET_HEAD --one-run --profile comprehensive \
   --output /tmp/round.json --atlas-html /tmp/round.html \
   --chat-step /tmp/chat-step.json --chat-bundle /tmp/cora-session.zip
-cora verify-process /tmp/round.json --repo . --one-run \
+cora verify-process /tmp/round.json --repo /path/to/target --one-run \
   --atlas-html /tmp/round.html --chat-bundle /tmp/cora-session.zip
 ```
 
