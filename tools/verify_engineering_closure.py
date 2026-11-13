@@ -177,12 +177,12 @@ def structural_units(code: str, path: str, test_only: bool = False) -> list[dict
     return sorted(rows, key=lambda row: (row["line"], row["symbol"]))
 
 
-def static_test_consumers(repo: Path, sha: str, tests: list[str],
-                          modules: list[str]) -> list[tuple[str, str]]:
-    """Candidate import edges, not proof that a test exercised a behavior."""
+def static_python_consumers(repo: Path, sha: str, consumers: list[str],
+                            modules: list[str]) -> list[tuple[str, str]]:
+    """Bounded candidate imports from test/tool Python; not runtime behavior."""
     known = set(modules)
     edges: set[tuple[str, str]] = set()
-    for test_path in tests:
+    for test_path in consumers:
         syntax = ast.parse(source(repo, sha, test_path), filename=test_path)
         for node in ast.walk(syntax):
             candidates = []
@@ -205,11 +205,18 @@ def static_test_consumers(repo: Path, sha: str, tests: list[str],
     return sorted(edges)
 
 
+def static_test_consumers(repo: Path, sha: str, tests: list[str],
+                          modules: list[str]) -> list[tuple[str, str]]:
+    """Compatibility source graph for original test module consumers."""
+    return static_python_consumers(repo, sha, tests, modules)
+
+
 def contribution_index(paths: list[str], modules: list[str], tools: list[str],
                        tests: list[str], imports: list[tuple[str, str]],
                        atlas: dict, test_imports: list[tuple[str, str]] | None = None,
                        units: dict[str, list[dict]] | None = None,
-                       test_units: dict[str, list[dict]] | None = None) -> dict:
+                       test_units: dict[str, list[dict]] | None = None,
+                       tool_imports: list[tuple[str, str]] | None = None) -> dict:
     """Source contribution graph, NOT causal ablation or safe-deletion evidence.
 
     Every tracked path is accounted for. The directed import graph only records
@@ -248,6 +255,12 @@ def contribution_index(paths: list[str], modules: list[str], tools: list[str],
             raise ValueError("test import edge references missing source")
         by_test_import[target].add(consumer)
 
+    by_tool_import: dict[str, set[str]] = {src: set() for src in modules}
+    for consumer, target in (tool_imports or []):
+        if consumer not in tools_set or target not in modules_set:
+            raise ValueError("tool import edge references missing source")
+        by_tool_import[target].add(consumer)
+
     by_command: dict[str, set[str]] = {src: set() for src in modules}
     by_family: dict[str, set[str]] = {src: set() for src in modules}
     by_witness: dict[str, set[str]] = {src: set() for src in modules}
@@ -284,7 +297,9 @@ def contribution_index(paths: list[str], modules: list[str], tools: list[str],
                 state = "TRANSITIVE_CLI_IMPORT"
             else:
                 state = "NOT_OBSERVED_STATIC"
-            if by_family[path] == {"finite-models"}:
+            if path == entrypoint:
+                declared_role = "CLI_ENTRYPOINT_ORCHESTRATOR_SOURCE"
+            elif by_family[path] == {"finite-models"}:
                 declared_role = "FINITE_MODEL_ASSURANCE_DECLARED_NOT_RUNTIME_VALIDATED"
             elif by_command[path]:
                 declared_role = "CLI_COMMAND_SOURCE_DECLARED_NOT_RUNTIME_VALIDATED"
@@ -299,6 +314,7 @@ def contribution_index(paths: list[str], modules: list[str], tools: list[str],
                 "declared_commands": sorted(by_command[path]),
                 "declared_test_witnesses": sorted(by_witness[path]),
                 "static_test_import_candidates": sorted(by_test_import[path]),
+                "static_tool_import_candidates": sorted(by_tool_import[path]),
                 "consumer_status": "STATIC_CANDIDATES_DYNAMIC_UNKNOWN",
                 "causal_effect": "NOT_MEASURED",
                 "consolidation": "NOT_AUTHORIZED_UNTESTED",
@@ -339,6 +355,9 @@ def contribution_index(paths: list[str], modules: list[str], tools: list[str],
         "test_case_declarations": sum(len(v) for v in (test_units or {}).values()),
         "modules_with_symbol_census": len(units or {}),
         "tests_with_symbol_census": len(test_units or {}),
+        "static_tool_import_edges": sum(len(values) for values in by_tool_import.values()),
+        "modules_with_static_tool_import_candidate": sum(
+            bool(by_tool_import[path]) for path in modules),
         "static_test_import_edges": sum(len(values) for values in by_test_import.values()),
         "modules_with_static_test_import_candidate": sum(
             bool(by_test_import[path]) for path in modules),
@@ -452,6 +471,7 @@ def analyze(repo: Path, revision: str = "HEAD") -> dict:
             "not a stable API")):
         raise ValueError("current release source identity / external gate missing")
     test_edges = static_test_consumers(repo, sha, tests, modules)
+    tool_edges = static_python_consumers(repo, sha, tools, modules)
     module_units = {
         path: structural_units(source(repo, sha, path), path) for path in modules
     }
@@ -461,7 +481,7 @@ def analyze(repo: Path, revision: str = "HEAD") -> dict:
     }
     contribution = contribution_index(
         paths, modules, tools, tests, imports, atlas,
-        test_edges, module_units, test_units)
+        test_edges, module_units, test_units, tool_edges)
     report = {
         "schema": SCHEMA, "commit": sha, "tree": tree_sha,
         "source": "ORIGINAL_COMMITTED_GIT", "authority": "NONE",
