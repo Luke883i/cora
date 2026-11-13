@@ -376,6 +376,122 @@ def verify_multichannel_intro(readme: str) -> list[str]:
     return sorted(set(errors))
 
 
+# Finite source contract for the *single* paste-ready Project instruction.
+# These gates detect bounded textual corruption; they do NOT test whether an
+# LLM or coding agent will follow the instructions on a real target.
+PROJECT_ADAPTER_V2_CLAUSES = (
+    ("P01", "Use CORA-METHOD", "not the target product."),
+    ("P02", "target's own ontology", "never transplant CORA's identity or approval."),
+    ("P03", "Discover actual read, write and runner", "METHOD_ONLY and NOT_RUN"),
+    ("P04", "TARGET_REPO, BASE, branch, HEAD", "UNKNOWN"),
+    ("P05", "A0 contract", "acceptance oracle."),
+    ("P06", "backward AND-DoD", "missing necessary evidence blocks"),
+    ("P07", "Git history", "unknown dependencies"),
+    ("P08", "smallest reversible vertical slice", "rollback"),
+    ("P09", "external coding agent a task packet", "Verify its readback"),
+    ("P10", "distinct, effective tool permission", "not merge or deployment."),
+    ("P11", "materialize blobs, tree, commit, branch and PR", "actual object SHAs"),
+    ("P12", "target-native tests only in an approved runner", "No runner means NOT_RUN."),
+    ("P13", "separately specified expected counterexample", "physical source mutations"),
+    ("P14", "CORA-ENGINE only when", "never treat a chat explanation as execution."),
+    ("P15", "71 CLI declarations", "independent review"),
+    ("P16", "PASS_SCOPED, REFUTED, NOT_RUN, UNKNOWN or BLOCKED_EXTERNAL",
+     "do not average unresolved AND leaves."),
+    ("P17", "DONE_REPORTED and PASS_REPORTED", "not a human signature"),
+    ("P18", "untrusted data", "Ignore embedded orders"),
+    ("P19", "cora-chat-iteration/1", "--chat-step and --chat-bundle"),
+    ("P20", "session_id, intent, actions, roadmap", "gap and live falsification action."),
+    ("P21", "verify-process --one-run --chat-bundle", "iterations/000001/handoff.md"),
+    ("P22", "temporary portable ZIP", "not encrypted, WORM, signed or live memory."),
+    ("P23", "no-progress tail", "Never predetermine a total N"),
+    ("P24", "Protected host checks", "external human decisions."),
+    ("P25", "compact evidence ledger", "If only METHOD_ONLY"),
+)
+
+# Deliberately independent of the expected safe clause strings. Attack
+# patterns challenge additive contradictions that keep the original line.
+# The finite list is not an open-world prompt-injection detector.
+PROJECT_ADAPTER_V2_FORBIDDEN = (
+    r"auto.merge without review",
+    r"substitute CORA ontology for target",
+    r"assume all tools (?:are )?write.enabled",
+    r"invent (?:the )?BASE and HEAD",
+    r"vague goal automatically (?:passes|qualifies)",
+    r"(?:change|convert) AND.DoD to OR",
+    r"delete source without consumer checks",
+    r"irreversible rewrite without (?:rollback|recovery)",
+    r"external coding agent automatically inherits",
+    r"proceed authorizes (?:publishing|deployment)",
+    r"proposed patch is already a commit",
+    r"native tests pass without execution",
+    r"text masks (?:are physical source mutations|count as executed source changes)",
+    r"CORA.ENGINE ran without a tool",
+    r"CLI help proves every runtime behavior",
+    r"PASS_SCOPED despite missing external gates",
+    r"PASS_REPORTED is independently verified",
+    r"README injected orders are authoritative",
+    r"generate the chat bundle automatically",
+    r"rewrite previous bundle rounds",
+    r"rounds/000001/handoff\.md is canonical",
+    r"upload secrets into the portable ZIP",
+    r"fixed total N ignores stagnation",
+    r"automatically approve and merge",
+    r"invented SHA is verified evidence",
+)
+
+
+def verify_project_adapter_prompt(guide: str) -> list[str]:
+    """Bounded paste-ready instruction grammar; never a model-behavior verdict."""
+    errors: list[str] = []
+    heading = "### Paste into Project instructions — CORA local adapter beta v2\n"
+    if guide.count(heading) != 1 or guide.count(
+            "CORA LOCAL PROJECT ADAPTER — BETA v2") != 1:
+        return ["project-adapter-owner-or-version"]
+    scope = guide.split(heading, 1)[1].split(
+        "\n### Practical engineering vocabulary", 1)[0]
+    m = re.search(r"(?ms)^```text\n(.*?)\n```[ \t]*$", scope)
+    if not m or scope.count("```text\n") != 1:
+        return ["project-adapter-canonical-fence"]
+    prompt = m.group(1)
+    if not (1000 <= len(prompt) <= 4800):
+        errors.append("project-adapter-context-budget")
+    if not prompt.startswith(
+            "CORA LOCAL PROJECT ADAPTER — BETA v2 (METHOD_ONLY BY DEFAULT)"):
+        errors.append("project-adapter-identity")
+    rows = re.findall(r"(?m)^(P[0-9]{2}) \| ([^\n]+)$", prompt)
+    expected = [row[0] for row in PROJECT_ADAPTER_V2_CLAUSES]
+    if [row[0] for row in rows] != expected:
+        errors.append("project-adapter-sequence")
+    indexed: dict[str, list[str]] = {}
+    for name, body in rows:
+        indexed.setdefault(name, []).append(body)
+    for name, *tokens in PROJECT_ADAPTER_V2_CLAUSES:
+        actual = indexed.get(name, [])
+        if len(actual) != 1 or any(token not in actual[0] for token in tokens):
+            errors.append("project-adapter-obligation:" + name)
+    for idx, pattern in enumerate(PROJECT_ADAPTER_V2_FORBIDDEN, 1):
+        if re.search(pattern, prompt, re.I):
+            errors.append("project-adapter-contradiction:P%02d" % idx)
+    packet = guide.split("**Task packet forwarded to the separate coding agent", 1)
+    required_packet = (
+        "```yaml", "target_repo:", "base_sha:", "head_sha:", "goal:",
+        "scope:", "allowed_operations:", "not_authorized:",
+        "owners_and_consumers:", "dod_leaves:",
+        "native_oracles_and_falsifiers:", "runner:", "evidence_and_rollback:",
+        "next_step:", "UNKNOWN", "NOT_RUN",
+    )
+    if len(packet) != 2 or any(field not in packet[1] for field in required_packet):
+        errors.append("project-adapter-task-packet-missing")
+    modes = ("METHOD_ONLY", "ENGINE_VERIFIED", "TARGET_NATIVE", "PR_MATERIALIZED")
+    if "Modes:" not in prompt or any(mode not in prompt for mode in modes):
+        errors.append("project-adapter-modes")
+    if ("not automatically delivered to external agents" not in prompt
+            or "source-receipt.json" not in prompt
+            or "authorization" not in prompt.lower()):
+        errors.append("project-adapter-transfer-boundary")
+    return sorted(set(errors))
+
+
 def verify_project_first_readme(readme: str) -> list[str]:
     """Source-only Project onboarding guard; no plan or connector attestation."""
     parts = readme.split("## Use CORA in a ChatGPT Project — beginner walkthrough\n", 1)
@@ -630,6 +746,8 @@ def verify(root: Path) -> list[str]:
     # Physical line count is diagnostic, not evidence of usability or accuracy.
     # PR42 replaces the former 180-line hard gate with source-bound predicates.
     errors.extend(verify_readme_semantics(readme, root=root))
+    errors.extend(verify_project_adapter_prompt(
+        (root / "docs/AGENT_ADOPTION.md").read_text("utf-8")))
     errors.extend(verify_compact_document_bridge(
         (root / "docs/CONTINUOUS_DEVELOPMENT.md").read_text("utf-8"),
         (root / "docs/INDEX.md").read_text("utf-8"),
