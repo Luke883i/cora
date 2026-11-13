@@ -470,8 +470,10 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         c = "c" * 40
         before = {"src/cora/cli.py": a, "src/cora/helper.py": b}
         unchanged = ekc.engine_source_universe(before, before)
-        self.assertEqual(unchanged["source_byte_identity"],
+        self.assertEqual(unchanged["source_oid_identity"],
                          "PASS_SCOPED_EXHAUSTIVE")
+        self.assertEqual(unchanged["source_byte_identity"],
+                         "NOT_ATTESTED_BY_OIDS_ONLY")
         self.assertEqual(unchanged["identical_blobs"], unchanged["denominator"])
         self.assertEqual(unchanged["accounted_paths"], unchanged["denominator"])
         self.assertEqual(unchanged["denominator"], 2)
@@ -486,7 +488,9 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         ):
             with self.subTest(expected=expected):
                 observed = ekc.engine_source_universe(before, change)
-                self.assertEqual(observed["source_byte_identity"], "REFUTED")
+                self.assertEqual(observed["source_oid_identity"], "REFUTED")
+                self.assertEqual(observed["source_byte_identity"],
+                                 "NOT_ATTESTED_BY_OIDS_ONLY")
                 self.assertEqual(observed["accounted_paths"], len(
                     set(before) | set(change)))
                 self.assertIn(expected,
@@ -513,6 +517,8 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         self.assertEqual(universe["changed_blobs"], 0)
         self.assertEqual(universe["added_blobs"], 0)
         self.assertEqual(universe["removed_blobs"], 0)
+        self.assertEqual(universe["source_oid_identity"],
+                         "PASS_SCOPED_EXHAUSTIVE")
         self.assertEqual(universe["source_byte_identity"],
                          "PASS_SCOPED_EXHAUSTIVE")
         self.assertEqual(universe["content_readback_paths"], universe["denominator"])
@@ -553,6 +559,7 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
                 "mutant: engine source blob identity regression")
             changed = ekc.analyze(clone, "HEAD", equivalence_base=base)
             index = changed["engine_source_universe"]
+            self.assertEqual(index["source_oid_identity"], "REFUTED")
             self.assertEqual(index["source_byte_identity"], "REFUTED")
             self.assertEqual(index["changed_blobs"], 1)
             self.assertEqual(index["identical_blobs"] + index["changed_blobs"],
