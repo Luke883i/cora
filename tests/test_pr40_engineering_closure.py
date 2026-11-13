@@ -528,6 +528,8 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         fake["engine_source_universe"]["rows"][0]["before_oid"] = "f" * 40
         with self.assertRaisesRegex(ValueError, "does not replay"):
             ekc.verify_report(ROOT, fake)
+        with self.assertRaisesRegex(ValueError, "two distinct Git revisions"):
+            ekc.git_engine_source_universe(ROOT, self.sha, self.sha)
         with self.assertRaisesRegex(ValueError, "ancestor"):
             ekc.git_engine_source_universe(ROOT, self.sha, base)
 
@@ -564,6 +566,23 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             self.assertEqual(index["full_runtime_behavior_equivalence"],
                              "NOT_ATTESTED")
             self.assertTrue(ekc.verify_report(clone, changed))
+
+    def test_nested_engine_source_cannot_escape_finite_universe_denominator(self):
+        base = "57dd5c4fb6317d9a9e951fcbebac9c7aa5560b6f"
+        with tempfile.TemporaryDirectory() as folder:
+            clone = Path(folder) / "source"
+            git(ROOT, "clone", "--no-local", "-q", "--", str(ROOT), str(clone))
+            git(clone, "checkout", "-q", self.sha)
+            nested = clone / "src/cora/hidden/runtime.py"
+            nested.parent.mkdir(parents=True)
+            nested.write_text("def witness():\n    return True\n", "utf-8")
+            git(clone, "add", "src/cora/hidden/runtime.py")
+            git(clone, "-c", "user.name=fixture", "-c",
+                "user.email=fixture@example.invalid", "commit", "-qm",
+                "mutant: new nested engine module outside original flat atlas")
+            with self.assertRaisesRegex(ValueError,
+                    "nested engine Python module outside declared finite universe"):
+                ekc.git_engine_source_universe(clone, base, "HEAD")
 
     def test_standalone_source_universe_cli_and_exact_report_replay(self):
         base = "57dd5c4fb6317d9a9e951fcbebac9c7aa5560b6f"
