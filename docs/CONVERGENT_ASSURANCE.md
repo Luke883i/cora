@@ -5,6 +5,7 @@
 **Operational use:** Correlate intent, Git change, unknown dependencies and negative source tests.
 **Evidence:** Reticulum implementation, contextual policies, source receipts and oracles.
 **Limits:** Borrowed methodologies and seeded models are not independent standards certifications.
+**Applicable current DoD:** [convergent R1-R4](DOD_PR20_CONVERGENCE.md) specifies scoped obligations and open evidence; its existence is not proof that any gate passed.
 
 
 ## Product/software/repository intent

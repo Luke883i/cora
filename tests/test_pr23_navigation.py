@@ -645,7 +645,7 @@ class ProgressiveDocumentationTests(unittest.TestCase):
                                  "CI green is independent review (" + token +
                                  ").\n\n## Final Experimental Baseline")
                 elif family == 14:
-                    m = mutation(src, "Current source is this Git revision",
+                    m = mutation(src, "Verify the exact checked-out Git revision",
                                  "Current source is from an unmerged draft (" + token + ")")
                 elif family == 15:
                     m = mutation(src,

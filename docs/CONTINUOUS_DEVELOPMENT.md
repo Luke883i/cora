@@ -5,6 +5,7 @@
 **Operational use:** Pin original Git BASE/HEAD, run relevant checks and verify actual merge revision.
 **Evidence:** Source policies, continuous.py receipts, separately executed CI and tests.
 **Limits:** A source PASS does not enforce GitHub branch protection or human decisions.
+**Applicable current DoD:** [change-governance](DOD_CONTINUOUS.md) specifies scoped obligations and open evidence; its existence is not proof that any gate passed.
 
 
 **Status:** v1.experimental, evidence and review framework, **not** a coding assistant or a GitHub administrator. The supported package remains `cora-audit` with one CLI, `cora`. The source of truth is a Git commit; CI and review attestations require separately trusted GitHub controls.

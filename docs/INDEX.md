@@ -7,7 +7,7 @@
 **Limits:** Archived ADRs are nonnormative and links do not certify reader comprehension.
 
 
-Start at the [README](../README.md): a source-scoped product promise, a three-step engineering cycle, direct ChatGPT Project setup, eight declared CLI families and scope-limited target examples. This index routes readers by task, method and evidence class; it is navigation, not a release authority or an independent witness.
+Start at the [README](../README.md): a source-scoped product promise, a bounded engineering cycle, direct ChatGPT Project setup, enterprise evaluation boundary and scope-limited target examples. This index routes readers by task, method and evidence class; it is navigation, not a release authority or an independent witness.
 
 ## How to navigate
 
@@ -22,7 +22,7 @@ The [README](../README.md) is the **compressed public front door**: outcome, met
 - **Comparing CORA with established engineering methods:** [Method crosswalk](CONVERGENT_ASSURANCE.md#method-crosswalk--borrowed-perspectives-not-full-implementations) → [Architecture](ARCHITECTURE.md) → [Evidence limits](DOD_V1_EXPERIMENTAL.md).
 - **Reviewing a PR or release:** [Continuous development](CONTINUOUS_DEVELOPMENT.md) → [Governance](../GOVERNANCE.md) → [Release procedure](RELEASE.md).
 - **Looking for syntax and inputs:** [CLI reference](CLI_REFERENCE.md), [committed ontology](../cora.ontology.json), [role registry](../cora.artifact-roles.json).
-- **Censusing all implemented command surfaces:** [Capability atlas](../.cora/assurance/capability-atlas.json) → [CLI reference](CLI_REFERENCE.md) → [architecture](ARCHITECTURE.md) → [capability DoD](../.cora/contracts/dod/capability-dod.json). These are source/test witnesses, not behavior certification.
+- **Censusing all implemented command surfaces:** The eight declared CLI families are method groupings, not eight independent engines; use the [Capability atlas](../.cora/assurance/capability-atlas.json) → [CLI reference](CLI_REFERENCE.md) → [architecture](ARCHITECTURE.md) → [capability DoD](../.cora/contracts/dod/capability-dod.json). These are source/test witnesses, not behavior certification.
 - **Tracing the five synergic goals:** [Convergent assurance](CONVERGENT_ASSURANCE.md) → [five-goal reticulum](../.cora/contracts/dod/five-synergies-dod.json) → [preseeded semantic mutants](../.cora/fixtures/five-synergies-mutants.json). Results are source-scoped; runtime and approval remain separately governed.
 - **Running integrated source-to-document convergence:** [Convergent assurance service](CONVERGENT_ASSURANCE.md) → [typed lattice](../.cora/contracts/profiles/type-assurance-profile.json) → [canonical CLI](CLI_REFERENCE.md). Original software owners remain responsible; model-supplied hypotheses are untrusted.
 - **Typed source checks:** [Typed assurance crosswalk](../.cora/contracts/profiles/type-assurance-profile.json) → [convergence method](CONVERGENT_ASSURANCE.md) → [source verifier](../tools/verify_type_assurance.py). These are bounded source checks, not certifications.
@@ -37,7 +37,7 @@ The [README](../README.md) is the **compressed public front door**: outcome, met
 
 ## Current documentation ownership and retention
 
-The [README](../README.md) answers *what, for whom, first run and limits*. [Getting started](GETTING_STARTED.md) contains the shortest reproducible path; [architecture](ARCHITECTURE.md) owns current module/data/evidence boundaries; [continuous development](CONTINUOUS_DEVELOPMENT.md) owns developer and agent operation; [release](RELEASE.md) owns operator gates. [CHANGELOG](../CHANGELOG.md) and original Git revisions own the implementation chronology.
+The [README](../README.md) answers *what, for whom, first run, limits and the enterprise evaluation boundary*. [Getting started](GETTING_STARTED.md) contains the shortest reproducible path; [architecture](ARCHITECTURE.md) owns current module/data/evidence boundaries; [continuous development](CONTINUOUS_DEVELOPMENT.md) owns developer and agent operation; [release](RELEASE.md) owns operator gates. [CHANGELOG](../CHANGELOG.md) and original Git revisions own the implementation chronology.
 
 **Retention rule:** the 17 `HISTORICAL` Markdown records are immutably referenced by the [registry](documentation-registry.json), historical source checks and this index. Other current documents also have declared routes or contract consumers. No whole-document deletion has a sufficiently demonstrated nonconsumer/retention oracle; therefore the present source tree deletes **zero archival files**. Superseded implementation chronology belongs in original Git, not rewritten into new historical "truth". A review may later retire a source only after evidence of consumers, alternative reachability and reversible migration.
 

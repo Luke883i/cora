@@ -41,6 +41,105 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
         self.assertEqual(actual["external_acceptance"], "BLOCKED_EXTERNAL")
         self.assertEqual(actual["authority"], "NONE")
 
+    def test_live_to_historical_links_require_local_nonoperative_context(self):
+        """A discoverable archive cannot silently become today's procedure."""
+        import json
+        registry = json.loads((ROOT / "docs/documentation-registry.json").read_text("utf-8"))
+        statuses = {d["path"]: d["status"] for d in registry["documents"]}
+        checker = DOC.historical_authority_issues
+        for path in ("docs/ARCHITECTURE.md", "docs/FILE_LAB.md",
+                     "docs/AI_CODE_ASSURANCE.md", "CONTRIBUTING.md"):
+            text = (ROOT / path).read_text("utf-8")
+            self.assertEqual(checker(path, text, statuses), [], path)
+
+        bad_routes = (
+            ("docs/FILE_LAB.md",
+             "See [standards audit](STANDARDS_MAINTENANCE_AUDIT.md)."),
+            ("docs/ARCHITECTURE.md",
+             "Use the [current DoD](DOD.md) for approval."),
+            ("docs/AI_CODE_ASSURANCE.md",
+             "Current required [agent audit](archive/audits/AUDIT_PR18_MAIN.md)."),
+            ("docs/AI_CODE_ASSURANCE.md",
+             "Required [agent audit](archive/audits/AUDIT_PR18_MAIN.md) now."),
+        )
+        for path, bad in bad_routes:
+            with self.subTest(path=path):
+                self.assertTrue(any(x.startswith("historical-authority-ambiguous:")
+                                    for x in checker(path, bad, statuses)))
+        self.assertEqual(checker(
+            "docs/FILE_LAB.md",
+            "For provenance only, see the [historical standards audit]"
+            "(STANDARDS_MAINTENANCE_AUDIT.md).", statuses), [])
+        self.assertEqual(checker(
+            "docs/FILE_LAB.md",
+            "```md\n[current](STANDARDS_MAINTENANCE_AUDIT.md)\n```", statuses), [])
+        self.assertEqual(checker(
+            "docs/INDEX.md",
+            "- [OLD DOD](DOD.md) — HISTORICAL · DOD", statuses), [])
+
+        report = DOC.census_markdown(ROOT)
+        self.assertEqual(report["counts"]["active_method_to_current_dod_edges"],
+                         sum(row["outbound_current_dod"]
+                             for row in report["documents"]
+                             if row["status"] in ("CURRENT", "SCOPED_CURRENT")
+                             and row["kind"] == "METHOD"))
+        self.assertEqual(report["counts"]["ambiguous_historical_authority"], 0,
+                         report["errors"])
+        self.assertEqual(report["counts"]["current_to_historical_edges"],
+                         sum(r["outbound_historical"] for r in report["documents"]
+                             if r["status"] in ("CURRENT", "SCOPED_CURRENT")))
+
+    def test_local_fragment_links_are_not_invisible_to_the_graph(self):
+        self.assertEqual(DOC.resolve("README.md", "#existing-heading"),
+                         ("README.md", "existing-heading"))
+        source = (ROOT / "README.md").read_text("utf-8")
+        bad = DOC.census_markdown(ROOT, overrides={
+            "README.md": source + "\n[broken local target](#unobserved-anchor)\n"
+        })
+        self.assertEqual(bad["status"], "REFUTED")
+        self.assertTrue(any(e.startswith(
+            "broken-anchor:README.md:README.md#unobserved-anchor")
+            for e in bad["errors"]), bad["errors"])
+        self.assertIn("worktree-git-parity:README.md", bad["errors"])
+        self.assertEqual(DOC.census_markdown(ROOT)["counts"]["broken_local_links"], 0)
+
+    def test_active_methods_have_direct_scoped_dod_routes(self):
+        """Method -> DoD ownership is a link, not proof that a DoD passes."""
+        import json
+        registry = json.loads((ROOT / "docs/documentation-registry.json").read_text("utf-8"))
+        statuses = {row["path"]: row["status"] for row in registry["documents"]}
+        owners = {
+            "docs/CONTINUOUS_DEVELOPMENT.md": "docs/DOD_CONTINUOUS.md",
+            "docs/ENGINEERING_DEBT.md": "docs/DOD_ENGINEERING_DEBT.md",
+            "docs/HOLISTIC_FORENSICS.md": "docs/DOD_HOLISTIC_FORENSICS.md",
+            "docs/GOLD_ASSURANCE.md": "docs/DOD_PR19_GOLD.md",
+            "docs/CONVERGENT_ASSURANCE.md": "docs/DOD_PR20_CONVERGENCE.md",
+            "docs/ARTIFACT_SEMANTICS.md": "docs/DOD_V1_EXPERIMENTAL.md",
+            "docs/RELEASE.md": "docs/DOD_RELEASE_READINESS.md",
+        }
+        def targets(path, body):
+            return [DOC.resolve(path, link)
+                    for link in DOC.markdown_links(body)]
+        scoped_rows = {
+            row["path"]: row for row in DOC.census_markdown(ROOT)["documents"]
+        }
+        for page, dod in owners.items():
+            with self.subTest(page=page):
+                self.assertEqual(statuses[page], "CURRENT")
+                self.assertIn(statuses[dod], ("CURRENT", "SCOPED_CURRENT"))
+                body = (ROOT / page).read_text("utf-8")
+                self.assertIn("**Applicable current DoD:**", body)
+                self.assertIn((dod, ""), targets(page, body))
+                route = scoped_rows[page]
+                self.assertGreaterEqual(route["outbound_current_dod"], 1)
+                # A plausible local link to the INDEX does not discharge
+                # a direct owner route; the negative source mutant must fail.
+                relative = dod.rsplit("/", 1)[-1]
+                mutant = body.replace("(" + relative + ")", "(INDEX.md)", 1)
+                self.assertNotEqual(mutant, body)
+                self.assertNotIn((dod, ""), targets(page, mutant))
+                self.assertIn(("docs/INDEX.md", ""), targets(page, mutant))
+
     def test_readme_evaluation_budget_and_source_reality(self):
         readme = (ROOT / "README.md").read_text("utf-8")
         index = (ROOT / "docs/INDEX.md").read_text("utf-8")

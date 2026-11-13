@@ -21,7 +21,7 @@ Intent → acceptance graph → reversible code slice → adversarial tests
 
 **Recommended use:** inspect an authorized checkout or review one bounded change. **Audience and conditions:** CTOs, developers, reviewers and coding agents; Python 3.11+, Git and authorized execution tools. **Open source license:** [MIT](LICENSE).
 
-**Current status:** experimental `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **Document status:** CURRENT. **Current scope:** Git source review. **Operational use:** inspect commits. **Evidence:** Git and scoped tests. **Limits:** `BLOCKED_EXTERNAL`. Current source is this Git revision; earlier prerelease candidate `v1.0.0a4` remains a draft. **Category:** agent-agnostic engineering assurance.
+**Current status:** experimental `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **Document status:** CURRENT. **Current scope:** Git source review. **Operational use:** inspect commits. **Evidence:** Git and scoped tests. **Limits:** `BLOCKED_EXTERNAL`. Verify the exact checked-out Git revision rather than relying on an earlier prerelease candidate or a README version string. **Category:** agent-agnostic engineering assurance.
 
 ## First five minutes — Quickstart
 
@@ -146,6 +146,12 @@ The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) di
 
 [Continuous development](docs/CONTINUOUS_DEVELOPMENT.md) · [Convergent assurance](docs/CONVERGENT_ASSURANCE.md) · [Documentation DoD](docs/DOCUMENTATION_DOD.md) · [Claim register](.cora/assurance/documentation-proofs.json) · [Verifier](tools/verify_claim_evidence.py).
 </details>
+
+## Enterprise evaluation boundary
+
+**Candidate for evaluation, not enterprise-qualified.** Use CORA in an authorized isolated checkout, pin Git, replay source receipts and record native target tests separately. Production or high-impact adoption requires organization-owned behavioral oracles, security assessment, effective host controls, rollback, supply-chain attestations and independent review; none is certified by CORA. See [release](docs/RELEASE.md) and [governance](GOVERNANCE.md).
+
+**Decision rule:** `PASS_SCOPED` covers only its tested claim; `NOT_RUN` and `BLOCKED_EXTERNAL` remain open regardless of synthetic test counts. Unknown ownership, authorization or independent evidence blocks stronger claims.
 
 ## Operating boundaries
 
