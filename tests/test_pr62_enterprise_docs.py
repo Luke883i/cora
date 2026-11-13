@@ -41,6 +41,47 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
         self.assertEqual(actual["external_acceptance"], "BLOCKED_EXTERNAL")
         self.assertEqual(actual["authority"], "NONE")
 
+    def test_live_to_historical_links_require_local_nonoperative_context(self):
+        """A discoverable archive cannot silently become today's procedure."""
+        import json
+        registry = json.loads((ROOT / "docs/documentation-registry.json").read_text("utf-8"))
+        statuses = {d["path"]: d["status"] for d in registry["documents"]}
+        checker = DOC.historical_authority_issues
+        for path in ("docs/ARCHITECTURE.md", "docs/FILE_LAB.md",
+                     "docs/AI_CODE_ASSURANCE.md", "CONTRIBUTING.md"):
+            text = (ROOT / path).read_text("utf-8")
+            self.assertEqual(checker(path, text, statuses), [], path)
+
+        bad_routes = (
+            ("docs/FILE_LAB.md",
+             "See [standards audit](STANDARDS_MAINTENANCE_AUDIT.md)."),
+            ("docs/ARCHITECTURE.md",
+             "Use the [current DoD](DOD.md) for approval."),
+            ("docs/AI_CODE_ASSURANCE.md",
+             "Current required [agent audit](archive/audits/AUDIT_PR18_MAIN.md)."),
+        )
+        for path, bad in bad_routes:
+            with self.subTest(path=path):
+                self.assertTrue(any(x.startswith("historical-authority-ambiguous:")
+                                    for x in checker(path, bad, statuses)))
+        self.assertEqual(checker(
+            "docs/FILE_LAB.md",
+            "For provenance only, see the [historical standards audit]"
+            "(STANDARDS_MAINTENANCE_AUDIT.md).", statuses), [])
+        self.assertEqual(checker(
+            "docs/FILE_LAB.md",
+            "```md\\n[current](STANDARDS_MAINTENANCE_AUDIT.md)\\n```", statuses), [])
+        self.assertEqual(checker(
+            "docs/INDEX.md",
+            "- [OLD DOD](DOD.md) — HISTORICAL · DOD", statuses), [])
+
+        report = DOC.census_markdown(ROOT)
+        self.assertEqual(report["counts"]["ambiguous_historical_authority"], 0,
+                         report["errors"])
+        self.assertEqual(report["counts"]["current_to_historical_edges"],
+                         sum(r["outbound_historical"] for r in report["documents"]
+                             if r["status"] in ("CURRENT", "SCOPED_CURRENT")))
+
     def test_readme_evaluation_budget_and_source_reality(self):
         readme = (ROOT / "README.md").read_text("utf-8")
         index = (ROOT / "docs/INDEX.md").read_text("utf-8")

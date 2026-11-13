@@ -62,6 +62,47 @@ def markdown_links(content: str) -> list[str]:
     return output
 
 
+def historical_authority_issues(
+    path: str, content: str, statuses: dict[str, str]
+) -> list[str]:
+    """Detect live prose that routes to archived authority as though current.
+
+    Source-text heuristic, not proof of reader interpretation. INDEX is the
+    intentionally labeled archive catalog. Fenced code is not a navigation
+    instruction; historical links in explanatory prose need local context.
+    """
+    if statuses.get(path) not in ("CURRENT", "SCOPED_CURRENT") or path == "docs/INDEX.md":
+        return []
+    issues: list[str] = []
+    inside, marker = False, ""
+    for number, line in enumerate(content.splitlines(), 1):
+        fence = CODE_FENCE.match(line)
+        if fence:
+            kind = fence.group(1)[0]
+            if not inside:
+                inside, marker = True, kind
+            elif kind == marker:
+                inside, marker = False, ""
+            continue
+        if inside:
+            continue
+        for link in LINK.finditer(line):
+            target = resolve(path, link.group(1).strip("<>"))
+            if target is None or statuses.get(target[0]) != "HISTORICAL":
+                continue
+            context = line[max(0, link.start()-110): link.end()+110]
+            if not re.search(
+                r"\\b(?:historical|historiographic|archived?|earlier|legacy|"
+                r"original|source record|retrospective)\\b", context, re.I
+            ):
+                issues.append(
+                    "historical-authority-ambiguous:" + path + ":" +
+                    str(number) + ":" + target[0]
+                )
+    return issues
+
+
+
 def resolve(base: str, href: str) -> tuple[str, str] | None:
     if href.startswith(("#", "https://", "http://", "mailto:", "tel:")):
         return None
@@ -745,7 +786,18 @@ def census_markdown(root: Path, *, revision: str = "HEAD",
                                     else "SOURCE_CHECKED",
             "interpretation": "MACHINE_SOURCE_HEURISTIC_NOT_HUMAN_COMPREHENSION",
         })
+    statuses = {path: entry["status"] for path, entry in registered.items()}
+    for path, content in bodies.items():
+        errors.extend(historical_authority_issues(path, content, statuses))
     for row in rows:
+        row["outbound_historical"] = sum(
+            statuses.get(dest) == "HISTORICAL"
+            for dest, _ in references[row["path"]]
+        )
+        row["outbound_active"] = sum(
+            statuses.get(dest) in ("CURRENT", "SCOPED_CURRENT")
+            for dest, _ in references[row["path"]]
+        )
         row["inbound"] = sum(sum(1 for dest, _ in edges if dest == row["path"])
                              for edges in references.values())
         # An index entry is discoverability, not proof of operational use.
@@ -774,6 +826,12 @@ def census_markdown(root: Path, *, revision: str = "HEAD",
             "broken_local_links": sum(x.startswith(("broken-link:", "broken-anchor:"))
                                       for x in errors),
             "missing_current_contracts": sum(x.startswith("standalone-") for x in errors),
+            "ambiguous_historical_authority": sum(
+                x.startswith("historical-authority-ambiguous:") for x in errors),
+            "current_to_historical_edges": sum(
+                row["outbound_historical"] for row in rows
+                if row["status"] in ("CURRENT", "SCOPED_CURRENT")),
+
             "original_git_parity": sum(x["source_parity"] for x in rows),
             "edges": sum(x["outbound_local"] for x in rows),
             "active_index_only": sum(x["evaluation_route"] == "INDEX_ONLY_REVIEW" for x in rows),
