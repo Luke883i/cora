@@ -149,7 +149,7 @@ The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) di
 
 ## Enterprise evaluation boundary
 
-**Enterprise evaluation candidate, not enterprise-qualified.** **Product:** `cora` scope defined; independent user acceptance open. **Software:** `cora-engine` and `cora-release-verification` source tested, not a stable supported release. **Repository:** Git, contracts and CI exist; effective host rules and non-author review are unverified. Adoption needs real target oracles, isolation, security/support commitments, provenance, rollback and accountable human acceptance. [Formal three-boundary DoD](docs/DOD_RELEASE_READINESS.md) · [release](docs/RELEASE.md) · [governance](GOVERNANCE.md).
+**Enterprise evaluation candidate, not enterprise-qualified.** **Product:** `cora` scope defined; independent user acceptance open. **Software:** `cora-engine` and `cora-release-verification` source tested, without a supported release. **Repository:** Git, contracts and CI exist; effective host rules and non-author review are unverified. Adoption needs real target oracles, isolation, security/support commitments, provenance, rollback and accountable human acceptance. [Formal three-boundary DoD](docs/DOD_RELEASE_READINESS.md) · [release](docs/RELEASE.md) · [governance](GOVERNANCE.md).
 
 **Decision rule:** `PASS_SCOPED` covers only measured scope; `NOT_RUN` and `BLOCKED_EXTERNAL` cannot be converted into approval.
 
