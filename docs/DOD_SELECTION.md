@@ -7,7 +7,7 @@
 **Limits:** No universal dead-code proof or automatic safe deletion.
 
 
-**Baseline:** CORA v1.experimental after merged PR-10. **Decision:** selection means **human investigation triage**, not proof of globally dead code or authority for deletion. A file is a versioned Git artifact with potentially overlapping software, test, verifier, workflow and retention roles. Absence of a parsed edge is not absence of a dependency.
+**Baseline:** CORA's current experimental source-level contract. **Decision:** selection means **human investigation triage**, not proof of globally dead code or authority for deletion. A file is a versioned Git artifact with potentially overlapping software, test, verifier, workflow and retention roles. Absence of a parsed edge is not absence of a dependency.
 
 ## G* — requested strongest claim: IMPOSSIBLE AS A UNIVERSAL GUARANTEE
 
@@ -23,7 +23,7 @@ For any **supported Git-tracked single-file case**, CORA produces a deterministi
 
 | Intermediate | Required local DoD | Witness | Human / external block |
 | --- | --- | --- | --- |
-| **I1 — Versioned identity** | L1 immutable commit; L2 Git blob status; L3 declared product/software identities; L4 multi-role artifact contract | PR-02 ledger, PR-03 graph, v1 role registry; real-Git tests | External consumer ownership not inferred |
+| **I1 — Versioned identity** | L1 immutable commit; L2 Git blob status; L3 declared product/software identities; L4 multi-role artifact contract | Git ledger, typed graph and artifact-role registry; original-Git source tests | External consumer ownership not inferred |
 | **I2 — Evidence graph** | L5 incoming candidate imports and declared entrypoints; L6 protected contractual roles; L7 explicit unknown layers; L8 no absence-as-proof | `file-lab`, `select-file`, exact path/role fixtures | Dynamic/build/deploy/registry/runtime closure missing |
 | **I3 — Selection soundness (scoped)** | L9 `RETAIN_EVIDENCED` on observed static imports, entrypoints or declared protected roles; L10 `DEBT_BLOCKED` when graph/roles/objects unavailable; L11 `INVESTIGATE` only for a review queue; L12 zero `safe_deletion_proven` claims | `selection/1` state machine and Git fixtures | A protected declaration itself remains a claim, not behavioral proof |
 | **I4 — Adversarial robustness** | L13 tampered and rehashed selection rejected; L14 dirty working tree irrelevant; L15 symlinks/absent files fail closed; L16 AI or user runtime claims never laundered into source verification | `verify-selection`, real Git negative tests | Signed external telemetry and proof-grade integration absent |
@@ -37,7 +37,7 @@ For any **supported Git-tracked single-file case**, CORA produces a deterministi
 - `INVESTIGATE`: no positive dependency emerged in the partial model; **selected for human research only**. This is not `DEAD`.
 - `DEBT_BLOCKED`: the committed artifact, ontology, graph or role evidence is unavailable/incomplete for minimum classification.
 
-In all states: `dead_code_proven=false`, `safe_deletion_proven=false`, `authorized_action=NONE`. The `cora closure --claim safe_deletion` path remains blocked/refuted as in PR-05. Neither file selection nor its source digest may authorize `apply-rename-doc` or any future destructive API.
+In all states: `dead_code_proven=false`, `safe_deletion_proven=false`, `authorized_action=NONE`. The `cora closure --claim safe_deletion` path remains blocked/refuted as enforced by the bounded closure contract. Neither file selection nor its source digest may authorize `apply-rename-doc` or any future destructive API.
 
 ## Falsification experiment — precise numerical contract
 

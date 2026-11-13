@@ -35,7 +35,7 @@ cora stress-file-lab --seed 883 --cases 1000000 --output /tmp/lab-stress.json
 | L4 Repository | Immutable snapshot, graph digest, bounded declared edges | Complete Git history, CI policy enforcement, cross-repository references |
 | L5 Runtime / environment | Imported, commit-bound **caller-supplied** observations | Instrumentation coverage, provenance attestation, environment reachability and non-use |
 
-Manifest declarations from PR-04 are listed separately and mean *declared* dependency only. **No inbound edge in an incomplete graph does not mean dead.** Any missing dimension yields an explicit `unresolved_obligations` record. The file dossier is source-revalidated only when no external runtime/AI annotation is attached; externally supplied claims retain their own unverified status.
+Manifest-adapter declarations are listed separately and mean *declared* dependency only. **No inbound edge in an incomplete graph does not mean dead.** Any missing dimension yields an explicit `unresolved_obligations` record. The file dossier is source-revalidated only when no external runtime/AI annotation is attached; externally supplied claims retain their own unverified status.
 
 ### Runtime observation contract (manually supplied)
 
