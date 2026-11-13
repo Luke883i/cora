@@ -38,6 +38,98 @@ class ReadinessTest(unittest.TestCase):
         self.assertEqual(a["source_status"],"PASS_SCOPED")
         self.assertEqual(a["release_status"],"BLOCKED_EXTERNAL")
         self.assertEqual(main(["--repo",str(self.repo),"--require-release-approval"]),3)
+    def test_product_software_repository_closeout_is_not_release_authority(self):
+        report = inspect_source(self.repo)
+        closure = report["object_closeout"]
+        self.assertEqual(closure["closure_status"], "SOURCE_CONTRACT_RECONCILED")
+        self.assertEqual(closure["product"],
+                         {"id": "cora", "state": "SOURCE_SCOPE_DEFINED"})
+        self.assertEqual({item["id"] for item in closure["software"]},
+                         {"cora-engine", "cora-release-verification"})
+        self.assertEqual(closure["repository"]["state"], "SOURCE_CONTROLS_DECLARED")
+        self.assertEqual(closure["host_protection"], "HOST_UNVERIFIED")
+        self.assertEqual(closure["runtime_target"], "NOT_ATTESTED_BY_SOURCE")
+        self.assertFalse(closure["enterprise_accepted"])
+        self.assertEqual(closure["residual_source_risks"], [
+            "GIT_OUTPUT_POST_CAPTURE_LIMIT",
+            "NATIVE_LOG_POST_CAPTURE_LIMIT",
+        ])
+        self.assertEqual(closure["authorization"], "NONE")
+        self.assertEqual(report["release_status"], "BLOCKED_EXTERNAL")
+        self.assertFalse(report["release_authorized"])
+
+    def test_six_live_source_owners_reject_removed_closeout_obligations(self):
+        masks = (
+            ("README.md", "Enterprise evaluation candidate",
+             "Enterprise approved", "CLOSURE_BOUNDARY_DRIFT:README.md"),
+            ("GOVERNANCE.md", "SOURCE_SCOPE_DEFINED", "PRODUCT_APPROVED",
+             "CLOSURE_BOUNDARY_DRIFT:GOVERNANCE.md"),
+            ("GOVERNANCE.md", "IMPLEMENTED_SOURCE_SCOPED", "UNIVERSAL_RUNTIME_PASS",
+             "CLOSURE_BOUNDARY_DRIFT:GOVERNANCE.md"),
+            ("GOVERNANCE.md", "CANDIDATE_VERIFICATION_ONLY", "SIGNED_RELEASE",
+             "CLOSURE_BOUNDARY_DRIFT:GOVERNANCE.md"),
+            ("GOVERNANCE.md", "SOURCE_CONTROLS_DECLARED", "HOST_AUTO_APPROVED",
+             "CLOSURE_BOUNDARY_DRIFT:GOVERNANCE.md"),
+            ("docs/DOD_RELEASE_READINESS.md", "I6 for effective host governance",
+             "I5 already proves host governance",
+             "CLOSURE_BOUNDARY_DRIFT:docs/DOD_RELEASE_READINESS.md"),
+            ("docs/RELEASE.md", "release_status=BLOCKED_EXTERNAL",
+             "release_status=APPROVED",
+             "CLOSURE_BOUNDARY_DRIFT:docs/RELEASE.md"),
+            ("docs/ARCHITECTURE.md", "Closure owner:", "Approved by the CLI:",
+             "CLOSURE_BOUNDARY_DRIFT:docs/ARCHITECTURE.md"),
+            ("SECURITY.md", "Repository visibility does not establish protected-branch controls",
+             "Repository publicity certifies host protection",
+             "CLOSURE_BOUNDARY_DRIFT:SECURITY.md"),
+        )
+        for rel, old, new, expected in masks:
+            with self.subTest(path=rel, claim=old):
+                original = (self.repo / rel).read_text("utf-8")
+                self.assertIn(old, original)
+                (self.repo / rel).write_text(original.replace(old, new, 1),
+                                             encoding="utf-8")
+                try:
+                    self.deny(expected)
+                    self.assertEqual(inspect_source(self.repo)["object_closeout"]
+                                     ["closure_status"], "BLOCKED_SOURCE")
+                finally:
+                    (self.repo / rel).write_text(original, encoding="utf-8")
+        report = inspect_source(self.repo)
+        self.assertEqual(report["source_status"], "PASS_SCOPED")
+
+    def test_source_closure_cannot_hide_other_blockers_or_forged_authority(self):
+        baseline = inspect_source(self.repo)
+        self.assertEqual(baseline["object_closeout"]["closure_status"],
+                         "SOURCE_CONTRACT_RECONCILED")
+        # Even a valid-looking prose matrix cannot repair an absent real
+        # source or permitted reviewer object.
+        codeowners = self.repo / ".github/CODEOWNERS"
+        original = codeowners.read_bytes()
+        codeowners.unlink()
+        try:
+            observed = inspect_source(self.repo)
+            self.assertEqual(observed["source_status"], "BLOCKED_SOURCE")
+            self.assertEqual(observed["object_closeout"]["closure_status"],
+                             "BLOCKED_SOURCE")
+            self.assertIn("MISSING_OR_SYMLINK:.github/CODEOWNERS",
+                          observed["source_errors"])
+        finally:
+            codeowners.write_bytes(original)
+
+        # Keep every legitimate 'BLOCKED_EXTERNAL' sentence intact and append
+        # a second forged authority assertion: contradictions must not average.
+        path = self.repo / "docs/RELEASE.md"
+        original = path.read_text("utf-8")
+        path.write_text(original + "\nrelease_authorized=true\n",
+                        encoding="utf-8")
+        try:
+            report = inspect_source(self.repo)
+            self.assertIn("CLOSURE_UNEARNED_APPROVAL", report["source_errors"])
+            self.assertEqual(report["object_closeout"]["closure_status"],
+                             "BLOCKED_SOURCE")
+        finally:
+            path.write_text(original, encoding="utf-8")
+
     def test_title_counterexample(self):
         self.swap("README.md","Continuous Ontological Repository Assurance","Code Ontology Repo Audit")
         self.deny("PRODUCT_EXPANSION_MISSING")

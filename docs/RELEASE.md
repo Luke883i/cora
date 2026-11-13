@@ -12,6 +12,12 @@
 
 **Decision boundary:** L1 Git/source CI and local tests are valuable engineering evidence; bounded L2 pilots do not prove broad product acceptance; L3 external qualification, when claimed, requires real people, host controls, reproducible artifacts and accountable decisions. A source report is **not a self-issued** approval, certificate, signed provenance or permission to publish. A PASS for one level cannot complete the others.
 
+## Three-boundary closure and acceptance
+
+The [single product/software/repository decision record](../GOVERNANCE.md#product-software-and-repository--bounded-closeout) and [release DoD](DOD_RELEASE_READINESS.md#three-boundary-closeout-interpretation-one-existing-release-dod) separate **source closure** from **adoption and publication**. Product scope is documented, the Python engine and release-verification tools are implemented within source/CI limits, and the repository holds reviewable Git/CI declarations. None authenticates a production environment, maintainer support commitment, required-host checks, independent reviewer or signed provenance.
+
+**Operator decision:** permit authorized experimental source evaluation only; maintain `release_status=BLOCKED_EXTERNAL`, `release_authorized=false`, `authorization=NONE` until I6 and I7 have independently attributable evidence. Do not use merged PR counts, all-green source CI or 71 successful CLI help invocations as an enterprise product acceptance oracle.
+
 ## Release path — current operator runbook
 
 1. **Freeze the intended commit.** Use a Draft PR with exact BASE/HEAD, source changes, code/contract tests, negative controls, risk owner and rollback plan. On an authorized checkout run `python -m unittest discover -s tests -v`, `python tools/verify_repository_contract.py --repo .`, `python tools/verify_artifact_roles.py --repo .` and `python tools/verify_release_readiness.py --repo .`. Use `cora process-run . --revision HEAD --change-base BASE_SHA --one-run --profile comprehensive --output /tmp/cora-release-run.json` and `cora verify-process /tmp/cora-release-run.json --repo . --one-run`. A caller-provided BASE is not authenticated GitHub PR metadata.

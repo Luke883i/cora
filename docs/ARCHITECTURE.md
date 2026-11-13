@@ -13,6 +13,8 @@
 
 **Current One-Run integration:** `process_suite.run_suite` projects advisory `practice_obligations` from original Git. The opt-in `--change-base BASE_SHA` enables an explicit complete Git change range under the v2 projection; default v1 is single-commit first-parent. Both One-Run renderers display review obligations without a ninth source method or second executor. Documentation candidates for other repositories come from their own tracked Git trees, not CORA's directory assumptions. Source evidence never grants runtime or release authority.
 
+**Closure owner:** [governance decision record](../GOVERNANCE.md#product-software-and-repository--bounded-closeout) and [release DoD](DOD_RELEASE_READINESS.md). Module existence does not authenticate runtime, host or support.
+
 ## Three non-equivalent boundaries
 
 - **Product `cora`:** externally usable capability and observable contract of a local evidence-first CLI. Its ownership may encompass multiple software components and repositories in the future; its *current* canonical source is this Git repository.

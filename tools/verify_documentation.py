@@ -385,7 +385,9 @@ def verify_project_first_readme(readme: str) -> list[str]:
         "**New project**", "**Project settings**", "**Project instructions**",
         "docs/AGENT_ADOPTION.md#chatgpt-project-beta-adapter",
         "**read access**", "Luke883i/cora", "**target repository**",
-        "read-only", "write-capable coding tool", "such as Codex",
+        "read-only", "GitHub connector abilities vary",
+        "write actions require verified permissions and explicit authorization",
+        "write-capable coding tool", "such as Codex",
         "CORA-METHOD", "without** executing CORA-ENGINE",
         "separate Python runner", "METHOD_ONLY", "NOT_RUN",
         "--chat-step", "--chat-bundle", "iterations/000001/handoff.md",
@@ -640,7 +642,10 @@ def verify(root: Path) -> list[str]:
             errors.append("missing-procedure:" + path)
         elif "--intent" not in (root / path).read_text("utf-8"):
             errors.append("contextual-intent-omitted:" + path)
-    if "not a stable" not in readme.lower() and "not a stable api" not in readme.lower():
+    # A secondary generic disclaimer cannot mask corruption of the
+    # specific, canonical API/release statement on the first screen.
+    front = readme.split("## First five minutes", 1)[0]
+    if "**not a stable API or verified public release**" not in front:
         errors.append("release-claim-regression")
     validate_dod(root, errors)
     try:

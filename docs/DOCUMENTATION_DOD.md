@@ -195,12 +195,12 @@ This amendment refines the existing R48-A–H AND-gate; it does **not** create a
 | R63-01 | Product / software / repository boundaries not conflated | README names all three; `docs/ARCHITECTURE.md` owns scope, no second engine; existing source verifier |
 | R63-02 | First command, verification and verdict visible | Quickstart and One-Run both retain executable CLI invocation; `PASS_SCOPED`, `NOT_RUN`, `REFUTED`, `BLOCKED_EXTERNAL` stay discriminable |
 | R63-03 | One canonical ChatGPT Project adapter | Exactly one paste-ready beta prompt under `docs/AGENT_ADOPTION.md`; README and `GETTING_STARTED.md` link it, not duplicate its instructions |
-| R63-04 | Least-privilege permissions and host boundary | Plus/Edu is a *recipe baseline*, not a guaranteed entitlement; normal ChatGPT GitHub connector is read-only; write access requires a distinct authorized tool; local CLI needs real execution |
+| R63-04 | Least-privilege permissions and host boundary | Plus/Edu is a *recipe baseline*, not a guaranteed entitlement; connected GitHub permissions depend on the actual tool and authorization; read access is not write approval; local CLI needs real execution |
 | R63-05 | Temporary handoff accurately described | `src/cora/chat_bundle.py` retains ZIP/source receipt, `iterations/000001/handoff.md`, finite limits and no signature/memory/approval claim |
 | R63-06 | Evidence-backed crossrepo narrative | Seven real historical PR links across CORA, ICTC, Teddy, iKant_EDU; no assertion that CORA independently validated their products |
 | R63-07 | Terms are discriminating | Blobbing, materialization, falsification, AND-DoD and finite saturation distinguish source objects, outcomes and inferential limits |
 | R63-08 | Preservation and bounded complexity | 48 registered Markdown, 31 active/17 historical, historic byte identity and zero broken local links; root README **at most 1,750 words**, current navigation and documentation test bounds |
-| R63-09 | Negative controls catch narrative corruption | Existing 1k, 10k and enterprise finite source falsifiers; targeted physical text mutants for read-only/write claims, prompt duplication, wrong handoff path, and invented approval |
+| R63-09 | Negative controls catch narrative corruption | Existing 1k, 10k and enterprise finite source falsifiers; targeted physical text mutants for false connector write/authorization claims, prompt duplication, wrong handoff path, and invented approval |
 | R63-10 | Exact-head review and no self-approval | Candidate exact Git SHA, repository/documentation/claim verification, relevant native tests and CI; effective host protection, independent review and user trials remain separate |
 
 **Source cut:** `R63_SOURCE = R63-01 ∧ R63-02 ∧ ... ∧ R63-10`. **Governed cut:** `R63_ACCEPTED = R63_SOURCE ∧ E01_FIRST_READ_HUMAN ∧ E02_AGENT_ON_EXTERNAL_MAINTAINED_TARGET ∧ E03_ENFORCED_HOST_AND_NON_AUTHOR_REVIEW`. A missing obligation is `BLOCKED_EXTERNAL` or `REFUTED`, never averaged away.
@@ -211,7 +211,7 @@ This amendment refines the existing R48-A–H AND-gate; it does **not** create a
 
 ### ChatGPT Project and timeless navigation — source acceptance
 
-**User outcome:** a first-time reader identifies a ChatGPT Project path directly in the README; the Project adapter remains canonical in `AGENT_ADOPTION.md`, without duplicated prompt text. The five steps specify plan availability without invented entitlement, read-only GitHub access, separately authorized writing, a real runner for CORA-ENGINE and native tests, and the finite ZIP handoff path.
+**User outcome:** a first-time reader identifies a ChatGPT Project path directly in the README; the Project adapter remains canonical in `AGENT_ADOPTION.md`, without duplicated prompt text. The five steps specify plan availability without invented entitlement, GitHub read access versus explicitly authorized write actions, a real runner for CORA-ENGINE and native tests, and the finite ZIP handoff path.
 
 **Noncompensatory source gates:** README project-path presence; five readable and sequence-checked steps; zero PR-number chronology in the README; no changed archival blob; registered Markdown graph still 48/48; product/software/repository boundaries; version- and permission-truthful claims; existing 1k/10k editorial mutants; exact-HEAD CI. The README budget is **1,750 words** as a provisional lint guardrail (not a universal readability standard).
 

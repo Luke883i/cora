@@ -410,8 +410,12 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         index = (ROOT / "docs/INDEX.md").read_text("utf-8")
         arch = (ROOT / "docs/ARCHITECTURE.md").read_text("utf-8")
         cross = (ROOT / "docs/CONVERGENT_ASSURANCE.md").read_text("utf-8")
-        cto_intro = ("a CTO sees reviewable decisions; developers see the next test; "
-                     "reviewers see unresolved risks.")
+        # Derive the editable value sentence from the canonical current
+        # front door; do not freeze a previous PR's rhetorical wording.
+        cto_intro = next(line.split("**Why it matters:**", 1)[1].strip()
+                         for line in root.splitlines()
+                         if line.startswith("**Why it matters:**"))
+        self.assertIn("unresolved risks", cto_intro)
         route_intro = ("This index routes readers by task, method and evidence class; "
                        "it is navigation, not a release authority or an independent witness.")
         catalog = (

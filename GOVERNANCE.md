@@ -9,6 +9,21 @@
 
 **Status:** normative proposal for the repository; roles are functions, not verified staff appointments. The GitHub repository owner currently controls the platform, but no independent reviewer, ruleset, or branch protection has been verified. This document does **not** claim that two-person approval is already technically enforced.
 
+## Product, software and repository — bounded closeout
+
+**Decision record, not a self-issued release certificate.** The objects below are distinct; a green test or merged PR about one cannot close the others. This table describes source-level completion criteria, not a claim that an independent actor has accepted the product.
+
+| Object / accountable function | Source closeout criterion | Current epistemic boundary |
+| --- | --- | --- |
+| **Product `cora`** / product owner | Explicit value, audience, METHOD vs ENGINE, targets, outcome and falsifiable acceptance conditions in README, ontology and product DoD | **SOURCE_SCOPE_DEFINED**; real-user usefulness, maintained-target outcomes, support promise and applicability remain **NOT_ATTESTED** |
+| **Software `cora-engine`** / software maintainer | One CLI entrypoint, bounded original-Git replay, syntax/JSON/installed-byte probes, 71 command bootstrap and measured negative regressions on exact HEAD | **IMPLEMENTED_SOURCE_SCOPED**; 71 `--help` processes do not execute 71 behaviors; isolation/operational reliability not certified |
+| **Software `cora-release-verification`** / release maintainer | Tools under `tools/`, reproducible candidate wheel/sdist, build-tool SCA limits, SBOM, replay and exact-artifact provenance | **CANDIDATE_VERIFICATION_ONLY**; signed artifacts, trustworthy issuer, published supported release and SLA remain **NOT_ATTESTED** |
+| **Repository `Luke883i/cora`** / repository steward | Git ownership, declared CODEOWNERS, source roles, docs, tests and 13 workflow definitions with exact-SHA CI witnesses | **SOURCE_CONTROLS_DECLARED**; administrator-enforced required checks, non-author review and bypass prevention remain **HOST_UNVERIFIED** |
+
+**Noncompensatory decision:** the existing [release DoD](docs/DOD_RELEASE_READINESS.md) owns `G-source = I1 ∧ I2 ∧ I3 ∧ I4 ∧ I5`, and `G-release = G-source ∧ I6 ∧ I7`. Source contract consistency alone does not demonstrate that CI passed on a later SHA. No `PASS_SCOPED` from product, software or repository can substitute for an independent human, maintained-target oracle, host enforcement or release approval. The external gate remains `BLOCKED_EXTERNAL`, `authorization=NONE`.
+
+**Closure procedure:** pin the target SHA; identify every owner and counterexample; run source tests and read the actual final-SHA check-runs; record `NOT_RUN` and surviving mutants; separately acquire genuine host, independent-review, real-target and supply-chain witnesses. The accountable owner may close a *bounded source issue* with those receipts, but cannot convert that into a supported product or release. Unfilled reviewer roles block elevated assurance rather than being silently delegated to an AI assistant.
+
 ## Decision rights — human-in-command
 
 | Accountability | Human role | Required decision or veto |
