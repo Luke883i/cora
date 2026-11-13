@@ -50,6 +50,23 @@ class ChatBundleTests(unittest.TestCase):
                      'blocks':['D2'], 'next_action':'Obtain qualified reviewer readback'}],
             'next_step':'Keep proof claims BLOCKED_EXTERNAL until independently observed'}
 
+    def test_strict_portable_json_rejects_nonfinite_and_duplicate_values(self):
+        """Hostile JSON must not vary across Python and RFC-compliant parsers."""
+        from cora.chat_bundle import _strict_json
+        self.assertEqual(_strict_json(b'{"state":"BLOCKED_EXTERNAL"}'),
+                         {"state": "BLOCKED_EXTERNAL"})
+        for raw in (b'{"iteration":NaN}', b'{"iteration":Infinity}',
+                    b'{"iteration":-Infinity}', b'{"a":{"x":NaN}}'):
+            with self.subTest(raw=raw), self.assertRaisesRegex(
+                    ValueError, "nonfinite JSON number"):
+                _strict_json(raw)
+        with self.assertRaisesRegex(ValueError, "duplicate JSON field"):
+            _strict_json(b'{"a":1,"a":2}')
+        with self.assertRaises(ValueError):
+            _json({"unsafe": float("nan")})
+        with self.assertRaises(ValueError):
+            _json({"unsafe": float("inf")})
+
     def test_append_roundtrip_two_rounds_and_exact_handoff(self):
         r1 = append_chat_iteration(self.bundle,repo=self.repo,step=self.step(),receipt=self.receipt())
         self.assertEqual(r1['iterations'],1)

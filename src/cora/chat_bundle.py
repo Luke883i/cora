@@ -29,7 +29,10 @@ SHA = re.compile(r"^[a-f0-9]{40}(?:[a-f0-9]{24})?$")
 
 
 def _json(data: object) -> bytes:
-    return (json.dumps(data, sort_keys=True, ensure_ascii=True, indent=2) + "\n").encode("utf-8")
+    # RFC 8259 JSON excludes NaN and infinities. Do not write a cross-parser
+    # ambiguity into the portable, append-only evidence chain.
+    return (json.dumps(data, sort_keys=True, ensure_ascii=True, indent=2,
+                       allow_nan=False) + "\n").encode("utf-8")
 
 
 def _hash(data: bytes) -> str:
@@ -44,7 +47,10 @@ def _strict_json(data: bytes) -> object:
                 raise ValueError("duplicate JSON field")
             result[k] = v
         return result
-    return json.loads(data.decode("utf-8"), object_pairs_hook=pairs)
+    def nonfinite(value):
+        raise ValueError("nonfinite JSON number rejected: " + value)
+    return json.loads(data.decode("utf-8"), object_pairs_hook=pairs,
+                      parse_constant=nonfinite)
 
 
 def _string(value: object, what: str, limit: int = 1500) -> str:

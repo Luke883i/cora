@@ -66,9 +66,40 @@ No direct GitHub identity authentication, independent reviewer proof, test execu
 
 Official references: https://csrc.nist.gov/pubs/sp/800/218/final · https://baseline.openssf.org/ · https://slsa.dev/spec/v1.2/ · https://dora.dev/ · https://docs.github.com/en/actions/reference/security/securely-using-pull_request_target
 
+## Full-surface assessment lenses — source, execution and independent acceptance
+
+The twenty lenses below are **ten established engineering practices (S01–S10) and ten frontier-style falsification lenses (F01–F10)**. They are review perspectives using existing CORA owners, **not twenty implemented engines, compliance attestations, or twenty independent product tests**. Each lens must preserve an exact Git revision, discriminate source observation from actual execution, and leave absent evidence `NOT_RUN` or `BLOCKED_EXTERNAL` rather than assigning a synthetic pass.
+
+| Lens | Existing owner and discriminating falsifier | What remains outside its source evidence |
+| --- | --- | --- |
+| S01 Git object provenance | `git_snapshot.py` / `evidence.py`: wrong object, symlink, LFS pointer or worktree-only change | Runtime and actor authenticity |
+| S02 Build and package reproducibility | `build_candidate.py` / `release_verify.py`: changed wheel/sdist bytes | Trusted build environment and publishing |
+| S03 CLI contract testing | `cli.py` / `verify_capability_atlas.py`: parser/dispatch/implementation drift; 71 installed `--help` smoke | Actual behavior of every command |
+| S04 Static compilation and input grammar | Exact-tree Python compilation and strict JSON readback: invalid syntax, duplicate or nonfinite JSON | Runtime semantics, alternative parsers |
+| S05 Regression/CI | Existing original-Git unittest and matrix workflow: fail tests on exact HEAD | Independent target acceptance and flakiness bounds |
+| S06 OpenSSF OSPS controls | `workflow_rationalization.py`: unsafe workflow or missing owned check | Effective protected branches and reviewer identities |
+| S07 NIST SSDF secure SDLC | `continuous.py`: missing change intent, testing or accountable owner | Organization-wide secure-development operation |
+| S08 SLSA Source/Build Tracks | `docs/RELEASE.md` and CI candidate receipts: forged source/build claim | Trusted signed provenance and source VSA |
+| S09 OWASP ASVS-style negative controls | Target-owned authentication/authorization input cases and behavioral oracles | Web-service or application assessment not executed here |
+| S10 ISO/IEC 25010 quality lenses | `independent_qualification.py`: measurable reliability/usability/cost criteria | Real user, workload and operating-environment measurements |
+| F01 Physical mutation | `gold_mutations.py` and committed Git fixture tests: a deliberate source fault must be detected | Unsampled code paths |
+| F02 Metamorphic invariants | `tests/test_pr26_capability_atlas.py`: unchanged committed source with dirty worktree yields same ledger | Actual product correctness |
+| F03 Differential source oracle | `independent_git_oracle.py`: independent Git readback disagrees with receipt | Runtime target equivalence |
+| F04 Non-compensatory reticular DoD | `reticulum.py`: remove one required edge and global eligibility must fail | External evidence is not synthesized |
+| F05 Model-based fault combinations | `*_stress.py`: prespecified masks and independently computed expected decisions | Open-world fault prevalence |
+| F06 Semantic saturation falsification | Bounded model suites: novelty tail and incomplete scenario family | Universal semantic coverage |
+| F07 Temporal/causal change invalidation | `practice_contract.py` / `genealogy.py`: change BASE or delete an upstream owner | Unknown dynamic and third-party consumers |
+| F08 Cross-language consumer investigation | `portable_js_imports.mjs` / Python graph: dynamic import or parser error remains unknown | Browser/network runtime, all language grammars |
+| F09 Opt-in native execution | `native_gold.py`: missing oracle, changed commit, invalid local runtime receipt | Trusted sandbox/runner identity |
+| F10 Paired independent qualification | `independent_qualification.py`: identical reviewer/self-report cannot satisfy external cut | Real separate operator, maintained target and measured benefit |
+
+**Measured source denominators must be dynamic:** all tracked Git files and their original blobs, every Python/JSON/Markdown/workflow/ESM surface, all declared CLI commands, and the existing test/source witnesses. `--help` is parser/bootstrap evidence only. A full `process-run` means the selected safe read-only source methods, never universal target-runtime coverage. GitHub Actions check-runs and optional Node/target probes are separately attributable to the **exact run SHA**, not to a static claim in this document.
+
+**Backward acceptance:** source eligibility requires a complete pinned inventory, source parsing, 71/71 CLI bootstrap checks, positive Git source→replay probes, rejected negative mutations and final-HEAD CI. A product/release assertion additionally requires maintained-target behavioral oracles, a non-author reviewer, effective host controls, trusted supply-chain evidence and suitable user acceptance. All are AND obligations; the static atlas never grants release authority.
+
 ## Trust boundary and known debt
 
-The policy and code live in the same repository that an agent can edit. Until protected GitHub branch rules, independent reviewer permissions and required trusted checks are configured by an administrator, **CORA cannot guarantee** a user or agent cannot bypass them. GitHub ruleset inspection on this private repository currently returns HTTP 403 due to account/plan restrictions, which is an **unverified control**, not proof of enforcement or non-enforcement. This first PR is a **bootstrap** and needs human administrator acceptance.
+The policy and code live in the same repository that an agent can edit. Until protected GitHub branch rules, independent reviewer permissions and required trusted checks are configured by an administrator, **CORA cannot guarantee** a user or agent cannot bypass them. A GitHub ruleset readback returning 403, or unavailable for any reason, means **HOST_UNVERIFIED**, not proof that branch protection is enabled or absent. A new installation or changed host policy requires separate human administrative acceptance; neither an older review nor a green Git-source test establishes current enforcement.
 
 Post-merge without real CI/deployment telemetry is not an end-to-end operational health gate. Any result that says `OBSERVED_REVIEW_REQUIRED` is an audit signal, not a merge authorization. No automated deletion, code rewrite, release or deployment is performed by these new tools.
 
