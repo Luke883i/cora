@@ -304,13 +304,13 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             ekc.verify_report(ROOT, fake)
 
     def test_lexical_qualified_ast_units_and_syntax_failure(self):
-        code = ("class Outer:\\n"
-                "    def method(self):\\n"
-                "        def nested():\\n"
-                "            return 1\\n"
-                "        return nested()\\n"
-                "    async def test_async(self):\\n"
-                "        return 2\\n")
+        code = ("class Outer:\n"
+                "    def method(self):\n"
+                "        def nested():\n"
+                "            return 1\n"
+                "        return nested()\n"
+                "    async def test_async(self):\n"
+                "        return 2\n")
         units = ekc.structural_units(code, "synthetic.py")
         self.assertEqual([u["symbol"] for u in units], [
             "Outer", "Outer.method", "Outer.method.nested", "Outer.test_async"])
@@ -319,7 +319,7 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         self.assertEqual([u["symbol"] for u in ekc.structural_units(
             code, "synthetic.py", test_only=True)], ["Outer.test_async"])
         with self.assertRaises(SyntaxError):
-            ekc.structural_units("def broken(\\n", "synthetic.py")
+            ekc.structural_units("def broken(\n", "synthetic.py")
 
     def test_physical_committed_cli_import_mutation_changes_source_not_worktree(self):
         with tempfile.TemporaryDirectory() as folder:
