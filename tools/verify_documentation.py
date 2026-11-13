@@ -152,7 +152,7 @@ README_SPECIFIC_TRUTHS = (
     "16 realistic fault families",
     "2,517 preregistered zero-to-fourway masks",
     "not one million independent source mutations",
-    "merged PR41",
+    "Current source is this Git revision",
     "two controlled physical Git repositories",
     "GitHub workflow files alone do not prove",
     "A hash can identify committed bytes; it cannot authenticate a human reviewer",
@@ -164,7 +164,7 @@ README_FALSE_PROMOTIONS = (
     r"\bA hash alone authenticates a human reviewer\b",
     r"\bCI green is independent review\b",
     r"\bExternal acceptance has been approved\b",
-    r"\bunmerged PR41\b",
+    r"\bCurrent source is from an unmerged draft\b",
     r"\b\d{5,} independently executed source mutations\b",
     r"\bPASS_SCOPED certificate alone grants merge and release authority\b",
     r"\bCORA automatically approves merges\b",
@@ -255,19 +255,13 @@ def verify_development_method_readme(readme: str) -> list[str]:
         ("saturation", ("fixed scenario catalog and final window",
                         "bounded convergence", "not proof of complete correctness",
                         "no-progress rounds", "does not predict N")),
-        ("ictc-source", ("[ICTC](https://github.com/Luke883i/ictc)", "Browser witness",
-                         "visual audit", "reconciliation contract",
-                         "656 recorded visual/UX findings to 12 root causes",
-                         "physical product mutants", "screenshot-derived")),
-        ("cognitive-source", ("[iKant_EDU](https://github.com/Luke883i/iKant_EDU)",
-                              "experimental computational cognitive architecture",
-                              "functional attention", "self/world state model",
-                              "computational constructs", "UNKNOWN",
-                              "11 unqualified file deletions", "PR238")),
-        ("epistemic-boundary", ("not proof that CORA CLI created these products",
-                                "not a claim of a conscious biological mind",
-                                "Millions of finite fault vectors",
-                                "not millions of real Git mutations")),
+        ("target-examples", ("[ICTC](https://github.com/Luke883i/ictc)",
+                             "[Teddy](https://github.com/Luke883i/teddy)",
+                             "[iKant_EDU](https://github.com/Luke883i/iKant_EDU)",
+                             "HTTP/SQLite", "source/UX verification",
+                             "unknown consumers", "reversible repository contraction")),
+        ("evidence-ownership", ("Source histories and native pilot evidence have distinct owners",
+                                "CORA did not independently certify these products")),
         ("glossary", ("Terminology, only after the engineering method:",
                       "intent mining", "reticular DoD", "semantic slices",
                       "blobbing/materialization", "semantic mutations",
@@ -279,7 +273,7 @@ def verify_development_method_readme(readme: str) -> list[str]:
     order = [section.find(m) for m in (
         "**1. Specify the outcome.**", "**2. Change one coherent unit.**",
         "**3. Try to disprove it, then stop intelligently.**",
-        "**Two concrete engineering histories",
+        "**Target examples, not universal validation:**",
         "**Terminology, only after the engineering method:")]
     if min(order) < 0 or order != sorted(order):
         errors.append("cto-method-progressive-order")
@@ -322,7 +316,7 @@ def verify_multichannel_intro(readme: str) -> list[str]:
         "boundaries": ("**Product**", "**software**", "**repository**", "not a coding agent"),
         "audience": ("**Recommended use:**", "**Audience and conditions:**",
                      "**Open source license:**", "[MIT](LICENSE)", "Python 3.11+"),
-        "release": ("1.0.0a5", "merged PR41", "PR46", "draft",
+        "release": ("1.0.0a5", "Current source is this Git revision", "v1.0.0a4", "draft",
                     "not a stable API or verified public release"),
     }
     for label, terms in groups.items():
@@ -334,6 +328,31 @@ def verify_multichannel_intro(readme: str) -> list[str]:
     if "--chat-step" not in readme or "--chat-bundle" not in readme:
         errors.append("cto-chat-path-lost")
     return sorted(set(errors))
+
+
+def verify_project_first_readme(readme: str) -> list[str]:
+    """Source-only Project onboarding guard; no plan or connector attestation."""
+    parts = readme.split("## Use CORA in a ChatGPT Project — beginner walkthrough\n", 1)
+    section = parts[1].split("\n## What works today", 1)[0] if len(parts) == 2 else ""
+    required = (
+        "ChatGPT Plus or Edu", "Projects are available on other plans",
+        "**New project**", "**Project settings**", "**Project instructions**",
+        "docs/AGENT_ADOPTION.md#chatgpt-project-beta-adapter",
+        "**read access**", "Luke883i/cora", "**target repository**",
+        "read-only", "write-capable coding tool", "such as Codex",
+        "CORA-METHOD", "without** executing CORA-ENGINE",
+        "separate Python runner", "METHOD_ONLY", "NOT_RUN",
+        "--chat-step", "--chat-bundle", "iterations/000001/handoff.md",
+        "neither automatic chat capture nor authenticated review",
+    )
+    errors = []
+    if not section or any(token not in section for token in required):
+        errors.append("project-onboarding-missing-source-boundary")
+    if len(re.findall(r"(?m)^[1-5]\. \*\*[^\n]+", section)) != 5:
+        errors.append("project-onboarding-five-steps-required")
+    if re.search(r"(?i)github app (?:automatically|directly) (?:commits|pushes|merges)", section):
+        errors.append("project-onboarding-false-write-authority")
+    return errors
 
 
 def verify_compact_document_bridge(guide: str, index: str, architecture: str) -> list[str]:
@@ -451,6 +470,7 @@ def verify_progressive_readme(readme: str) -> list[str]:
         errors.append("navigation-unsupported-interaction")
     errors.extend(verify_readme_semantics(readme))
     errors.extend(verify_multichannel_intro(readme))
+    errors.extend(verify_project_first_readme(readme))
     errors.extend(verify_development_method_readme(readme))
     errors.extend(verify_contract_to_application_readme(readme))
     return sorted(set(errors))
