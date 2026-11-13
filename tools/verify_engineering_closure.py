@@ -249,6 +249,7 @@ def contribution_index(paths: list[str], modules: list[str], tools: list[str],
         by_test_import[target].add(consumer)
 
     by_command: dict[str, set[str]] = {src: set() for src in modules}
+    by_family: dict[str, set[str]] = {src: set() for src in modules}
     by_witness: dict[str, set[str]] = {src: set() for src in modules}
     commands = atlas.get("commands")
     if not isinstance(commands, list):
@@ -261,6 +262,10 @@ def contribution_index(paths: list[str], modules: list[str], tools: list[str],
                 or not isinstance(command, str) or not command):
             raise ValueError("component command has missing source/test witness")
         by_command[source].add(command)
+        family = binding.get("family")
+        if not isinstance(family, str) or not family:
+            raise ValueError("command taxonomy is missing")
+        by_family[source].add(family)
         by_witness[source].add(witness)
 
     rows = []
@@ -275,8 +280,16 @@ def contribution_index(paths: list[str], modules: list[str], tools: list[str],
                 state = "TRANSITIVE_CLI_IMPORT"
             else:
                 state = "NOT_OBSERVED_STATIC"
+            if by_family[path] == {"finite-models"}:
+                declared_role = "FINITE_MODEL_ASSURANCE_DECLARED_NOT_RUNTIME_VALIDATED"
+            elif by_command[path]:
+                declared_role = "CLI_COMMAND_SOURCE_DECLARED_NOT_RUNTIME_VALIDATED"
+            else:
+                declared_role = "NON_COMMAND_SUPPORT_SOURCE_CONSUMERS_INCOMPLETE"
             row = {
                 "path": path, "surface": kind, "cli_static": state,
+                "declared_capability_role": declared_role,
+                "declared_families": sorted(by_family[path]),
                 "imports": sorted(edges[path]), "imported_by": sorted(incoming[path]),
                 "declared_units": (units or {}).get(path, []),
                 "declared_commands": sorted(by_command[path]),
@@ -325,11 +338,19 @@ def contribution_index(paths: list[str], modules: list[str], tools: list[str],
         "static_test_import_edges": sum(len(values) for values in by_test_import.values()),
         "modules_with_static_test_import_candidate": sum(
             bool(by_test_import[path]) for path in modules),
+        "finite_model_assurance_declared_modules": sum(
+            by_family[p] == {"finite-models"} for p in modules),
+        "non_finite_cli_declared_modules": sum(
+            bool(by_command[p]) and by_family[p] != {"finite-models"} for p in modules),
         "modules_without_declared_cli_witness": sum(
             not by_command[path] for path in modules),
         "causal_effects_measured": 0,
         "safe_consolidations_attested": 0,
     }
+    if (metrics["finite_model_assurance_declared_modules"]
+            + metrics["non_finite_cli_declared_modules"]
+            + metrics["modules_without_declared_cli_witness"] != len(modules)):
+        raise ValueError("declared source capability categories overlap or omit modules")
     if (metrics["indexed_paths"] != metrics["tracked_paths"]
             or sum(reach.values()) != len(modules)
             or reach["ENTRYPOINT"] != 1):
