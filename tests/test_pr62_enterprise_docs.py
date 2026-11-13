@@ -547,7 +547,7 @@ class FullSurfaceExecutionTests(unittest.TestCase):
         self.assertEqual(doc.count(marker), 1)
         block = doc.split(marker, 1)[1].split(
             "\n## Trust boundary and known debt", 1)[0]
-        names = re.findall(r"(?m)^\| ([SF][0-9]{2}) \|", block)
+        names = re.findall(r"(?m)^\| ([SF][0-9]{2})\s", block)
         self.assertEqual(names, (["S%02d" % k for k in range(1, 11)] +
                                  ["F%02d" % k for k in range(1, 11)]))
         self.assertIn("not twenty implemented engines", block)
@@ -555,7 +555,7 @@ class FullSurfaceExecutionTests(unittest.TestCase):
         self.assertIn("AND obligations", block)
         # A superficially plausible duplicate lens must fail the same contract.
         self.assertNotEqual(
-            re.findall(r"(?m)^\| ([SF][0-9]{2}) \|",
+            re.findall(r"(?m)^\| ([SF][0-9]{2})\s",
                        block.replace("| F10 ", "| F09 ", 1)), names)
 
 
