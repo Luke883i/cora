@@ -464,6 +464,122 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             self.assertEqual(run.returncode, 3, run.stdout + run.stderr)
             self.assertIn("component DoD orphan", run.stdout + run.stderr)
 
+    def test_closed_world_source_universe_is_exhaustive_not_behavioral(self):
+        a = "a" * 40
+        b = "b" * 40
+        c = "c" * 40
+        before = {"src/cora/cli.py": a, "src/cora/helper.py": b}
+        unchanged = ekc.engine_source_universe(before, before)
+        self.assertEqual(unchanged["source_byte_identity"],
+                         "PASS_SCOPED_EXHAUSTIVE")
+        self.assertEqual(unchanged["identical_blobs"], unchanged["denominator"])
+        self.assertEqual(unchanged["accounted_paths"], unchanged["denominator"])
+        self.assertEqual(unchanged["denominator"], 2)
+        self.assertEqual(unchanged["full_runtime_behavior_equivalence"],
+                         "NOT_ATTESTED")
+        self.assertEqual(unchanged["authorization"], "NONE")
+        for change, expected in (
+            ({"src/cora/cli.py": a, "src/cora/helper.py": c}, "CHANGED_BLOB"),
+            ({"src/cora/cli.py": a}, "REMOVED"),
+            ({"src/cora/cli.py": a, "src/cora/helper.py": b,
+              "src/cora/new.py": c}, "ADDED"),
+        ):
+            with self.subTest(expected=expected):
+                observed = ekc.engine_source_universe(before, change)
+                self.assertEqual(observed["source_byte_identity"], "REFUTED")
+                self.assertEqual(observed["accounted_paths"], len(
+                    set(before) | set(change)))
+                self.assertIn(expected,
+                              {r["difference"] for r in observed["rows"]})
+                self.assertEqual(observed["full_runtime_behavior_equivalence"],
+                                 "NOT_ATTESTED")
+        for invalid in (
+            {"src/cora/cli.py": "fake"},
+            {"src/cora/../unsafe.py": a, "src/cora/cli.py": a},
+            {"src/cora/helper.py": b},
+        ):
+            with self.subTest(invalid=invalid), self.assertRaises(ValueError):
+                ekc.engine_source_universe(before, invalid)
+
+    def test_full_engine_source_universe_exact_git_replay_and_forged_receipt(self):
+        base = "57dd5c4fb6317d9a9e951fcbebac9c7aa5560b6f"
+        report = ekc.analyze(ROOT, self.sha, equivalence_base=base)
+        universe = report["engine_source_universe"]
+        self.assertEqual(universe["base"], base)
+        self.assertEqual(universe["head"], self.sha)
+        self.assertEqual(universe["denominator"], report["counts"]["modules"])
+        self.assertEqual(universe["accounted_paths"], universe["denominator"])
+        self.assertEqual(universe["identical_blobs"], universe["denominator"])
+        self.assertEqual(universe["changed_blobs"], 0)
+        self.assertEqual(universe["added_blobs"], 0)
+        self.assertEqual(universe["removed_blobs"], 0)
+        self.assertEqual(universe["source_byte_identity"],
+                         "PASS_SCOPED_EXHAUSTIVE")
+        self.assertEqual(universe["full_runtime_behavior_equivalence"],
+                         "NOT_ATTESTED")
+        self.assertEqual(report["component_dod"]["global_status"],
+                         "BLOCKED_EXTERNAL")
+        self.assertTrue(ekc.verify_report(ROOT, report))
+        fake = copy.deepcopy(report)
+        fake["engine_source_universe"]["rows"][0]["before_oid"] = "f" * 40
+        with self.assertRaisesRegex(ValueError, "does not replay"):
+            ekc.verify_report(ROOT, fake)
+        with self.assertRaisesRegex(ValueError, "ancestor"):
+            ekc.git_engine_source_universe(ROOT, self.sha, base)
+
+    def test_original_git_physical_mutation_breaks_exhaustive_source_identity(self):
+        base = "57dd5c4fb6317d9a9e951fcbebac9c7aa5560b6f"
+        with tempfile.TemporaryDirectory() as folder:
+            clone = Path(folder) / "source"
+            git(ROOT, "clone", "--no-local", "-q", "--", str(ROOT), str(clone))
+            git(clone, "checkout", "-q", self.sha)
+            baseline = ekc.git_engine_source_universe(clone, base, "HEAD")
+            self.assertEqual(baseline["source_byte_identity"],
+                             "PASS_SCOPED_EXHAUSTIVE")
+            path = clone / "src/cora/reticulum.py"
+            path.write_text(path.read_text("utf-8") +
+                            "\n# source universe falsifier\n", "utf-8")
+            self.assertEqual(ekc.git_engine_source_universe(
+                clone, base, "HEAD"), baseline)
+            git(clone, "add", "src/cora/reticulum.py")
+            git(clone, "-c", "user.name=fixture", "-c",
+                "user.email=fixture@example.invalid", "commit", "-qm",
+                "mutant: engine source blob identity regression")
+            changed = ekc.analyze(clone, "HEAD", equivalence_base=base)
+            index = changed["engine_source_universe"]
+            self.assertEqual(index["source_byte_identity"], "REFUTED")
+            self.assertEqual(index["changed_blobs"], 1)
+            self.assertEqual(index["identical_blobs"] + index["changed_blobs"],
+                             index["denominator"])
+            self.assertEqual(index["full_runtime_behavior_equivalence"],
+                             "NOT_ATTESTED")
+            self.assertTrue(ekc.verify_report(clone, changed))
+
+    def test_standalone_source_universe_cli_and_exact_report_replay(self):
+        base = "57dd5c4fb6317d9a9e951fcbebac9c7aa5560b6f"
+        import os
+        with tempfile.TemporaryDirectory() as folder:
+            receipt = Path(folder) / "source-universe.json"
+            command = [sys.executable, str(ROOT / "tools/verify_engineering_closure.py"),
+                       "--repo", str(ROOT), "--revision", self.sha,
+                       "--equivalence-base", base, "--output", str(receipt)]
+            env = {k: v for k, v in os.environ.items() if k != "PYTHONPATH"}
+            run = subprocess.run(command, cwd=ROOT, env=env,
+                                 capture_output=True, text=True,
+                                 check=False, timeout=90)
+            self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+            document = json.loads(receipt.read_text("utf-8"))
+            self.assertEqual(document["engine_source_universe"]["source_byte_identity"],
+                             "PASS_SCOPED_EXHAUSTIVE")
+            replay = subprocess.run(
+                [sys.executable, str(ROOT / "tools/verify_engineering_closure.py"),
+                 "--repo", str(ROOT), "--verify-report", str(receipt)],
+                cwd=ROOT, env=env, capture_output=True, text=True,
+                check=False, timeout=90)
+            self.assertEqual(replay.returncode, 0, replay.stdout + replay.stderr)
+            self.assertEqual(json.loads(replay.stdout)["status"],
+                             "SOURCE_REPLAY_SCOPED")
+
     def test_previous_engineering_receipt_semantics_preserved_under_extension(self):
         """Baseline verifier runs on baseline Git, new verifier on PR HEAD."""
         from types import ModuleType
