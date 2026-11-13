@@ -614,6 +614,62 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         self.assertNotEqual(a["commit"], b["commit"])
         self.assertNotEqual(a["source_digest_sha256"], b["source_digest_sha256"])
 
+    def test_exhaustive_declared_cli_help_observation_universe(self):
+        """All declared CLI help observations, not all runtime command effects."""
+        import os
+        import hashlib
+        base = "57dd5c4fb6317d9a9e951fcbebac9c7aa5560b6f"
+        atlas = json.loads(git(ROOT, "show",
+                               base + ":.cora/assurance/capability-atlas.json"))
+        commands = sorted(row["command"] for row in atlas["commands"])
+        self.assertEqual(len(commands), 71)
+        self.assertEqual(len(set(commands)), len(commands))
+        with tempfile.TemporaryDirectory() as folder:
+            clone = Path(folder) / "source"
+            git(ROOT, "clone", "--no-local", "-q", "--", str(ROOT), str(clone))
+            def observe(revision):
+                git(clone, "checkout", "-q", "-f", revision)
+                env = {**os.environ, "PYTHONPATH": str(clone / "src")}
+                results = {}
+                for cmd in commands:
+                    outcome = subprocess.run(
+                        [sys.executable, "-m", "cora.cli", cmd, "--help"],
+                        cwd=clone, env=env, capture_output=True,
+                        text=True, check=False, timeout=25)
+                    self.assertEqual(outcome.returncode, 0,
+                                     revision + ":" + cmd + " " + outcome.stderr[:300])
+                    self.assertEqual(outcome.stderr, "")
+                    self.assertIn("usage: cora " + cmd, outcome.stdout)
+                    results[cmd] = outcome.stdout
+                return results
+            reference, current = observe(base), observe(self.sha)
+            self.assertEqual(set(reference), set(commands))
+            self.assertEqual(set(current), set(commands))
+            self.assertEqual(reference, current)
+            digest = lambda x: hashlib.sha256(json.dumps(
+                x, sort_keys=True, ensure_ascii=True).encode("utf-8")).hexdigest()
+            self.assertEqual(digest(reference), digest(current))
+            # Physical negative control: a parser change must alter a real
+            # observable, even when the declared CLI command count remains 71.
+            parser = clone / "src/cora/cli.py"
+            original = parser.read_text("utf-8")
+            needle = "sub.add_parser('snapshot')"
+            self.assertEqual(original.count(needle), 1)
+            parser.write_text(original.replace(
+                needle, "sub.add_parser('snapshot', description='MUTATED HELPTEXT')"),
+                "utf-8")
+            git(clone, "add", "src/cora/cli.py")
+            git(clone, "-c", "user.name=fixture", "-c",
+                "user.email=fixture@example.invalid", "commit", "-qm",
+                "mutant: change CLI help without removing declared command")
+            bad = subprocess.run(
+                [sys.executable, "-m", "cora.cli", "snapshot", "--help"],
+                cwd=clone, env={**os.environ, "PYTHONPATH": str(clone / "src")},
+                capture_output=True, text=True, check=False, timeout=25)
+            self.assertEqual(bad.returncode, 0, bad.stderr)
+            self.assertIn("MUTATED HELPTEXT", bad.stdout)
+            self.assertNotEqual(bad.stdout, current["snapshot"])
+
     def test_native_engine_behavior_parity_across_exact_git_revisions(self):
         """A fixed native sample: source blobs give broader identity, not universal runtime proof."""
         from os import environ
