@@ -436,7 +436,7 @@ class FullSurfaceExecutionTests(unittest.TestCase):
         self.assertEqual(_strict_json(b'{"unique":true}'), {"unique": True})
         with self.assertRaisesRegex(ValueError, "duplicate JSON field"):
             _strict_json(b'{"authority":"NONE","authority":"APPROVED"}')
-        with self.assertRaises(ValueError):
+        with self.assertRaises(SyntaxError):
             compile(b"def wrong(: pass", "mutated.py", "exec")
 
     def test_09_all_declared_commands_execute_help_as_installed_cli(self):
