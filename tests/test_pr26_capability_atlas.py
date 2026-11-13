@@ -337,5 +337,43 @@ class CapabilityAtlasTests(unittest.TestCase):
             self.assertEqual(rejected.returncode, 3, rejected.stderr[-700:])
 
 
+    def test_11_installed_optional_js_parser_is_syntactically_valid(self):
+        """Cross-language syntax only. Node execution/runtime still separate."""
+        import shutil
+        node = shutil.which("node")
+        if not node:
+            self.skipTest("NODE_NOT_INSTALLED: JS parser execution NOT_RUN")
+        parser = ROOT / "src/cora/portable_js_imports.mjs"
+        proc = subprocess.run([node, "--check", str(parser)],
+                              capture_output=True, timeout=20, check=False)
+        self.assertEqual(proc.returncode, 0, proc.stderr[-500:])
+        with tempfile.TemporaryDirectory() as td:
+            broken = Path(td) / "broken.mjs"
+            broken.write_text("export const = unexpected;\\n", encoding="utf-8")
+            negative = subprocess.run([node, "--check", str(broken)],
+                                      capture_output=True, timeout=20, check=False)
+            self.assertNotEqual(negative.returncode, 0)
+
+    def test_12_twenty_bounded_standard_frontier_lenses_have_single_owner(self):
+        """Lenses name source owners; they do not claim native runtime coverage."""
+        import re
+        path = ROOT / "docs/CONTINUOUS_DEVELOPMENT.md"
+        doc = path.read_text("utf-8")
+        marker = "## Full-surface assessment lenses"
+        self.assertEqual(doc.count(marker), 1)
+        block = doc.split(marker, 1)[1].split(
+            "\\n## Trust boundary and known debt", 1)[0]
+        names = re.findall(r"(?m)^\\| ([SF][0-9]{2}) \\|", block)
+        self.assertEqual(names, (["S%02d" % k for k in range(1, 11)] +
+                                 ["F%02d" % k for k in range(1, 11)]))
+        self.assertIn("not twenty implemented engines", block)
+        self.assertIn("71/71 CLI bootstrap checks", block)
+        self.assertIn("AND obligations", block)
+        # A superficially plausible duplicate lens must fail the same contract.
+        self.assertNotEqual(
+            re.findall(r"(?m)^\\| ([SF][0-9]{2}) \\|",
+                       block.replace("| F10 ", "| F09 ", 1)), names)
+
+
 if __name__=="__main__":
     unittest.main()
