@@ -277,6 +277,50 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
                 "causal_effects_measured"], 0)
             self.assertTrue(ekc.verify_report(clone, changed))
 
+    def test_granular_ast_symbol_and_test_case_census_with_exact_git_replay(self):
+        report = ekc.analyze(ROOT, self.sha)
+        proof = report["component_contribution"]
+        rows = {row["path"]: row for row in proof["rows"]}
+        metrics = proof["metrics"]
+        self.assertEqual(metrics["modules_with_symbol_census"], report["counts"]["modules"])
+        self.assertEqual(metrics["tests_with_symbol_census"], report["counts"]["tests"])
+        self.assertEqual(metrics["module_declarations"], sum(
+            len(rows[path]["declared_units"]) for path in rows
+            if rows[path]["surface"] == "PYTHON_MODULE"))
+        self.assertEqual(metrics["test_case_declarations"], sum(
+            len(rows[path]["test_cases"]) for path in rows
+            if rows[path]["surface"] == "TEST_SOURCE"))
+        self.assertGreater(metrics["module_declarations"], report["counts"]["modules"])
+        self.assertGreater(metrics["test_case_declarations"], report["counts"]["tests"])
+        self.assertIn("snapshot", {unit["symbol"] for unit in
+                      rows["src/cora/git_snapshot.py"]["declared_units"]})
+        self.assertTrue(any(unit["symbol"].endswith(
+            "test_granular_ast_symbol_and_test_case_census_with_exact_git_replay")
+            for unit in rows["tests/test_pr40_engineering_closure.py"]["test_cases"]))
+        self.assertEqual(metrics["causal_effects_measured"], 0)
+        fake = copy.deepcopy(report)
+        fake["component_contribution"]["metrics"]["module_declarations"] += 1
+        with self.assertRaisesRegex(ValueError, "does not replay"):
+            ekc.verify_report(ROOT, fake)
+
+    def test_lexical_qualified_ast_units_and_syntax_failure(self):
+        code = ("class Outer:\\n"
+                "    def method(self):\\n"
+                "        def nested():\\n"
+                "            return 1\\n"
+                "        return nested()\\n"
+                "    async def test_async(self):\\n"
+                "        return 2\\n")
+        units = ekc.structural_units(code, "synthetic.py")
+        self.assertEqual([u["symbol"] for u in units], [
+            "Outer", "Outer.method", "Outer.method.nested", "Outer.test_async"])
+        self.assertEqual([u["kind"] for u in units], [
+            "CLASS", "DEF", "DEF", "ASYNC_DEF"])
+        self.assertEqual([u["symbol"] for u in ekc.structural_units(
+            code, "synthetic.py", test_only=True)], ["Outer.test_async"])
+        with self.assertRaises(SyntaxError):
+            ekc.structural_units("def broken(\\n", "synthetic.py")
+
     def test_physical_committed_cli_import_mutation_changes_source_not_worktree(self):
         with tempfile.TemporaryDirectory() as folder:
             clone = Path(folder) / "source"
