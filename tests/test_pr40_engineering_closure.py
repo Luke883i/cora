@@ -515,6 +515,10 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         self.assertEqual(universe["removed_blobs"], 0)
         self.assertEqual(universe["source_byte_identity"],
                          "PASS_SCOPED_EXHAUSTIVE")
+        self.assertEqual(universe["content_readback_paths"], universe["denominator"])
+        self.assertEqual(universe["content_byte_equal_paths"], universe["denominator"])
+        self.assertEqual(universe["content_byte_different_paths"], [])
+        self.assertEqual(universe["exact_content_parity"], "PASS_SCOPED_EXHAUSTIVE")
         self.assertEqual(universe["full_runtime_behavior_equivalence"],
                          "NOT_ATTESTED")
         self.assertEqual(report["component_dod"]["global_status"],
@@ -551,6 +555,12 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             self.assertEqual(index["changed_blobs"], 1)
             self.assertEqual(index["identical_blobs"] + index["changed_blobs"],
                              index["denominator"])
+            self.assertEqual(index["content_readback_paths"], index["denominator"])
+            self.assertEqual(index["content_byte_equal_paths"], index["denominator"] - 1)
+            self.assertEqual(index["content_byte_different_paths"],
+                             ["src/cora/reticulum.py"])
+            self.assertEqual(index["exact_content_parity"],
+                             "REFUTED_SOURCE_CONTENT_PARITY")
             self.assertEqual(index["full_runtime_behavior_equivalence"],
                              "NOT_ATTESTED")
             self.assertTrue(ekc.verify_report(clone, changed))
@@ -570,6 +580,8 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
             document = json.loads(receipt.read_text("utf-8"))
             self.assertEqual(document["engine_source_universe"]["source_byte_identity"],
+                             "PASS_SCOPED_EXHAUSTIVE")
+            self.assertEqual(document["engine_source_universe"]["exact_content_parity"],
                              "PASS_SCOPED_EXHAUSTIVE")
             replay = subprocess.run(
                 [sys.executable, str(ROOT / "tools/verify_engineering_closure.py"),
