@@ -187,11 +187,19 @@ def audit_contract(root: Path, *, readme_override: str | None = None) -> list[st
             errors.append('first-read-missing:' + token)
     title = '# CORA — Continuous Ontological Repository Assurance'
     marker = '<!-- programme-header:v2 -->'
+    # A single exact, visible programme badge may precede the canonical
+    # metadata block; the banner does not replace the Git-local source claim.
+    programme_badge = (
+        '[![ROA Research Programme]'
+        '(https://img.shields.io/badge/ROA-Research_Programme-1f6feb)]'
+        '(https://github.com/Luke883i/academics)\n\n'
+    )
+    header_source = readme[len(programme_badge):] if readme.startswith(programme_badge) else readme
     legacy = readme.startswith(title)
-    header, separator, body = readme.partition('\n\n')
-    # The original title-first source remains a valid historical test fixture.
+    header, separator, body = header_source.partition('\n\n')
+    # Header position and exact declaration tokens are still fail-closed.
     v2 = (separator != '' and header.startswith(marker)
-          and readme.count(marker) == 1
+          and header_source.count(marker) == 1
           and all(token in header for token in (
               'Luke883i/academics', 'Luke883i/ROA', 'Luke883i/cora',
               'Repository-local code, evidence, and governance remain authoritative'))

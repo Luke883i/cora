@@ -22,6 +22,19 @@ def git(root, *args):
 class RepositoryContract(unittest.TestCase):
     def test_novice_static_readme_and_links(self):
         self.assertEqual(audit_contract(ROOT), [])
+    def test_programme_badge_whitelist_preserves_header_truth(self):
+        """Visible badge is optional; a substituted badge cannot bypass header."""
+        readme = (ROOT / 'README.md').read_text('utf-8')
+        expected = '[![ROA Research Programme](https://img.shields.io/badge/ROA-Research_Programme-1f6feb)](https://github.com/Luke883i/academics)'
+        self.assertIn(expected, readme)
+        self.assertEqual(audit_contract(ROOT), [])
+        modified = readme.replace(expected, '[![Forged approval](https://example.invalid/badge.svg)](https://example.invalid)', 1)
+        self.assertIn('full-product-name-missing', audit_contract(ROOT, readme_override=modified))
+        repeated = readme.replace(expected, expected + '\\n\\n' + expected, 1)
+        self.assertIn('full-product-name-missing', audit_contract(ROOT, readme_override=repeated))
+        no_header = readme.replace('<!-- programme-header:v2 -->', '<!-- unsigned-banner -->', 1)
+        self.assertIn('full-product-name-missing', audit_contract(ROOT, readme_override=no_header))
+
     def test_readme_missing_limit_is_detected(self):
         doc = (ROOT / 'README.md').read_text('utf-8')
         changed = doc.replace('## Operating boundaries', '## Undocumented')
