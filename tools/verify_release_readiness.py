@@ -23,7 +23,7 @@ except ModuleNotFoundError as exc:
 
 NAME = "Continuous Ontological Repository Assurance"
 REQUIRED = (
- "README.md","CHANGELOG.md","AGENTS.md","GOVERNANCE.md",
+ "README.md","CHANGELOG.md","AGENTS.md","GOVERNANCE.md","SECURITY.md",
  "docs/CONTINUOUS_DEVELOPMENT.md",
  "docs/ARCHITECTURE.md","docs/archive/decisions/ADR-PR15.md","docs/archive/audits/AUDIT_PR15_MAIN.md",
  "docs/DOD_RELEASE_READINESS.md","docs/RELEASE.md",
@@ -174,6 +174,69 @@ def inspect_source(root: Path) -> dict:
     for v in ("G-source","G-release","I1","I7","BLOCKED_EXTERNAL","L28"):
         if v not in txt("docs/DOD_RELEASE_READINESS.md"):
             errors.append("RELEASE_DOD_INCOMPLETE:"+v)
+    # Three distinct source objects: a reviewable declaration, never a
+    # self-issued enterprise certificate or host/release authority.
+    boundaries = {
+        "README.md": (
+            "**Enterprise evaluation candidate, not enterprise-qualified.**",
+            "**Product:**", "**Software:**", "**Repository:**",
+            "Formal three-boundary DoD", "NOT_RUN", "BLOCKED_EXTERNAL"),
+        "GOVERNANCE.md": (
+            "## Product, software and repository — bounded closeout",
+            "SOURCE_SCOPE_DEFINED", "IMPLEMENTED_SOURCE_SCOPED",
+            "CANDIDATE_VERIFICATION_ONLY", "SOURCE_CONTROLS_DECLARED",
+            "HOST_UNVERIFIED", "G-source = I1", "G-release = G-source",
+            "authorization=NONE"),
+        "docs/DOD_RELEASE_READINESS.md": (
+            "## Three-boundary closeout interpretation",
+            "Product `cora`", "cora-engine", "cora-release-verification",
+            "Repository `Luke883i/cora`", "I6", "I7", "BLOCKED_EXTERNAL",
+            "release_authorized=false", "authorization=NONE"),
+        "docs/RELEASE.md": (
+            "## Three-boundary closure and acceptance",
+            "source closure", "release_status=BLOCKED_EXTERNAL",
+            "release_authorized=false", "authorization=NONE"),
+        "docs/ARCHITECTURE.md": (
+            "Closure owner:", "governance decision record",
+            "Module existence does not authenticate runtime"),
+        "SECURITY.md": (
+            "Repository visibility does not establish protected-branch controls",
+            "No supported production release", "NOT_ATTESTED"),
+    }
+    for rel, tokens in boundaries.items():
+        source = txt(rel)
+        if any(token not in source for token in tokens):
+            errors.append("CLOSURE_BOUNDARY_DRIFT:" + rel)
+    # A signed-looking source statement never turns a local source verifier
+    # into an authenticated host or release approver.
+    forbidden = (
+        "release_status=APPROVED", "release_authorized=true",
+        "authorization=APPROVED", "HOST_VERIFIED_BY_SOURCE",
+    )
+    if any(term in txt(rel) for rel in boundaries for term in forbidden):
+        errors.append("CLOSURE_UNEARNED_APPROVAL")
+    source_closure_ok = not any(
+        e.startswith(("CLOSURE_BOUNDARY_DRIFT:", "CLOSURE_UNEARNED_APPROVAL",
+                      "PRODUCT_SOFTWARE_ONTOLOGY", "PACKAGE_METADATA",
+                      "WORKFLOW_SOURCE_POLICY")) for e in errors)
+    object_closeout = {
+        "schema": "cora-source-object-closeout/1",
+        "product": {"id": "cora", "state": "SOURCE_SCOPE_DEFINED"},
+        "software": [
+            {"id": "cora-engine", "state": "IMPLEMENTED_SOURCE_SCOPED"},
+            {"id": "cora-release-verification",
+             "state": "CANDIDATE_VERIFICATION_ONLY"},
+        ],
+        "repository": {"id": "Luke883i/cora",
+                       "state": "SOURCE_CONTROLS_DECLARED"},
+        "closure_status": ("SOURCE_CONTRACT_RECONCILED" if
+                           source_closure_ok else "BLOCKED_SOURCE"),
+        "runtime_target": "NOT_ATTESTED_BY_SOURCE",
+        "host_protection": "HOST_UNVERIFIED",
+        "independent_review": "BLOCKED_EXTERNAL",
+        "enterprise_accepted": False,
+        "authorization": "NONE",
+    }
     return {
       "schema":"cora-release-source-readiness/1",
       "product_name":NAME,"distribution":"cora-audit","version":version,
@@ -181,6 +244,7 @@ def inspect_source(root: Path) -> dict:
       "input_sha256":{k:hashlib.sha256(v).hexdigest() for k,v in sorted(data.items())},
       "source_status":"PASS_SCOPED" if not errors else "BLOCKED_SOURCE",
       "source_errors":sorted(set(errors)),
+      "object_closeout":object_closeout,
       "release_status":"BLOCKED_EXTERNAL",
       "external_obligations":["PROTECTED_MAIN_REQUIRED_CHECKS_NOT_ATTESTED",
          "INDEPENDENT_NON_AUTHOR_APPROVAL_NOT_ATTESTED",
