@@ -369,6 +369,17 @@ def g(repo: Path, *args: str) -> str:
 
 class FullSurfaceExecutionTests(unittest.TestCase):
 
+    def test_host_governance_text_has_no_stale_visibility_or_bootstrap_claim(self):
+        """A past API 403 or first-PR wording cannot become current control truth."""
+        current = (ROOT / "docs/CONTINUOUS_DEVELOPMENT.md").read_text("utf-8")
+        governance = (ROOT / "GOVERNANCE.md").read_text("utf-8")
+        for text in (current, governance):
+            self.assertNotIn("this private repository", text.lower())
+            self.assertNotIn("this first PR", text)
+        self.assertIn("HOST_UNVERIFIED", current)
+        self.assertIn("NOT_ATTESTED by source alone", governance)
+        self.assertIn("separate human administrative acceptance", current)
+
     def test_08_complete_committed_static_surface_and_strict_json(self):
         """Full tracked Git-source census; does not imply all runtime paths run."""
         import hashlib

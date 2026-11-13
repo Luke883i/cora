@@ -99,7 +99,7 @@ The twenty lenses below are **ten established engineering practices (S01–S10) 
 
 ## Trust boundary and known debt
 
-The policy and code live in the same repository that an agent can edit. Until protected GitHub branch rules, independent reviewer permissions and required trusted checks are configured by an administrator, **CORA cannot guarantee** a user or agent cannot bypass them. GitHub ruleset inspection on this private repository currently returns HTTP 403 due to account/plan restrictions, which is an **unverified control**, not proof of enforcement or non-enforcement. This first PR is a **bootstrap** and needs human administrator acceptance.
+The policy and code live in the same repository that an agent can edit. Until protected GitHub branch rules, independent reviewer permissions and required trusted checks are configured by an administrator, **CORA cannot guarantee** a user or agent cannot bypass them. A GitHub ruleset readback returning 403, or unavailable for any reason, means **HOST_UNVERIFIED**, not proof that branch protection is enabled or absent. A new installation or changed host policy requires separate human administrative acceptance; neither an older review nor a green Git-source test establishes current enforcement.
 
 Post-merge without real CI/deployment telemetry is not an end-to-end operational health gate. Any result that says `OBSERVED_REVIEW_REQUIRED` is an audit signal, not a merge authorization. No automated deletion, code rewrite, release or deployment is performed by these new tools.
 
