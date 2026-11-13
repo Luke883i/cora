@@ -98,6 +98,38 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
         self.assertIn("worktree-git-parity:README.md", bad["errors"])
         self.assertEqual(DOC.census_markdown(ROOT)["counts"]["broken_local_links"], 0)
 
+    def test_active_methods_have_direct_scoped_dod_routes(self):
+        """Method -> DoD ownership is a link, not proof that a DoD passes."""
+        import json
+        registry = json.loads((ROOT / "docs/documentation-registry.json").read_text("utf-8"))
+        statuses = {row["path"]: row["status"] for row in registry["documents"]}
+        owners = {
+            "docs/CONTINUOUS_DEVELOPMENT.md": "docs/DOD_CONTINUOUS.md",
+            "docs/ENGINEERING_DEBT.md": "docs/DOD_ENGINEERING_DEBT.md",
+            "docs/HOLISTIC_FORENSICS.md": "docs/DOD_HOLISTIC_FORENSICS.md",
+            "docs/GOLD_ASSURANCE.md": "docs/DOD_PR19_GOLD.md",
+            "docs/CONVERGENT_ASSURANCE.md": "docs/DOD_PR20_CONVERGENCE.md",
+            "docs/ARTIFACT_SEMANTICS.md": "docs/DOD_V1_EXPERIMENTAL.md",
+            "docs/RELEASE.md": "docs/DOD_RELEASE_READINESS.md",
+        }
+        def targets(path, body):
+            return [DOC.resolve(path, link)
+                    for link in DOC.markdown_links(body)]
+        for page, dod in owners.items():
+            with self.subTest(page=page):
+                self.assertEqual(statuses[page], "CURRENT")
+                self.assertIn(statuses[dod], ("CURRENT", "SCOPED_CURRENT"))
+                body = (ROOT / page).read_text("utf-8")
+                self.assertIn("**Applicable current DoD:**", body)
+                self.assertIn((dod, ""), targets(page, body))
+                # A plausible local link to the INDEX does not discharge
+                # a direct owner route; the negative source mutant must fail.
+                relative = dod.rsplit("/", 1)[-1]
+                mutant = body.replace("(" + relative + ")", "(INDEX.md)", 1)
+                self.assertNotEqual(mutant, body)
+                self.assertNotIn((dod, ""), targets(page, mutant))
+                self.assertIn(("docs/INDEX.md", ""), targets(page, mutant))
+
     def test_readme_evaluation_budget_and_source_reality(self):
         readme = (ROOT / "README.md").read_text("utf-8")
         index = (ROOT / "docs/INDEX.md").read_text("utf-8")
