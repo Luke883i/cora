@@ -154,9 +154,37 @@ def _call_name(node: ast.AST) -> str:
 
 
 
+def static_test_consumers(repo: Path, sha: str, tests: list[str],
+                          modules: list[str]) -> list[tuple[str, str]]:
+    """Candidate import edges, not proof that a test exercised a behavior."""
+    known = set(modules)
+    edges: set[tuple[str, str]] = set()
+    for test_path in tests:
+        syntax = ast.parse(source(repo, sha, test_path), filename=test_path)
+        for node in ast.walk(syntax):
+            candidates = []
+            if isinstance(node, ast.Import):
+                candidates.extend(alias.name for alias in node.names
+                                  if alias.name.startswith("cora."))
+            elif isinstance(node, ast.ImportFrom):
+                prefix = node.module or ""
+                if prefix == "cora":
+                    candidates.extend("cora." + alias.name for alias in node.names)
+                elif prefix.startswith("cora."):
+                    candidates.append(prefix)
+            for qualified in candidates:
+                parts = qualified.split(".")
+                if len(parts) < 2:
+                    continue
+                target = "src/cora/" + parts[1] + ".py"
+                if target in known:
+                    edges.add((test_path, target))
+    return sorted(edges)
+
+
 def contribution_index(paths: list[str], modules: list[str], tools: list[str],
                        tests: list[str], imports: list[tuple[str, str]],
-                       atlas: dict) -> dict:
+                       atlas: dict, test_imports: list[tuple[str, str]] | None = None) -> dict:
     """Source contribution graph, NOT causal ablation or safe-deletion evidence.
 
     Every tracked path is accounted for. The directed import graph only records
@@ -184,6 +212,12 @@ def contribution_index(paths: list[str], modules: list[str], tools: list[str],
         for callee in sorted(edges[current] - reachable):
             reachable.add(callee)
             frontier.append(callee)
+
+    by_test_import: dict[str, set[str]] = {src: set() for src in modules}
+    for consumer, target in (test_imports or []):
+        if consumer not in tests_set or target not in modules_set:
+            raise ValueError("test import edge references missing source")
+        by_test_import[target].add(consumer)
 
     by_command: dict[str, set[str]] = {src: set() for src in modules}
     by_witness: dict[str, set[str]] = {src: set() for src in modules}
@@ -217,6 +251,7 @@ def contribution_index(paths: list[str], modules: list[str], tools: list[str],
                 "imports": sorted(edges[path]), "imported_by": sorted(incoming[path]),
                 "declared_commands": sorted(by_command[path]),
                 "declared_test_witnesses": sorted(by_witness[path]),
+                "static_test_import_candidates": sorted(by_test_import[path]),
                 "consumer_status": "STATIC_CANDIDATES_DYNAMIC_UNKNOWN",
                 "causal_effect": "NOT_MEASURED",
                 "consolidation": "NOT_AUTHORIZED_UNTESTED",
@@ -252,6 +287,9 @@ def contribution_index(paths: list[str], modules: list[str], tools: list[str],
         "transitive_cli_imports": reach["TRANSITIVE_CLI_IMPORT"],
         "not_observed_static": reach["NOT_OBSERVED_STATIC"],
         "command_source_bindings": len(commands),
+        "static_test_import_edges": sum(len(values) for values in by_test_import.values()),
+        "modules_with_static_test_import_candidate": sum(
+            bool(by_test_import[path]) for path in modules),
         "modules_without_declared_cli_witness": sum(
             not by_command[path] for path in modules),
         "causal_effects_measured": 0,
@@ -353,7 +391,9 @@ def analyze(repo: Path, revision: str = "HEAD") -> dict:
             "**Release = BLOCKED_EXTERNAL**",
             "not a stable API")):
         raise ValueError("current release source identity / external gate missing")
-    contribution = contribution_index(paths, modules, tools, tests, imports, atlas)
+    test_edges = static_test_consumers(repo, sha, tests, modules)
+    contribution = contribution_index(
+        paths, modules, tools, tests, imports, atlas, test_edges)
     report = {
         "schema": SCHEMA, "commit": sha, "tree": tree_sha,
         "source": "ORIGINAL_COMMITTED_GIT", "authority": "NONE",
