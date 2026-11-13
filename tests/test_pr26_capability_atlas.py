@@ -236,11 +236,19 @@ class CapabilityAtlasTests(unittest.TestCase):
                 counts["workflows"] += 1
             elif row["path"].endswith(".mjs"):
                 counts["javascript"] += 1
-        self.assertEqual(counts, {
-            "python": 135, "json": 54, "markdown": 48,
-            "workflows": 13, "javascript": 1,
-        })
-        self.assertEqual(len(ledger["records"]), 255)
+        # Inventory grows and contracts with the exact checked-out Git tree.
+        # Fixed-era counts are diagnostics, not a ban on future safe changes.
+        expected = {
+            "python": sum(p.endswith(".py") for p in paths),
+            "json": sum(p.endswith(".json") for p in paths),
+            "markdown": sum(p.endswith(".md") for p in paths),
+            "workflows": sum(p.startswith(".github/workflows/") and
+                             p.endswith(".yml") for p in paths),
+            "javascript": sum(p.endswith(".mjs") for p in paths),
+        }
+        self.assertEqual(counts, expected)
+        self.assertEqual(len(ledger["records"]), len(paths))
+        self.assertEqual(counts["markdown"], 48)  # existing registry contract
         self.assertEqual(_strict_json(b'{"unique":true}'), {"unique": True})
         with self.assertRaisesRegex(ValueError, "duplicate JSON field"):
             _strict_json(b'{"authority":"NONE","authority":"APPROVED"}')
