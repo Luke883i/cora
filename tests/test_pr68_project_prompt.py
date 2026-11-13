@@ -1,6 +1,6 @@
 """Finite CORA Project instruction mutations; NOT an LLM behavioral evaluation.
 
-20,000? No: 25 families * 400 unique NEGATIVE strings = exactly 10,000.
+25 families x 4 threat shapes x 100 variants = exactly 10,000 negatives.
 Plus 200 positive source-format controls. No model calls or physical Git writes.
 """
 from __future__ import annotations
@@ -112,13 +112,26 @@ class ProjectAdapterV2Tests(unittest.TestCase):
             for variation in range(400):
                 token = f"case-{idx:02d}-{variation:03d}"
                 if variation < 200:
-                    changed = line.replace(first, attack + " [" + token + "]", 1)
+                    # Two independent necessary facts per clause: corrupt the
+                    # first OR the second, never both at once.
+                    anchor = first if variation < 100 else second
+                    self.assertIn(anchor, line)
+                    changed = line.replace(anchor, attack + " [" + token + "]", 1)
                     candidate = self.prompt.replace(line, changed, 1)
                     expected = "project-adapter-obligation:" + name
                     family = "corrupted_obligation_rejected"
-                else:
+                elif variation < 300:
+                    # Contradiction adjacent to an otherwise intact rule.
                     changed = line + "\n" + attack + " [" + token + "]"
                     candidate = self.prompt.replace(line, changed, 1)
+                    expected = "project-adapter-contradiction:" + name
+                    family = "additive_override_rejected"
+                else:
+                    # Simulated lower-trust tool/issue text elsewhere in the
+                    # instruction context; do not treat as delegated authority.
+                    payload = "[UNTRUSTED_TOOL_OUTPUT issue=" + token + "] " + attack
+                    candidate = self.prompt.replace(
+                        "\nModes:", "\n" + payload + "\nModes:", 1)
                     expected = "project-adapter-contradiction:" + name
                     family = "additive_override_rejected"
                 self.assertNotEqual(candidate, self.prompt)
