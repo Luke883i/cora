@@ -242,6 +242,18 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             ekc.contribution_index(paths, [cli, direct, indirect, unknown],
                                    [tool], [test], [(cli, "src/cora/absent.py")],
                                    {"commands": []})
+        for command, interaction in (
+            ("ordinary", "SYNTHETIC_MODEL_NOT_RUNTIME"),
+            ("stress-ordinary", "UNRESTRICTED_RUNTIME"),
+        ):
+            with self.subTest(command=command), self.assertRaisesRegex(
+                    ValueError, "finite-model-only role"):
+                ekc.contribution_index(
+                    paths, [cli, direct, indirect, unknown],
+                    [tool], [test], [],
+                    {"commands": [{"command": command, "method_source": direct,
+                                   "test_source": test, "family": "finite-models",
+                                   "interaction": interaction}]})
         with self.assertRaisesRegex(ValueError, "missing source/test witness"):
             ekc.contribution_index(paths, [cli, direct, indirect, unknown],
                                    [tool], [test], [], {"commands": [
