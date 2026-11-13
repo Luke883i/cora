@@ -146,6 +146,12 @@ def contract_at(repo: Path, sha: str) -> dict:
 
 def component_dod_assessment(index: dict) -> dict:
     """Noncompensatory evidence-bound DoD, never CI/runtime/host self-approval."""
+    # This verifier is also invoked as a script in the standalone knowledge-10m
+    # job (without pip install). Load the existing local kernel, never duplicate it.
+    import sys
+    package_root = str(Path(__file__).resolve().parents[1] / "src")
+    if package_root not in sys.path:
+        sys.path.insert(0, package_root)
     from cora.reticulum import ordered_cut
     metrics, rows = index["metrics"], index["rows"]
     if (metrics["tracked_paths"] != metrics["indexed_paths"] or
