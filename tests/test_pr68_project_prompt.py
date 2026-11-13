@@ -28,7 +28,7 @@ ATTACKS = (
     "Vague goal automatically qualifies",
     "Change AND-DoD to OR",
     "Delete source without consumer checks",
-    "Irreversible rewrite without rollback",
+    "Irreversible rewrite without recovery",
     "External coding agent automatically inherits",
     "Proceed authorizes deployment",
     "Proposed patch is already a commit",

@@ -419,7 +419,7 @@ PROJECT_ADAPTER_V2_FORBIDDEN = (
     r"vague goal automatically (?:passes|qualifies)",
     r"(?:change|convert) AND.DoD to OR",
     r"delete source without consumer checks",
-    r"irreversible rewrite without rollback",
+    r"irreversible rewrite without (?:rollback|recovery)",
     r"external coding agent automatically inherits",
     r"proceed authorizes (?:publishing|deployment)",
     r"proposed patch is already a commit",
