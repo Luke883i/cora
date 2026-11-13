@@ -179,6 +179,19 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             sum(metrics[name] for name in (
                 "entrypoint_modules", "direct_cli_imports", "transitive_cli_imports",
                 "not_observed_static")), report["counts"]["modules"])
+        self.assertEqual(
+            metrics["finite_model_assurance_declared_modules"]
+            + metrics["non_finite_cli_declared_modules"]
+            + metrics["modules_without_declared_cli_witness"],
+            metrics["python_modules"])
+        roles = {row["path"]: row.get("declared_capability_role")
+                 for row in rows if row["surface"] == "PYTHON_MODULE"}
+        self.assertEqual(roles["src/cora/gold_saturation.py"],
+                         "FINITE_MODEL_ASSURANCE_DECLARED_NOT_RUNTIME_VALIDATED")
+        self.assertEqual(roles["src/cora/continuous.py"],
+                         "CLI_COMMAND_SOURCE_DECLARED_NOT_RUNTIME_VALIDATED")
+        self.assertEqual(roles["src/cora/native_gold.py"],
+                         "NON_COMMAND_SUPPORT_SOURCE_CONSUMERS_INCOMPLETE")
         self.assertEqual(metrics["causal_effects_measured"], 0)
         self.assertEqual(metrics["safe_consolidations_attested"], 0)
         self.assertEqual(len({r["path"] for r in rows}), len(rows))
@@ -204,7 +217,7 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             paths, [cli, direct, indirect, unknown], [tool], [test],
             [(cli, direct), (direct, indirect)],
             {"commands": [{"command": "direct", "method_source": direct,
-                           "test_source": test}]})
+                           "test_source": test, "family": "git-evidence"}]})
         by = {r["path"]: r for r in proof["rows"]}
         self.assertEqual(by[cli]["cli_static"], "ENTRYPOINT")
         self.assertEqual(by[direct]["cli_static"], "DIRECT_CLI_IMPORT")
@@ -213,6 +226,9 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         self.assertEqual(by[unknown]["consumer_status"],
                          "STATIC_CANDIDATES_DYNAMIC_UNKNOWN")
         self.assertEqual(by[direct]["declared_commands"], ["direct"])
+        self.assertEqual(by[direct]["declared_families"], ["git-evidence"])
+        self.assertEqual(by[direct]["declared_capability_role"],
+                         "CLI_COMMAND_SOURCE_DECLARED_NOT_RUNTIME_VALIDATED")
         self.assertEqual(by[direct]["declared_test_witnesses"], [test])
         self.assertEqual(by[tool]["surface"], "OPERATIONAL_TOOL_SOURCE")
         self.assertEqual(by[test]["surface"], "TEST_SOURCE")
