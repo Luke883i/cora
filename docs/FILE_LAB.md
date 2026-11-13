@@ -81,7 +81,7 @@ CORA validates the schema and references. It never treats this range as a calibr
 
 ## Falsification and DoD
 
-A real Git fixture with two declared products and one shared software must distinguish positive incoming/outgoing edges, product entrypoints, a genuinely unreferenced **static candidate**, dynamic imports, runtime presence/absence, invalid commit bindings, AI hallucinated refs, forged/rehashed reports and two-person gate. A separate seeded 1M-case model stress tests the *finite triage policy*, **not a million repository analyses**. Pass means no false safe-deletion; it does not prove global recall, calibrated confidence, or field accuracy. See [standards audit](STANDARDS_MAINTENANCE_AUDIT.md).
+A real Git fixture with two declared products and one shared software must distinguish positive incoming/outgoing edges, product entrypoints, a genuinely unreferenced **static candidate**, dynamic imports, runtime presence/absence, invalid commit bindings, AI hallucinated refs, forged/rehashed reports and two-person gate. A separate seeded 1M-case model stress tests the *finite triage policy*, **not a million repository analyses**. Pass means no false safe-deletion; it does not prove global recall, calibrated confidence, or field accuracy. See the [current selection DoD](DOD_SELECTION.md) and [governance](../GOVERNANCE.md); the older standards audit is retained as a historical source in the [documentation index](INDEX.md).
 
 ## v1.experimental artifact roles
 

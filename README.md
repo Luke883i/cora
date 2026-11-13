@@ -157,3 +157,6 @@ The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) di
 
 **External acceptance remains `BLOCKED_EXTERNAL`** without independent target, reviewer and host evidence. **GitHub workflow files alone do not prove** enforced rules. Absent imports do not prove `safe_deletion`; source CI does not authorize release.
 
+## Engineering map
+
+**Product:** assurance. **Software:** `cora-engine` and `cora-release-verification`. **Repository:** source, tests, CI and **historical ADRs**. [Index](docs/INDEX.md) identifies current document owners; original Git retains decision history.

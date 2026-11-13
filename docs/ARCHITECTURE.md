@@ -68,7 +68,7 @@ The optional **maintenance** path is deliberately separate: clean Git worktree -
 
 ## Repo navigation / novice engineer challenge
 
-Starting at the root, an engineer should find answers without prior PR history: What is CORA? What is deliberately not supported? How do I install and audit a repo? Which source modules implement the capabilities? What evidence proves the last revision? Where do I run tests and report security issues? The [README](../README.md) answers the first three; this map and `src/cora/` answer the next; [current product DoD](DOD_V1_EXPERIMENTAL.md), `tests/`, `.github/workflows/` and [security](../SECURITY.md) answer the rest. Automatic checks validate links and commands; genuine human comprehension requires the independent first-read review described in [DoD](DOD.md).
+Starting at the root, an engineer should find answers without prior PR history: What is CORA? What is deliberately not supported? How do I install and audit a repo? Which source modules implement the capabilities? What evidence proves the last revision? Where do I run tests and report security issues? The [README](../README.md) answers the first three; this map and `src/cora/` answer the next; [current product DoD](DOD_V1_EXPERIMENTAL.md), `tests/`, `.github/workflows/` and [security](../SECURITY.md) answer the rest. Automatic checks validate links and commands; genuine human comprehension requires the independent first-read review described in the [documentation acceptance DoD](DOCUMENTATION_DOD.md).
 
 ## Artifact roles are not file name inference
 
