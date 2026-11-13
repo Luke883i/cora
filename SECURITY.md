@@ -31,7 +31,7 @@ Current source and safety obligations are described by [governance](GOVERNANCE.m
 
 ## v1.experimental declaration trust
 
-Artifact roles are versioned owner declarations, not security labels authenticated by GitHub or an attested CI. Do not use a file name, a declared test/contract role, a self-hash or an AI hypothesis as proof of safety for quarantine, archive, rename or deletion. The current private-repository hosting configuration may lack enforceable protected-branch controls; release and merge gates require explicit administrator evidence. See [role contract](docs/ARTIFACT_SEMANTICS.md) and [v1 DoD](docs/DOD_V1_EXPERIMENTAL.md).
+Artifact roles are versioned owner declarations, not security labels authenticated by GitHub or an attested CI. Do not use a file name, a declared test/contract role, a self-hash or an AI hypothesis as proof of safety for quarantine, archive, rename or deletion. Repository visibility does not establish protected-branch controls; release and merge gates require current, explicitly attributable administrator evidence. See [role contract](docs/ARTIFACT_SEMANTICS.md) and [v1 DoD](docs/DOD_V1_EXPERIMENTAL.md).
 
 ## External scanner evidence and process modes
 
