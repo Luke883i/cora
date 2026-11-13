@@ -376,8 +376,8 @@ def verify_compact_document_bridge(guide: str, index: str, architecture: str) ->
                    "docs/")
     if any(t not in index for t in index_facts):
         errors.append("cto-navigation-hierarchy-drift")
-    if "source merged via PR46" not in architecture:
-        errors.append("cto-version-chronology-drift")
+    if "implemented in src/cora/chat_bundle.py" not in architecture:
+        errors.append("cto-chat-owner-drift")
     return sorted(set(errors))
 
 

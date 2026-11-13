@@ -235,9 +235,9 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         self.assertIn("cto-navigation-hierarchy-drift",
                       DOC.verify_compact_document_bridge(
                           guide, index.replace("compressed public front door", "new SOT"), arch))
-        self.assertIn("cto-version-chronology-drift",
+        self.assertIn("cto-chat-owner-drift",
                       DOC.verify_compact_document_bridge(
-                          guide, index, arch.replace("source merged via PR46", "still unmerged")))
+                          guide, index, arch.replace("implemented in src/cora/chat_bundle.py", "not implemented")))
         # Metadata-independent formatting edits must not be called evidence loss.
         self.assertEqual(DOC.verify_compact_document_bridge(guide + "\n", index, arch), [])
 
@@ -496,12 +496,13 @@ class ProgressiveDocumentationTests(unittest.TestCase):
                 "synthetic approval document", "duplicated definitive release policy",
                 "separate undocumented owner map", "new immutable certificate",
             ),
-            # 9: merged source history falsely undone
+            # 9: the real portable chat source owner is falsified
             (
-                "still unmerged PR46", "unreleased unreviewed PR46", "PR46 never existed",
-                "PR46 is merely hypothetical", "no actual merge of PR46",
-                "PR46 cannot be traced in Git", "source was only proposed by PR46",
-                "PR46 has no provenance", "PR46 was rejected", "PR46 is an external rumor",
+                "only a README demonstration", "a self-executing ChatGPT Project",
+                "an unimplemented feature", "not connected to the CLI",
+                "a GitHub app with automatic runtime", "a hosted CORA server",
+                "an independent human review", "a pseudocode-only handler",
+                "a file owned by the target repo", "an unverified external plugin",
             ),
         )
         fingerprint = set()
@@ -533,7 +534,7 @@ class ProgressiveDocumentationTests(unittest.TestCase):
             elif family == 8:
                 i = mutation(i, "compressed public front door", content)
             else:
-                a = mutation(a, "source merged via PR46", content)
+                a = mutation(a, "implemented in src/cora/chat_bundle.py", content)
             self.assertNotEqual((r, g, i, a, c), (root, guide, index, arch, cross))
             digest = hashlib.sha256("\n".join((r, g, i, a, c)).encode("utf-8")).digest()
             self.assertNotIn(digest, fingerprint)
