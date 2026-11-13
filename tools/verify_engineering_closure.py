@@ -205,12 +205,6 @@ def static_python_consumers(repo: Path, sha: str, consumers: list[str],
     return sorted(edges)
 
 
-def static_test_consumers(repo: Path, sha: str, tests: list[str],
-                          modules: list[str]) -> list[tuple[str, str]]:
-    """Compatibility source graph for original test module consumers."""
-    return static_python_consumers(repo, sha, tests, modules)
-
-
 def contribution_index(paths: list[str], modules: list[str], tools: list[str],
                        tests: list[str], imports: list[tuple[str, str]],
                        atlas: dict, test_imports: list[tuple[str, str]] | None = None,
@@ -470,7 +464,7 @@ def analyze(repo: Path, revision: str = "HEAD") -> dict:
             "**Release = BLOCKED_EXTERNAL**",
             "not a stable API")):
         raise ValueError("current release source identity / external gate missing")
-    test_edges = static_test_consumers(repo, sha, tests, modules)
+    test_edges = static_python_consumers(repo, sha, tests, modules)
     tool_edges = static_python_consumers(repo, sha, tools, modules)
     module_units = {
         path: structural_units(source(repo, sha, path), path) for path in modules
