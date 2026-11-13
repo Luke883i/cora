@@ -144,6 +144,96 @@ def contract_at(repo: Path, sha: str) -> dict:
     return doc
 
 
+def _engine_source_manifest(repo: Path, commit: str) -> dict[str, str]:
+    """Enumerate all exact Git engine Python blobs, including unchanged paths."""
+    raw = git(repo, "ls-tree", "-r", "-z", commit, "--", "src/cora")
+    result = {}
+    for record in raw.split(b"\0"):
+        if not record:
+            continue
+        try:
+            attributes, pathname = record.split(b"\t", 1)
+            mode, kind, oid = attributes.decode("ascii").split()
+            path = pathname.decode("utf-8")
+        except (ValueError, UnicodeDecodeError) as exc:
+            raise ValueError("unparseable committed engine tree") from exc
+        if not re.fullmatch(r"src/cora/[^/]+\.py", path):
+            continue
+        if (kind != "blob" or mode not in ("100644", "100755")
+                or not SHA.fullmatch(oid) or path in result):
+            raise ValueError("invalid engine module blob identity")
+        result[path] = oid
+    if "src/cora/cli.py" not in result:
+        raise ValueError("source universe missing canonical CLI entrypoint")
+    return result
+
+
+def engine_source_universe(before: dict[str, str], after: dict[str, str]) -> dict:
+    """Universal *blob* equality over the exact closed-world module path union.
+
+    This is an exhaustive SOURCE-byte property, not behavioral equivalence over
+    unbounded inputs, runtime environment, plugins, or network effects.
+    """
+    for snapshot in (before, after):
+        if (not isinstance(snapshot, dict) or not snapshot
+                or any(not isinstance(p, str) or
+                       not re.fullmatch(r"src/cora/[^/]+\.py", p) or
+                       not isinstance(oid, str) or not SHA.fullmatch(oid)
+                       for p, oid in snapshot.items())
+                or "src/cora/cli.py" not in snapshot):
+            raise ValueError("incomplete or invalid source-universe manifest")
+    universe = sorted(set(before) | set(after))
+    rows = [
+        {"path": path,
+         "before_oid": before.get(path),
+         "after_oid": after.get(path),
+         "difference": ("ADDED" if path not in before else
+                        "REMOVED" if path not in after else
+                        "IDENTICAL_BLOB" if before[path] == after[path] else
+                        "CHANGED_BLOB")}
+        for path in universe
+    ]
+    counts = Counter(row["difference"] for row in rows)
+    identical = counts["IDENTICAL_BLOB"]
+    exact = identical == len(universe)
+    return {
+        "schema": "cora-engine-source-universe/1",
+        "quantifier": "FOR_ALL_GIT_TRACKED_SRC_CORA_TOP_LEVEL_PYTHON_MODULE_BLOBS",
+        "universe": "BASE_UNION_HEAD_FROM_ORIGINAL_GIT",
+        "denominator": len(universe),
+        "accounted_paths": len(rows),
+        "identical_blobs": identical,
+        "changed_blobs": counts["CHANGED_BLOB"],
+        "added_blobs": counts["ADDED"],
+        "removed_blobs": counts["REMOVED"],
+        "source_byte_identity": "PASS_SCOPED_EXHAUSTIVE" if exact else "REFUTED",
+        "source_coverage": "ALL_TRACKED_ENGINE_PYTHON_MODULES_IN_BOTH_REVISIONS",
+        "conditional_behavior": "UNOBSERVED_DEPENDENCIES_AND_ENVIRONMENT",
+        "full_runtime_behavior_equivalence": "NOT_ATTESTED",
+        "authorization": "NONE",
+        "rows": rows,
+    }
+
+
+def git_engine_source_universe(repo: Path, base: str, head: str) -> dict:
+    """Accept only exact, ancestrally related Git commits for this comparison."""
+    base_sha = git(repo, "rev-parse", "--verify", base + "^{commit}", max_bytes=128).decode().strip()
+    head_sha = git(repo, "rev-parse", "--verify", head + "^{commit}", max_bytes=128).decode().strip()
+    if not SHA.fullmatch(base_sha) or not SHA.fullmatch(head_sha):
+        raise ValueError("invalid exact Git source universe revision")
+    ancestry = subprocess.run(["git", "-C", str(repo), "merge-base",
+                               "--is-ancestor", base_sha, head_sha],
+                              capture_output=True, timeout=30, check=False)
+    if ancestry.returncode != 0:
+        raise ValueError("source universe requires base ancestor of head")
+    result = engine_source_universe(
+        _engine_source_manifest(repo, base_sha),
+        _engine_source_manifest(repo, head_sha))
+    result["base"] = base_sha
+    result["head"] = head_sha
+    return result
+
+
 def component_dod_assessment(index: dict) -> dict:
     """Noncompensatory evidence-bound DoD, never CI/runtime/host self-approval."""
     # This verifier is also invoked as a script in the standalone knowledge-10m
@@ -506,7 +596,7 @@ def contribution_index(paths: list[str], modules: list[str], tools: list[str],
     }
 
 
-def analyze(repo: Path, revision: str = "HEAD") -> dict:
+def analyze(repo: Path, revision: str = "HEAD", *, equivalence_base: str | None = None) -> dict:
     """Exact committed source/static inspection; dynamic behavior remains unknown."""
     repo = Path(repo).resolve(strict=True)
     sha = git(repo, "rev-parse", "--verify", revision + "^{commit}").decode().strip()
@@ -648,13 +738,18 @@ def analyze(repo: Path, revision: str = "HEAD") -> dict:
         "independent_approval": "NOT_ATTESTED",
         "product_qualified": False,
     }
+    if equivalence_base is not None:
+        report["engine_source_universe"] = git_engine_source_universe(
+            repo, equivalence_base, sha)
     report["source_digest_sha256"] = hashlib.sha256(canonical(report)).hexdigest()
     return report
 
 
 def verify_report(repo: Path, report: dict) -> bool:
     if (not isinstance(report, dict) or not SHA.fullmatch(str(report.get("commit", "")))
-            or analyze(repo, report["commit"]) != report):
+            or analyze(repo, report["commit"], equivalence_base=(
+            report["engine_source_universe"]["base"]
+            if "engine_source_universe" in report else None)) != report):
         raise ValueError("engineering knowledge report does not replay from original Git")
     return True
 
@@ -833,6 +928,7 @@ def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--repo", type=Path, default=Path("."))
     p.add_argument("--revision", default="HEAD")
+    p.add_argument("--equivalence-base", help="exact ancestor commit for exhaustive engine SOURCE-byte comparison")
     p.add_argument("--output", type=Path)
     p.add_argument("--verify-report", type=Path)
     p.add_argument("--stress-10m", action="store_true")
@@ -851,12 +947,15 @@ def main() -> int:
                 raise ValueError('closure accounting is separate from stress or knowledge replay')
             result = closure_delta(args.repo, args.closure_base, args.revision)
         elif args.verify_report:
+            if args.equivalence_base is not None:
+                raise ValueError("replay derives the base from the original exact Git report")
             record = json.loads(args.verify_report.read_text("utf-8"))
             verify_report(args.repo, record)
             result = {"status": "SOURCE_REPLAY_SCOPED", "commit": record["commit"],
                       "authority": "NONE", "product": "BLOCKED_EXTERNAL"}
         else:
-            result = analyze(args.repo, args.revision)
+            result = analyze(args.repo, args.revision,
+                             equivalence_base=args.equivalence_base)
             if args.stress_10m:
                 contract = contract_at(args.repo, result["commit"])
                 result["finite_model"] = stress(contract)
