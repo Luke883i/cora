@@ -89,6 +89,12 @@ class ProjectAdapterV2Tests(unittest.TestCase):
         self.assertIn("cora verify-process /tmp/round.json --repo /path/to/target", first_run)
         self.assertIn("A ChatGPT Project instruction is not automatically delivered", self.prompt)
         self.assertIn("Give the external coding agent a task packet", self.prompt)
+        for field in ("target_repo:", "base_sha:", "head_sha:",
+                      "native_oracles_and_falsifiers:", "not_authorized:",
+                      "next_step:"):
+            self.assertIn(field, self.guide)
+        self.assertNotIn("project-adapter-task-packet-missing",
+                         DOC.verify_project_adapter_prompt(self.guide))
 
     def test_ten_thousand_finite_adversarial_prompt_mutations(self):
         """25 contract families x 200 deletion/corruptions + 200 added conflicts.

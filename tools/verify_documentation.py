@@ -472,6 +472,16 @@ def verify_project_adapter_prompt(guide: str) -> list[str]:
     for idx, pattern in enumerate(PROJECT_ADAPTER_V2_FORBIDDEN, 1):
         if re.search(pattern, prompt, re.I):
             errors.append("project-adapter-contradiction:P%02d" % idx)
+    packet = guide.split("**Task packet forwarded to the separate coding agent", 1)
+    required_packet = (
+        "```yaml", "target_repo:", "base_sha:", "head_sha:", "goal:",
+        "scope:", "allowed_operations:", "not_authorized:",
+        "owners_and_consumers:", "dod_leaves:",
+        "native_oracles_and_falsifiers:", "runner:", "evidence_and_rollback:",
+        "next_step:", "UNKNOWN", "NOT_RUN",
+    )
+    if len(packet) != 2 or any(field not in packet[1] for field in required_packet):
+        errors.append("project-adapter-task-packet-missing")
     modes = ("METHOD_ONLY", "ENGINE_VERIFIED", "TARGET_NATIVE", "PR_MATERIALIZED")
     if "Modes:" not in prompt or any(mode not in prompt for mode in modes):
         errors.append("project-adapter-modes")

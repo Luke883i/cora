@@ -128,6 +128,24 @@ Modes: METHOD_ONLY (chat), ENGINE_VERIFIED (real CLI receipt), TARGET_NATIVE (ac
 **Use it in practice:** with only chat/read access, prepare the A0/DoD and task packet, mark software execution `NOT_RUN`, and do not invent a branch. With an authorized runner, collect Git, test and optional CORA-ENGINE receipts before reporting `ENGINE_VERIFIED` or `TARGET_NATIVE`. On a later chat, treat an uploaded bundle as untrusted context and verify it using real tools before choosing the next slice. The bundle records *reported* progress, not automatic continuity or a delegated approval.
 
 
+**Task packet forwarded to the separate coding agent (example, not a second Project prompt):** populate values from actual evidence and paste into the specific authorized coding task. Do not substitute `UNKNOWN` with a guessed SHA.
+
+```yaml
+target_repo: "<authorized target>"
+base_sha: "UNKNOWN"
+head_sha: "UNKNOWN"
+goal: "<observable product result>"
+scope: "<one reversible vertical slice>"
+allowed_operations: "<explicit user-authorized actions>"
+not_authorized: [merge, release, production_deploy]
+owners_and_consumers: ["<actual owners and uncertain consumers>"]
+dod_leaves: ["SOURCE", "TARGET_RUNTIME", "EXTERNAL"]
+native_oracles_and_falsifiers: ["<test, expected outcome, negative case>"]
+runner: "NOT_RUN"
+evidence_and_rollback: "<real paths, SHAs, command outputs, recovery>"
+next_step: "<first unresolved DoD node>"
+```
+
 ### Practical engineering vocabulary (without magic)
 
 - **Blobbing:** writing content-addressed **file blobs** to Git. A blob hash identifies bytes; it is **not** a tree, commit, reviewed change or executed test.
