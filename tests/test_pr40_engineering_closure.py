@@ -325,6 +325,16 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             len(rows[path]["test_cases"]) for path in rows
             if rows[path]["surface"] == "TEST_SOURCE"))
         self.assertGreater(metrics["module_declarations"], report["counts"]["modules"])
+        self.assertEqual(metrics["module_lexical_call_candidates"], sum(
+            len(unit["lexical_call_candidates"])
+            for row in rows.values() if row["surface"] == "PYTHON_MODULE"
+            for unit in row["declared_units"]))
+        self.assertEqual(metrics["test_lexical_call_candidates"], sum(
+            len(unit["lexical_call_candidates"])
+            for row in rows.values() if row["surface"] == "TEST_SOURCE"
+            for unit in row["test_cases"]))
+        self.assertGreater(metrics["module_lexical_call_candidates"], 0)
+        self.assertGreater(metrics["test_lexical_call_candidates"], 0)
         self.assertGreater(metrics["test_case_declarations"], report["counts"]["tests"])
         self.assertIn("snapshot", {unit["symbol"] for unit in
                       rows["src/cora/git_snapshot.py"]["declared_units"]})
@@ -350,6 +360,14 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             "Outer", "Outer.method", "Outer.method.nested", "Outer.test_async"])
         self.assertEqual([u["kind"] for u in units], [
             "CLASS", "DEF", "DEF", "ASYNC_DEF"])
+        by_symbol = {unit["symbol"]: unit for unit in units}
+        self.assertEqual(by_symbol["Outer"]["lexical_call_candidates"], [])
+        self.assertEqual(by_symbol["Outer.method"]["lexical_call_candidates"],
+                         ["nested"])
+        self.assertEqual(by_symbol["Outer.method.nested"]["lexical_call_candidates"],
+                         [])
+        self.assertTrue(all(unit["evidence"] ==
+            "AST_DECLARATION_AND_CALL_CANDIDATES_NOT_EXECUTION" for unit in units))
         self.assertEqual([u["symbol"] for u in ekc.structural_units(
             code, "synthetic.py", test_only=True)], ["Outer.test_async"])
         with self.assertRaises(SyntaxError):
