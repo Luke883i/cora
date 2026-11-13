@@ -252,7 +252,7 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
                     errors.append(code)
             need(g.count("## ChatGPT Project beta adapter") == 1,
                  "duplicate-or-missing-adapter")
-            need(g.count("CORA LOCAL PROJECT ADAPTER — BETA v1") == 1,
+            need(g.count("CORA LOCAL PROJECT ADAPTER — BETA v2") == 1,
                  "missing-canonical-project-prompt")
             need("Plus or Edu" in g and "ChatGPT Plus or Edu" in r,
                  "undocumented-beta-plan-assumption")
