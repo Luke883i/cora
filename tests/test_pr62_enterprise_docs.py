@@ -350,5 +350,198 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
               + "; runtime_target_executions=0; release_authorizations=0")
 
 
+import copy
+import json
+import subprocess
+import sys
+import tempfile
+
+CAP_SPEC = importlib.util.spec_from_file_location(
+    "cora_cross_surface_capability", ROOT / "tools/verify_capability_atlas.py")
+CAP = importlib.util.module_from_spec(CAP_SPEC)
+CAP_SPEC.loader.exec_module(CAP)
+
+
+def g(repo: Path, *args: str) -> str:
+    return subprocess.check_output(
+        ["git", "-C", str(repo), *args], stderr=subprocess.PIPE).decode("utf-8").strip()
+
+
+class FullSurfaceExecutionTests(unittest.TestCase):
+
+    def test_08_complete_committed_static_surface_and_strict_json(self):
+        """Full tracked Git-source census; does not imply all runtime paths run."""
+        import hashlib
+        from cora.chat_bundle import _strict_json
+        from cora.git_snapshot import snapshot
+        head = g(ROOT, "rev-parse", "HEAD")
+        ledger = snapshot(ROOT, head)
+        paths = [p.decode("utf-8") for p in subprocess.check_output(
+            ["git", "-C", str(ROOT), "ls-files", "-z"]).split(b"\0") if p]
+        self.assertEqual([row["path"] for row in ledger["records"]],
+                         sorted(paths))
+        counts = {"python": 0, "json": 0, "markdown": 0,
+                  "workflows": 0, "javascript": 0}
+        for row in ledger["records"]:
+            if row["status"] != "observed_git_blob":
+                self.assertIn(row["status"], (
+                    "symlink_unresolved", "gitlink_unresolved",
+                    "blob_too_large", "lfs_pointer_unresolved"))
+                continue
+            source = (ROOT / row["path"]).read_bytes()
+            self.assertEqual(row["sha256"], hashlib.sha256(source).hexdigest(),
+                             row["path"])
+            self.assertEqual(row["size"], len(source), row["path"])
+            if row["path"].endswith(".py"):
+                compile(source, row["path"], "exec")
+                counts["python"] += 1
+            elif row["path"].endswith(".json"):
+                _strict_json(source)
+                counts["json"] += 1
+            elif row["path"].endswith(".md"):
+                counts["markdown"] += 1
+            elif row["path"].startswith(".github/workflows/") and row["path"].endswith(".yml"):
+                counts["workflows"] += 1
+            elif row["path"].endswith(".mjs"):
+                counts["javascript"] += 1
+        # Inventory grows and contracts with the exact checked-out Git tree.
+        # Fixed-era counts are diagnostics, not a ban on future safe changes.
+        expected = {
+            "python": sum(p.endswith(".py") for p in paths),
+            "json": sum(p.endswith(".json") for p in paths),
+            "markdown": sum(p.endswith(".md") for p in paths),
+            "workflows": sum(p.startswith(".github/workflows/") and
+                             p.endswith(".yml") for p in paths),
+            "javascript": sum(p.endswith(".mjs") for p in paths),
+        }
+        self.assertEqual(counts, expected)
+        self.assertEqual(len(ledger["records"]), len(paths))
+        self.assertEqual(counts["markdown"], 48)  # existing registry contract
+        self.assertEqual(_strict_json(b'{"unique":true}'), {"unique": True})
+        with self.assertRaisesRegex(ValueError, "duplicate JSON field"):
+            _strict_json(b'{"authority":"NONE","authority":"APPROVED"}')
+        with self.assertRaises(ValueError):
+            compile(b"def wrong(: pass", "mutated.py", "exec")
+
+    def test_09_all_declared_commands_execute_help_as_installed_cli(self):
+        """Actual subprocess parser smoke, NOT 71 target behaviors or executions."""
+        import sys
+        src = (ROOT / "src/cora/cli.py").read_text("utf-8")
+        names, _, _ = CAP.parser_wiring(src)
+        declared = [r["command"] for r in
+                    json.loads((ROOT / ".cora/assurance/capability-atlas.json").read_text("utf-8"))["commands"]]
+        self.assertEqual(set(names), set(declared))
+        self.assertEqual(len(declared), len(set(declared)))
+        self.assertEqual(len(declared), 71)
+        for cmd in sorted(declared):
+            with self.subTest(command=cmd):
+                proc = subprocess.run(
+                    [sys.executable, "-m", "cora.cli", cmd, "--help"],
+                    input=b"", capture_output=True, timeout=15, check=False)
+                self.assertEqual(proc.returncode, 0,
+                                 (cmd + ": " + proc.stderr.decode("utf-8", "replace")[-500:]))
+                self.assertIn(b"usage:", proc.stdout.lower())
+        invalid = subprocess.run(
+            [sys.executable, "-m", "cora.cli", "cora-unknown-command", "--help"],
+            input=b"", capture_output=True, timeout=15, check=False)
+        self.assertNotEqual(invalid.returncode, 0)
+        self.assertIn(b"invalid choice", invalid.stderr.lower())
+
+    def test_10_real_git_cli_snapshot_replay_and_forgery_rejection(self):
+        """Installed CLI + original disposable Git; no host or target oracle."""
+        import sys
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            target = base / "target"
+            target.mkdir()
+            g(target, "init", "-q")
+            g(target, "config", "user.name", "CORA smoke")
+            g(target, "config", "user.email", "fixture@example.invalid")
+            (target / "payload.txt").write_text("original\n", "utf-8")
+            g(target, "add", "payload.txt")
+            g(target, "commit", "-qm", "original fixture")
+            sha = g(target, "rev-parse", "HEAD")
+            ledger_path = base / "ledger.json"
+            run_path = base / "process.json"
+
+            def cli(*argv):
+                return subprocess.run(
+                    [sys.executable, "-m", "cora.cli", *map(str, argv)],
+                    capture_output=True, timeout=45, check=False)
+
+            observed = cli("snapshot", target, "--revision", sha,
+                           "--output", ledger_path)
+            self.assertEqual(observed.returncode, 0, observed.stderr[-700:])
+            ledger = json.loads(ledger_path.read_text("utf-8"))
+            self.assertEqual(ledger["commit"], sha)
+            self.assertEqual(ledger["coverage"]["runtime"], "unsupported")
+            self.assertEqual(len(ledger["records"]), 1)
+            verified = cli("verify-ledger", ledger_path, "--repo", target)
+            self.assertEqual(verified.returncode, 0, verified.stderr[-700:])
+            self.assertEqual(json.loads(verified.stdout)["status"],
+                             "verified_against_git_objects")
+
+            # A dirty target worktree does not rewrite the original commit.
+            (target / "payload.txt").write_text("uncommitted change\n", "utf-8")
+            self.assertEqual(cli("verify-ledger", ledger_path, "--repo", target).returncode, 0)
+            forged = copy.deepcopy(ledger)
+            forged["coverage"]["runtime"] = "certified"
+            ledger_path.write_text(json.dumps(forged), "utf-8")
+            rejected = cli("verify-ledger", ledger_path, "--repo", target)
+            self.assertEqual(rejected.returncode, 3, rejected.stderr[-700:])
+            self.assertIn(b"CORA error:", rejected.stderr)
+
+            produced = cli("process-run", target, "--revision", sha,
+                           "--process", "history", "--output", run_path)
+            self.assertEqual(produced.returncode, 0, produced.stderr[-700:])
+            process = json.loads(run_path.read_text("utf-8"))
+            self.assertEqual(process["commit"], sha)
+            self.assertEqual(process["authorized_action"], "NONE")
+            replayed = cli("verify-process", run_path, "--repo", target)
+            self.assertEqual(replayed.returncode, 0, replayed.stderr[-700:])
+            process["results"][0]["status"] = "INDEPENDENTLY_CERTIFIED"
+            run_path.write_text(json.dumps(process), "utf-8")
+            rejected = cli("verify-process", run_path, "--repo", target)
+            self.assertEqual(rejected.returncode, 3, rejected.stderr[-700:])
+
+
+    def test_11_installed_optional_js_parser_is_syntactically_valid(self):
+        """Cross-language syntax only. Node execution/runtime still separate."""
+        import shutil
+        node = shutil.which("node")
+        if not node:
+            self.skipTest("NODE_NOT_INSTALLED: JS parser execution NOT_RUN")
+        parser = ROOT / "src/cora/portable_js_imports.mjs"
+        proc = subprocess.run([node, "--check", str(parser)],
+                              capture_output=True, timeout=20, check=False)
+        self.assertEqual(proc.returncode, 0, proc.stderr[-500:])
+        with tempfile.TemporaryDirectory() as td:
+            broken = Path(td) / "broken.mjs"
+            broken.write_text("export const = unexpected;\n", encoding="utf-8")
+            negative = subprocess.run([node, "--check", str(broken)],
+                                      capture_output=True, timeout=20, check=False)
+            self.assertNotEqual(negative.returncode, 0)
+
+    def test_12_twenty_bounded_standard_frontier_lenses_have_single_owner(self):
+        """Lenses name source owners; they do not claim native runtime coverage."""
+        import re
+        path = ROOT / "docs/CONTINUOUS_DEVELOPMENT.md"
+        doc = path.read_text("utf-8")
+        marker = "## Full-surface assessment lenses"
+        self.assertEqual(doc.count(marker), 1)
+        block = doc.split(marker, 1)[1].split(
+            "\n## Trust boundary and known debt", 1)[0]
+        names = re.findall(r"(?m)^\| ([SF][0-9]{2}) \|", block)
+        self.assertEqual(names, (["S%02d" % k for k in range(1, 11)] +
+                                 ["F%02d" % k for k in range(1, 11)]))
+        self.assertIn("not twenty implemented engines", block)
+        self.assertIn("71/71 CLI bootstrap checks", block)
+        self.assertIn("AND obligations", block)
+        # A superficially plausible duplicate lens must fail the same contract.
+        self.assertNotEqual(
+            re.findall(r"(?m)^\| ([SF][0-9]{2}) \|",
+                       block.replace("| F10 ", "| F09 ", 1)), names)
+
+
 if __name__ == "__main__":
     unittest.main()
