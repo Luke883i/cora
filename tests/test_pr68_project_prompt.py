@@ -73,6 +73,7 @@ class ProjectAdapterV2Tests(unittest.TestCase):
         self.assertEqual(len(DOC.PROJECT_ADAPTER_V2_FORBIDDEN), 25)
         self.assertEqual(len(ATTACKS), 25)
         self.assertEqual(self.prompt.count("CORA LOCAL PROJECT ADAPTER"), 1)
+        self.assertLessEqual(len(self.prompt), 4800)  # conservative Project UI proxy
         cli = (ROOT / "src/cora/cli.py").read_text("utf-8")
         bundle = (ROOT / "src/cora/chat_bundle.py").read_text("utf-8")
         reference = (ROOT / "docs/CLI_REFERENCE.md").read_text("utf-8")

@@ -453,7 +453,7 @@ def verify_project_adapter_prompt(guide: str) -> list[str]:
     if not m or scope.count("```text\n") != 1:
         return ["project-adapter-canonical-fence"]
     prompt = m.group(1)
-    if not (1000 <= len(prompt) <= 8000):
+    if not (1000 <= len(prompt) <= 4800):
         errors.append("project-adapter-context-budget")
     if not prompt.startswith(
             "CORA LOCAL PROJECT ADAPTER — BETA v2 (METHOD_ONLY BY DEFAULT)"):
