@@ -385,6 +385,56 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         with self.assertRaises(SyntaxError):
             ekc.structural_units("def broken(\n", "synthetic.py")
 
+    def test_exact_git_component_dod_all_leaves_noncompensatory(self):
+        report = ekc.analyze(ROOT, self.sha)
+        dod = report["component_dod"]
+        rows = {node["id"]: node for node in dod["nodes"]}
+        self.assertEqual(dod["logic"], "NONCOMPENSATORY_AND")
+        self.assertEqual(dod["abstract_goal"],
+                         "EVIDENCE_BOUND_CAUSAL_CONTRIBUTION_AND_NO_LOSS_CONSOLIDATION")
+        self.assertEqual(dod["source_goal"], "G_COMPONENT_SOURCE")
+        self.assertEqual(dod["global_goal"], "G_COMPONENT")
+        self.assertEqual(dod["global_status"], "BLOCKED_EXTERNAL")
+        self.assertEqual(dod["authority"], "NONE")
+        self.assertEqual(dod["behavioral_equivalence"], "NOT_ATTESTED")
+        self.assertFalse(dod["safe_consolidation_authorized"])
+        self.assertEqual(len(dod["nodes"]), 14)
+        self.assertEqual(set(dod["ordered_cut"]), set(rows))
+        self.assertIn("G_COMPONENT_SOURCE", rows["G_COMPONENT"]["depends_on"])
+        self.assertEqual(rows["G_COMPONENT"]["scope"], "EXTERNAL")
+        for key in ("E1_NATIVE_BEHAVIOR_PARITY", "E2_INDEPENDENT_ABLATION",
+                    "E3_INDEPENDENT_HOST_REVIEW"):
+            self.assertEqual(rows[key]["scope"], "EXTERNAL")
+            self.assertEqual(rows[key]["status"], "BLOCKED_EXTERNAL")
+        self.assertEqual(rows["L4_NEGATIVE_ORACLES"]["status"],
+                         "NATIVE_TEST_EXECUTION_NOT_ATTESTED_BY_REPORT")
+        self.assertTrue(ekc.verify_report(ROOT, report))
+        forged = copy.deepcopy(report)
+        forged["component_dod"]["global_status"] = "PASS"
+        with self.assertRaisesRegex(ValueError, "does not replay"):
+            ekc.verify_report(ROOT, forged)
+
+    def test_component_dod_denominator_and_false_consolidation_fail_closed(self):
+        report = ekc.analyze(ROOT, self.sha)
+        source_index = report["component_contribution"]
+        for field, value in (
+            ("safe_consolidations_attested", 1),
+            ("causal_effects_measured", 1),
+            ("tracked_paths", source_index["metrics"]["tracked_paths"] - 1),
+        ):
+            modified = copy.deepcopy(source_index)
+            modified["metrics"][field] = value
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                ekc.component_dod_assessment(modified)
+        modified = copy.deepcopy(source_index)
+        modified["rows"][0]["consolidation"] = "SAFE_TO_REMOVE"
+        with self.assertRaises(ValueError):
+            ekc.component_dod_assessment(modified)
+        modified = copy.deepcopy(source_index)
+        modified["rows"] = modified["rows"][:-1]
+        with self.assertRaises(ValueError):
+            ekc.component_dod_assessment(modified)
+
     def test_actual_wrapper_consolidation_has_original_git_behavioral_parity(self):
         """Execute former source owner on the same Git inputs, not just compare labels."""
         from types import ModuleType
