@@ -464,6 +464,64 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             self.assertEqual(run.returncode, 3, run.stdout + run.stderr)
             self.assertIn("component DoD orphan", run.stdout + run.stderr)
 
+    def test_previous_engineering_receipt_semantics_preserved_under_extension(self):
+        """Baseline verifier runs on baseline Git, new verifier on PR HEAD."""
+        from types import ModuleType
+        base = "57dd5c4fb6317d9a9e951fcbebac9c7aa5560b6f"
+        previous = ModuleType("baseline_original_git_engineering_closure")
+        baseline_code = git(ROOT, "show",
+                            base + ":tools/verify_engineering_closure.py")
+        exec(compile(baseline_code, "baseline_engineering_closure.py", "exec"),
+             previous.__dict__)
+        a = previous.analyze(ROOT, base)
+        b = ekc.analyze(ROOT, self.sha)
+        self.assertEqual(set(b) - set(a), {"component_contribution", "component_dod"})
+        self.assertEqual(set(a) - set(b), set())
+        for field in a:
+            if field not in ("commit", "tree", "source_digest_sha256"):
+                with self.subTest(field=field):
+                    self.assertEqual(a[field], b[field])
+        self.assertTrue(previous.verify_report(ROOT, a))
+        self.assertTrue(ekc.verify_report(ROOT, b))
+        self.assertNotEqual(a["commit"], b["commit"])
+        self.assertNotEqual(a["source_digest_sha256"], b["source_digest_sha256"])
+
+    def test_native_engine_behavior_parity_across_exact_git_revisions(self):
+        """A fixed native sample: source blobs give broader identity, not universal runtime proof."""
+        from os import environ
+        base = "57dd5c4fb6317d9a9e951fcbebac9c7aa5560b6f"
+        snippet = (
+            "import json\n"
+            "from cora.reticulum import MODEL, assess_cut, ordered_cut, invalidated_witnesses\n"
+            "nodes=[{'id':'A','scope':'SOURCE','depends_on':[]},"
+            "{'id':'E','scope':'EXTERNAL','depends_on':[]},"
+            "{'id':'G','scope':'EXTERNAL','depends_on':['A','E']}]\n"
+            "a=assess_cut(nodes,'G',{'A':MODEL,'E':MODEL})\n"
+            "w=[{'id':'W','dependencies':['src/cora/reticulum.py'],"
+            "'revision':'a'*40,'scope':'SOURCE'}]\n"
+            "b=invalidated_witnesses(w,['src/cora/reticulum.py'],source_revision='b'*40)\n"
+            "print(json.dumps({'cut':ordered_cut(nodes,'G'),'states':a['states'],"
+            "'blocked':a['blocked_leaves'],'invalidation':b['witnesses']},sort_keys=True))\n"
+        )
+        with tempfile.TemporaryDirectory() as folder:
+            clone = Path(folder) / "source"
+            git(ROOT, "clone", "--no-local", "-q", "--", str(ROOT), str(clone))
+            def run(revision):
+                git(clone, "checkout", "-q", "-f", revision)
+                return subprocess.run(
+                    [sys.executable, "-c", snippet], cwd=clone,
+                    env={**environ, "PYTHONPATH": str(clone / "src")},
+                    capture_output=True, text=True, check=False, timeout=60)
+            prior = run(base)
+            candidate = run(self.sha)
+            self.assertEqual(prior.returncode, 0, prior.stderr)
+            self.assertEqual(candidate.returncode, 0, candidate.stderr)
+            self.assertEqual(json.loads(prior.stdout), json.loads(candidate.stdout))
+            observed = json.loads(candidate.stdout)
+            self.assertEqual(observed["states"]["E"], "BLOCKED_EXTERNAL")
+            self.assertEqual(observed["invalidation"][0]["state"],
+                             "INVALIDATED_BY_CHANGED_SOURCE")
+
     def test_original_git_product_source_oids_unchanged_across_pr69(self):
         """All CORA engine module bytes match base; not a runtime equivalence claim."""
         base = "57dd5c4fb6317d9a9e951fcbebac9c7aa5560b6f"
