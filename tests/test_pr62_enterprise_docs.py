@@ -59,6 +59,8 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
              "Use the [current DoD](DOD.md) for approval."),
             ("docs/AI_CODE_ASSURANCE.md",
              "Current required [agent audit](archive/audits/AUDIT_PR18_MAIN.md)."),
+            ("docs/AI_CODE_ASSURANCE.md",
+             "Required [agent audit](archive/audits/AUDIT_PR18_MAIN.md) now."),
         )
         for path, bad in bad_routes:
             with self.subTest(path=path):

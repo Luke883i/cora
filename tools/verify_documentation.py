@@ -91,9 +91,11 @@ def historical_authority_issues(
             if target is None or statuses.get(target[0]) != "HISTORICAL":
                 continue
             context = line[max(0, link.start()-110): link.end()+110]
+            # URL path components (e.g. archive/) are not historical disclaimers.
+            visible_context = re.sub(r"\]\([^)]*\)", "]", context)
             if not re.search(
                 r"\b(?:historical|historiographic|archived?|earlier|legacy|"
-                r"original|source record|retrospective)\b", context, re.I
+                r"original|source record|retrospective)\b", visible_context, re.I
             ):
                 issues.append(
                     "historical-authority-ambiguous:" + path + ":" +
