@@ -162,6 +162,114 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
 
 
 
+    def test_component_index_denominator_trace_and_nonpromotion(self):
+        report = ekc.analyze(ROOT, self.sha)
+        proof = report["component_contribution"]
+        metrics = proof["metrics"]
+        rows = proof["rows"]
+        self.assertEqual(proof["schema"], "cora-component-contribution/1")
+        self.assertEqual(proof["authority"], "NONE")
+        self.assertEqual(metrics["tracked_paths"], report["counts"]["files"])
+        self.assertEqual(metrics["indexed_paths"], len(rows))
+        self.assertEqual(metrics["python_modules"], report["counts"]["modules"])
+        self.assertEqual(metrics["source_tools"], report["counts"]["tools"])
+        self.assertEqual(metrics["test_sources"], report["counts"]["tests"])
+        self.assertEqual(metrics["command_source_bindings"], 71)
+        self.assertEqual(
+            sum(metrics[name] for name in (
+                "entrypoint_modules", "direct_cli_imports", "transitive_cli_imports",
+                "not_observed_static")), report["counts"]["modules"])
+        self.assertEqual(metrics["causal_effects_measured"], 0)
+        self.assertEqual(metrics["safe_consolidations_attested"], 0)
+        self.assertEqual(len({r["path"] for r in rows}), len(rows))
+        self.assertTrue(all(r["causal_effect"] == "NOT_MEASURED" for r in rows))
+        self.assertTrue(all(r["consolidation"] == "NOT_AUTHORIZED_UNTESTED" for r in rows))
+        self.assertEqual(
+            proof["global_consolidation"],
+            "BLOCKED_EXTERNAL_BEHAVIORAL_PARITY_AND_GOVERNED_REVIEW")
+        fake = copy.deepcopy(report)
+        fake["component_contribution"]["rows"][0]["consolidation"] = "SAFE_TO_REMOVE"
+        with self.assertRaisesRegex(ValueError, "does not replay"):
+            ekc.verify_report(ROOT, fake)
+
+    def test_component_contribution_static_graph_counterexamples(self):
+        cli = "src/cora/cli.py"
+        direct = "src/cora/direct.py"
+        indirect = "src/cora/indirect.py"
+        unknown = "src/cora/dynamic_only.py"
+        test = "tests/test_direct.py"
+        tool = "tools/verify_direct.py"
+        paths = sorted([cli, direct, indirect, unknown, test, tool, "docs/README.md"])
+        proof = ekc.contribution_index(
+            paths, [cli, direct, indirect, unknown], [tool], [test],
+            [(cli, direct), (direct, indirect)],
+            {"commands": [{"command": "direct", "method_source": direct,
+                           "test_source": test}]})
+        by = {r["path"]: r for r in proof["rows"]}
+        self.assertEqual(by[cli]["cli_static"], "ENTRYPOINT")
+        self.assertEqual(by[direct]["cli_static"], "DIRECT_CLI_IMPORT")
+        self.assertEqual(by[indirect]["cli_static"], "TRANSITIVE_CLI_IMPORT")
+        self.assertEqual(by[unknown]["cli_static"], "NOT_OBSERVED_STATIC")
+        self.assertEqual(by[unknown]["consumer_status"],
+                         "STATIC_CANDIDATES_DYNAMIC_UNKNOWN")
+        self.assertEqual(by[direct]["declared_commands"], ["direct"])
+        self.assertEqual(by[direct]["declared_test_witnesses"], [test])
+        self.assertEqual(by[tool]["surface"], "OPERATIONAL_TOOL_SOURCE")
+        self.assertEqual(by[test]["surface"], "TEST_SOURCE")
+        self.assertEqual(proof["metrics"]["tracked_paths"], len(paths))
+        self.assertEqual(proof["metrics"]["not_observed_static"], 1)
+        self.assertEqual(proof["metrics"]["safe_consolidations_attested"], 0)
+        with self.assertRaisesRegex(ValueError, "denominator"):
+            ekc.contribution_index(paths + [cli], [cli, direct, indirect, unknown],
+                                   [tool], [test], [], {"commands": []})
+        with self.assertRaisesRegex(ValueError, "missing source"):
+            ekc.contribution_index(paths, [cli, direct, indirect, unknown],
+                                   [tool], [test], [(cli, "src/cora/absent.py")],
+                                   {"commands": []})
+        with self.assertRaisesRegex(ValueError, "missing source/test witness"):
+            ekc.contribution_index(paths, [cli, direct, indirect, unknown],
+                                   [tool], [test], [], {"commands": [
+                                       {"command": "fake", "method_source": unknown,
+                                        "test_source": "tests/absent.py"}]})
+
+    def test_physical_committed_cli_import_mutation_changes_source_not_worktree(self):
+        with tempfile.TemporaryDirectory() as folder:
+            clone = Path(folder) / "source"
+            git(ROOT, "clone", "--no-local", "-q", "--", str(ROOT), str(clone))
+            git(clone, "checkout", "-q", self.sha)
+            baseline = ekc.analyze(clone, "HEAD")
+            module = "src/cora/git_snapshot.py"
+            def state(report):
+                return next(r["cli_static"] for r in
+                            report["component_contribution"]["rows"]
+                            if r["path"] == module)
+            self.assertEqual(state(baseline), "DIRECT_CLI_IMPORT")
+            cli = clone / "src/cora/cli.py"
+            original = cli.read_text("utf-8")
+            needle = "from .git_snapshot import snapshot"
+            self.assertEqual(original.count(needle), 1)
+            cli.write_text(original.replace(needle,
+                                            "# removed import in physical falsifier"),
+                           "utf-8")
+            # The original Git commit, NOT a dirty working tree, owns the proof.
+            self.assertEqual(ekc.analyze(clone, "HEAD"), baseline)
+            git(clone, "add", "src/cora/cli.py")
+            git(clone, "-c", "user.name=fixture",
+                "-c", "user.email=fixture@example.invalid",
+                "commit", "-qm", "mutant: disconnect CLI import without updating atlas")
+            changed = ekc.analyze(clone, "HEAD")
+            self.assertNotEqual(changed["commit"], baseline["commit"])
+            self.assertNotEqual(state(changed), "DIRECT_CLI_IMPORT")
+            self.assertEqual(changed["component_contribution"]["metrics"][
+                "safe_consolidations_attested"], 0)
+            self.assertTrue(ekc.verify_report(clone, changed))
+            forged = copy.deepcopy(changed)
+            forged["component_contribution"]["metrics"]["safe_consolidations_attested"] = 1
+            with self.assertRaisesRegex(ValueError, "does not replay"):
+                ekc.verify_report(clone, forged)
+
+
+
 class ClosureEconomyAdversarialTests(unittest.TestCase):
     """Finite counterexamples plus a real two-commit original-Git fixture."""
 
