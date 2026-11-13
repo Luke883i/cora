@@ -21,7 +21,7 @@ Intent → acceptance graph → reversible code slice → adversarial tests
 
 **Recommended use:** inspect an authorized checkout or review one bounded change. **Audience and conditions:** CTOs, developers, reviewers and coding agents; Python 3.11+, Git and authorized execution tools. **Open source license:** [MIT](LICENSE).
 
-**Current status:** experimental `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **Document status:** CURRENT. **Current scope:** Git source review. **Operational use:** inspect commits. **Evidence:** Git and scoped tests. **Limits:** `BLOCKED_EXTERNAL`. Current source is this Git revision; earlier prerelease candidate `v1.0.0a4` remains a draft. **Category:** agent-agnostic engineering assurance.
+**Current status:** experimental `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **Document status:** CURRENT. **Current scope:** Git source review. **Operational use:** inspect commits. **Evidence:** Git and scoped tests. **Limits:** `BLOCKED_EXTERNAL`. Verify the exact checked-out Git revision rather than relying on an earlier prerelease candidate or a README version string. **Category:** agent-agnostic engineering assurance.
 
 ## First five minutes — Quickstart
 
@@ -146,6 +146,12 @@ The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) di
 
 [Continuous development](docs/CONTINUOUS_DEVELOPMENT.md) · [Convergent assurance](docs/CONVERGENT_ASSURANCE.md) · [Documentation DoD](docs/DOCUMENTATION_DOD.md) · [Claim register](.cora/assurance/documentation-proofs.json) · [Verifier](tools/verify_claim_evidence.py).
 </details>
+
+## Enterprise evaluation boundary
+
+**Evaluation candidate, not enterprise-qualified.** CORA can support an *authorized, isolated, source-scoped evaluation* when a named operator pins the Git revision, checks the CLI and report replay, records native target-test evidence separately and retains explicit unresolved obligations. It does **not** independently establish operational security, managed support, production suitability, protected branch enforcement, package provenance, or an authenticated second reviewer. A production or high-impact adoption decision must be owned by the organization and supported by its own target-specific behavioral oracle, security/threat assessment, deployment and rollback controls, supply-chain attestations and independent review. See [release gates](docs/RELEASE.md) and [governance](GOVERNANCE.md).
+
+**Decision rule:** source-local `PASS_SCOPED` permits only the bounded interpretation stated by its evidence; `NOT_RUN` and `BLOCKED_EXTERNAL` cannot be traded for a larger synthetic test count. If the target, owner, authorization, independent oracle or effective controls are unknown, record the missing witness rather than silently promoting maturity.
 
 ## Operating boundaries
 
