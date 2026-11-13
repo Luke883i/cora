@@ -652,6 +652,60 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             self.assertEqual(after["component_contribution"]["metrics"][
                 "safe_consolidations_attested"], 0)
 
+    def test_native_chat_bundle_external_review_guard_ablation(self):
+        """Third physical causal witness: self-approval must be rejected before mutation."""
+        from os import environ
+        with tempfile.TemporaryDirectory() as folder:
+            clone = Path(folder) / "source"
+            git(ROOT, "clone", "--no-local", "-q", "--", str(ROOT), str(clone))
+            git(clone, "checkout", "-q", self.sha)
+            script = (
+                "import importlib.util\n"
+                "from cora.chat_bundle import validate_step\n"
+                "spec=importlib.util.spec_from_file_location('fixture',"
+                "'tests/test_pr46_chat_bundle.py')\n"
+                "mod=importlib.util.module_from_spec(spec)\n"
+                "spec.loader.exec_module(mod)\n"
+                "fixture=mod.ChatBundleTests('test_append_roundtrip_two_rounds_and_exact_handoff')\n"
+                "fixture.setUp()\n"
+                "step=fixture.step()\n"
+                "step['dod']['nodes'][1]['observation']='REPORTED_OBSERVED'\n"
+                "step['dod']['nodes'][1]['evidence_refs']=['self-reported-review']\n"
+                "try:\n"
+                "    validate_step(step)\n"
+                "except ValueError as exc:\n"
+                "    print('REJECTED:'+str(exc))\n"
+                "else:\n"
+                "    print('ACCEPTED')\n"
+            )
+            def run():
+                return subprocess.run(
+                    [sys.executable, "-c", script], cwd=clone,
+                    env={**environ, "PYTHONPATH": str(clone / "src")},
+                    capture_output=True, text=True, check=False, timeout=60)
+            original = run()
+            self.assertEqual(original.returncode, 0, original.stderr)
+            self.assertEqual(original.stdout.strip(),
+                             "REJECTED:external evidence cannot be self-approved")
+            path = clone / "src/cora/chat_bundle.py"
+            before = path.read_text("utf-8")
+            guard = ('        if not n["depends_on"] and n["scope"] == "EXTERNAL" '
+                     'and n["observation"] == "REPORTED_OBSERVED":\n'
+                     '            raise ValueError("external evidence cannot be self-approved")')
+            self.assertEqual(before.count(guard), 1)
+            path.write_text(before.replace(guard,
+                 '        if False:\n'
+                 '            raise ValueError("external evidence cannot be self-approved")'),
+                 "utf-8")
+            git(clone, "add", "src/cora/chat_bundle.py")
+            git(clone, "-c", "user.name=fixture", "-c",
+                "user.email=fixture@example.invalid", "commit", "-qm",
+                "mutant: chat bundle external approval guard removed")
+            changed = run()
+            self.assertEqual(changed.returncode, 0, changed.stderr)
+            self.assertEqual(changed.stdout.strip(), "ACCEPTED")
+            self.assertNotEqual(original.stdout, changed.stdout)
+
     def test_native_reticular_external_guard_fails_on_committed_ablation(self):
         """One real subprocess counterfactual, not a universal causal proof."""
         from os import environ
