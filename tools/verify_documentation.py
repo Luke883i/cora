@@ -643,6 +643,15 @@ def check_current_contract(path: str, content: str, *,
                  r"is independently enterprise[- ]ready|automatically deletes source code)\b",
                  content, re.I):
         errors.append("standalone-false-authority:" + path)
+    # Current operational pages must describe product behavior, not PR sequence.
+    # Archives, the explicit index and changelog retain original IDs.
+    # Deep-link aliases and paths remain compatible; lexical, not semantic proof.
+    if path not in {"CHANGELOG.md", "docs/INDEX.md"}:
+        operative = re.sub(r'<a\s+id="[^"]+"\s*></a>', "", content)
+        operative = re.sub(r'\]\([^)\n]*\)', "]", operative)
+        operative = re.sub(r'\x60[^\x60\n]*\x60', "", operative)
+        if re.search(r'\bPR[- #]?\d+\b', operative, re.IGNORECASE):
+            errors.append("standalone-pr-narrative:" + path)
     return errors
 
 

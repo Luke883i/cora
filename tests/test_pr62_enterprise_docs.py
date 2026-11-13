@@ -76,6 +76,21 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
         self.assertIn("standalone-title:README.md",
                       DOC.check_current_contract("README.md", false_title))
 
+    def test_current_documents_disallow_pr_era_prose_but_keep_compat_refs(self):
+        current = (ROOT / "docs/GETTING_STARTED.md").read_text("utf-8")
+        check = DOC.check_current_contract
+        self.assertEqual(check("docs/GETTING_STARTED.md", current), [])
+        false = current + "\nPR999 is the current product contract.\n"
+        self.assertIn("standalone-pr-narrative:docs/GETTING_STARTED.md",
+                      check("docs/GETTING_STARTED.md", false))
+        compatible = current + (
+            '\n<a id="pr999-compatibility"></a>\n'
+            '[Old source](archive/decisions/ADR-PR01.md)\n'
+        )
+        self.assertEqual(check("docs/GETTING_STARTED.md", compatible), [])
+        history = (ROOT / "CHANGELOG.md").read_text("utf-8")
+        self.assertEqual(check("CHANGELOG.md", history), [])
+
     def test_supply_chain_candidate_not_independent_attestation(self):
         ci = (ROOT / ".github/workflows/ci-release-candidate.yml").read_text("utf-8")
         release = (ROOT / "docs/RELEASE.md").read_text("utf-8")
