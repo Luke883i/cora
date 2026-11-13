@@ -70,7 +70,7 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
             "(STANDARDS_MAINTENANCE_AUDIT.md).", statuses), [])
         self.assertEqual(checker(
             "docs/FILE_LAB.md",
-            "```md\\n[current](STANDARDS_MAINTENANCE_AUDIT.md)\\n```", statuses), [])
+            "```md\n[current](STANDARDS_MAINTENANCE_AUDIT.md)\n```", statuses), [])
         self.assertEqual(checker(
             "docs/INDEX.md",
             "- [OLD DOD](DOD.md) — HISTORICAL · DOD", statuses), [])

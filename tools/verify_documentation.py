@@ -92,8 +92,8 @@ def historical_authority_issues(
                 continue
             context = line[max(0, link.start()-110): link.end()+110]
             if not re.search(
-                r"\\b(?:historical|historiographic|archived?|earlier|legacy|"
-                r"original|source record|retrospective)\\b", context, re.I
+                r"\b(?:historical|historiographic|archived?|earlier|legacy|"
+                r"original|source record|retrospective)\b", context, re.I
             ):
                 issues.append(
                     "historical-authority-ambiguous:" + path + ":" +
