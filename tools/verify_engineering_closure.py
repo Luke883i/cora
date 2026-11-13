@@ -229,6 +229,29 @@ def git_engine_source_universe(repo: Path, base: str, head: str) -> dict:
     result = engine_source_universe(
         _engine_source_manifest(repo, base_sha),
         _engine_source_manifest(repo, head_sha))
+    # Distinct readback from object-ID comparison: exhaustively compare actual
+    # Git-committed bytes for every path present in *both* revisions.
+    # Source equality is exact on this finite domain; runtime effects are not.
+    equal, unequal = 0, []
+    for row in result["rows"]:
+        path = row["path"]
+        if row["before_oid"] is None or row["after_oid"] is None:
+            continue
+        a = git(repo, "show", base_sha + ":" + path)
+        b = git(repo, "show", head_sha + ":" + path)
+        if a == b:
+            equal += 1
+        else:
+            unequal.append(path)
+    result["content_readback_paths"] = equal + len(unequal)
+    result["content_byte_equal_paths"] = equal
+    result["content_byte_different_paths"] = unequal
+    result["content_readback_scope"] = "EVERY_SHARED_ENGINE_MODULE_FROM_ORIGINAL_GIT"
+    result["exact_content_parity"] = (
+        "PASS_SCOPED_EXHAUSTIVE"
+        if result["source_byte_identity"] == "PASS_SCOPED_EXHAUSTIVE"
+        and equal == result["denominator"] and not unequal
+        else "REFUTED_SOURCE_CONTENT_PARITY")
     result["base"] = base_sha
     result["head"] = head_sha
     return result
