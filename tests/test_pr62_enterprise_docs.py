@@ -256,7 +256,8 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
                  "missing-canonical-project-prompt")
             need("Plus or Edu" in g and "ChatGPT Plus or Edu" in r,
                  "undocumented-beta-plan-assumption")
-            need("standard ChatGPT GitHub app is read-only" in g,
+            need("GitHub connector capabilities vary" in g
+                 and "explicit user authorization" in g,
                  "read-vs-write-capability-confused")
             need("separate write-capable tool" in g and "not permission to push or merge" in r,
                  "missing-independent-write-authorization")
@@ -290,8 +291,8 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
         # One controlled contradiction per distinct reader-risk family.
         mutants = [
             (readme, guide.replace(
-                "standard ChatGPT GitHub app is read-only",
-                "standard ChatGPT GitHub app can automatically push code", 1),
+                "GitHub connector capabilities vary",
+                "GitHub connector always pushes and merges", 1),
              start, dod, implementation),
             (readme, guide.replace("separate write-capable tool",
                                    "the same read-only app", 1),
@@ -315,6 +316,27 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
             with self.subTest(family=i):
                 self.assertTrue(source_errors(*mutant),
                                 "semantic corruption survived: " + str(i))
+
+    def test_project_connector_rights_are_effective_capabilities_not_app_name(self):
+        """Disallow automatic GitHub authority and categorical stale read-only claims."""
+        readme = (ROOT / "README.md").read_text("utf-8")
+        self.assertEqual(DOC.verify_project_first_readme(readme), [])
+        mutations = [
+            ("GitHub connector abilities vary",
+             "Standard ChatGPT GitHub connectors are always read-only"),
+            ("write actions require verified permissions and explicit authorization",
+             "write actions run and approve automatically"),
+        ]
+        for old, replacement in mutations:
+            with self.subTest(change=old):
+                self.assertIn(old, readme)
+                forged = readme.replace(old, replacement, 1)
+                self.assertIn("project-onboarding-missing-source-boundary",
+                              DOC.verify_project_first_readme(forged))
+        self.assertIn("GitHub connector capabilities vary",
+                      (ROOT / "docs/AGENT_ADOPTION.md").read_text("utf-8"))
+        self.assertIn("connector capabilities vary",
+                      (ROOT / "docs/GETTING_STARTED.md").read_text("utf-8"))
 
     def test_one_million_distinct_noncompensatory_contract_vectors(self):
         """Exactly 1,000,000 unique 20-bit states and an independent bit oracle."""
