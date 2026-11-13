@@ -19,7 +19,7 @@ Intent → acceptance graph → reversible code slice → adversarial tests
 
 **Recommended use:** inspect an authorized checkout or review one bounded change. **Audience and conditions:** CTOs, developers, reviewers and coding agents; Python 3.11+, Git and authorized execution tools. **Open source license:** [MIT](LICENSE).
 
-**Current status:** experimental `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **Document status:** CURRENT. **Current scope:** Git source review. **Operational use:** inspect commits. **Evidence:** Git and scoped tests. **Limits:** `BLOCKED_EXTERNAL`. Source lineage: **merged PR41**, PR46; `v1.0.0a4` draft. **Category:** agent-agnostic engineering assurance.
+**Current status:** experimental `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **Document status:** CURRENT. **Current scope:** Git source review. **Operational use:** inspect commits. **Evidence:** Git and scoped tests. **Limits:** `BLOCKED_EXTERNAL`. Current source is this Git revision; earlier prerelease candidate `v1.0.0a4` remains a draft. **Category:** agent-agnostic engineering assurance.
 
 ## First five minutes — Quickstart
 
@@ -34,7 +34,19 @@ cora verify-ledger /tmp/cora-ledger.json --repo .
 
 For a scoped dossier, run [One-Run](#one-run--one-command-one-evidence-dossier). The snapshot is Git-only; neither command tests target runtime. [Getting started](docs/GETTING_STARTED.md) covers setup.
 
-**ChatGPT Project beta (Plus/Edu recipe):** ChatGPT's GitHub app can **read** [CORA](https://github.com/Luke883i/cora) and authorized target repositories; it cannot push code. To edit, authorize a separate write-capable tool (e.g. Codex) on your target; running CORA requires Python. See the [canonical Project prompt](docs/AGENT_ADOPTION.md#chatgpt-project-beta-adapter).
+**ChatGPT Project:** see the complete, first-time setup below; the [canonical beta prompt](docs/AGENT_ADOPTION.md#chatgpt-project-beta-adapter) is optional and does not execute software.
+
+## Use CORA in a ChatGPT Project — beginner walkthrough
+
+**Choose this route if you want ChatGPT to help improve your own software.** The beta guide recommends **ChatGPT Plus or Edu**; Projects are available on other plans too, and specific tools depend on plan and workspace. No ChatGPT subscription is needed to run the standalone Python CLI.
+
+1. **Create a Project:** in ChatGPT choose **New project**, name it for your work and open its **Project settings**. Copy the [single canonical CORA beta prompt](docs/AGENT_ADOPTION.md#chatgpt-project-beta-adapter) into **Project instructions**.
+2. **Connect GitHub:** in Settings → Apps/Plugins authorize **read access** to [CORA](https://github.com/Luke883i/cora) and your **target repository** (your own or one you may work on). Confirm both repositories are available in this chat. The standard ChatGPT GitHub app is **read-only**, not permission to push or merge.
+3. **Request a bounded change:** for example, “Read my target README and implementation; propose the smallest reversible fix for its broken login, with tests and a PR.” State product outcome and test oracle. CORA-METHOD can guide the discussion **without** executing CORA-ENGINE.
+4. **Authorize execution separately:** use an available, **write-capable coding tool**, such as Codex, with explicit write permission **on your target** to create blobs, commits and a PR. A separate Python runner is needed for actual CORA-ENGINE receipts and native target tests. If unavailable, report `METHOD_ONLY` / `NOT_RUN`, never invented execution or a fictional PR.
+5. **Keep evidence and continue:** after an actual `process-run`, optionally provide a `--chat-step` file and `--chat-bundle` ZIP. The [handoff guide](docs/GETTING_STARTED.md#in-a-chatgpt-session-the-shortest-reproducible-path) explains how to replay numbered `iterations/000001/handoff.md` records. The temporary ZIP is neither automatic chat capture nor authenticated review.
+
+**Practical result:** a proposed change, an authorized Git commit and a scoped evidence dossier are three separate things. The host and an independent human remain responsible for approval.
 
 ## What works today
 
@@ -81,10 +93,7 @@ The dossier distinguishes `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTER
 
 **Delete a module?** Candidate consumers and negative tests inform review; an unknown dynamic caller means `BLOCKED`, not safe deletion.
 
-**Two concrete engineering histories (methods at different maturity levels, not proof that CORA CLI created these products):**
-
-- **[ICTC](https://github.com/Luke883i/ictc)** — An authorized [Browser witness](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/browser-onto-compliance-v1.py) captures screenshots; the [visual audit](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/s4-a6-ux4-uiux-mount-audit.md) contains **screenshot-derived** UX faults. A [reconciliation contract](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/uiux-656-absorption-contract.json) maps **656 recorded visual/UX findings to 12 root causes**; [physical product mutants](https://github.com/Luke883i/ictc/blob/e641526114a508e24f86e8554c027d8cd6bbe715/v3/release-readiness-e2-product-mutants.mjs) test actual source. No independent user study is attested.
-- **[iKant_EDU](https://github.com/Luke883i/iKant_EDU)** — An **experimental computational cognitive architecture** uses a replaceable LLM, **functional attention** and a **self/world state model**: **computational constructs**, **not a claim of a conscious biological mind**. Git forensics retained **UNKNOWN** consumers, found **11 unqualified file deletions**, and [PR238](https://github.com/Luke883i/iKant_EDU/pull/238) restored a workflow. **Millions of finite fault vectors**, **not millions of real Git mutations**. [Model](https://github.com/Luke883i/iKant_EDU/blob/73842c1d71ea1b1faa3903b255d00cd09b1b6cb6/docs/IKANT_COGNITIVE_SUBSTRATE.md) · [backlog](https://github.com/Luke883i/iKant_EDU/blob/73842c1d71ea1b1faa3903b255d00cd09b1b6cb6/docs/CORA_PR_A_BACKLOG.md).
+**Target examples, not universal validation:** [ICTC](https://github.com/Luke883i/ictc) exercises HTTP/SQLite and source/UX verification; [Teddy](https://github.com/Luke883i/teddy) exercises Node; [iKant_EDU](https://github.com/Luke883i/iKant_EDU) illustrates unknown consumers and reversible repository contraction. Source histories and native pilot evidence have distinct owners; CORA did not independently certify these products. [Pilot scopes](docs/GOLD_ASSURANCE.md).
 
 **Terminology, only after the engineering method:** *intent mining* = extracting obligations; *reticular DoD* = dependencies; *semantic slices* = bounded changes; *blobbing/materialization* = writing Git objects; *semantic mutations* = falsifiers; *semantic saturation* = bounded absence of new findings. Specifically, blobs hold bytes; trees and commits record revisions. Saturation covers finite scenarios, never universal correctness.
 
