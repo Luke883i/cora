@@ -148,7 +148,8 @@ def component_dod_assessment(index: dict) -> dict:
     """Noncompensatory evidence-bound DoD, never CI/runtime/host self-approval."""
     from cora.reticulum import ordered_cut
     metrics, rows = index["metrics"], index["rows"]
-    if (metrics["tracked_paths"] != metrics["indexed_paths"] != len(rows)):
+    if (metrics["tracked_paths"] != metrics["indexed_paths"] or
+            metrics["indexed_paths"] != len(rows)):
         raise ValueError("component DoD source denominator contradiction")
     if (metrics["tracked_paths"] != len(rows) or
             metrics["python_modules"] != sum(r["surface"] == "PYTHON_MODULE" for r in rows)
@@ -167,7 +168,8 @@ def component_dod_assessment(index: dict) -> dict:
         "I4_GOVERNANCE": ["E3_INDEPENDENT_HOST_REVIEW"],
         "G_COMPONENT_SOURCE": ["L1_INVENTORY", "L2_CONSUMERS", "L3_SEPARATION",
                                "L4_NEGATIVE_ORACLES", "L5_REPLAY"],
-        "G_COMPONENT": ["I1_TRACE", "I2_CAUSALITY", "I3_EQUIVALENCE", "I4_GOVERNANCE"],
+        "G_COMPONENT": ["G_COMPONENT_SOURCE", "I1_TRACE",
+                        "I2_CAUSALITY", "I3_EQUIVALENCE", "I4_GOVERNANCE"],
     }
     source = {
         "L1_INVENTORY": "SOURCE_CENSUS_COMPUTED_NOT_INDEPENDENTLY_ATTESTED",
