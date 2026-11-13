@@ -244,6 +244,19 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
                             report["component_contribution"]["rows"]
                             if r["path"] == module)
             self.assertEqual(state(baseline), "DIRECT_CLI_IMPORT")
+            # A bounded native CLI ablation: same disposable runner and command.
+            # This witnesses a single behavior, not universal module necessity.
+            from os import environ
+            def snapshot_cli():
+                return subprocess.run(
+                    [sys.executable, "-m", "cora.cli", "snapshot",
+                     str(clone), "--revision", "HEAD"],
+                    cwd=clone, env={**environ, "PYTHONPATH": str(clone / "src")},
+                    capture_output=True, text=True, check=False, timeout=60)
+            baseline_cli = snapshot_cli()
+            self.assertEqual(baseline_cli.returncode, 0,
+                             baseline_cli.stderr[:1000])
+
             cli = clone / "src/cora/cli.py"
             original = cli.read_text("utf-8")
             needle = "from .git_snapshot import snapshot"
@@ -258,6 +271,10 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
                 "-c", "user.email=fixture@example.invalid",
                 "commit", "-qm", "mutant: disconnect CLI import without updating atlas")
             changed = ekc.analyze(clone, "HEAD")
+            ablated_cli = snapshot_cli()
+            self.assertNotEqual(ablated_cli.returncode, 0,
+                                "ablation must be behaviorally discriminating")
+            self.assertIn("snapshot", ablated_cli.stderr)
             self.assertNotEqual(changed["commit"], baseline["commit"])
             self.assertNotEqual(state(changed), "DIRECT_CLI_IMPORT")
             self.assertEqual(changed["component_contribution"]["metrics"][
