@@ -193,7 +193,7 @@ README_SPECIFIC_TRUTHS = (
     "16 realistic fault families",
     "2,517 preregistered zero-to-fourway masks",
     "not one million independent source mutations",
-    "Current source is this Git revision",
+    "Verify the exact checked-out Git revision",
     "two controlled physical Git repositories",
     "GitHub workflow files alone do not prove",
     "A hash can identify committed bytes; it cannot authenticate a human reviewer",
@@ -357,7 +357,7 @@ def verify_multichannel_intro(readme: str) -> list[str]:
         "boundaries": ("**Product**", "**software**", "**repository**", "not a coding agent"),
         "audience": ("**Recommended use:**", "**Audience and conditions:**",
                      "**Open source license:**", "[MIT](LICENSE)", "Python 3.11+"),
-        "release": ("1.0.0a5", "Current source is this Git revision", "v1.0.0a4", "draft",
+        "release": ("1.0.0a5", "Verify the exact checked-out Git revision",
                     "not a stable API or verified public release"),
     }
     for label, terms in groups.items():

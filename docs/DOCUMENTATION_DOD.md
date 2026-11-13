@@ -11,6 +11,26 @@ The [machine contract](../.cora/contracts/dod/documentation-dod.json) defines 28
 
 **G_DOC_SOURCE** requires all of I_VALUE, I_ACCESS, I_CONSISTENCY, I_OPERATION, and I_EVIDENCE. **G_DOC_ACCEPTED** requires G_DOC_SOURCE and E01, E02, and E03. Every dependency is AND-composed.
 
+## Current reticular DoD — global, intermediate and local
+
+**Global G_RETICULAR_SOURCE (AND):** a new reader can locate the current product contract and two execution routes; every tracked Markdown has one source-bound classification; navigation links and anchors resolve; operative documents cannot silently promote historical records into current instructions; every hardening change preserves existing software/test/profile consumers. This is a *source-checkable editorial cut*, composed with the existing 28-node documentation contract, not another assurance engine or self-certifying release gate.
+
+**Global G_RETICULAR_ACCEPTED (AND):** G_RETICULAR_SOURCE plus genuine unfamiliar-reader E01, independently operated maintained-target E02 and effective GitHub host/non-author-review E03. Neither static text scanning nor local CI can discharge these external duties.
+
+| Intermediate cut | Necessary local conditions | Existing owner, witness or counterexample |
+| --- | --- | --- |
+| I_IDENTITY | L01 README names product/software/repository and alpha limits; L02 METHOD_ONLY vs ENGINE execution and independent adoption authority remain distinct | README, ARCHITECTURE, AGENT_ADOPTION; original S01–S03; falsify an auto-approval claim |
+| I_NAVIGATION | L03 exactly 48 registered Markdown (31 active, 17 historical) with original-Git parity; L04 all local paths, headings and legacy anchor aliases resolve; five reader routes remain accessible | `verify_documentation.census_markdown`; original navigation mutants and source/origin readback |
+| I_AUTHORITY | L05 every live-to-historical Markdown edge is explicitly framed as prior/historiographic evidence, never today's operative DoD; L06 archive records and the three protected historical out-of-archive exceptions remain byte-identical | `historical_authority_issues`, historical blob registry, file-lab/architecture negative and legitimate-history positive fixtures |
+| I_CONSUMERS | L07 retain or migrate every exact README heading/phrase consumed by original source verifiers, claim-profile anchors and tests; L08 current FIRST-READ, FILE_LAB, release and governance routes resolve to current owners rather than archival proxies | `verify_documentation.py`, `verify_repository_contract.py`, `verify_layout_simplification.py`, `documentation-proofs.json`; negative deleted-heading/replaced-owner mutants |
+| I_EVIDENCE | L09 exact-HEAD documentation/census/claim replay and original test suite, with surviving and inconclusive mutants recorded; L10 independent runtime/user/reviewer/host evidence remains explicit debt | Candidate Git SHA, CI check-runs, typed source reports and separate external receipts; zero self-issued authorization |
+
+**Non-compensatory falsifiers:** missing or duplicate registry entry; broken relative link or anchor; forged Git blob/parity; operational link to a historical DoD without a local historical qualifier; historical file rewrite; loss of a heading still required by a downstream consumer; README promise inflated to enterprise approval; a locally green finite simulation called product-runtime evidence. Each must be rejected by its *relevant* checker or retained as an unresolved gap; a lexical scan cannot assert open-world semantic completeness.
+
+**Measured outputs:** registry coverage 48/48, current 31, historical 17, 17 archival byte identities, no unclassified current document, zero ambiguous historic-authority edges, zero broken tracked links/anchors, retained original 18 claim/evidence leaves and parser census of 71 declared CLI commands. These are declared **acceptance thresholds**, not a statement that the candidate's CI has run. The census exposes directed edges, inbound nonindex counts, historical outbound counts and Git parity to challenge archive-index-only reachability. Remote URLs are `NOT_PROBED`; actual users, execution trust and platform governance are independently assessed.
+
+**Minimal-change discipline:** correct current consumer links and original verification predicates *before* removing a heading; never relocate or rewrite protected historical source to make topology cosmetically uniform. The historical audit remains retrievable from the INDEX, not a current engineering rule. This section records the current desired outcome without altering the original machine DoD IDs, S01–S18 authorities or E01–E03 boundaries.
+
 ## Source obligations
 
 - **I_VALUE:** README explains the product promise before the internal implementation history, distinguishes product/software/repository, and never inflates its proof claims (S01, S02, S03, S06).
