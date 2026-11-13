@@ -237,21 +237,21 @@ def analyze(repo: Path, revision: str = "HEAD", *, run_behavior: bool = False) -
     names = ["README.md", "CHANGELOG.md", "AGENTS.md",
              "docs/ARCHITECTURE.md", "docs/RELEASE.md", "docs/INDEX.md"]
     documents = {name: source(repo, sha, name) for name in names}
-    # PR44 is verified in actual Git ancestry; do not fossilize a PR40-only prose gate.
-    architecture_era = ("merged PR36–44" if re.search(
-        r"(?m)^Merge pull request #44\b", subjects) else "merged PR36–40")
+    # Git ancestry remains verified above; current architecture documents
+    # executable owners, not historical merge milestones.
+    architecture_owner = "one CORA product and one Python CLI"
     expected = {
         "CHANGELOG.md": "PR40 engineering knowledge source convergence — merged source",
         "AGENTS.md": "Knowledge-convergence gate (source-only; independent gates outstanding)",
-        "docs/ARCHITECTURE.md": architecture_era,
+        "docs/ARCHITECTURE.md": architecture_owner,
         "docs/RELEASE.md": "Existing GitHub release draft",
         "README.md": "[final experimental DoD](.cora/contracts/dod/final-experimental-dod.json)",
         "docs/INDEX.md": "../.cora/contracts/dod/final-experimental-dod.json",
     }
     if any(text not in documents[path] for path, text in expected.items()):
         raise ValueError("current document / merged Git temporal drift")
-    if "PR40 merged source knowledge" not in documents["docs/RELEASE.md"]:
-        raise ValueError("current release chronology lost merged PR40")
+    if "The authoritative candidate identity is the exact Git HEAD" not in documents["docs/RELEASE.md"]:
+        raise ValueError("current release procedure is not revision-bound")
     if "published_at=null" not in documents["docs/RELEASE.md"] or "refs/tags/v1.0.0a4" not in documents["docs/RELEASE.md"]:
         raise ValueError("release draft tag/asset observation omitted")
     banned = {

@@ -58,9 +58,17 @@ def inspect_source(root: Path) -> dict:
     readme = txt("README.md")
     product_title = "# CORA — "+NAME+"\n"
     marker = "<!-- programme-header:v2 -->"
+    # Accept only the exact optional, non-authorizing research-program badge.
+    # A free-form banner must not bypass the original product identity gate.
+    badge = (
+        '[![ROA Research Programme]'
+        '(https://img.shields.io/badge/ROA-Research_Programme-1f6feb)]'
+        '(https://github.com/Luke883i/academics)\n\n'
+    )
+    candidate = readme[len(badge):] if readme.startswith(badge) else readme
     legacy = readme.startswith(product_title)
-    header, sep, body = readme.partition("\n\n")
-    v2 = (header.startswith(marker) and readme.count(marker) == 1
+    header, sep, body = candidate.partition("\n\n")
+    v2 = (header.startswith(marker) and candidate.count(marker) == 1
           and bool(sep) and body.startswith(product_title)
           and all(t in header for t in (
             "Luke883i/academics", "Luke883i/ROA", "Luke883i/cora",

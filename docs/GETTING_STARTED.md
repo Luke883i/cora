@@ -74,7 +74,8 @@ equivalent wording is only a candidate for human reconciliation.
 
 A **conversation is not a CORA runtime**. A chat can draft a plan or read a ZIP, but a source observation only exists after the Python CLI runs against a repository the operator may access.
 
-- Start with a local checkout of CORA and a target repository you are authorized to inspect. Keep outputs outside the repository. No credentials, entire private chat transcripts, or private source files belong in the portable ZIP by default.
+- **Chat-only / METHOD_ONLY:** connecting GitHub in read mode permits planning, evidence questions and a proposed DoD; no local checkout, write permission, installation or fictitious runtime execution is needed. Use the [Project walkthrough](../README.md#use-cora-in-a-chatgpt-project--beginner-walkthrough).
+- **Engine / actual tests:** use a real, authorized local checkout of CORA and a target repository plus a Python runner. GitHub read permission alone is insufficient. Keep outputs outside the repository; no credentials, private chat transcripts or private source files belong in the portable ZIP by default.
 - Copy `examples/chat-step.example.json` to `/tmp/chat-step.json`; edit `session_id`, `intent`, `actions`, `falsifiers`, `roadmap`, `dod` and `gaps`. The sample is intentionally blocked pending an independent runtime/reviewer oracle.
 - From CORA's checkout, run:
 

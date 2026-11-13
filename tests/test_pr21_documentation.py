@@ -69,7 +69,9 @@ class DocumentationDoDTests(unittest.TestCase):
 
         cases = [
             ("missing-index-link", lambda: change("docs/INDEX.md",
-             lambda x: x.replace("](../README.md)", "](https://example.invalid)")), "not-indexed:README.md"),
+             lambda x: x.replace("](../README.md)", "](https://example.invalid)").replace(
+                 "](../README.md#use-cora-in-a-chatgpt-project--beginner-walkthrough)",
+                 "](https://example.invalid)")), "not-indexed:README.md"),
             ("missing-doc", lambda: (fixture / "docs/FILE_LAB.md").unlink(), "missing:docs/FILE_LAB.md"),
             ("unregistered-doc", lambda: (fixture / "docs/rogue.md").write_text("# Unregistered", encoding="utf-8"), "unregistered:docs/rogue.md"),
             ("duplicate-registration", lambda: registry_mutate(

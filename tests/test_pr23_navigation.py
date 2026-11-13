@@ -173,16 +173,15 @@ class ProgressiveDocumentationTests(unittest.TestCase):
             ("convergence", "not proof of complete correctness", "guarantees perfection"),
             ("stagnation", "no-progress rounds", "infinite retries"),
             ("next", "does not predict N", "predicts every round"),
-            ("ictc", "656 recorded visual/UX findings to 12 root causes", "infinite proven findings"),
-            ("screenshot", "screenshot-derived", "human-certified UX"),
-            ("browser", "Browser witness", "imagined browser"),
-            ("source", "physical product mutants", "symbolic toy only"),
-            ("ikant", "experimental computational cognitive architecture", "biological brain clone"),
-            ("cognitive", "functional attention", "measured biological emotions"),
-            ("world", "self/world state model", "verified inner self"),
-            ("unknown consumers", "UNKNOWN", "UNUSED"),
-            ("recovery", "11 unqualified file deletions", "11 approved deletions"),
-            ("consciousness", "not a claim of a conscious biological mind", "proves consciousness"),
+            ("ictc", "[ICTC](https://github.com/Luke883i/ictc)", "unlinked target"),
+            ("teddy", "[Teddy](https://github.com/Luke883i/teddy)", "unsupported target"),
+            ("ikant", "[iKant_EDU](https://github.com/Luke883i/iKant_EDU)", "missing target"),
+            ("runtime-scope", "HTTP/SQLite", "full universal runtime"),
+            ("source-scope", "source/UX verification", "certified human UX"),
+            ("consumer", "unknown consumers", "verified unused consumers"),
+            ("reversibility", "reversible repository contraction", "automatic safe deletion"),
+            ("owners", "Source histories and native pilot evidence have distinct owners", "All evidence belongs to one product"),
+            ("qualification", "CORA did not independently certify these products", "CORA certified every product"),
         )
         heading = self.readme.index("## How CORA works")
         tail = self.readme[heading:]
@@ -236,9 +235,9 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         self.assertIn("cto-navigation-hierarchy-drift",
                       DOC.verify_compact_document_bridge(
                           guide, index.replace("compressed public front door", "new SOT"), arch))
-        self.assertIn("cto-version-chronology-drift",
+        self.assertIn("cto-chat-owner-drift",
                       DOC.verify_compact_document_bridge(
-                          guide, index, arch.replace("source merged via PR46", "still unmerged")))
+                          guide, index, arch.replace("implemented in src/cora/chat_bundle.py", "not implemented")))
         # Metadata-independent formatting edits must not be called evidence loss.
         self.assertEqual(DOC.verify_compact_document_bridge(guide + "\n", index, arch), [])
 
@@ -255,7 +254,7 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         self.assertIn("tests or counterexamples", intro)
         self.assertIn("the work still needed", intro)
         # Editorial budgets are review proxies, never evidence of comprehension.
-        self.assertLessEqual(len(self.readme.split()), 1500)
+        self.assertLessEqual(len(self.readme.split()), 1750)
         self.assertLessEqual(len(release.split()), 1900)
         self.assertLessEqual(len(arch.split()), 2300)
         self.assertNotIn("## PR32 —", release)
@@ -266,7 +265,7 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         self.assertIn("BLOCKED_EXTERNAL", release)
         self.assertIn("published_at=null", release)
         self.assertIn("refs/tags/v1.0.0a4", release)
-        self.assertIn("PR40 merged source knowledge", release)
+        self.assertIn("The authoritative candidate identity is the exact Git HEAD", release)
         self.assertEqual(verify_readme_semantics(self.readme, root=ROOT), [])
 
     def test_pr60_counterexample_mutations_preserve_decision_boundaries(self):
@@ -497,12 +496,13 @@ class ProgressiveDocumentationTests(unittest.TestCase):
                 "synthetic approval document", "duplicated definitive release policy",
                 "separate undocumented owner map", "new immutable certificate",
             ),
-            # 9: merged source history falsely undone
+            # 9: the real portable chat source owner is falsified
             (
-                "still unmerged PR46", "unreleased unreviewed PR46", "PR46 never existed",
-                "PR46 is merely hypothetical", "no actual merge of PR46",
-                "PR46 cannot be traced in Git", "source was only proposed by PR46",
-                "PR46 has no provenance", "PR46 was rejected", "PR46 is an external rumor",
+                "only a README demonstration", "a self-executing ChatGPT Project",
+                "an unimplemented feature", "not connected to the CLI",
+                "a GitHub app with automatic runtime", "a hosted CORA server",
+                "an independent human review", "a pseudocode-only handler",
+                "a file owned by the target repo", "an unverified external plugin",
             ),
         )
         fingerprint = set()
@@ -526,15 +526,15 @@ class ProgressiveDocumentationTests(unittest.TestCase):
             elif family == 4:
                 r = mutation(r, "not one million independent source mutations", content)
             elif family == 5:
-                r = mutation(r, "656 recorded visual/UX findings to 12 root causes", content)
+                r = mutation(r, "source/UX verification", content)
             elif family == 6:
-                r = mutation(r, "computational constructs", content)
+                r = mutation(r, "unknown consumers", content)
             elif family == 7:
                 g = mutation(g, "SQLite with versioned schema migrations", content)
             elif family == 8:
                 i = mutation(i, "compressed public front door", content)
             else:
-                a = mutation(a, "source merged via PR46", content)
+                a = mutation(a, "implemented in src/cora/chat_bundle.py", content)
             self.assertNotEqual((r, g, i, a, c), (root, guide, index, arch, cross))
             digest = hashlib.sha256("\n".join((r, g, i, a, c)).encode("utf-8")).digest()
             self.assertNotIn(digest, fingerprint)
@@ -615,8 +615,10 @@ class ProgressiveDocumentationTests(unittest.TestCase):
                     m = mutation(src, "## What works today",
                                  "\n" + " " * (i+1) + "\n## What works today")
                 elif family == 6:
-                    literal = "- **[ICTC]"
-                    m = mutation(src, literal, "* **[ICTC]")
+                    # Benign equivalent spacing; the removed ICTC list belonged
+                    # to historic README prose, not the current target summary.
+                    literal = "**Target examples, not universal validation:**"
+                    m = mutation(src, literal, literal + " " * (i+1))
                     m = mutation(m, "## First five minutes",
                                  " " * i + "\n## First five minutes")
                 elif family == 7:
@@ -643,8 +645,8 @@ class ProgressiveDocumentationTests(unittest.TestCase):
                                  "CI green is independent review (" + token +
                                  ").\n\n## Final Experimental Baseline")
                 elif family == 14:
-                    m = mutation(src, "**merged PR41**",
-                                 "**unmerged PR41** (" + token + ")")
+                    m = mutation(src, "Current source is this Git revision",
+                                 "Current source is from an unmerged draft (" + token + ")")
                 elif family == 15:
                     m = mutation(src,
                                  "cora snapshot . --revision HEAD --output /tmp/cora-ledger.json",

@@ -41,6 +41,24 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         self.assertEqual(report["authority"], "NONE")
         self.assertTrue(ekc.verify_report(ROOT, report))
 
+    def test_release_provenance_gate_does_not_depend_on_historic_pr_prose(self):
+        report = ekc.analyze(ROOT, self.sha)
+        self.assertEqual(report["product_qualified"], False)
+        self.assertEqual(report["host_enforcement"], "BLOCKED_EXTERNAL")
+        with tempfile.TemporaryDirectory() as tmp:
+            clone = Path(tmp) / "source"
+            git(ROOT, "clone", "--no-local", "-q", "--", str(ROOT), str(clone))
+            git(clone, "checkout", "-q", self.sha)
+            release = clone / "docs/RELEASE.md"
+            release.write_text(release.read_text("utf-8").replace(
+                "The authoritative candidate identity is the exact Git HEAD",
+                "The candidate identity is inferred from last year's PR"), "utf-8")
+            git(clone, "add", "docs/RELEASE.md")
+            git(clone, "-c", "user.name=fixture", "-c", "user.email=fixture@example.invalid",
+                "commit", "-qm", "mutant: release identity made historical")
+            with self.assertRaisesRegex(ValueError, "current release source identity"):
+                ekc.analyze(clone, "HEAD")
+
     def test_report_tampering_and_source_promotions_refused(self):
         report = ekc.analyze(ROOT, self.sha)
         for field, value in (

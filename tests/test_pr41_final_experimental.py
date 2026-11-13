@@ -114,10 +114,10 @@ class FinalExperimentalClosureTests(unittest.TestCase):
             git(cloned, "reset", "--hard", "-q", self.sha)
             architecture = cloned / "docs/ARCHITECTURE.md"
             current_arch = architecture.read_text("utf-8")
-            claim = "merged PR36–44" if "merged PR36–44" in current_arch else "merged PR36–40"
+            claim = "one CORA product and one Python CLI"
             self.assertIn(claim, current_arch)
             architecture.write_text(current_arch.replace(
-                claim, "merged PR36–38"), encoding="utf-8")
+                claim, "multiple competing products and runtimes"), encoding="utf-8")
             mutant = commit(cloned, "docs/ARCHITECTURE.md",
                             "mutant: outdated live architecture")
             with self.assertRaisesRegex(ValueError, "temporal drift"):

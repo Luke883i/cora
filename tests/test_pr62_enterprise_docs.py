@@ -44,17 +44,52 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
     def test_readme_evaluation_budget_and_source_reality(self):
         readme = (ROOT / "README.md").read_text("utf-8")
         index = (ROOT / "docs/INDEX.md").read_text("utf-8")
-        self.assertLessEqual(len(readme.split()), 1450)
-        self.assertLess(len(readme.encode("utf-8")), 14204)
+        self.assertLessEqual(len(readme.split()), 1750)
+        self.assertLess(len(readme.encode("utf-8")), 16000)
         self.assertFalse(re.search(r"(?im)^#{2,3}[^\n]*\bPR[- ]?\d+", readme))
-        self.assertLessEqual(len(re.findall(r"\bPR[- #]?\d+\b", readme, re.I)), 3)
+        self.assertEqual(len(re.findall(r"\bPR[- #]?\d+\b", readme, re.I)), 0)
         self.assertEqual(DOC.verify_readme_semantics(readme, root=ROOT), [])
         self.assertEqual(DOC.verify_progressive_readme(readme), [])
+        self.assertEqual(DOC.verify_project_first_readme(readme), [])
         self.assertIn("Implementation and historical detail", index)
         self.assertIn("compressed public front door", index)
         self.assertIn("SLSA provenance: NOT_ATTESTED", readme)
         self.assertIn("External acceptance remains `BLOCKED_EXTERNAL`", readme)
         self.assertIn("not one million independent source mutations", readme)
+
+    def test_readme_badge_and_first_title_are_fail_closed(self):
+        """Badge is allowed only with exact source, never generic title drift."""
+        readme = (ROOT / "README.md").read_text("utf-8")
+        badge = (
+            "[![ROA Research Programme]"
+            "(https://img.shields.io/badge/ROA-Research_Programme-1f6feb)]"
+            "(https://github.com/Luke883i/academics)"
+        )
+        self.assertTrue(readme.startswith(badge))
+        self.assertEqual(DOC.check_current_contract("README.md", readme), [])
+        false_badge = readme.replace(badge, badge.replace("Programme", "Approval"), 1)
+        self.assertIn("standalone-title:README.md",
+                      DOC.check_current_contract("README.md", false_badge))
+        false_title = readme.replace(
+            "# CORA — Continuous Ontological Repository Assurance",
+            "# Unattributed Corporate Software", 1)
+        self.assertIn("standalone-title:README.md",
+                      DOC.check_current_contract("README.md", false_title))
+
+    def test_current_documents_disallow_pr_era_prose_but_keep_compat_refs(self):
+        current = (ROOT / "docs/GETTING_STARTED.md").read_text("utf-8")
+        check = DOC.check_current_contract
+        self.assertEqual(check("docs/GETTING_STARTED.md", current), [])
+        false = current + "\nPR999 is the current product contract.\n"
+        self.assertIn("standalone-pr-narrative:docs/GETTING_STARTED.md",
+                      check("docs/GETTING_STARTED.md", false))
+        compatible = current + (
+            '\n<a id="pr999-compatibility"></a>\n'
+            '[Old source](archive/decisions/ADR-PR01.md)\n'
+        )
+        self.assertEqual(check("docs/GETTING_STARTED.md", compatible), [])
+        history = (ROOT / "CHANGELOG.md").read_text("utf-8")
+        self.assertEqual(check("CHANGELOG.md", history), [])
 
     def test_supply_chain_candidate_not_independent_attestation(self):
         ci = (ROOT / ".github/workflows/ci-release-candidate.yml").read_text("utf-8")
@@ -120,11 +155,11 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
                  "duplicate-or-missing-adapter")
             need(g.count("CORA LOCAL PROJECT ADAPTER — BETA v1") == 1,
                  "missing-canonical-project-prompt")
-            need("Plus or Edu" in g and "Plus/Edu recipe" in r,
+            need("Plus or Edu" in g and "ChatGPT Plus or Edu" in r,
                  "undocumented-beta-plan-assumption")
             need("standard ChatGPT GitHub app is read-only" in g,
                  "read-vs-write-capability-confused")
-            need("separate write-capable tool" in g and "cannot push code" in r,
+            need("separate write-capable tool" in g and "not permission to push or merge" in r,
                  "missing-independent-write-authorization")
             need("METHOD_ONLY BY DEFAULT" in g and "ENGINE_VERIFIED" in g
                  and "PR_MATERIALIZED" in g, "simulated-execution")

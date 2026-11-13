@@ -228,8 +228,13 @@ def analyze(repo: Path, revision: str = "HEAD") -> dict:
             "**Software:** `cora-engine` and `cora-release-verification`",
             "**Repository:** source, tests, CI and **historical ADRs**")):
         raise ValueError("README current product/software/repository boundaries missing")
-    if "PR39 merged" not in release:
-        raise ValueError("release status lacks PR39 merged/source-not-release distinction")
+    # Review the current operator contract, not the wording of a historical PR.
+    # Neither a merged source commit nor a source test is publication authority.
+    if not all(token in release for token in (
+            "The authoritative candidate identity is the exact Git HEAD",
+            "**Release = BLOCKED_EXTERNAL**",
+            "not a stable API")):
+        raise ValueError("current release source identity / external gate missing")
     report = {
         "schema": SCHEMA, "commit": sha, "tree": tree_sha,
         "source": "ORIGINAL_COMMITTED_GIT", "authority": "NONE",

@@ -1,4 +1,5 @@
-# PR-16 semantic assurance lattice — falsifiable DoD
+<a id="pr-16-semantic-assurance-lattice--falsifiable-dod"></a>
+# Semantic assurance lattice — falsifiable source DoD
 
 **Document status:** SCOPED_CURRENT
 **Current scope:** The source-only semantic-lattice contract implemented within CORA.
@@ -7,7 +8,7 @@
 **Limits:** Contract PASS does not authenticate a Docker host, reviewer or merge.
 
 
-**Scope:** candidate branch only; source assurance is not independent sandbox, merge, or release permission. Every status is SHA-scoped and may be invalidated by a changed input or implementation.
+**Scope:** experimental source assurance only; an observed source PASS cannot attest sandbox isolation, independent approval, merge authority or release permission. Every status is SHA-scoped and may be invalidated by a changed input or implementation.
 
 ## Global obligations, non-compensatory
 
