@@ -84,6 +84,20 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
                          sum(r["outbound_historical"] for r in report["documents"]
                              if r["status"] in ("CURRENT", "SCOPED_CURRENT")))
 
+    def test_local_fragment_links_are_not_invisible_to_the_graph(self):
+        self.assertEqual(DOC.resolve("README.md", "#existing-heading"),
+                         ("README.md", "existing-heading"))
+        source = (ROOT / "README.md").read_text("utf-8")
+        bad = DOC.census_markdown(ROOT, overrides={
+            "README.md": source + "\\n[broken local target](#unobserved-anchor)\\n"
+        })
+        self.assertEqual(bad["status"], "REFUTED")
+        self.assertTrue(any(e.startswith(
+            "broken-anchor:README.md:README.md#unobserved-anchor")
+            for e in bad["errors"]), bad["errors"])
+        self.assertIn("worktree-git-parity:README.md", bad["errors"])
+        self.assertEqual(DOC.census_markdown(ROOT)["counts"]["broken_local_links"], 0)
+
     def test_readme_evaluation_budget_and_source_reality(self):
         readme = (ROOT / "README.md").read_text("utf-8")
         index = (ROOT / "docs/INDEX.md").read_text("utf-8")

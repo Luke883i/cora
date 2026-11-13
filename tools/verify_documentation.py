@@ -106,7 +106,10 @@ def historical_authority_issues(
 
 
 def resolve(base: str, href: str) -> tuple[str, str] | None:
-    if href.startswith(("#", "https://", "http://", "mailto:", "tel:")):
+    # In-document fragments are real graph edges and must be validated.
+    if href.startswith("#"):
+        return base, unquote(href[1:])
+    if href.startswith(("https://", "http://", "mailto:", "tel:")):
         return None
     raw, _, anchor = unquote(href).partition("#")
     if not raw or "://" in raw or raw.startswith("/") or "\\" in raw:
