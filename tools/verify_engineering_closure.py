@@ -265,6 +265,10 @@ def contribution_index(paths: list[str], modules: list[str], tools: list[str],
         family = binding.get("family")
         if not isinstance(family, str) or not family:
             raise ValueError("command taxonomy is missing")
+        if (family == "finite-models" and
+                (not command.startswith("stress")
+                 or binding.get("interaction") != "SYNTHETIC_MODEL_NOT_RUNTIME")):
+            raise ValueError("finite-model-only role lacks a real finite-model witness")
         by_family[source].add(family)
         by_witness[source].add(witness)
 
