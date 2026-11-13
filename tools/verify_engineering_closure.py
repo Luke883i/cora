@@ -326,8 +326,17 @@ def contribution_index(paths: list[str], modules: list[str], tools: list[str],
                 declared_role = "CLI_COMMAND_SOURCE_DECLARED_NOT_RUNTIME_VALIDATED"
             else:
                 declared_role = "NON_COMMAND_SUPPORT_SOURCE_CONSUMERS_INCOMPLETE"
+            if path == entrypoint:
+                review = "CANONICAL_ENTRYPOINT_NOT_A_CONSOLIDATION_CANDIDATE"
+            elif (state == "NOT_OBSERVED_STATIC" and not incoming[path]
+                  and not by_command[path] and not by_witness[path]
+                  and not by_test_import[path] and not by_tool_import[path]):
+                review = "STATIC_ISOLATION_REVIEW_ONLY_DYNAMIC_UNKNOWN"
+            else:
+                review = "SOURCE_CONSUMER_OBSERVED_OR_UNRESOLVED_REQUIRES_COUNTERFACTUAL"
             row = {
                 "path": path, "surface": kind, "cli_static": state,
+                "consolidation_review": review,
                 "declared_capability_role": declared_role,
                 "declared_families": sorted(by_family[path]),
                 "imports": sorted(edges[path]), "imported_by": sorted(incoming[path]),
@@ -395,6 +404,12 @@ def contribution_index(paths: list[str], modules: list[str], tools: list[str],
         "modules_without_declared_cli_witness": sum(
             not by_command[path] for path in modules),
         "causal_effects_measured": 0,
+        "static_isolation_review_count": sum(
+            r.get("consolidation_review") ==
+            "STATIC_ISOLATION_REVIEW_ONLY_DYNAMIC_UNKNOWN" for r in rows),
+        "static_isolation_review_paths": sorted(
+            r["path"] for r in rows if r.get("consolidation_review") ==
+            "STATIC_ISOLATION_REVIEW_ONLY_DYNAMIC_UNKNOWN"),
         "safe_consolidations_attested": 0,
     }
     if (metrics["finite_model_assurance_declared_modules"]

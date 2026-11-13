@@ -200,6 +200,10 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
                          "NON_COMMAND_SUPPORT_SOURCE_CONSUMERS_INCOMPLETE")
         self.assertEqual(metrics["causal_effects_measured"], 0)
         self.assertEqual(metrics["safe_consolidations_attested"], 0)
+        self.assertEqual(metrics["static_isolation_review_count"],
+                         len(metrics["static_isolation_review_paths"]))
+        self.assertTrue(all(path.startswith("src/cora/") for path in
+                            metrics["static_isolation_review_paths"]))
         self.assertEqual(len({r["path"] for r in rows}), len(rows))
         self.assertTrue(all(r["causal_effect"] == "NOT_MEASURED" for r in rows))
         self.assertTrue(all(r["consolidation"] == "NOT_AUTHORIZED_UNTESTED" for r in rows))
@@ -231,6 +235,14 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         self.assertEqual(by[unknown]["cli_static"], "NOT_OBSERVED_STATIC")
         self.assertEqual(by[unknown]["consumer_status"],
                          "STATIC_CANDIDATES_DYNAMIC_UNKNOWN")
+        self.assertEqual(by[unknown]["consolidation_review"],
+                         "STATIC_ISOLATION_REVIEW_ONLY_DYNAMIC_UNKNOWN")
+        self.assertEqual(by[direct]["consolidation_review"],
+                         "SOURCE_CONSUMER_OBSERVED_OR_UNRESOLVED_REQUIRES_COUNTERFACTUAL")
+        self.assertEqual(by[cli]["consolidation_review"],
+                         "CANONICAL_ENTRYPOINT_NOT_A_CONSOLIDATION_CANDIDATE")
+        self.assertEqual(proof["metrics"]["static_isolation_review_paths"],
+                         [unknown])
         self.assertEqual(by[direct]["declared_commands"], ["direct"])
         self.assertEqual(by[direct]["declared_families"], ["git-evidence"])
         self.assertEqual(by[direct]["declared_capability_role"],
@@ -405,6 +417,8 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         by = {row["path"]: row for row in rows["rows"]}
         self.assertEqual(by[module]["static_tool_import_candidates"], [tool])
         self.assertEqual(by[module]["causal_effect"], "NOT_MEASURED")
+        self.assertEqual(by[module]["consolidation_review"],
+                         "SOURCE_CONSUMER_OBSERVED_OR_UNRESOLVED_REQUIRES_COUNTERFACTUAL")
         self.assertEqual(by[cli]["declared_capability_role"],
                          "CLI_ENTRYPOINT_ORCHESTRATOR_SOURCE")
         self.assertEqual(rows["metrics"]["static_tool_import_edges"], 1)
