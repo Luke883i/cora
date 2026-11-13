@@ -5,6 +5,7 @@
 **Operational use:** Check candidate bytes, required reviews, hosting and rollback before any tag.
 **Evidence:** Actual wheel/sdist receipts, CI, SCA limits and independently verified host state.
 **Limits:** Current source is staged not published; no source verifier can authorize release.
+**Applicable current DoD:** [release-readiness](DOD_RELEASE_READINESS.md) specifies scoped obligations and open evidence; its existence is not proof that any gate passed.
 
 
 **Status: staged, not published. Current source:** `cora-audit 1.0.0a5` (Python 3.11+, one `cora` CLI). The authoritative candidate identity is the exact Git HEAD supplied to the current release verification; a previous PR or static SHA never qualifies a later checkout. Any source change invalidates earlier receipts. This is a source change, **not a stable API, supported production release or independently approved distribution**. No public candidate is published. **Release = BLOCKED_EXTERNAL** pending the separately accountable operator gates below.

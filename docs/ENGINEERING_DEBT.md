@@ -5,6 +5,7 @@
 **Operational use:** Inspect debt-signals, compare revisions and prioritize explicit unknowns.
 **Evidence:** Original Git, optional input analyzers and the process suite.
 **Limits:** Findings are not certified defect counts or verified remediation.
+**Applicable current DoD:** [engineering-debt](DOD_ENGINEERING_DEBT.md) specifies scoped obligations and open evidence; its existence is not proof that any gate passed.
 
 
 **Status: experimental.** An inventory of observations, *not* a certified defect register, a measured financial liability, a runtime dependency graph, or a license to modify software.

@@ -5,6 +5,7 @@
 **Operational use:** Join sourced Gold/DoD claims with explicitly authorized native tests.
 **Evidence:** Gold source paths, pinned repositories and original runner receipts.
 **Limits:** Teddy/ICTC observations do not imply browser, remote or universal acceptance.
+**Applicable current DoD:** [contextual Gold](DOD_PR19_GOLD.md) specifies scoped obligations and open evidence; its existence is not proof that any gate passed.
 
 
 This is one **existing CORA product**, not a second AI coding assistant or authority. R1 contextual DoD, R2 physical mutation, R3 effect observation and R4 three-source pilot are distinct from external host/release validation.
