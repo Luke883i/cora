@@ -32,7 +32,7 @@ A role may be unfilled in a single-maintainer project. In that case **high-risk 
 - **Investigate:** no observed static inbound edge, but unknown runtime, build, reflection, API and retention still prevent a dead-file conclusion.
 - **Quarantine candidate:** design a reversible isolation experiment on a segregated branch/worktree; define monitoring, exposure period and rollback. Not executable by `file-lab`.
 - **Archive candidate:** specify recoverable location, hash, retention schedule, migration owner, discovery path and restore test; requires retention owner's veto review.
-- **Rename candidate:** require language/format-aware codemod plus consumer, workflow and runtime impact evidence. PR-06 only implements exact tracked-document path rename under separate authorization.
+- **Rename candidate:** require language/format-aware codemod plus consumer, workflow and runtime impact evidence. The current `apply-rename-doc` implementation only supports exact tracked-document path renames under separate authorization.
 - **Delete blocked:** no universal deletion authorization in CORA. A `PASS_SCOPED` observational certificate is not an approval.
 
 Two distinct human reviewer identities are required for a quarantine, archive, broad rename or deletion exception; the implementer cannot act as sole independent reviewer. The `file-decision` CLI records a proposal only, **never applies** an action and never authenticates users. Record rationales, alternatives, counterexamples, evidence commit and reviewer identities in an external approved change record or PR; do not put sensitive runtime traces in public CI artifacts.
