@@ -154,6 +154,23 @@ def _call_name(node: ast.AST) -> str:
 
 
 
+def lexical_call_candidates(node: ast.AST) -> list[str]:
+    """Bounded lexical call names, excluding child definitions; not call execution."""
+    names = set()
+    stack = list(ast.iter_child_nodes(node))
+    while stack:
+        child = stack.pop()
+        if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef,
+                              ast.ClassDef, ast.Lambda)):
+            continue
+        if isinstance(child, ast.Call):
+            name = _call_name(child.func)
+            if name:
+                names.add(name)
+        stack.extend(ast.iter_child_nodes(child))
+    return sorted(names)
+
+
 def structural_units(code: str, path: str, test_only: bool = False) -> list[dict]:
     """AST-declared units; neither executable coverage nor inferred behavior."""
     syntax = ast.parse(code, filename=path)
@@ -168,7 +185,8 @@ def structural_units(code: str, path: str, test_only: bool = False) -> list[dict
                         "kind": "CLASS" if isinstance(child, ast.ClassDef) else
                                 "ASYNC_DEF" if isinstance(child, ast.AsyncFunctionDef) else "DEF",
                         "line": child.lineno,
-                        "evidence": "AST_DECLARATION_NOT_EXECUTION",
+                        "lexical_call_candidates": lexical_call_candidates(child),
+                        "evidence": "AST_DECLARATION_AND_CALL_CANDIDATES_NOT_EXECUTION",
                     })
                 visit(child, name + ".")
             else:
@@ -355,6 +373,12 @@ def contribution_index(paths: list[str], modules: list[str], tools: list[str],
         "not_observed_static": reach["NOT_OBSERVED_STATIC"],
         "command_source_bindings": len(commands),
         "module_declarations": sum(len(v) for v in (units or {}).values()),
+        "module_lexical_call_candidates": sum(
+            len(unit["lexical_call_candidates"]) for rows in (units or {}).values()
+            for unit in rows),
+        "test_lexical_call_candidates": sum(
+            len(unit["lexical_call_candidates"]) for rows in (test_units or {}).values()
+            for unit in rows),
         "test_case_declarations": sum(len(v) for v in (test_units or {}).values()),
         "modules_with_symbol_census": len(units or {}),
         "tests_with_symbol_census": len(test_units or {}),
