@@ -237,13 +237,13 @@ def analyze(repo: Path, revision: str = "HEAD", *, run_behavior: bool = False) -
     names = ["README.md", "CHANGELOG.md", "AGENTS.md",
              "docs/ARCHITECTURE.md", "docs/RELEASE.md", "docs/INDEX.md"]
     documents = {name: source(repo, sha, name) for name in names}
-    # PR44 is verified in actual Git ancestry; do not fossilize a PR40-only prose gate.
-    architecture_era = ("merged PR36–44" if re.search(
-        r"(?m)^Merge pull request #44\b", subjects) else "merged PR36–40")
+    # Git ancestry remains verified above; current architecture documents
+    # executable owners, not historical merge milestones.
+    architecture_owner = "one CORA product and one Python CLI"
     expected = {
         "CHANGELOG.md": "PR40 engineering knowledge source convergence — merged source",
         "AGENTS.md": "Knowledge-convergence gate (source-only; independent gates outstanding)",
-        "docs/ARCHITECTURE.md": architecture_era,
+        "docs/ARCHITECTURE.md": architecture_owner,
         "docs/RELEASE.md": "Existing GitHub release draft",
         "README.md": "[final experimental DoD](.cora/contracts/dod/final-experimental-dod.json)",
         "docs/INDEX.md": "../.cora/contracts/dod/final-experimental-dod.json",
