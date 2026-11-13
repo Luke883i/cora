@@ -232,6 +232,51 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
                                        {"command": "fake", "method_source": unknown,
                                         "test_source": "tests/absent.py"}]})
 
+    def test_static_test_import_candidates_are_not_behavioral_receipts(self):
+        report = ekc.analyze(ROOT, self.sha)
+        index = report["component_contribution"]
+        rows = {row["path"]: row for row in index["rows"]}
+        self.assertGreater(index["metrics"]["static_test_import_edges"], 0)
+        self.assertGreater(index["metrics"]["modules_with_static_test_import_candidate"], 0)
+        # This exact committed test declares an import; that is source linkage only.
+        self.assertIn("tests/test_pr59_consolidation.py",
+                      rows["src/cora/practice_contract.py"]["static_test_import_candidates"])
+        self.assertEqual(index["metrics"]["causal_effects_measured"], 0)
+        self.assertEqual(index["metrics"]["safe_consolidations_attested"], 0)
+        fake = copy.deepcopy(report)
+        fake["component_contribution"]["rows"][0]["causal_effect"] = "PROVED_NECESSARY"
+        with self.assertRaisesRegex(ValueError, "does not replay"):
+            ekc.verify_report(ROOT, fake)
+
+    def test_git_only_static_test_consumer_replay_detects_source_mutation(self):
+        with tempfile.TemporaryDirectory() as folder:
+            clone = Path(folder) / "source"
+            git(ROOT, "clone", "--no-local", "-q", "--", str(ROOT), str(clone))
+            git(clone, "checkout", "-q", self.sha)
+            original_report = ekc.analyze(clone, "HEAD")
+            target = "src/cora/practice_contract.py"
+            def refs(document):
+                return next(row["static_test_import_candidates"]
+                            for row in document["component_contribution"]["rows"]
+                            if row["path"] == target)
+            self.assertIn("tests/test_pr59_consolidation.py", refs(original_report))
+            file = clone / "tests/test_pr59_consolidation.py"
+            before = file.read_text("utf-8")
+            needle = "from cora.practice_contract import classify, project, verify"
+            self.assertEqual(before.count(needle), 1)
+            file.write_text(before.replace(needle,
+                "# mutant: statically remove practice contract test import"), "utf-8")
+            self.assertEqual(ekc.analyze(clone, "HEAD"), original_report)
+            git(clone, "add", "tests/test_pr59_consolidation.py")
+            git(clone, "-c", "user.name=fixture", "-c",
+                "user.email=fixture@example.invalid", "commit", "-qm",
+                "mutant: disconnect declarative test import")
+            changed = ekc.analyze(clone, "HEAD")
+            self.assertNotIn("tests/test_pr59_consolidation.py", refs(changed))
+            self.assertEqual(changed["component_contribution"]["metrics"][
+                "causal_effects_measured"], 0)
+            self.assertTrue(ekc.verify_report(clone, changed))
+
     def test_physical_committed_cli_import_mutation_changes_source_not_worktree(self):
         with tempfile.TemporaryDirectory() as folder:
             clone = Path(folder) / "source"
