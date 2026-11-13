@@ -153,6 +153,124 @@ def _call_name(node: ast.AST) -> str:
     return ""
 
 
+
+def contribution_index(paths: list[str], modules: list[str], tools: list[str],
+                       tests: list[str], imports: list[tuple[str, str]],
+                       atlas: dict) -> dict:
+    """Source contribution graph, NOT causal ablation or safe-deletion evidence.
+
+    Every tracked path is accounted for. The directed import graph only records
+    literal, existing Python relative imports discovered by analyze(); missing
+    static edges never imply no runtime caller or substitutability.
+    """
+    if (len(paths) != len(set(paths)) or "src/cora/cli.py" not in modules
+            or not set(modules + tools + tests).issubset(set(paths))):
+        raise ValueError("component denominator or entrypoint invalid")
+    modules_set, tools_set, tests_set = set(modules), set(tools), set(tests)
+    edges = {src: set() for src in modules}
+    incoming = {src: set() for src in modules}
+    for caller, callee in imports:
+        if caller not in modules_set or callee not in modules_set:
+            raise ValueError("static edge references missing module")
+        edges[caller].add(callee)
+        incoming[callee].add(caller)
+
+    entrypoint = "src/cora/cli.py"
+    direct = set(edges[entrypoint])
+    reachable = {entrypoint}
+    frontier = [entrypoint]
+    while frontier:
+        current = frontier.pop()
+        for callee in sorted(edges[current] - reachable):
+            reachable.add(callee)
+            frontier.append(callee)
+
+    by_command: dict[str, set[str]] = {src: set() for src in modules}
+    by_witness: dict[str, set[str]] = {src: set() for src in modules}
+    commands = atlas.get("commands")
+    if not isinstance(commands, list):
+        raise ValueError("component CLI method atlas unavailable")
+    for binding in commands:
+        source = binding.get("method_source")
+        witness = binding.get("test_source")
+        command = binding.get("command")
+        if (source not in modules_set or witness not in tests_set
+                or not isinstance(command, str) or not command):
+            raise ValueError("component command has missing source/test witness")
+        by_command[source].add(command)
+        by_witness[source].add(witness)
+
+    rows = []
+    for path in paths:
+        if path in modules_set:
+            kind = "PYTHON_MODULE"
+            if path == entrypoint:
+                state = "ENTRYPOINT"
+            elif path in direct:
+                state = "DIRECT_CLI_IMPORT"
+            elif path in reachable:
+                state = "TRANSITIVE_CLI_IMPORT"
+            else:
+                state = "NOT_OBSERVED_STATIC"
+            row = {
+                "path": path, "surface": kind, "cli_static": state,
+                "imports": sorted(edges[path]), "imported_by": sorted(incoming[path]),
+                "declared_commands": sorted(by_command[path]),
+                "declared_test_witnesses": sorted(by_witness[path]),
+                "consumer_status": "STATIC_CANDIDATES_DYNAMIC_UNKNOWN",
+                "causal_effect": "NOT_MEASURED",
+                "consolidation": "NOT_AUTHORIZED_UNTESTED",
+            }
+        else:
+            if path in tools_set:
+                kind = "OPERATIONAL_TOOL_SOURCE"
+            elif path in tests_set:
+                kind = "TEST_SOURCE"
+            elif path.startswith(".github/workflows/") and path.endswith((".yml", ".yaml")):
+                kind = "CI_DECLARATION"
+            elif path.endswith(".md"):
+                kind = "DOCUMENTATION_SOURCE"
+            elif path.startswith(".cora/contracts/"):
+                kind = "CONTRACT_SOURCE"
+            else:
+                kind = "OTHER_TRACKED_SOURCE"
+            row = {
+                "path": path, "surface": kind, "cli_static": "NOT_APPLICABLE",
+                "causal_effect": "NOT_MEASURED",
+                "consolidation": "NOT_AUTHORIZED_UNTESTED",
+            }
+        rows.append(row)
+    reach = Counter(row["cli_static"] for row in rows if row["surface"] == "PYTHON_MODULE")
+    metrics = {
+        "tracked_paths": len(paths),
+        "indexed_paths": len(rows),
+        "python_modules": len(modules),
+        "source_tools": len(tools),
+        "test_sources": len(tests),
+        "entrypoint_modules": reach["ENTRYPOINT"],
+        "direct_cli_imports": reach["DIRECT_CLI_IMPORT"],
+        "transitive_cli_imports": reach["TRANSITIVE_CLI_IMPORT"],
+        "not_observed_static": reach["NOT_OBSERVED_STATIC"],
+        "command_source_bindings": len(commands),
+        "modules_without_declared_cli_witness": sum(
+            not by_command[path] for path in modules),
+        "causal_effects_measured": 0,
+        "safe_consolidations_attested": 0,
+    }
+    if (metrics["indexed_paths"] != metrics["tracked_paths"]
+            or sum(reach.values()) != len(modules)
+            or reach["ENTRYPOINT"] != 1):
+        raise ValueError("component source coverage incomplete")
+    return {
+        "schema": "cora-component-contribution/1",
+        "scope": "ORIGINAL_GIT_STATIC_SOURCE_NOT_ABLATION",
+        "authority": "NONE",
+        "metrics": metrics,
+        "rows": rows,
+        "global_consolidation": "BLOCKED_EXTERNAL_BEHAVIORAL_PARITY_AND_GOVERNED_REVIEW",
+    }
+
+
 def analyze(repo: Path, revision: str = "HEAD") -> dict:
     """Exact committed source/static inspection; dynamic behavior remains unknown."""
     repo = Path(repo).resolve(strict=True)
@@ -235,6 +353,7 @@ def analyze(repo: Path, revision: str = "HEAD") -> dict:
             "**Release = BLOCKED_EXTERNAL**",
             "not a stable API")):
         raise ValueError("current release source identity / external gate missing")
+    contribution = contribution_index(paths, modules, tools, tests, imports, atlas)
     report = {
         "schema": SCHEMA, "commit": sha, "tree": tree_sha,
         "source": "ORIGINAL_COMMITTED_GIT", "authority": "NONE",
@@ -247,6 +366,7 @@ def analyze(repo: Path, revision: str = "HEAD") -> dict:
                    "static_import_edges": len(set(imports)),
                    "dynamic_callsite_indicators": len(dynamic)},
         "static_import_edges": [list(x) for x in sorted(set(imports))],
+        "component_contribution": contribution,
         "dynamic_callsites": sorted(dynamic, key=lambda d: (d["path"], d["line"], d["call"])),
         "debt_register": [
             {"id": "P0_CI_GIT_CLONE", "layer": "REPOSITORY",
