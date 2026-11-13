@@ -433,6 +433,7 @@ class FullSurfaceExecutionTests(unittest.TestCase):
         # Git source object, not only to the prerelease version string.
         import cora
         package_root = Path(cora.__file__).resolve().parent
+        shipped_count = 0
         for row in ledger["records"]:
             p = row["path"]
             if not (p.startswith("src/cora/") and
@@ -443,7 +444,20 @@ class FullSurfaceExecutionTests(unittest.TestCase):
             self.assertTrue(installed.is_file(), "package omits: " + p)
             self.assertEqual(hashlib.sha256(installed.read_bytes()).hexdigest(),
                              row["sha256"], "wheel/source byte drift: " + p)
+            shipped_count += 1
 
+        print("CORA_FULLSURFACE_GIT " + json.dumps({
+            "schema": "cora-fullsurface-sample/1",
+            "commit": head, "tracked": len(paths),
+            "python_compiled": counts["python"],
+            "strict_json_parsed": counts["json"],
+            "markdown_inventory": counts["markdown"],
+            "workflow_sources": counts["workflows"],
+            "javascript_sources": counts["javascript"],
+            "installed_sources_byte_compared": shipped_count,
+            "authorization": "NONE",
+            "behavioral_coverage": "NOT_ATTESTED_BY_SOURCE",
+        }, sort_keys=True))
         self.assertEqual(_strict_json(b'{"unique":true}'), {"unique": True})
         with self.assertRaisesRegex(ValueError, "duplicate JSON field"):
             _strict_json(b'{"authority":"NONE","authority":"APPROVED"}')
@@ -473,6 +487,14 @@ class FullSurfaceExecutionTests(unittest.TestCase):
             input=b"", capture_output=True, timeout=15, check=False)
         self.assertNotEqual(invalid.returncode, 0)
         self.assertIn(b"invalid choice", invalid.stderr.lower())
+        print("CORA_CLI_BOOTSTRAP " + json.dumps({
+            "schema": "cora-cli-help-smoke/1",
+            "commit": g(ROOT, "rev-parse", "HEAD"),
+            "declared": len(declared), "help_invocations_succeeded": len(declared),
+            "behavioral_target_tests": 0,
+            "interpretation": "PARSER_BOOTSTRAP_ONLY_NOT_IMPLEMENTATION_PROOF",
+            "authorization": "NONE",
+        }, sort_keys=True))
 
     def test_10_real_git_cli_snapshot_replay_and_forgery_rejection(self):
         """Installed CLI + original disposable Git; no host or target oracle."""
