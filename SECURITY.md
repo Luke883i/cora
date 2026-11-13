@@ -25,6 +25,14 @@ Please include affected revision, minimal reproduction, relevant scope, and pote
 Current source and safety obligations are described by [governance](GOVERNANCE.md) and the [release procedure](docs/RELEASE.md); historic audits remain available through the [documentation index](docs/INDEX.md).
 
 
+## Resource-budget and isolation debt — not resolved by source CI
+
+**GIT_OUTPUT_POST_CAPTURE_LIMIT:** `src/cora/git_snapshot.py::git` and its batch reader use `subprocess.run(..., stdout=PIPE)` before checking returned output sizes. The documented maximum is a post-capture rejection threshold, **not** independently demonstrated peak-memory containment. Authorized very large Git outputs need a bounded streaming/child-termination regression before treating this path as hostile-input safe.
+
+**NATIVE_LOG_POST_CAPTURE_LIMIT:** `src/cora/native_gold.py::capture_native` likewise collects local test output before the 2 MiB log check. The current 120-second subprocess timeout and later size rejection do not establish a trustworthy execution sandbox or robust descendant-process teardown. A qualified operator must verify in-flight output, process cleanup and resource denial in an isolated environment.
+
+These are **open P1 engineering-hardening obligations**, not a finding that an exploitable incident occurred. A local test pass, content digest, declaration of read-only modes or zero synthetic mismatches does not discharge them. No automatic target execution or release approval is implied.
+
 ## Forensic runtime and AI inputs
 
 `file-lab` reads Git objects and optional bounded JSON annotations locally; source code is not sent to a model or executed. Runtime traces supplied by users are **unverified**, may contain sensitive operational identifiers and should be minimized and retained only in an approved location. AI hypotheses are untrusted text and cannot elevate certificate status, change the repository or authorize deletion. Confidence ranges are explicitly uncalibrated. GitHub CODEOWNERS and self-hosted checks are **not** adequate protection against authorized maintainer bypass without independent required reviews.

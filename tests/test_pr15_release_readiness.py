@@ -50,6 +50,10 @@ class ReadinessTest(unittest.TestCase):
         self.assertEqual(closure["host_protection"], "HOST_UNVERIFIED")
         self.assertEqual(closure["runtime_target"], "NOT_ATTESTED_BY_SOURCE")
         self.assertFalse(closure["enterprise_accepted"])
+        self.assertEqual(closure["residual_source_risks"], [
+            "GIT_OUTPUT_POST_CAPTURE_LIMIT",
+            "NATIVE_LOG_POST_CAPTURE_LIMIT",
+        ])
         self.assertEqual(closure["authorization"], "NONE")
         self.assertEqual(report["release_status"], "BLOCKED_EXTERNAL")
         self.assertFalse(report["release_authorized"])

@@ -202,6 +202,8 @@ def inspect_source(root: Path) -> dict:
             "Module existence does not authenticate runtime"),
         "SECURITY.md": (
             "Repository visibility does not establish protected-branch controls",
+            "GIT_OUTPUT_POST_CAPTURE_LIMIT", "NATIVE_LOG_POST_CAPTURE_LIMIT",
+            "open P1 engineering-hardening obligations",
             "no supported production release", "NOT_ATTESTED"),
     }
     for rel, tokens in boundaries.items():
@@ -235,6 +237,10 @@ def inspect_source(root: Path) -> dict:
         "host_protection": "HOST_UNVERIFIED",
         "independent_review": "BLOCKED_EXTERNAL",
         "enterprise_accepted": False,
+        "residual_source_risks": [
+            "GIT_OUTPUT_POST_CAPTURE_LIMIT",
+            "NATIVE_LOG_POST_CAPTURE_LIMIT",
+        ],
         "authorization": "NONE",
     }
     return {
