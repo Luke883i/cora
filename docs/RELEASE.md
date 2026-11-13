@@ -35,11 +35,11 @@
 | Hosting/review | **BLOCKED_EXTERNAL**; source declarations are not enforced permissions | Protected branch, independent reviewer and authoritative host readback |
 | Product acceptance | Bounded L1 and selected L2 observations; no independent enterprise decision | Maintained target, measured usability/cost, owner acceptance and rollback |
 
-**Scope:** `tools/release_verify.py` owns original wheel/sdist verification; the PR55 supply-chain pipeline produces `cora.cdx.json`, `cora-scoped-sca.json`, `cora-unsigned-build.json` and schema validation receipts. Their digest binding is not third-party identity, software completeness, a SOC 2/ISO 27001 certificate or authorization. Scanner failures must not be interpreted as vulnerability-free results.
+**Scope:** `tools/release_verify.py` owns original wheel/sdist verification; the candidate supply-chain pipeline produces `cora.cdx.json`, `cora-scoped-sca.json`, `cora-unsigned-build.json` and schema validation receipts. Their digest binding is not third-party identity, software completeness, a SOC 2/ISO 27001 certificate or authorization. Scanner failures must not be interpreted as vulnerability-free results.
 
-## Source evidence lineage — historical, not operational
+## Release provenance and existing draft — non-authorizing
 
-**PR40 merged source knowledge** on 7 November 2026; PR41 established a bounded 30-node final-experimental source baseline. PR32/PR34 were procedure and candidate-build stages; PR39 merged a source-only independent acceptance protocol, not a release; PR54/PR55 added version/SBOM/SCA checks; PR56 separated L1/L2/L3 and documented the optional external study protocol. These milestones are preserved in [CHANGELOG](../CHANGELOG.md), original Git commits, [architecture](ARCHITECTURE.md) and the [independent qualification DoD](../.cora/contracts/dod/independent-qualification-dod.json), not alternative release instructions.
+The release architecture and qualification gates are the current [governance](../GOVERNANCE.md), [architecture](ARCHITECTURE.md), [source DoD](../.cora/contracts/dod/independent-qualification-dod.json) and this operator procedure. Earlier implementation milestones are available in [CHANGELOG](../CHANGELOG.md) and original Git: a merged source change, test fixture or historic PR status cannot independently authenticate a release.
 
 **Existing GitHub release draft:** `CORA v1.0.0a4 — First Alpha Release` (historical GitHub Release ID 435292303) was reported on 7 November 2026 as `draft=true`, `prerelease=true`, `published_at=null`, zero assets. A read-only request for `refs/tags/v1.0.0a4` returned 404 at that time. These are **dated host observations**, not evidence of the current tag state, public release or a signed artifact. The historical `1.0.0a4` procedure must **not** be copied to publish `1.0.0a5`. Reconcile any existing draft under the authorized release manager; do not create a duplicate.
 

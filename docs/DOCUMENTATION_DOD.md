@@ -38,7 +38,7 @@ Negative fixtures must reject missing files, duplicated identities, broken links
 
 The separate [claim/proof profile](../.cora/assurance/documentation-proofs.json) binds each S01–S18 leaf to one README proposition in its actual section, a named implementation/contract file, an existing test source and a concrete falsifier. The [source verifier](../tools/verify_claim_evidence.py) reads each witness as a Git blob from the **same pinned commit**, checks fixed semantic boundary oracles (including CLI parser, intent digest, declaration IDs, legacy blob identity, source-vs-external DoD and cross-document contradiction patterns), and emits a replayable SHA- and blob-attributed receipt.
 
-From an authorized checkout, with full Git history including the PR-21 baseline, run:
+From an authorized checkout, with the original documentation baseline reachable in Git, run:
 
 ```sh
 python tools/verify_claim_evidence.py --repo . --revision HEAD --output /tmp/cora-doc-proofs.json
@@ -52,7 +52,7 @@ Adversarial Git fixtures physically commit contradicting current-doc claims, det
 <a id="progressive-navigation-micro-dod--pr-23-source-merged"></a>
 ## Progressive navigation and five reader paths
 
-No parallel documentation engine is introduced. Reuse the PR-21 source leaves **S01–S18**, the PR-22 revision-bound claim profile and the existing `verify_documentation.py` entrypoint. The following **editorial DoD is a proposed non-compensatory cut**, not a new certificate of human understanding:
+No parallel documentation engine is introduced. Reuse the source leaves **S01–S18** and the revision-bound claim profile and the existing `verify_documentation.py` entrypoint. The following **editorial DoD is a proposed non-compensatory cut**, not a new certificate of human understanding:
 
 | Local cut | Necessary property and source evidence | Falsifier / user |
 | --- | --- | --- |
@@ -63,7 +63,7 @@ No parallel documentation engine is introduced. Reuse the PR-21 source leaves **
 | **N5 Evidence and authority** | DoD, actual CLI/source verifiers, revision-bound proof profile, Git/CI and independent decision rights remain distinct | Promote model PASS to approval, claim real runtime or publication; reviewer |
 | **N6 History and semantic minimalism** | The 48-item index and 17 historical blobs remain intact; the 18 README claim/proof leaves, complete parser, first-use task routes and bounded truth predicates must remain green. Line count is tracked as a diagnostic, **never a release gate** | Remove a claim, stale Git status, misleading runtime authority, break a user route or a link; maintainer |
 
-**G_NAV_SOURCE = N1 ∧ N2 ∧ N3 ∧ N4 ∧ N5 ∧ N6.** This is checked only by finite structural/semantic source predicates, existing PR-21/22 provenance contracts, and actual CI on the reviewed HEAD. **G_NAV_ACCEPTED = G_NAV_SOURCE ∧ E01 ∧ E02 ∧ E03**, so an unfamiliar-human navigation trial, an independent maintained-target agent pilot and host-enforced non-author review remain **BLOCKED_EXTERNAL** without actual witnesses.
+**G_NAV_SOURCE = N1 ∧ N2 ∧ N3 ∧ N4 ∧ N5 ∧ N6.** This is checked only by finite structural/semantic source predicates, existing provenance contracts, and actual CI on the reviewed HEAD. **G_NAV_ACCEPTED = G_NAV_SOURCE ∧ E01 ∧ E02 ∧ E03**, so an unfamiliar-human navigation trial, an independent maintained-target agent pilot and host-enforced non-author review remain **BLOCKED_EXTERNAL** without actual witnesses.
 
 The `test_pr23_navigation.py` experiment creates **1,000 reproducible adversarial editorial/reader-target input variants** across ten prespecified mutation families. They are ten classes with 100 distinct text vectors each, *not* 1,000 independent humans, authentic user sessions or independent semantic concepts. Each variant must break an explicit current invariant while an unchanged source must pass; output reports case counts and family-specific survivors. The mutation corpus cannot measure real task completion, calibrated product quality or accessibility in every browser. Human first-read remains the falsifier for those external claims.
 
@@ -87,11 +87,11 @@ Every generated receipt binds method and test-source Git blob OIDs to a revision
 
 The former **≤180 physical-line** gate has been falsified: adding harmless Markdown whitespace can fail it, while compact lines can contain false claims. A numeric line budget is **not** a valid proxy for clarity, safe onboarding, correctness or semantic preservation. The rule is retired as a blocking predicate; line/word counts remain optional diagnostics. This amendment does not change the original 28-node documentation evidence DAG or promote E01–E03.
 
-The [machine-readable README refactor DoD](../.cora/contracts/dod/documentation-dod.json) adds a separately checked, non-authorizing `readme_refactor` contract. Its **ten source cuts** cover exact S01–S18 section/claim binding, live merged PR41/current release truth, first-use order, all five reader routes and five disclosure lenses, exact 71-command identity, One-Run status honesty, Git-tracked relative links, explicit independent-operator limits and finite falsifiers. All ten are AND-required: a missing source claim or incorrect disclosure defeats a source PASS regardless of other successes.
+The [machine-readable README refactor DoD](../.cora/contracts/dod/documentation-dod.json) adds a separately checked, non-authorizing `readme_refactor` contract. Its **ten source cuts** cover exact S01–S18 section/claim binding, current source/release identity and dated provenance truth, first-use order, all five reader routes and five disclosure lenses, exact 71-command identity, One-Run status honesty, Git-tracked relative links, explicit independent-operator limits and finite falsifiers. All ten are AND-required: a missing source claim or incorrect disclosure defeats a source PASS regardless of other successes.
 
-The [PR42 navigation regression](../tests/test_pr23_navigation.py) maintains the original 1,000 adversarial vectors and adds **10,000 deterministic, distinct, preregistered variants** (`seed=883`, 20 families × 500): 4,000 meaning-preserving editorial transformations that must PASS and 6,000 false-authority/claim-count/command/link/traceability changes that must FAIL. Zero incorrect classifications, original-Git 18/18 proof replay, exact-HEAD Python 3.11/3.13 CI and a proofable checksum of the mutant stream are the SOURCE thresholds. A **true unfamiliar engineer**, an external maintained-target agent study and effective protected GitHub non-author review remain separately **BLOCKED_EXTERNAL** without real operator witnesses.
+The [navigation regression](../tests/test_pr23_navigation.py) maintains the original 1,000 adversarial vectors and adds **10,000 deterministic, distinct, preregistered variants** (`seed=883`, 20 families × 500): 4,000 meaning-preserving editorial transformations that must PASS and 6,000 false-authority/claim-count/command/link/traceability changes that must FAIL. Zero incorrect classifications, original-Git 18/18 proof replay, exact-HEAD Python 3.11/3.13 CI and a proofable checksum of the mutant stream are the SOURCE thresholds. A **true unfamiliar engineer**, an external maintained-target agent study and effective protected GitHub non-author review remain separately **BLOCKED_EXTERNAL** without real operator witnesses.
 
-The README is the current product entry; a source-document pass cannot approve a release. The PR42 test source and `README.md` Git blob must be compared to the reviewed candidate, with commit identity invalidated by any subsequent edit. No new orchestrator, auto-merge, release, or paper-only human study is authorized.
+The README is the current product entry; a source-document pass cannot approve a release. The current navigation regression source and `README.md` Git blob must be compared to the reviewed candidate, with commit identity invalidated by any subsequent edit. No new orchestrator, auto-merge, release, or paper-only human study is authorized.
 
 
 <a id="pr48--cto-facing-multi-abstraction-front-door-dod-source-candidate"></a>
@@ -135,7 +135,7 @@ static assertions nor deterministic lexical mutants measure this.
 `tests/test_pr23_navigation.py` (100 new + historical 1k/10k);
 `.cora/assurance/documentation-proofs.json`; `docs/INDEX.md`;
 `docs/ARCHITECTURE.md`; `docs/CONTINUOUS_DEVELOPMENT.md`.
-The original PR42 machine DoD is **retained**, not weakened.
+The original machine-readable DoD is **retained**, not weakened.
 
 <a id="pr48-migration--source-derived-claritycompression-and-external-qualification"></a>
 ## Source-derived clarity, compression and external acceptance
@@ -160,13 +160,13 @@ This amendment refines the existing R48-A–H AND-gate; it does **not** create a
 
 **External obligations (E0–E7, non-inferable from Git source):** first-read human comprehension, genuine maintained-target experiments, independently identified reviewer, enforced hosting rules, verified signed provenance, security acceptance, release-manager decision and independent operational review. Each requires externally attributable evidence and remains open until that evidence is actually supplied.
 
-**DoD-of-DoD:** each obligation must name a source, an independent oracle or concrete falsifier, the owning verifier, the exact revision invalidating prior evidence and whether the observation is SOURCE or EXTERNAL. The 20-bit AND-cut is stressed with 1,000,000 deterministic distinct finite vectors, plus physical Markdown/claim corruption controls in [PR62 regression tests](../tests/test_pr62_enterprise_docs.py). The vectors exercise *contract semantics*, not a million independent repository edits, people or real product executions. The original 10,000 README counterexamples remain separately required. Failures must remain distinguishable from `NOT_RUN`; every new source revision requires fresh candidate-SHA CI.
+**DoD-of-DoD:** each obligation must name a source, an independent oracle or concrete falsifier, the owning verifier, the exact revision invalidating prior evidence and whether the observation is SOURCE or EXTERNAL. The 20-bit AND-cut is stressed with 1,000,000 deterministic distinct finite vectors, plus physical Markdown/claim corruption controls in [enterprise documentation regression tests](../tests/test_pr62_enterprise_docs.py). The vectors exercise *contract semantics*, not a million independent repository edits, people or real product executions. The original 10,000 README counterexamples remain separately required. Failures must remain distinguishable from `NOT_RUN`; every new source revision requires fresh candidate-SHA CI.
 
 **Minimality rule:** prefer one existing authoritative owner over a new parallel registry, engine, framework or dashboard. Archive identity is retained; index-only visibility is not evidence of current operational use. No document may claim that Git hashes, SBOM generation or green source CI establish reviewer identity, supply-chain signing, protected hosting or enterprise readiness.
 
-## Reader-first engineering transfer — minimal source DoD (post-PR62)
+## Reader-first engineering transfer — current minimum source DoD
 
-**Goal:** an unfamiliar CTO or engineer can locate what CORA does, reproduce a source-scoped command, challenge an overclaim, and see what remains blocked, without learning its development chronology first. This is a *source/documentation candidate* measure; no documentation unit test establishes actual human comprehension or external readiness. Reuse the original `S01–S18` documentation contract, verifier, Chat bundle source and R48/PR62 budgets. No second registry, product, software engine, approval gate or "enterprise-ready" designation.
+**Goal:** an unfamiliar CTO or engineer can locate what CORA does, reproduce a source-scoped command, challenge an overclaim, and see what remains blocked, without learning its development chronology first. This is a *source/documentation candidate* measure; no documentation unit test establishes actual human comprehension or external readiness. Reuse the original `S01–S18` documentation contract, verifier, Chat bundle source and source-tested editorial budgets. No second registry, product, software engine, approval gate or "enterprise-ready" designation.
 
 | ID | Necessary source condition | Measurable bound / owner / falsifier |
 | --- | --- | --- |
@@ -177,8 +177,8 @@ This amendment refines the existing R48-A–H AND-gate; it does **not** create a
 | R63-05 | Temporary handoff accurately described | `src/cora/chat_bundle.py` retains ZIP/source receipt, `iterations/000001/handoff.md`, finite limits and no signature/memory/approval claim |
 | R63-06 | Evidence-backed crossrepo narrative | Seven real historical PR links across CORA, ICTC, Teddy, iKant_EDU; no assertion that CORA independently validated their products |
 | R63-07 | Terms are discriminating | Blobbing, materialization, falsification, AND-DoD and finite saturation distinguish source objects, outcomes and inferential limits |
-| R63-08 | Preservation and bounded complexity | 48 registered Markdown, 31 active/17 historical, historic byte identity and zero broken local links; root README **at most 1,750 words**, existing PR62 and PR23 bound |
-| R63-09 | Negative controls catch narrative corruption | Existing 1k, 10k and PR62 finite source falsifiers; targeted physical text mutants for read-only/write claims, prompt duplication, wrong handoff path, and invented approval |
+| R63-08 | Preservation and bounded complexity | 48 registered Markdown, 31 active/17 historical, historic byte identity and zero broken local links; root README **at most 1,750 words**, current navigation and documentation test bounds |
+| R63-09 | Negative controls catch narrative corruption | Existing 1k, 10k and enterprise finite source falsifiers; targeted physical text mutants for read-only/write claims, prompt duplication, wrong handoff path, and invented approval |
 | R63-10 | Exact-head review and no self-approval | Candidate exact Git SHA, repository/documentation/claim verification, relevant native tests and CI; effective host protection, independent review and user trials remain separate |
 
 **Source cut:** `R63_SOURCE = R63-01 ∧ R63-02 ∧ ... ∧ R63-10`. **Governed cut:** `R63_ACCEPTED = R63_SOURCE ∧ E01_FIRST_READ_HUMAN ∧ E02_AGENT_ON_EXTERNAL_MAINTAINED_TARGET ∧ E03_ENFORCED_HOST_AND_NON_AUTHOR_REVIEW`. A missing obligation is `BLOCKED_EXTERNAL` or `REFUTED`, never averaged away.
