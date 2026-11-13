@@ -7,7 +7,7 @@
 **Limits:** Archived ADRs are nonnormative and links do not certify reader comprehension.
 
 
-Start at the [README](../README.md): a source-scoped product promise, a three-step engineering cycle, direct ChatGPT Project setup, eight CLI families and scope-limited target examples. This index routes readers by task, method and evidence class; it is navigation, not a release authority or an independent witness.
+Start at the [README](../README.md): a source-scoped product promise, a three-step engineering cycle, direct ChatGPT Project setup, eight declared CLI families and scope-limited target examples. This index routes readers by task, method and evidence class; it is navigation, not a release authority or an independent witness.
 
 ## How to navigate
 
