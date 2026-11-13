@@ -120,6 +120,9 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
         def targets(path, body):
             return [DOC.resolve(path, link)
                     for link in DOC.markdown_links(body)]
+        scoped_rows = {
+            row["path"]: row for row in DOC.census_markdown(ROOT)["documents"]
+        }
         for page, dod in owners.items():
             with self.subTest(page=page):
                 self.assertEqual(statuses[page], "CURRENT")
@@ -127,8 +130,7 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
                 body = (ROOT / page).read_text("utf-8")
                 self.assertIn("**Applicable current DoD:**", body)
                 self.assertIn((dod, ""), targets(page, body))
-                scoped = DOC.census_markdown(ROOT)["documents"]
-                route = next(x for x in scoped if x["path"] == page)
+                route = scoped_rows[page]
                 self.assertGreaterEqual(route["outbound_current_dod"], 1)
                 # A plausible local link to the INDEX does not discharge
                 # a direct owner route; the negative source mutant must fail.
