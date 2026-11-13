@@ -355,6 +355,27 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         with self.assertRaises(SyntaxError):
             ekc.structural_units("def broken(\n", "synthetic.py")
 
+    def test_component_denominator_negative_omission_and_duplicate_falsifiers(self):
+        cli = "src/cora/cli.py"
+        module = "src/cora/example.py"
+        tool = "tools/example.py"
+        test = "tests/test_example.py"
+        paths = [cli, module, tool, test]
+        for modules, tools, tests in (
+            ([cli], [tool], [test]),
+            ([cli, module], [], [test]),
+            ([cli, module], [tool], []),
+            ([cli, module, module], [tool], [test]),
+        ):
+            with self.subTest(modules=modules, tools=tools, tests=tests):
+                with self.assertRaisesRegex(ValueError, "denominator classes"):
+                    ekc.contribution_index(paths, modules, tools, tests, [],
+                                           {"commands": []})
+        proof = ekc.contribution_index(
+            paths, [cli, module], [tool], [test], [], {"commands": []})
+        self.assertEqual(proof["metrics"]["tracked_paths"], 4)
+        self.assertEqual(proof["metrics"]["indexed_paths"], 4)
+
     def test_static_tool_consumer_unknown_and_negative_contract(self):
         cli = "src/cora/cli.py"
         module = "src/cora/reticulum.py"
