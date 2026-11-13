@@ -221,6 +221,15 @@ def contribution_index(paths: list[str], modules: list[str], tools: list[str],
             or not set(modules + tools + tests).issubset(set(paths))):
         raise ValueError("component denominator or entrypoint invalid")
     modules_set, tools_set, tests_set = set(modules), set(tools), set(tests)
+    expected = {
+        "modules": {p for p in paths if re.fullmatch(r"src/cora/[^/]+\.py", p)},
+        "tools": {p for p in paths if re.fullmatch(r"tools/[^/]+\.py", p)},
+        "tests": {p for p in paths if re.fullmatch(r"tests/test_[^/]+\.py", p)},
+    }
+    if (modules_set != expected["modules"] or tools_set != expected["tools"]
+            or tests_set != expected["tests"]
+            or any(len(group) != len(set(group)) for group in (modules, tools, tests))):
+        raise ValueError("component source denominator classes incomplete or duplicated")
     if units is not None and set(units) != modules_set:
         raise ValueError("module symbol census is incomplete")
     if test_units is not None and set(test_units) != tests_set:
