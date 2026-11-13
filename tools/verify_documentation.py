@@ -803,6 +803,11 @@ def census_markdown(root: Path, *, revision: str = "HEAD",
             statuses.get(dest) in ("CURRENT", "SCOPED_CURRENT")
             for dest, _ in references[row["path"]]
         )
+        row["outbound_current_dod"] = sum(
+            statuses.get(dest) in ("CURRENT", "SCOPED_CURRENT") and
+            registered.get(dest, {}).get("kind") == "DOD"
+            for dest, _ in references[row["path"]]
+        )
         row["inbound"] = sum(sum(1 for dest, _ in edges if dest == row["path"])
                              for edges in references.values())
         # An index entry is discoverability, not proof of operational use.
@@ -836,6 +841,10 @@ def census_markdown(root: Path, *, revision: str = "HEAD",
             "current_to_historical_edges": sum(
                 row["outbound_historical"] for row in rows
                 if row["status"] in ("CURRENT", "SCOPED_CURRENT")),
+            "active_method_to_current_dod_edges": sum(
+                row["outbound_current_dod"] for row in rows
+                if row["status"] in ("CURRENT", "SCOPED_CURRENT") and
+                row["kind"] == "METHOD"),
 
             "original_git_parity": sum(x["source_parity"] for x in rows),
             "edges": sum(x["outbound_local"] for x in rows),

@@ -78,6 +78,11 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
             "- [OLD DOD](DOD.md) — HISTORICAL · DOD", statuses), [])
 
         report = DOC.census_markdown(ROOT)
+        self.assertEqual(report["counts"]["active_method_to_current_dod_edges"],
+                         sum(row["outbound_current_dod"]
+                             for row in report["documents"]
+                             if row["status"] in ("CURRENT", "SCOPED_CURRENT")
+                             and row["kind"] == "METHOD"))
         self.assertEqual(report["counts"]["ambiguous_historical_authority"], 0,
                          report["errors"])
         self.assertEqual(report["counts"]["current_to_historical_edges"],
@@ -122,6 +127,9 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
                 body = (ROOT / page).read_text("utf-8")
                 self.assertIn("**Applicable current DoD:**", body)
                 self.assertIn((dod, ""), targets(page, body))
+                scoped = DOC.census_markdown(ROOT)["documents"]
+                route = next(x for x in scoped if x["path"] == page)
+                self.assertGreaterEqual(route["outbound_current_dod"], 1)
                 # A plausible local link to the INDEX does not discharge
                 # a direct owner route; the negative source mutant must fail.
                 relative = dod.rsplit("/", 1)[-1]
