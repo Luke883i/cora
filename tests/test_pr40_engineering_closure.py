@@ -349,6 +349,46 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         with self.assertRaises(SyntaxError):
             ekc.structural_units("def broken(\n", "synthetic.py")
 
+    def test_native_reticular_external_guard_fails_on_committed_ablation(self):
+        """One real subprocess counterfactual, not a universal causal proof."""
+        from os import environ
+        with tempfile.TemporaryDirectory() as folder:
+            clone = Path(folder) / "repo"
+            git(ROOT, "clone", "--no-local", "-q", "--", str(ROOT), str(clone))
+            git(clone, "checkout", "-q", self.sha)
+            snippet = (
+                "from cora.reticulum import assess_cut, MODEL\n"
+                "nodes=[{'id':'E','scope':'EXTERNAL','depends_on':[]},"
+                "{'id':'G','scope':'SOURCE','depends_on':['E']}]\n"
+                "print(assess_cut(nodes,'G',{'E':MODEL})['status'])\n"
+            )
+            def oracle():
+                return subprocess.run(
+                    [sys.executable, "-c", snippet], cwd=clone,
+                    env={**environ, "PYTHONPATH": str(clone / "src")},
+                    capture_output=True, text=True, check=False, timeout=60)
+            before = oracle()
+            self.assertEqual(before.returncode, 0, before.stderr)
+            self.assertEqual(before.stdout.strip(), "BLOCKED_UNOBSERVED")
+            file = clone / "src/cora/reticulum.py"
+            content = file.read_text("utf-8")
+            original = ('state = (EXTERNAL if node.get("scope") == "EXTERNAL" else\n'
+                        '                     observations.get(key, BLOCKED))')
+            self.assertEqual(content.count(original), 1)
+            mutated = content.replace(original,
+                                      'state = observations.get(key, BLOCKED)')
+            file.write_text(mutated, "utf-8")
+            # Dirty bytes have not changed original committed source identity.
+            self.assertEqual(git(clone, "rev-parse", "HEAD"), self.sha)
+            git(clone, "add", "src/cora/reticulum.py")
+            git(clone, "-c", "user.name=fixture", "-c",
+                "user.email=fixture@example.invalid", "commit", "-qm",
+                "mutant: remove mandatory external leaf guard")
+            after = oracle()
+            self.assertEqual(after.returncode, 0, after.stderr)
+            self.assertEqual(after.stdout.strip(), "MODEL_ELIGIBLE_UNATTESTED")
+            self.assertNotEqual(after.stdout, before.stdout)
+
     def test_physical_committed_cli_import_mutation_changes_source_not_worktree(self):
         with tempfile.TemporaryDirectory() as folder:
             clone = Path(folder) / "source"
