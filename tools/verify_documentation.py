@@ -424,7 +424,7 @@ PROJECT_ADAPTER_V2_FORBIDDEN = (
     r"proceed authorizes (?:publishing|deployment)",
     r"proposed patch is already a commit",
     r"native tests pass without execution",
-    r"text masks are physical source mutations",
+    r"text masks (?:are physical source mutations|count as executed source changes)",
     r"CORA.ENGINE ran without a tool",
     r"CLI help proves every runtime behavior",
     r"PASS_SCOPED despite missing external gates",

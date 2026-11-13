@@ -33,7 +33,7 @@ ATTACKS = (
     "Proceed authorizes deployment",
     "Proposed patch is already a commit",
     "Native tests pass without execution",
-    "Text masks are physical source mutations",
+    "Text masks count as executed source changes",
     "CORA-ENGINE ran without a tool",
     "CLI help proves every runtime behavior",
     "PASS_SCOPED despite missing external gates",
