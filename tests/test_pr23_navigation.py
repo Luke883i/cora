@@ -265,7 +265,7 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         self.assertIn("BLOCKED_EXTERNAL", release)
         self.assertIn("published_at=null", release)
         self.assertIn("refs/tags/v1.0.0a4", release)
-        self.assertIn("PR40 merged source knowledge", release)
+        self.assertIn("The authoritative candidate identity is the exact Git HEAD", release)
         self.assertEqual(verify_readme_semantics(self.readme, root=ROOT), [])
 
     def test_pr60_counterexample_mutations_preserve_decision_boundaries(self):

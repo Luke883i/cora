@@ -250,8 +250,8 @@ def analyze(repo: Path, revision: str = "HEAD", *, run_behavior: bool = False) -
     }
     if any(text not in documents[path] for path, text in expected.items()):
         raise ValueError("current document / merged Git temporal drift")
-    if "PR40 merged source knowledge" not in documents["docs/RELEASE.md"]:
-        raise ValueError("current release chronology lost merged PR40")
+    if "The authoritative candidate identity is the exact Git HEAD" not in documents["docs/RELEASE.md"]:
+        raise ValueError("current release procedure is not revision-bound")
     if "published_at=null" not in documents["docs/RELEASE.md"] or "refs/tags/v1.0.0a4" not in documents["docs/RELEASE.md"]:
         raise ValueError("release draft tag/asset observation omitted")
     banned = {
