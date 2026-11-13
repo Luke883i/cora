@@ -642,7 +642,10 @@ def verify(root: Path) -> list[str]:
             errors.append("missing-procedure:" + path)
         elif "--intent" not in (root / path).read_text("utf-8"):
             errors.append("contextual-intent-omitted:" + path)
-    if "not a stable" not in readme.lower() and "not a stable api" not in readme.lower():
+    # A secondary generic disclaimer cannot mask corruption of the
+    # specific, canonical API/release statement on the first screen.
+    front = readme.split("## First five minutes", 1)[0]
+    if "**not a stable API or verified public release**" not in front:
         errors.append("release-claim-regression")
     validate_dod(root, errors)
     try:

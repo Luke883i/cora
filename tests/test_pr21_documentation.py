@@ -114,6 +114,20 @@ class DocumentationDoDTests(unittest.TestCase):
                 self.assertIn(expected, problems, problems)
                 self.assertTrue(problems)
 
+    def test_release_claim_corruption_cannot_hide_behind_another_disclaimer(self):
+        readme = (ROOT / "README.md").read_text("utf-8")
+        self.assertNotIn("release-claim-regression",
+                         doc.verify_progressive_readme(readme))
+        self.assertIn("**not a stable API or verified public release**", readme)
+        forged = readme.replace(
+            "**not a stable API or verified public release**",
+            "**stable enterprise-ready API and release**", 1)
+        # This secondary disclaimer once incorrectly masked the missing
+        # first-read API boundary.
+        forged += "\\nThe software is not a stable supported release.\\n"
+        self.assertIn("release-claim-regression",
+                      doc.verify_progressive_readme(forged))
+
     def test_04_parser_commands_are_exact_not_legacy_catalog(self):
         import ast
         code = ast.parse((ROOT / "src/cora/cli.py").read_text("utf-8"))
