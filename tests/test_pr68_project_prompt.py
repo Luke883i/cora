@@ -88,7 +88,7 @@ class ProjectAdapterV2Tests(unittest.TestCase):
         self.assertIn("cora process-run /path/to/target", first_run)
         self.assertIn("cora verify-process /tmp/round.json --repo /path/to/target", first_run)
         self.assertIn("A ChatGPT Project instruction is not automatically delivered", self.prompt)
-        self.assertIn("Give the external coding agent a task packet", self.prompt)
+        self.assertIn("P09 | Send external coding agent a task packet:", self.prompt)
         for field in ("target_repo:", "base_sha:", "head_sha:",
                       "native_oracles_and_falsifiers:", "not_authorized:",
                       "next_step:"):
@@ -173,12 +173,13 @@ class ProjectAdapterV2Tests(unittest.TestCase):
         for k in range(200):
             if k < 100:
                 candidate = self.prompt.replace(
-                    "\nBOOTSTRAP (once per target",
-                    "\n" + " " * k + "\nBOOTSTRAP (once per target", 1)
+                    "\nBOOTSTRAP (per target",
+                    "\n" + " " * (k + 1) + "\nBOOTSTRAP (per target", 1)
             else:
                 candidate = self.prompt.replace(
-                    "\nFOR EACH ENGINEERING REQUEST",
-                    "\n" + " " * (k - 100) + "\nFOR EACH ENGINEERING REQUEST", 1)
+                    "\nEACH REQUEST (depth",
+                    "\n" + " " * (k - 99) + "\nEACH REQUEST (depth", 1)
+            self.assertNotEqual(candidate, self.prompt, ("unchanged-control", k))
             self.assertEqual(
                 DOC.verify_project_adapter_prompt(self.rebuild(candidate)), [],
                 ("benign", k))
