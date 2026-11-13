@@ -435,6 +435,35 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             ekc.component_dod_assessment(modified)
 
+    def test_physical_committed_global_dod_edge_removal_fails_closed(self):
+        with tempfile.TemporaryDirectory() as folder:
+            clone = Path(folder) / "source"
+            git(ROOT, "clone", "--no-local", "-q", "--", str(ROOT), str(clone))
+            git(clone, "checkout", "-q", self.sha)
+            baseline = ekc.analyze(clone, "HEAD")
+            self.assertEqual(baseline["component_dod"]["global_status"],
+                             "BLOCKED_EXTERNAL")
+            module = clone / "tools/verify_engineering_closure.py"
+            before = module.read_text("utf-8")
+            old = '"G_COMPONENT": ["G_COMPONENT_SOURCE", "I1_TRACE",'
+            new = '"G_COMPONENT": ["I1_TRACE",'
+            self.assertEqual(before.count(old), 1)
+            module.write_text(before.replace(old, new), "utf-8")
+            # Replaying the prior source SHA cannot legitimize uncommitted bytes.
+            self.assertEqual(ekc.analyze(clone, "HEAD"), baseline)
+            git(clone, "add", "tools/verify_engineering_closure.py")
+            git(clone, "-c", "user.name=fixture", "-c",
+                "user.email=fixture@example.invalid", "commit", "-qm",
+                "mutant: orphan source DoD from the global root")
+            from os import environ
+            run = subprocess.run(
+                [sys.executable, "tools/verify_engineering_closure.py",
+                 "--repo", str(clone), "--revision", "HEAD"],
+                cwd=clone, env={**environ, "PYTHONPATH": str(clone / "src")},
+                capture_output=True, text=True, check=False, timeout=60)
+            self.assertEqual(run.returncode, 3, run.stdout + run.stderr)
+            self.assertIn("component DoD orphan", run.stdout + run.stderr)
+
     def test_actual_wrapper_consolidation_has_original_git_behavioral_parity(self):
         """Execute former source owner on the same Git inputs, not just compare labels."""
         from types import ModuleType
