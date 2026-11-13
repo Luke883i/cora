@@ -209,7 +209,7 @@ class CapabilityAtlasTests(unittest.TestCase):
         head = g(ROOT, "rev-parse", "HEAD")
         ledger = snapshot(ROOT, head)
         paths = [p.decode("utf-8") for p in subprocess.check_output(
-            ["git", "-C", str(ROOT), "ls-files", "-z"]).split(b"\\0") if p]
+            ["git", "-C", str(ROOT), "ls-files", "-z"]).split(b"\0") if p]
         self.assertEqual([row["path"] for row in ledger["records"]],
                          sorted(paths))
         counts = {"python": 0, "json": 0, "markdown": 0,
@@ -289,7 +289,7 @@ class CapabilityAtlasTests(unittest.TestCase):
             g(target, "init", "-q")
             g(target, "config", "user.name", "CORA smoke")
             g(target, "config", "user.email", "fixture@example.invalid")
-            (target / "payload.txt").write_text("original\\n", "utf-8")
+            (target / "payload.txt").write_text("original\n", "utf-8")
             g(target, "add", "payload.txt")
             g(target, "commit", "-qm", "original fixture")
             sha = g(target, "rev-parse", "HEAD")
@@ -314,7 +314,7 @@ class CapabilityAtlasTests(unittest.TestCase):
                              "verified_against_git_objects")
 
             # A dirty target worktree does not rewrite the original commit.
-            (target / "payload.txt").write_text("uncommitted change\\n", "utf-8")
+            (target / "payload.txt").write_text("uncommitted change\n", "utf-8")
             self.assertEqual(cli("verify-ledger", ledger_path, "--repo", target).returncode, 0)
             forged = copy.deepcopy(ledger)
             forged["coverage"]["runtime"] = "certified"
@@ -349,7 +349,7 @@ class CapabilityAtlasTests(unittest.TestCase):
         self.assertEqual(proc.returncode, 0, proc.stderr[-500:])
         with tempfile.TemporaryDirectory() as td:
             broken = Path(td) / "broken.mjs"
-            broken.write_text("export const = unexpected;\\n", encoding="utf-8")
+            broken.write_text("export const = unexpected;\n", encoding="utf-8")
             negative = subprocess.run([node, "--check", str(broken)],
                                       capture_output=True, timeout=20, check=False)
             self.assertNotEqual(negative.returncode, 0)
@@ -362,8 +362,8 @@ class CapabilityAtlasTests(unittest.TestCase):
         marker = "## Full-surface assessment lenses"
         self.assertEqual(doc.count(marker), 1)
         block = doc.split(marker, 1)[1].split(
-            "\\n## Trust boundary and known debt", 1)[0]
-        names = re.findall(r"(?m)^\\| ([SF][0-9]{2}) \\|", block)
+            "\n## Trust boundary and known debt", 1)[0]
+        names = re.findall(r"(?m)^\| ([SF][0-9]{2}) \|", block)
         self.assertEqual(names, (["S%02d" % k for k in range(1, 11)] +
                                  ["F%02d" % k for k in range(1, 11)]))
         self.assertIn("not twenty implemented engines", block)
@@ -371,7 +371,7 @@ class CapabilityAtlasTests(unittest.TestCase):
         self.assertIn("AND obligations", block)
         # A superficially plausible duplicate lens must fail the same contract.
         self.assertNotEqual(
-            re.findall(r"(?m)^\\| ([SF][0-9]{2}) \\|",
+            re.findall(r"(?m)^\| ([SF][0-9]{2}) \|",
                        block.replace("| F10 ", "| F09 ", 1)), names)
 
 
