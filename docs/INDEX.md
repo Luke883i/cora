@@ -7,7 +7,7 @@
 **Limits:** Archived ADRs are nonnormative and links do not certify reader comprehension.
 
 
-Start at the [README](../README.md): a source-scoped product promise, a three-step engineering cycle, direct ChatGPT Project setup, eight declared CLI families and scope-limited target examples. This index routes readers by task, method and evidence class; it is navigation, not a release authority or an independent witness.
+Start at the [README](../README.md): a source-scoped product promise, a bounded engineering cycle, direct ChatGPT Project setup, enterprise evaluation boundary and scope-limited target examples. This index routes readers by task, method and evidence class; it is navigation, not a release authority or an independent witness.
 
 ## How to navigate
 
@@ -37,7 +37,7 @@ The [README](../README.md) is the **compressed public front door**: outcome, met
 
 ## Current documentation ownership and retention
 
-The [README](../README.md) answers *what, for whom, first run and limits*. [Getting started](GETTING_STARTED.md) contains the shortest reproducible path; [architecture](ARCHITECTURE.md) owns current module/data/evidence boundaries; [continuous development](CONTINUOUS_DEVELOPMENT.md) owns developer and agent operation; [release](RELEASE.md) owns operator gates. [CHANGELOG](../CHANGELOG.md) and original Git revisions own the implementation chronology.
+The [README](../README.md) answers *what, for whom, first run, limits and the enterprise evaluation boundary*. [Getting started](GETTING_STARTED.md) contains the shortest reproducible path; [architecture](ARCHITECTURE.md) owns current module/data/evidence boundaries; [continuous development](CONTINUOUS_DEVELOPMENT.md) owns developer and agent operation; [release](RELEASE.md) owns operator gates. [CHANGELOG](../CHANGELOG.md) and original Git revisions own the implementation chronology.
 
 **Retention rule:** the 17 `HISTORICAL` Markdown records are immutably referenced by the [registry](documentation-registry.json), historical source checks and this index. Other current documents also have declared routes or contract consumers. No whole-document deletion has a sufficiently demonstrated nonconsumer/retention oracle; therefore the present source tree deletes **zero archival files**. Superseded implementation chronology belongs in original Git, not rewritten into new historical "truth". A review may later retire a source only after evidence of consumers, alternative reachability and reversible migration.
 

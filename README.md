@@ -149,14 +149,11 @@ The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) di
 
 ## Enterprise evaluation boundary
 
-**Evaluation candidate, not enterprise-qualified.** CORA can support an *authorized, isolated, source-scoped evaluation* when a named operator pins the Git revision, checks the CLI and report replay, records native target-test evidence separately and retains explicit unresolved obligations. It does **not** independently establish operational security, managed support, production suitability, protected branch enforcement, package provenance, or an authenticated second reviewer. A production or high-impact adoption decision must be owned by the organization and supported by its own target-specific behavioral oracle, security/threat assessment, deployment and rollback controls, supply-chain attestations and independent review. See [release gates](docs/RELEASE.md) and [governance](GOVERNANCE.md).
+**Candidate for evaluation, not enterprise-qualified.** Use CORA in an authorized isolated checkout, pin Git, replay source receipts and record native target tests separately. Production or high-impact adoption requires organization-owned behavioral oracles, security assessment, effective host controls, rollback, supply-chain attestations and independent review; none is certified by CORA. See [release](docs/RELEASE.md) and [governance](GOVERNANCE.md).
 
-**Decision rule:** source-local `PASS_SCOPED` permits only the bounded interpretation stated by its evidence; `NOT_RUN` and `BLOCKED_EXTERNAL` cannot be traded for a larger synthetic test count. If the target, owner, authorization, independent oracle or effective controls are unknown, record the missing witness rather than silently promoting maturity.
+**Decision rule:** `PASS_SCOPED` covers only its tested claim; `NOT_RUN` and `BLOCKED_EXTERNAL` remain open regardless of synthetic test counts. Unknown ownership, authorization or independent evidence blocks stronger claims.
 
 ## Operating boundaries
 
 **External acceptance remains `BLOCKED_EXTERNAL`** without independent target, reviewer and host evidence. **GitHub workflow files alone do not prove** enforced rules. Absent imports do not prove `safe_deletion`; source CI does not authorize release.
 
-## Engineering map
-
-**Product:** assurance. **Software:** `cora-engine` and `cora-release-verification`. **Repository:** source, tests, CI and **historical ADRs**. [Index](docs/INDEX.md) identifies current document owners; original Git retains decision history.
