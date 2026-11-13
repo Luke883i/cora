@@ -57,6 +57,25 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
         self.assertIn("External acceptance remains `BLOCKED_EXTERNAL`", readme)
         self.assertIn("not one million independent source mutations", readme)
 
+    def test_readme_badge_and_first_title_are_fail_closed(self):
+        """Badge is allowed only with exact source, never generic title drift."""
+        readme = (ROOT / "README.md").read_text("utf-8")
+        badge = (
+            "[![ROA Research Programme]"
+            "(https://img.shields.io/badge/ROA-Research_Programme-1f6feb)]"
+            "(https://github.com/Luke883i/academics)"
+        )
+        self.assertTrue(readme.startswith(badge))
+        self.assertEqual(DOC.check_current_contract("README.md", readme), [])
+        false_badge = readme.replace(badge, badge.replace("Programme", "Approval"), 1)
+        self.assertIn("standalone-title:README.md",
+                      DOC.check_current_contract("README.md", false_badge))
+        false_title = readme.replace(
+            "# CORA — Continuous Ontological Repository Assurance",
+            "# Unattributed Corporate Software", 1)
+        self.assertIn("standalone-title:README.md",
+                      DOC.check_current_contract("README.md", false_title))
+
     def test_supply_chain_candidate_not_independent_attestation(self):
         ci = (ROOT / ".github/workflows/ci-release-candidate.yml").read_text("utf-8")
         release = (ROOT / "docs/RELEASE.md").read_text("utf-8")

@@ -610,7 +610,21 @@ def check_current_contract(path: str, content: str, *,
     """Finite textual checks. They do not certify clarity, truth or a reader."""
     errors: list[str] = []
     intro = content.split("\n## ", 1)[0][:3000]
-    if not re.search(r"(?m)^# [^\n]{8,}", content[:550]):
+    # The optional, exact ROA badge precedes the original README header.
+    # Do not expand the title window for other files or arbitrary banners:
+    # those still fail as out-of-range or displaced document identity.
+    badge = (
+        "[![ROA Research Programme]"
+        "(https://img.shields.io/badge/ROA-Research_Programme-1f6feb)]"
+        "(https://github.com/Luke883i/academics)\n\n"
+    )
+    heading_source = (content[len(badge):]
+                      if path == "README.md" and content.startswith(badge)
+                      else content)
+    title_match = re.search(r"(?m)^# [^\n]{8,}", heading_source[:550])
+    if (not title_match or
+        (path == "README.md" and title_match.group(0) !=
+         "# CORA — Continuous Ontological Repository Assurance")):
         errors.append("standalone-title:" + path)
     required = ("**Document status:**", "**Current scope:**",
                 "**Operational use:**", "**Evidence:**", "**Limits:**")
