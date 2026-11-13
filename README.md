@@ -9,7 +9,7 @@
 
 CORA is a local, offline-first Python 3.11+ framework. It helps developers and AI coding assistants inspect a Git repository and **produce reproducible pre/post-merge review reports**. It connects **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**. Authorized agents edit; CORA evaluates evidence. It is **not a coding agent** or an approver.
 
-**Why it matters:** plausible patches are not proof: a CTO sees reviewable decisions; developers see the next test; reviewers see unresolved risks.
+**Why it matters:** plausible patches are not proof. Readers need decisions, next tests and visible unresolved risks.
 
 ```text
 Intent → acceptance graph → reversible code slice → adversarial tests
@@ -48,7 +48,7 @@ For a scoped dossier, run [One-Run](#one-run--one-command-one-evidence-dossier).
 4. **Authorize execution separately:** use an available **write-capable coding tool**, such as Codex, or an authorized GitHub write action, with explicit permission **on your target** to create blobs, commits and a PR. A separate Python runner is needed for actual CORA-ENGINE receipts and native target tests. If unavailable, report `METHOD_ONLY` / `NOT_RUN`, never invented execution or a fictional PR.
 5. **Keep evidence and continue:** after an actual `process-run`, optionally provide a `--chat-step` file and `--chat-bundle` ZIP. The [handoff guide](docs/GETTING_STARTED.md#in-a-chatgpt-session-the-shortest-reproducible-path) explains how to replay numbered `iterations/000001/handoff.md` records. The temporary ZIP is neither automatic chat capture nor authenticated review.
 
-**Practical result:** a proposed change, an authorized Git commit and a scoped evidence dossier are three separate things. The host and an independent human remain responsible for approval.
+**Practical result:** proposed changes, commits and evidence dossiers are distinct; humans and host controls approve.
 
 ## What works today
 
@@ -149,9 +149,9 @@ The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) di
 
 ## Enterprise evaluation boundary
 
-**Candidate for evaluation, not enterprise-qualified.** Use CORA in an authorized isolated checkout, pin Git, replay source receipts and record native target tests separately. Production or high-impact adoption requires organization-owned behavioral oracles, security assessment, effective host controls, rollback, supply-chain attestations and independent review; none is certified by CORA. See [release](docs/RELEASE.md) and [governance](GOVERNANCE.md).
+**Enterprise evaluation candidate, not enterprise-qualified.** **Product:** `cora` scope defined; independent user acceptance open. **Software:** `cora-engine` and `cora-release-verification` source tested, not a stable supported release. **Repository:** Git, contracts and CI exist; effective host rules and non-author review are unverified. Adoption needs real target oracles, isolation, security/support commitments, provenance, rollback and accountable human acceptance. [Formal three-boundary DoD](docs/DOD_RELEASE_READINESS.md) · [release](docs/RELEASE.md) · [governance](GOVERNANCE.md).
 
-**Decision rule:** `PASS_SCOPED` covers only its tested claim; `NOT_RUN` and `BLOCKED_EXTERNAL` remain open regardless of synthetic test counts. Unknown ownership, authorization or independent evidence blocks stronger claims.
+**Decision rule:** `PASS_SCOPED` covers only measured scope; `NOT_RUN` and `BLOCKED_EXTERNAL` cannot be converted into approval.
 
 ## Operating boundaries
 
