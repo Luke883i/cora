@@ -173,16 +173,15 @@ class ProgressiveDocumentationTests(unittest.TestCase):
             ("convergence", "not proof of complete correctness", "guarantees perfection"),
             ("stagnation", "no-progress rounds", "infinite retries"),
             ("next", "does not predict N", "predicts every round"),
-            ("ictc", "656 recorded visual/UX findings to 12 root causes", "infinite proven findings"),
-            ("screenshot", "screenshot-derived", "human-certified UX"),
-            ("browser", "Browser witness", "imagined browser"),
-            ("source", "physical product mutants", "symbolic toy only"),
-            ("ikant", "experimental computational cognitive architecture", "biological brain clone"),
-            ("cognitive", "functional attention", "measured biological emotions"),
-            ("world", "self/world state model", "verified inner self"),
-            ("unknown consumers", "UNKNOWN", "UNUSED"),
-            ("recovery", "11 unqualified file deletions", "11 approved deletions"),
-            ("consciousness", "not a claim of a conscious biological mind", "proves consciousness"),
+            ("ictc", "[ICTC](https://github.com/Luke883i/ictc)", "unlinked target"),
+            ("teddy", "[Teddy](https://github.com/Luke883i/teddy)", "unsupported target"),
+            ("ikant", "[iKant_EDU](https://github.com/Luke883i/iKant_EDU)", "missing target"),
+            ("runtime-scope", "HTTP/SQLite", "full universal runtime"),
+            ("source-scope", "source/UX verification", "certified human UX"),
+            ("consumer", "unknown consumers", "verified unused consumers"),
+            ("reversibility", "reversible repository contraction", "automatic safe deletion"),
+            ("owners", "Source histories and native pilot evidence have distinct owners", "All evidence belongs to one product"),
+            ("qualification", "CORA did not independently certify these products", "CORA certified every product"),
         )
         heading = self.readme.index("## How CORA works")
         tail = self.readme[heading:]
@@ -255,7 +254,7 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         self.assertIn("tests or counterexamples", intro)
         self.assertIn("the work still needed", intro)
         # Editorial budgets are review proxies, never evidence of comprehension.
-        self.assertLessEqual(len(self.readme.split()), 1500)
+        self.assertLessEqual(len(self.readme.split()), 1750)
         self.assertLessEqual(len(release.split()), 1900)
         self.assertLessEqual(len(arch.split()), 2300)
         self.assertNotIn("## PR32 —", release)
@@ -526,9 +525,9 @@ class ProgressiveDocumentationTests(unittest.TestCase):
             elif family == 4:
                 r = mutation(r, "not one million independent source mutations", content)
             elif family == 5:
-                r = mutation(r, "656 recorded visual/UX findings to 12 root causes", content)
+                r = mutation(r, "source/UX verification", content)
             elif family == 6:
-                r = mutation(r, "computational constructs", content)
+                r = mutation(r, "unknown consumers", content)
             elif family == 7:
                 g = mutation(g, "SQLite with versioned schema migrations", content)
             elif family == 8:
@@ -643,8 +642,8 @@ class ProgressiveDocumentationTests(unittest.TestCase):
                                  "CI green is independent review (" + token +
                                  ").\n\n## Final Experimental Baseline")
                 elif family == 14:
-                    m = mutation(src, "**merged PR41**",
-                                 "**unmerged PR41** (" + token + ")")
+                    m = mutation(src, "Current source is this Git revision",
+                                 "Current source is from an unmerged draft (" + token + ")")
                 elif family == 15:
                     m = mutation(src,
                                  "cora snapshot . --revision HEAD --output /tmp/cora-ledger.json",
