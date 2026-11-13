@@ -89,7 +89,7 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
                          ("README.md", "existing-heading"))
         source = (ROOT / "README.md").read_text("utf-8")
         bad = DOC.census_markdown(ROOT, overrides={
-            "README.md": source + "\\n[broken local target](#unobserved-anchor)\\n"
+            "README.md": source + "\n[broken local target](#unobserved-anchor)\n"
         })
         self.assertEqual(bad["status"], "REFUTED")
         self.assertTrue(any(e.startswith(
