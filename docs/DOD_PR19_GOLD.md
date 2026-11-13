@@ -1,4 +1,5 @@
-# PR-19 retrograde R1–R4 / P01–P12 semantic DoD
+<a id="pr-19-retrograde-r1r4--p01p12-semantic-dod"></a>
+# Gold assurance R1–R4 / P01–P12 semantic DoD
 
 **Document status:** SCOPED_CURRENT
 **Current scope:** Source-bounded Gold assurance obligations now integrated into CORA.
@@ -21,8 +22,8 @@ Global human contract: `potenzia cora con gold mining; aggiorna prodotto, reposi
 
 Mechanical candidate gates: **D1** contract schema and 23 nodes, 12 patterns, 10 seeds, three pins; reject 16 family JSON mutations and 9 structural ones. **D2** reverse-derive 12 source / 16 governed leaves, preserve dependencies. **D3** FULL goal: exact Git commit/blob on all three separate pinned source checkout roots. **D3a** candidate CI: actual ICTC public readback (1/3). **D3b** private ikant and aosp1: **BLOCKED_ACCESS / NOT_OBSERVED**. No pass inflation from correct handling of missing access. Local Git fixtures test the mechanism, not actual private GitHub CI. **D4** physical source modification and independent oracle states killed/survived/timeout/inconclusive, baseline and no implicit target execution. **D5** potential effects cannot self-certify. **D6** two byte-identical 10M model streams with 12 singles+66 pairs per session, zero mismatches/unsafe promotions, zero novel tail signatures and zero physical mutants counted as model events. **D7** Python 3.11/3.13 new tests, cumulative regression and all final-HEAD CI checks plus README, roles, architecture and CLI contracts. **D8** actual target behavior/host reviewers/recovery are external and must remain BLOCKED.
 
-D1–D2 and D4–D7 are eligible for **source CI PASS_SCOPED** only on exact final GitHub HEAD; full D3 remains **BLOCKED_ACCESS** until separately authorized private source readbacks. A green CI job for correct blocker detection is not a full D3 pass and cannot close G_GOLD_SOURCE. D8 cannot be closed by this PR. R2 genuine behavioral qualification, R3 authenticated CI side effects and R4 operational cross-repo pre/postmerge remain to be independently demonstrated. No Enterprise/production/release claim.
+D1–D2 and D4–D7 are eligible for **source CI PASS_SCOPED** only on exact final GitHub HEAD; full D3 remains **BLOCKED_ACCESS** until separately authorized private source readbacks. A green CI job for correct blocker detection is not a full D3 pass and cannot close G_GOLD_SOURCE. D8 cannot be closed by a source-only candidate. R2 genuine behavioral qualification, R3 authenticated CI side effects and R4 operational cross-repo pre/postmerge remain to be independently demonstrated. No Enterprise/production/release claim.
 
-## Historical failure and constrained closure
+## Current source-access and execution boundary
 
-At PR-19 prior candidate `c0af25a8`, 24 check runs passed and one failed: `gold-three-repo-source` stopped at the private ikant checkout (GitHub run 41674419549). No source mismatch was shown because the private source never arrived. Hardening replaces implicit cross-repository privileges with public ICTC replay and machine-checked 1-of-3 blockers. It also fixes a Linux permission mismatch between Docker user 65534 and private mode-0700 staging. R4 full is still external; positive source CI cannot compensate for source not observed.
+The public ICTC replay and machine-checked 1-of-3 access blockers cannot replace actual private-source readback. Docker execution also requires an explicit filesystem/UID permission contract; a successful local test is not independent container confinement. Full R4 remains external. Source CI cannot count an inaccessible repository as observed or silently promote a missing native outcome.
