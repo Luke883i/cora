@@ -615,8 +615,10 @@ class ProgressiveDocumentationTests(unittest.TestCase):
                     m = mutation(src, "## What works today",
                                  "\n" + " " * (i+1) + "\n## What works today")
                 elif family == 6:
-                    literal = "- **[ICTC]"
-                    m = mutation(src, literal, "* **[ICTC]")
+                    # Benign equivalent spacing; the removed ICTC list belonged
+                    # to historic README prose, not the current target summary.
+                    literal = "**Target examples, not universal validation:**"
+                    m = mutation(src, literal, literal + " " * (i+1))
                     m = mutation(m, "## First five minutes",
                                  " " * i + "\n## First five minutes")
                 elif family == 7:
