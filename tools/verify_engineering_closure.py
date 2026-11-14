@@ -144,6 +144,206 @@ def contract_at(repo: Path, sha: str) -> dict:
     return doc
 
 
+def _engine_source_manifest(repo: Path, commit: str) -> dict[str, str]:
+    """Enumerate all exact Git engine Python blobs, including unchanged paths."""
+    raw = git(repo, "ls-tree", "-r", "-z", commit, "--", "src/cora")
+    result = {}
+    for record in raw.split(b"\0"):
+        if not record:
+            continue
+        try:
+            attributes, pathname = record.split(b"\t", 1)
+            mode, kind, oid = attributes.decode("ascii").split()
+            path = pathname.decode("utf-8")
+        except (ValueError, UnicodeDecodeError) as exc:
+            raise ValueError("unparseable committed engine tree") from exc
+        if path.startswith("src/cora/") and path.endswith(".py") and not (
+                re.fullmatch(r"src/cora/[^/]+\.py", path)):
+            raise ValueError("nested engine Python module outside declared finite universe")
+        if not re.fullmatch(r"src/cora/[^/]+\.py", path):
+            continue
+        if (kind != "blob" or mode not in ("100644", "100755")
+                or not SHA.fullmatch(oid) or path in result):
+            raise ValueError("invalid engine module blob identity")
+        result[path] = oid
+    if "src/cora/cli.py" not in result:
+        raise ValueError("source universe missing canonical CLI entrypoint")
+    return result
+
+
+def engine_source_universe(before: dict[str, str], after: dict[str, str]) -> dict:
+    """Universal *blob* equality over the exact closed-world module path union.
+
+    This is an exhaustive SOURCE-byte property, not behavioral equivalence over
+    unbounded inputs, runtime environment, plugins, or network effects.
+    """
+    for snapshot in (before, after):
+        if (not isinstance(snapshot, dict) or not snapshot
+                or any(not isinstance(p, str) or
+                       not re.fullmatch(r"src/cora/[^/]+\.py", p) or
+                       not isinstance(oid, str) or not SHA.fullmatch(oid)
+                       for p, oid in snapshot.items())
+                or "src/cora/cli.py" not in snapshot):
+            raise ValueError("incomplete or invalid source-universe manifest")
+    universe = sorted(set(before) | set(after))
+    rows = [
+        {"path": path,
+         "before_oid": before.get(path),
+         "after_oid": after.get(path),
+         "difference": ("ADDED" if path not in before else
+                        "REMOVED" if path not in after else
+                        "IDENTICAL_BLOB" if before[path] == after[path] else
+                        "CHANGED_BLOB")}
+        for path in universe
+    ]
+    counts = Counter(row["difference"] for row in rows)
+    identical = counts["IDENTICAL_BLOB"]
+    exact = identical == len(universe)
+    return {
+        "schema": "cora-engine-source-universe/1",
+        "quantifier": "FOR_ALL_GIT_TRACKED_SRC_CORA_TOP_LEVEL_PYTHON_MODULE_BLOBS",
+        "universe": "BASE_UNION_HEAD_FROM_ORIGINAL_GIT",
+        "denominator": len(universe),
+        "accounted_paths": len(rows),
+        "identical_blobs": identical,
+        "changed_blobs": counts["CHANGED_BLOB"],
+        "added_blobs": counts["ADDED"],
+        "removed_blobs": counts["REMOVED"],
+        "source_oid_identity": "PASS_SCOPED_EXHAUSTIVE" if exact else "REFUTED",
+        "source_byte_identity": "NOT_ATTESTED_BY_OIDS_ONLY",
+        "source_coverage": "ALL_TRACKED_ENGINE_PYTHON_MODULES_IN_BOTH_REVISIONS",
+        "conditional_behavior": "UNOBSERVED_DEPENDENCIES_AND_ENVIRONMENT",
+        "full_runtime_behavior_equivalence": "NOT_ATTESTED",
+        "authorization": "NONE",
+        "rows": rows,
+    }
+
+
+def git_engine_source_universe(repo: Path, base: str, head: str) -> dict:
+    """Accept only exact, ancestrally related Git commits for this comparison."""
+    base_sha = git(repo, "rev-parse", "--verify", base + "^{commit}", max_bytes=128).decode().strip()
+    head_sha = git(repo, "rev-parse", "--verify", head + "^{commit}", max_bytes=128).decode().strip()
+    if not SHA.fullmatch(base_sha) or not SHA.fullmatch(head_sha):
+        raise ValueError("invalid exact Git source universe revision")
+    if base_sha == head_sha:
+        raise ValueError("source universality requires two distinct Git revisions")
+    ancestry = subprocess.run(["git", "-C", str(repo), "merge-base",
+                               "--is-ancestor", base_sha, head_sha],
+                              capture_output=True, timeout=30, check=False)
+    if ancestry.returncode != 0:
+        raise ValueError("source universe requires base ancestor of head")
+    result = engine_source_universe(
+        _engine_source_manifest(repo, base_sha),
+        _engine_source_manifest(repo, head_sha))
+    # Distinct readback from object-ID comparison: exhaustively compare actual
+    # Git-committed bytes for every path present in *both* revisions.
+    # Source equality is exact on this finite domain; runtime effects are not.
+    equal, unequal = 0, []
+    for row in result["rows"]:
+        path = row["path"]
+        if row["before_oid"] is None or row["after_oid"] is None:
+            continue
+        a = git(repo, "show", base_sha + ":" + path)
+        b = git(repo, "show", head_sha + ":" + path)
+        if a == b:
+            equal += 1
+        else:
+            unequal.append(path)
+    result["content_readback_paths"] = equal + len(unequal)
+    result["content_byte_equal_paths"] = equal
+    result["content_byte_different_paths"] = unequal
+    result["content_readback_scope"] = "EVERY_SHARED_ENGINE_MODULE_FROM_ORIGINAL_GIT"
+    result["exact_content_parity"] = (
+        "PASS_SCOPED_EXHAUSTIVE"
+        if result["source_oid_identity"] == "PASS_SCOPED_EXHAUSTIVE"
+        and equal == result["denominator"] and not unequal
+        else "REFUTED_SOURCE_CONTENT_PARITY")
+    result["source_byte_identity"] = (
+        "PASS_SCOPED_EXHAUSTIVE"
+        if result["exact_content_parity"] == "PASS_SCOPED_EXHAUSTIVE"
+        else "REFUTED")
+    result["baseline_authority"] = "CALLER_SELECTED_ANCESTRAL_GIT_NOT_AUTHENTICATED_PR_BASE"
+    result["base"] = base_sha
+    result["head"] = head_sha
+    return result
+
+
+def component_dod_assessment(index: dict) -> dict:
+    """Noncompensatory evidence-bound DoD, never CI/runtime/host self-approval."""
+    # This verifier is also invoked as a script in the standalone knowledge-10m
+    # job (without pip install). Load the existing local kernel, never duplicate it.
+    import sys
+    package_root = str(Path(__file__).resolve().parents[1] / "src")
+    if package_root not in sys.path:
+        sys.path.insert(0, package_root)
+    from cora.reticulum import ordered_cut
+    metrics, rows = index["metrics"], index["rows"]
+    if (metrics["tracked_paths"] != metrics["indexed_paths"] or
+            metrics["indexed_paths"] != len(rows)):
+        raise ValueError("component DoD source denominator contradiction")
+    if (metrics["tracked_paths"] != len(rows) or
+            metrics["python_modules"] != sum(r["surface"] == "PYTHON_MODULE" for r in rows)
+            or metrics["test_sources"] != sum(r["surface"] == "TEST_SOURCE" for r in rows)
+            or metrics["source_tools"] != sum(r["surface"] == "OPERATIONAL_TOOL_SOURCE" for r in rows)
+            or any(r["causal_effect"] != "NOT_MEASURED" or
+                   r["consolidation"] != "NOT_AUTHORIZED_UNTESTED" for r in rows)
+            or metrics["safe_consolidations_attested"] != 0
+            or metrics["causal_effects_measured"] != 0):
+        raise ValueError("component DoD cannot promote incomplete source or false authority")
+
+    edges = {
+        "I1_TRACE": ["L1_INVENTORY", "L2_CONSUMERS", "L3_SEPARATION", "L5_REPLAY"],
+        "I2_CAUSALITY": ["L4_NEGATIVE_ORACLES", "E2_INDEPENDENT_ABLATION"],
+        "I3_EQUIVALENCE": ["E1_NATIVE_BEHAVIOR_PARITY"],
+        "I4_GOVERNANCE": ["E3_INDEPENDENT_HOST_REVIEW"],
+        "G_COMPONENT_SOURCE": ["L1_INVENTORY", "L2_CONSUMERS", "L3_SEPARATION",
+                               "L4_NEGATIVE_ORACLES", "L5_REPLAY"],
+        "G_COMPONENT": ["G_COMPONENT_SOURCE", "I1_TRACE",
+                        "I2_CAUSALITY", "I3_EQUIVALENCE", "I4_GOVERNANCE"],
+    }
+    source = {
+        "L1_INVENTORY": "SOURCE_CENSUS_COMPUTED_NOT_INDEPENDENTLY_ATTESTED",
+        "L2_CONSUMERS": "STATIC_CANDIDATES_DYNAMIC_UNKNOWN",
+        "L3_SEPARATION": "SOURCE_NONPROMOTION_COMPUTED",
+        "L4_NEGATIVE_ORACLES": "NATIVE_TEST_EXECUTION_NOT_ATTESTED_BY_REPORT",
+        "L5_REPLAY": "INDEPENDENT_EXACT_HEAD_REPLAY_REQUIRED",
+    }
+    external = (
+        "E1_NATIVE_BEHAVIOR_PARITY", "E2_INDEPENDENT_ABLATION",
+        "E3_INDEPENDENT_HOST_REVIEW",
+    )
+    nodes = [{
+        "id": key,
+        "scope": "EXTERNAL" if key in external or key in (
+            "I2_CAUSALITY", "I3_EQUIVALENCE", "I4_GOVERNANCE", "G_COMPONENT"
+        ) else "SOURCE",
+        "depends_on": edges.get(key, []),
+        "status": ("BLOCKED_EXTERNAL" if key in external else
+                   source[key] if key in source else "NONCOMPENSATORY_NOT_ATTESTED"),
+    } for key in (*source, *external, *edges)]
+    by_id = {n["id"]: n for n in nodes}
+    ordered = ordered_cut(nodes, "G_COMPONENT")
+    if set(ordered) != set(by_id) or len(ordered) != len(nodes):
+        raise ValueError("component DoD orphan, cycle or hidden obligation")
+    if (by_id["G_COMPONENT"]["scope"] != "EXTERNAL" or
+            any(by_id[e]["scope"] != "EXTERNAL" for e in external)):
+        raise ValueError("component DoD external leaf promoted to source")
+    return {
+        "schema": "cora-component-dod-assessment/1",
+        "abstract_goal": "EVIDENCE_BOUND_CAUSAL_CONTRIBUTION_AND_NO_LOSS_CONSOLIDATION",
+        "source_goal": "G_COMPONENT_SOURCE",
+        "global_goal": "G_COMPONENT",
+        "logic": "NONCOMPENSATORY_AND",
+        "nodes": nodes,
+        "ordered_cut": ordered,
+        "source_status": "IMPLEMENTATION_CANDIDATE_REPLAY_AND_NATIVE_TEST_PENDING",
+        "global_status": "BLOCKED_EXTERNAL",
+        "authority": "NONE",
+        "behavioral_equivalence": "NOT_ATTESTED",
+        "safe_consolidation_authorized": False,
+    }
+
+
 def _call_name(node: ast.AST) -> str:
     if isinstance(node, ast.Name):
         return node.id
@@ -153,7 +353,284 @@ def _call_name(node: ast.AST) -> str:
     return ""
 
 
-def analyze(repo: Path, revision: str = "HEAD") -> dict:
+
+def lexical_call_candidates(node: ast.AST) -> list[str]:
+    """Bounded lexical call names, excluding child definitions; not call execution."""
+    names = set()
+    stack = list(ast.iter_child_nodes(node))
+    while stack:
+        child = stack.pop()
+        if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef,
+                              ast.ClassDef, ast.Lambda)):
+            continue
+        if isinstance(child, ast.Call):
+            name = _call_name(child.func)
+            if name:
+                names.add(name)
+        stack.extend(ast.iter_child_nodes(child))
+    return sorted(names)
+
+
+def structural_units(code: str, path: str, test_only: bool = False) -> list[dict]:
+    """AST-declared units; neither executable coverage nor inferred behavior."""
+    syntax = ast.parse(code, filename=path)
+    rows = []
+    def visit(node: ast.AST, owner: str) -> None:
+        for child in ast.iter_child_nodes(node):
+            if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                name = owner + child.name
+                if not test_only or child.name.startswith("test_"):
+                    rows.append({
+                        "symbol": name,
+                        "kind": "CLASS" if isinstance(child, ast.ClassDef) else
+                                "ASYNC_DEF" if isinstance(child, ast.AsyncFunctionDef) else "DEF",
+                        "line": child.lineno,
+                        "lexical_call_candidates": lexical_call_candidates(child),
+                        "evidence": "AST_DECLARATION_AND_CALL_CANDIDATES_NOT_EXECUTION",
+                    })
+                visit(child, name + ".")
+            else:
+                visit(child, owner)
+    visit(syntax, "")
+    return sorted(rows, key=lambda row: (row["line"], row["symbol"]))
+
+
+def static_python_consumers(repo: Path, sha: str, consumers: list[str],
+                            modules: list[str]) -> list[tuple[str, str]]:
+    """Bounded candidate imports from test/tool Python; not runtime behavior."""
+    known = set(modules)
+    edges: set[tuple[str, str]] = set()
+    for test_path in consumers:
+        syntax = ast.parse(source(repo, sha, test_path), filename=test_path)
+        for node in ast.walk(syntax):
+            candidates = []
+            if isinstance(node, ast.Import):
+                candidates.extend(alias.name for alias in node.names
+                                  if alias.name.startswith("cora."))
+            elif isinstance(node, ast.ImportFrom):
+                prefix = node.module or ""
+                if prefix == "cora":
+                    candidates.extend("cora." + alias.name for alias in node.names)
+                elif prefix.startswith("cora."):
+                    candidates.append(prefix)
+            for qualified in candidates:
+                parts = qualified.split(".")
+                if len(parts) < 2:
+                    continue
+                target = "src/cora/" + parts[1] + ".py"
+                if target in known:
+                    edges.add((test_path, target))
+    return sorted(edges)
+
+
+def contribution_index(paths: list[str], modules: list[str], tools: list[str],
+                       tests: list[str], imports: list[tuple[str, str]],
+                       atlas: dict, test_imports: list[tuple[str, str]] | None = None,
+                       units: dict[str, list[dict]] | None = None,
+                       test_units: dict[str, list[dict]] | None = None,
+                       tool_imports: list[tuple[str, str]] | None = None) -> dict:
+    """Source contribution graph, NOT causal ablation or safe-deletion evidence.
+
+    Every tracked path is accounted for. The directed import graph only records
+    literal, existing Python relative imports discovered by analyze(); missing
+    static edges never imply no runtime caller or substitutability.
+    """
+    if (len(paths) != len(set(paths)) or "src/cora/cli.py" not in modules
+            or not set(modules + tools + tests).issubset(set(paths))):
+        raise ValueError("component denominator or entrypoint invalid")
+    modules_set, tools_set, tests_set = set(modules), set(tools), set(tests)
+    expected = {
+        "modules": {p for p in paths if re.fullmatch(r"src/cora/[^/]+\.py", p)},
+        "tools": {p for p in paths if re.fullmatch(r"tools/[^/]+\.py", p)},
+        "tests": {p for p in paths if re.fullmatch(r"tests/test_[^/]+\.py", p)},
+    }
+    if (modules_set != expected["modules"] or tools_set != expected["tools"]
+            or tests_set != expected["tests"]
+            or any(len(group) != len(set(group)) for group in (modules, tools, tests))):
+        raise ValueError("component source denominator classes incomplete or duplicated")
+    if units is not None and set(units) != modules_set:
+        raise ValueError("module symbol census is incomplete")
+    if test_units is not None and set(test_units) != tests_set:
+        raise ValueError("test symbol census is incomplete")
+    edges = {src: set() for src in modules}
+    incoming = {src: set() for src in modules}
+    for caller, callee in imports:
+        if caller not in modules_set or callee not in modules_set:
+            raise ValueError("static edge references missing module")
+        edges[caller].add(callee)
+        incoming[callee].add(caller)
+
+    entrypoint = "src/cora/cli.py"
+    direct = set(edges[entrypoint])
+    reachable = {entrypoint}
+    frontier = [entrypoint]
+    while frontier:
+        current = frontier.pop()
+        for callee in sorted(edges[current] - reachable):
+            reachable.add(callee)
+            frontier.append(callee)
+
+    by_test_import: dict[str, set[str]] = {src: set() for src in modules}
+    for consumer, target in (test_imports or []):
+        if consumer not in tests_set or target not in modules_set:
+            raise ValueError("test import edge references missing source")
+        by_test_import[target].add(consumer)
+
+    by_tool_import: dict[str, set[str]] = {src: set() for src in modules}
+    for consumer, target in (tool_imports or []):
+        if consumer not in tools_set or target not in modules_set:
+            raise ValueError("tool import edge references missing source")
+        by_tool_import[target].add(consumer)
+
+    by_command: dict[str, set[str]] = {src: set() for src in modules}
+    by_family: dict[str, set[str]] = {src: set() for src in modules}
+    by_witness: dict[str, set[str]] = {src: set() for src in modules}
+    commands = atlas.get("commands")
+    if not isinstance(commands, list):
+        raise ValueError("component CLI method atlas unavailable")
+    for binding in commands:
+        source = binding.get("method_source")
+        witness = binding.get("test_source")
+        command = binding.get("command")
+        if (source not in modules_set or witness not in tests_set
+                or not isinstance(command, str) or not command):
+            raise ValueError("component command has missing source/test witness")
+        by_command[source].add(command)
+        family = binding.get("family")
+        if not isinstance(family, str) or not family:
+            raise ValueError("command taxonomy is missing")
+        if (family == "finite-models" and
+                (not command.startswith("stress")
+                 or binding.get("interaction") != "SYNTHETIC_MODEL_NOT_RUNTIME")):
+            raise ValueError("finite-model-only role lacks a real finite-model witness")
+        by_family[source].add(family)
+        by_witness[source].add(witness)
+
+    rows = []
+    for path in paths:
+        if path in modules_set:
+            kind = "PYTHON_MODULE"
+            if path == entrypoint:
+                state = "ENTRYPOINT"
+            elif path in direct:
+                state = "DIRECT_CLI_IMPORT"
+            elif path in reachable:
+                state = "TRANSITIVE_CLI_IMPORT"
+            else:
+                state = "NOT_OBSERVED_STATIC"
+            if path == entrypoint:
+                declared_role = "CLI_ENTRYPOINT_ORCHESTRATOR_SOURCE"
+            elif by_family[path] == {"finite-models"}:
+                declared_role = "FINITE_MODEL_ASSURANCE_DECLARED_NOT_RUNTIME_VALIDATED"
+            elif by_command[path]:
+                declared_role = "CLI_COMMAND_SOURCE_DECLARED_NOT_RUNTIME_VALIDATED"
+            else:
+                declared_role = "NON_COMMAND_SUPPORT_SOURCE_CONSUMERS_INCOMPLETE"
+            if path == entrypoint:
+                review = "CANONICAL_ENTRYPOINT_NOT_A_CONSOLIDATION_CANDIDATE"
+            elif (state == "NOT_OBSERVED_STATIC" and not incoming[path]
+                  and not by_command[path] and not by_witness[path]
+                  and not by_test_import[path] and not by_tool_import[path]):
+                review = "STATIC_ISOLATION_REVIEW_ONLY_DYNAMIC_UNKNOWN"
+            else:
+                review = "SOURCE_CONSUMER_OBSERVED_OR_UNRESOLVED_REQUIRES_COUNTERFACTUAL"
+            row = {
+                "path": path, "surface": kind, "cli_static": state,
+                "consolidation_review": review,
+                "declared_capability_role": declared_role,
+                "declared_families": sorted(by_family[path]),
+                "imports": sorted(edges[path]), "imported_by": sorted(incoming[path]),
+                "declared_units": (units or {}).get(path, []),
+                "declared_commands": sorted(by_command[path]),
+                "declared_test_witnesses": sorted(by_witness[path]),
+                "static_test_import_candidates": sorted(by_test_import[path]),
+                "static_tool_import_candidates": sorted(by_tool_import[path]),
+                "consumer_status": "STATIC_CANDIDATES_DYNAMIC_UNKNOWN",
+                "causal_effect": "NOT_MEASURED",
+                "consolidation": "NOT_AUTHORIZED_UNTESTED",
+            }
+        else:
+            if path in tools_set:
+                kind = "OPERATIONAL_TOOL_SOURCE"
+            elif path in tests_set:
+                kind = "TEST_SOURCE"
+            elif path.startswith(".github/workflows/") and path.endswith((".yml", ".yaml")):
+                kind = "CI_DECLARATION"
+            elif path.endswith(".md"):
+                kind = "DOCUMENTATION_SOURCE"
+            elif path.startswith(".cora/contracts/"):
+                kind = "CONTRACT_SOURCE"
+            else:
+                kind = "OTHER_TRACKED_SOURCE"
+            row = {
+                "path": path, "surface": kind, "cli_static": "NOT_APPLICABLE",
+                "test_cases": (test_units or {}).get(path, []) if path in tests_set else [],
+                "causal_effect": "NOT_MEASURED",
+                "consolidation": "NOT_AUTHORIZED_UNTESTED",
+            }
+        rows.append(row)
+    reach = Counter(row["cli_static"] for row in rows if row["surface"] == "PYTHON_MODULE")
+    metrics = {
+        "tracked_paths": len(paths),
+        "indexed_paths": len(rows),
+        "python_modules": len(modules),
+        "source_tools": len(tools),
+        "test_sources": len(tests),
+        "entrypoint_modules": reach["ENTRYPOINT"],
+        "direct_cli_imports": reach["DIRECT_CLI_IMPORT"],
+        "transitive_cli_imports": reach["TRANSITIVE_CLI_IMPORT"],
+        "not_observed_static": reach["NOT_OBSERVED_STATIC"],
+        "command_source_bindings": len(commands),
+        "module_declarations": sum(len(v) for v in (units or {}).values()),
+        "module_lexical_call_candidates": sum(
+            len(unit["lexical_call_candidates"]) for rows in (units or {}).values()
+            for unit in rows),
+        "test_lexical_call_candidates": sum(
+            len(unit["lexical_call_candidates"]) for rows in (test_units or {}).values()
+            for unit in rows),
+        "test_case_declarations": sum(len(v) for v in (test_units or {}).values()),
+        "modules_with_symbol_census": len(units or {}),
+        "tests_with_symbol_census": len(test_units or {}),
+        "static_tool_import_edges": sum(len(values) for values in by_tool_import.values()),
+        "modules_with_static_tool_import_candidate": sum(
+            bool(by_tool_import[path]) for path in modules),
+        "static_test_import_edges": sum(len(values) for values in by_test_import.values()),
+        "modules_with_static_test_import_candidate": sum(
+            bool(by_test_import[path]) for path in modules),
+        "finite_model_assurance_declared_modules": sum(
+            by_family[p] == {"finite-models"} for p in modules),
+        "non_finite_cli_declared_modules": sum(
+            bool(by_command[p]) and by_family[p] != {"finite-models"} for p in modules),
+        "modules_without_declared_cli_witness": sum(
+            not by_command[path] for path in modules),
+        "causal_effects_measured": 0,
+        "static_isolation_review_count": sum(
+            r.get("consolidation_review") ==
+            "STATIC_ISOLATION_REVIEW_ONLY_DYNAMIC_UNKNOWN" for r in rows),
+        "static_isolation_review_paths": sorted(
+            r["path"] for r in rows if r.get("consolidation_review") ==
+            "STATIC_ISOLATION_REVIEW_ONLY_DYNAMIC_UNKNOWN"),
+        "safe_consolidations_attested": 0,
+    }
+    if (metrics["finite_model_assurance_declared_modules"]
+            + metrics["non_finite_cli_declared_modules"]
+            + metrics["modules_without_declared_cli_witness"] != len(modules)):
+        raise ValueError("declared source capability categories overlap or omit modules")
+    if (metrics["indexed_paths"] != metrics["tracked_paths"]
+            or sum(reach.values()) != len(modules)
+            or reach["ENTRYPOINT"] != 1):
+        raise ValueError("component source coverage incomplete")
+    return {
+        "schema": "cora-component-contribution/1",
+        "scope": "ORIGINAL_GIT_STATIC_SOURCE_NOT_ABLATION",
+        "authority": "NONE",
+        "metrics": metrics,
+        "rows": rows,
+        "global_consolidation": "BLOCKED_EXTERNAL_BEHAVIORAL_PARITY_AND_GOVERNED_REVIEW",
+    }
+
+
+def analyze(repo: Path, revision: str = "HEAD", *, equivalence_base: str | None = None) -> dict:
     """Exact committed source/static inspection; dynamic behavior remains unknown."""
     repo = Path(repo).resolve(strict=True)
     sha = git(repo, "rev-parse", "--verify", revision + "^{commit}").decode().strip()
@@ -235,6 +712,18 @@ def analyze(repo: Path, revision: str = "HEAD") -> dict:
             "**Release = BLOCKED_EXTERNAL**",
             "not a stable API")):
         raise ValueError("current release source identity / external gate missing")
+    test_edges = static_python_consumers(repo, sha, tests, modules)
+    tool_edges = static_python_consumers(repo, sha, tools, modules)
+    module_units = {
+        path: structural_units(source(repo, sha, path), path) for path in modules
+    }
+    test_units = {
+        path: structural_units(source(repo, sha, path), path, test_only=True)
+        for path in tests
+    }
+    contribution = contribution_index(
+        paths, modules, tools, tests, imports, atlas,
+        test_edges, module_units, test_units, tool_edges)
     report = {
         "schema": SCHEMA, "commit": sha, "tree": tree_sha,
         "source": "ORIGINAL_COMMITTED_GIT", "authority": "NONE",
@@ -247,6 +736,8 @@ def analyze(repo: Path, revision: str = "HEAD") -> dict:
                    "static_import_edges": len(set(imports)),
                    "dynamic_callsite_indicators": len(dynamic)},
         "static_import_edges": [list(x) for x in sorted(set(imports))],
+        "component_contribution": contribution,
+        "component_dod": component_dod_assessment(contribution),
         "dynamic_callsites": sorted(dynamic, key=lambda d: (d["path"], d["line"], d["call"])),
         "debt_register": [
             {"id": "P0_CI_GIT_CLONE", "layer": "REPOSITORY",
@@ -281,13 +772,18 @@ def analyze(repo: Path, revision: str = "HEAD") -> dict:
         "independent_approval": "NOT_ATTESTED",
         "product_qualified": False,
     }
+    if equivalence_base is not None:
+        report["engine_source_universe"] = git_engine_source_universe(
+            repo, equivalence_base, sha)
     report["source_digest_sha256"] = hashlib.sha256(canonical(report)).hexdigest()
     return report
 
 
 def verify_report(repo: Path, report: dict) -> bool:
     if (not isinstance(report, dict) or not SHA.fullmatch(str(report.get("commit", "")))
-            or analyze(repo, report["commit"]) != report):
+            or analyze(repo, report["commit"], equivalence_base=(
+            report["engine_source_universe"]["base"]
+            if "engine_source_universe" in report else None)) != report):
         raise ValueError("engineering knowledge report does not replay from original Git")
     return True
 
@@ -466,6 +962,7 @@ def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--repo", type=Path, default=Path("."))
     p.add_argument("--revision", default="HEAD")
+    p.add_argument("--equivalence-base", help="exact ancestor commit for exhaustive engine SOURCE-byte comparison")
     p.add_argument("--output", type=Path)
     p.add_argument("--verify-report", type=Path)
     p.add_argument("--stress-10m", action="store_true")
@@ -484,12 +981,15 @@ def main() -> int:
                 raise ValueError('closure accounting is separate from stress or knowledge replay')
             result = closure_delta(args.repo, args.closure_base, args.revision)
         elif args.verify_report:
+            if args.equivalence_base is not None:
+                raise ValueError("replay derives the base from the original exact Git report")
             record = json.loads(args.verify_report.read_text("utf-8"))
             verify_report(args.repo, record)
             result = {"status": "SOURCE_REPLAY_SCOPED", "commit": record["commit"],
                       "authority": "NONE", "product": "BLOCKED_EXTERNAL"}
         else:
-            result = analyze(args.repo, args.revision)
+            result = analyze(args.repo, args.revision,
+                             equivalence_base=args.equivalence_base)
             if args.stress_10m:
                 contract = contract_at(args.repo, result["commit"])
                 result["finite_model"] = stress(contract)
