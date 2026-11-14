@@ -232,6 +232,19 @@ def build_registry(repo: Path, sha: str) -> dict:
             adapter="PR36_PROCESS_SUITE", policy="SOURCE_AUTOMATED",
             verifier="verify-process", detail="SAFE_SOURCE_METHOD",
             dependencies=[] if name == "git_snapshot" else ["method:git_snapshot"]))
+    if {".cora/contracts/profiles/hforge-profile-v1.json",
+            ".cora/contracts/dod/hforge-transplant-dod.json",
+            "tools/hforge_profile.py"}.issubset(files):
+        items.append(_activity("stage:hforge-source", "PROFILE_STAGE",
+            "tools/hforge_profile.py", owner="cora-release-verification",
+            entry="cora process-run --one-run --profile comprehensive",
+            effect="READ_ONLY", adapter="INTEGRATED_SAFE_GIT_SOURCE",
+            policy="AUTO_SOURCE_NATIVE_OPT_IN", verifier="verify-process",
+            dependencies=["method:git_snapshot"],
+            paths=["tools/hforge_profile.py",
+                   ".cora/contracts/profiles/hforge-profile-v1.json",
+                   ".cora/contracts/dod/hforge-transplant-dod.json"],
+            detail="SOURCE_GIT_ONLY_NO_NATIVE_77_REPLAY"))
     for path in paths:
         if re.fullmatch(r"tools/[^/]+\.py", path):
             kind = ("VERIFIER" if path.startswith("tools/verify_")

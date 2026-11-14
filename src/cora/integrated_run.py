@@ -150,7 +150,8 @@ def _topological(registry: dict) -> list[str]:
     return done
 
 
-def _attempts(registry: dict, baseline: dict, test: dict) -> list[dict]:
+def _attempts(registry: dict, baseline: dict, test: dict,
+              hforge: dict | None = None) -> list[dict]:
     executed = {row["id"]: row for row in baseline["activities"]}
     observed = {row["activity_id"]: row for row in test["parsed_cases"]}
     ids = {row["activity_id"] for row in registry["activities"]}
@@ -167,6 +168,12 @@ def _attempts(registry: dict, baseline: dict, test: dict) -> list[dict]:
             else:
                 state, reason = source["state"], source.get("reason")
                 origin, elapsed = source.get("source_digest"), source.get("elapsed_ms")
+        elif row["kind"] == "PROFILE_STAGE" and key == "stage:hforge-source":
+            state = ("EXECUTED_SCOPED" if hforge and
+                     hforge["state"] == "PASS_SCOPED_GIT_SOURCE_AND_REPLAY"
+                     else "BLOCKED")
+            reason = hforge["state"] if hforge else "HFORGE_EVIDENCE_MISSING"
+            origin = hforge.get("legacy_receipt_digest") if hforge else None
         elif row["kind"] == "TEST_CASE" and key in observed:
             state, reason = observed[key]["state"], observed[key]["outcome"]
             origin = test["log_sha256"]
@@ -209,11 +216,14 @@ def _attempts(registry: dict, baseline: dict, test: dict) -> list[dict]:
     return rows
 
 
-def _gap_register(registry: dict, attempts: list[dict], test: dict) -> dict:
+def _gap_register(registry: dict, attempts: list[dict], test: dict,
+                  hforge: dict | None = None) -> dict:
     reasons: dict[str, list[str]] = {}
     for attempt in attempts:
         if attempt["state"] in ("NOT_RUN", "BLOCKED", "FAIL", "SKIPPED"):
             reasons.setdefault(attempt["reason"] or attempt["state"], []).append(attempt["activity_id"])
+    if hforge and hforge["state"] != "NOT_APPLICABLE_PROFILE_NOT_COMMITTED":
+        reasons["HFORGE_P2_AND_P5_UNATTESTED"] = ["stage:hforge-source"]
     if test["parse_warnings"]:
         reasons["RUNTIME_TEST_CASE_LINEAGE_INCOMPLETE"] = ["suite:unittest-discover"]
     return {"schema": "cora-integrated-gaps/2",
@@ -406,9 +416,9 @@ def run_integrated(repo: Path, revision: str = "HEAD", *, process: str = "full",
     test, log = _test_observation(repo, sha, tree,
                                   authorized=authorization_file if execute_self_tests else None,
                                   evidence_dir=out, timeout=test_timeout)
-    attempts = _attempts(registry, base, test)
+    attempts = _attempts(registry, base, test, hforge)
     order = _topological(registry)
-    gaps = _gap_register(registry, attempts, test)
+    gaps = _gap_register(registry, attempts, test, hforge)
     dod = _dod(repo, sha, test, base)
     env = {"python_version": platform.python_version(),
            "implementation": platform.python_implementation(),
@@ -532,9 +542,9 @@ def verify_integrated(repo: Path, receipt: dict, *, html_page: str | None = None
     actual_hforge = _hforge_source(repo, sha, receipt["baseline_pr36"])
     if receipt.get("hforge") != actual_hforge:
         raise ValueError("H-FORGE evidence omitted, altered or cross-revision")
-    if receipt["attempts"] != _attempts(expected, receipt["baseline_pr36"], test):
+    if receipt["attempts"] != _attempts(expected, receipt["baseline_pr36"], test, actual_hforge):
         raise ValueError("unaccounted activity or forged per-method result")
-    if receipt["gaps"] != _gap_register(expected, receipt["attempts"], test):
+    if receipt["gaps"] != _gap_register(expected, receipt["attempts"], test, actual_hforge):
         raise ValueError("hidden blocker or missing evidence gap")
     if receipt["dod"] != _dod(repo, sha, test, receipt["baseline_pr36"]):
         raise ValueError("DoD state promotion or missing obligation")
