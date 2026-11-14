@@ -1,0 +1,60 @@
+{
+  "schema": "cora-hforge-profile/1",
+  "upstream": {
+    "repo": "Luke883i/cora",
+    "main_sha": "8ed7d6be48d2aac1d9a232b10ebc747da3e0f5a4",
+    "pr70_number": 70,
+    "pr70_draft_sha": "625d010a99dd3c5ddb67076d1ab84a18b8ab8314",
+    "pr70_source_tree": "65562a373115a00f24fab9ec889fe302e70cef80",
+    "source_archive": "USER_UPLOADED_ZIP_EXACT_GIT_TREE_NO_ORIGINAL_GIT_HISTORY"
+  },
+  "integration": "PROFILE_NOT_ENGINE",
+  "source_reuse": [
+    "git_snapshot",
+    "evidence",
+    "reticulum",
+    "holistic",
+    "observation_fusion",
+    "integrated_run",
+    "chat_bundle",
+    "one_run"
+  ],
+  "operational_reference": "cora-operational-observation/1",
+  "required_scenarios": {
+    "declared_cli_help": 71,
+    "native": [
+      "version",
+      "process-list",
+      "snapshot-pinned",
+      "graph-pinned",
+      "dod-plan-pinned",
+      "stress-128"
+    ]
+  },
+  "trace_layers": [
+    "git_identity",
+    "source_structure",
+    "native_observation",
+    "runtime_effects",
+    "consumer_closure",
+    "external_review"
+  ],
+  "gates": [
+    "P0",
+    "P1",
+    "P2",
+    "P3",
+    "P4",
+    "P5"
+  ],
+  "unknown_behavior_policy": "HOLD",
+  "synthetic_policy_status": "MODEL_ONLY",
+  "unbounded_equivalence": "NOT_CLAIMED",
+  "release_authorization": "NONE",
+  "contract_falsifiers": [
+    "dual_git_atlas_reconciliation",
+    "native_replay_opt_in",
+    "original_one_run_replay",
+    "no_promotion_without_runtime"
+  ]
+}
