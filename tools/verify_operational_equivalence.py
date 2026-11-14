@@ -25,6 +25,24 @@ SHA = re.compile(r"^[a-f0-9]{40}(?:[a-f0-9]{24})?$")
 CMD = re.compile(r"^[a-z][a-z0-9-]*$")
 MAX_OUTPUT = 16 * 1024 * 1024
 
+NEGATIVE_CONTROLS = (
+    "DELETED_DECLARED_COMMAND", "FORGED_EQUALITY", "MISSING_OBSERVATION",
+    "ALTERED_CLI_HELP", "WRONG_HEAD_OR_BASE", "SCOPE_NARROWING",
+    "NONZERO_EXIT",
+)
+EXCLUDED = (
+    "ALL_POSSIBLE_INPUTS", "DYNAMIC_EXTENSIONS", "NETWORK_SERVICES",
+    "PERSISTENT_SIDE_EFFECTS", "DIFFERENT_HOST_ENVIRONMENTS",
+    "INDEPENDENT_REVIEW", "BRANCH_PROTECTION",
+    "FULL_PRODUCT_GLOBAL_EQUIVALENCE",
+)
+ENVIRONMENT = {
+    "python": "SAME_INTERPRETER", "pythonhashseed": "0",
+    "locale": "C.UTF-8", "timezone": "UTC", "columns": "100",
+    "user_site": "DISABLED", "fixture": "PINNED_BASE_GIT_COMMIT",
+}
+
+
 
 def git(repo: Path, *args: str) -> bytes:
     result = subprocess.run(
@@ -67,8 +85,12 @@ def universe(repo: Path, base: str, head: str) -> tuple[list[str], dict]:
             contract["help_case"] != "ALL_DECLARED_COMMANDS_FROM_BOTH_GIT_PINNED_CAPABILITY_ATLASES" or
             contract["native_cases"] != list(NATIVE) or
             contract["expected_declared_cli_commands"] != 71 or
-            len(contract["required_negative_controls"]) < 7 or
-            len(contract["excluded_obligations"]) < 7):
+            contract["intent"] != "EXHAUSTIVE_EQUIVALENCE_ON_EXPLICIT_FINITE_OPERATIONS_ONLY" or
+            contract["base_head"] != "DISTINCT_ANCESTRALLY_RELATED_COMMITS" or
+            contract["output_oracle"] != "EXACT_RETURN_CODE_STDOUT_STDERR_BYTES_IN_SAME_RUNNER_ENVIRONMENT" or
+            contract["runner_environment"] != ENVIRONMENT or
+            contract["required_negative_controls"] != list(NEGATIVE_CONTROLS) or
+            contract["excluded_obligations"] != list(EXCLUDED)):
         raise ValueError("operational contract incomplete or unsafe")
     command_sets = []
     for rev in (base, head):
@@ -235,6 +257,14 @@ def run(repo: Path, base: str, head: str, *, execute_pinned_native: bool) -> dic
         "independent_reviewer": "NOT_ATTESTED",
         "side_effect_equivalence": "OUTSIDE_OBSERVATION_UNIVERSE",
         "unregistered_behavior": "NOT_EVALUATED",
+        "scoped_dod": {
+            "I1_UNIVERSE": "PASS_CLOSED_77_FROM_DUAL_GIT_ATLAS",
+            "I2_ENVIRONMENT": "OBSERVED_SAME_RUNNER_DIFFERENT_GIT_CHECKOUTS",
+            "I3_OBSERVATIONS": result["status"],
+            "I4_INDEPENDENT_REPLAY": "PENDING_SEPARATE_EXECUTION",
+            "G_OP": "PENDING_REPLAY",
+            "G_PRODUCT": "BLOCKED_EXTERNAL",
+        },
         "authorization": "NONE",
     }
 
@@ -265,11 +295,18 @@ def main() -> int:
                 raise ValueError("replay must derive base/head from the receipt")
             report = json.loads(args.verify_report.read_text("utf-8"))
             verify(args.repo, report, execute_pinned_native=args.execute_pinned_native)
-            result = {"schema": "cora-operational-replay/1",
-                      "base": report["base"], "head": report["head"],
-                      "status": "REPLAYED_SCOPED_OPERATIONS",
-                      "authorization": "NONE",
-                      "product_global_status": "BLOCKED_EXTERNAL"}
+            passed = report["status"] == "PASS_EXHAUSTIVE_FINITE_OBSERVATIONS"
+            result = {
+                "schema": "cora-operational-replay/1",
+                "base": report["base"], "head": report["head"],
+                "status": ("REPLAYED_SCOPED_OPERATIONS" if passed
+                           else "REPLAYED_REFUTED_SCOPED_OPERATIONS"),
+                "scoped_global_dod": (
+                    "PASS_ON_COMPLETE_REGISTERED_UNIVERSE" if passed
+                    else "REFUTED"),
+                "authorization": "NONE",
+                "product_global_status": "BLOCKED_EXTERNAL",
+            }
         else:
             if not args.base:
                 raise ValueError("required exact --base Git commit")
