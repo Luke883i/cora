@@ -534,7 +534,8 @@ def verify_project_zip_lifecycle(readme: str, adoption: str,
                "**New project**", "**Project instructions**",
                "**read access**", "backward requirements decomposition",
                "POST → SQLite → GET", "same SHA", "--chat-step",
-               "--chat-bundle", "iterations/000001/handoff.md")
+               "--chat-bundle", "latest copy to this Project chat",
+               "iterations/000001/handoff.md")
     offsets = [path.find(term) for term in ordered]
     if not path or any(x < 0 for x in offsets) or offsets != sorted(offsets):
         errors.append("project-readme-beginner-journey-drift")
@@ -560,6 +561,7 @@ def verify_project_zip_lifecycle(readme: str, adoption: str,
                  "**source ZIP**", "**temporary", "matching source receipt",
                  "latest verified copy", "iteration: 1",
                  "iteration: 2", "same session ID",
+                 "For round 2, **do not start a fresh unrelated ZIP**",
                  "verify-process --one-run --chat-bundle",
                  "automatic Project memory"):
         if term not in g:

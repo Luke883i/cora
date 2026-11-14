@@ -599,7 +599,8 @@ class ProgressiveDocumentationTests(unittest.TestCase):
              "Upload the first ZIP to permanent shared Project files"),
             ("ADOPTION", "never treat an older attachment as current",
              "older attachments are always authoritative"),
-            ("GUIDE", "iteration: 2", "iteration: 99"),
+            ("GUIDE", "For round 2, **do not start a fresh unrelated ZIP**",
+             "For round 2, start a fresh unrelated ZIP"),
             ("GUIDE", "same session ID", "different session ID"),
             ("GUIDE", "automatic Project memory", "complete authenticated memory"),
         )
