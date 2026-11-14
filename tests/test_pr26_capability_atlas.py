@@ -92,7 +92,18 @@ class CapabilityAtlasTests(unittest.TestCase):
         self.assertEqual(r["surfaces"]["github_workflows"], len(current))
         self.assertEqual(r["surfaces"]["contracts"], 2)
         self.assertGreaterEqual(r["surfaces"]["internal_dod"], 9)
-        self.assertEqual(r["surfaces"]["internal_profiles"], 2)
+        # Preserve the two original profiles, but reconcile the complete
+        # current denominator against the exact committed Git tree. A new
+        # optional profile is not a source-census regression.
+        profiles_now = {p for p in g(ROOT, "ls-tree", "-r", "--name-only",
+                                     sha, "--", ".cora/contracts/profiles").splitlines()
+                        if p.startswith(".cora/contracts/profiles/") and
+                        p.endswith(".json") and p.count("/") == 3}
+        self.assertTrue({
+            ".cora/contracts/profiles/method-atlas.json",
+            ".cora/contracts/profiles/type-assurance-profile.json",
+        }.issubset(profiles_now))
+        self.assertEqual(r["surfaces"]["internal_profiles"], len(profiles_now))
         # The original two records are mandatory, but future registered
         # assurance contracts may grow. Exactness derives from original Git.
         assurance_now = {p for p in g(ROOT, "ls-tree", "-r", "--name-only",

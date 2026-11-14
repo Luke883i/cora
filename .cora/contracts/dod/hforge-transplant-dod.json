@@ -1,0 +1,16 @@
+{
+  "schema": "cora-hforge-transplant-dod/1",
+  "goal": "G_HFORGE_PRODUCT_GOVERNED",
+  "aggregation": "NONCOMPENSATORY_AND",
+  "authority": "NONE",
+  "nodes": [
+    {"id":"P0", "depends_on":[], "acceptance":"PR70 draft and main pinned; immutable declared universe; profile verified, no inferred runtime", "scope":"SOURCE", "state":"LOCAL_MODEL_TESTED"},
+    {"id":"P1", "depends_on":["P0"], "acceptance":"77-case source receipt bound to exact base/head and independent original-Git atlas, no forged PASS or duplicate rows", "scope":"SOURCE", "state":"LOCAL_SHAPE_ONLY"},
+    {"id":"P2", "depends_on":["P1"], "acceptance":"PR70 native verify reruns 77 exact cases; separate side-effect/error-path probes and native readback executed on target", "scope":"EXTERNAL", "state":"BLOCKED_NOT_RUN_ON_CORA"},
+    {"id":"P3", "depends_on":["P0"], "acceptance":"Original BASE/HEAD Git trees independently recomputed, Gitlinks explicit, verified net removal for optional contraction claim; no rename-as-removal", "scope":"SOURCE", "state":"LOCAL_GIT_FIXTURE_ONLY"},
+    {"id":"P4", "depends_on":["P1", "P2", "P3"], "acceptance":"CORA One-Run, chat bundle, CLI names, contract schemas and legacy tests replay on exact candidate and postmerge revision", "scope":"EXTERNAL", "state":"BLOCKED_NOT_INTEGRATED"},
+    {"id":"P5", "depends_on":["P2", "P3", "P4"], "acceptance":"CORA native product pilot, dynamic and external consumer closure, controlled effects and error recovery, trustworthy reviewer/host checks; known limitations explicit", "scope":"EXTERNAL", "state":"BLOCKED_EXTERNAL"},
+    {"id":"G_HFORGE_PRODUCT_GOVERNED", "depends_on":["P0", "P1", "P2", "P3", "P4", "P5"], "acceptance":"All independent obligations met, no counterexample, exact-revision evidence; authorization remains external", "scope":"EXTERNAL", "state":"NOT_DEMONSTRATED"}
+  ],
+  "prohibited_promotions": ["receipt_shape_to_native_execution", "hash_to_runtime_authority", "finite_77_to_universal_equivalence", "synthetic_mutation_to_product_test", "ci_green_to_release_authorization"]
+}

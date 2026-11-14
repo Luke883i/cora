@@ -513,7 +513,7 @@
         "POLICY",
         "PRODUCT_CONTRACT"
       ],
-      "rationale": "Twenty-eight-node R1–R4 source/external non-compensatory semantic DoD profile."
+      "rationale": "Twenty-eight-node R1\u2013R4 source/external non-compensatory semantic DoD profile."
     },
     {
       "pattern": "tests/test_pr20_convergence.py",
@@ -546,7 +546,7 @@
         "DOCUMENTATION",
         "PRODUCT_CONTRACT"
       ],
-      "rationale": "Global source and complete R1–R4 AND cut and falsification gates."
+      "rationale": "Global source and complete R1\u2013R4 AND cut and falsification gates."
     },
     {
       "pattern": ".cora/contracts/dod/documentation-dod.json",
@@ -728,7 +728,6 @@
       ],
       "rationale": "Scoped capability evidence; not a runtime or release attestation."
     },
-
     {
       "pattern": ".cora/assurance/operational-universe.json",
       "roles": [
@@ -736,7 +735,8 @@
         "PRODUCT_CONTRACT"
       ],
       "rationale": "Preregistered finite CLI/native observation scope and external proof limitations; not runtime or reviewer authority."
-    },    {
+    },
+    {
       "pattern": ".cora/contracts/dod/capability-dod.json",
       "roles": [
         "POLICY",
@@ -1224,6 +1224,22 @@
         "TEST"
       ],
       "rationale": "PR52 physical Node RED/GREEN tests, Git/log/authority mutations, ICTC HTTP/SQLite oracle falsifiers and bounded JS graph."
+    },
+    {
+      "pattern": ".cora/contracts/dod/hforge-transplant-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Optional H-FORGE noncompensatory proof obligations, no test or host authority."
+    },
+    {
+      "pattern": ".cora/contracts/profiles/hforge-profile-v1.json",
+      "roles": [
+        "ARTIFACT_INDEX",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Optional original-Git/PR70 source profile; not a runtime or deletion authorization."
     }
   ]
 }

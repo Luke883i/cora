@@ -639,6 +639,7 @@
       "tools/build_candidate.py",
       "tools/external_validate.py",
       "tools/governance_readback.py",
+      "tools/hforge_profile.py",
       "tools/independent_git_oracle.py",
       "tools/make_experimental_bundle.py",
       "tools/release_stress.py",
@@ -730,6 +731,11 @@
     "test_modules": [
       "tests/test_archaeology_pr12.py",
       "tests/test_continuous_pr14.py",
+      "tests/test_counterfactual_blindspots.py",
+      "tests/test_hforge_native_pilot.py",
+      "tests/test_hforge_original_source_mutants.py",
+      "tests/test_hforge_pr70_binding.py",
+      "tests/test_hforge_profile.py",
       "tests/test_pr01.py",
       "tests/test_pr02.py",
       "tests/test_pr03.py",
@@ -793,6 +799,7 @@
       ".cora/contracts/dod/final-experimental-dod.json",
       ".cora/contracts/dod/five-synergies-dod.json",
       ".cora/contracts/dod/gold-assurance.json",
+      ".cora/contracts/dod/hforge-transplant-dod.json",
       ".cora/contracts/dod/history-convergence-dod.json",
       ".cora/contracts/dod/independent-qualification-dod.json",
       ".cora/contracts/dod/integrated-dod.json",
@@ -805,6 +812,7 @@
       ".cora/contracts/dod/workflow-dod.json"
     ],
     "internal_profiles": [
+      ".cora/contracts/profiles/hforge-profile-v1.json",
       ".cora/contracts/profiles/method-atlas.json",
       ".cora/contracts/profiles/type-assurance-profile.json"
     ],

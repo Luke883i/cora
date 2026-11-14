@@ -51,3 +51,16 @@ External PR association input: `{"schema":"cora-pr-index/1","commits":{"<sha>":1
 Method references: [Git log](https://git-scm.com/docs/git-log), [PyDriller](https://github.com/ishepard/pydriller), [RefactoringMiner](https://github.com/tsantalis/RefactoringMiner), [CodeScene](https://helpcenter.codescene.com/help/articles/1844075-how-to-assess-coupling-health-in-codescene), [Joern CPG](https://docs.joern.io/code-property-graph/), [CodeQL dataflow](https://codeql.github.com/docs/writing-codeql-queries/about-data-flow-analysis/), [OpenTelemetry](https://opentelemetry.io/docs/concepts/resources/), [NIST SSDF](https://csrc.nist.gov/pubs/sp/800/218/final), [OpenSSF OSPS](https://baseline.openssf.org/). These are reference methods, **not proof of existing integrations or standards certification**.
 
 **Additional falsification gate:** a complete ownership set is carried through transitive cohort unions, so an unowned bridge cannot join two declared different products. Truncated Git history disqualifies the short-lived scaffold heuristic; the report instead emits `HISTORY_WINDOW_TRUNCATED_UNKNOWN_LINEAGE`.
+
+## H-FORGE optional experimental profile
+
+For bounded before/after change analysis, `tools/hforge_profile.py` composes
+existing Git evidence and the opt-in finite operational-equivalence verifier.
+It reconciles the fixed 77-case declared universe against the original Git atlases,
+provides tracked-tree measurements and can replay the existing source One-Run.
+It is **not** an additional engine or default CLI command. The source projection lives under `tools/` to preserve byte-for-byte the original `src/cora/` engine module universe; only the explicitly scoped release-verification surface grows. Static omissions,
+dynamic/external consumers, persisted effects, independent review and governed
+product acceptance remain open unless separately observed. The committed
+`.cora/contracts/profiles/hforge-profile-v1.json` and
+`.cora/contracts/dod/hforge-transplant-dod.json` are declaration/DoD inputs,
+not attestations that these prerequisites have been satisfied.
