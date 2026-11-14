@@ -185,7 +185,7 @@ so review the archive's contents and sharing permissions before uploading it.
    `falsifiers`, `dod`, `gaps`, and `next_step` to reflect observed
    evidence; `DONE_REPORTED` is not verification. After a real Git commit,
    execute `process-run` and `verify-process` as shown in
-   [the runnable handoff](#in-a-chatgpt-session-the-shortest-reproducible-path).
+   [the runnable handoff](GETTING_STARTED.md#in-a-chatgpt-session-the-shortest-reproducible-path).
 3. **Verify before attaching.** Check that `verify-process --one-run
    --chat-bundle` accepts the archive on the matching checkout and that the
    latest `source-receipt.json` identifies the intended HEAD. Examine the
