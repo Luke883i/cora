@@ -251,5 +251,29 @@ class GitFixture(unittest.TestCase):
         self.assertGreaterEqual(report["surfaces"]["internal_dod"], 20)
         self.assertGreaterEqual(report["surfaces"]["internal_profiles"], 3)
 
+    def test_new_profile_and_dod_have_source_routed_and_typed_original_git(self):
+        """New contracts must not masquerade as legacy routes or host approval."""
+        from tools.verify_layout_simplification import _registered_additional_route
+        root = Path(__file__).resolve().parents[1]
+        paths = json.loads((root / ".cora/contracts/index.json").read_text())
+        catalog = json.loads((root / ".cora/assurance/capability-atlas.json").read_text())["repository_surfaces"]
+        wanted = {
+            "cora.hforge-transplant-dod.json": (".cora/contracts/dod/hforge-transplant-dod.json", "INTERNAL_DOD"),
+            "cora.hforge-profile-v1.json": (".cora/contracts/profiles/hforge-profile-v1.json", "INTERNAL_PROFILE"),
+        }
+        index = {x["logical"]: x for x in paths["bindings"]}
+        for logical, (canonical, scope) in wanted.items():
+            self.assertEqual(index[logical]["canonical"], canonical)
+            self.assertEqual(index[logical]["scope"], scope)
+            self.assertTrue(_registered_additional_route(index[logical],catalog))
+            for mutant in (
+                {"logical":logical, "canonical": canonical, "scope":"PUBLIC_STABLE"},
+                {"logical":logical, "canonical": canonical.replace(".json", ".unknown.json"), "scope":scope},
+                {"logical":logical, "canonical":"../outside.json", "scope":scope},
+            ):
+                self.assertFalse(_registered_additional_route(mutant,catalog))
+        self.assertEqual(paths["authority"], "NONE")
+        self.assertEqual(paths["governed_status"], "BLOCKED_EXTERNAL")
+
 if __name__ == '__main__':
     unittest.main()

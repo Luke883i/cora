@@ -69,6 +69,16 @@
       "scope": "INTERNAL_DOD"
     },
     {
+      "logical": "cora.hforge-profile-v1.json",
+      "canonical": ".cora/contracts/profiles/hforge-profile-v1.json",
+      "scope": "INTERNAL_PROFILE"
+    },
+    {
+      "logical": "cora.hforge-transplant-dod.json",
+      "canonical": ".cora/contracts/dod/hforge-transplant-dod.json",
+      "scope": "INTERNAL_DOD"
+    },
+    {
       "logical": "cora.history-convergence-dod.json",
       "canonical": ".cora/contracts/dod/history-convergence-dod.json",
       "scope": "INTERNAL_DOD"

@@ -358,16 +358,33 @@ def _validate_theme(repo:Path,sha:str,baseline:dict,head:dict,manifest:dict)->di
         any(x.get("canonical")!=v for k,v in expected.items()
             for x in bindings if x.get("logical")==k) or
         not set(expected).issubset({x.get("logical") for x in bindings}) or
-        any(not (x.get("logical","").startswith("cora.") and
-                 x.get("canonical","").startswith(".cora/contracts/dod/") and
-                 x.get("scope")=="INTERNAL_DOD") for x in bindings
-            if x.get("logical") not in expected)):
+        len({x.get("canonical") for x in bindings}) != len(bindings) or
+        any(not _registered_additional_route(x, _json(repo,sha,".cora/assurance/capability-atlas.json").get("repository_surfaces",{}))
+            for x in bindings if x.get("logical") not in expected)):
         raise ValueError("logical contract path index incomplete or unsafe")
     for route in bindings:
         if route["canonical"] not in head or route["scope"] not in (
                 "PUBLIC_STABLE","INTERNAL_DOD","INTERNAL_PROFILE","INTERNAL_ASSURANCE"):
             raise ValueError("contract route target missing or unqualified")
     return {"byte_identical":exact,"rewritten":rewritten,"remaining_root":len(PUBLIC_ROOT)}
+
+
+def _registered_additional_route(route: dict, catalog: dict) -> bool:
+    """Additional contracts must live in their exact Git-classified surface.
+
+    Historical migrated routes are checked separately and are immutable.
+    A new source path is never review, runtime or product authorization.
+    """
+    logical, canonical, scope = (route.get("logical"),
+                                 route.get("canonical"), route.get("scope"))
+    if (not isinstance(logical, str) or not re.fullmatch(r"cora\.[A-Za-z0-9_.-]+\.json",logical)
+            or not isinstance(canonical,str)):
+        return False
+    permitted = (("INTERNAL_DOD", r"\.cora/contracts/dod/[A-Za-z0-9_.-]+\.json", "internal_dod"),
+                 ("INTERNAL_PROFILE", r"\.cora/contracts/profiles/[A-Za-z0-9_.-]+\.json", "internal_profiles"))
+    return any(scope == kind and re.fullmatch(pattern,canonical)
+               and canonical in catalog.get(registered,[])
+               for kind,pattern,registered in permitted)
 
 
 def check(repo:Path,revision:str="HEAD")->dict:
