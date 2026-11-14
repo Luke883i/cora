@@ -85,7 +85,7 @@ The dossier distinguishes `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTER
 
 **Other Git repos:** `--one-run --portable-profile /path/to/target.json` enables source replay, not transplanted DoD. `--portable-parse-js` parses static ESM without execution. [Cross-repository limits](docs/CONTINUOUS_DEVELOPMENT.md).
 
-**H-FORGE:** [Optional profile](docs/HOLISTIC_FORENSICS.md#h-forge-optional-experimental-profile) reuses CORA's 77-case replay and mutants; runtime equivalence, dynamic consumers, effects and P5 acceptance remain unverified.
+**H-FORGE:** [Safe source stage](docs/HOLISTIC_FORENSICS.md#h-forge-optional-experimental-profile) joins comprehensive One-Run; native 77-case replay, effects, dynamic consumers and P5 acceptance remain separately unverified.
 
 ## How CORA works
 

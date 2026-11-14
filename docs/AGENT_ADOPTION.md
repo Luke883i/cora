@@ -67,6 +67,15 @@ When using CORA in a chat-assisted workflow, distinguish the conversation's prop
 
 ## ChatGPT Project beta adapter
 
+For users starting without a repository, first follow [the GitHub + Project
+walkthrough](GETTING_STARTED.md#github-and-chatgpt-project-from-zero). It
+explains separate target and CORA repositories, source ZIP versus original
+Git history, explicit permissions, backward-derived AND acceptance conditions,
+small reversible webapp slices and why a verified source receipt does not
+substitute for target-native behavior. **One canonical Project prompt follows**;
+do not paste an additional competing instruction.
+
+
 **Canonical prompt and owner:** this section is the single beta Project instruction source. The root README links here; `AGENTS.md` governs coding contributions and the target repository keeps its own product/software/runtime authority. This is an opt-in **CORA-METHOD** adapter, not a deployed CORA service or a replacement for `CORA-ENGINE`.
 
 ### Beginner setup: understand, modify, prove

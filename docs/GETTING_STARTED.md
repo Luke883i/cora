@@ -12,6 +12,77 @@ coding agent, a sandbox attestation, a merge approver or a product certificate.
 Start from an authorized checkout with Python 3.11+ and Git. Use an output
 directory outside the repository (`/tmp` below is a Unix example).
 
+## GitHub and ChatGPT Project from zero
+
+**1. Create the target repository.** Open [GitHub](https://github.com), sign in, choose
+**New repository**, provide an application name (for example `my-issues-webapp`),
+choose private or public as appropriate, and initialize with a README. Keep
+secrets, personal records and API keys out of public repositories. This
+repository will contain **your product**, not CORA's source code. Record the
+initial commit SHA; future changes must be reproducible from real Git history.
+
+**2. Obtain CORA's instructions.** Open [the CORA repository](https://github.com/Luke883i/cora).
+Read the [single canonical ChatGPT Project prompt](AGENT_ADOPTION.md#chatgpt-project-beta-adapter).
+You may download a **source ZIP of main** as a reference and attach it to
+your Project; that ZIP is a snapshot, not a Git clone and does **not** contain
+original `.git` history. For Git-based execution use an authorized `git clone`
+of CORA and of your target. A later `--chat-bundle` ZIP is a different,
+operator-produced continuation artifact, not encrypted, signed or automatic chat memory.
+
+**3. Set up ChatGPT Project.** In ChatGPT, create a Project for your app.
+Paste the canonical text fence into **Project instructions**. Attach the CORA
+source ZIP if useful; connect GitHub with scoped read permission to both
+repositories. Pro or Edu can be an advanced-workflow recommendation, **not**
+a universal minimum for Projects or proof of connector, runner or write access.
+A separate permitted coding tool and real execution environment are required
+for commits and test evidence; ChatGPT instructions do not transfer themselves
+to an unrelated coding agent.
+
+**4. Express the outcome before writing code.** Example: "Build an issue
+webapp: a reporter submits an item; a reviewer sees the persisted item, may
+close it, and an unauthorized user cannot close it." Translate this A0
+outcome into observable acceptance tests, including reload/persistence,
+authorization, data integrity, failure and rollback. This is **backward
+requirements decomposition** (requirements traceability and verification/
+validation): derive a noncompensatory AND graph from the desired result to
+necessary source, unit, integration, HTTP/browser and independently reviewed
+evidence. `UNKNOWN` or `NOT_RUN` does not satisfy a necessary condition.
+
+**5. Develop in reversible vertical slices.** On an explicitly authorized
+target branch, have a separate coding agent implement one testable workflow
+(e.g. create issue -> persist SQLite -> GET returns same record) with positive
+and negative oracles. Record the BASE and actual HEAD before/after; materialize
+a Git blob, tree, commit and PR, then read them back. Falsify the change:
+duplicate submissions, invalid input, unauthorized closure and failed
+persistence must not be silently treated as PASS. Use target-native tests and
+real browser checks where relevant. Run CORA on the **same committed SHA**
+and inspect its receipt, counters and unclosed obligations. Each new commit
+invalidates the preceding SHA-bound candidate proof.
+
+**6. Execute and replay the single CORA dossier.** From a trusted checkout
+with Python 3.11+, Git and an installed CORA CLI, run the One-Run and
+`verify-process` commands below. The comprehensive route automatically
+records the **safe H-FORGE source stage** when its original-Git profile is
+present and replays the original safe One-Run source. The 77 native comparison
+cases and any target tests or effects are **not** run without distinct consent.
+On other targets without the canonical H-FORGE profile, applicability and
+missing prerequisites are reported; the default is not a product certificate.
+
+**7. Close the roadmap deliberately.** For each iteration report what was
+observed, what was falsified, what survived, evidence provenance, rollback,
+and the first unresolved AND prerequisite. Use the opt-in
+[chat-bundle continuation](#in-a-chatgpt-session-the-shortest-reproducible-path)
+to carry numbered status and next steps. Do not preassign a final number of
+iterations or treat a passing source CI as permission to merge or release.
+
+**Public source examples (bounded):** [CORA #52](https://github.com/Luke883i/cora/pull/52)
+documents native Teddy Node and ICTC HTTP/SQLite pilots;
+[ICTC #274](https://github.com/Luke883i/ictc/pull/274) contains a
+source-only intake-to-proof contract and [ICTC #275](https://github.com/Luke883i/ictc/pull/275)
+adds owner/route hardening. These commits illustrate distinct types of
+engineering evidence; they do not demonstrate that CORA autonomously wrote,
+ran or approved a complete third-party webapp.
+
 ## One path to a reviewable conclusion
 
 ```sh
