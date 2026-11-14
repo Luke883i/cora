@@ -45,6 +45,10 @@ class StrictFiniteUniverseTests(unittest.TestCase):
         self.assertEqual(cases[-6:], list(op.NATIVE))
         self.assertEqual(contract["global_product_status"], "BLOCKED_EXTERNAL")
         self.assertEqual(contract["authority"], "NONE")
+        self.assertEqual(contract["runner_environment"], op.ENVIRONMENT)
+        self.assertEqual(contract["required_negative_controls"],
+                         list(op.NEGATIVE_CONTROLS))
+        self.assertEqual(contract["excluded_obligations"], list(op.EXCLUDED))
 
     def test_strict_per_observation_equality_not_percentage_compensation(self):
         cases = ["help:snapshot", "version", "graph-pinned"]
@@ -98,6 +102,16 @@ class StrictFiniteUniverseTests(unittest.TestCase):
         with patch.object(op, "read_json", side_effect=missing):
             with self.assertRaisesRegex(ValueError, "missing, duplicate"):
                 op.universe(ROOT, MERGED_PR69_BASE, self.head)
+        def renamed(repo, sha, path):
+            doc = original(repo, sha, path)
+            if path == op.ATLAS and sha == self.head:
+                doc = copy.deepcopy(doc)
+                doc["commands"][0]["command"] = "forged-command"
+            return doc
+        with patch.object(op, "read_json", side_effect=renamed):
+            with self.assertRaisesRegex(ValueError, "universe changed"):
+                op.universe(ROOT, MERGED_PR69_BASE, self.head)
+
 
     def test_distinct_baseline_and_explicit_native_consent_required(self):
         with self.assertRaisesRegex(ValueError, "explicit"):
@@ -161,6 +175,11 @@ class EndToEndOperationalReceiptTests(unittest.TestCase):
         self.assertEqual(receipt["product_global_status"], "BLOCKED_EXTERNAL")
         self.assertEqual(receipt["independent_reviewer"], "NOT_ATTESTED")
         self.assertEqual(receipt["authorization"], "NONE")
+        self.assertEqual(receipt["scoped_dod"]["G_OP"], "PENDING_REPLAY")
+        self.assertEqual(receipt["runner_environment"]["working_directory"],
+                         str(ROOT.resolve()))
+        self.assertTrue(receipt["runner_environment"]["python"])
+        self.assertEqual(receipt["runner_environment"]["pythonhashseed"], "0")
         self.assertEqual(len({row["case"] for row in receipt["rows"]}), 77)
         self.assertEqual(len([row for row in receipt["rows"]
                               if row["case"].startswith("help:")]), 71)

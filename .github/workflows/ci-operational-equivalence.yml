@@ -54,6 +54,7 @@ jobs:
           assert r['independent_reviewer']=='NOT_ATTESTED'
           assert r['authorization']=='NONE'
           assert replay['status']=='REPLAYED_SCOPED_OPERATIONS'
+          assert replay['scoped_global_dod']=='PASS_ON_COMPLETE_REGISTERED_UNIVERSE'
           assert replay['product_global_status']=='BLOCKED_EXTERNAL'
           PY
       - name: Retain exact-revision finite operational receipts
