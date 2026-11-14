@@ -85,6 +85,8 @@ The dossier distinguishes `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTER
 
 **Other Git repos:** `--one-run --portable-profile /path/to/target.json` enables source replay, not transplanted DoD. `--portable-parse-js` parses static ESM without execution. [Cross-repository limits](docs/CONTINUOUS_DEVELOPMENT.md).
 
+**Optional holistic change analysis:** [H-FORGE](docs/HOLISTIC_FORENSICS.md#h-forge-optional-experimental-profile) is a source-bound profile layered on existing CORA Git/One-Run evidence, not a second engine or an automatic deletion, approval or runtime-equivalence authority. Its closed 77-observation comparator and seeded source mutants test finite oracles, not all inputs, dynamic consumers or persistent side effects; independent P5 acceptance remains open.
+
 ## How CORA works
 
 **1. Specify the outcome.** Turn natural-language intent into an **AND-dependency graph** of observable conditions. Reason **backward**: an unknown prerequisite stays open. [Worked application contract](docs/CONTINUOUS_DEVELOPMENT.md#example-contract-and-evidence-ladder--portable-corrective-action-app).
@@ -109,7 +111,7 @@ Follow [agent adoption](docs/AGENT_ADOPTION.md) and the [R1–R4 DoD](docs/DOD_P
 
 ## Final Experimental Baseline — bounded evidence
 
-The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) distinguishes **15 SOURCE leaves, 7 EXTERNAL leaves, and 8 aggregate AND gates**. Its **16 realistic fault families** and **2,517 preregistered zero-to-fourway masks** are finite-model cases, **not one million independent source mutations**. **two controlled physical Git repositories** supply bounded counterexamples, not independent target or user acceptance.
+The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) distinguishes **15 SOURCE leaves, 7 EXTERNAL leaves, and 8 aggregate AND gates**. Its **16 realistic fault families** and **2,517 preregistered zero-to-fourway masks** are finite-model cases, **not one million independent source mutations**. **Two controlled physical Git repositories** supply bounded counterexamples, not independent target or user acceptance.
 
 ## Documentation by goal
 
