@@ -9,7 +9,7 @@
 
 CORA is a local, offline-first Python 3.11+ framework. It helps developers and AI coding assistants inspect a Git repository and **produce reproducible pre/post-merge review reports**. It connects **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**. Authorized agents edit; CORA evaluates evidence. It is **not a coding agent** or an approver.
 
-**Why it matters:** plausible patches are not proof. Readers need decisions, next tests and visible unresolved risks. A CTO gets reviewable boundaries; a beginner gets the next step.
+**Why it matters:** plausible patches are not proof. Readers need decisions, next tests and visible unresolved risks. CTOs get decisions; beginners get steps.
 
 ```text
 GitHub repo + CORA main ZIP/prompt -> ChatGPT Project
@@ -23,7 +23,7 @@ GitHub repo + CORA main ZIP/prompt -> ChatGPT Project
 
 **Recommended use:** review an authorized Git change. **Audience and conditions:** CTOs, developers, reviewers and coding agents; Python 3.11+, Git and authorized execution tools. **Open source license:** [MIT](LICENSE).
 
-**Current status:** experimental `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **Document status:** CURRENT. **Current scope:** Git source review. **Operational use:** inspect commits. **Evidence:** Git and scoped tests. **Limits:** `BLOCKED_EXTERNAL`. Verify the exact checked-out Git revision; the README version is not proof. **Category:** agent-agnostic engineering assurance.
+**Current status:** experimental `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **Document status:** CURRENT. **Current scope:** Git source review. **Operational use:** inspect commits. **Evidence:** Git and scoped tests. **Limits:** `BLOCKED_EXTERNAL`. Verify the exact checked-out Git revision; the README is not proof. **Category:** agent-agnostic engineering assurance.
 
 ## First five minutes — Quickstart
 
@@ -46,7 +46,7 @@ For a scoped dossier, run [One-Run](#one-run--one-command-one-evidence-dossier).
 
 1. **Create your GitHub repository:** on [GitHub](https://github.com) select **New repository**, name your issue webapp, add a README and record its Git SHA. This is your **target repository**, not CORA.
 2. **Install the Project instructions:** open [Luke883i/cora](https://github.com/Luke883i/cora), choose **Code → Download ZIP** from `main` (source only, no `.git`). Copy the [single canonical CORA beta prompt](docs/AGENT_ADOPTION.md#chatgpt-project-beta-adapter). In ChatGPT choose **New project**, then **Project settings** → **Project instructions**; paste it and attach the source ZIP.
-3. **Connect GitHub; specify success:** grant scoped **read access** to both repositories. GitHub connector abilities vary: **read-only** cannot push; write actions require verified permissions and explicit authorization. State A0: "A reporter creates an issue, a reviewer sees it after reload, an outsider cannot close it."
+3. **Connect GitHub; specify success:** grant scoped **read access** to both repositories. GitHub connector abilities vary: **read-only** is not permission to push or merge; write actions require verified permissions and explicit authorization. State A0: "A reporter creates an issue, a reviewer sees it after reload, an outsider cannot close it."
 4. **Plan backwards and implement:** ask for **backward requirements decomposition** (all necessary AND acceptance tests), a falsifiable roadmap and one reversible slice: POST → SQLite → GET; test bad input and unauthorized closure. A **write-capable coding tool**, such as Codex, requires separate authorization; a **separate Python runner** provides actual test evidence. CORA-METHOD guides you **without** executing CORA-ENGINE. With no runner, report `METHOD_ONLY` / `NOT_RUN`.
 5. **Verify and continue:** commit the slice, execute One-Run and replay on the same SHA. With a runner create `--chat-step` and `--chat-bundle`, verify the temporary ZIP, then attach its latest copy to this Project chat. Read `iterations/000001/handoff.md` and open DoD; the archive is neither automatic chat capture nor authenticated review. [Detailed webapp and ZIP walkthrough](docs/GETTING_STARTED.md#github-and-chatgpt-project-from-zero).
 
