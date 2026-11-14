@@ -1,0 +1,47 @@
+{
+  "schema": "cora-operational-observation-universe/1",
+  "intent": "EXHAUSTIVE_EQUIVALENCE_ON_EXPLICIT_FINITE_OPERATIONS_ONLY",
+  "authority": "NONE",
+  "global_product_status": "BLOCKED_EXTERNAL",
+  "expected_declared_cli_commands": 71,
+  "help_case": "ALL_DECLARED_COMMANDS_FROM_BOTH_GIT_PINNED_CAPABILITY_ATLASES",
+  "native_cases": [
+    "version",
+    "process-list",
+    "snapshot-pinned",
+    "graph-pinned",
+    "dod-plan-pinned",
+    "stress-128"
+  ],
+  "native_execution": "EXPLICIT_OPT_IN_PINNED_CORA_SOURCE_ONLY",
+  "base_head": "DISTINCT_ANCESTRALLY_RELATED_COMMITS",
+  "output_oracle": "EXACT_RETURN_CODE_STDOUT_STDERR_BYTES_IN_SAME_RUNNER_ENVIRONMENT",
+  "runner_environment": {
+    "python": "SAME_INTERPRETER",
+    "pythonhashseed": "0",
+    "locale": "C.UTF-8",
+    "timezone": "UTC",
+    "columns": "100",
+    "user_site": "DISABLED",
+    "fixture": "PINNED_BASE_GIT_COMMIT"
+  },
+  "required_negative_controls": [
+    "DELETED_DECLARED_COMMAND",
+    "FORGED_EQUALITY",
+    "MISSING_OBSERVATION",
+    "ALTERED_CLI_HELP",
+    "WRONG_HEAD_OR_BASE",
+    "SCOPE_NARROWING",
+    "NONZERO_EXIT"
+  ],
+  "excluded_obligations": [
+    "ALL_POSSIBLE_INPUTS",
+    "DYNAMIC_EXTENSIONS",
+    "NETWORK_SERVICES",
+    "PERSISTENT_SIDE_EFFECTS",
+    "DIFFERENT_HOST_ENVIRONMENTS",
+    "INDEPENDENT_REVIEW",
+    "BRANCH_PROTECTION",
+    "FULL_PRODUCT_GLOBAL_EQUIVALENCE"
+  ]
+}

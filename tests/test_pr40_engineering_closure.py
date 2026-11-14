@@ -619,7 +619,12 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
                              "SOURCE_REPLAY_SCOPED")
 
     def test_previous_engineering_receipt_semantics_preserved_under_extension(self):
-        """Baseline verifier runs on baseline Git, new verifier on PR HEAD."""
+        """Isolate verifier behavior: compare old/new code on the SAME Git tree.
+
+        Comparing a historical tree with current HEAD would wrongly treat newly
+        tracked files as a verifier regression. New fields may extend the
+        receipt, but every previously declared field must stay equivalent.
+        """
         from types import ModuleType
         base = "57dd5c4fb6317d9a9e951fcbebac9c7aa5560b6f"
         previous = ModuleType("baseline_original_git_engineering_closure")
@@ -627,17 +632,19 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
                             base + ":tools/verify_engineering_closure.py")
         exec(compile(baseline_code, "baseline_engineering_closure.py", "exec"),
              previous.__dict__)
-        a = previous.analyze(ROOT, base)
+        a = previous.analyze(ROOT, self.sha)
         b = ekc.analyze(ROOT, self.sha)
         self.assertEqual(set(b) - set(a), {"component_contribution", "component_dod"})
         self.assertEqual(set(a) - set(b), set())
         for field in a:
-            if field not in ("commit", "tree", "source_digest_sha256"):
+            if field != "source_digest_sha256":
                 with self.subTest(field=field):
                     self.assertEqual(a[field], b[field])
         self.assertTrue(previous.verify_report(ROOT, a))
         self.assertTrue(ekc.verify_report(ROOT, b))
-        self.assertNotEqual(a["commit"], b["commit"])
+        self.assertEqual(a["commit"], b["commit"])
+        self.assertEqual(a["commit"], self.sha)
+        self.assertEqual(a["tree"], b["tree"])
         self.assertNotEqual(a["source_digest_sha256"], b["source_digest_sha256"])
 
     def test_exhaustive_declared_cli_help_observation_universe(self):
