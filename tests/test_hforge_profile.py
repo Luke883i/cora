@@ -10,7 +10,7 @@ import tempfile
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from cora import hforge_profile as h
+from tools import hforge_profile as h
 
 
 def git(repo: Path, *args):
@@ -208,7 +208,7 @@ class GitFixture(unittest.TestCase):
         refuted["status"] = "REFUTED_FINITE_OBSERVATIONS"
         self.assertEqual(h.operational_claim(refuted, self.base, self.head)["scoped_status"],
                          "REFUTED_FINITE_OBSERVATIONS")
-        src = (Path(__file__).resolve().parents[1] / "src/cora/hforge_profile.py").read_text()
+        src = (Path(__file__).resolve().parents[1] / "tools/hforge_profile.py").read_text()
         function = src[src.index("def operational_claim("):src.index("\ndef assess(")]
         sites = (
             ('left["exit_code"] == right["exit_code"] == 0',
@@ -245,7 +245,8 @@ class GitFixture(unittest.TestCase):
         root = Path(__file__).resolve().parents[1]
         report = check(root, "HEAD")
         self.assertEqual(report["source_status"], "PASS_SCOPED_SOURCE")
-        self.assertGreaterEqual(report["surfaces"]["modules"], 64)
+        self.assertEqual(report["surfaces"]["modules"], 63)
+        self.assertGreaterEqual(report["surfaces"]["operational_tools"], 22)
         self.assertGreaterEqual(report["surfaces"]["test_modules"], 59)
         self.assertGreaterEqual(report["surfaces"]["internal_dod"], 20)
         self.assertGreaterEqual(report["surfaces"]["internal_profiles"], 3)

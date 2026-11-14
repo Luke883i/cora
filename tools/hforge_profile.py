@@ -270,7 +270,7 @@ def bind_pr70_universe(repo: Path, report: dict, *, base: str, head: str) -> dic
 
 def verify_one_run_native(repo: Path, source_receipt: dict) -> dict:
     """Reuse actual CORA One-Run replay, not H-FORGE's shallow schema check."""
-    from .one_run import verify_one
+    from cora.one_run import verify_one
     if (not isinstance(source_receipt, dict) or
             source_receipt.get('schema') != 'cora-one-run/1' or
             source_receipt.get('authorization') != 'NONE'):

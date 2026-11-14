@@ -54,11 +54,11 @@ Method references: [Git log](https://git-scm.com/docs/git-log), [PyDriller](http
 
 ## H-FORGE optional experimental profile
 
-For bounded before/after change analysis, `src/cora/hforge_profile.py` composes
+For bounded before/after change analysis, `tools/hforge_profile.py` composes
 existing Git evidence and the opt-in finite operational-equivalence verifier.
 It reconciles the fixed 77-case declared universe against the original Git atlases,
 provides tracked-tree measurements and can replay the existing source One-Run.
-It is **not** an additional engine or default CLI command. Static omissions,
+It is **not** an additional engine or default CLI command. The source projection lives under `tools/` to preserve byte-for-byte the original `src/cora/` engine module universe; only the explicitly scoped release-verification surface grows. Static omissions,
 dynamic/external consumers, persisted effects, independent review and governed
 product acceptance remain open unless separately observed. The committed
 `.cora/contracts/profiles/hforge-profile-v1.json` and

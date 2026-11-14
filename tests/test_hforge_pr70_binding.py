@@ -10,7 +10,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT/'src'))
-from cora import hforge_profile as h
+from tools import hforge_profile as h
 from tools import verify_operational_equivalence as op
 
 
