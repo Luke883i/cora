@@ -137,7 +137,7 @@ def arguments(case: str, repo: Path, base: str, fixture: Path) -> list[str]:
     return fixed[case]
 
 
-def execute(checkout: Path, argv: list[str]) -> dict:
+def execute(checkout: Path, argv: list[str], *, workdir: Path | None = None) -> dict:
     env = dict(os.environ)
     env.update({
         "PYTHONPATH": str(checkout / "src"),
@@ -149,7 +149,7 @@ def execute(checkout: Path, argv: list[str]) -> dict:
         "LC_ALL": "C.UTF-8",
     })
     run = subprocess.run(
-        [sys.executable, "-m", "cora.cli", *argv], cwd=checkout,
+        [sys.executable, "-m", "cora.cli", *argv], cwd=workdir or checkout,
         env=env, capture_output=True, timeout=60, check=False)
     if len(run.stdout) > MAX_OUTPUT or len(run.stderr) > MAX_OUTPUT:
         raise ValueError("native observation exceeded size bound")
@@ -235,7 +235,8 @@ def run(repo: Path, base: str, head: str, *, execute_pinned_native: bool) -> dic
             if revision(checkout, "HEAD") != sha:
                 raise ValueError("checkout identity drift")
             observations.append({
-                case: execute(checkout, arguments(case, repo, base_sha, fixture))
+                case: execute(checkout, arguments(case, repo, base_sha, fixture),
+                              workdir=repo)
                 for case in cases
             })
         result = compare(cases, observations[0], observations[1])
@@ -246,6 +247,16 @@ def run(repo: Path, base: str, head: str, *, execute_pinned_native: bool) -> dic
         ).hexdigest(),
         "universe": "ALL_DECLARED_71_CLI_HELP_PLUS_6_NATIVE_OPERATIONS",
         "runner": "TWO_ORIGINAL_GIT_CHECKOUTS_ONE_PYTHON_BINARY_ONE_PINNED_INPUT",
+        "runner_environment": {
+            "python": sys.version.split()[0],
+            "executable": sys.executable,
+            "working_directory": str(repo),
+            "pythonhashseed": "0",
+            "locale": "C.UTF-8",
+            "timezone": "UTC",
+            "columns": "100",
+            "user_site": "DISABLED",
+        },
         "method": "EXACT_EXIT_STDOUT_STDERR_BYTE_COMPARISON",
         "status": result["status"],
         "denominator": result["denominator"],
