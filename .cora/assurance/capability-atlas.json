@@ -651,6 +651,7 @@
       "tools/verify_engineering_closure.py",
       "tools/verify_final_experimental.py",
       "tools/verify_layout_simplification.py",
+      "tools/verify_operational_equivalence.py",
       "tools/verify_pr16_coverage.py",
       "tools/verify_release_readiness.py",
       "tools/verify_repository_contract.py",
@@ -665,6 +666,7 @@
       ".github/workflows/ci-gold-assurance.yml",
       ".github/workflows/ci-holistic-archaeology.yml",
       ".github/workflows/ci-one-run-integrated.yml",
+      ".github/workflows/ci-operational-equivalence.yml",
       ".github/workflows/ci-release-candidate.yml",
       ".github/workflows/ci-release-readiness.yml",
       ".github/workflows/ci-selection.yml",
@@ -778,6 +780,7 @@
       "tests/test_pr59_consolidation.py",
       "tests/test_pr62_enterprise_docs.py",
       "tests/test_pr68_project_prompt.py",
+      "tests/test_pr70_operational_equivalence.py",
       "tests/test_selection.py"
     ],
     "internal_dod": [
@@ -807,7 +810,8 @@
     ],
     "assurance_records": [
       ".cora/assurance/capability-atlas.json",
-      ".cora/assurance/documentation-proofs.json"
+      ".cora/assurance/documentation-proofs.json",
+      ".cora/assurance/operational-universe.json"
     ]
   },
   "qualification": {
