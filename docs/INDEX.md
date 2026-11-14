@@ -15,7 +15,7 @@ The [README](../README.md) is the **compressed public front door**: outcome, met
 
 ## Choose your path
 
-- **ChatGPT Project user:** [README walkthrough](../README.md#use-cora-in-a-chatgpt-project--beginner-walkthrough) → [canonical Project instructions](AGENT_ADOPTION.md#chatgpt-project-beta-adapter) → [verified handoff](GETTING_STARTED.md#in-a-chatgpt-session-the-shortest-reproducible-path). No automatic runner or GitHub write access.
+- **ChatGPT Project user:** [README walkthrough](../README.md#use-cora-in-a-chatgpt-project--beginner-walkthrough) → [GitHub setup](GETTING_STARTED.md#github-and-chatgpt-project-from-zero) → [canonical Project instructions](AGENT_ADOPTION.md#chatgpt-project-beta-adapter) → [temporary ZIP lifecycle](GETTING_STARTED.md#manage-the-temporary-zip-in-chatgpt-project) → [verified handoff](GETTING_STARTED.md#in-a-chatgpt-session-the-shortest-reproducible-path). No automatic runner, chat-memory capture, reviewer or GitHub write access.
 - **New to CORA:** [Getting started](GETTING_STARTED.md) → [Architecture](ARCHITECTURE.md) → [Understanding evidence and limitations](DOD_V1_EXPERIMENTAL.md).
 - **Using an AI coding assistant:** [Agent adoption](AGENT_ADOPTION.md) → [Agent method](AI_CODE_ASSURANCE.md) → [Convergent assurance](CONVERGENT_ASSURANCE.md) → [complete R1–R4 obligations](DOD_PR20_CONVERGENCE.md).
 - **Auditing an existing repository:** [File Lab](FILE_LAB.md) → [Holistic forensics](HOLISTIC_FORENSICS.md) → [Engineering debt](ENGINEERING_DEBT.md).
