@@ -338,7 +338,7 @@ class IntegratedOneRunTests(unittest.TestCase):
                     filename = clone/path
                     doc = json.loads(filename.read_text("utf-8"))
                     change(doc)
-                    filename.write_text(json.dumps(doc, indent=2)+"\\n",
+                    filename.write_text(json.dumps(doc, indent=2)+"\n",
                                         encoding="utf-8")
                     git(clone, "add", path)
                     git(clone, "commit", "-qm", "mutant HFORGE gate "+str(idx))
