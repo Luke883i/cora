@@ -191,5 +191,64 @@ class GitFixture(unittest.TestCase):
         self.assertEqual(measured["symlinks"], 1)
         self.assertLess(measured["tracked_bytes"], 10000)
 
+    def test_composite_mutant_survivors_require_legitimate_refuted_oracle(self):
+        """Primary positive-only oracle misses 7 compensating composites.
+
+        A second *valid* REFUTED receipt kills all seven; six occur in the
+        first million seeded source mutants, so no inflated killed count.
+        """
+        good = receipt(self.base, self.head)
+        refuted = copy.deepcopy(good)
+        row = refuted["rows"][0]
+        row["candidate"]["stdout_sha256"] = hashlib.sha256(b"changed\n").hexdigest()
+        row["candidate"]["stdout_bytes"] = len(b"changed\n")
+        row["status"] = "REFUTED"
+        refuted["passed"] = 76
+        refuted["failed"] = [row["case"]]
+        refuted["status"] = "REFUTED_FINITE_OBSERVATIONS"
+        self.assertEqual(h.operational_claim(refuted, self.base, self.head)["scoped_status"],
+                         "REFUTED_FINITE_OBSERVATIONS")
+        src = (Path(__file__).resolve().parents[1] / "src/cora/hforge_profile.py").read_text()
+        function = src[src.index("def operational_claim("):src.index("\ndef assess(")]
+        sites = (
+            ('left["exit_code"] == right["exit_code"] == 0',
+             'left["exit_code"] != right["exit_code"] == 0'),
+            ('left["stdout_bytes"] > 0', 'left["stdout_bytes"] <= 0'),
+            ('right["stdout_bytes"] > 0', 'right["stdout_bytes"] <= 0'),
+        )
+        comparison = ('if row["status"] != expected_status:',
+                      'if row["status"] == expected_status:')
+        self.assertEqual(function.count(comparison[0]), 1)
+        for old, _ in sites:
+            self.assertEqual(function.count(old), 1)
+        with tempfile.TemporaryDirectory(prefix="hforge-refuted-oracle-") as tmp:
+            for subset in range(1, 8):
+                with self.subTest(mask=subset):
+                    mutated = function.replace(*comparison)
+                    for j, (old, new) in enumerate(sites):
+                        if subset & (1 << j):
+                            mutated = mutated.replace(old, new, 1)
+                    p = Path(tmp) / "source_mutant.py"
+                    p.write_text(mutated, encoding="utf-8")
+                    ns = {"hashlib": hashlib, "re": h.re, "OP_SCHEMA": h.OP_SCHEMA,
+                          "NATIVE": h.NATIVE, "_canonical_digest": h._canonical_digest}
+                    exec(compile(p.read_bytes(), str(p), "exec"), ns)
+                    # Such a composite escapes the positive-only mutation oracle.
+                    self.assertIsInstance(ns["operational_claim"](good, self.base, self.head), dict)
+                    # A legitimate refuted outcome is the independent second oracle.
+                    with self.assertRaises(ValueError):
+                        ns["operational_claim"](refuted, self.base, self.head)
+
+    def test_capability_atlas_covers_all_eight_new_surfaces(self):
+        """Prevent new unregistered modules/tests silently breaking source CI."""
+        from tools.verify_capability_atlas import check
+        root = Path(__file__).resolve().parents[1]
+        report = check(root, "HEAD")
+        self.assertEqual(report["source_status"], "PASS_SCOPED_SOURCE")
+        self.assertGreaterEqual(report["surfaces"]["modules"], 64)
+        self.assertGreaterEqual(report["surfaces"]["test_modules"], 59)
+        self.assertGreaterEqual(report["surfaces"]["internal_dod"], 20)
+        self.assertGreaterEqual(report["surfaces"]["internal_profiles"], 3)
+
 if __name__ == '__main__':
     unittest.main()
