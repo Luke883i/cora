@@ -323,6 +323,9 @@ def _validate_theme(repo:Path,sha:str,baseline:dict,head:dict,manifest:dict)->di
                             re.fullmatch(r"tests/test_[^/]+\.py",p) for p in added)) or (
                         group=="internal_dod" and all(
                             re.fullmatch(r"\.cora/contracts/dod/[^/]+\.json",p) for p in added)) or (
+                        group=="internal_profiles" and all(
+                            re.fullmatch(r"\.cora/contracts/profiles/[^/]+\.json",p)
+                            for p in added)) or (
                         group=="github_workflows" and all(
                             re.fullmatch(r"\.github/workflows/[^/]+\.ya?ml",p) for p in added)) or (
                         group=="assurance_records" and all(
