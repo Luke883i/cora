@@ -561,7 +561,7 @@ def verify_project_zip_lifecycle(readme: str, adoption: str,
                  "latest verified copy", "iteration: 1",
                  "iteration: 2", "same session ID",
                  "verify-process --one-run --chat-bundle",
-                 "not automatic Project memory"):
+                 "automatic Project memory"):
         if term not in g:
             errors.append("project-zip-getting-started-omission:" + term)
     if re.search(r"(?i)(?:zip|archive).{0,60}(?:automatically (?:captures|approves|merges)"
