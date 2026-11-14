@@ -83,6 +83,38 @@ adds owner/route hardening. These commits illustrate distinct types of
 engineering evidence; they do not demonstrate that CORA autonomously wrote,
 ran or approved a complete third-party webapp.
 
+
+
+### Manage the temporary ZIP in ChatGPT Project
+
+The **source ZIP** from GitHub `main` is an optional static reference for
+reading CORA's method; it does not include Git history. The **temporary
+`--chat-bundle` ZIP** is a different file: a real local CORA execution writes
+numbered iteration records and a matching source receipt. Upload the *latest
+verified copy* to a **chat inside your ChatGPT Project**; do not treat it as
+automatic Project memory, a password-protected archive or an independent
+approval. Keep its working copy outside the repository.
+
+For round 1, copy `examples/chat-step.example.json` to
+`/tmp/chat-step.json`, fill the actual `session_id`, `iteration: 1`,
+observed actions, DoD nodes, falsifiers, open gaps and next step. Execute the
+handoff commands [below](#in-a-chatgpt-session-the-shortest-reproducible-path)
+from the authorized checkout; `verify-process --one-run --chat-bundle`
+must accept the result before upload. Name the attached bundle's repository,
+HEAD, session and iteration in the chat. Ask ChatGPT to read
+`iterations/000001/handoff.md`, `dod.json`, and
+`source-receipt.json`, and to propose the next falsifiable slice rather than
+declare unfinished requirements PASS.
+
+For round 2, **do not start a fresh unrelated ZIP**: keep the local
+`/tmp/cora-session.zip`, set `iteration: 2` with the same session ID,
+record the new exact SHA if it changed, append with the real CLI, and replay
+again. Upload the new ZIP copy, identify it as the current iteration, and
+avoid retaining multiple unlabelled stale attachments as competing current
+truth. A missing runner means `NOT_RUN`; no file attachment can create a
+Git execution or authenticate an external reviewer. Review secrets and
+sharing permissions before transfer.
+
 ## One path to a reviewable conclusion
 
 ```sh
