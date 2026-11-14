@@ -93,7 +93,17 @@ class CapabilityAtlasTests(unittest.TestCase):
         self.assertEqual(r["surfaces"]["contracts"], 2)
         self.assertGreaterEqual(r["surfaces"]["internal_dod"], 9)
         self.assertEqual(r["surfaces"]["internal_profiles"], 2)
-        self.assertEqual(r["surfaces"]["assurance_records"], 2)
+        # The original two records are mandatory, but future registered
+        # assurance contracts may grow. Exactness derives from original Git.
+        assurance_now = {p for p in g(ROOT, "ls-tree", "-r", "--name-only",
+                                    sha, "--", ".cora/assurance").splitlines()
+                         if p.startswith(".cora/assurance/")
+                         and p.count("/") == 2 and p.endswith(".json")}
+        self.assertTrue({
+            ".cora/assurance/capability-atlas.json",
+            ".cora/assurance/documentation-proofs.json",
+        }.issubset(assurance_now))
+        self.assertEqual(r["surfaces"]["assurance_records"], len(assurance_now))
         self.assertEqual(r["surfaces"]["markdown"], 48)
         self.assertGreaterEqual(r["surfaces"]["test_modules"], 36)
         self.assertEqual(r["authorization"], "NONE")
