@@ -284,6 +284,7 @@ def _metrics(registry: dict, attempts: list[dict], test: dict) -> dict:
 
 def _artifact_payloads(bundle: dict, log: bytes | None) -> dict[str, bytes]:
     files = {"registry.json": _serialize(bundle["registry"]),
+             "hforge.json": _serialize(bundle["hforge"]),
              "attempts.json": _serialize(bundle["attempts"]),
              "gaps.json": _serialize(bundle["gaps"]),
              "dod.json": _serialize(bundle["dod"]),
@@ -307,6 +308,80 @@ def _manifest(bundle: dict, log: bytes | None, materialized: bool) -> dict:
             "authority": "NONE"}
 
 
+
+def _hforge_source(repo: Path, sha: str, baseline: dict) -> dict:
+    """Safe, replayable Git projection of H-FORGE, never target code execution."""
+    from .integrated_registry import tree_paths
+    names = set(tree_paths(repo, sha))
+    required = {".cora/contracts/dod/hforge-transplant-dod.json",
+                ".cora/contracts/profiles/hforge-profile-v1.json",
+                "tools/hforge_profile.py"}
+    common = {"schema": "cora-hforge-integrated-source/1", "commit": sha,
+              "authorization": "NONE", "product_status": "BLOCKED_EXTERNAL",
+              "native": "NOT_RUN_REQUIRES_CONSENT", "p5": "BLOCKED_EXTERNAL"}
+    if not required.issubset(names):
+        return {**common, "state": "NOT_APPLICABLE_PROFILE_NOT_COMMITTED",
+                "missing": sorted(required-names)}
+    doc = json.loads(git(repo, "show", sha +
+        ":.cora/contracts/dod/hforge-transplant-dod.json").decode("utf-8"))
+    profile = json.loads(git(repo, "show", sha +
+        ":.cora/contracts/profiles/hforge-profile-v1.json").decode("utf-8"))
+    clause = doc.get("one_run_absorption", {})
+    if (doc.get("authority") != "NONE" or
+        clause.get("schema") != "cora-hforge-one-run-absorption/1" or
+        clause.get("authority") != "NONE" or clause.get("native_default") != "NOT_RUN" or
+        clause.get("global_product") != "NOT_DEMONSTRATED" or
+        len(clause.get("phases", [])) != 13 or
+        len(set(clause.get("phases", []))) != 13 or
+        len(clause.get("invariants", [])) != 12 or
+        profile.get("schema") != "cora-hforge-profile/1" or
+        profile.get("integration") != "PROFILE_NOT_ENGINE" or
+        profile.get("required_scenarios", {}).get("declared_cli_help") != 71 or
+        len(profile.get("required_scenarios", {}).get("native", [])) != 6):
+        raise ValueError("H-FORGE original Git DoD/profile is not qualified")
+    base = baseline["source_process"].get("change_base")
+    if base is None:
+        try:
+            base = git(repo, "rev-parse", sha+"^").decode().strip()
+        except ValueError:
+            return {**common, "state": "DEBT_BLOCKED_ROOT_HAS_NO_PARENT"}
+    if base == sha or not re.fullmatch(r"(?:[0-9a-f]{40}|[0-9a-f]{64})", base):
+        raise ValueError("H-FORGE requires a distinct full original Git BASE")
+    git(repo, "merge-base", "--is-ancestor", base, sha)
+    def measure(rev: str) -> dict:
+        raw = git(repo, "ls-tree", "-r", "-l", "-z", rev, max_output=16000000)
+        if not raw.endswith(b"\0"):
+            raise ValueError("H-FORGE truncated original tree")
+        count = byte_size = links = 0
+        for record in raw.split(b"\0")[:-1]:
+            meta, path = record.split(b"\t", 1)
+            mode, kind, oid, size = meta.split()
+            if not path or b"\n" in path:
+                raise ValueError("ambiguous H-FORGE path")
+            if kind == b"commit" and mode == b"160000":
+                links += 1
+            elif kind == b"blob" and mode in (b"100644", b"100755", b"120000") and size.isdigit():
+                count += 1
+                byte_size += int(size)
+            else:
+                raise ValueError("unqualified H-FORGE original Git object")
+        return {"files": count, "bytes": byte_size, "gitlinks": links,
+                "tree_sha256": hashlib.sha256(raw).hexdigest()}
+    before, after = measure(base), measure(sha)
+    if verify_one(repo, baseline) is not True:
+        raise ValueError("original One-Run did not replay for H-FORGE")
+    return {**common, "state": ("PASS_SCOPED_GIT_SOURCE_AND_REPLAY"
+                                if not (before["gitlinks"] or after["gitlinks"])
+                                else "DEBT_BLOCKED_GITLINKS"),
+            "base": base, "before": before, "after": after,
+            "delta_files": after["files"]-before["files"],
+            "delta_bytes": after["bytes"]-before["bytes"],
+            "p0": "PASS_EXACT_GIT", "p1": "HOLD_NO_77_CASE_RECEIPT",
+            "p2": "NOT_RUN_CONSENT_REQUIRED", "p3": "GIT_TREE_ONLY",
+            "p4": "PASS_ORIGINAL_ONE_RUN_SOURCE_REPLAY",
+            "legacy_receipt_digest": baseline["receipt_digest"]}
+
+
 def run_integrated(repo: Path, revision: str = "HEAD", *, process: str = "full",
                    max_commits: int = 64, focus: str | None = None,
                    execute_self_tests: bool = False,
@@ -327,6 +402,7 @@ def run_integrated(repo: Path, revision: str = "HEAD", *, process: str = "full",
     base = run_one(repo, sha, process=process, max_commits=max_commits,
                    focus=focus, execute_self_tests=False,
                    model_stress_cases=model_stress_cases,change_base=change_base)
+    hforge = _hforge_source(repo, sha, base)
     test, log = _test_observation(repo, sha, tree,
                                   authorized=authorization_file if execute_self_tests else None,
                                   evidence_dir=out, timeout=test_timeout)
@@ -345,7 +421,7 @@ def run_integrated(repo: Path, revision: str = "HEAD", *, process: str = "full",
         "release_authorized": False,
         "source_status": "DEBT_BLOCKED",
         "product_status": "BLOCKED_EXTERNAL",
-        "baseline_pr36": base, "registry": registry,
+        "baseline_pr36": base, "registry": registry, "hforge": hforge,
         "plan": {"schema": "cora-integrated-plan/2", "order": order,
                  "source_methods": [x for x in order if x.startswith("method:")],
                  "effectful_disallowed": sorted(x["activity_id"] for x in registry["activities"]
@@ -453,6 +529,9 @@ def verify_integrated(repo: Path, receipt: dict, *, html_page: str | None = None
                 or x["state"] not in ("RUN_REPORTED_UNATTESTED", "SKIPPED", "FAIL")):
             raise ValueError("malformed individual test event")
         seen.add(x["activity_id"])
+    actual_hforge = _hforge_source(repo, sha, receipt["baseline_pr36"])
+    if receipt.get("hforge") != actual_hforge:
+        raise ValueError("H-FORGE evidence omitted, altered or cross-revision")
     if receipt["attempts"] != _attempts(expected, receipt["baseline_pr36"], test):
         raise ValueError("unaccounted activity or forged per-method result")
     if receipt["gaps"] != _gap_register(expected, receipt["attempts"], test):
