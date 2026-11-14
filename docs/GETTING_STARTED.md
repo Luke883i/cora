@@ -115,6 +115,46 @@ truth. A missing runner means `NOT_RUN`; no file attachment can create a
 Git execution or authenticate an external reviewer. Review secrets and
 sharing permissions before transfer.
 
+### Worked example: develop an issue webapp by evidence
+
+Suppose you tell ChatGPT: "A reporter can submit a ticket. After refreshing
+the page, a reviewer sees that same ticket. Only an authorized reviewer can
+close it, and failure must never appear as success." This is the **A0
+product outcome**, not a command to implement or approve everything at once.
+
+Work **backward** from acceptance: the outcome requires a real HTTP write
+endpoint; durable, versioned SQLite storage; a read endpoint that returns the
+committed row after a restart; role checks for closure; error handling; and a
+target-native browser or HTTP oracle. These form an **AND-dependency graph**:
+a green unit test for POST cannot compensate for a missing persistence or
+authorization test. The AI proposes the graph and a roadmap; the target
+product owner confirms actual requirements and permissions.
+
+Develop **incrementally**, with one reversible Git change per testable slice.
+First implement `POST /issues` and the SQLite schema migration: test valid
+input gives a new ID and invalid input creates *no row*. Next implement
+`GET /issues/{id}` and test readback after reopening the database. Then
+implement `PATCH /issues/{id}/close`: a reviewer succeeds and a reporter or
+anonymous visitor gets a denial with no database state change. Finally
+exercise a browser reload and a forced database error. Keep failed and
+surviving counterexamples as open tasks, not reassuring summaries.
+
+After **each authorized commit**, record the actual blob/tree/commit SHA and
+run the target's native tests. Run CORA One-Run against **that exact HEAD**
+and independently replay its receipt. The H-FORGE safe Git stage reports
+source changes where applicable; neither it nor the ChatGPT Project
+automatically runs this webapp, proves all runtime paths or approves a merge.
+When the SHA changes, regenerate dependent receipts and append the next
+verified temporary bundle iteration before continuing in the Project chat.
+
+**Real public examples, with narrow claims:** [CORA source commit 094294a](https://github.com/Luke883i/cora/commit/094294a3c051fb0a63c4efe19c467845cbb9e393)
+consolidated a mandatory native pilot suite; [ICTC source commit cc4d5dc](https://github.com/Luke883i/ictc/commit/cc4d5dc7209823c85cbf170bef27f09f506b3df1)
+fixed a demo checkout-root regression after migration; [ICTC source commit
+2aec423](https://github.com/Luke883i/ictc/commit/2aec4230a2f290089894a042fd900b6fa989f595)
+regenerated derived route/owner material. They illustrate real source and CI
+changes with provenance, **not** proof that this example issue webapp was
+built, accepted or independently tested by CORA.
+
 ## One path to a reviewable conclusion
 
 ```sh
