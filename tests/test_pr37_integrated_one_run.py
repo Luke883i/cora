@@ -258,5 +258,95 @@ class IntegratedOneRunTests(unittest.TestCase):
         self.assertEqual(len(families),10)
 
 
+    def test_hforge_is_accounted_in_single_original_git_one_run(self):
+        report = self.report
+        hforge = report["hforge"]
+        self.assertEqual(hforge["commit"], self.sha)
+        self.assertEqual(hforge["schema"], "cora-hforge-integrated-source/1")
+        self.assertEqual(hforge["state"], "PASS_SCOPED_GIT_SOURCE_AND_REPLAY")
+        self.assertEqual(hforge["p4"], "PASS_ORIGINAL_ONE_RUN_SOURCE_REPLAY")
+        self.assertEqual(hforge["p2"], "NOT_RUN_CONSENT_REQUIRED")
+        self.assertEqual(hforge["p5"], "BLOCKED_EXTERNAL")
+        self.assertEqual(hforge["native"], "NOT_RUN_REQUIRES_CONSENT")
+        self.assertEqual(hforge["legacy_receipt_digest"],
+                         report["baseline_pr36"]["receipt_digest"])
+        rows = [r for r in report["registry"]["activities"]
+                if r["activity_id"] == "stage:hforge-source"]
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["effect_class"], "READ_ONLY")
+        self.assertEqual(rows[0]["authorization_policy"], "AUTO_SOURCE_NATIVE_OPT_IN")
+        attempts = [r for r in report["attempts"]
+                    if r["activity_id"] == "stage:hforge-source"]
+        self.assertEqual(len(attempts), 1)
+        self.assertEqual(attempts[0]["state"], "EXECUTED_SCOPED")
+        self.assertTrue(any(g["reason"] == "HFORGE_P2_AND_P5_UNATTESTED"
+                            for g in report["gaps"]["issues"]))
+        self.assertTrue(verify_integrated(ROOT, report))
+
+    def test_hforge_forged_receipts_fail_even_after_rehashed_digest(self):
+        attacks = [
+            lambda r: r.pop("hforge"),
+            lambda r: r["hforge"].update(commit="0"*40),
+            lambda r: r["hforge"].update(base="1"*40),
+            lambda r: r["hforge"].update(state="PASS_PRODUCT"),
+            lambda r: r["hforge"].update(native="PASS_77"),
+            lambda r: r["hforge"].update(p5="PASS"),
+            lambda r: r["hforge"].update(delta_bytes=-999999),
+            lambda r: r["hforge"]["after"].update(tree_sha256="f"*64),
+            lambda r: r["registry"]["activities"].pop(
+                next(i for i,x in enumerate(r["registry"]["activities"])
+                     if x["activity_id"] == "stage:hforge-source")),
+            lambda r: r["attempts"].pop(
+                next(i for i,x in enumerate(r["attempts"])
+                     if x["activity_id"] == "stage:hforge-source")),
+            lambda r: r["gaps"].update(issues=[]),
+            lambda r: r["evidence_manifest"]["files"].pop(
+                next(i for i,x in enumerate(r["evidence_manifest"]["files"])
+                     if x["path"] == "hforge.json")),
+        ]
+        for i, change in enumerate(attacks):
+            with self.subTest(attack=i):
+                forged = copy.deepcopy(self.report)
+                change(forged)
+                unsigned = {k:v for k,v in forged.items()
+                            if k != "receipt_digest"}
+                forged["receipt_digest"] = domain_hash(
+                    "CORA:integrated-one-run:2", unsigned)
+                with self.assertRaises((ValueError, KeyError, TypeError)):
+                    verify_integrated(ROOT, forged)
+
+    def test_physical_git_hforge_contract_mutations_are_refused(self):
+        # Real committed source edits in a disposable Git clone, not model masks.
+        path = ".cora/contracts/dod/hforge-transplant-dod.json"
+        mutators = (
+            lambda d: d.update(authority="APPROVED"),
+            lambda d: d["one_run_absorption"].update(authority="APPROVED"),
+            lambda d: d["one_run_absorption"].update(native_default="PASS"),
+            lambda d: d["one_run_absorption"].update(global_product="PASS"),
+            lambda d: d["one_run_absorption"]["phases"].pop(),
+            lambda d: d["one_run_absorption"]["invariants"].pop(),
+        )
+        with tempfile.TemporaryDirectory(prefix="cora-hforge-physical-") as td:
+            clone = Path(td)/"clone"
+            subprocess.run(["git", "clone", "--no-local", "-q", str(ROOT),
+                            str(clone)], check=True)
+            git(clone, "config", "user.name", "CORA HFORGE falsifier")
+            git(clone, "config", "user.email", "hforge@example.invalid")
+            for idx, change in enumerate(mutators):
+                with self.subTest(mutant=idx):
+                    git(clone, "checkout", "-q", self.sha)
+                    filename = clone/path
+                    doc = json.loads(filename.read_text("utf-8"))
+                    change(doc)
+                    filename.write_text(json.dumps(doc, indent=2)+"\\n",
+                                        encoding="utf-8")
+                    git(clone, "add", path)
+                    git(clone, "commit", "-qm", "mutant HFORGE gate "+str(idx))
+                    mutant_sha = git(clone, "rev-parse", "HEAD")
+                    with self.assertRaisesRegex(ValueError, "H-FORGE"):
+                        run_integrated(clone, mutant_sha)
+
+
+
 if __name__=="__main__":
     unittest.main()
