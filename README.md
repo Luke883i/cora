@@ -9,19 +9,21 @@
 
 CORA is a local, offline-first Python 3.11+ framework. It helps developers and AI coding assistants inspect a Git repository and **produce reproducible pre/post-merge review reports**. It connects **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**. Authorized agents edit; CORA evaluates evidence. It is **not a coding agent** or an approver.
 
-**Why it matters:** plausible patches are not proof. Readers need decisions, next tests and visible unresolved risks.
+**Why it matters:** plausible patches are not proof. Readers need decisions, next tests and visible unresolved risks. A CTO gets reviewable boundaries; a beginner gets the next step.
 
 ```text
-Intent → acceptance graph → reversible code slice → adversarial tests
-             ↑                          ↓
-       open obligations ← exact Git SHA + evidence dossier
+GitHub repo + CORA main ZIP/prompt -> ChatGPT Project
+  -> A0 goal -> backward AND acceptance tests
+  -> one webapp slice -> falsifiers -> real Git commit
+  -> One-Run + safe H-FORGE -> exact Git SHA + evidence dossier
+  -> verified temporary ZIP -> next slice / PR / human review
 ```
 
 **Product** = engineering assurance; **software** = the `cora` CLI and verifiers; **repository** = Git source, contracts and CI. None proves target-product readiness.
 
-**Recommended use:** inspect an authorized checkout or review one bounded change. **Audience and conditions:** CTOs, developers, reviewers and coding agents; Python 3.11+, Git and authorized execution tools. **Open source license:** [MIT](LICENSE).
+**Recommended use:** review an authorized Git change. **Audience and conditions:** CTOs, developers, reviewers and coding agents; Python 3.11+, Git and authorized execution tools. **Open source license:** [MIT](LICENSE).
 
-**Current status:** experimental `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **Document status:** CURRENT. **Current scope:** Git source review. **Operational use:** inspect commits. **Evidence:** Git and scoped tests. **Limits:** `BLOCKED_EXTERNAL`. Verify the exact checked-out Git revision rather than relying on an earlier prerelease candidate or a README version string. **Category:** agent-agnostic engineering assurance.
+**Current status:** experimental `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **Document status:** CURRENT. **Current scope:** Git source review. **Operational use:** inspect commits. **Evidence:** Git and scoped tests. **Limits:** `BLOCKED_EXTERNAL`. Verify the exact checked-out Git revision; the README version is not proof. **Category:** agent-agnostic engineering assurance.
 
 ## First five minutes — Quickstart
 
@@ -40,15 +42,13 @@ For a scoped dossier, run [One-Run](#one-run--one-command-one-evidence-dossier).
 
 ## Use CORA in a ChatGPT Project — beginner walkthrough
 
-**Choose this route if you want ChatGPT to help improve your own software.** The beta guide recommends **ChatGPT Plus or Edu**; Projects are available on other plans too, and specific tools depend on plan and workspace. No ChatGPT subscription is needed to run the standalone Python CLI.
+**Start here:** the beta describes **ChatGPT Plus or Edu**; Pro or Edu may suit demanding workflows. Projects are available on other plans, and tool permissions vary.
 
-1. **Create a Project:** in ChatGPT choose **New project**, name it for your work and open its **Project settings**. Copy the [single canonical CORA beta prompt](docs/AGENT_ADOPTION.md#chatgpt-project-beta-adapter) into **Project instructions**.
-2. **Connect GitHub:** in Settings → Apps/Plugins authorize **read access** to [CORA](https://github.com/Luke883i/cora) and your **target repository** (your own or one you may work on). Confirm both repositories are available in this chat. GitHub connector abilities vary: **read-only** access is **not permission to push or merge**, and write actions require verified permissions and explicit authorization.
-3. **Request a bounded change:** for example, “Read my target README and implementation; propose the smallest reversible fix for its broken login, with tests and a PR.” State product outcome and test oracle. CORA-METHOD can guide the discussion **without** executing CORA-ENGINE.
-4. **Authorize execution separately:** use an available **write-capable coding tool**, such as Codex, or an authorized GitHub write action, with explicit permission **on your target** to create blobs, commits and a PR. A separate Python runner is needed for actual CORA-ENGINE receipts and native target tests. If unavailable, report `METHOD_ONLY` / `NOT_RUN`, never invented execution or a fictional PR.
-5. **Keep evidence and continue:** after an actual `process-run`, optionally provide a `--chat-step` file and `--chat-bundle` ZIP. The [handoff guide](docs/GETTING_STARTED.md#in-a-chatgpt-session-the-shortest-reproducible-path) explains how to replay numbered `iterations/000001/handoff.md` records. The temporary ZIP is neither automatic chat capture nor authenticated review.
-
-**Practical result:** proposed changes, commits and evidence dossiers are distinct; humans and host controls approve.
+1. **Create your GitHub repository:** on [GitHub](https://github.com) select **New repository**, name your issue webapp, add a README and record its Git SHA. This is your **target repository**, not CORA.
+2. **Install the Project instructions:** open [Luke883i/cora](https://github.com/Luke883i/cora), choose **Code → Download ZIP** from `main` (source only, no `.git`). Copy the [single canonical CORA beta prompt](docs/AGENT_ADOPTION.md#chatgpt-project-beta-adapter). In ChatGPT choose **New project**, then **Project settings** → **Project instructions**; paste it and attach the source ZIP.
+3. **Connect GitHub; specify success:** grant scoped **read access** to both repositories. GitHub connector abilities vary: **read-only** cannot push; write actions require verified permissions and explicit authorization. State A0: "A reporter creates an issue, a reviewer sees it after reload, an outsider cannot close it."
+4. **Plan backwards and implement:** ask for **backward requirements decomposition** (all necessary AND acceptance tests), a falsifiable roadmap and one reversible slice: POST → SQLite → GET; test bad input and unauthorized closure. A **write-capable coding tool**, such as Codex, requires separate authorization; a **separate Python runner** provides actual test evidence. CORA-METHOD guides you **without** executing CORA-ENGINE. With no runner, report `METHOD_ONLY` / `NOT_RUN`.
+5. **Verify and continue:** commit the slice, execute One-Run and replay on the same SHA. With a runner create `--chat-step` and `--chat-bundle`, verify the temporary ZIP, then attach its latest copy to this Project chat. Read `iterations/000001/handoff.md` and open DoD; the archive is neither automatic chat capture nor authenticated review. [Detailed webapp and ZIP walkthrough](docs/GETTING_STARTED.md#github-and-chatgpt-project-from-zero).
 
 ## What works today
 
@@ -81,7 +81,7 @@ The dossier distinguishes `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTER
 
 **Change range:** `--change-base BASE_SHA` compares an explicit base against HEAD; without it, the default covers one commit. Neither mode authenticates PR metadata or rewrites code.
 
-**Native Gold pilots:** Teddy Node and ICTC HTTP/SQLite have bounded consented tests; LUMEN browser and NILO remote remain unobserved. Local PASS is not an authenticated runner or productivity claim. [Pilot evidence and linkage](docs/GOLD_ASSURANCE.md).
+**Native Gold pilots:** bounded, consented Teddy Node and ICTC HTTP/SQLite tests. LUMEN browser and NILO remote remain unobserved; local PASS cannot attest productivity or runner identity. [Pilot evidence](docs/GOLD_ASSURANCE.md).
 
 **Other Git repos:** `--one-run --portable-profile /path/to/target.json` enables source replay, not transplanted DoD. `--portable-parse-js` parses static ESM without execution. [Cross-repository limits](docs/CONTINUOUS_DEVELOPMENT.md).
 
