@@ -748,10 +748,24 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
                      if p.startswith("src/cora/") and p.endswith(".py")]
             return {p: git(ROOT, "rev-parse", revision + ":" + p)
                     for p in paths}
-        before, after = module_oids(base), module_oids(self.sha)
-        self.assertEqual(set(before), set(after))
+        # Preserve PR69's historical zero-engine-change assertion at the
+        # actual PR69 merge SHA, rather than banning subsequent reviewed work.
+        pr69_merge = "8ed7d6be48d2aac1d9a232b10ebc747da3e0f5a4"
+        before, at_pr69 = module_oids(base), module_oids(pr69_merge)
+        self.assertEqual(set(before), set(at_pr69))
         self.assertGreaterEqual(len(before), 60)
-        self.assertEqual(before, after)
+        self.assertEqual(before, at_pr69)
+        # Later PR72 has exactly two intentional engine changes for the
+        # integrated H-FORGE source stage. Every other module remains
+        # source-identical to the PR69 baseline; neither fact alone proves
+        # universal behavioral equivalence or external acceptance.
+        current = module_oids(self.sha)
+        self.assertEqual(set(before), set(current))
+        changed = {p for p in before if before[p] != current[p]}
+        self.assertEqual(changed, {
+            "src/cora/integrated_run.py",
+            "src/cora/integrated_registry.py",
+        })
         # The assurance verifier does change; do not call the entire repo equal.
         verifier = "tools/verify_engineering_closure.py"
         self.assertNotEqual(git(ROOT, "rev-parse", base + ":" + verifier),

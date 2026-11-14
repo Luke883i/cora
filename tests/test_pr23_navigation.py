@@ -575,6 +575,50 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         self.assertIn("cto-method-overclaim",
                       DOC.verify_method_crosswalk(self.readme, false_promotion, index))
 
+
+    def test_real_project_onboarding_and_temporary_zip_regression_oracles(self):
+        """Finite source-level lexical and ordering contracts, not human UX proof."""
+        adoption = (ROOT / "docs/AGENT_ADOPTION.md").read_text("utf-8")
+        guide = (ROOT / "docs/GETTING_STARTED.md").read_text("utf-8")
+        oracle = DOC.verify_project_zip_lifecycle
+        self.assertEqual(oracle(self.readme, adoption, guide), [])
+        targets = (
+            ("README", "GitHub repo + CORA main ZIP/prompt -> ChatGPT Project",
+             "a screenshot proves project installation"),
+            ("README", "**New repository**", "**Automatically provision production**"),
+            ("README", "**Code → Download ZIP**", "**Deploy CORA ZIP**"),
+            ("README", "**Project instructions**", "**Project release certificate**"),
+            ("README", "backward requirements decomposition", "guess requirements"),
+            ("README", "POST → SQLite → GET", "click around with no readback"),
+            ("README", "same SHA", "whatever SHA"),
+            ("README", "latest copy to this Project chat",
+             "a model silently stores all verified runs"),
+            ("ADOPTION", "There are **two different ZIPs**",
+             "There is one automatically verified ZIP"),
+            ("ADOPTION", "Upload latest verified ZIP to Project chat",
+             "Upload the first ZIP to permanent shared Project files"),
+            ("ADOPTION", "never treat an older attachment as current",
+             "older attachments are always authoritative"),
+            ("GUIDE", "For round 2, **do not start a fresh unrelated ZIP**",
+             "For round 2, start a fresh unrelated ZIP"),
+            ("GUIDE", "same session ID", "different session ID"),
+            ("GUIDE", "automatic Project memory", "complete authenticated memory"),
+        )
+        for path, good, bad in targets:
+            with self.subTest(path=path, corruption=good):
+                source = {"README": self.readme, "ADOPTION": adoption,
+                          "GUIDE": guide}[path]
+                self.assertIn(good, source)
+                changed = mutation(source, good, bad)
+                parts = dict(README=self.readme, ADOPTION=adoption, GUIDE=guide)
+                parts[path] = changed
+                errors = oracle(parts["README"], parts["ADOPTION"], parts["GUIDE"])
+                self.assertTrue(errors, (path, good))
+        # Surface formatting cannot be mistaken for a semantic regression.
+        cosmetic = mutation(self.readme, "**Why it matters:**", "*Why it matters:*")
+        self.assertEqual(oracle(cosmetic, adoption, guide), [])
+        self.assertEqual(oracle(self.readme, adoption + "\n", guide + "\n"), [])
+
     def test_pr42_preseeded_10000_semantic_variants(self):
         """8 benign and 12 adversarial families, 500 each, seed 883.
 
