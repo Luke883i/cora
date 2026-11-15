@@ -513,18 +513,24 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         self.assertEqual(universe["head"], self.sha)
         self.assertEqual(universe["denominator"], report["counts"]["modules"])
         self.assertEqual(universe["accounted_paths"], universe["denominator"])
-        self.assertEqual(universe["identical_blobs"], universe["denominator"])
-        self.assertEqual(universe["changed_blobs"], 0)
+        # The historic PR69 engine parity remains a separate, retained proof.
+        historical = ekc.git_engine_source_universe(
+            ROOT, base, "8ed7d6be48d2aac1d9a232b10ebc747da3e0f5a4")
+        self.assertEqual(historical["source_byte_identity"], "PASS_SCOPED_EXHAUSTIVE")
+        self.assertEqual(historical["content_byte_different_paths"], [])
+        # PR72 intentionally changes two engine modules. Account for their
+        # *actual committed bytes*; do not assert universal equivalence.
+        changed = ["src/cora/integrated_registry.py", "src/cora/integrated_run.py"]
+        self.assertEqual(universe["identical_blobs"], universe["denominator"] - 2)
+        self.assertEqual(universe["changed_blobs"], 2)
         self.assertEqual(universe["added_blobs"], 0)
         self.assertEqual(universe["removed_blobs"], 0)
-        self.assertEqual(universe["source_oid_identity"],
-                         "PASS_SCOPED_EXHAUSTIVE")
-        self.assertEqual(universe["source_byte_identity"],
-                         "PASS_SCOPED_EXHAUSTIVE")
+        self.assertEqual(universe["source_oid_identity"], "REFUTED")
+        self.assertEqual(universe["source_byte_identity"], "REFUTED")
         self.assertEqual(universe["content_readback_paths"], universe["denominator"])
-        self.assertEqual(universe["content_byte_equal_paths"], universe["denominator"])
-        self.assertEqual(universe["content_byte_different_paths"], [])
-        self.assertEqual(universe["exact_content_parity"], "PASS_SCOPED_EXHAUSTIVE")
+        self.assertEqual(universe["content_byte_equal_paths"], universe["denominator"] - 2)
+        self.assertEqual(universe["content_byte_different_paths"], changed)
+        self.assertEqual(universe["exact_content_parity"], "REFUTED_SOURCE_CONTENT_PARITY")
         self.assertEqual(universe["full_runtime_behavior_equivalence"],
                          "NOT_ATTESTED")
         self.assertEqual(report["component_dod"]["global_status"],
@@ -606,9 +612,11 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
             document = json.loads(receipt.read_text("utf-8"))
             self.assertEqual(document["engine_source_universe"]["source_byte_identity"],
-                             "PASS_SCOPED_EXHAUSTIVE")
+                             "REFUTED")
             self.assertEqual(document["engine_source_universe"]["exact_content_parity"],
-                             "PASS_SCOPED_EXHAUSTIVE")
+                             "REFUTED_SOURCE_CONTENT_PARITY")
+            self.assertEqual(document["engine_source_universe"]["content_byte_different_paths"],
+                             ["src/cora/integrated_registry.py", "src/cora/integrated_run.py"])
             replay = subprocess.run(
                 [sys.executable, str(ROOT / "tools/verify_engineering_closure.py"),
                  "--repo", str(ROOT), "--verify-report", str(receipt)],
