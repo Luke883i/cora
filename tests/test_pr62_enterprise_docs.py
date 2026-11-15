@@ -302,8 +302,11 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
              start, dod, implementation),
             (readme, guide + "\n## ChatGPT Project beta adapter\nDuplicate.\n",
              start, dod, implementation),
+            # Multiple valid handoff references are intentional. A negative
+            # witness must remove *all* occurrences of the canonical path;
+            # changing one occurrence leaves another authoritative route.
             (readme, guide, start.replace("iterations/000001/handoff.md",
-                                          "rounds/000001/handoff.md", 1),
+                                          "rounds/000001/handoff.md"),
              dod, implementation),
             (readme, guide, start, dod.replace("R63_ACCEPTED =",
                                                "R63_ACCEPTED_IS_AUTOMATIC ="),

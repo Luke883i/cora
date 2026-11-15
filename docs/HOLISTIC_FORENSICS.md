@@ -58,7 +58,7 @@ For bounded before/after change analysis, `tools/hforge_profile.py` composes
 existing Git evidence and the opt-in finite operational-equivalence verifier.
 It reconciles the fixed 77-case declared universe against the original Git atlases,
 provides tracked-tree measurements and can replay the existing source One-Run.
-It is **not** an additional engine or default CLI command. The source projection lives under `tools/` to preserve byte-for-byte the original `src/cora/` engine module universe; only the explicitly scoped release-verification surface grows. Static omissions,
+It remains **a profile, not a second engine or separate CLI command**. In the comprehensive One-Run, its safe original-Git source/tree stage is now accounted for and verified with the original One-Run; the standalone profile implementation under `tools/` remains available for explicitly authorized deeper examination. The default does not rerun the 77 native cases, exercise product error recovery or qualify external consumers. Static omissions,
 dynamic/external consumers, persisted effects, independent review and governed
 product acceptance remain open unless separately observed. The committed
 `.cora/contracts/profiles/hforge-profile-v1.json` and

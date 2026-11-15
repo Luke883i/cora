@@ -519,6 +519,59 @@ def verify_project_first_readme(readme: str) -> list[str]:
     return errors
 
 
+def verify_project_zip_lifecycle(readme: str, adoption: str,
+                                 getting_started: str) -> list[str]:
+    """Finite, auditable beginner workflow; not a human-comprehension study.
+
+    Distinguish immutable Git evidence, CORA source reference ZIP and the
+    operator-produced per-session temporary ChatGPT handoff archive.
+    """
+    errors = []
+    section = readme.split(
+        "## Use CORA in a ChatGPT Project — beginner walkthrough\n", 1)
+    path = section[1].split("\n## What works today", 1)[0] if len(section) == 2 else ""
+    ordered = ("**New repository**", "**Code → Download ZIP**",
+               "**New project**", "**Project instructions**",
+               "**read access**", "backward requirements decomposition",
+               "POST → SQLite → GET", "same SHA", "--chat-step",
+               "--chat-bundle", "latest copy to this Project chat",
+               "iterations/000001/handoff.md")
+    offsets = [path.find(term) for term in ordered]
+    if not path or any(x < 0 for x in offsets) or offsets != sorted(offsets):
+        errors.append("project-readme-beginner-journey-drift")
+    figure = readme.split("## First five minutes", 1)[0]
+    for term in ("GitHub repo + CORA main ZIP/prompt -> ChatGPT Project",
+                 "backward AND acceptance tests",
+                 "exact Git SHA + evidence dossier", "verified temporary ZIP"):
+        if term not in figure:
+            errors.append("project-readme-diagram-omission:" + term)
+    a = " ".join(adoption.split())
+    for term in ("There are **two different ZIPs**",
+                 "**latest verified temporary ZIP to the current Project chat**",
+                 "Project instructions", "outside the target repository",
+                 "Upload latest verified ZIP to Project chat",
+                 "session/round/SHA", "source-receipt.json",
+                 "never treat an older attachment as current",
+                 "keep local ZIP, verify again and update chat attachment",
+                 "not encrypted, WORM, signed or live memory"):
+        if term not in a:
+            errors.append("project-zip-canonical-prompt-or-guide-omission:" + term)
+    g = " ".join(getting_started.split())
+    for term in ("## Manage the temporary ZIP in ChatGPT Project",
+                 "**source ZIP**", "**temporary", "matching source receipt",
+                 "latest verified copy", "iteration: 1",
+                 "iteration: 2", "same session ID",
+                 "For round 2, **do not start a fresh unrelated ZIP**",
+                 "verify-process --one-run --chat-bundle",
+                 "automatic Project memory"):
+        if term not in g:
+            errors.append("project-zip-getting-started-omission:" + term)
+    if re.search(r"(?i)(?:zip|archive).{0,60}(?:automatically (?:captures|approves|merges)"
+                 r"|authenticates an external reviewer|is a signed certificate)", path):
+        errors.append("project-zip-false-authority")
+    return sorted(set(errors))
+
+
 def verify_compact_document_bridge(guide: str, index: str, architecture: str) -> list[str]:
     """Reversible documentation assertion, not independent product acceptance."""
     errors = []
@@ -748,6 +801,9 @@ def verify(root: Path) -> list[str]:
     errors.extend(verify_readme_semantics(readme, root=root))
     errors.extend(verify_project_adapter_prompt(
         (root / "docs/AGENT_ADOPTION.md").read_text("utf-8")))
+    errors.extend(verify_project_zip_lifecycle(
+        readme, (root / "docs/AGENT_ADOPTION.md").read_text("utf-8"),
+        (root / "docs/GETTING_STARTED.md").read_text("utf-8")))
     errors.extend(verify_compact_document_bridge(
         (root / "docs/CONTINUOUS_DEVELOPMENT.md").read_text("utf-8"),
         (root / "docs/INDEX.md").read_text("utf-8"),
