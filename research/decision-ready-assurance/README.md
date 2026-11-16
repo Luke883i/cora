@@ -6,7 +6,7 @@
 
 ## Reading order
 
-1. `MANUSCRIPT.md`: full paper source; `MANUSCRIPT.docx` is delivered in the separately downloadable archival companion, with two-column layout, not the official IEEE Access template.
+1. `MANUSCRIPT.md`: full paper source; `MANUSCRIPT.docx` is committed in this folder as an actual two-column Word document; the separate archival companion also includes the styled authoring version. Neither is the official IEEE Access template.
 2. `CLAIM_LEDGER.json`: supported, bounded, unsupported and contradicted scientific claims. An unsupported claim does not become evidence by appearing in the paper.
 3. `evidence/RETROSPECTIVE_11_CASES.json`: public PR identities, pins and source limits.
 4. `evidence/FACTS.json`: observations versus unobserved user outcomes and costs.
@@ -20,7 +20,7 @@
 
 ## Archival complement and portability
 
-**This Git repository folder contains a compact, human-readable and directly testable scientific dossier.** The five historical original ZIP bundles (52.6 MB altogether) and final Word paper are delivered separately in the downloadable research ZIP, preserving byte hashes declared in the archive register. The heavy archives are **not committed to GitHub**. Consequently source-only verification and complete archival verification are different results, and no claim of full remote byte archival is made.
+**This Git repository folder contains a compact, human-readable and directly testable scientific dossier.** The five historical original ZIP bundles (52.6 MB altogether) are delivered separately in the downloadable research ZIP, preserving byte hashes declared in the archive register. The heavy archives are **not committed to GitHub**. Consequently source-only verification and complete archival verification are different results, and no claim of full remote byte archival is made.
 
 This avoids putting historical experimental binaries on the runtime-critical CORA tree. The independent archive can be placed under `evidence/archive/` to run full verification. None of this modifies CORA runtime authority.
 
