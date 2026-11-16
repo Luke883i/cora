@@ -1,0 +1,102 @@
+{
+  "schema": "cora-ms10-claims/1",
+  "date": "2026-11-16",
+  "claims": [
+    {
+      "id": "C01",
+      "text": "CORA-ENGINE exposes source/git-oriented and read-only workflow assurance mechanisms",
+      "status": "SUPPORTED_SCOPE",
+      "limit": "Not full runtime verification"
+    },
+    {
+      "id": "C02",
+      "text": "11 selected historical PRs in five public repositories",
+      "status": "SUPPORTED_RETROSPECTIVE",
+      "limit": "Purposive sampling; Git PR metadata"
+    },
+    {
+      "id": "C03",
+      "text": "92 applicable evidence obligation slots, 70 unobserved in this dossier",
+      "status": "SUPPORTED_LOCAL_MODEL",
+      "limit": "No inference of 70 actual product failures"
+    },
+    {
+      "id": "C04",
+      "text": "EC-03 and strong checklist tied on selected 16 fixtures",
+      "status": "SUPPORTED_AUTHOR_TEST",
+      "limit": "Cannot imply universal equivalence or superiority"
+    },
+    {
+      "id": "C05",
+      "text": "44 briefing models preserve obligation topics",
+      "status": "SUPPORTED_LOCAL_MODEL",
+      "limit": "Not real operators or observed comprehension"
+    },
+    {
+      "id": "C06",
+      "text": "Selected ICTC grade guard permits unknown required grade",
+      "status": "SUPPORTED_LOCAL_COUNTEREXAMPLE",
+      "limit": "Not a deployed exploit or production test"
+    },
+    {
+      "id": "C07",
+      "text": "iKant PR 249 net added lines",
+      "status": "SUPPORTED_PR_METADATA",
+      "limit": "Root consolidation does not prove software simplification"
+    },
+    {
+      "id": "C08",
+      "text": "Teddy V21 original source helper test bound to a Git blob",
+      "status": "SUPPORTED_LOCAL_SCOPE",
+      "limit": "No visual acceptance and CORA-engine causality"
+    },
+    {
+      "id": "C09",
+      "text": "211 workflow files across five pinned trees",
+      "status": "SUPPORTED_GIT_INVENTORY",
+      "limit": "No count of agent decisions or active CI"
+    },
+    {
+      "id": "C10",
+      "text": "CORA improves human understanding",
+      "status": "NOT_MEASURED",
+      "limit": "Zero human participants"
+    },
+    {
+      "id": "C11",
+      "text": "CORA reduces compute or total assurance costs",
+      "status": "NOT_MEASURED",
+      "limit": "Synthetic points are not billed costs"
+    },
+    {
+      "id": "C12",
+      "text": "CORA exceeds a strong checklist in decision accuracy",
+      "status": "CONTRADICTED_IN_FINITE_FIXTURES",
+      "limit": "16/16 tie"
+    },
+    {
+      "id": "C13",
+      "text": "CORA automatically authorizes release or deletion",
+      "status": "FORBIDDEN",
+      "limit": "Original engine is not an authorizing actor"
+    },
+    {
+      "id": "C14",
+      "text": "The research has been independently peer reviewed",
+      "status": "NOT_DONE",
+      "limit": "Research artifacts author-controlled"
+    },
+    {
+      "id": "C15",
+      "text": "Whole CORA ecosystem product is certified",
+      "status": "UNSUPPORTED",
+      "limit": "No holistic runtime/user/host validation"
+    },
+    {
+      "id": "C16",
+      "text": "Longitudinal obligation conservation across all revisions",
+      "status": "NOT_MEASURED",
+      "limit": "No time-aligned persistent identity proof"
+    }
+  ]
+}

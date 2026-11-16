@@ -1,0 +1,65 @@
+{
+  "schema": "cora-ms10-references/1",
+  "refs": [
+    {
+      "id": "R01",
+      "name": "Jansen and Bosch (2005)",
+      "uri": "doi:10.1109/WICSA.2005.61",
+      "role": "Architectural decisions prior art"
+    },
+    {
+      "id": "R02",
+      "name": "Bainbridge (1983)",
+      "uri": "doi:10.1016/0005-1098(83)90046-8",
+      "role": "Supervision and automation"
+    },
+    {
+      "id": "R03",
+      "name": "Storey (2026)",
+      "uri": "doi:10.1145/3807966",
+      "role": "Cognitive and intent debt"
+    },
+    {
+      "id": "R04",
+      "name": "Konrad et al. (2026)",
+      "uri": "https://arxiv.org/abs/2604.04990",
+      "role": "Agent architecture prior art"
+    },
+    {
+      "id": "R05",
+      "name": "Zhou et al. (2026)",
+      "uri": "doi:10.1145/3785010",
+      "role": "LLM design rationale"
+    },
+    {
+      "id": "R06",
+      "name": "LEDGER (2026)",
+      "uri": "https://arxiv.org/abs/2608.18398",
+      "role": "Claim evidence graph"
+    },
+    {
+      "id": "R07",
+      "name": "Soei (2026)",
+      "uri": "https://arxiv.org/abs/2610.39468",
+      "role": "Observability provenance"
+    },
+    {
+      "id": "R08",
+      "name": "W3C PROV-O (2013)",
+      "uri": "https://www.w3.org/TR/prov-o/",
+      "role": "Provenance standard"
+    },
+    {
+      "id": "R09",
+      "name": "GSN v3 (2021)",
+      "uri": "https://scsc.uk/gsn",
+      "role": "Assurance argument"
+    },
+    {
+      "id": "R10",
+      "name": "Koishybayev et al. (2022)",
+      "uri": "https://www.usenix.org/conference/usenixsecurity22/presentation/koishybayev",
+      "role": "CI security"
+    }
+  ]
+}
