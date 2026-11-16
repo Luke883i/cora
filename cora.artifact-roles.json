@@ -513,7 +513,7 @@
         "POLICY",
         "PRODUCT_CONTRACT"
       ],
-      "rationale": "Twenty-eight-node R1\u2013R4 source/external non-compensatory semantic DoD profile."
+      "rationale": "Twenty-eight-node R1–R4 source/external non-compensatory semantic DoD profile."
     },
     {
       "pattern": "tests/test_pr20_convergence.py",
@@ -546,7 +546,7 @@
         "DOCUMENTATION",
         "PRODUCT_CONTRACT"
       ],
-      "rationale": "Global source and complete R1\u2013R4 AND cut and falsification gates."
+      "rationale": "Global source and complete R1–R4 AND cut and falsification gates."
     },
     {
       "pattern": ".cora/contracts/dod/documentation-dod.json",
@@ -1240,6 +1240,49 @@
         "PRODUCT_CONTRACT"
       ],
       "rationale": "Optional original-Git/PR70 source profile; not a runtime or deletion authorization."
+    },
+    {
+      "pattern": "research/decision-ready-assurance/*.md",
+      "roles": [
+        "DOCUMENTATION"
+      ],
+      "rationale": "Historical scientific manuscript and transparent author-scoped study narration; not a product release authorization."
+    },
+    {
+      "pattern": "research/decision-ready-assurance/*.docx",
+      "roles": [
+        "DOCUMENTATION"
+      ],
+      "rationale": "Human-readable research manuscript, not a test receipt or an independently approved publication."
+    },
+    {
+      "pattern": "research/decision-ready-assurance/*.json",
+      "roles": [
+        "ARTIFACT_INDEX"
+      ],
+      "rationale": "Scoped research claims, PR/source identities and archive inventories; claims are not runtime or independent human proof."
+    },
+    {
+      "pattern": "research/decision-ready-assurance/verify_release.py",
+      "roles": [
+        "CONTRACT_VERIFIER"
+      ],
+      "rationale": "Read-only verification of the bounded scientific source claim ceilings, not an independent runtime or user trial."
+    },
+    {
+      "pattern": "research/decision-ready-assurance/tests/test_tamper.py",
+      "roles": [
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Physical modifications of copied scientific records with negative claim-oracle tests; no production evaluation."
+    },
+    {
+      "pattern": "research/decision-ready-assurance/tools/build_word.py",
+      "roles": [
+        "RELEASE_TOOL"
+      ],
+      "rationale": "Optional manuscript generator with no impact on CORA runtime, CI gates, approval, or source authority."
     }
   ]
 }
