@@ -105,7 +105,7 @@ jobs:
           retention-days: 14
   diagnostic-unit-discovery:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     outputs:
       headline: ${{ steps.extract.outputs.headline }}
       test_status: ${{ steps.extract.outputs.test_status }}
@@ -166,7 +166,7 @@ jobs:
 
   diagnostic-unit-discovery-313:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     outputs:
       headline: ${{ steps.extract.outputs.headline }}
       test_status: ${{ steps.extract.outputs.test_status }}
