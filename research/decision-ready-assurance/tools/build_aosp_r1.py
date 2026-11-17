@@ -16,7 +16,7 @@ def p(t='',size=18,bold=False,color=NAVY,before=0,after=60,shade=None,keep=False
 def heading(t): return p(t,21,True,NAVY,145,68,keep=True)
 def tc(t,width,head=False,alt=False):
  fill='DCE8F0' if head else ('F7FAFC' if alt else 'FFFFFF')
- return f'<w:tc><w:tcPr><w:tcW w:w="{width}" w:type="dxa"/><w:shd w:val="clear" w:fill="{fill}"/><w:tcMar><w:top w:w="75" w:type="dxa"/><w:left w:w="95" w:type="dxa"/><w:bottom w:w="75" w:type="dxa"/><w:right w:w="95" w:type="dxa"/></w:tcMar></w:tcPr>{p(t,16 if head else 16,head,NAVY if head else '283548',0,0)}</w:tc>'
+ return f'<w:tc><w:tcPr><w:tcW w:w="{width}" w:type="dxa"/><w:shd w:val="clear" w:fill="{fill}"/><w:tcMar><w:top w:w="75" w:type="dxa"/><w:left w:w="95" w:type="dxa"/><w:bottom w:w="75" w:type="dxa"/><w:right w:w="95" w:type="dxa"/></w:tcMar></w:tcPr>{p(t,16 if head else 16,head,NAVY if head else "283548",0,0)}</w:tc>'
 def table(rows,widths,header=False):
  grid=''.join(f'<w:gridCol w:w="{v}"/>' for v in widths)
  body=''.join('<w:tr>'+ ('<w:trPr><w:tblHeader w:val="true"/></w:trPr>' if header and i==0 else '') + ''.join(tc(v,widths[j],head=(header and i==0),alt=i%2==0) for j,v in enumerate(row))+'</w:tr>' for i,row in enumerate(rows))
