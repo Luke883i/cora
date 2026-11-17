@@ -1,0 +1,163 @@
+{
+  "schema": "pr73-r3-visual-evidence/1",
+  "as_of": "2026-11-17",
+  "method": "VENDOR_AND_ROA_AOSP_AGNOSTIC",
+  "original_teddy_user_pixels": "NOT_INCLUDED_IN_PUBLIC_SOURCE_TREE",
+  "original_ictc_15_images": "NOT_INCLUDED_IN_PUBLIC_SOURCE_TREE",
+  "ai_autonomous_full_loop": "NOT_DEMONSTRATED",
+  "public_source_pins": [
+    {
+      "id": "T01",
+      "repository": "Luke883i/teddy",
+      "revision": "baadd6e69a0ccaec83fc6fc8659850d7b863b80e",
+      "path": "docs/v18-visual-hardening.md",
+      "blob": "83ed756c94cc43d576cb713075127bd2c1689da1",
+      "assertion": "User-front/three-quarter screenshot and first visual root-cause hypotheses",
+      "url": "https://github.com/Luke883i/teddy/blob/baadd6e69a0ccaec83fc6fc8659850d7b863b80e/docs/v18-visual-hardening.md"
+    },
+    {
+      "id": "T02",
+      "repository": "Luke883i/teddy",
+      "revision": "baadd6e69a0ccaec83fc6fc8659850d7b863b80e",
+      "path": "docs/v19-underarm-negative-space.md",
+      "blob": "f0502788720c31d828b589a7c167b7eb9e7619a6",
+      "assertion": "Negative visual evidence refutes V18 skin-weight-only explanation",
+      "url": "https://github.com/Luke883i/teddy/blob/baadd6e69a0ccaec83fc6fc8659850d7b863b80e/docs/v19-underarm-negative-space.md"
+    },
+    {
+      "id": "T03",
+      "repository": "Luke883i/teddy",
+      "revision": "baadd6e69a0ccaec83fc6fc8659850d7b863b80e",
+      "path": "docs/v20-shoulder-seam-dod.md",
+      "blob": "07d17ccf2dd25d9308d6e3c2fb7cb2c4a897c059",
+      "assertion": "Further failed screenshot controls; real edge stretch and human acceptance debt",
+      "url": "https://github.com/Luke883i/teddy/blob/baadd6e69a0ccaec83fc6fc8659850d7b863b80e/docs/v20-shoulder-seam-dod.md"
+    },
+    {
+      "id": "T04",
+      "repository": "Luke883i/teddy",
+      "revision": "baadd6e69a0ccaec83fc6fc8659850d7b863b80e",
+      "path": "tools/browser-visual-v18.mjs",
+      "blob": "3ccb0e2426a966e8430b5cabc3fce021a1ed8f88",
+      "assertion": "Real Chrome CDP WebGL2 screenshot capture; runtime state and pixel-change assertion",
+      "url": "https://github.com/Luke883i/teddy/blob/baadd6e69a0ccaec83fc6fc8659850d7b863b80e/tools/browser-visual-v18.mjs"
+    },
+    {
+      "id": "T05",
+      "repository": "Luke883i/teddy",
+      "revision": "baadd6e69a0ccaec83fc6fc8659850d7b863b80e",
+      "path": "tools/browser-motion-intent-v45.mjs",
+      "blob": "1fcf9dfcf96c22dc86fd402d1f02ed1ea1bc0d52",
+      "assertion": "32 actual gesture screenshots saved with SHA-256 and NOT_HUMAN_REVIEWED",
+      "url": "https://github.com/Luke883i/teddy/blob/baadd6e69a0ccaec83fc6fc8659850d7b863b80e/tools/browser-motion-intent-v45.mjs"
+    },
+    {
+      "id": "T06",
+      "repository": "Luke883i/teddy",
+      "revision": "baadd6e69a0ccaec83fc6fc8659850d7b863b80e",
+      "path": "docs/v22-facial-volume-dod.md",
+      "blob": "34de05fd5bf151fa931c384492b4aa61ca5bc34b",
+      "assertion": "Side-profile annotated visual symptom to real 3D facial-geometry checks",
+      "url": "https://github.com/Luke883i/teddy/blob/baadd6e69a0ccaec83fc6fc8659850d7b863b80e/docs/v22-facial-volume-dod.md"
+    },
+    {
+      "id": "I01",
+      "repository": "Luke883i/ictc",
+      "revision": "633ce78e8cbe409f8be6e7779da08832c1a237d7",
+      "path": "tests/contracts/uiux-p3-screenshot-allocation.json",
+      "blob": "57d8272b8892b1495d38f7a68b5d22cdf53abb06",
+      "assertion": "15 screenshot references, 12 semantic groups, 28 owner-attributed findings",
+      "url": "https://github.com/Luke883i/ictc/blob/633ce78e8cbe409f8be6e7779da08832c1a237d7/tests/contracts/uiux-p3-screenshot-allocation.json"
+    },
+    {
+      "id": "I02",
+      "repository": "Luke883i/ictc",
+      "revision": "633ce78e8cbe409f8be6e7779da08832c1a237d7",
+      "path": "docs/SCREENSHOT_INTENT_RUNTIME_SEMANTIC_CONVERGENCE.md",
+      "blob": "c85c86602d6687edeca9542da750ba498fb4f41b",
+      "assertion": "Screenshot-derived header placement → DOM and runtime obligations",
+      "url": "https://github.com/Luke883i/ictc/blob/633ce78e8cbe409f8be6e7779da08832c1a237d7/docs/SCREENSHOT_INTENT_RUNTIME_SEMANTIC_CONVERGENCE.md"
+    },
+    {
+      "id": "I03",
+      "repository": "Luke883i/ictc",
+      "revision": "633ce78e8cbe409f8be6e7779da08832c1a237d7",
+      "path": "public/ui/procedure-frame.js",
+      "blob": "dc859ff2d805fdc909d3d13a583e71114b6b44a9",
+      "assertion": "Exact frame.after(rail) DOM sibling insertion",
+      "url": "https://github.com/Luke883i/ictc/blob/633ce78e8cbe409f8be6e7779da08832c1a237d7/public/ui/procedure-frame.js"
+    },
+    {
+      "id": "I04",
+      "repository": "Luke883i/ictc",
+      "revision": "633ce78e8cbe409f8be6e7779da08832c1a237d7",
+      "path": "public/ui/procedure-editorial-slots.js",
+      "blob": "87a9884a3434b14861425db9a4cb0b649324c9de",
+      "assertion": "Exact validPhysicalOrder parentage/sequence contract",
+      "url": "https://github.com/Luke883i/ictc/blob/633ce78e8cbe409f8be6e7779da08832c1a237d7/public/ui/procedure-editorial-slots.js"
+    },
+    {
+      "id": "N01",
+      "repository": "Luke883i/NILO",
+      "revision": "3513ead1cf82dd104d471e20cfc9b11bf81158fb",
+      "path": "tests/browser-lv-03.py",
+      "blob": "125d3858d633a30a76047ed1f136350ed2c599c3",
+      "assertion": "True Chrome LV03 state, checkpoint and screenshots; no player acceptance",
+      "url": "https://github.com/Luke883i/NILO/blob/3513ead1cf82dd104d471e20cfc9b11bf81158fb/tests/browser-lv-03.py"
+    },
+    {
+      "id": "L01",
+      "repository": "Luke883i/lumen",
+      "revision": "547e46788e72f1556dc2e32db3621d008032cbd0",
+      "path": "browser/tests/interaction.spec.mjs",
+      "blob": "9081257c5709d7f0910e56abf9580d6a74827281",
+      "assertion": "Playwright interaction and network-ambiguous verify-before-repeat",
+      "url": "https://github.com/Luke883i/lumen/blob/547e46788e72f1556dc2e32db3621d008032cbd0/browser/tests/interaction.spec.mjs"
+    },
+    {
+      "id": "C01",
+      "repository": "Luke883i/cora",
+      "revision": "4ed58534022345e58d17207ab472a306d06d2925",
+      "path": "docs/CONTINUOUS_DEVELOPMENT.md",
+      "blob": "7439b5a974fe12d7dd90a097508150e581d23288",
+      "assertion": "Backward AND DoD and exact Git source evidence",
+      "url": "https://github.com/Luke883i/cora/blob/4ed58534022345e58d17207ab472a306d06d2925/docs/CONTINUOUS_DEVELOPMENT.md"
+    },
+    {
+      "id": "C02",
+      "repository": "Luke883i/cora",
+      "revision": "4ed58534022345e58d17207ab472a306d06d2925",
+      "path": "docs/CONVERGENT_ASSURANCE.md",
+      "blob": "63da9fd39b656f53800b8fd59caba3cd5a539ed7",
+      "assertion": "Seeded modeled saturation and independent no-novelty tail limits",
+      "url": "https://github.com/Luke883i/cora/blob/4ed58534022345e58d17207ab472a306d06d2925/docs/CONVERGENT_ASSURANCE.md"
+    },
+    {
+      "id": "C03",
+      "repository": "Luke883i/cora",
+      "revision": "4ed58534022345e58d17207ab472a306d06d2925",
+      "path": "docs/GOLD_ASSURANCE.md",
+      "blob": "2fc55289fb2d164119af62db3046fd0dea96a589",
+      "assertion": "Physical mutations vs modeled fault masks and native oracle differentiation",
+      "url": "https://github.com/Luke883i/cora/blob/4ed58534022345e58d17207ab472a306d06d2925/docs/GOLD_ASSURANCE.md"
+    },
+    {
+      "id": "C04",
+      "repository": "Luke883i/cora",
+      "revision": "6695923c1689bc440fa26969d32eb32356c8df76",
+      "path": "research/decision-ready-assurance/MANUSCRIPT.markdown",
+      "blob": "0e30a9df5d9a5bfac9fd4683c03319c5d7e115fd",
+      "assertion": "MS10 author-controlled null 16/16 comparator and unobserved evidence",
+      "url": "https://github.com/Luke883i/cora/blob/6695923c1689bc440fa26969d32eb32356c8df76/research/decision-ready-assurance/MANUSCRIPT.markdown"
+    },
+    {
+      "id": "P01",
+      "repository": "Luke883i/academics",
+      "revision": "12c1526041815e5dfc5344d7200fd0ff74e61565",
+      "path": "README.md",
+      "blob": "50162476e44f774cd1171df4d11132b6018cd70f",
+      "assertion": "AOSP programme identity, independently scoped public repos",
+      "url": "https://github.com/Luke883i/academics/blob/12c1526041815e5dfc5344d7200fd0ff74e61565/README.md"
+    }
+  ]
+}
