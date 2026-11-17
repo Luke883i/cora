@@ -1288,6 +1288,16 @@
       "pattern": "research/decision-ready-assurance/tools/build_aosp_r1.py",
       "roles": ["RELEASE_TOOL"],
       "rationale": "Deterministic, offline authorial DOCX builder; no software release authority."
+    },
+    {
+      "pattern": "research/decision-ready-assurance/tools/verify_aosp_r1.py",
+      "roles": ["CONTRACT_VERIFIER"],
+      "rationale": "Read-only AOSP scope and DOCX claim verifier, bounded author receipt only."
+    },
+    {
+      "pattern": "research/decision-ready-assurance/tests/test_aosp_r1_mutations.py",
+      "roles": ["FIXTURE", "TEST"],
+      "rationale": "Physical copied-file mutations of R1 author-controlled artifacts; not scientific human study."
     }
   ]
 }
