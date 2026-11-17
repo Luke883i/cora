@@ -41,7 +41,7 @@ jobs:
           report=json.loads((root/'Editorial_Falsification_Report.json').read_text())
           assert report['negative_physical_docx_copies']==60 and report['negative_detected']==60
           assert report['distinct_negative_docx_digests']==60
-          assert report['benign_controls']==10 and report['benign_accepted']==10
+          assert report['benign_metadata_controls']==10 and report['benign_accepted']==10
           assert report['docx_sha256']==hashlib.sha256(doc.read_bytes()).hexdigest()
           assert report['docx_sha256']=='d0c7d4c827a0f03874dea3479e15ebc650f9408c1295110ec97df49b93c2a19f'
           assert report['target_runtime'] if 'target_runtime' in report else report['not_claimed']
