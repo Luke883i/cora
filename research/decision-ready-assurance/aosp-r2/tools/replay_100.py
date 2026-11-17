@@ -33,7 +33,7 @@ def problems(x,oracle):
 def check_docx(source):
  file=R/'ENGLISH_FIELD_GUIDE_R2.docx'
  data=file.read_bytes()
- sha=hashlib.sha1(b'blob '+str(len(data)).encode()+b'\\x00'+data).hexdigest()
+ sha=hashlib.sha1(b'blob '+str(len(data)).encode()+bytes([0])+data).hexdigest()
  err=[]
  if sha!='ffa99d46c315258f3dc7cb8067e039b7c3ce3741':err.append('DOCX_BLOB_SHA_DRIFT')
  with ZipFile(file) as z:
@@ -71,7 +71,7 @@ def main():
  word_errors,sha=check_docx(x)
  r={'schema':'cora-r2-local-replay/1','mutants':100,'detected':sum(z['status']=='KILLED' for z in outcomes),'survivors':[z['id'] for z in outcomes if z['status']!='KILLED'],'benign_controls':10,'benign_accepted':sum(benign),'document_errors':word_errors,'document_git_blob_sha':sha,'scope':'AUTHOR_SCOPED_NOT_PEER_REVIEW','outcomes':outcomes}
  a=argparse.ArgumentParser();a.add_argument('--out');args=a.parse_args()
- if args.out:Path(args.out).write_text(json.dumps(r,indent=2)+'\\n')
+ if args.out:Path(args.out).write_text(json.dumps(r,indent=2)+chr(10))
  print(json.dumps({k:v for k,v in r.items() if k!='outcomes'},indent=2))
  return 0 if r['detected']==100 and r['benign_accepted']==10 and not word_errors else 1
 if __name__=='__main__':sys.exit(main())
