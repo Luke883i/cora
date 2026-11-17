@@ -4,11 +4,11 @@
   "scope": "AUTHOR_CONTROLLED_FINITE_EDITORIAL_AND_EPISTEMIC_JSON_MODEL",
   "total": 100,
   "distinct_families": 20,
-  "mutants_killed": 99,
-  "mutants_survived": 1,
+  "mutants_killed": 100,
+  "mutants_survived": 0,
   "benign_controls": 10,
   "benign_controls_accepted": 10,
-  "execution": "100_DISPOSABLE_JSON_COPIES_IN_JS_HARNESS",
+  "execution": "100_DISPOSABLE_JSON_COPIES_REPLAYED_AFTER_FALSE_NEGATIVE_REPAIR",
   "not": "NO_HUMAN_STUDY_NO_INDEPENDENT_PIXEL_REPLAY_NO_REAL_TARGET_FALSIFICATION",
   "outcomes": [
     {
@@ -694,8 +694,10 @@
     {
       "id": "M086",
       "family": "F18",
-      "status": "SURVIVED",
-      "detected": []
+      "status": "KILLED",
+      "detected": [
+        "F18"
+      ]
     },
     {
       "id": "M087",
@@ -809,5 +811,6 @@
         "F20"
       ]
     }
-  ]
+  ],
+  "repaired_case": "M086_ORACLE_FALSE_NEGATIVE_IN_PREVIOUS_COMMIT"
 }

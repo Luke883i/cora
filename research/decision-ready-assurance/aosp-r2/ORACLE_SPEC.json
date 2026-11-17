@@ -220,5 +220,39 @@
     "source_to_word_claim_spectrum",
     "public_pins_not_runtime",
     "no_model_promotion"
+  ],
+  "semantic_forbidden": [
+    {
+      "family": "F18",
+      "path": [
+        3,
+        0,
+        "rows",
+        2,
+        2
+      ],
+      "text": "Native EDU/MCP equivalence proven",
+      "reason": "Negated requirement must not pass merely because it retains the original anchor."
+    },
+    {
+      "family": "F12",
+      "path": [
+        1,
+        6,
+        "text"
+      ],
+      "text": "one million real captured original screenshots",
+      "reason": "Modeled mutation cannot be promoted into independently captured image evidence."
+    },
+    {
+      "family": "F06",
+      "path": [
+        0,
+        7,
+        "text"
+      ],
+      "text": "the model automatically authorizes",
+      "reason": "Tool outputs do not grant approval."
+    }
   ]
 }
