@@ -1420,7 +1420,7 @@
       "rationale": "Non-compensatory research DoD with explicit external debt; a research contract, not runtime authority."
     },
     {
-      "pattern": "research/decision-ready-assurance/observer-compiler-paper/*.md",
+      "pattern": "research/decision-ready-assurance/observer-compiler-paper/*.markdown",
       "roles": [
         "DOCUMENTATION"
       ],
