@@ -1,0 +1,98 @@
+{
+  "schema": "aosp-r1-brief/1",
+  "date": "2026-11-17",
+  "title": "AOSP | Dal codice plausibile alla decisione giustificabile",
+  "subtitle": "Nove repository pubblici, un metodo di ingegneria verificabile. Guida standalone per chi inizia e per chi decide.",
+  "takeaway": "Un coding agent puo costruire una modifica. CORA-METHOD guida la derivazione e la falsificazione; CORA-ENGINE controlla evidenze Git/source circoscritte. Nessuno dei due approva il rilascio o dimostra da solo che il prodotto funzioni per gli utenti.",
+  "definition": "AOSP = Augmented Ontological-Semantic Platforms: ecosistema di ricerca e software autonomi, non piattaforma unica ne integrazione runtime dimostrata. ROA e la ricerca teorica di riferimento; il metodo operativo non richiede di accettarne la teoria.",
+  "steps": [
+    [
+      "01",
+      "Intento e AS-IS",
+      "Formulare un esito osservabile e leggere il repository alla revisione reale, prima della roadmap."
+    ],
+    [
+      "02",
+      "DoD retrogrado AND",
+      "Derivare condizioni tutte necessarie: persistenza, permessi, test, rollback, owner, prove esterne."
+    ],
+    [
+      "03",
+      "Slice autorizzata",
+      "Un agente abilitato implementa la piu piccola modifica coerente; CORA non scrive il prodotto."
+    ],
+    [
+      "04",
+      "Git e oracoli originali",
+      "Bloccare BASE/HEAD e blob; eseguire test nativi e ricevute. SHA significa identita dei byte, non verita."
+    ],
+    [
+      "05",
+      "Falsificare e qualificare",
+      "Provare controesempi, annotare sopravvissuti, UNKNOWN, NOT_RUN, REFUTED e BLOCKED_EXTERNAL."
+    ],
+    [
+      "06",
+      "Decisione umana",
+      "Mostrare prove e debiti: accettare, ripianificare o bloccare; nuova HEAD = nuove verifiche."
+    ]
+  ],
+  "repo_groups": [
+    [
+      "Teoria/programma",
+      "academics, ROA",
+      "Mappa del programma, storia e osservatori limitati; non validazione esterna."
+    ],
+    [
+      "Assurance",
+      "cora",
+      "CLI Python, contratti, revisioni Git, dossier; non agente o certificatore."
+    ],
+    [
+      "Compliance",
+      "ictc",
+      "Node/SQLite: fonte, requisito, rischio, azione ed evidenza; giudizio giuridico umano."
+    ],
+    [
+      "Interazione LLM",
+      "iKant_EDU, teddy",
+      "Meta-controller EDU e personaggio conversazionale locale; host e modello reale hanno propri gate."
+    ],
+    [
+      "Esperienze applicative",
+      "NILO, lumen",
+      "Platform 2D e biblioteca web; browser, utenti, Koha/SSO restano oracoli specifici."
+    ],
+    [
+      "Archivio storico",
+      "juriscribe",
+      "Esperimento chiuso e non mantenuto: non usare come prodotto operativo."
+    ]
+  ],
+  "examples": [
+    [
+      "ICTC | Non basta un controllo che passa",
+      "Un confronto locale sulle etichette del grado di evidenza puo accettare per errore un grado richiesto sconosciuto. L'oracolo corretto rifiuta l'input non riconosciuto e mantiene i casi validi; il controesempio e locale, non un exploit distribuito.",
+      "Repo ictc; CORA PR73/MS-10, sezione IV R4."
+    ],
+    [
+      "iKant_EDU | Ridurre le cartelle non prova equivalenza",
+      "La PR #249 riporta sette directory, ma +4.219/−1.458 righe (saldo +2.761). Servono elenco dei consumer, test EDU/MCP sulla stessa HEAD, osservazioni host e review indipendente: topologia non equivale a contrazione semantica.",
+      "Repo iKant_EDU; CORA PR73/MS-10, sezione IV R3."
+    ],
+    [
+      "NILO | Dieci milioni di scenari non sono dieci milioni di partite",
+      "Il gioco ha tre livelli candidati; le campagne semantiche sintetiche stressano un modello. Qualita del gameplay, browser e divertimento richiedono test nativi e giocatori veri. I livelli futuri non sono automaticamente giocabili.",
+      "Repo NILO, README e contratti."
+    ],
+    [
+      "Teddy / LUMEN | L'oracolo dipende dal prodotto",
+      "Teddy distingue chat deterministica, inferenza Qwen locale e mock dichiarati; LUMEN distingue prestiti SQLite da Koha/SSO reali. Un test source o simulato non sostituisce provider, istituzione o utente.",
+      "Repo teddy e lumen, README."
+    ]
+  ],
+  "science": "PR73/MS-10: 11 PR scelte intenzionalmente in cinque repository; 92 slot di evidenza applicabili e 70 NON osservati nel dossier (non 70 difetti). EC-03 e checklist forte pari su 16/16 fixture. Quarantaquattro briefing modellati, zero persone studiate. Nessuna superiorita causale, maggiore comprensione, risparmio, peer review o certificazione dimostrati.",
+  "ctogate": "Pilot CTO: scegliere una PR e l'AS-IS esatto; fissare un DoD con oracoli nativi e controesempi; confrontare con una checklist parimenti informata; misurare tempo/costi e decisioni errate; conservare review, authority, rollback e prove runtime esterne. Solo allora decidere se CORA aggiunge valore.",
+  "status": "R1: DOCUMENTO AUTORIALE / SOURCE-SCOPED. Non prova di adozione, accuratezza del prodotto, efficacia cognitiva o qualificazione enterprise.",
+  "sources": "Repository pubblici (main pinned al 17-11-2026): github.com/Luke883i/{academics,ROA,cora,ictc,iKant_EDU,teddy,NILO,lumen,juriscribe}. Dossier: github.com/Luke883i/cora/pull/73; research/decision-ready-assurance/{MANUSCRIPT.markdown,evidence/FACTS.json,CLAIM_LEDGER.json}."
+}
