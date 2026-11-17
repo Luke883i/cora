@@ -1382,6 +1382,20 @@
         "CONTRACT_VERIFIER"
       ],
       "rationale": "Read-only fixed-byte source-register and typed structural falsifier, not foreign test execution or a trust issuer."
+    },
+    {
+      "pattern": "research/decision-ready-assurance/public-field-guide/*.markdown",
+      "roles": [
+        "DOCUMENTATION"
+      ],
+      "rationale": "Stand-alone public engineering field guide and exact original Git links; no document revision narrative, runtime approval or causal guarantee."
+    },
+    {
+      "pattern": "research/decision-ready-assurance/public-field-guide/*.py",
+      "roles": [
+        "CONTRACT_VERIFIER"
+      ],
+      "rationale": "Source-only plain-copy and original Git-link falsification on finite author-defined edits; no foreign product tests or review authority."
     }
   ]
 }
