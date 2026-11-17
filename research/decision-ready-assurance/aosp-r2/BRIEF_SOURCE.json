@@ -1,0 +1,320 @@
+{
+  "schema": "cora-r2-popular-engineering-brief/1",
+  "title": "From a convincing patch to a defensible decision",
+  "subtitle": "A plain-English field guide to backward reasoning, semantic falsification, Git evidence and the point where computers must stop claiming success.",
+  "audience": "Curious readers, engineering leads and CTOs",
+  "language": "en",
+  "page_policy": "FOUR_A4_PAGES_PROGRESSIVE_DISCLOSURE",
+  "pages": [
+    {
+      "page": 1,
+      "kicker": "THE PROBLEM  /  THE METHOD",
+      "title": "A green build is not the same as a good decision",
+      "deck": "AI can produce code, tests and polished dashboards faster than a reviewer can reconstruct why they exist. The question is not whether a change looks plausible. It is: what would have to be true before someone should accept it?",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Imagine a tiny issue-reporting web app. A visitor must file a problem, see it again after reloading the page, and be unable to close another person's report. A screenshot of a working form proves none of those three conditions by itself."
+        },
+        {
+          "type": "h2",
+          "text": "A six-stage journey: read the arrows as obligations, not magic"
+        },
+        {
+          "type": "diagram",
+          "rows": [
+            [
+              "1  NAME THE OUTCOME",
+              "2  REASON BACKWARD",
+              "3  CHANGE ONE SLICE"
+            ],
+            [
+              "Visitor reports an issue",
+              "All necessary acceptance conditions",
+              "An authorized agent edits code"
+            ],
+            [
+              "4  BIND EXACT BYTES",
+              "5  TRY TO REFUTE",
+              "6  HUMAN DECISION"
+            ],
+            [
+              "Git blob / tree / commit",
+              "Independent positive and negative oracles",
+              "Accept, reject or request more proof"
+            ]
+          ],
+          "caption": "Figure 1  Method independent of any AI vendor. The diagram is an authored synthesis of CORA's existing source workflow [E01-E04]."
+        },
+        {
+          "type": "h2",
+          "text": "Derive requirements backward, rather than writing a hopeful to-do list"
+        },
+        {
+          "type": "p",
+          "text": "Start at the desired final behavior, then ask what must hold for it to be true. For the issue app, success needs every one of these leaves: a POST creates a record; SQLite commits it; GET after reload returns it; roles forbid an outsider from closing it; invalid input is rejected; recovery and the human owner are known. This is an AND graph: five green leaves cannot compensate for one missing mandatory leaf."
+        },
+        {
+          "type": "mini",
+          "rows": [
+            [
+              "GOAL",
+              "A visitor can safely file and recover a report"
+            ],
+            [
+              "AND leaves",
+              "POST + durable storage + readback + authorization + negative tests"
+            ],
+            [
+              "Missing leaf",
+              "NOT_RUN / REFUTED / BLOCKED, not a synthetic PASS"
+            ]
+          ]
+        },
+        {
+          "type": "p",
+          "text": "An authorized coding tool may implement one reversible vertical slice, e.g., POST → SQLite → GET. A repository-assurance tool may inspect the resulting commits and receipts. Neither tool can grant a company's release permission. Next revision, re-check the same claims against the new HEAD. [E01-E03]"
+        },
+        {
+          "type": "call",
+          "text": "Key distinction: a plan says what should be observed; a source test says what was checked; a trusted runtime receipt says what happened there; an accountable person decides whether it is enough."
+        }
+      ]
+    },
+    {
+      "page": 2,
+      "kicker": "A REAL TRACE  /  FROM SCREEN TO SYSTEM",
+      "title": "What a screenshot can tell you — and what it cannot",
+      "deck": "A marked-up screen is a useful observation. It is not yet an explanation of the cause. The method turns the visible symptom into testable hypotheses, then descends through the implementation.",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "In a public ICTC audit, an evidence register links 15 annotated screenshot references to 12 issue families and 28 individually owned findings (22 P3A; 6 P3B). Those counts belong to the source register, not to independently re-examined images: the original 15 image bytes were not present in the pinned public main tree checked for this guide. [E06-E07]"
+        },
+        {
+          "type": "h2",
+          "text": "One bounded case: content that looked 'below' a header"
+        },
+        {
+          "type": "p",
+          "text": "The design intent said supporting procedure information belonged below the canonical header. The root-cause analysis found that the content was physically nested inside the header element even where copy and tests called it 'below'. This is a semantic-to-physical mismatch: words describe one relation, the browser DOM encodes another. [E07]"
+        },
+        {
+          "type": "diagram",
+          "rows": [
+            [
+              "OBSERVATION  [E06]",
+              "15 image references and annotations; human-intended placement"
+            ],
+            [
+              "HYPOTHESIS  [E07]",
+              "The support rail may be a header child rather than a sibling"
+            ],
+            [
+              "SOURCE  [E08]",
+              "frame.after(rail) inserts a sibling after .procedure-frame"
+            ],
+            [
+              "STRUCTURE  [E09]",
+              "validPhysicalOrder checks parent, child order and sibling sequence"
+            ],
+            [
+              "MODEL TEST  [E10]",
+              "Finite fault-family simulation challenges the source invariant"
+            ],
+            [
+              "REAL WORLD  [OPEN]",
+              "Browser geometry, interaction, persistence, devices and user judgment"
+            ]
+          ],
+          "caption": "Figure 2  Screen → issue hypothesis → DOM source → automated oracle → external observation. Labels identify pinned public code/records, not independently reproduced screenshots."
+        },
+        {
+          "type": "h2",
+          "text": "Why this must reach the 'metal'"
+        },
+        {
+          "type": "p",
+          "text": "A screenshot can suggest crowded buttons, hidden information or a misleading AI indicator. It cannot prove whether CSS is clipping a component, whether the DOM parent is wrong, whether a click reaches an authenticated HTTP endpoint, whether SQLite persists state, or whether a real mobile reader can complete the task. Each layer needs a different witness: annotated pixels → DOM/geometry → browser action → server/DB readback → real device/user. Escalate until the claim and the evidence refer to the same layer."
+        },
+        {
+          "type": "call",
+          "text": "Counterexample: passing a source-only check cannot certify pixel-perfect layout or practical accessibility. The public ICTC model also runs one million synthetic cases; that is not one million independently captured screenshots. [E06-E10]"
+        }
+      ]
+    },
+    {
+      "page": 3,
+      "kicker": "THE COMPUTATION  /  BLOB · FALSIFY · SATURATE",
+      "title": "Turn a claim into bytes, then try to break it",
+      "deck": "The words sound exotic; the operations are familiar engineering practices: make inputs reproducible, test a prediction against an independent rule, and stop only within a defined search boundary.",
+      "blocks": [
+        {
+          "type": "h2",
+          "text": "1. 'Blob' means materialize an exact version, not prove it is true"
+        },
+        {
+          "type": "p",
+          "text": "Git stores file bytes as content-addressed blobs, directory mappings as trees, and revision history as commits. Pin BASE and HEAD; specify a target path, expected behavior, affected owners and consumer links; write a reversible patch and tests. If a blob changes, evidence tied to the old blob must be reconsidered. The hash identifies bytes — not an authentic reviewer, correct behavior or a trusted machine. [E01-E04]"
+        },
+        {
+          "type": "mini",
+          "rows": [
+            [
+              "Observed goal",
+              "Report survives reload and unauthorized close is refused"
+            ],
+            [
+              "Object trail",
+              "file blob → tree → commit HEAD → named test log"
+            ],
+            [
+              "Human gate",
+              "owner + review + effective host policy, verified separately"
+            ]
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "2. 'Falsify' means make the expected failure observable"
+        },
+        {
+          "type": "p",
+          "text": "Before testing, write an oracle independent of the patch: for example, 'a user without the closure role receives a denial and no database state changes'. Introduce an invalid role, an unknown evidence grade, stale source SHA or deliberately broken DOM parent in a disposable copy. Re-run the specific oracle and preserve the command, environment, expected result and outcome. KILLED = the oracle caught the injected fault; SURVIVED = it did not; INCONCLUSIVE = the run cannot decide. Never label an unexecuted test a pass. [E04]"
+        },
+        {
+          "type": "h2",
+          "text": "3. 'Saturate' means bounded no-new-information, not universal correctness"
+        },
+        {
+          "type": "p",
+          "text": "Group faults by meaning, not merely by count: wrong owner; missing dependency; stale provenance; unauthorized state transition; broken source-to-runtime link; lost rollback. Generate seeded variants, including meaningful combinations. Keep an independent expected-result rule, record newly discovered material classes, then run a fresh tail. A tail with no new class supports only model-bounded saturation; a surviving unsafe case or a new class reopens the design. If new classes keep appearing, remodel the taxonomy instead of declaring victory. [E05]"
+        },
+        {
+          "type": "diagram",
+          "rows": [
+            [
+              "PIN",
+              "MUTATE",
+              "ORACLE",
+              "CLASSIFY",
+              "TAIL"
+            ],
+            [
+              "exact HEAD + seed",
+              "copy-only fault vector",
+              "independent expectation",
+              "killed / survived / unknown",
+              "new class? reopen"
+            ]
+          ],
+          "caption": "Figure 3  Deterministic finite testing: reproducibility and search coverage are not production proof. [E04-E05]"
+        },
+        {
+          "type": "call",
+          "text": "Scale carefully: 100 deliberately injected editorial/data faults in this document's own local campaign are not 100 independent real-world failures. CORA reports seeded 10-million-case modeled streams; ICTC also models one-million-case UI fault families. Neither number means that many physical source edits, browser runs or human tests. [E05,E10]"
+        }
+      ]
+    },
+    {
+      "page": 4,
+      "kicker": "THE DECISION  /  EVIDENCE & ADOPTION",
+      "title": "What the public projects show — and what remains open",
+      "deck": "The method is tool- and theory-agnostic. These public repositories illustrate different proof obligations; belonging to one research programme does not make them a single integrated platform.",
+      "blocks": [
+        {
+          "type": "table",
+          "headers": [
+            "Public repository",
+            "Useful stress test",
+            "What a local PASS does not establish"
+          ],
+          "rows": [
+            [
+              "CORA · academics · ROA",
+              "Assurance engine, programme map, bounded-observer theory [E01,E16,E17]",
+              "Release authority or scientific acceptance"
+            ],
+            [
+              "ICTC",
+              "Compliance knowledge + screenshot/DOM and grade guards [E06-E09,E18]",
+              "Legal applicability or actual full-product deployment"
+            ],
+            [
+              "iKant_EDU",
+              "Two LLM-control surfaces, unknown consumers; PR249 seven-root candidate [E12,E11]",
+              "Native EDU/MCP equivalence or real host admission"
+            ],
+            [
+              "Teddy",
+              "Local chat, model call, HTTP/SQLite receipts [E14]",
+              "That a mock is an actual model inference"
+            ],
+            [
+              "NILO",
+              "Canvas2D platformer, three candidate levels, semantic scenario masks [E13]",
+              "Player delight or complete six-level commercial game"
+            ],
+            [
+              "LUMEN",
+              "Library service: local loans vs Koha and SSO [E15]",
+              "Real institutional integration, HA or user acceptance"
+            ],
+            [
+              "Juriscribe",
+              "Closed historical experiment [E19]",
+              "Supported operational tooling"
+            ]
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "A scientific result worth keeping even when it is null"
+        },
+        {
+          "type": "p",
+          "text": "In PR73/MS-10, 11 purposively selected pull requests from five projects yielded 92 applicable evidence slots; 70 were unobserved in the collected dossier (not 70 proven defects). A typed decision rule and an equally informed strong checklist tied on 16/16 selected fixtures. Forty-four role-formatted briefings were generated, but no human participants were tested. Better decisions, comprehension, causation and total cost savings are not measured. [E11]"
+        },
+        {
+          "type": "h2",
+          "text": "A CTO's falsifiable one-PR pilot"
+        },
+        {
+          "type": "p",
+          "text": "Choose one relevant change. Freeze its real BASE/HEAD and its risk. Give both CORA-guided review and a strong checklist the same evidence. Compare harmful false closures, missing-risk detection, time spent by engineers and reviewers, compute/CI cost, rework and rollback readiness. Require a real target oracle and an independent authorizer before expanding use. If the added assurance costs more without improving decisions at this risk level, reject the adoption hypothesis."
+        },
+        {
+          "type": "h2",
+          "text": "Evidence map — click the pin or inspect the exact revision"
+        },
+        {
+          "type": "sources",
+          "refs": [
+            "E01",
+            "E02",
+            "E04",
+            "E05",
+            "E06",
+            "E07",
+            "E08",
+            "E09",
+            "E10",
+            "E11",
+            "E12",
+            "E13",
+            "E14",
+            "E15",
+            "E16",
+            "E17",
+            "E18",
+            "E19"
+          ]
+        },
+        {
+          "type": "small",
+          "text": "E01-E19 resolve to public, revision-pinned GitHub files. This standalone guide contains the method and the main counterexamples; the machine-readable pin ledger alongside the source records full Git blob SHA values. Screenshot originals, independent reader tests and external approvals are not claimed. Programme terminology: AOSP (Augmented Ontological-Semantic Platforms), ROA (Reticular Observer Architectures); neither is a prerequisite for using the method."
+        }
+      ]
+    }
+  ]
+}
