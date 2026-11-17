@@ -1361,6 +1361,27 @@
         "CONTRACT_VERIFIER"
       ],
       "rationale": "Opt-in 100 selected physically rewritten Word mutants and benign controls, no real target code or human test."
+    },
+    {
+      "pattern": "research/decision-ready-assurance/aosp-r5/*.tsv",
+      "roles": [
+        "ARTIFACT_INDEX"
+      ],
+      "rationale": "Incremental seven-repository historical Git file-OID register, not source or target runtime certification."
+    },
+    {
+      "pattern": "research/decision-ready-assurance/aosp-r5/*.markdown",
+      "roles": [
+        "DOCUMENTATION"
+      ],
+      "rationale": "Author-scoped R5 semantic editorial and science qualification, no independent reviewer or release authority."
+    },
+    {
+      "pattern": "research/decision-ready-assurance/aosp-r5/*.py",
+      "roles": [
+        "CONTRACT_VERIFIER"
+      ],
+      "rationale": "Read-only fixed-byte source-register and typed structural falsifier, not foreign test execution or a trust issuer."
     }
   ]
 }
