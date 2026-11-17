@@ -1,0 +1,90 @@
+{
+  "schema": "aosp-public-2026-11-17/1",
+  "source": "GitHub connected owner repository listing, each public main branch and README blob",
+  "source_date": "2026-11-17",
+  "programme": "AOSP / Augmented Ontological-Semantic Platforms",
+  "relationship": "THEMATIC_PROGRAMME_NOT_SHARED_RUNTIME",
+  "repos": [
+    {
+      "name": "academics",
+      "url": "https://github.com/Luke883i/academics",
+      "visibility": "public",
+      "branch": "main",
+      "head_sha": "12c1526041815e5dfc5344d7200fd0ff74e61565",
+      "readme_blob_sha": "50162476e44f774cd1171df4d11132b6018cd70f",
+      "bounded_role": "programme and author archive"
+    },
+    {
+      "name": "ROA",
+      "url": "https://github.com/Luke883i/ROA",
+      "visibility": "public",
+      "branch": "main",
+      "head_sha": "519a85bb15e8a964ce2f4d2cb6fdba44ab2382e7",
+      "readme_blob_sha": "16f1b626ebb3346cba850bd70b9803d9ee7e897d",
+      "bounded_role": "theory, bounded observation"
+    },
+    {
+      "name": "cora",
+      "url": "https://github.com/Luke883i/cora",
+      "visibility": "public",
+      "branch": "main",
+      "head_sha": "4ed58534022345e58d17207ab472a306d06d2925",
+      "readme_blob_sha": "be1c77e8da95423ed7ee3a9cf126e6f2dc8477e1",
+      "bounded_role": "Git/source assurance method and engine"
+    },
+    {
+      "name": "ictc",
+      "url": "https://github.com/Luke883i/ictc",
+      "visibility": "public",
+      "branch": "main",
+      "head_sha": "633ce78e8cbe409f8be6e7779da08832c1a237d7",
+      "readme_blob_sha": "28c83119b90790084bdb9c428f6e5210da5c4bfe",
+      "bounded_role": "compliance knowledge governance"
+    },
+    {
+      "name": "iKant_EDU",
+      "url": "https://github.com/Luke883i/iKant_EDU",
+      "visibility": "public",
+      "branch": "main",
+      "head_sha": "e270c6e2cc772f960126eecea9f50501339e3656",
+      "readme_blob_sha": "3d290a377a28636560448e1cf33e5497640da9c3",
+      "bounded_role": "experimental LLM meta-controller"
+    },
+    {
+      "name": "teddy",
+      "url": "https://github.com/Luke883i/teddy",
+      "visibility": "public",
+      "branch": "main",
+      "head_sha": "baadd6e69a0ccaec83fc6fc8659850d7b863b80e",
+      "readme_blob_sha": "f541d82bf8b0b922b4586d982f597ad72456bef6",
+      "bounded_role": "local conversational character"
+    },
+    {
+      "name": "NILO",
+      "url": "https://github.com/Luke883i/NILO",
+      "visibility": "public",
+      "branch": "main",
+      "head_sha": "3513ead1cf82dd104d471e20cfc9b11bf81158fb",
+      "readme_blob_sha": "1316465f4ba08b15e06413989a710f04e59c7332",
+      "bounded_role": "candidate 2D platform game"
+    },
+    {
+      "name": "lumen",
+      "url": "https://github.com/Luke883i/lumen",
+      "visibility": "public",
+      "branch": "main",
+      "head_sha": "547e46788e72f1556dc2e32db3621d008032cbd0",
+      "readme_blob_sha": "46903da54aaaaddb704cf1c8eb3cd4ce8e177058",
+      "bounded_role": "standalone library webapp pilot"
+    },
+    {
+      "name": "juriscribe",
+      "url": "https://github.com/Luke883i/juriscribe",
+      "visibility": "public",
+      "branch": "main",
+      "head_sha": "e7546d8752229b016967b0e1d7f7c4760af747fc",
+      "readme_blob_sha": "2823ae9b485589ee1dfb7d4fe647d06157010559",
+      "bounded_role": "closed unmaintained historical tool"
+    }
+  ]
+}

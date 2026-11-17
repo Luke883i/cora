@@ -1,0 +1,258 @@
+{
+  "schema": "cora-r2-typed-oracle/1",
+  "head_reference": "a6519d08da7a0b35e76056a2388bfde1e0d154ee",
+  "surface_blob": "ccdea386d30aafd48f07f6306715297064cde665",
+  "expected_source_schema": "cora-r2-popular-engineering-brief/1",
+  "expected_pages": 4,
+  "criteria": [
+    {
+      "id": "F01",
+      "family": "clear_problem",
+      "path": [
+        0,
+        "title"
+      ],
+      "required": "A green build is not the same as a good decision"
+    },
+    {
+      "id": "F02",
+      "family": "nontrivial_question",
+      "path": [
+        0,
+        "deck"
+      ],
+      "required": "what would have to be true before someone should accept it?"
+    },
+    {
+      "id": "F03",
+      "family": "user_safety_intent",
+      "path": [
+        0,
+        0,
+        "text"
+      ],
+      "required": "unable to close another person's report"
+    },
+    {
+      "id": "F04",
+      "family": "backward_direction",
+      "path": [
+        0,
+        2,
+        "rows",
+        0,
+        1
+      ],
+      "required": "2  REASON BACKWARD"
+    },
+    {
+      "id": "F05",
+      "family": "noncompensatory_and",
+      "path": [
+        0,
+        4,
+        "text"
+      ],
+      "required": "five green leaves cannot compensate for one missing mandatory leaf"
+    },
+    {
+      "id": "F06",
+      "family": "decision_authority",
+      "path": [
+        0,
+        7,
+        "text"
+      ],
+      "required": "an accountable person decides"
+    },
+    {
+      "id": "F07",
+      "family": "screenshot_byte_boundary",
+      "path": [
+        1,
+        0,
+        "text"
+      ],
+      "required": "the original 15 image bytes were not present"
+    },
+    {
+      "id": "F08",
+      "family": "layout_root_cause",
+      "path": [
+        1,
+        2,
+        "text"
+      ],
+      "required": "physically nested inside the header element"
+    },
+    {
+      "id": "F09",
+      "family": "source_sibling_placement",
+      "path": [
+        1,
+        3,
+        "rows",
+        2,
+        1
+      ],
+      "required": "frame.after(rail)"
+    },
+    {
+      "id": "F10",
+      "family": "dom_parent_oracle",
+      "path": [
+        1,
+        3,
+        "rows",
+        3,
+        1
+      ],
+      "required": "validPhysicalOrder"
+    },
+    {
+      "id": "F11",
+      "family": "physical_observation_gate",
+      "path": [
+        1,
+        5,
+        "text"
+      ],
+      "required": "real device/user"
+    },
+    {
+      "id": "F12",
+      "family": "simulated_count_boundary",
+      "path": [
+        1,
+        6,
+        "text"
+      ],
+      "required": "one million synthetic cases"
+    },
+    {
+      "id": "F13",
+      "family": "git_not_authority",
+      "path": [
+        2,
+        1,
+        "text"
+      ],
+      "required": "not an authentic reviewer"
+    },
+    {
+      "id": "F14",
+      "family": "mutation_outcome_truth",
+      "path": [
+        2,
+        4,
+        "text"
+      ],
+      "required": "SURVIVED"
+    },
+    {
+      "id": "F15",
+      "family": "late_novelty_resets",
+      "path": [
+        2,
+        6,
+        "text"
+      ],
+      "required": "a new class reopens the design"
+    },
+    {
+      "id": "F16",
+      "family": "diagram_reopen_gate",
+      "path": [
+        2,
+        7,
+        "rows",
+        1,
+        4
+      ],
+      "required": "new class? reopen"
+    },
+    {
+      "id": "F17",
+      "family": "physical_vs_model_campaign",
+      "path": [
+        2,
+        8,
+        "text"
+      ],
+      "required": "100 deliberately injected editorial/data faults"
+    },
+    {
+      "id": "F18",
+      "family": "external_ikant_equivalence",
+      "path": [
+        3,
+        0,
+        "rows",
+        2,
+        2
+      ],
+      "required": "Native EDU/MCP equivalence"
+    },
+    {
+      "id": "F19",
+      "family": "null_strong_comparator",
+      "path": [
+        3,
+        2,
+        "text"
+      ],
+      "required": "tied on 16/16 selected fixtures"
+    },
+    {
+      "id": "F20",
+      "family": "cto_equal_information",
+      "path": [
+        3,
+        4,
+        "text"
+      ],
+      "required": "strong checklist the same evidence"
+    }
+  ],
+  "cross_gates": [
+    "source_page_count",
+    "four_audience_arcs",
+    "source_to_word_claim_spectrum",
+    "public_pins_not_runtime",
+    "no_model_promotion"
+  ],
+  "semantic_forbidden": [
+    {
+      "family": "F18",
+      "path": [
+        3,
+        0,
+        "rows",
+        2,
+        2
+      ],
+      "text": "Native EDU/MCP equivalence proven",
+      "reason": "Negated requirement must not pass merely because it retains the original anchor."
+    },
+    {
+      "family": "F12",
+      "path": [
+        1,
+        6,
+        "text"
+      ],
+      "text": "one million real captured original screenshots",
+      "reason": "Modeled mutation cannot be promoted into independently captured image evidence."
+    },
+    {
+      "family": "F06",
+      "path": [
+        0,
+        7,
+        "text"
+      ],
+      "text": "the model automatically authorizes",
+      "reason": "Tool outputs do not grant approval."
+    }
+  ]
+}

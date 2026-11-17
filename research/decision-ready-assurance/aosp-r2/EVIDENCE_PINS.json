@@ -1,0 +1,202 @@
+{
+  "schema": "cora-r2-pinned-evidence/1",
+  "as_of": "2026-11-17",
+  "evidence_boundary": "PUBLIC_SOURCE_AND_AUTHOR_RESEARCH_ONLY_NOT_PHYSICAL_SCREENSHOT_BYTES_OR_EXTERNAL_REVIEW",
+  "notes": [
+    "The 15 annotated ICTC screenshots are referenced by an author-maintained public allocation register, but the original 15 image byte objects were not observed in the pinned public ICTC main tree. Therefore the case supports a traceable screenshot-to-finding model, not independently replayed pixel extraction.",
+    "Git blob identities attest exact source bytes, not correctness or authority; CI, web UI, local SQLite, actual devices and humans require their own witness.",
+    "All public repository names are selected from Luke883i's publicly visible repositories as of the scope census; private repositories are excluded."
+  ],
+  "refs": [
+    {
+      "id": "E01",
+      "title": "CORA plain-language workflow and limits",
+      "repo": "Luke883i/cora",
+      "revision": "4ed58534022345e58d17207ab472a306d06d2925",
+      "path": "README.md",
+      "blob_sha": "be1c77e8da95423ed7ee3a9cf126e6f2dc8477e1",
+      "kind": "DOCUMENTED_SOURCE",
+      "url": "https://github.com/Luke883i/cora/blob/4ed58534022345e58d17207ab472a306d06d2925/README.md"
+    },
+    {
+      "id": "E02",
+      "title": "Backward non-compensatory AND reticulum",
+      "repo": "Luke883i/cora",
+      "revision": "4ed58534022345e58d17207ab472a306d06d2925",
+      "path": "src/cora/reticulum.py",
+      "blob_sha": "3805baa50798d1ac723a59c09f751b319bd6ac09",
+      "kind": "IMPLEMENTATION_SOURCE",
+      "url": "https://github.com/Luke883i/cora/blob/4ed58534022345e58d17207ab472a306d06d2925/src/cora/reticulum.py"
+    },
+    {
+      "id": "E03",
+      "title": "Backward engineering example and evidence levels",
+      "repo": "Luke883i/cora",
+      "revision": "4ed58534022345e58d17207ab472a306d06d2925",
+      "path": "docs/CONTINUOUS_DEVELOPMENT.md",
+      "blob_sha": "7439b5a974fe12d7dd90a097508150e581d23288",
+      "kind": "DOCUMENTED_METHOD",
+      "url": "https://github.com/Luke883i/cora/blob/4ed58534022345e58d17207ab472a306d06d2925/docs/CONTINUOUS_DEVELOPMENT.md"
+    },
+    {
+      "id": "E04",
+      "title": "Physical Git mutation vs synthetic case masks",
+      "repo": "Luke883i/cora",
+      "revision": "4ed58534022345e58d17207ab472a306d06d2925",
+      "path": "docs/GOLD_ASSURANCE.md",
+      "blob_sha": "2fc55289fb2d164119af62db3046fd0dea96a589",
+      "kind": "DOCUMENTED_METHOD",
+      "url": "https://github.com/Luke883i/cora/blob/4ed58534022345e58d17207ab472a306d06d2925/docs/GOLD_ASSURANCE.md"
+    },
+    {
+      "id": "E05",
+      "title": "No-novelty tail and finite seed boundary",
+      "repo": "Luke883i/cora",
+      "revision": "4ed58534022345e58d17207ab472a306d06d2925",
+      "path": "docs/CONVERGENT_ASSURANCE.md",
+      "blob_sha": "63da9fd39b656f53800b8fd59caba3cd5a539ed7",
+      "kind": "DOCUMENTED_METHOD",
+      "url": "https://github.com/Luke883i/cora/blob/4ed58534022345e58d17207ab472a306d06d2925/docs/CONVERGENT_ASSURANCE.md"
+    },
+    {
+      "id": "E06",
+      "title": "Fifteen screenshot indexes, 12 families, 28 owner-attributed findings",
+      "repo": "Luke883i/ictc",
+      "revision": "633ce78e8cbe409f8be6e7779da08832c1a237d7",
+      "path": "tests/contracts/uiux-p3-screenshot-allocation.json",
+      "blob_sha": "57d8272b8892b1495d38f7a68b5d22cdf53abb06",
+      "kind": "REGISTER_NOT_ORIGINAL_SCREENSHOT_PIXELS",
+      "url": "https://github.com/Luke883i/ictc/blob/633ce78e8cbe409f8be6e7779da08832c1a237d7/tests/contracts/uiux-p3-screenshot-allocation.json"
+    },
+    {
+      "id": "E07",
+      "title": "Screenshot-intent-to-runtime requirements and limits",
+      "repo": "Luke883i/ictc",
+      "revision": "633ce78e8cbe409f8be6e7779da08832c1a237d7",
+      "path": "docs/SCREENSHOT_INTENT_RUNTIME_SEMANTIC_CONVERGENCE.md",
+      "blob_sha": "c85c86602d6687edeca9542da750ba498fb4f41b",
+      "kind": "DOCUMENTED_METHOD",
+      "url": "https://github.com/Luke883i/ictc/blob/633ce78e8cbe409f8be6e7779da08832c1a237d7/docs/SCREENSHOT_INTENT_RUNTIME_SEMANTIC_CONVERGENCE.md"
+    },
+    {
+      "id": "E08",
+      "title": "DOM physical support-rail sibling insertion",
+      "repo": "Luke883i/ictc",
+      "revision": "633ce78e8cbe409f8be6e7779da08832c1a237d7",
+      "path": "public/ui/procedure-frame.js",
+      "blob_sha": "dc859ff2d805fdc909d3d13a583e71114b6b44a9",
+      "kind": "IMPLEMENTATION_SOURCE",
+      "url": "https://github.com/Luke883i/ictc/blob/633ce78e8cbe409f8be6e7779da08832c1a237d7/public/ui/procedure-frame.js"
+    },
+    {
+      "id": "E09",
+      "title": "Browser DOM parentage/order source check",
+      "repo": "Luke883i/ictc",
+      "revision": "633ce78e8cbe409f8be6e7779da08832c1a237d7",
+      "path": "public/ui/procedure-editorial-slots.js",
+      "blob_sha": "87a9884a3434b14861425db9a4cb0b649324c9de",
+      "kind": "IMPLEMENTATION_SOURCE",
+      "url": "https://github.com/Luke883i/ictc/blob/633ce78e8cbe409f8be6e7779da08832c1a237d7/public/ui/procedure-editorial-slots.js"
+    },
+    {
+      "id": "E10",
+      "title": "Finite modeled 1M screenshot-convergence faults",
+      "repo": "Luke883i/ictc",
+      "revision": "633ce78e8cbe409f8be6e7779da08832c1a237d7",
+      "path": "tests/verification/screenshot-intent-runtime-convergence-saturation-1m.mjs",
+      "blob_sha": "93cdf39f35b129cb6f78409121074af8e48a34ec",
+      "kind": "MODEL_TEST_SOURCE_NOT_MILLION_SCREENSHOTS",
+      "url": "https://github.com/Luke883i/ictc/blob/633ce78e8cbe409f8be6e7779da08832c1a237d7/tests/verification/screenshot-intent-runtime-convergence-saturation-1m.mjs"
+    },
+    {
+      "id": "E11",
+      "title": "Strong comparator null and five-repository retrospective",
+      "repo": "Luke883i/cora",
+      "revision": "6695923c1689bc440fa26969d32eb32356c8df76",
+      "path": "research/decision-ready-assurance/MANUSCRIPT.markdown",
+      "blob_sha": "0e30a9df5d9a5bfac9fd4683c03319c5d7e115fd",
+      "kind": "AUTHOR_RESEARCH",
+      "url": "https://github.com/Luke883i/cora/blob/6695923c1689bc440fa26969d32eb32356c8df76/research/decision-ready-assurance/MANUSCRIPT.markdown"
+    },
+    {
+      "id": "E12",
+      "title": "iKant EDU meta-controller and external gates",
+      "repo": "Luke883i/iKant_EDU",
+      "revision": "e270c6e2cc772f960126eecea9f50501339e3656",
+      "path": "README.md",
+      "blob_sha": "3d290a377a28636560448e1cf33e5497640da9c3",
+      "kind": "DOCUMENTED_SOURCE",
+      "url": "https://github.com/Luke883i/iKant_EDU/blob/e270c6e2cc772f960126eecea9f50501339e3656/README.md"
+    },
+    {
+      "id": "E13",
+      "title": "NILO gameplay candidate and 10M scenario boundary",
+      "repo": "Luke883i/NILO",
+      "revision": "3513ead1cf82dd104d471e20cfc9b11bf81158fb",
+      "path": "README.md",
+      "blob_sha": "1316465f4ba08b15e06413989a710f04e59c7332",
+      "kind": "DOCUMENTED_SOURCE",
+      "url": "https://github.com/Luke883i/NILO/blob/3513ead1cf82dd104d471e20cfc9b11bf81158fb/README.md"
+    },
+    {
+      "id": "E14",
+      "title": "Teddy local text/model/HTTP SQLite distinctions",
+      "repo": "Luke883i/teddy",
+      "revision": "baadd6e69a0ccaec83fc6fc8659850d7b863b80e",
+      "path": "README.md",
+      "blob_sha": "f541d82bf8b0b922b4586d982f597ad72456bef6",
+      "kind": "DOCUMENTED_SOURCE",
+      "url": "https://github.com/Luke883i/teddy/blob/baadd6e69a0ccaec83fc6fc8659850d7b863b80e/README.md"
+    },
+    {
+      "id": "E15",
+      "title": "LUMEN local loan vs external Koha/SSO",
+      "repo": "Luke883i/lumen",
+      "revision": "547e46788e72f1556dc2e32db3621d008032cbd0",
+      "path": "README.md",
+      "blob_sha": "46903da54aaaaddb704cf1c8eb3cd4ce8e177058",
+      "kind": "DOCUMENTED_SOURCE",
+      "url": "https://github.com/Luke883i/lumen/blob/547e46788e72f1556dc2e32db3621d008032cbd0/README.md"
+    },
+    {
+      "id": "E16",
+      "title": "AOSP programme map, not runtime equivalence",
+      "repo": "Luke883i/academics",
+      "revision": "12c1526041815e5dfc5344d7200fd0ff74e61565",
+      "path": "README.md",
+      "blob_sha": "50162476e44f774cd1171df4d11132b6018cd70f",
+      "kind": "AUTHOR_PROGRAMME",
+      "url": "https://github.com/Luke883i/academics/blob/12c1526041815e5dfc5344d7200fd0ff74e61565/README.md"
+    },
+    {
+      "id": "E17",
+      "title": "ROA theoretical programme and non-proof boundary",
+      "repo": "Luke883i/ROA",
+      "revision": "519a85bb15e8a964ce2f4d2cb6fdba44ab2382e7",
+      "path": "README.md",
+      "blob_sha": "16f1b626ebb3346cba850bd70b9803d9ee7e897d",
+      "kind": "THEORY_NOT_RUNTIME_PROOF",
+      "url": "https://github.com/Luke883i/ROA/blob/519a85bb15e8a964ce2f4d2cb6fdba44ab2382e7/README.md"
+    },
+    {
+      "id": "E18",
+      "title": "ICTC compliance knowledge and decisions",
+      "repo": "Luke883i/ictc",
+      "revision": "633ce78e8cbe409f8be6e7779da08832c1a237d7",
+      "path": "README.md",
+      "blob_sha": "28c83119b90790084bdb9c428f6e5210da5c4bfe",
+      "kind": "DOCUMENTED_SOURCE",
+      "url": "https://github.com/Luke883i/ictc/blob/633ce78e8cbe409f8be6e7779da08832c1a237d7/README.md"
+    },
+    {
+      "id": "E19",
+      "title": "Closed Juriscribe experiment",
+      "repo": "Luke883i/juriscribe",
+      "revision": "e7546d8752229b016967b0e1d7f7c4760af747fc",
+      "path": "README.md",
+      "blob_sha": "2823ae9b485589ee1dfb7d4fe647d06157010559",
+      "kind": "HISTORICAL_NOT_ACTIVE_PRODUCT",
+      "url": "https://github.com/Luke883i/juriscribe/blob/e7546d8752229b016967b0e1d7f7c4760af747fc/README.md"
+    }
+  ]
+}

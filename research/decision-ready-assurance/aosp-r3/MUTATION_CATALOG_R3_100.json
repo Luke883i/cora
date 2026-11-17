@@ -1,0 +1,230 @@
+{
+  "schema": "cora-r3-editorial-physical-100/1",
+  "date": "2026-11-17",
+  "source": "ENGLISH_AGNOSTIC_VISUAL_METHOD_R3.docx",
+  "expected_git_blob_sha": "1c7be2ed38a9f106708468be29bc703e9a5cd9d9",
+  "expected_sha256": "7c3b3997bc3da4a9a003ba8234106aed0c7728d2e1688e44ebfb260bcef9b88c",
+  "falsification_scope": "AUTHOR_DEFINED_EDITORIAL_OOXML_ONLY_NO_TARGET_RUNTIME_OR_INDEPENDENT_READER",
+  "families": [
+    {
+      "id": "F01_OWNERSHIP",
+      "anchor": "human authorizes scope",
+      "mutations": [
+        "the AI decides and signs independently",
+        "a chatbot may merge without authorization",
+        "an agent self-approves every slice",
+        "any generated plan grants permission",
+        "a source test confers corporate authority"
+      ]
+    },
+    {
+      "id": "F02_REAL_EXECUTION",
+      "anchor": "runner launches the real application",
+      "mutations": [
+        "a synthetic screenshot replaces the real application",
+        "the AI marks the application launched without a runner",
+        "a source parser is equivalent to running the product",
+        "a simulated browser counts as observed runtime",
+        "the app need not run to call the user journey complete"
+      ]
+    },
+    {
+      "id": "F03_IMAGE_IDENTITY",
+      "anchor": "actual screenshot with source ID",
+      "mutations": [
+        "fictional image with no source ID",
+        "illustrative image counts as actual screenshot",
+        "unversioned image counts as authentic proof",
+        "AI description alone authenticates the PNG",
+        "a gallery thumbnail substitutes for screenshot bytes"
+      ]
+    },
+    {
+      "id": "F04_ABSTRACT_TO_IRON",
+      "anchor": "CSS → DOM → JS → HTTP → persistence",
+      "mutations": [
+        "style-only inspection certifies persistence",
+        "HTML text certifies the server response",
+        "static code proves all user journeys",
+        "design intent is the database authority",
+        "CSS alone guarantees authorization"
+      ]
+    },
+    {
+      "id": "F05_NO_INDEPENDENT_ORACLE",
+      "anchor": "No independent oracle? INCONCLUSIVE",
+      "mutations": [
+        "No independent oracle? PASS",
+        "No independent oracle? RELEASE",
+        "No independent oracle? CERTIFIED",
+        "No independent oracle? USER_APPROVED",
+        "No independent oracle? FULLY_VERIFIED"
+      ]
+    },
+    {
+      "id": "F06_BACKWARD_AND",
+      "anchor": "non-compensatory AND conditions",
+      "mutations": [
+        "optional OR conditions",
+        "one synthetic green is enough",
+        "waivable conditions by majority vote",
+        "evidence aggregation ignores mandatory leaves",
+        "all requirements may be skipped"
+      ]
+    },
+    {
+      "id": "F07_NOT_EVIDENCE",
+      "anchor": "The roadmap is a falsifiable proposal, not evidence",
+      "mutations": [
+        "The roadmap is full production proof",
+        "The roadmap replaces source testing",
+        "The roadmap guarantees user acceptance",
+        "The roadmap proves authorization",
+        "The roadmap is an infallible oracle"
+      ]
+    },
+    {
+      "id": "F08_TEDDY_SCREEN_SOURCE",
+      "anchor": "real user screenshots were interpreted",
+      "mutations": [
+        "fabricated AI images were independently tested",
+        "1000 blinded reviewers studied screenshots",
+        "the model autonomously captured all original screenshots",
+        "no human screenshot input was involved",
+        "the underlying image bytes were independently observed here"
+      ]
+    },
+    {
+      "id": "F09_V19_NEGATIVE",
+      "anchor": "weights cannot open absent space",
+      "mutations": [
+        "weights automatically open any missing void",
+        "the visual error was fixed by a green weight test",
+        "Watertightness proves empty axilla",
+        "shaders remove actual solid geometry",
+        "all pose defects disappeared after V18"
+      ]
+    },
+    {
+      "id": "F10_DYNAMIC_LIMIT",
+      "anchor": "did not prove deformation under shoulder rotation",
+      "mutations": [
+        "proved every possible animation pose",
+        "proved full continuous collision-free runtime",
+        "automatically proved 60fps on every GPU",
+        "proved every motion is aesthetically correct",
+        "proved all screenshots independent positive controls"
+      ]
+    },
+    {
+      "id": "F11_CDP_PHYSICAL",
+      "anchor": "Chrome’s Page.captureScreenshot",
+      "mutations": [
+        "an AI-drawn mock image",
+        "an unexecuted hypothetical browser call",
+        "a CSS snapshot invented by the model",
+        "a text description of a screenshot",
+        "a fabricated PNG without browser state"
+      ]
+    },
+    {
+      "id": "F12_PIXEL_NOT_AESTHETIC",
+      "anchor": "does not decide whether the character is aesthetically correct",
+      "mutations": [
+        "automatically establishes the character is aesthetically correct",
+        "is an independently sampled user preference",
+        "is a proof of photographic cuteness",
+        "certifies the entire design as production-ready",
+        "is equivalent to human aesthetic approval"
+      ]
+    },
+    {
+      "id": "F13_SCREENSHOT_LIMIT",
+      "anchor": "15 original annotated screenshot image files were not found",
+      "mutations": [
+        "15 original images were fully inspected and authenticated",
+        "15 source pixels were reconstructed from Git text",
+        "the image source is complete and certified",
+        "fifteen browser sessions were independently replicated",
+        "the images were fully available as public Git blobs"
+      ]
+    },
+    {
+      "id": "F14_ICTC_COUNT",
+      "anchor": "12 issue families and 28 owned findings",
+      "mutations": [
+        "12 live product certifications and 28 deployments",
+        "12 independent human studies and 28 reviewers",
+        "12 real browsers and 28 production owners approved",
+        "12 separate photographic experiments and 28 subjects",
+        "12 no-error audits and 28 closed liabilities"
+      ]
+    },
+    {
+      "id": "F15_DOM_SIBLING",
+      "anchor": "frame.after(rail)",
+      "mutations": [
+        "header.append(rail)",
+        "frame.append(rail)",
+        "frame.before(rail)",
+        "header.insertBefore(rail)",
+        "style.display=\"block\""
+      ]
+    },
+    {
+      "id": "F16_NILO_SCOPE",
+      "anchor": "not evidence that a player feels delight",
+      "mutations": [
+        "proof every player is delighted",
+        "evidence of full commercial readiness",
+        "an independent entertainment survey",
+        "proof of every user preference",
+        "six completed levels and nine certified bosses"
+      ]
+    },
+    {
+      "id": "F17_LUMEN_SCOPE",
+      "anchor": "cannot by itself attest a real institutional Koha/SSO integration",
+      "mutations": [
+        "certifies real institutional Koha/SSO integration",
+        "is a production IdP acceptance",
+        "guarantees enterprise deployment",
+        "proves actual authorized third-party data",
+        "constitutes external vendor assurance"
+      ]
+    },
+    {
+      "id": "F18_AOSP_BOUNDARY",
+      "anchor": "not one deployed platform",
+      "mutations": [
+        "a single fully deployed production platform",
+        "all repos share one tested authority",
+        "every application runs in the same environment",
+        "a universal official certification",
+        "one mandatory common codebase"
+      ]
+    },
+    {
+      "id": "F19_MUTATION_DENOM",
+      "anchor": "three distinct denominations",
+      "mutations": [
+        "the same proof of production reality",
+        "universally interchangeable measures",
+        "three equivalent independent real-world experiments",
+        "three automated approvals by the model",
+        "three ways to prove global correctness"
+      ]
+    },
+    {
+      "id": "F20_SCIENCE_NULL",
+      "anchor": "tied on 16/16 selected fixtures",
+      "mutations": [
+        "CORA outperformed on all 16 fixtures",
+        "16 independent reviewers proved superiority",
+        "the checklist was decisively defeated",
+        "CORA showed causal productivity savings",
+        "16 real enterprises certified CORA"
+      ]
+    }
+  ]
+}

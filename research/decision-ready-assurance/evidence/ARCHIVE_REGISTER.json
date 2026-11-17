@@ -1,0 +1,42 @@
+{
+  "schema": "cora-ms10-archive-register/1",
+  "as_of": "2026-11-16",
+  "source_scope": "RESEARCH_NOT_PRODUCT_PROOF",
+  "snapshots": [
+    {
+      "id": "SI01_SCIENTIFIC_FREEZE",
+      "file": "evidence/archive/SI01_SCIENTIFIC_FREEZE.zip",
+      "sha256": "3d2e76cb447842f8af303521bbd9fe233965dcba9961dd227ac20e6292e51f24",
+      "bytes": 9428294,
+      "scope": "FROZEN_AUTHOR_CONTROLLED_RESEARCH_ARCHIVE_NOT_INDEPENDENT_REVIEW"
+    },
+    {
+      "id": "SI02_SI08_HISTORIC",
+      "file": "evidence/archive/SI02_SI08_HISTORIC.zip",
+      "sha256": "006590f4272a9f8e20046151b694289295bb61eb90472af56986cc01542122a5",
+      "bytes": 37498347,
+      "scope": "FROZEN_AUTHOR_CONTROLLED_RESEARCH_ARCHIVE_NOT_INDEPENDENT_REVIEW"
+    },
+    {
+      "id": "MS07_100_MANUSCRIPT_VARIANTS",
+      "file": "evidence/archive/MS07_100_MANUSCRIPT_VARIANTS.zip",
+      "sha256": "a9f01225c22e30118940690a59d0c6c8e39c10c05f5d2f276caab5689ffd4a22",
+      "bytes": 4811905,
+      "scope": "FROZEN_AUTHOR_CONTROLLED_RESEARCH_ARCHIVE_NOT_INDEPENDENT_REVIEW"
+    },
+    {
+      "id": "MS08_RETROGRADE",
+      "file": "evidence/archive/MS08_RETROGRADE.zip",
+      "sha256": "7d6f0a8b9a96eb21833ec423d9c43385947f4cdc73284fc93149f426a320e341",
+      "bytes": 220900,
+      "scope": "FROZEN_AUTHOR_CONTROLLED_RESEARCH_ARCHIVE_NOT_INDEPENDENT_REVIEW"
+    },
+    {
+      "id": "SI11A_INSTRUMENT",
+      "file": "evidence/archive/SI11A_INSTRUMENT.zip",
+      "sha256": "b9e385754b4433202a1e5f68aa0ca6f581da09ecf6e5de68af41a1816bf1c9ae",
+      "bytes": 656736,
+      "scope": "FROZEN_AUTHOR_CONTROLLED_RESEARCH_ARCHIVE_NOT_INDEPENDENT_REVIEW"
+    }
+  ]
+}

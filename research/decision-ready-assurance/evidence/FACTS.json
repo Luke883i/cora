@@ -1,0 +1,48 @@
+{
+  "schema": "cora-ms10-observed-vs-inferred/1",
+  "date": "2026-11-16",
+  "coramain_sha": "4ed58534022345e58d17207ab472a306d06d2925",
+  "observations": {
+    "public_pr_events": 11,
+    "distinct_repositories": 5,
+    "evidence_obligation_slots": 92,
+    "dossier_unobserved_slots": 70,
+    "matched_fixture_decisions": 16,
+    "matched_fixture_equal": 16,
+    "paired_compared_oracle_fields_per_evaluator": 82,
+    "strong_checklist_pr_verdict_ties": 11,
+    "briefing_formats": 4,
+    "briefings": 44,
+    "comprehension_questions_per_briefing": 7,
+    "local_si11a_unit_tests": 37,
+    "si11a_physical_source_mutants_detected": 17,
+    "synthetic_briefing_cost_points_min": 52,
+    "synthetic_briefing_cost_points_max": 59,
+    "synthetic_full_card_points": 76,
+    "real_human_participants": 0,
+    "actual_skill_pretests": 0,
+    "actual_skill_posttests": 0,
+    "billed_compute_savings_observed": false,
+    "github_workflow_file_inventory": {
+      "cora": 14,
+      "ictc": 53,
+      "ikant_EDU": 116,
+      "teddy": 25,
+      "NILO": 3
+    },
+    "ictc_local_unknown_required_grade_counterexample": true,
+    "ikant_pr249_added_lines": 4219,
+    "ikant_pr249_deleted_lines": 1458,
+    "teddy_v21_predates_public_cora": true
+  },
+  "measurement_limits": {
+    "workflow_counts": "GIT_PATH_INVENTORY_ONLY_NO_AUTHOR_CAUSAL_ATTRIBUTION",
+    "unobserved_slots": "MISSING_IN_RETRIEVED_DOSSIER_NOT_PROVEN_FAILED_AT_REPO",
+    "comparator": "AUTHOR_CHOSEN_FINITE_FIXTURES_NO_GENERAL_EQUIVALENCE",
+    "synthetic_points": "AUTHOR_WEIGHTS_NOT_TIME_MONEY_TOKENS_OR_ATTENTION_MEASURE",
+    "human_understanding": "NOT_MEASURED",
+    "authorization": "NOT_AUTHENTICATED_FROM_GIT",
+    "CORA_effectiveness": "NO_CAUSAL_INCREMENTAL_SUPERIORITY_DEMONSTRATED"
+  },
+  "research_closeout": "AUTHOR_CONTROLLED_ARTIFACT_READY_FOR_HUMAN_EDITORIAL_REVIEW_NOT_PUBLISHED"
+}

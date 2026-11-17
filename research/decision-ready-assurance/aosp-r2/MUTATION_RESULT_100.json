@@ -1,0 +1,816 @@
+{
+  "schema": "cora-r2-mutation-report/1",
+  "head_reference": "a6519d08da7a0b35e76056a2388bfde1e0d154ee",
+  "scope": "AUTHOR_CONTROLLED_FINITE_EDITORIAL_AND_EPISTEMIC_JSON_MODEL",
+  "total": 100,
+  "distinct_families": 20,
+  "mutants_killed": 100,
+  "mutants_survived": 0,
+  "benign_controls": 10,
+  "benign_controls_accepted": 10,
+  "execution": "100_DISPOSABLE_JSON_COPIES_REPLAYED_AFTER_FALSE_NEGATIVE_REPAIR",
+  "not": "NO_HUMAN_STUDY_NO_INDEPENDENT_PIXEL_REPLAY_NO_REAL_TARGET_FALSIFICATION",
+  "outcomes": [
+    {
+      "id": "M001",
+      "family": "F01",
+      "status": "KILLED",
+      "detected": [
+        "F01"
+      ]
+    },
+    {
+      "id": "M002",
+      "family": "F01",
+      "status": "KILLED",
+      "detected": [
+        "F01"
+      ]
+    },
+    {
+      "id": "M003",
+      "family": "F01",
+      "status": "KILLED",
+      "detected": [
+        "F01"
+      ]
+    },
+    {
+      "id": "M004",
+      "family": "F01",
+      "status": "KILLED",
+      "detected": [
+        "F01"
+      ]
+    },
+    {
+      "id": "M005",
+      "family": "F01",
+      "status": "KILLED",
+      "detected": [
+        "F01"
+      ]
+    },
+    {
+      "id": "M006",
+      "family": "F02",
+      "status": "KILLED",
+      "detected": [
+        "F02"
+      ]
+    },
+    {
+      "id": "M007",
+      "family": "F02",
+      "status": "KILLED",
+      "detected": [
+        "F02"
+      ]
+    },
+    {
+      "id": "M008",
+      "family": "F02",
+      "status": "KILLED",
+      "detected": [
+        "F02"
+      ]
+    },
+    {
+      "id": "M009",
+      "family": "F02",
+      "status": "KILLED",
+      "detected": [
+        "F02"
+      ]
+    },
+    {
+      "id": "M010",
+      "family": "F02",
+      "status": "KILLED",
+      "detected": [
+        "F02"
+      ]
+    },
+    {
+      "id": "M011",
+      "family": "F03",
+      "status": "KILLED",
+      "detected": [
+        "F03"
+      ]
+    },
+    {
+      "id": "M012",
+      "family": "F03",
+      "status": "KILLED",
+      "detected": [
+        "F03"
+      ]
+    },
+    {
+      "id": "M013",
+      "family": "F03",
+      "status": "KILLED",
+      "detected": [
+        "F03"
+      ]
+    },
+    {
+      "id": "M014",
+      "family": "F03",
+      "status": "KILLED",
+      "detected": [
+        "F03"
+      ]
+    },
+    {
+      "id": "M015",
+      "family": "F03",
+      "status": "KILLED",
+      "detected": [
+        "F03"
+      ]
+    },
+    {
+      "id": "M016",
+      "family": "F04",
+      "status": "KILLED",
+      "detected": [
+        "F04"
+      ]
+    },
+    {
+      "id": "M017",
+      "family": "F04",
+      "status": "KILLED",
+      "detected": [
+        "F04"
+      ]
+    },
+    {
+      "id": "M018",
+      "family": "F04",
+      "status": "KILLED",
+      "detected": [
+        "F04"
+      ]
+    },
+    {
+      "id": "M019",
+      "family": "F04",
+      "status": "KILLED",
+      "detected": [
+        "F04"
+      ]
+    },
+    {
+      "id": "M020",
+      "family": "F04",
+      "status": "KILLED",
+      "detected": [
+        "F04"
+      ]
+    },
+    {
+      "id": "M021",
+      "family": "F05",
+      "status": "KILLED",
+      "detected": [
+        "F05"
+      ]
+    },
+    {
+      "id": "M022",
+      "family": "F05",
+      "status": "KILLED",
+      "detected": [
+        "F05"
+      ]
+    },
+    {
+      "id": "M023",
+      "family": "F05",
+      "status": "KILLED",
+      "detected": [
+        "F05"
+      ]
+    },
+    {
+      "id": "M024",
+      "family": "F05",
+      "status": "KILLED",
+      "detected": [
+        "F05"
+      ]
+    },
+    {
+      "id": "M025",
+      "family": "F05",
+      "status": "KILLED",
+      "detected": [
+        "F05"
+      ]
+    },
+    {
+      "id": "M026",
+      "family": "F06",
+      "status": "KILLED",
+      "detected": [
+        "F06"
+      ]
+    },
+    {
+      "id": "M027",
+      "family": "F06",
+      "status": "KILLED",
+      "detected": [
+        "F06"
+      ]
+    },
+    {
+      "id": "M028",
+      "family": "F06",
+      "status": "KILLED",
+      "detected": [
+        "F06"
+      ]
+    },
+    {
+      "id": "M029",
+      "family": "F06",
+      "status": "KILLED",
+      "detected": [
+        "F06"
+      ]
+    },
+    {
+      "id": "M030",
+      "family": "F06",
+      "status": "KILLED",
+      "detected": [
+        "F06"
+      ]
+    },
+    {
+      "id": "M031",
+      "family": "F07",
+      "status": "KILLED",
+      "detected": [
+        "F07"
+      ]
+    },
+    {
+      "id": "M032",
+      "family": "F07",
+      "status": "KILLED",
+      "detected": [
+        "F07"
+      ]
+    },
+    {
+      "id": "M033",
+      "family": "F07",
+      "status": "KILLED",
+      "detected": [
+        "F07"
+      ]
+    },
+    {
+      "id": "M034",
+      "family": "F07",
+      "status": "KILLED",
+      "detected": [
+        "F07"
+      ]
+    },
+    {
+      "id": "M035",
+      "family": "F07",
+      "status": "KILLED",
+      "detected": [
+        "F07"
+      ]
+    },
+    {
+      "id": "M036",
+      "family": "F08",
+      "status": "KILLED",
+      "detected": [
+        "F08"
+      ]
+    },
+    {
+      "id": "M037",
+      "family": "F08",
+      "status": "KILLED",
+      "detected": [
+        "F08"
+      ]
+    },
+    {
+      "id": "M038",
+      "family": "F08",
+      "status": "KILLED",
+      "detected": [
+        "F08"
+      ]
+    },
+    {
+      "id": "M039",
+      "family": "F08",
+      "status": "KILLED",
+      "detected": [
+        "F08"
+      ]
+    },
+    {
+      "id": "M040",
+      "family": "F08",
+      "status": "KILLED",
+      "detected": [
+        "F08"
+      ]
+    },
+    {
+      "id": "M041",
+      "family": "F09",
+      "status": "KILLED",
+      "detected": [
+        "F09"
+      ]
+    },
+    {
+      "id": "M042",
+      "family": "F09",
+      "status": "KILLED",
+      "detected": [
+        "F09"
+      ]
+    },
+    {
+      "id": "M043",
+      "family": "F09",
+      "status": "KILLED",
+      "detected": [
+        "F09"
+      ]
+    },
+    {
+      "id": "M044",
+      "family": "F09",
+      "status": "KILLED",
+      "detected": [
+        "F09"
+      ]
+    },
+    {
+      "id": "M045",
+      "family": "F09",
+      "status": "KILLED",
+      "detected": [
+        "F09"
+      ]
+    },
+    {
+      "id": "M046",
+      "family": "F10",
+      "status": "KILLED",
+      "detected": [
+        "F10"
+      ]
+    },
+    {
+      "id": "M047",
+      "family": "F10",
+      "status": "KILLED",
+      "detected": [
+        "F10"
+      ]
+    },
+    {
+      "id": "M048",
+      "family": "F10",
+      "status": "KILLED",
+      "detected": [
+        "F10"
+      ]
+    },
+    {
+      "id": "M049",
+      "family": "F10",
+      "status": "KILLED",
+      "detected": [
+        "F10"
+      ]
+    },
+    {
+      "id": "M050",
+      "family": "F10",
+      "status": "KILLED",
+      "detected": [
+        "F10"
+      ]
+    },
+    {
+      "id": "M051",
+      "family": "F11",
+      "status": "KILLED",
+      "detected": [
+        "F11"
+      ]
+    },
+    {
+      "id": "M052",
+      "family": "F11",
+      "status": "KILLED",
+      "detected": [
+        "F11"
+      ]
+    },
+    {
+      "id": "M053",
+      "family": "F11",
+      "status": "KILLED",
+      "detected": [
+        "F11"
+      ]
+    },
+    {
+      "id": "M054",
+      "family": "F11",
+      "status": "KILLED",
+      "detected": [
+        "F11"
+      ]
+    },
+    {
+      "id": "M055",
+      "family": "F11",
+      "status": "KILLED",
+      "detected": [
+        "F11"
+      ]
+    },
+    {
+      "id": "M056",
+      "family": "F12",
+      "status": "KILLED",
+      "detected": [
+        "F12"
+      ]
+    },
+    {
+      "id": "M057",
+      "family": "F12",
+      "status": "KILLED",
+      "detected": [
+        "F12"
+      ]
+    },
+    {
+      "id": "M058",
+      "family": "F12",
+      "status": "KILLED",
+      "detected": [
+        "F12"
+      ]
+    },
+    {
+      "id": "M059",
+      "family": "F12",
+      "status": "KILLED",
+      "detected": [
+        "F12"
+      ]
+    },
+    {
+      "id": "M060",
+      "family": "F12",
+      "status": "KILLED",
+      "detected": [
+        "F12"
+      ]
+    },
+    {
+      "id": "M061",
+      "family": "F13",
+      "status": "KILLED",
+      "detected": [
+        "F13"
+      ]
+    },
+    {
+      "id": "M062",
+      "family": "F13",
+      "status": "KILLED",
+      "detected": [
+        "F13"
+      ]
+    },
+    {
+      "id": "M063",
+      "family": "F13",
+      "status": "KILLED",
+      "detected": [
+        "F13"
+      ]
+    },
+    {
+      "id": "M064",
+      "family": "F13",
+      "status": "KILLED",
+      "detected": [
+        "F13"
+      ]
+    },
+    {
+      "id": "M065",
+      "family": "F13",
+      "status": "KILLED",
+      "detected": [
+        "F13"
+      ]
+    },
+    {
+      "id": "M066",
+      "family": "F14",
+      "status": "KILLED",
+      "detected": [
+        "F14"
+      ]
+    },
+    {
+      "id": "M067",
+      "family": "F14",
+      "status": "KILLED",
+      "detected": [
+        "F14"
+      ]
+    },
+    {
+      "id": "M068",
+      "family": "F14",
+      "status": "KILLED",
+      "detected": [
+        "F14"
+      ]
+    },
+    {
+      "id": "M069",
+      "family": "F14",
+      "status": "KILLED",
+      "detected": [
+        "F14"
+      ]
+    },
+    {
+      "id": "M070",
+      "family": "F14",
+      "status": "KILLED",
+      "detected": [
+        "F14"
+      ]
+    },
+    {
+      "id": "M071",
+      "family": "F15",
+      "status": "KILLED",
+      "detected": [
+        "F15"
+      ]
+    },
+    {
+      "id": "M072",
+      "family": "F15",
+      "status": "KILLED",
+      "detected": [
+        "F15"
+      ]
+    },
+    {
+      "id": "M073",
+      "family": "F15",
+      "status": "KILLED",
+      "detected": [
+        "F15"
+      ]
+    },
+    {
+      "id": "M074",
+      "family": "F15",
+      "status": "KILLED",
+      "detected": [
+        "F15"
+      ]
+    },
+    {
+      "id": "M075",
+      "family": "F15",
+      "status": "KILLED",
+      "detected": [
+        "F15"
+      ]
+    },
+    {
+      "id": "M076",
+      "family": "F16",
+      "status": "KILLED",
+      "detected": [
+        "F16"
+      ]
+    },
+    {
+      "id": "M077",
+      "family": "F16",
+      "status": "KILLED",
+      "detected": [
+        "F16"
+      ]
+    },
+    {
+      "id": "M078",
+      "family": "F16",
+      "status": "KILLED",
+      "detected": [
+        "F16"
+      ]
+    },
+    {
+      "id": "M079",
+      "family": "F16",
+      "status": "KILLED",
+      "detected": [
+        "F16"
+      ]
+    },
+    {
+      "id": "M080",
+      "family": "F16",
+      "status": "KILLED",
+      "detected": [
+        "F16"
+      ]
+    },
+    {
+      "id": "M081",
+      "family": "F17",
+      "status": "KILLED",
+      "detected": [
+        "F17"
+      ]
+    },
+    {
+      "id": "M082",
+      "family": "F17",
+      "status": "KILLED",
+      "detected": [
+        "F17"
+      ]
+    },
+    {
+      "id": "M083",
+      "family": "F17",
+      "status": "KILLED",
+      "detected": [
+        "F17"
+      ]
+    },
+    {
+      "id": "M084",
+      "family": "F17",
+      "status": "KILLED",
+      "detected": [
+        "F17"
+      ]
+    },
+    {
+      "id": "M085",
+      "family": "F17",
+      "status": "KILLED",
+      "detected": [
+        "F17"
+      ]
+    },
+    {
+      "id": "M086",
+      "family": "F18",
+      "status": "KILLED",
+      "detected": [
+        "F18"
+      ]
+    },
+    {
+      "id": "M087",
+      "family": "F18",
+      "status": "KILLED",
+      "detected": [
+        "F18"
+      ]
+    },
+    {
+      "id": "M088",
+      "family": "F18",
+      "status": "KILLED",
+      "detected": [
+        "F18"
+      ]
+    },
+    {
+      "id": "M089",
+      "family": "F18",
+      "status": "KILLED",
+      "detected": [
+        "F18"
+      ]
+    },
+    {
+      "id": "M090",
+      "family": "F18",
+      "status": "KILLED",
+      "detected": [
+        "F18"
+      ]
+    },
+    {
+      "id": "M091",
+      "family": "F19",
+      "status": "KILLED",
+      "detected": [
+        "F19"
+      ]
+    },
+    {
+      "id": "M092",
+      "family": "F19",
+      "status": "KILLED",
+      "detected": [
+        "F19"
+      ]
+    },
+    {
+      "id": "M093",
+      "family": "F19",
+      "status": "KILLED",
+      "detected": [
+        "F19"
+      ]
+    },
+    {
+      "id": "M094",
+      "family": "F19",
+      "status": "KILLED",
+      "detected": [
+        "F19"
+      ]
+    },
+    {
+      "id": "M095",
+      "family": "F19",
+      "status": "KILLED",
+      "detected": [
+        "F19"
+      ]
+    },
+    {
+      "id": "M096",
+      "family": "F20",
+      "status": "KILLED",
+      "detected": [
+        "F20"
+      ]
+    },
+    {
+      "id": "M097",
+      "family": "F20",
+      "status": "KILLED",
+      "detected": [
+        "F20"
+      ]
+    },
+    {
+      "id": "M098",
+      "family": "F20",
+      "status": "KILLED",
+      "detected": [
+        "F20"
+      ]
+    },
+    {
+      "id": "M099",
+      "family": "F20",
+      "status": "KILLED",
+      "detected": [
+        "F20"
+      ]
+    },
+    {
+      "id": "M100",
+      "family": "F20",
+      "status": "KILLED",
+      "detected": [
+        "F20"
+      ]
+    }
+  ],
+  "repaired_case": "M086_ORACLE_FALSE_NEGATIVE_IN_PREVIOUS_COMMIT"
+}

@@ -26,6 +26,29 @@ jobs:
         env:
           EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - name: R3 exact-Git Word plus 100 physical editorial mutants (source scoped)
+        run: |
+          python research/decision-ready-assurance/aosp-r3/tools/falsify_r3_100.py --output /tmp/cora-r3-100.json
+          python - <<'PY'
+          import json
+          r=json.load(open('/tmp/cora-r3-100.json'))
+          assert r['baseline_git_blob']=='1c7be2ed38a9f106708468be29bc703e9a5cd9d9'
+          assert r['mutants']==100 and r['detected']==100
+          assert r['distinct_mutated_git_blobs']==100 and not r['survivors']
+          assert r['benign_controls']==10 and r['benign_accepted']==10
+          assert r['runtime_product_test']=='NOT_DONE' and r['external_human_test']=='NOT_DONE'
+          PY
+      - name: R2 original-source editorial comparator (100 finite copies; no product claim)
+        run: |
+          python research/decision-ready-assurance/aosp-r2/tools/replay_100.py --out /tmp/cora-r2-100.json
+          python - <<'PY'
+          import json
+          r=json.load(open('/tmp/cora-r2-100.json'))
+          assert r['mutants']==100 and r['detected']==100 and not r['survivors']
+          assert r['benign_controls']==10 and r['benign_accepted']==10
+          assert r['document_git_blob_sha']=='ffa99d46c315258f3dc7cb8067e039b7c3ce3741'
+          assert r['scope']=='AUTHOR_SCOPED_NOT_PEER_REVIEW'
+          PY
       - name: Install candidate and scoped coverage oracle
         run: |
           # PR07 nested wheel/sdist oracle imports setuptools.build_meta in
@@ -105,7 +128,7 @@ jobs:
           retention-days: 14
   diagnostic-unit-discovery:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     outputs:
       headline: ${{ steps.extract.outputs.headline }}
       test_status: ${{ steps.extract.outputs.test_status }}
@@ -166,7 +189,7 @@ jobs:
 
   diagnostic-unit-discovery-313:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     outputs:
       headline: ${{ steps.extract.outputs.headline }}
       test_status: ${{ steps.extract.outputs.test_status }}

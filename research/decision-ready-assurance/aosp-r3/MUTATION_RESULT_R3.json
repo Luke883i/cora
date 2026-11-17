@@ -1,0 +1,37 @@
+{
+  "schema": "cora-r3-visual-ctoguide-falsification/1",
+  "date": "2026-11-17",
+  "status": "PASS_AUTHOR_SCOPED_EDITORIAL_ONLY",
+  "document": "research/decision-ready-assurance/aosp-r3/ENGLISH_AGNOSTIC_VISUAL_METHOD_R3.docx",
+  "document_git_blob_sha": "1c7be2ed38a9f106708468be29bc703e9a5cd9d9",
+  "document_sha256": "7c3b3997bc3da4a9a003ba8234106aed0c7728d2e1688e44ebfb260bcef9b88c",
+  "document_bytes": 13500,
+  "word_pages_visually_rendered": 4,
+  "physical_ooXML_mutations": 100,
+  "distinct_mutated_git_blobs": 100,
+  "caught": 100,
+  "survivors": 0,
+  "negative_mutation_families": 20,
+  "benign_controls": 10,
+  "benign_accepted": 10,
+  "mutant_archive_sha256": "5246fb9da1141b9cc497630bb6f81098ea9e64c3d8de666ca037803303e701b5",
+  "mutant_archive_location": "separate user-delivered R3_MUTATIONS_100_PHYSICAL.zip, not committed as 1.47MB binary corpus",
+  "revision_readback": "CORA PR73 branch carries exact committed Word blob",
+  "repro_command": "python research/decision-ready-assurance/aosp-r3/tools/falsify_r3_100.py --output /tmp/r3-mutations.json --archive /tmp/r3-mutants.zip",
+  "method_scope": "Each mutant physically replaces one anchored normative claim inside a disposable DOCX word/document.xml; separately authored oracle checks required anchor plus 5 forbidden false promotions per family; no user data, browser or target code is mutated.",
+  "external": {
+    "original_teddy_user_images": "NOT_AVAILABLE_IN_PINNED_PUBLIC_TREE",
+    "original_ictc_15_images": "NOT_AVAILABLE_IN_PINNED_PUBLIC_TREE",
+    "agent_autonomous_visual_loop": "NOT_DEMONSTRATED",
+    "real_product_reexecution_in_this_r3": "NOT_DONE",
+    "independent_reader_comprehension": "NOT_MEASURED",
+    "runtime_enterprise_assurance": "NOT_MEASURED",
+    "PR73_final_head_all_green": "OPEN_CI"
+  },
+  "scientific_claim_ceiling": {
+    "retrospective": "11 intentionally selected PRs, 92 applicable slots, 70 unobserved in dossier not defects",
+    "comparator": "16/16 strong checklist tie; no superiority",
+    "briefings": "44 authored, 0 human participants"
+  },
+  "note": "Results are locally reported after actual execution on compact Word bytes. The committed portable Python runner is newly added and its own GitHub CI execution is a separate gate. No universal mutation saturation is claimed."
+}
