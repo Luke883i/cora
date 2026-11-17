@@ -31,3 +31,11 @@ git hash-object research/decision-ready-assurance/aosp-r2/ENGLISH_FIELD_GUIDE_R2
 ```
 
 Commit identity, native CI on the final HEAD, rendered page inspection, independent editorial comprehension and external authorization are different evidence gates. The very next addition must preserve their status instead of converting this local mutation result into proof of reader benefit.
+
+## Host execution observed at original R2 CI head (not reusable as final-HEAD approval)
+
+On `cdfe65b57b1e7cbaa915226cdcc5eda486fd98df`, [GitHub Action run 44061090203](https://github.com/Luke883i/cora/actions/runs/44061090203) completed the `editorial-replay` job successfully. The job ran `tools/replay_100.py` over 100 disposable JSON files with independent authored predicates and verified the committed DOCX Git blob; the [aosp-r2-editorial-replay artifact](https://github.com/Luke883i/cora/actions/runs/44061090203) retains the scoped receipt. This is stronger than the first in-memory author test, yet remains finite source/Word integrity evidence, not a human study.
+
+The same original HEAD had a separate **failed** `documentation-contract (3.11)` job at [run 44061090005](https://github.com/Luke883i/cora/actions/runs/44061090005), at its PR62 enterprise-documentation test step; the Python 3.13 job passed the same step. The currently exposed job metadata does not provide a sufficient traceback to assign root cause. Do not assert `ALL_GREEN`, cross-HEAD CI carryover, or independent paper qualification.
+
+**Visual QA scope:** a separately created two-page editorial-layout preview was rendered locally and inspected, with zero accessibility-audit findings after header-row adjustments; it is **not byte-identical to the four-section, 18-linked PR Word blob**. The PR document's exact page count and visual rendering should not be marked independently verified without rendering that exact blob. Three editable Word-native diagrams exist at source/OOXML structural level.

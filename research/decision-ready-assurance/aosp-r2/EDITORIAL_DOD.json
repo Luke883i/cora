@@ -29,7 +29,7 @@
   ],
   "gates": {
     "source_pins": "EXPECTED_BLOBS_AND_REPOSITORIES",
-    "word_diagrams": "TWO_EDITABLE_DIAGRAM_TABLES_WITH_INLINE_EVIDENCE_IDS",
+    "word_diagrams": "THREE_EDITABLE_WORD_NATIVE_DIAGRAM_TABLES_WITH_PINNED_EVIDENCE_IDS",
     "source_to_docx": "REBUILT_CONTENT_AND_EXACT_GIT_BLOB",
     "physical_mutants": 100,
     "expected_detection": 100,
