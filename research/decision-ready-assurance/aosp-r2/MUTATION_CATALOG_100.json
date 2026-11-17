@@ -1,0 +1,1547 @@
+{
+  "schema": "cora-r2-mutations/1",
+  "seed": "r2-fixed-20x5-20261117",
+  "source_blob": "ccdea386d30aafd48f07f6306715297064cde665",
+  "mutants": [
+    {
+      "id": "M001",
+      "family": "F01",
+      "category": "clear_problem",
+      "selector": [
+        0,
+        "title"
+      ],
+      "original_anchor": "A green build is not the same as a good decision",
+      "mutation": "A green build proves release approval",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F01"
+    },
+    {
+      "id": "M002",
+      "family": "F01",
+      "category": "clear_problem",
+      "selector": [
+        0,
+        "title"
+      ],
+      "original_anchor": "A green build is not the same as a good decision",
+      "mutation": "Code generation is always correct",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F01"
+    },
+    {
+      "id": "M003",
+      "family": "F01",
+      "category": "clear_problem",
+      "selector": [
+        0,
+        "title"
+      ],
+      "original_anchor": "A green build is not the same as a good decision",
+      "mutation": "The LLM has certified the change",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F01"
+    },
+    {
+      "id": "M004",
+      "family": "F01",
+      "category": "clear_problem",
+      "selector": [
+        0,
+        "title"
+      ],
+      "original_anchor": "A green build is not the same as a good decision",
+      "mutation": "Every pass is a world proof",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F01"
+    },
+    {
+      "id": "M005",
+      "family": "F01",
+      "category": "clear_problem",
+      "selector": [
+        0,
+        "title"
+      ],
+      "original_anchor": "A green build is not the same as a good decision",
+      "mutation": "Deployment guaranteed",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F01"
+    },
+    {
+      "id": "M006",
+      "family": "F02",
+      "category": "nontrivial_question",
+      "selector": [
+        0,
+        "deck"
+      ],
+      "original_anchor": "what would have to be true before someone should accept it?",
+      "mutation": "all changes can be accepted immediately",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F02"
+    },
+    {
+      "id": "M007",
+      "family": "F02",
+      "category": "nontrivial_question",
+      "selector": [
+        0,
+        "deck"
+      ],
+      "original_anchor": "what would have to be true before someone should accept it?",
+      "mutation": "testing costs nothing",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F02"
+    },
+    {
+      "id": "M008",
+      "family": "F02",
+      "category": "nontrivial_question",
+      "selector": [
+        0,
+        "deck"
+      ],
+      "original_anchor": "what would have to be true before someone should accept it?",
+      "mutation": "the assistant knows all future defects",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F02"
+    },
+    {
+      "id": "M009",
+      "family": "F02",
+      "category": "nontrivial_question",
+      "selector": [
+        0,
+        "deck"
+      ],
+      "original_anchor": "what would have to be true before someone should accept it?",
+      "mutation": "AI outputs substitute for requirements",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F02"
+    },
+    {
+      "id": "M010",
+      "family": "F02",
+      "category": "nontrivial_question",
+      "selector": [
+        0,
+        "deck"
+      ],
+      "original_anchor": "what would have to be true before someone should accept it?",
+      "mutation": "the screenshot proves the whole application",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F02"
+    },
+    {
+      "id": "M011",
+      "family": "F03",
+      "category": "user_safety_intent",
+      "selector": [
+        0,
+        0,
+        "text"
+      ],
+      "original_anchor": "unable to close another person's report",
+      "mutation": "allowed to close any person's report",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F03"
+    },
+    {
+      "id": "M012",
+      "family": "F03",
+      "category": "user_safety_intent",
+      "selector": [
+        0,
+        0,
+        "text"
+      ],
+      "original_anchor": "unable to close another person's report",
+      "mutation": "automatically allowed to delete all data",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F03"
+    },
+    {
+      "id": "M013",
+      "family": "F03",
+      "category": "user_safety_intent",
+      "selector": [
+        0,
+        0,
+        "text"
+      ],
+      "original_anchor": "unable to close another person's report",
+      "mutation": "authorized roles are irrelevant",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F03"
+    },
+    {
+      "id": "M014",
+      "family": "F03",
+      "category": "user_safety_intent",
+      "selector": [
+        0,
+        0,
+        "text"
+      ],
+      "original_anchor": "unable to close another person's report",
+      "mutation": "any user may change server policy",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F03"
+    },
+    {
+      "id": "M015",
+      "family": "F03",
+      "category": "user_safety_intent",
+      "selector": [
+        0,
+        0,
+        "text"
+      ],
+      "original_anchor": "unable to close another person's report",
+      "mutation": "no authentication testing is required",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F03"
+    },
+    {
+      "id": "M016",
+      "family": "F04",
+      "category": "backward_direction",
+      "selector": [
+        0,
+        2,
+        "rows",
+        0,
+        1
+      ],
+      "original_anchor": "2  REASON BACKWARD",
+      "mutation": "2  SKIP REQUIREMENTS",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F04"
+    },
+    {
+      "id": "M017",
+      "family": "F04",
+      "category": "backward_direction",
+      "selector": [
+        0,
+        2,
+        "rows",
+        0,
+        1
+      ],
+      "original_anchor": "2  REASON BACKWARD",
+      "mutation": "2  DESIGN FORWARD WITHOUT CHECKS",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F04"
+    },
+    {
+      "id": "M018",
+      "family": "F04",
+      "category": "backward_direction",
+      "selector": [
+        0,
+        2,
+        "rows",
+        0,
+        1
+      ],
+      "original_anchor": "2  REASON BACKWARD",
+      "mutation": "2  MARK TASK DONE",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F04"
+    },
+    {
+      "id": "M019",
+      "family": "F04",
+      "category": "backward_direction",
+      "selector": [
+        0,
+        2,
+        "rows",
+        0,
+        1
+      ],
+      "original_anchor": "2  REASON BACKWARD",
+      "mutation": "2  APPROVE WITHOUT BASE",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F04"
+    },
+    {
+      "id": "M020",
+      "family": "F04",
+      "category": "backward_direction",
+      "selector": [
+        0,
+        2,
+        "rows",
+        0,
+        1
+      ],
+      "original_anchor": "2  REASON BACKWARD",
+      "mutation": "2  OMIT REQUIRED LEAVES",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F04"
+    },
+    {
+      "id": "M021",
+      "family": "F05",
+      "category": "noncompensatory_and",
+      "selector": [
+        0,
+        4,
+        "text"
+      ],
+      "original_anchor": "five green leaves cannot compensate for one missing mandatory leaf",
+      "mutation": "five green leaves always compensate for one missing mandatory leaf",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F05"
+    },
+    {
+      "id": "M022",
+      "family": "F05",
+      "category": "noncompensatory_and",
+      "selector": [
+        0,
+        4,
+        "text"
+      ],
+      "original_anchor": "five green leaves cannot compensate for one missing mandatory leaf",
+      "mutation": "OR replaces every required AND",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F05"
+    },
+    {
+      "id": "M023",
+      "family": "F05",
+      "category": "noncompensatory_and",
+      "selector": [
+        0,
+        4,
+        "text"
+      ],
+      "original_anchor": "five green leaves cannot compensate for one missing mandatory leaf",
+      "mutation": "source-only passing replaces any deployment check",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F05"
+    },
+    {
+      "id": "M024",
+      "family": "F05",
+      "category": "noncompensatory_and",
+      "selector": [
+        0,
+        4,
+        "text"
+      ],
+      "original_anchor": "five green leaves cannot compensate for one missing mandatory leaf",
+      "mutation": "unknown owner counts as approval",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F05"
+    },
+    {
+      "id": "M025",
+      "family": "F05",
+      "category": "noncompensatory_and",
+      "selector": [
+        0,
+        4,
+        "text"
+      ],
+      "original_anchor": "five green leaves cannot compensate for one missing mandatory leaf",
+      "mutation": "a green dashboard overrules failing authorization",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F05"
+    },
+    {
+      "id": "M026",
+      "family": "F06",
+      "category": "decision_authority",
+      "selector": [
+        0,
+        7,
+        "text"
+      ],
+      "original_anchor": "an accountable person decides",
+      "mutation": "the model automatically authorizes release",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F06"
+    },
+    {
+      "id": "M027",
+      "family": "F06",
+      "category": "decision_authority",
+      "selector": [
+        0,
+        7,
+        "text"
+      ],
+      "original_anchor": "an accountable person decides",
+      "mutation": "a code receipt is a human signature",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F06"
+    },
+    {
+      "id": "M028",
+      "family": "F06",
+      "category": "decision_authority",
+      "selector": [
+        0,
+        7,
+        "text"
+      ],
+      "original_anchor": "an accountable person decides",
+      "mutation": "CI green grants all permissions",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F06"
+    },
+    {
+      "id": "M029",
+      "family": "F06",
+      "category": "decision_authority",
+      "selector": [
+        0,
+        7,
+        "text"
+      ],
+      "original_anchor": "an accountable person decides",
+      "mutation": "an autogenerated summary is approval",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F06"
+    },
+    {
+      "id": "M030",
+      "family": "F06",
+      "category": "decision_authority",
+      "selector": [
+        0,
+        7,
+        "text"
+      ],
+      "original_anchor": "an accountable person decides",
+      "mutation": "unknown authority is acceptable",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F06"
+    },
+    {
+      "id": "M031",
+      "family": "F07",
+      "category": "screenshot_byte_boundary",
+      "selector": [
+        1,
+        0,
+        "text"
+      ],
+      "original_anchor": "the original 15 image bytes were not present",
+      "mutation": "all original 15 image bytes were independently authenticated",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F07"
+    },
+    {
+      "id": "M032",
+      "family": "F07",
+      "category": "screenshot_byte_boundary",
+      "selector": [
+        1,
+        0,
+        "text"
+      ],
+      "original_anchor": "the original 15 image bytes were not present",
+      "mutation": "one million fresh screenshots were physically compared",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F07"
+    },
+    {
+      "id": "M033",
+      "family": "F07",
+      "category": "screenshot_byte_boundary",
+      "selector": [
+        1,
+        0,
+        "text"
+      ],
+      "original_anchor": "the original 15 image bytes were not present",
+      "mutation": "the original screenshot files are in this public tree",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F07"
+    },
+    {
+      "id": "M034",
+      "family": "F07",
+      "category": "screenshot_byte_boundary",
+      "selector": [
+        1,
+        0,
+        "text"
+      ],
+      "original_anchor": "the original 15 image bytes were not present",
+      "mutation": "all 15 screenshots prove deployed UX",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F07"
+    },
+    {
+      "id": "M035",
+      "family": "F07",
+      "category": "screenshot_byte_boundary",
+      "selector": [
+        1,
+        0,
+        "text"
+      ],
+      "original_anchor": "the original 15 image bytes were not present",
+      "mutation": "the historical image source is independently known",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F07"
+    },
+    {
+      "id": "M036",
+      "family": "F08",
+      "category": "layout_root_cause",
+      "selector": [
+        1,
+        2,
+        "text"
+      ],
+      "original_anchor": "physically nested inside the header element",
+      "mutation": "physically stored outside the page",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F08"
+    },
+    {
+      "id": "M037",
+      "family": "F08",
+      "category": "layout_root_cause",
+      "selector": [
+        1,
+        2,
+        "text"
+      ],
+      "original_anchor": "physically nested inside the header element",
+      "mutation": "proved correct without examining DOM",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F08"
+    },
+    {
+      "id": "M038",
+      "family": "F08",
+      "category": "layout_root_cause",
+      "selector": [
+        1,
+        2,
+        "text"
+      ],
+      "original_anchor": "physically nested inside the header element",
+      "mutation": "known to be a network-only failure",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F08"
+    },
+    {
+      "id": "M039",
+      "family": "F08",
+      "category": "layout_root_cause",
+      "selector": [
+        1,
+        2,
+        "text"
+      ],
+      "original_anchor": "physically nested inside the header element",
+      "mutation": "never connected to DOM hierarchy",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F08"
+    },
+    {
+      "id": "M040",
+      "family": "F08",
+      "category": "layout_root_cause",
+      "selector": [
+        1,
+        2,
+        "text"
+      ],
+      "original_anchor": "physically nested inside the header element",
+      "mutation": "no physical placement issue existed",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F08"
+    },
+    {
+      "id": "M041",
+      "family": "F09",
+      "category": "source_sibling_placement",
+      "selector": [
+        1,
+        3,
+        "rows",
+        2,
+        1
+      ],
+      "original_anchor": "frame.after(rail)",
+      "mutation": "frame.before(rail)",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F09"
+    },
+    {
+      "id": "M042",
+      "family": "F09",
+      "category": "source_sibling_placement",
+      "selector": [
+        1,
+        3,
+        "rows",
+        2,
+        1
+      ],
+      "original_anchor": "frame.after(rail)",
+      "mutation": "header.append(rail)",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F09"
+    },
+    {
+      "id": "M043",
+      "family": "F09",
+      "category": "source_sibling_placement",
+      "selector": [
+        1,
+        3,
+        "rows",
+        2,
+        1
+      ],
+      "original_anchor": "frame.after(rail)",
+      "mutation": "frame.append(rail)",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F09"
+    },
+    {
+      "id": "M044",
+      "family": "F09",
+      "category": "source_sibling_placement",
+      "selector": [
+        1,
+        3,
+        "rows",
+        2,
+        1
+      ],
+      "original_anchor": "frame.after(rail)",
+      "mutation": "rail.remove()",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F09"
+    },
+    {
+      "id": "M045",
+      "family": "F09",
+      "category": "source_sibling_placement",
+      "selector": [
+        1,
+        3,
+        "rows",
+        2,
+        1
+      ],
+      "original_anchor": "frame.after(rail)",
+      "mutation": "header.innerHTML += rail",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F09"
+    },
+    {
+      "id": "M046",
+      "family": "F10",
+      "category": "dom_parent_oracle",
+      "selector": [
+        1,
+        3,
+        "rows",
+        3,
+        1
+      ],
+      "original_anchor": "validPhysicalOrder",
+      "mutation": "looksFineWithoutDOM",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F10"
+    },
+    {
+      "id": "M047",
+      "family": "F10",
+      "category": "dom_parent_oracle",
+      "selector": [
+        1,
+        3,
+        "rows",
+        3,
+        1
+      ],
+      "original_anchor": "validPhysicalOrder",
+      "mutation": "browserScreenshotAlwaysPass",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F10"
+    },
+    {
+      "id": "M048",
+      "family": "F10",
+      "category": "dom_parent_oracle",
+      "selector": [
+        1,
+        3,
+        "rows",
+        3,
+        1
+      ],
+      "original_anchor": "validPhysicalOrder",
+      "mutation": "colorOnlyTruthy",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F10"
+    },
+    {
+      "id": "M049",
+      "family": "F10",
+      "category": "dom_parent_oracle",
+      "selector": [
+        1,
+        3,
+        "rows",
+        3,
+        1
+      ],
+      "original_anchor": "validPhysicalOrder",
+      "mutation": "autofixEverything",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F10"
+    },
+    {
+      "id": "M050",
+      "family": "F10",
+      "category": "dom_parent_oracle",
+      "selector": [
+        1,
+        3,
+        "rows",
+        3,
+        1
+      ],
+      "original_anchor": "validPhysicalOrder",
+      "mutation": "alwaysTrueCheck",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F10"
+    },
+    {
+      "id": "M051",
+      "family": "F11",
+      "category": "physical_observation_gate",
+      "selector": [
+        1,
+        5,
+        "text"
+      ],
+      "original_anchor": "real device/user",
+      "mutation": "simulated model only",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F11"
+    },
+    {
+      "id": "M052",
+      "family": "F11",
+      "category": "physical_observation_gate",
+      "selector": [
+        1,
+        5,
+        "text"
+      ],
+      "original_anchor": "real device/user",
+      "mutation": "JavaScript parser only",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F11"
+    },
+    {
+      "id": "M053",
+      "family": "F11",
+      "category": "physical_observation_gate",
+      "selector": [
+        1,
+        5,
+        "text"
+      ],
+      "original_anchor": "real device/user",
+      "mutation": "LLM preference only",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F11"
+    },
+    {
+      "id": "M054",
+      "family": "F11",
+      "category": "physical_observation_gate",
+      "selector": [
+        1,
+        5,
+        "text"
+      ],
+      "original_anchor": "real device/user",
+      "mutation": "source inventory only",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F11"
+    },
+    {
+      "id": "M055",
+      "family": "F11",
+      "category": "physical_observation_gate",
+      "selector": [
+        1,
+        5,
+        "text"
+      ],
+      "original_anchor": "real device/user",
+      "mutation": "source pass without human",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F11"
+    },
+    {
+      "id": "M056",
+      "family": "F12",
+      "category": "simulated_count_boundary",
+      "selector": [
+        1,
+        6,
+        "text"
+      ],
+      "original_anchor": "one million synthetic cases",
+      "mutation": "one million authenticated live-browser sessions",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F12"
+    },
+    {
+      "id": "M057",
+      "family": "F12",
+      "category": "simulated_count_boundary",
+      "selector": [
+        1,
+        6,
+        "text"
+      ],
+      "original_anchor": "one million synthetic cases",
+      "mutation": "one million real captured original screenshots",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F12"
+    },
+    {
+      "id": "M058",
+      "family": "F12",
+      "category": "simulated_count_boundary",
+      "selector": [
+        1,
+        6,
+        "text"
+      ],
+      "original_anchor": "one million synthetic cases",
+      "mutation": "one million independent human participants",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F12"
+    },
+    {
+      "id": "M059",
+      "family": "F12",
+      "category": "simulated_count_boundary",
+      "selector": [
+        1,
+        6,
+        "text"
+      ],
+      "original_anchor": "one million synthetic cases",
+      "mutation": "one million actual remote devices",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F12"
+    },
+    {
+      "id": "M060",
+      "family": "F12",
+      "category": "simulated_count_boundary",
+      "selector": [
+        1,
+        6,
+        "text"
+      ],
+      "original_anchor": "one million synthetic cases",
+      "mutation": "one million production defects fixed",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F12"
+    },
+    {
+      "id": "M061",
+      "family": "F13",
+      "category": "git_not_authority",
+      "selector": [
+        2,
+        1,
+        "text"
+      ],
+      "original_anchor": "not an authentic reviewer",
+      "mutation": "is a cryptographically authenticated reviewer",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F13"
+    },
+    {
+      "id": "M062",
+      "family": "F13",
+      "category": "git_not_authority",
+      "selector": [
+        2,
+        1,
+        "text"
+      ],
+      "original_anchor": "not an authentic reviewer",
+      "mutation": "is automatic production authority",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F13"
+    },
+    {
+      "id": "M063",
+      "family": "F13",
+      "category": "git_not_authority",
+      "selector": [
+        2,
+        1,
+        "text"
+      ],
+      "original_anchor": "not an authentic reviewer",
+      "mutation": "guarantees code correctness",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F13"
+    },
+    {
+      "id": "M064",
+      "family": "F13",
+      "category": "git_not_authority",
+      "selector": [
+        2,
+        1,
+        "text"
+      ],
+      "original_anchor": "not an authentic reviewer",
+      "mutation": "is a proven real-world observation",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F13"
+    },
+    {
+      "id": "M065",
+      "family": "F13",
+      "category": "git_not_authority",
+      "selector": [
+        2,
+        1,
+        "text"
+      ],
+      "original_anchor": "not an authentic reviewer",
+      "mutation": "is guaranteed full source coverage",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F13"
+    },
+    {
+      "id": "M066",
+      "family": "F14",
+      "category": "mutation_outcome_truth",
+      "selector": [
+        2,
+        4,
+        "text"
+      ],
+      "original_anchor": "SURVIVED",
+      "mutation": "APPROVED",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F14"
+    },
+    {
+      "id": "M067",
+      "family": "F14",
+      "category": "mutation_outcome_truth",
+      "selector": [
+        2,
+        4,
+        "text"
+      ],
+      "original_anchor": "SURVIVED",
+      "mutation": "AUTOCORRECTED",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F14"
+    },
+    {
+      "id": "M068",
+      "family": "F14",
+      "category": "mutation_outcome_truth",
+      "selector": [
+        2,
+        4,
+        "text"
+      ],
+      "original_anchor": "SURVIVED",
+      "mutation": "PUBLISHED",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F14"
+    },
+    {
+      "id": "M069",
+      "family": "F14",
+      "category": "mutation_outcome_truth",
+      "selector": [
+        2,
+        4,
+        "text"
+      ],
+      "original_anchor": "SURVIVED",
+      "mutation": "CERTIFIED",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F14"
+    },
+    {
+      "id": "M070",
+      "family": "F14",
+      "category": "mutation_outcome_truth",
+      "selector": [
+        2,
+        4,
+        "text"
+      ],
+      "original_anchor": "SURVIVED",
+      "mutation": "COMPLETE",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F14"
+    },
+    {
+      "id": "M071",
+      "family": "F15",
+      "category": "late_novelty_resets",
+      "selector": [
+        2,
+        6,
+        "text"
+      ],
+      "original_anchor": "a new class reopens the design",
+      "mutation": "new classes are ignored as duplicates",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F15"
+    },
+    {
+      "id": "M072",
+      "family": "F15",
+      "category": "late_novelty_resets",
+      "selector": [
+        2,
+        6,
+        "text"
+      ],
+      "original_anchor": "a new class reopens the design",
+      "mutation": "surviving unsafe faults are accepted",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F15"
+    },
+    {
+      "id": "M073",
+      "family": "F15",
+      "category": "late_novelty_resets",
+      "selector": [
+        2,
+        6,
+        "text"
+      ],
+      "original_anchor": "a new class reopens the design",
+      "mutation": "novelty is evidence of completion",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F15"
+    },
+    {
+      "id": "M074",
+      "family": "F15",
+      "category": "late_novelty_resets",
+      "selector": [
+        2,
+        6,
+        "text"
+      ],
+      "original_anchor": "a new class reopens the design",
+      "mutation": "the maximum tier forces PASS",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F15"
+    },
+    {
+      "id": "M075",
+      "family": "F15",
+      "category": "late_novelty_resets",
+      "selector": [
+        2,
+        6,
+        "text"
+      ],
+      "original_anchor": "a new class reopens the design",
+      "mutation": "no new class means universal correctness",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F15"
+    },
+    {
+      "id": "M076",
+      "family": "F16",
+      "category": "diagram_reopen_gate",
+      "selector": [
+        2,
+        7,
+        "rows",
+        1,
+        4
+      ],
+      "original_anchor": "new class? reopen",
+      "mutation": "new class? ignore",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F16"
+    },
+    {
+      "id": "M077",
+      "family": "F16",
+      "category": "diagram_reopen_gate",
+      "selector": [
+        2,
+        7,
+        "rows",
+        1,
+        4
+      ],
+      "original_anchor": "new class? reopen",
+      "mutation": "new class? certify",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F16"
+    },
+    {
+      "id": "M078",
+      "family": "F16",
+      "category": "diagram_reopen_gate",
+      "selector": [
+        2,
+        7,
+        "rows",
+        1,
+        4
+      ],
+      "original_anchor": "new class? reopen",
+      "mutation": "new class? publish",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F16"
+    },
+    {
+      "id": "M079",
+      "family": "F16",
+      "category": "diagram_reopen_gate",
+      "selector": [
+        2,
+        7,
+        "rows",
+        1,
+        4
+      ],
+      "original_anchor": "new class? reopen",
+      "mutation": "new class? waive",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F16"
+    },
+    {
+      "id": "M080",
+      "family": "F16",
+      "category": "diagram_reopen_gate",
+      "selector": [
+        2,
+        7,
+        "rows",
+        1,
+        4
+      ],
+      "original_anchor": "new class? reopen",
+      "mutation": "new class? skip",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F16"
+    },
+    {
+      "id": "M081",
+      "family": "F17",
+      "category": "physical_vs_model_campaign",
+      "selector": [
+        2,
+        8,
+        "text"
+      ],
+      "original_anchor": "100 deliberately injected editorial/data faults",
+      "mutation": "100 independently validated real users",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F17"
+    },
+    {
+      "id": "M082",
+      "family": "F17",
+      "category": "physical_vs_model_campaign",
+      "selector": [
+        2,
+        8,
+        "text"
+      ],
+      "original_anchor": "100 deliberately injected editorial/data faults",
+      "mutation": "100 million real browser executions",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F17"
+    },
+    {
+      "id": "M083",
+      "family": "F17",
+      "category": "physical_vs_model_campaign",
+      "selector": [
+        2,
+        8,
+        "text"
+      ],
+      "original_anchor": "100 deliberately injected editorial/data faults",
+      "mutation": "100 authenticated production defects",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F17"
+    },
+    {
+      "id": "M084",
+      "family": "F17",
+      "category": "physical_vs_model_campaign",
+      "selector": [
+        2,
+        8,
+        "text"
+      ],
+      "original_anchor": "100 deliberately injected editorial/data faults",
+      "mutation": "100 hardware devices tested",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F17"
+    },
+    {
+      "id": "M085",
+      "family": "F17",
+      "category": "physical_vs_model_campaign",
+      "selector": [
+        2,
+        8,
+        "text"
+      ],
+      "original_anchor": "100 deliberately injected editorial/data faults",
+      "mutation": "100 external CTO approvals",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F17"
+    },
+    {
+      "id": "M086",
+      "family": "F18",
+      "category": "external_ikant_equivalence",
+      "selector": [
+        3,
+        0,
+        "rows",
+        2,
+        2
+      ],
+      "original_anchor": "Native EDU/MCP equivalence",
+      "mutation": "Native EDU/MCP equivalence proven",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F18"
+    },
+    {
+      "id": "M087",
+      "family": "F18",
+      "category": "external_ikant_equivalence",
+      "selector": [
+        3,
+        0,
+        "rows",
+        2,
+        2
+      ],
+      "original_anchor": "Native EDU/MCP equivalence",
+      "mutation": "All host permissions verified",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F18"
+    },
+    {
+      "id": "M088",
+      "family": "F18",
+      "category": "external_ikant_equivalence",
+      "selector": [
+        3,
+        0,
+        "rows",
+        2,
+        2
+      ],
+      "original_anchor": "Native EDU/MCP equivalence",
+      "mutation": "External consumers exhaustively enumerated",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F18"
+    },
+    {
+      "id": "M089",
+      "family": "F18",
+      "category": "external_ikant_equivalence",
+      "selector": [
+        3,
+        0,
+        "rows",
+        2,
+        2
+      ],
+      "original_anchor": "Native EDU/MCP equivalence",
+      "mutation": "Seven roots prove fully safe deletion",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F18"
+    },
+    {
+      "id": "M090",
+      "family": "F18",
+      "category": "external_ikant_equivalence",
+      "selector": [
+        3,
+        0,
+        "rows",
+        2,
+        2
+      ],
+      "original_anchor": "Native EDU/MCP equivalence",
+      "mutation": "Merged PR proves deployed feature",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F18"
+    },
+    {
+      "id": "M091",
+      "family": "F19",
+      "category": "null_strong_comparator",
+      "selector": [
+        3,
+        2,
+        "text"
+      ],
+      "original_anchor": "tied on 16/16 selected fixtures",
+      "mutation": "outperformed on 16/16 selected fixtures",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F19"
+    },
+    {
+      "id": "M092",
+      "family": "F19",
+      "category": "null_strong_comparator",
+      "selector": [
+        3,
+        2,
+        "text"
+      ],
+      "original_anchor": "tied on 16/16 selected fixtures",
+      "mutation": "proved universal superiority in every repo",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F19"
+    },
+    {
+      "id": "M093",
+      "family": "F19",
+      "category": "null_strong_comparator",
+      "selector": [
+        3,
+        2,
+        "text"
+      ],
+      "original_anchor": "tied on 16/16 selected fixtures",
+      "mutation": "included 1000 independently blinded trials",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F19"
+    },
+    {
+      "id": "M094",
+      "family": "F19",
+      "category": "null_strong_comparator",
+      "selector": [
+        3,
+        2,
+        "text"
+      ],
+      "original_anchor": "tied on 16/16 selected fixtures",
+      "mutation": "measured guaranteed human comprehension",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F19"
+    },
+    {
+      "id": "M095",
+      "family": "F19",
+      "category": "null_strong_comparator",
+      "selector": [
+        3,
+        2,
+        "text"
+      ],
+      "original_anchor": "tied on 16/16 selected fixtures",
+      "mutation": "certified enterprise readiness",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F19"
+    },
+    {
+      "id": "M096",
+      "family": "F20",
+      "category": "cto_equal_information",
+      "selector": [
+        3,
+        4,
+        "text"
+      ],
+      "original_anchor": "strong checklist the same evidence",
+      "mutation": "weak checklist less evidence",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F20"
+    },
+    {
+      "id": "M097",
+      "family": "F20",
+      "category": "cto_equal_information",
+      "selector": [
+        3,
+        4,
+        "text"
+      ],
+      "original_anchor": "strong checklist the same evidence",
+      "mutation": "no independent comparator needed",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F20"
+    },
+    {
+      "id": "M098",
+      "family": "F20",
+      "category": "cto_equal_information",
+      "selector": [
+        3,
+        4,
+        "text"
+      ],
+      "original_anchor": "strong checklist the same evidence",
+      "mutation": "only the author's opinion matters",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F20"
+    },
+    {
+      "id": "M099",
+      "family": "F20",
+      "category": "cto_equal_information",
+      "selector": [
+        3,
+        4,
+        "text"
+      ],
+      "original_anchor": "strong checklist the same evidence",
+      "mutation": "no cost measurements needed",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F20"
+    },
+    {
+      "id": "M100",
+      "family": "F20",
+      "category": "cto_equal_information",
+      "selector": [
+        3,
+        4,
+        "text"
+      ],
+      "original_anchor": "strong checklist the same evidence",
+      "mutation": "omit real target oracles and reviewers",
+      "mechanism": "REPLACE_ANCHOR_IN_COPIED_SOURCE",
+      "expected": "KILLED",
+      "oracle_family": "F20"
+    }
+  ]
+}
