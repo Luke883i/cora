@@ -38,6 +38,17 @@ jobs:
           assert r['benign_controls']==10 and r['benign_accepted']==10
           assert r['runtime_product_test']=='NOT_DONE' and r['external_human_test']=='NOT_DONE'
           PY
+      - name: R2 original-source editorial comparator (100 finite copies; no product claim)
+        run: |
+          python research/decision-ready-assurance/aosp-r2/tools/replay_100.py --out /tmp/cora-r2-100.json
+          python - <<'PY'
+          import json
+          r=json.load(open('/tmp/cora-r2-100.json'))
+          assert r['mutants']==100 and r['detected']==100 and not r['survivors']
+          assert r['benign_controls']==10 and r['benign_accepted']==10
+          assert r['document_git_blob_sha']=='ffa99d46c315258f3dc7cb8067e039b7c3ce3741'
+          assert r['scope']=='AUTHOR_SCOPED_NOT_PEER_REVIEW'
+          PY
       - name: Install candidate and scoped coverage oracle
         run: |
           # PR07 nested wheel/sdist oracle imports setuptools.build_meta in
