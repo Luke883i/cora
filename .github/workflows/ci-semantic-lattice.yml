@@ -28,6 +28,24 @@ jobs:
         run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
       - name: Independent public guide and sixty physical source-copy falsifiers (source only)
         run: python research/decision-ready-assurance/public-field-guide/verify_public_guide.py
+      - name: Rebuild exact standalone Word and reject sixty OOXML counterexamples (author scoped)
+        run: |
+          python -m pip install 'python-docx==1.2.0'
+          python research/decision-ready-assurance/public-field-guide/build_guide.py
+          python research/decision-ready-assurance/public-field-guide/audit_guide.py
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, json
+          root=Path('research/decision-ready-assurance/public-field-guide')
+          doc=root/'From_Intent_to_Evidence.docx'
+          report=json.loads((root/'Editorial_Falsification_Report.json').read_text())
+          assert report['negative_physical_docx_copies']==60 and report['negative_detected']==60
+          assert report['distinct_negative_docx_digests']==60
+          assert report['benign_controls']==10 and report['benign_accepted']==10
+          assert report['docx_sha256']==hashlib.sha256(doc.read_bytes()).hexdigest()
+          assert report['docx_sha256']=='d0c7d4c827a0f03874dea3479e15ebc650f9408c1295110ec97df49b93c2a19f'
+          assert report['target_runtime'] if 'target_runtime' in report else report['not_claimed']
+          PY
       - name: R5 original Git source register and eight typed negative oracles (source only)
         run: python research/decision-ready-assurance/aosp-r5/verify_incremental_r5.py
       - name: R3 exact-Git Word plus 100 physical editorial mutants (source scoped)
@@ -118,6 +136,7 @@ jobs:
         with:
           name: cora-pr16-python-${{ matrix.python-version }}-source-evidence-only
           path: |
+            research/decision-ready-assurance/public-field-guide/From_Intent_to_Evidence.docx
             /tmp/cora-repo-contract.json
             /tmp/cora-roles.json
             /tmp/cora-artifacts.json
