@@ -31,3 +31,7 @@ python research/decision-ready-assurance/verify_release.py --archival
 ```
 
 No online GitHub check, independent human experiment, peer review, release approval or product certification is executed by this folder.
+
+## AOSP R1 executive brief (17 November 2026)
+
+A standalone, two-page A4 CTO/beginner document is available at [AOSP_R1_CTO_STANDALONE.docx](AOSP_R1_CTO_STANDALONE.docx). It distinguishes AOSP programme membership from shared runtime and gives four concrete source-bounded examples. Its original source is [AOSP_R1_BRIEF_CONTENT.json](AOSP_R1_BRIEF_CONTENT.json); see [scientific freeze](AOSP_R1_SCIENCE_FREEZE.markdown), [nine public source pins](AOSP_R1_PUBLIC_SCOPE.json), [reflection/AND DoD](AOSP_R1_PROJECT_AND_DOD.markdown), [falsification report](AOSP_R1_FALSIFICATION.markdown), and [deterministic builder](tools/build_aosp_r1.py). This communications artifact does not extend MS-10 scientific claims, provide a human study or authorize a release.

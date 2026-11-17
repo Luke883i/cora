@@ -8,7 +8,7 @@ FILES=['AOSP_R1_BRIEF_CONTENT.json','AOSP_R1_PUBLIC_SCOPE.json','AOSP_R1_SCIENCE
 def mutate_json(p,fn):
  x=json.loads(p.read_text());fn(x);p.write_text(json.dumps(x,ensure_ascii=False))
 variants=[
- ('private_repo','AOSP_R1_PUBLIC_SCOPE.json',lambda p:mutate_json(p,lambda x:x['repos'].append({'name':'aosp1','visibility':'private','url':'https://github.com/Luke883i/aosp1','branch':'main','head_sha':'0'*40,'readme_blob_sha':'0'*40}))),
+ ('private_repo','AOSP_R1_PUBLIC_SCOPE.json',lambda p:mutate_json(p,lambda x:x['repos'].append({'name':'synthetic_nonpublic_fixture','visibility':'private','url':'https://github.com/Luke883i/synthetic_nonpublic_fixture','branch':'main','head_sha':'0'*40,'readme_blob_sha':'0'*40}))),
  ('missing_repo','AOSP_R1_PUBLIC_SCOPE.json',lambda p:mutate_json(p,lambda x:x['repos'].pop())),
  ('wrong_visibility','AOSP_R1_PUBLIC_SCOPE.json',lambda p:mutate_json(p,lambda x:x['repos'][0].__setitem__('visibility','private'))),
  ('pin_lost','AOSP_R1_PUBLIC_SCOPE.json',lambda p:mutate_json(p,lambda x:x['repos'][0].__setitem__('head_sha','abc'))),
