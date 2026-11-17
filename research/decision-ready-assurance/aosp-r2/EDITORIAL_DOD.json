@@ -1,0 +1,40 @@
+{
+  "schema": "cora-r2-editorial-dod/1",
+  "identity": "AGENT_AGNOSTIC_METHOD_CASE_STUDY_NOT_ROA_PROOF",
+  "allowed_pages": [
+    4
+  ],
+  "language": "English",
+  "audience": [
+    "curious beginner",
+    "CTO",
+    "practicing engineer"
+  ],
+  "principles": [
+    "Hook with a concrete decision failure, not labels or proprietary theory.",
+    "Define jargon immediately; avoid unexplained acronym stacks.",
+    "Outcome first; backwards AND derivation with one complete example.",
+    "Separate intent, hypothesis, inference, source witness, runtime, real-world observation, and permission.",
+    "Explain Git blob, tree, commit, HEAD and proof-of-bytes without calling them proof-of-truth.",
+    "Demonstrate both semantic scenario masks and actual copied-file mutation; keep denominator and oracle independent.",
+    "Explain a no-new-material-class tail and why sampled saturation does not prove universal completeness.",
+    "Bind diagrams to exact source revisions and negative or missing evidence.",
+    "Cover an authentic screenshot-to-finding case with the original-pixels availability limitation.",
+    "Explain browser/DOM, network/API, persistence, user and device as progressively stronger oracles.",
+    "Use at least three distinct public application examples with no shared runtime assumption.",
+    "Preserve the MS-10 11/92/70, 16/16 tie, 44 briefings and zero humans.",
+    "Offer a one-PR comparator pilot including reviewer time and rework, not an unmeasured ROI promise.",
+    "Show counterevidence, limits and what would falsify each important claim.",
+    "Keep the main prose readable without opening references; references are audit trail rather than prerequisites."
+  ],
+  "gates": {
+    "source_pins": "EXPECTED_BLOBS_AND_REPOSITORIES",
+    "word_diagrams": "TWO_EDITABLE_DIAGRAM_TABLES_WITH_INLINE_EVIDENCE_IDS",
+    "source_to_docx": "REBUILT_CONTENT_AND_EXACT_GIT_BLOB",
+    "physical_mutants": 100,
+    "expected_detection": 100,
+    "valid_controls": 10,
+    "minimum_examples": 4,
+    "closed_promise": "AUTHOR_SCOPED_NOT_PUBLISHED_OR_APPROVED"
+  }
+}
