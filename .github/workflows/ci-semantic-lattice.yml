@@ -26,6 +26,35 @@ jobs:
         env:
           EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - name: Rebuild byte-pinned observer paper and replay 147 Word / 10k model faults
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="research/decision-ready-assurance/observer-compiler-paper"
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+          test -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf
+          python -m pip install 'python-docx==1.2.0' 'Pillow==12.3.0'
+          work=$(mktemp -d)
+          trap 'rm -rf "$work"' EXIT
+          cp "$root/Research_Source_And_Verification.zip" "$work/src.zip"
+          cp "$root/From_Intent_to_Evidence.docx" "$work/published.docx"
+          (cd "$work" && unzip -q src.zip)
+          (cd "$work" && python build_paper.py && python science_and_falsification.py && python audit_paper.py)
+          cmp "$work/From_Intent_to_Evidence.docx" "$work/published.docx"
+          python - "$work" "$root" <<'PY'
+          import hashlib, json, pathlib, sys
+          tmp, root = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2])
+          data = (root/'From_Intent_to_Evidence.docx').read_bytes()
+          assert hashlib.sha256(data).hexdigest() == '75a5cfd30a3281877d21e0278aa9f5853eab9beb3639d1b83b85a1bdd5c68ef2'
+          a=json.loads((tmp/'Document_Adversarial_Audit.json').read_text())
+          s=json.loads((tmp/'Scientific_Challenge_Audit.json').read_text())
+          assert a['status']=='PASS_AUTHOR_SCOPED' and a['physical_modified_Word_variants']==147
+          assert a['physical_negative_detected']==147 and a['benign_accepted']==10
+          assert s['model_variants_constructed']==10000 and s['detected_by_typed_oracle']==10000
+          assert s['benign_accepted']==10 and s['original_bryophyte_empirical_validation']=='NOT_DONE'
+          assert a['original_repo_runtime']=='NOT_RERUN' and a['human_test']=='NOT_PERFORMED'
+          print('paper exact Word + source-only adversarial suites PASS_AUTHOR_SCOPED')
+          PY
       - name: Independent public guide and sixty physical source-copy falsifiers (source only)
         run: python research/decision-ready-assurance/public-field-guide/verify_public_guide.py
       - name: Rebuild exact standalone Word and reject sixty OOXML counterexamples (author scoped)
