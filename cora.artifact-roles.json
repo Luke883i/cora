@@ -1283,6 +1283,11 @@
         "RELEASE_TOOL"
       ],
       "rationale": "Optional manuscript generator with no impact on CORA runtime, CI gates, approval, or source authority."
+    },
+    {
+      "pattern": "research/decision-ready-assurance/tools/build_aosp_r1.py",
+      "roles": ["RELEASE_TOOL"],
+      "rationale": "Deterministic, offline authorial DOCX builder; no software release authority."
     }
   ]
 }
