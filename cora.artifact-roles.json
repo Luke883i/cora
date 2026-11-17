@@ -1333,6 +1333,34 @@
         "CONTRACT_VERIFIER"
       ],
       "rationale": "Opt-in read-only editorial replay over disposable JSON copies and exact Word blob, not an external test runner."
+    },
+    {
+      "pattern": "research/decision-ready-assurance/aosp-r3/*.json",
+      "roles": [
+        "ARTIFACT_INDEX"
+      ],
+      "rationale": "Pinned R3 public source/visual receipts and exact author-controlled OOXML falsification identifiers; not measured human benefit or target runtime."
+    },
+    {
+      "pattern": "research/decision-ready-assurance/aosp-r3/*.markdown",
+      "roles": [
+        "DOCUMENTATION"
+      ],
+      "rationale": "R3 editorial explanation and human/host acceptance boundaries, no release authority."
+    },
+    {
+      "pattern": "research/decision-ready-assurance/aosp-r3/*.docx",
+      "roles": [
+        "DOCUMENTATION"
+      ],
+      "rationale": "Editable four-page English product-observation field guide, locally rendered; no automatic reviewer or product approval."
+    },
+    {
+      "pattern": "research/decision-ready-assurance/aosp-r3/tools/*.py",
+      "roles": [
+        "CONTRACT_VERIFIER"
+      ],
+      "rationale": "Opt-in 100 selected physically rewritten Word mutants and benign controls, no real target code or human test."
     }
   ]
 }
