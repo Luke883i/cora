@@ -26,6 +26,8 @@ jobs:
         env:
           EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - name: Independent public guide and sixty physical source-copy falsifiers (source only)
+        run: python research/decision-ready-assurance/public-field-guide/verify_public_guide.py
       - name: R5 original Git source register and eight typed negative oracles (source only)
         run: python research/decision-ready-assurance/aosp-r5/verify_incremental_r5.py
       - name: R3 exact-Git Word plus 100 physical editorial mutants (source scoped)
