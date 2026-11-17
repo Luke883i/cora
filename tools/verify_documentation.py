@@ -13,17 +13,6 @@ import re
 from pathlib import Path
 from urllib.parse import unquote
 
-# Research supplements are NOT part of the 48 operational CORA documentation
-# entries. This is an exact-path whitelist: an arbitrary new Markdown file
-# remains unregistered and fails the original documentation census.
-RESEARCH_SUPPLEMENT_MD = frozenset({
-    "research/decision-ready-assurance/README.md",
-    "research/decision-ready-assurance/MANUSCRIPT.md",
-    "research/decision-ready-assurance/ROADMAP.md",
-    "research/decision-ready-assurance/SCIENTIFIC_AUDIT.md",
-    "research/decision-ready-assurance/FINAL_REPORT.md",
-})
-
 BASELINE_SHA = "ee6da7625dae1e4101e06eb979a348610f39093b"
 BASELINE_MD = 43
 EXPECTED_MD = 48
@@ -721,8 +710,6 @@ def verify(root: Path) -> list[str]:
     actual = set()
     for p in root.rglob("*.md"):
         rel = p.relative_to(root)
-        if rel.as_posix() in RESEARCH_SUPPLEMENT_MD:
-            continue  # author-scoped scientific corpus, not operating docs
         if any(part.startswith(".") and part not in (".github",) for part in rel.parts):
             continue
         if any(part in ("build", "dist", "site-packages") for part in rel.parts):
@@ -922,8 +909,7 @@ def census_markdown(root: Path, *, revision: str = "HEAD",
                 tree[filename.decode("utf-8")] = oid
     reg = json.loads((root / "docs/documentation-registry.json").read_text("utf-8"))
     registered = {entry["path"]: entry for entry in reg["documents"]}
-    tracked = sorted(path for path in tree if path.lower().endswith(".md")
-                     and path not in RESEARCH_SUPPLEMENT_MD)
+    tracked = sorted(path for path in tree if path.lower().endswith(".md"))
     errors: list[str] = []
     if set(tracked) != set(registered):
         errors.append("census-registry-tree-drift")

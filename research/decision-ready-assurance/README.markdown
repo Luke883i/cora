@@ -6,12 +6,12 @@
 
 ## Reading order
 
-1. `MANUSCRIPT.md`: full paper source; `MANUSCRIPT.docx` is committed in this folder as an actual two-column Word document; the separate archival companion also includes the styled authoring version. Neither is the official IEEE Access template.
+1. `MANUSCRIPT.markdown`: full paper source; `MANUSCRIPT.docx` is committed in this folder as an actual two-column Word document; the separate archival companion also includes the styled authoring version. Neither is the official IEEE Access template.
 2. `CLAIM_LEDGER.json`: supported, bounded, unsupported and contradicted scientific claims. An unsupported claim does not become evidence by appearing in the paper.
 3. `evidence/RETROSPECTIVE_11_CASES.json`: public PR identities, pins and source limits.
 4. `evidence/FACTS.json`: observations versus unobserved user outcomes and costs.
 5. `evidence/REFERENCES.json` and `evidence/ARCHIVE_REGISTER.json`: prior art and original archive digests.
-6. `ROADMAP.md`: author-closeable DoD versus external empirical and editorial obligations.
+6. `ROADMAP.markdown`: author-closeable DoD versus external empirical and editorial obligations.
 7. `verify_release.py`: read-only claim and provenance tests, fail-closed.
 
 ## What the study demonstrates

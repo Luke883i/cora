@@ -22,7 +22,7 @@ variants=[
 ]
 with tempfile.TemporaryDirectory() as td:
  q=Path(td)/'research';q.mkdir()
- files=['MANUSCRIPT.md','ROADMAP.md','CLAIM_LEDGER.json','evidence/FACTS.json','evidence/RETROSPECTIVE_11_CASES.json','evidence/REFERENCES.json','evidence/ARCHIVE_REGISTER.json']
+ files=['MANUSCRIPT.markdown','ROADMAP.markdown','CLAIM_LEDGER.json','evidence/FACTS.json','evidence/RETROSPECTIVE_11_CASES.json','evidence/REFERENCES.json','evidence/ARCHIVE_REGISTER.json']
  for f in files:
   p=q/f;p.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(R/f,p)
  assert not problems(q),'baseline integrity failed'
@@ -33,7 +33,7 @@ with tempfile.TemporaryDirectory() as td:
   if not found:print('SURVIVOR',name)
   shutil.copy2(R/'evidence/FACTS.json',p)
  p=q/'CLAIM_LEDGER.json';x=json.loads(p.read_text());x['claims'][9]['status']='SUPPORTED';p.write_text(json.dumps(x));caught+=bool(problems(q));shutil.copy2(R/'CLAIM_LEDGER.json',p)
- p=q/'MANUSCRIPT.md';s=p.read_text();p.write_text(s.replace('70 unobserved','70 proven failures'));caught+=bool(problems(q));shutil.copy2(R/'MANUSCRIPT.md',p)
+ p=q/'MANUSCRIPT.markdown';s=p.read_text();p.write_text(s.replace('70 unobserved','70 proven failures'));caught+=bool(problems(q));shutil.copy2(R/'MANUSCRIPT.markdown',p)
  p=q/'evidence/RETROSPECTIVE_11_CASES.json';p.unlink();caught+=bool(problems(q))
  expected=len(variants)+3;print(json.dumps({'physical_mutations':expected,'detected':caught,'survivors':expected-caught}))
  sys.exit(caught!=expected)

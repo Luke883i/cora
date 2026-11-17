@@ -15,4 +15,4 @@ The final manuscript is MS-10. Its contribution is a reproducible artifact for c
 | A09 Economics | Synthetic cost points disclosed | No compute/human savings |
 | A10 Prior art and AI | Storey, Konrad, Zhou, LEDGER, Soei; substantial AI-use disclosure | No independent peer review |
 
-All ten checks are author-controlled text/data tests, not an authenticated panel of referees. Sources: CLAIM_LEDGER.json; evidence/{FACTS,RETROSPECTIVE_11_CASES,ARCHIVE_REGISTER,REFERENCES}.json; MANUSCRIPT.md.
+All ten checks are author-controlled text/data tests, not an authenticated panel of referees. Sources: CLAIM_LEDGER.json; evidence/{FACTS,RETROSPECTIVE_11_CASES,ARCHIVE_REGISTER,REFERENCES}.json; MANUSCRIPT.markdown.

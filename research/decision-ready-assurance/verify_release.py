@@ -14,8 +14,8 @@ def problems(root=ROOT,archival=False):
         events=json.loads((root/'evidence/RETROSPECTIVE_11_CASES.json').read_text(encoding='utf-8'))['events']
         refs=json.loads((root/'evidence/REFERENCES.json').read_text(encoding='utf-8'))['refs']
         archive=json.loads((root/'evidence/ARCHIVE_REGISTER.json').read_text(encoding='utf-8'))['snapshots']
-        paper=(root/'MANUSCRIPT.md').read_text(encoding='utf-8')
-        roadmap=(root/'ROADMAP.md').read_text(encoding='utf-8')
+        paper=(root/'MANUSCRIPT.markdown').read_text(encoding='utf-8')
+        roadmap=(root/'ROADMAP.markdown').read_text(encoding='utf-8')
     except (FileNotFoundError,ValueError,KeyError) as e:return ['MISSING_OR_MALFORMED_RESEARCH_SOURCE:'+str(e)]
     m=facts['observations'];lim=facts['measurement_limits']
     need(m['public_pr_events']==11 and len(events)==11,'RETROSPECTIVE_DENOMINATOR')

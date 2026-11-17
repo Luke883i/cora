@@ -34,4 +34,4 @@ def build(source,target):
   elif not line.startswith('# '):buf.append(line)
  flush();target.parent.mkdir(parents=True,exist_ok=True);d.save(target)
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('--source',type=Path,default=ROOT/'MANUSCRIPT.md');p.add_argument('--out',type=Path,default=ROOT/'MANUSCRIPT_REGENERATED.docx');a=p.parse_args();build(a.source,a.out);print(a.out)
+ p=argparse.ArgumentParser();p.add_argument('--source',type=Path,default=ROOT/'MANUSCRIPT.markdown');p.add_argument('--out',type=Path,default=ROOT/'MANUSCRIPT_REGENERATED.docx');a=p.parse_args();build(a.source,a.out);print(a.out)

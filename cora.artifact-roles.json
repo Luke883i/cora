@@ -1242,7 +1242,7 @@
       "rationale": "Optional original-Git/PR70 source profile; not a runtime or deletion authorization."
     },
     {
-      "pattern": "research/decision-ready-assurance/*.md",
+      "pattern": "research/decision-ready-assurance/*.markdown",
       "roles": [
         "DOCUMENTATION"
       ],
