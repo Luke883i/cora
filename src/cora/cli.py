@@ -40,7 +40,7 @@ from .portable_assurance import run_portable, verify_portable, render_portable_h
 from .integrated_run import run_integrated, verify_integrated as verify_integrated_one_run
 from .integrated_html import render_integrated_html
 from .chat_bundle import append_chat_iteration, verify_chat_bundle, load_chat_step
-from .continuous import evaluate as development_gate, verify_gate, agent_check, self_development_plan, verify_self_development_plan
+from .continuous import evaluate as development_gate, verify_gate, agent_check, self_development_plan, SELF_P0
 from .continuous_stress import stress_continuous
 from .archive_intake import inspect_zip, verify_intake
 from .runtime_observation import observe_runtime
@@ -123,10 +123,6 @@ def main(argv: list[str] | None = None) -> int:
     cp.add_argument('--contract', type=Path, default=Path('.cora/contracts/dod/convergence-dod.json'))
     cp.add_argument('--goal', choices=('G_SOURCE_CONVERGENCE','G_R1_R4_COMPLETE','G_GOVERNED'), default='G_R1_R4_COMPLETE')
     cp.add_argument('--output', type=Path)
-    cp.add_argument('--self-p0', action='store_true', help='Read and assess the committed CORA development programme; no release approval')
-    cp.add_argument('--repo', type=Path, default=Path('.'))
-    cp.add_argument('--revision', default='HEAD')
-    cp.add_argument('--verify-self-report', type=Path, help='Reopen exact Git source and verify a self-P0 report')
     cs = sub.add_parser('stress-convergence', help='10M preseeded realistic finite fault-class model cases, not physical code mutations')
     cs.add_argument('--contract', type=Path, default=Path('.cora/contracts/dod/convergence-dod.json'))
     cs.add_argument('--sessions', type=int, default=10)
@@ -518,20 +514,11 @@ def main(argv: list[str] | None = None) -> int:
             code=2 if result['status']=='REFUTED' or (args.require_full and
                 result['status']!='PASS_SCOPED_FINITE_MODEL') else 0
         elif args.cmd == 'convergence-plan':
-            if args.self_p0:
-                if args.goal != 'G_R1_R4_COMPLETE' or args.contract != Path('.cora/contracts/dod/convergence-dod.json'):
-                    raise ValueError('self-P0 uses the canonical committed programme, not R1-R4 overrides')
-                if args.verify_self_report:
-                    receipt=json.loads(args.verify_self_report.read_text('utf-8'))
-                    verify_self_development_plan(args.repo, receipt, args.revision)
-                    result={'schema':'cora-self-development-verification/1',
-                            'status':'GIT_REPLAY_SCOPED', 'commit':receipt['commit'],
-                            'report_digest':receipt['report_digest'], 'authority':'NONE'}
-                else:
-                    result=self_development_plan(args.repo,args.revision)
+            if args.contract == Path(SELF_P0):
+                if args.goal != 'G_R1_R4_COMPLETE':
+                    raise ValueError('self-P0 has its own canonical non-promoting A0/G0')
+                result=self_development_plan(Path.cwd(), 'HEAD')
             else:
-                if args.verify_self_report:
-                    raise ValueError('self-report requires --self-p0')
                 contract=load_convergence_contract(args.contract)
                 result=convergent_plan(contract,args.goal)
             code=0

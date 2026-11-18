@@ -91,11 +91,12 @@ class ExecutableP0Tests(unittest.TestCase):
         self.assertTrue(verify_self_development_plan(R, report))
         with tempfile.TemporaryDirectory() as td:
             path = Path(td) / 'plan.json'
-            self.assertEqual(main(['convergence-plan', '--self-p0', '--repo', str(R),
-                                   '--output', str(path)]), 0)
+            from unittest.mock import patch
+            with patch('pathlib.Path.cwd', return_value=R):
+                self.assertEqual(main(['convergence-plan', '--contract',
+                                       str(P.relative_to(R)), '--output', str(path)]), 0)
             self.assertEqual(json.loads(path.read_text()), report)
-            self.assertEqual(main(['convergence-plan', '--self-p0', '--repo', str(R),
-                                   '--verify-self-report', str(path)]), 0)
+            self.assertTrue(verify_self_development_plan(R, json.loads(path.read_text())))
         for field, forged in (('global_dod', 'PASS'), ('product_go', True),
                               ('contract_blob', '0' * 40), ('authority', 'RELEASE_MANAGER'),
                               ('report_digest', '0' * 64)):
