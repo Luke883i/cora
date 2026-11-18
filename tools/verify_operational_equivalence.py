@@ -411,6 +411,73 @@ def verify_native_counterfactual(repo: Path, report: dict, tests: list[dict],
     return True
 
 
+def minimize_native_failure(changes: list[str], native_probe, *,
+                            max_probes: int = 128) -> dict:
+    """Deterministic 1-minimal source-change witness, never semantic deletion proof.
+
+    The caller must explicitly supply an isolated *native* oracle that returns
+    FAIL, PASS, or UNKNOWN for a selected subset of physical changes. Probe
+    twice and refuse to shrink across nondeterministic/unknown outcomes.
+    """
+    from cora.evidence import domain_hash
+    if (not isinstance(changes, list) or not 1 <= len(changes) <= 128 or
+            any(not isinstance(x, str) or not x for x in changes) or
+            len(set(changes)) != len(changes) or
+            type(max_probes) is not int or not 2 <= max_probes <= 512 or
+            not callable(native_probe)):
+        raise ValueError('P3 ddmin changes, oracle or budget invalid')
+    trials = []
+    def check(subset):
+        if 2 * len(trials) + 2 > max_probes:
+            return 'UNKNOWN_BUDGET'
+        a, b = native_probe(tuple(subset)), native_probe(tuple(subset))
+        if a not in ('FAIL', 'PASS', 'UNKNOWN') or b not in ('FAIL', 'PASS', 'UNKNOWN'):
+            raise ValueError('P3 native oracle returned unrecognized outcome')
+        state = a if a == b else 'UNKNOWN_FLAKY'
+        trials.append({'subset': list(subset), 'first': a, 'second': b,
+                       'status': state})
+        return state
+    current = list(changes)
+    initial = check(current)
+    if initial != 'FAIL':
+        state = 'UNKNOWN_OR_NOT_REPRODUCED'
+    else:
+        granularity = 2
+        while len(current) > 1:
+            width = max(1, (len(current) + granularity - 1) // granularity)
+            parts = [current[i:i + width] for i in range(0, len(current), width)]
+            reduced = False
+            for group in parts:
+                complement = [x for x in current if x not in group]
+                if complement and check(complement) == 'FAIL':
+                    current, reduced = complement, True
+                    granularity = max(2, granularity - 1)
+                    break
+            if reduced:
+                continue
+            if granularity >= len(current):
+                break
+            granularity = min(len(current), granularity * 2)
+        # Final 1-minimality check is mandatory; unknown/budget never certifies it.
+        checked = True
+        for idx in range(len(current)):
+            subset = current[:idx] + current[idx + 1:]
+            verdict = check(subset)
+            if verdict != 'PASS':
+                checked = False
+                break
+        state = ('FAIL_1_MINIMAL_NATIVE_WITNESS' if checked and
+                 all(t['status'] in ('PASS', 'FAIL') for t in trials) else
+                 'UNKNOWN_MINIMALITY')
+    result = {'schema': 'cora-native-ddmin/1', 'source_changes': changes,
+              'minimized': current, 'trials': trials, 'status': state,
+              'scope': 'OPERATOR_SUPPLIED_NATIVE_PROBE_NOT_CAUSAL_UNIVERSALITY',
+              'unknown_trials': sum(x['status'] == 'UNKNOWN_FLAKY' or
+                                    x['status'] == 'UNKNOWN' for x in trials),
+              'execution_authority': 'NONE', 'safe_deletion': False}
+    result['digest'] = domain_hash('CORA:native-ddmin:1', result)
+    return result
+
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--repo", type=Path, default=Path("."))
