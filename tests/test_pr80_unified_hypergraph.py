@@ -180,5 +180,22 @@ class UnifiedHypergraphTests(unittest.TestCase):
         self.assertEqual(self.report(), r)
 
 
+class OriginalCoraSourceSelfApplication(unittest.TestCase):
+    def test_original_git_checkout_consumer_projection_and_replay(self):
+        # CI must use a real Git checkout; no ZIP comment substitutes for HEAD.
+        root = Path(__file__).resolve().parents[1]
+        self.assertTrue((root / '.git').exists(), 'exact original Git checkout required')
+        head = git(root, 'rev-parse', 'HEAD')
+        result = unified_consumer_hypergraph(root, head)
+        self.assertEqual(result['commit'], head)
+        self.assertGreaterEqual(result['file_count'], 300)
+        self.assertEqual(result['global_status'], 'BLOCKED_EXTERNAL')
+        self.assertEqual(result['and_assessment']['states']['L_EXTERNAL_CONSUMERS'],
+                         'BLOCKED_EXTERNAL')
+        self.assertFalse(result['safe_deletion_proven'])
+        self.assertGreater(len(result['edges']), 0)
+        self.assertTrue(verify_unified_consumer_hypergraph(root, result))
+
+
 if __name__ == '__main__':
     unittest.main()
