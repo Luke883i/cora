@@ -119,9 +119,11 @@ and exact source/profile replay with
 The **default** `include_consumers=False` retains old receipts and the
 71-command CLI interface. The additional summary carries the original
 projection digest and explicit `BLOCKED_EXTERNAL`, not an independent
-product success or additional target execution. The existing opt-in Node
-parser remains the owner for syntactic ESM candidates; non-Python consumers
-are currently UNKNOWN in this P2 projection until separately bound.
+product success or additional target execution. The original packaged Node ESM parser is reused when `parse_js=True`
+is explicitly requested; exact ESM file imports become typed **candidates**,
+while dynamic, CommonJS, unresolved package and external consumers stay
+UNKNOWN. The default `parse_js=False` preserves P1 transport and avoids
+implicitly requiring Node or running target code.
 
 **Falsification boundary:** source tests include two committed Git revisions,
 dirty worktree immunity, an intentionally changed test import, missing
