@@ -18,6 +18,7 @@ from .evidence import domain_hash, valid_path
 from .gold_bridge import bridge_gold
 from .native_gold import replay_native
 from .git_snapshot import git, snapshot
+from .graph import unified_consumer_hypergraph
 from .process_suite import run_suite
 
 SCHEMA = "cora-portable-one-run/1"
@@ -156,7 +157,8 @@ def parse_upstream_paths(items: list[str]) -> dict[str, Path]:
 def run_portable(repo: Path, revision: str, profile: Path, *,
                  evidence_dir: Path | None = None, parse_js: bool = False,
                  upstream_paths: dict[str, Path] | None = None,
-                 native_probe: Path | None = None) -> dict:
+                 native_probe: Path | None = None,
+                 include_consumers: bool = False) -> dict:
     """Read-only source dossier. No arbitrary target code or target test execution."""
     repo = Path(repo).resolve(strict=True)
     provenance = snapshot(repo, revision)
@@ -253,6 +255,17 @@ def run_portable(repo: Path, revision: str, profile: Path, *,
         "excluded": ["target execution", "host rights", "reviewer identity",
                      "dynamic callers", "real user acceptance", "release permission"]
     }
+    if include_consumers:
+        graph = unified_consumer_hypergraph(repo, commit)
+        result["consumer_hypergraph"] = {
+            "graph_digest": graph["graph_digest"],
+            "typed_source_edges": len(graph["edges"]),
+            "dependency_hyperedges": len(graph["hyperedges"]),
+            "unresolved_source_kinds": len(graph["unknowns"]),
+            "global_status": graph["global_status"],
+            "scope": "GIT_SOURCE_CANDIDATES_NOT_RUNTIME_CLOSURE",
+            "authority": "NONE"
+        }
     if doc["schema"] == "cora-portable-target/2":
         # R1-R4 remains target-owned with no authority of its own.
         result["gold"] = bridge_gold(repo, commit, doc, evidence)
@@ -336,13 +349,15 @@ def verify_portable(repo: Path, receipt: dict, profile: Path, *,
                     evidence_dir: Path | None = None,
                     html_page: str | None = None, parse_js: bool = False,
                     upstream_paths: dict[str, Path] | None = None,
-                    native_probe: Path | None = None) -> bool:
+                    native_probe: Path | None = None,
+                    include_consumers: bool = False) -> bool:
     if not isinstance(receipt, dict) or receipt.get("schema") != SCHEMA:
         _reject("wrong report schema")
     fresh = run_portable(repo, receipt.get("commit", ""), profile,
                          evidence_dir=evidence_dir, parse_js=parse_js,
                          upstream_paths=upstream_paths,
-                         native_probe=native_probe)
+                         native_probe=native_probe,
+                         include_consumers=include_consumers)
     if fresh != receipt:
         _reject("Git/source/profile/receipt replay mismatch")
     if html_page is not None and render_portable_html(fresh) != html_page:
