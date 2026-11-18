@@ -151,3 +151,219 @@ def verify_graph_against_git(repo: Path, graph: dict) -> bool:
     if actual != graph:
         raise ValueError('graph differs from committed Git evidence')
     return True
+
+# P2: Git-source projection over the original graph and canonical AND engine.
+# No second engine or dependency scanner with runtime authority is created.
+def unified_consumer_hypergraph(repo: Path, revision: str = 'HEAD') -> dict:
+    """Read a pinned source tree; expose typed consumer candidates and unknowns.
+
+    This is a bounded, opt-in source projection. A missing candidate is never
+    evidence of no runtime or external consumer, and no retirement is allowed.
+    """
+    from .reticulum import assess_cut, MODEL, BLOCKED
+    from .workflow_rationalization import audit_workflows
+
+    repo = Path(repo).resolve(strict=True)
+    ledger = snapshot(repo, revision)
+    validate_ledger(ledger)
+    commit = ledger['commit']
+    records = {r['path']: r for r in ledger['records']}
+    if len(records) > 4096:
+        raise ValueError('P2 bounded source census exceeded')
+    paths = sorted(records)
+    aliases: dict[str, set[str]] = {}
+    for path in paths:
+        if path.endswith('.py'):
+            for alias in modules_for(path):
+                aliases.setdefault(alias, set()).add(path)
+
+    edges: dict[tuple[str, str, str], dict] = {}
+    unknowns: set[tuple[str, str]] = set()
+    generated: set[str] = set()
+    source_bytes = 0
+    parsed_python = 0
+    parsed_workflows = 0
+    source_suffix = ('.py', '.js', '.mjs', '.cjs', '.ts', '.tsx',
+                     '.yml', '.yaml', '.json', '.toml', '.sh')
+
+    def unknown(path: str, kind: str) -> None:
+        unknowns.add((path, kind))
+
+    def add(consumer: str, dependency: str, kind: str) -> None:
+        if consumer not in records or dependency not in records:
+            unknown(consumer, 'UNRESOLVED_SOURCE_REFERENCE')
+            return
+        key = (consumer, dependency, kind)
+        edges[key] = {'consumer': 'file:' + consumer,
+                      'dependency': 'file:' + dependency,
+                      'kind': kind, 'evidence_path': consumer,
+                      'evidence_blob_oid': records[consumer]['git_oid'],
+                      'status': 'SOURCE_CANDIDATE_NOT_RUNTIME_EDGE'}
+        if len(edges) > 16384:
+            raise ValueError('P2 consumer edge budget exceeded')
+
+    def resolve(path: str, name: str, role: str) -> None:
+        matches = aliases.get(name, set())
+        if len(matches) == 1:
+            add(path, next(iter(matches)), role)
+        elif len(matches) > 1:
+            unknown(path, 'AMBIGUOUS_PYTHON_MODULE')
+        else:
+            unknown(path, 'UNRESOLVED_OR_EXTERNAL_PYTHON_MODULE')
+
+    for path in paths:
+        record = records[path]
+        if (path.startswith(('generated/', 'gen/', 'dist/', 'build/')) or
+                '/generated/' in path or '/gen/' in path):
+            generated.add(path)
+            unknown(path, 'GENERATED_PRODUCER_NOT_ATTESTED')
+        if not path.endswith(source_suffix):
+            continue
+        size = record.get('size')
+        if (record['status'] != 'observed_git_blob' or
+                not isinstance(size, int) or size > 256 * 1024 or
+                source_bytes + size > 16 * 1024 * 1024):
+            unknown(path, 'SOURCE_READBACK_SKIPPED_OR_UNAVAILABLE')
+            continue
+        raw = git(repo, 'cat-file', 'blob', record['git_oid'],
+                  max_output=256 * 1024 + 1)
+        source_bytes += len(raw)
+        try:
+            content = raw.decode('utf-8')
+        except UnicodeDecodeError:
+            unknown(path, 'SOURCE_ENCODING_UNKNOWN')
+            continue
+        if not path.endswith('.py'):
+            if path.endswith(('.js', '.mjs', '.cjs', '.ts', '.tsx')):
+                unknown(path, 'NON_PYTHON_CONSUMERS_REQUIRE_ORIGINAL_PARSER')
+            continue
+        try:
+            syntax = ast.parse(content, filename=path)
+        except SyntaxError:
+            unknown(path, 'PYTHON_PARSE_FAILED')
+            continue
+        parsed_python += 1
+        role = ('GENERATED_STATIC_IMPORT_CANDIDATE' if path in generated else
+                'TEST_STATIC_IMPORT_CANDIDATE' if path.startswith('tests/') else
+                'PYTHON_STATIC_IMPORT_CANDIDATE')
+        for expr in ast.walk(syntax):
+            if isinstance(expr, ast.Call) and (
+                isinstance(expr.func, ast.Name) and expr.func.id == '__import__' or
+                isinstance(expr.func, ast.Attribute) and expr.func.attr == 'import_module'):
+                unknown(path, 'DYNAMIC_PYTHON_IMPORT_UNKNOWN')
+            if isinstance(expr, ast.Import):
+                for item in expr.names:
+                    resolve(path, item.name, role)
+            elif isinstance(expr, ast.ImportFrom):
+                if expr.level:
+                    unknown(path, 'RELATIVE_PYTHON_IMPORT_UNKNOWN')
+                    continue
+                if expr.module:
+                    resolve(path, expr.module, role)
+                    for item in expr.names:
+                        if item.name != '*' and expr.module + '.' + item.name in aliases:
+                            resolve(path, expr.module + '.' + item.name, role)
+                else:
+                    unknown(path, 'IMPORT_TARGET_UNKNOWN')
+
+    # Reuse the original partial YAML/source workflow owner, not a second parser.
+    try:
+        workflows = audit_workflows(repo, commit)
+    except (ValueError, KeyError, TypeError) as exc:
+        workflows = None
+        unknown('.github/workflows', 'ORIGINAL_WORKFLOW_ANALYSIS_' + type(exc).__name__.upper())
+    if workflows is not None:
+        parsed_workflows = workflows['workflow_count']
+        for workflow in workflows['workflows']:
+            target = workflow['path']
+            for source in workflow['in_repo_callers']:
+                add(source, target, 'WORKFLOW_REUSABLE_CALL_CANDIDATE')
+            for source in workflow['other_literal_references']:
+                add(source, target, 'WORKFLOW_LITERAL_REFERENCE_CANDIDATE')
+            if workflow['flags']:
+                unknown(target, 'PARTIAL_WORKFLOW_YAML_OR_DYNAMIC_CONSUMER')
+        if not workflows['source_scan_complete']:
+            unknown('.github/workflows', 'INCOMPLETE_WORKFLOW_SOURCE_SCAN')
+
+    incoming: dict[str, list[dict]] = {}
+    for edge in edges.values():
+        incoming.setdefault(edge['dependency'][5:], []).append(edge)
+    hyperedges = [
+        {'dependency': 'file:' + path, 'operator': 'AND',
+         'source_consumers': sorted(e['consumer'] for e in incoming[path]),
+         'candidate_kinds': sorted({e['kind'] for e in incoming[path]}),
+         'external_consumer_closure': 'UNKNOWN_NOT_ABSENT',
+         'safe_to_delete': False}
+        for path in sorted(incoming)
+    ]
+    nodes = [
+        {'id': 'P2_G0', 'scope': 'EXTERNAL',
+         'depends_on': ['P2_G1', 'P2_G2', 'P2_G3', 'P2_G4']},
+    ]
+    leaves = [
+        ('P2_G1', ('L_GIT_SHA', 'L_GIT_CENSUS', 'L_BOUNDED_SOURCE')),
+        ('P2_G2', ('L_PYTHON', 'L_TESTS', 'L_WORKFLOWS')),
+        ('P2_G3', ('L_GENERATED', 'L_DYNAMIC_UNKNOWN', 'L_TYPED_HYPEREDGES')),
+        ('P2_G4', ('L_REPLAY', 'L_EXTERNAL_CONSUMERS', 'L_INDEPENDENT_REVIEW')),
+    ]
+    for gate, deps in leaves:
+        nodes.append({'id': gate, 'scope': 'EXTERNAL' if gate == 'P2_G4' else 'SOURCE',
+                      'depends_on': list(deps)})
+        for item in deps:
+            nodes.append({'id': item,
+                          'scope': ('EXTERNAL' if item in
+                                    ('L_EXTERNAL_CONSUMERS', 'L_INDEPENDENT_REVIEW')
+                                    else 'SOURCE'), 'depends_on': []})
+    observations = {n['id']: MODEL for n in nodes
+                    if not n['depends_on'] and n['scope'] != 'EXTERNAL'}
+    if any(kind in ('PYTHON_PARSE_FAILED', 'SOURCE_READBACK_SKIPPED_OR_UNAVAILABLE',
+                    'SOURCE_ENCODING_UNKNOWN') for _, kind in unknowns):
+        observations['L_PYTHON'] = BLOCKED
+        observations['L_BOUNDED_SOURCE'] = BLOCKED
+    if workflows is None or not workflows['source_scan_complete']:
+        observations['L_WORKFLOWS'] = BLOCKED
+    if any(kind == 'DYNAMIC_PYTHON_IMPORT_UNKNOWN' for _, kind in unknowns):
+        observations['L_DYNAMIC_UNKNOWN'] = BLOCKED
+    # A constructed report has not replayed itself; only a separate verifier can.
+    observations['L_REPLAY'] = BLOCKED
+    if len(unknowns) > 8192:
+        raise ValueError('P2 unknown ledger budget exceeded')
+    # No runtime observation, even when every bounded source scan was successful.
+    cut = assess_cut(nodes, 'P2_G0', observations)
+    result = {'schema': 'cora-unified-consumer-hypergraph/1',
+              'commit': commit, 'ledger_digest': ledger['ledger_digest'],
+              'file_count': len(paths), 'python_sources_parsed': parsed_python,
+              'workflow_sources_seen': parsed_workflows,
+              'source_bytes_read': source_bytes,
+              'edges': sorted(edges.values(), key=lambda e: (
+                  e['dependency'], e['consumer'], e['kind'])),
+              'hyperedges': hyperedges,
+              'generated_path_candidates': sorted(generated),
+              'unknowns': [{'path': p, 'kind': k} for p, k in sorted(unknowns)],
+              'coverage': {'python': 'GIT_STATIC_AST_CANDIDATES',
+                           'tests': 'GIT_STATIC_AST_CANDIDATES',
+                           'workflows': 'REUSED_ORIGINAL_PARTIAL_YAML_ANALYZER',
+                           'generated': 'PATH_CANDIDATE_NOT_GENERATOR_PROOF',
+                           'non_python': 'PARSER_REQUIRED_UNKNOWN',
+                           'dynamic': 'UNKNOWN_NOT_ABSENT',
+                           'external': 'BLOCKED_EXTERNAL',
+                           'runtime': 'NOT_ATTESTED'},
+              'and_assessment': cut,
+              'global_status': cut['status'],
+              'authority': 'NONE', 'safe_deletion_proven': False}
+    result['graph_digest'] = domain_hash('CORA:unified-consumer-hypergraph:1', result)
+    return result
+
+
+def verify_unified_consumer_hypergraph(repo: Path, report: dict) -> bool:
+    """Recompute exact Git source, and reject stale/tampered output."""
+    if not isinstance(report, dict) or report.get('schema') != 'cora-unified-consumer-hypergraph/1':
+        raise ValueError('invalid unified consumer hypergraph receipt')
+    digest = domain_hash('CORA:unified-consumer-hypergraph:1',
+                         {k: v for k, v in report.items() if k != 'graph_digest'})
+    if digest != report.get('graph_digest'):
+        raise ValueError('unified consumer graph integrity mismatch')
+    actual = unified_consumer_hypergraph(repo, report.get('commit', ''))
+    if actual != report:
+        raise ValueError('unified consumer graph differs from original committed source')
+    return True
