@@ -518,17 +518,23 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             ROOT, base, "8ed7d6be48d2aac1d9a232b10ebc747da3e0f5a4")
         self.assertEqual(historical["source_byte_identity"], "PASS_SCOPED_EXHAUSTIVE")
         self.assertEqual(historical["content_byte_different_paths"], [])
-        # PR72 intentionally changes two engine modules. Account for their
-        # *actual committed bytes*; do not assert universal equivalence.
-        changed = ["src/cora/integrated_registry.py", "src/cora/integrated_run.py"]
-        self.assertEqual(universe["identical_blobs"], universe["denominator"] - 2)
-        self.assertEqual(universe["changed_blobs"], 2)
+        # Qualify the immutable PR72 successor independently of current P0.
+        pr72 = ekc.git_engine_source_universe(
+            ROOT, base, "7b32e8e9114523c3af975bb6240933b6cad83c0f")
+        self.assertEqual(pr72["changed_blobs"], 2)
+        self.assertEqual(pr72["content_byte_different_paths"], [
+            "src/cora/integrated_registry.py", "src/cora/integrated_run.py"])
+        # The P0 owner changes are additional, not a rewrite of PR72 evidence.
+        changed = ["src/cora/cli.py", "src/cora/continuous.py",
+                   "src/cora/integrated_registry.py", "src/cora/integrated_run.py"]
+        self.assertEqual(universe["identical_blobs"], universe["denominator"] - 4)
+        self.assertEqual(universe["changed_blobs"], 4)
         self.assertEqual(universe["added_blobs"], 0)
         self.assertEqual(universe["removed_blobs"], 0)
         self.assertEqual(universe["source_oid_identity"], "REFUTED")
         self.assertEqual(universe["source_byte_identity"], "REFUTED")
         self.assertEqual(universe["content_readback_paths"], universe["denominator"])
-        self.assertEqual(universe["content_byte_equal_paths"], universe["denominator"] - 2)
+        self.assertEqual(universe["content_byte_equal_paths"], universe["denominator"] - 4)
         self.assertEqual(universe["content_byte_different_paths"], changed)
         self.assertEqual(universe["exact_content_parity"], "REFUTED_SOURCE_CONTENT_PARITY")
         self.assertEqual(universe["full_runtime_behavior_equivalence"],
@@ -555,11 +561,17 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             old = ekc.git_engine_source_universe(
                 clone, base, "8ed7d6be48d2aac1d9a232b10ebc747da3e0f5a4")
             self.assertEqual(old["source_byte_identity"], "PASS_SCOPED_EXHAUSTIVE")
-            # PR72 already has two intentional changed engine source blobs.
+            # Freeze PR72 on the pre-P0 epoch, then prove the P0-only delta.
+            pr72 = ekc.git_engine_source_universe(
+                clone, base, "7b32e8e9114523c3af975bb6240933b6cad83c0f")
+            self.assertEqual(pr72["changed_blobs"], 2)
+            self.assertEqual(pr72["content_byte_different_paths"], [
+                "src/cora/integrated_registry.py", "src/cora/integrated_run.py"])
             baseline = ekc.git_engine_source_universe(clone, base, "HEAD")
             self.assertEqual(baseline["source_byte_identity"], "REFUTED")
-            self.assertEqual(baseline["changed_blobs"], 2)
+            self.assertEqual(baseline["changed_blobs"], 4)
             self.assertEqual(baseline["content_byte_different_paths"], [
+                "src/cora/cli.py", "src/cora/continuous.py",
                 "src/cora/integrated_registry.py", "src/cora/integrated_run.py"])
             path = clone / "src/cora/reticulum.py"
             path.write_text(path.read_text("utf-8") +
@@ -578,8 +590,9 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             self.assertEqual(index["identical_blobs"] + index["changed_blobs"],
                              index["denominator"])
             self.assertEqual(index["content_readback_paths"], index["denominator"])
-            self.assertEqual(index["content_byte_equal_paths"], index["denominator"] - 3)
+            self.assertEqual(index["content_byte_equal_paths"], index["denominator"] - 5)
             self.assertEqual(index["content_byte_different_paths"], [
+                "src/cora/cli.py", "src/cora/continuous.py",
                 "src/cora/integrated_registry.py", "src/cora/integrated_run.py",
                 "src/cora/reticulum.py"])
             self.assertEqual(index["exact_content_parity"],
@@ -624,7 +637,8 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             self.assertEqual(document["engine_source_universe"]["exact_content_parity"],
                              "REFUTED_SOURCE_CONTENT_PARITY")
             self.assertEqual(document["engine_source_universe"]["content_byte_different_paths"],
-                             ["src/cora/integrated_registry.py", "src/cora/integrated_run.py"])
+                             ["src/cora/cli.py", "src/cora/continuous.py",
+                              "src/cora/integrated_registry.py", "src/cora/integrated_run.py"])
             replay = subprocess.run(
                 [sys.executable, str(ROOT / "tools/verify_engineering_closure.py"),
                  "--repo", str(ROOT), "--verify-report", str(receipt)],
