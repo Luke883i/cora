@@ -1,0 +1,119 @@
+{
+  "schema": "scientific-editorial-release-dod/1",
+  "artifact": "From_Intent_to_Evidence.docx",
+  "word_sha256": "988b8df4d4e90b172c17d5fe199b3818360d32a883b7320ff1c80135cb7cabf0",
+  "word_git_blob": "77fc302848772c4d34b8c0b60df932f1f9703f48",
+  "source_bundle_git_blob": "8ca28df0d902f83704d62916404cb2efdf7c4743",
+  "logic": "NON_COMPENSATORY_AND",
+  "authority": "NONE",
+  "coverage": {
+    "source_git_refs": 138,
+    "old_source_refs": 120,
+    "incremental_git_refs": 18,
+    "product_case_studies": 6,
+    "pages_rendered": 14,
+    "diagrams_with_alt": 4,
+    "physical_docx_negative_mutants": 162,
+    "rejected": 162,
+    "benign_modified_docx": 10,
+    "accepted_benign": 10
+  },
+  "nodes": [
+    {
+      "id": "N01",
+      "obligation": "Conventional scientific and engineering terminology precedes local project labels",
+      "evidence": "SOURCE_COPY",
+      "status": "PASS_AUTHOR_SCOPED"
+    },
+    {
+      "id": "N02",
+      "obligation": "AOSP is an ecosystem; ROA/RLA/ECNN/CORA taxonomy is local and secondary",
+      "evidence": "SOURCE_COPY",
+      "status": "PASS_AUTHOR_SCOPED"
+    },
+    {
+      "id": "N03",
+      "obligation": "Six product/software/repository cases have domain-appropriate boundaries",
+      "evidence": "SOURCE_COPY",
+      "status": "PASS_AUTHOR_SCOPED"
+    },
+    {
+      "id": "N04",
+      "obligation": "120 existing plus 18 incrementally pinned original Git file identities are preserved",
+      "evidence": "EXACT_GIT_LINKS",
+      "status": "PASS_SOURCE_INTEGRITY"
+    },
+    {
+      "id": "N05",
+      "obligation": "Filesystem consolidation is qualified by consumers, roles, cost and replay, not directory counts",
+      "evidence": "SOURCE_COPY",
+      "status": "PASS_AUTHOR_SCOPED"
+    },
+    {
+      "id": "N06",
+      "obligation": "Novice Project prompt and ZIP workflow separates orchestration and expert approval",
+      "evidence": "SOURCE_COPY",
+      "status": "PASS_AUTHOR_SCOPED"
+    },
+    {
+      "id": "N07",
+      "obligation": "Turing-inspired bryophyte analogy is expressly methodological and blind-expert study remains open",
+      "evidence": "SOURCE_COPY",
+      "status": "PASS_AUTHOR_SCOPED"
+    },
+    {
+      "id": "N08",
+      "obligation": "Four figures retain meaningful alternate text; all fourteen pages render cleanly",
+      "evidence": "WORD_RENDER_A11Y",
+      "status": "PASS_LOCAL_VISUAL"
+    },
+    {
+      "id": "N09",
+      "obligation": "One page states supported claims, unsupported claims, open tests and AI work classes",
+      "evidence": "SOURCE_COPY",
+      "status": "PASS_AUTHOR_SCOPED"
+    },
+    {
+      "id": "N10",
+      "obligation": "Original prior paper remains addressable by its historical Git commit",
+      "evidence": "ORIGINAL_GIT",
+      "status": "PASS_SOURCE"
+    },
+    {
+      "id": "N11",
+      "obligation": "Exact Word SHA-256 replay and 162 rejected / 10 benign OOXML mutants",
+      "evidence": "LOCAL_AUTHOR_TEST",
+      "status": "PASS_AUTHOR_SCOPED"
+    },
+    {
+      "id": "E01",
+      "obligation": "Independent expert scientific and domain acceptance",
+      "evidence": "EXTERNAL",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "E02",
+      "obligation": "Actual original runtime re-execution of six target products and deployment operations",
+      "evidence": "EXTERNAL",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "E03",
+      "obligation": "Causal human competence, effort and error reduction trial with matched arms",
+      "evidence": "EXTERNAL",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "E04",
+      "obligation": "Authentic governance with independent publication/release approval",
+      "evidence": "EXTERNAL",
+      "status": "BLOCKED_EXTERNAL"
+    }
+  ],
+  "document_status": "PASS_AUTHOR_SCOPED",
+  "external_science": "NOT_ATTESTED",
+  "real_product_runtime": "NOT_EXECUTED",
+  "causal_leverage": "HYPOTHESIS_ONLY",
+  "human_approval": "REQUIRED_EXTERNAL",
+  "note": "Source/file identity, local deterministic Word reproduction and authored mutation oracles do not certify original runtime behavior, AI authorship or scientific novelty."
+}
