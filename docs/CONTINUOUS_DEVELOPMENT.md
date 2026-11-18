@@ -126,6 +126,22 @@ P3 implementation extends the existing `tools/verify_operational_equivalence.py`
 without changing its original closed 77-case CLI behavior, adding a second
 runner, modifying the target root, or silently executing untrusted targets.
 
+**Canonical-contract alignment (not an invented new source of authority).**
+The twelve P3 diagnostic leaves below refine, but do **not replace**, the
+five P3 leaves in committed
+`.cora/contracts/dod/self-governing-portable-development-v1.json`:
+
+| Canonical leaf and original owner | PR83 source observation | Admission |
+| --- | --- | --- |
+| L18 – `src/cora/ci_repro.py`: same-identity test comparison | Original Git test OIDs checked by the existing operational-equivalence owner on synthetic Python targets | OPEN: no provider-independent cross-target attestation |
+| L19 – `src/cora/native_gold.py`: isolated physical ddmin | Native fixture clones, un-memoized repeat probes, one physical 1-minimal counterexample | OPEN: canonical Gold owner and external target execution remain unqualified |
+| L20 – `src/cora/independent_qualification.py`: denied effects and zero-write | Neither source-level refutation nor local fixture proves authenticated host denial | BLOCKED_EXTERNAL |
+| L25 – `src/cora/one_run.py`: exact-SHA replay | PR83 receipt replay verifies reported Git test blobs; not an independently issued One-Run runtime receipt | OPEN / source only |
+| L26 – `src/cora/ci_repro.py`: distinguish CI from experiment | Native fixture FAIL stays FAIL even with green CI; machine AND never promotes external approval | OPEN: required exact HEAD CI and independent acceptance separate |
+
+Each canonical status remains governed by the original contract and owner.
+Neither a new P3 diagnostic label nor `PASS_SCOPED_FINITE_NATIVE` changes
+the foundational P3 leaf state or the P0 global release decision.
 **Global P3 = AND(G1,G2,G3,G4), with twelve noncompensatory local DoDs:**
 
 | Gate | Local DoDs | Native falsifier or independent requirement |
