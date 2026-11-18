@@ -802,7 +802,7 @@ def main(argv: list[str] | None = None) -> int:
                         args.atlas_json.write_text(json.dumps(result,sort_keys=True,indent=2)+'\n',encoding='utf-8')
                     if args.atlas_html:
                         args.atlas_html.write_text(render_portable_html(result),encoding='utf-8')
-                    code = 2 if (result['source_status']=='DEBT_BLOCKED' or
+                    code = 2 if (result['source_status'] in ('DEBT_BLOCKED', 'SOURCE_PARTIAL_NOT_CONFIGURED') or
                                  result.get('native_gold',{}).get('report_status') ==
                                  'LOCAL_RUNNER_FAIL_REPORTED') else 0
                 elif args.profile == 'comprehensive':

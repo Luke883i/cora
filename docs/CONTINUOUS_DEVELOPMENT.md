@@ -27,6 +27,54 @@ Canonical [machine contract](../.cora/contracts/dod/self-governing-portable-deve
 
 Run existing convergence-suite discovery: `python -m unittest discover -s tests -p 'test_pr20_*.py' -v`. P0 injects 10,000 deterministic *contract-model* faults, checks 100 valid metamorphic controls and performs zero target runtime mutations. Passing the campaign cannot close G0, attest human labor, authorize file retirement or replace provider review.
 
+## Target-neutral portability: bounded P1 source contract
+
+This is a *source-portability* operation, not proof of the external product, host,
+reviewer, or human-cost benefit. An external target may have its own root layout:
+CORA must not fabricate `cora.ontology.json` or `cora.artifact-roles.json`
+in the target, add adapter manifests to bypass its own root policy, or treat a
+missing manifest as a passing configured method.
+
+**Global P1 = AND(P1-G1,P1-G2,P1-G3,P1-G4).** All four intermediate
+obligations are non-compensatory and remain independent of P0's global
+scientific/external G0:
+
+| Intermediate gate | Local falsifiable obligations | Owner and original oracle |
+| --- | --- | --- |
+| P1-G1 committed-source identity | L1 same exact SHA for profile, owner and Git ledger; L2 no target root writes, untracked manifests ignored; L3 two heterogeneous original Git source fixtures | `git_snapshot`, `portable_assurance`, existing portable tests |
+| P1-G2 honest method classification | L4 absent committed root manifest means `NOT_CONFIGURED`, not PASS; L5 present-but-invalid manifest stays `DEBT_BLOCKED`; L6 all eight process slots accounted for and Git-valid partial work retained | `process_suite`, `holistic`, original process and portable tests |
+| P1-G3 replayable portability | L7 caller-owned **external** portable profile bound to the target source; L8 replay of original commit rejects tampered report, source and false authority; L9 JS and Python source do not run unless a separately authorized native probe is selected | `portable_assurance`, `verify_portable`, original Gold/JS tests |
+| P1-G4 compatibility and governance | L10 CORA strict process default preserved; L11 original CLI command/help remains stable, source partial returns nonzero status while the receipt is still written; L12 host/reviewer/behavior and global release are always blocked absent independent evidence | existing CLI and original CI/independent checks |
+
+For a foreign repository, create an **external** caller-owned portable target
+profile with an exact Git revision and an existing source owner; then run:
+
+```sh
+cora process-run /path/to/target --one-run \
+  --portable-profile /path/outside/target/target-profile.json \
+  --output /path/outside/target/portable-receipt.json
+cora verify-process /path/outside/target/portable-receipt.json \
+  --repo /path/to/target --one-run \
+  --portable-profile /path/outside/target/target-profile.json
+```
+
+On a target whose pinned source lacks both CORA manifests, `source_status` is
+`SOURCE_PARTIAL_NOT_CONFIGURED`, with the two missing obligations listed by
+name and the available Git/history source evidence retained. The source-run CLI
+returns **2**, rather than a false success; the verifier can still replay the
+exact receipt and must reject forged `PASS` fields. If the target commits a
+malformed manifest, the corresponding configured method is `DEBT_BLOCKED`.
+Legacy `run_suite` defaults to `strict`, preserving the original meaning of its
+outputs. Nothing in this section grants permission to modify a foreign target.
+
+**Minimized execution dependency:** once P1 is source-qualified, combine the
+former P2 hypergraph and P3 original/native counterexamples as one iterative
+causal-oracle workstream (not two new engines). Carry the former P4 semantic
+contraction as a per-slice *net-cost and effect-preservation gate*. Carry P5
+independent review/host authority as an orthogonal, never waived external gate.
+Run P6's three-arm causal labor study only on independently qualified target
+slices. This is a reduction of scheduling overhead, **not** of DoD obligations.
+
 <a id="current-change-range-discipline-pr59"></a>
 ## Current change-range discipline
 

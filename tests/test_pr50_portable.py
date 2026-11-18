@@ -92,8 +92,14 @@ class PortableCrossRepo(unittest.TestCase):
                                  "FOREIGN_GIT_SOURCE_UNVERIFIED")
                 self.assertEqual(result["evidence"][0]["state"],
                                  "INTEGRITY_VERIFIED_EXECUTION_UNATTESTED")
-                self.assertIn(result["source_status"],
-                              ("PASS_SCOPED_GIT_SOURCE_ONLY", "DEBT_BLOCKED"))
+                self.assertEqual(result["source_status"], "SOURCE_PARTIAL_NOT_CONFIGURED")
+                self.assertEqual(result["source_process"]["unconfigured_manifests"], {
+                    "artifact_roles": "cora.artifact-roles.json",
+                    "python_candidate_graph": "cora.ontology.json"})
+                self.assertEqual([x["method"] for x in result["source_process"]["results"]
+                                 if x["status"] == "NOT_CONFIGURED"],
+                                 ["artifact_roles", "python_candidate_graph"])
+                self.assertEqual(len(result["source_process"]["results"]), 8)
                 self.assertEqual(result["js_import_graph"],
                                  "NOT_OBSERVED_NONPYTHON_CONSUMERS_UNKNOWN")
 
@@ -238,7 +244,7 @@ class PortableCrossRepo(unittest.TestCase):
                str(self.repos[0][0]), "--one-run", "--portable-profile",
                str(self.profile), "--output", str(receipt), "--atlas-html", str(html)]
         launched = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
-        self.assertIn(launched.returncode, (0, 2), launched.stderr)
+        self.assertEqual(launched.returncode, 2, launched.stderr)
         self.assertTrue(receipt.is_file(), launched.stderr)
         replay = subprocess.run([sys.executable, "-m", "cora.cli", "verify-process",
                                   str(receipt), "--repo", str(self.repos[0][0]),
@@ -247,6 +253,90 @@ class PortableCrossRepo(unittest.TestCase):
                                  cwd=ROOT, capture_output=True, text=True)
         self.assertEqual(replay.returncode, 0, replay.stderr + replay.stdout)
         self.assertIn("BLOCKED_EXTERNAL", replay.stdout)
+
+    def test_p1_missing_in_committed_git_is_not_a_failed_configured_method(self):
+        from cora.process_suite import run_suite, verify_suite
+        for idx in range(2):
+            repo, sha, _ = self.repos[idx]
+            source_before = git(repo, "status", "--porcelain")
+            strict = run_suite(repo, sha, process="full")
+            self.assertEqual(strict["status"], "DEBT_BLOCKED")
+            portable = self.run_it(idx)
+            self.assertEqual(portable["source_status"], "SOURCE_PARTIAL_NOT_CONFIGURED")
+            checks = {x["method"]:x for x in portable["source_process"]["results"]}
+            self.assertEqual(len(checks), 8, "no method silently disappears from the dossier")
+            self.assertEqual(checks["artifact_roles"]["status"], "NOT_CONFIGURED")
+            self.assertEqual(checks["python_candidate_graph"]["status"], "NOT_CONFIGURED")
+            self.assertEqual(checks["holistic_archaeology"]["status"], "PARTIAL_SCOPED_NOT_CONFIGURED")
+            self.assertEqual(checks["git_snapshot"]["status"], "REUSED_SCOPED_FROM_HOLISTIC")
+            self.assertEqual(checks["git_archaeology"]["status"], "REUSED_SCOPED_FROM_HOLISTIC")
+            self.assertEqual(portable["governed_status"], "BLOCKED_EXTERNAL")
+            self.assertEqual(portable["authorization"], "NONE")
+            self.assertEqual(portable["target_name_scope"], "CALLER_DECLARED_UNAUTHENTICATED")
+            self.assertTrue(verify_suite(repo, portable["source_process"]))
+            self.assertEqual(git(repo,"status","--porcelain"), source_before)
+            self.assertFalse((repo / "cora.ontology.json").exists())
+            self.assertFalse((repo / "cora.artifact-roles.json").exists())
+            # Dirty untracked manifests are not committed source, and never fill gaps.
+            (repo / "cora.artifact-roles.json").write_text("not original Git bytes")
+            (repo / "cora.ontology.json").write_text("not original Git bytes")
+            after = self.run_it(idx)
+            self.assertEqual(after, portable)
+            self.assertTrue(verify_portable(repo, portable, self.profile))
+            (repo / "cora.artifact-roles.json").unlink()
+            (repo / "cora.ontology.json").unlink()
+
+    def test_p1_invalid_present_is_debt_and_valid_present_is_scoped(self):
+        repo, _, _ = self.repos[1]
+        role = repo / "cora.artifact-roles.json"
+        ontology = repo / "cora.ontology.json"
+        role.write_text("{not-valid-json")
+        git(repo, "add", "cora.artifact-roles.json")
+        git(repo, "commit", "-qm", "committed malformed CORA role manifest")
+        self.repos[1] = (repo, git(repo,"rev-parse","HEAD"), "src/app.py")
+        invalid = self.run_it(1)
+        self.assertEqual(invalid["source_status"], "DEBT_BLOCKED")
+        bad = {x["method"]:x["status"] for x in invalid["source_process"]["results"]}
+        self.assertEqual(bad["artifact_roles"], "DEBT_BLOCKED")
+        self.assertEqual(bad["python_candidate_graph"], "NOT_CONFIGURED")
+        self.assertEqual(invalid["source_process"]["unconfigured_manifests"],
+                         {"python_candidate_graph": "cora.ontology.json"})
+        self.assertTrue(verify_portable(repo, invalid, self.profile))
+        role.write_text(json.dumps({"schema":"cora-artifact-roles/1", "rules":[{
+            "pattern":"src/*.py", "roles":["SOFTWARE_SOURCE"],
+            "rationale":"Target-owned declared code, not runtime proof."}]}))
+        ontology.write_text(json.dumps({"schema":"cora-ontology/1", "products":[{
+            "id":"target", "roots":["src"], "entrypoints":["src/app.py"]}],
+            "software":[{"id":"target-module", "roots":["src"],
+                         "product_ids":["target"]}]}))
+        git(repo, "add", ".")
+        git(repo, "commit", "-qm", "valid target-owned declarations")
+        self.repos[1] = (repo,git(repo,"rev-parse","HEAD"),"src/app.py")
+        good = self.run_it(1)
+        self.assertEqual(good["source_status"], "PASS_SCOPED_GIT_SOURCE_ONLY")
+        self.assertEqual(good["source_process"]["unconfigured_manifests"], {})
+        self.assertTrue(verify_portable(repo, good, self.profile))
+        self.assertEqual(good["governed_status"], "BLOCKED_EXTERNAL")
+        self.assertEqual(good["source_process"]["authorized_action"], "NONE")
+
+    def test_p1_receipt_promotion_and_manifest_identity_adversaries(self):
+        result = self.run_it(0)
+        for path, value in (("source_status", "PASS_SCOPED_GIT_SOURCE_ONLY"),
+                            ("governed_status", "PASS"),
+                            ("authorization", "ALLOW")):
+            forged = copy.deepcopy(result)
+            forged[path] = value
+            with self.subTest(field=path), self.assertRaisesRegex(ValueError,"replay mismatch"):
+                verify_portable(self.repos[0][0], forged, self.profile)
+        forged = copy.deepcopy(result)
+        forged["source_process"]["results"] = [row for row in forged["source_process"]["results"]
+                                                 if row["method"] != "artifact_roles"]
+        with self.assertRaisesRegex(ValueError,"replay mismatch"):
+            verify_portable(self.repos[0][0], forged, self.profile)
+        # A profile is required by the original portable interface; it is not a
+        # synthetic substitute for independent host or a root ontology file.
+        with self.assertRaises((TypeError,AttributeError)):
+            run_portable(self.repos[0][0], "HEAD", None)
 
     def test_reticular_all_levels_and_no_false_source_global(self):
         r = evaluate(ROOT)
