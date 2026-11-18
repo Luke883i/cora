@@ -290,6 +290,126 @@ def verify(repo: Path, report: dict, *, execute_pinned_native: bool) -> bool:
         raise ValueError("operational equivalence report does not independently replay")
     return True
 
+# P3: native counterfactual adjudication reuses this original operational owner.
+# These functions classify caller-observed native effects; they NEVER launch
+# arbitrary foreign-target code or authenticate the evidence producer.
+def native_counterfactual(repo: Path, base: str, head: str,
+                          tests: list[dict], baseline: dict,
+                          candidate: dict) -> dict:
+    """Classify a closed native test universe with exact Git test identity.
+
+    Observation = {exit_code:int, stdout:bytes, stderr:bytes,
+                   effects:{relative_path:bytes}}. An absent observation or
+    missing effect is UNKNOWN, not a false PASS. Only the operator may execute
+    target code in separately trusted isolation.
+    """
+    from cora.evidence import domain_hash, valid_path
+    if (not isinstance(tests, list) or not 1 <= len(tests) <= 256 or
+            any(not isinstance(t, dict) or set(t) != {'id', 'path'} or
+                not isinstance(t['id'], str) or not t['id'] or
+                not isinstance(t['path'], str) or not valid_path(t['path'])
+                for t in tests) or
+            len({t['id'] for t in tests}) != len(tests) or
+            not isinstance(baseline, dict) or not isinstance(candidate, dict) or
+            set(baseline) - {t['id'] for t in tests} or
+            set(candidate) - {t['id'] for t in tests}):
+        raise ValueError('P3 native test denominator invalid')
+    repo = Path(repo).resolve(strict=True)
+    b, h = revision(repo, base), revision(repo, head)
+    if b == h:
+        raise ValueError('P3 distinct Git revisions required')
+    ancestor = subprocess.run(['git', '-C', str(repo), 'merge-base',
+                               '--is-ancestor', b, h],
+                              capture_output=True, timeout=30, check=False)
+    if ancestor.returncode:
+        raise ValueError('P3 source revisions must have original ancestry')
+    def original_oid(sha, path):
+        row = git(repo, 'ls-tree', '-z', sha, '--', path)
+        if (row.count(b'\0') != 1 or not row.endswith(b'\0') or
+                b'\t' not in row or
+                row.split(b'\t', 1)[1][:-1].decode('utf-8') != path or
+                not row.startswith((b'100644 blob ', b'100755 blob '))):
+            return None
+        return row.split(b'\t', 1)[0].decode('ascii').split()[-1]
+    def valid_observation(obs):
+        return (isinstance(obs, dict) and set(obs) ==
+                {'exit_code', 'stdout', 'stderr', 'effects'} and
+                type(obs['exit_code']) is int and
+                isinstance(obs['stdout'], bytes) and
+                isinstance(obs['stderr'], bytes) and
+                isinstance(obs['effects'], dict) and
+                bool(obs['effects']) and len(obs['effects']) <= 32 and
+                all(isinstance(p, str) and valid_path(p) and
+                    isinstance(v, bytes) and len(v) <= 1024 * 1024
+                    for p, v in obs['effects'].items()) and
+                len(obs['stdout']) <= MAX_OUTPUT and
+                len(obs['stderr']) <= MAX_OUTPUT)
+    def fingerprint(obs):
+        if not valid_observation(obs):
+            return None
+        return {
+            'exit_code': obs['exit_code'],
+            'stdout_sha256': hashlib.sha256(obs['stdout']).hexdigest(),
+            'stderr_sha256': hashlib.sha256(obs['stderr']).hexdigest(),
+            'effect_sha256': {p: hashlib.sha256(data).hexdigest()
+                              for p, data in sorted(obs['effects'].items())},
+        }
+    rows = []
+    for item in tests:
+        key, path = item['id'], item['path']
+        left_oid, right_oid = original_oid(b, path), original_oid(h, path)
+        left, right = fingerprint(baseline.get(key)), fingerprint(candidate.get(key))
+        if left_oid is None or right_oid is None:
+            status = 'UNKNOWN_TEST_NOT_IN_ORIGINAL_GIT'
+        elif left_oid != right_oid:
+            status = 'UNKNOWN_TEST_IDENTITY_DRIFT'
+        elif left is None or right is None:
+            status = 'UNKNOWN_NATIVE_OBSERVATION_OR_EFFECT_MISSING'
+        elif left['exit_code'] != 0:
+            status = 'UNKNOWN_BASELINE_ORACLE_NOT_ACCEPTED'
+        elif left != right:
+            status = 'FAIL_OBSERVED_NATIVE_COUNTERFACTUAL'
+        else:
+            status = 'PASS_SCOPED_SAME_OBSERVED_NATIVE_EFFECTS'
+        rows.append({'id': key, 'path': path, 'base_oracle_oid': left_oid,
+                     'head_oracle_oid': right_oid, 'baseline': left,
+                     'candidate': right, 'status': status})
+    bad = [row['id'] for row in rows if row['status'].startswith('FAIL_')]
+    unknown = [row['id'] for row in rows if row['status'].startswith('UNKNOWN_')]
+    result = {'schema': 'cora-native-counterfactual/1', 'base': b, 'head': h,
+              'tests': rows, 'denominator': len(tests), 'failed': bad,
+              'unknown': unknown,
+              'status': ('FAIL_OBSERVED' if bad else
+                         'UNKNOWN_INCOMPLETE' if unknown else
+                         'PASS_SCOPED_FINITE_NATIVE'),
+              'execution': 'OPERATOR_SUPPLIED_ORIGINAL_GIT_NATIVE_OBSERVATIONS',
+              'producer_authenticated': False,
+              'external_and_runtime_closure': 'BLOCKED_EXTERNAL',
+              'release_authorization': 'NONE'}
+    result['digest'] = domain_hash('CORA:native-counterfactual:1', result)
+    return result
+
+
+
+def verify_native_counterfactual(repo: Path, report: dict, tests: list[dict],
+                                 baseline: dict, candidate: dict) -> bool:
+    """Reopen original Git oracle blobs and recompare caller-supplied evidence.
+
+    A changed caller-controlled observation can be rehashed; this replay
+    detects report-only forgery, NOT producer collusion or missing effects.
+    """
+    from cora.evidence import domain_hash
+    if not isinstance(report, dict) or report.get('schema') != 'cora-native-counterfactual/1':
+        raise ValueError('invalid P3 counterfactual receipt')
+    if report.get('digest') != domain_hash('CORA:native-counterfactual:1',
+                                            {k: v for k, v in report.items() if k != 'digest'}):
+        raise ValueError('P3 counterfactual digest mismatch')
+    actual = native_counterfactual(repo, report['base'], report['head'],
+                                   tests, baseline, candidate)
+    if actual != report:
+        raise ValueError('P3 counterfactual Git and native evidence replay mismatch')
+    return True
+
 
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
