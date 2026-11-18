@@ -59,8 +59,9 @@ def _coupling_groups(paths:list[str], pair_rows:list[dict], by_path:dict, owners
 
 def holistic_audit(repo:Path, revision:str='HEAD', *, max_commits:int=256,
                    focus:str|None=None, pr_index:dict|None=None,
-                   manifest_mode:str='strict') -> dict:
-    if manifest_mode not in ('strict', 'target_neutral'):
+                   manifest_mode:str='strict',role_manifest:str='cora.artifact-roles.json',
+                   ontology_manifest:str='cora.ontology.json') -> dict:
+    if manifest_mode not in ('strict', 'target_neutral') or not valid_path(role_manifest) or not valid_path(ontology_manifest):
         raise ValueError('unknown manifest classification policy')
     repo=Path(repo).resolve(strict=True)
     ledger=snapshot(repo,revision)
@@ -68,21 +69,21 @@ def holistic_audit(repo:Path, revision:str='HEAD', *, max_commits:int=256,
     history=mine_history(repo,sha,max_commits=max_commits,pr_index=pr_index)
     files={r['path']:r for r in ledger['records']}
     paths=sorted(files)
-    missing = ({'python_static_graph': 'cora.ontology.json',
-                'artifact_roles': 'cora.artifact-roles.json'}
+    missing = ({'python_static_graph': ontology_manifest,
+                'artifact_roles': role_manifest}
                if manifest_mode == 'target_neutral' else {})
     missing = {method: source for method, source in missing.items()
                if source not in files}
     failures=[]
     try:
-        graph=graph_from_commit(repo,sha)
+        graph=graph_from_commit(repo,sha,ontology_path=ontology_manifest)
     except (ValueError, KeyError) as exc:
         graph=None
         failures.append({'method':'python_graph_and_ontology',
                          'status':'NOT_CONFIGURED' if 'python_static_graph' in missing else 'UNAVAILABLE',
                          'reason':'ABSENT_IN_PINNED_GIT' if 'python_static_graph' in missing else type(exc).__name__})
     try:
-        roles=artifact_audit(repo,sha)
+        roles=artifact_audit(repo,sha,manifest=role_manifest)
     except (ValueError,KeyError) as exc:
         roles=None
         failures.append({'method':'artifact_roles',
@@ -180,6 +181,8 @@ def holistic_audit(repo:Path, revision:str='HEAD', *, max_commits:int=256,
     if manifest_mode == 'target_neutral':
         report['manifest_mode'] = manifest_mode
         report['not_configured'] = dict(sorted(missing.items()))
+    if (role_manifest,ontology_manifest)!=('cora.artifact-roles.json','cora.ontology.json'):
+        report['manifest_paths']={'artifact_roles':role_manifest,'ontology':ontology_manifest}
     report['report_digest']=domain_hash('CORA:holistic:1',report)
     return report
 
@@ -194,7 +197,9 @@ def verify_holistic(repo:Path, report:dict) -> bool:
     focus=report['focused_file']['path'] if report.get('focused_file') else None
     actual=holistic_audit(repo,report['commit'],max_commits=history['bounded_commits'],
                           focus=focus,pr_index=pr,
-                          manifest_mode=report.get('manifest_mode','strict'))
+                          manifest_mode=report.get('manifest_mode','strict'),
+                          role_manifest=report.get('manifest_paths',{}).get('artifact_roles','cora.artifact-roles.json'),
+                          ontology_manifest=report.get('manifest_paths',{}).get('ontology','cora.ontology.json'))
     if actual != report:
         raise ValueError('holistic report cannot be replayed from committed Git state')
     return True

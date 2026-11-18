@@ -42,19 +42,21 @@ def process_catalog() -> dict:
 
 def run_suite(repo:Path,revision:str='HEAD',*,process:str='full',
               max_commits:int=64,focus:str|None=None,measure:bool=False,
-              change_base:str|None=None,source_mode:str='strict')->dict:
+              change_base:str|None=None,source_mode:str='strict',
+              role_manifest:str='cora.artifact-roles.json',
+              ontology_manifest:str='cora.ontology.json')->dict:
     if process not in PROCESSES or type(max_commits) is not int or not 1<=max_commits<=1000:
         raise ValueError('unknown CORA process or invalid history limit')
-    if source_mode not in ('strict', 'target_neutral'):
-        raise ValueError('unknown source manifest policy')
+    if source_mode not in ('strict', 'target_neutral') or not valid_path(role_manifest) or not valid_path(ontology_manifest):
+        raise ValueError('unknown source manifest policy or unsafe manifest path')
     if focus is not None and not valid_path(focus):
         raise ValueError('unsafe focus')
     repo=Path(repo).resolve(strict=True)
     ledger=snapshot(repo,revision)
     commit=ledger['commit']
     tracked={row['path'] for row in ledger['records']}
-    absent = ({'artifact_roles': 'cora.artifact-roles.json',
-               'python_candidate_graph': 'cora.ontology.json'}
+    absent = ({'artifact_roles': role_manifest,
+               'python_candidate_graph': ontology_manifest}
               if source_mode=='target_neutral' else {})
     absent={method: path for method,path in absent.items() if path not in tracked}
     checks=[]
@@ -93,7 +95,8 @@ def run_suite(repo:Path,revision:str='HEAD',*,process:str='full',
         holistic_started=monotonic() if measure else None
         try:
             holistic = holistic_audit(repo,commit,max_commits=max_commits,focus=focus,
-                                       manifest_mode=source_mode)
+                                       manifest_mode=source_mode,role_manifest=role_manifest,
+                                       ontology_manifest=ontology_manifest)
         except (ValueError,KeyError,TypeError):
             pass  # Explicit fallback below still records failed methods.
         if measure:
@@ -108,12 +111,13 @@ def run_suite(repo:Path,revision:str='HEAD',*,process:str='full',
     }
     sources = {
         'git_snapshot': lambda:snapshot(repo,commit),
-        'artifact_roles': lambda:artifact_audit(repo,commit),
+        'artifact_roles': lambda:artifact_audit(repo,commit,manifest=role_manifest),
         'manifest_adapters': lambda:adapter_audit(repo,commit),
         'git_archaeology': lambda:mine_history(repo,commit,max_commits=max_commits),
-        'python_candidate_graph': lambda:graph_from_commit(repo,commit),
+        'python_candidate_graph': lambda:graph_from_commit(repo,commit,ontology_path=ontology_manifest),
         'holistic_archaeology': lambda:holistic_audit(repo,commit,max_commits=max_commits,
-                                                        focus=focus,manifest_mode=source_mode),
+                                                        focus=focus,manifest_mode=source_mode,
+                                                        role_manifest=role_manifest,ontology_manifest=ontology_manifest),
         'debt_signals': lambda:debt_scan(repo,commit,max_commits=max_commits,_holistic_report=holistic),
     }
     for name in IMPLEMENTED[process]:
@@ -176,6 +180,8 @@ def run_suite(repo:Path,revision:str='HEAD',*,process:str='full',
     if measure:
         result['timing']={'wall_ms':max(0,int((monotonic()-started)*1000)),
                           'basis':'MONOTONIC_LOCAL_OBSERVATION_NOT_REPLAYABLE'}
+    if (role_manifest,ontology_manifest)!=('cora.artifact-roles.json','cora.ontology.json'):
+        result['manifest_paths']={'artifact_roles':role_manifest,'ontology':ontology_manifest}
     result['run_digest']=domain_hash('CORA:process-run:1',result)
     return result
 
@@ -195,7 +201,9 @@ def verify_suite(repo:Path,report:dict)->bool:
     expected=run_suite(repo,report['commit'],process=report['process'],
                        max_commits=report['history_limit'],focus=report['focus'],
                        change_base=report.get('change_base'),
-                       source_mode=report.get('source_mode','strict'))
+                       source_mode=report.get('source_mode','strict'),
+                       role_manifest=report.get('manifest_paths',{}).get('artifact_roles','cora.artifact-roles.json'),
+                       ontology_manifest=report.get('manifest_paths',{}).get('ontology','cora.ontology.json'))
     if not has_practices:
         # An old, source-replayed receipt does not magically acquire the
         # implementation added after its commit; historical bytes stay intact.
