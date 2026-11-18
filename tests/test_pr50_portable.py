@@ -12,6 +12,8 @@ import unittest
 from pathlib import Path
 
 from cora.portable_assurance import run_portable, verify_portable, render_portable_html
+from cora.graph import consumer_hypergraph, verify_consumer_hypergraph
+from cora.evidence import domain_hash
 from tools.verify_crossrepo_convergence import evaluate
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -401,6 +403,119 @@ class TestPortableNonRootManifests(unittest.TestCase):
             legacy=run_portable(target,rev,profile)
             self.assertEqual(legacy['source_process']['status'],'SOURCE_PARTIAL_NOT_CONFIGURED')
 
+
+
+class TestP2NativeConsumerCut(unittest.TestCase):
+    def setUp(self):
+        self.folder = tempfile.TemporaryDirectory()
+        self.addCleanup(self.folder.cleanup)
+        self.repo = Path(self.folder.name)
+        files = {
+            "src/pkg/__init__.py": "",
+            "src/pkg/lib.py": "VALUE = 3\n",
+            "tests/test_consumer.py": "import pkg.lib\n",
+            "generated/client.py": "import pkg.lib\n",
+            "src/pkg/dynamic.py": 'import importlib\nimportlib.import_module("pkg.lib")\n',
+            "src/client.mjs": 'import "./foreign.mjs";\n',
+            ".github/workflows/base.yml": "on: [workflow_call]\njobs:\n  job:\n    runs-on: ubuntu-latest\n",
+            ".github/workflows/call.yml": "on: [push]\njobs:\n  using:\n    uses: ./.github/workflows/base.yml\n",
+            "contracts/ontology.json": json.dumps({
+                "schema": "cora-ontology/1",
+                "products": [{"id": "p", "roots": ["src", "generated", "tests"],
+                              "entrypoints": ["src/pkg/lib.py"]}],
+                "software": [{"id": "sw", "roots": ["src"], "product_ids": ["p"]}]}),
+        }
+        for path, data in files.items():
+            out = self.repo / path
+            out.parent.mkdir(parents=True, exist_ok=True)
+            out.write_text(data)
+        git(self.repo, "init", "-q")
+        git(self.repo, "config", "user.name", "P2 fixture")
+        git(self.repo, "config", "user.email", "p2@example.invalid")
+        git(self.repo, "add", ".")
+        git(self.repo, "commit", "-qm", "immutable P2 source fixture")
+        self.sha = git(self.repo, "rev-parse", "HEAD")
+
+    def report(self, revision=None, ontology="contracts/ontology.json"):
+        return consumer_hypergraph(self.repo, revision or self.sha,
+                                   ontology_path=ontology)
+
+    def test_four_and_gates_and_typed_candidates(self):
+        report = self.report()
+        edges = {(e["consumer"], e["dependency"], e["kind"]) for e in report["edges"]}
+        self.assertIn(("file:tests/test_consumer.py", "file:src/pkg/lib.py",
+                       "TEST_PYTHON_CONSUMER_CANDIDATE"), edges)
+        self.assertIn(("file:generated/client.py", "file:src/pkg/lib.py",
+                       "GENERATED_PYTHON_CONSUMER_CANDIDATE"), edges)
+        self.assertIn(("file:.github/workflows/call.yml", "file:.github/workflows/base.yml",
+                       "REUSABLE_WORKFLOW_CALL_CANDIDATE"), edges)
+        self.assertEqual(report["global_status"], "BLOCKED_EXTERNAL")
+        self.assertEqual(report["assessment"]["states"]["P2_G4"], "BLOCKED_EXTERNAL")
+        self.assertEqual(len(report["assessment"]["ordered_cut"]), 17)
+        self.assertEqual(report["authority"], "NONE")
+        self.assertFalse(report["safe_to_delete"])
+        group = next(g for g in report["hyperedges"]
+                     if g["dependency"] == "file:src/pkg/lib.py")
+        self.assertEqual(group["operator"], "AND")
+        self.assertFalse(group["safe_to_delete"])
+        self.assertTrue(verify_consumer_hypergraph(self.repo, report))
+
+    def test_manifestless_dynamic_nonpython_and_generator_unknown(self):
+        report = self.report()
+        unknown = {(x["path"], x["kind"]) for x in report["unknowns"]}
+        self.assertIn(("generated/client.py", "GENERATED_PRODUCER_UNATTESTED"), unknown)
+        self.assertIn(("src/client.mjs", "NON_PYTHON_PARSER_NOT_INVOKED"), unknown)
+        self.assertTrue(any(x["kind"] == "GRAPH_DYNAMIC_IMPORT_UNKNOWN"
+                            for x in report["unknowns"]))
+        missing = self.report(ontology="contracts/not-committed.json")
+        self.assertIsNone(missing["source_graph_digest"])
+        self.assertEqual(missing["assessment"]["states"]["L_PYTHON"], "BLOCKED_UNOBSERVED")
+        self.assertTrue(verify_consumer_hypergraph(self.repo, missing))
+        self.assertEqual(missing["global_status"], "BLOCKED_EXTERNAL")
+
+    def test_physical_git_mutation_stale_sha_and_rehashed_forgery(self):
+        old = self.report()
+        (self.repo / "tests/test_consumer.py").write_text("import dirty.not_committed\n")
+        self.assertEqual(self.report(), old)
+        git(self.repo, "add", ".")
+        git(self.repo, "commit", "-qm", "physical source import mutation")
+        fresh = self.report("HEAD")
+        self.assertNotEqual(old["digest"], fresh["digest"])
+        self.assertFalse(any(x["consumer"] == "file:tests/test_consumer.py"
+                             for x in fresh["edges"]))
+        self.assertTrue(verify_consumer_hypergraph(self.repo, old))
+        forged = copy.deepcopy(old)
+        forged["authority"] = "RELEASE_APPROVED"
+        with self.assertRaisesRegex(ValueError, "digest mismatch"):
+            verify_consumer_hypergraph(self.repo, forged)
+        forged["digest"] = domain_hash("CORA:consumer-hypergraph:1",
+                                       {k:v for k,v in forged.items() if k != "digest"})
+        with self.assertRaisesRegex(ValueError, "differs"):
+            verify_consumer_hypergraph(self.repo, forged)
+
+    def test_10000_finite_receipt_faults_not_10000_runtime_mutations(self):
+        report = self.report()
+        for i in range(10000):
+            bad = copy.deepcopy(report)
+            family = i % 5
+            if family == 0: bad["safe_to_delete"] = True
+            elif family == 1: bad["authority"] = "FAKE_%d" % i
+            elif family == 2: bad["unknowns"] = []
+            elif family == 3: bad["edges"] = []
+            else: bad["assessment"]["status"] = "MODEL_ELIGIBLE_UNATTESTED"
+            with self.assertRaisesRegex(ValueError, "digest mismatch"):
+                verify_consumer_hypergraph(self.repo, bad)
+
+    def test_original_cora_git_repository_self_application(self):
+        # This is only authoritative on the full original Git checkout used by CI.
+        self.assertTrue((ROOT / ".git").exists(), "original Git history required")
+        head = git(ROOT, "rev-parse", "HEAD")
+        report = consumer_hypergraph(ROOT, head)
+        self.assertEqual(report["commit"], head)
+        self.assertGreater(report["file_count"], 300)
+        self.assertEqual(report["global_status"], "BLOCKED_EXTERNAL")
+        self.assertFalse(report["safe_to_delete"])
+        self.assertTrue(verify_consumer_hypergraph(ROOT, report))
 
 
 if __name__ == "__main__":
