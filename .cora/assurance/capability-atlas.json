@@ -785,6 +785,7 @@
       "tests/test_pr52_native_gold.py",
       "tests/test_pr58_practice_contract.py",
       "tests/test_pr59_consolidation.py",
+      "tests/test_pr80_unified_hypergraph.py",
       "tests/test_pr62_enterprise_docs.py",
       "tests/test_pr68_project_prompt.py",
       "tests/test_pr70_operational_equivalence.py",

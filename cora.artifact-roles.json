@@ -524,6 +524,11 @@
       "rationale": "CORA self-governing source-level AND development program; never a release or external authority."
     },
     {
+      "pattern": "tests/test_pr80_unified_hypergraph.py",
+      "roles": ["CONTRACT_VERIFIER", "FIXTURE", "TEST"],
+      "rationale": "P2 source-only hypergraph, physical committed Git falsifier and 10000 finite receipt mutants; no independent product authority."
+    },
+    {
       "pattern": "tests/test_pr20_self_governing_contract.py",
       "roles": [
         "CONTRACT_VERIFIER",
