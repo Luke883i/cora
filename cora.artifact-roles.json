@@ -516,6 +516,23 @@
       "rationale": "Twenty-eight-node R1–R4 source/external non-compensatory semantic DoD profile."
     },
     {
+      "pattern": ".cora/contracts/dod/self-governing-portable-development-v1.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "CORA self-governing source-level AND development program; never a release or external authority."
+    },
+    {
+      "pattern": "tests/test_pr20_self_governing_contract.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "Finite 10000 contract-model mutants and 100 positive controls; no target runtime execution."
+    },
+    {
       "pattern": "tests/test_pr20_convergence.py",
       "roles": [
         "CONTRACT_VERIFIER",
