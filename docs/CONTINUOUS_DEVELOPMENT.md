@@ -156,6 +156,14 @@ including the empty set, and never promotes flaky, unobserved or
 budget-exhausted tests into proof. ddmin returns **local 1-minimality** only;
 not a universally minimal cause, a deployment guarantee or safe deletion.
 
+`native_counterfactual_cut(native_receipt, ddmin_receipt)` now materializes
+these exact four intermediate gates and twelve leaves using the original
+`reticulum.assess_cut`. The reticular digest stays intact in a separate
+`cora-p3-native-cut/1` envelope. Incomplete observations remain BLOCKED,
+observed native regressions propagate REFUTED through every affected gate,
+and independent reviewer/rollback remain BLOCKED_EXTERNAL. Source-change
+labels supplied to ddmin never, by themselves, authenticate physical Git
+provenance; L7 stays blocked until that linkage can be independently checked.
 **Executed fixtures:** two real Git source revisions, unchanged original test
 blob, a harmless source comment plus an independently failing behavioral
 change, persisted receipt divergence with identical stdout/exit, source
