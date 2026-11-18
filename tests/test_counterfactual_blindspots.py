@@ -188,11 +188,11 @@ class P3NativeCounterfactualTests(unittest.TestCase):
 
     def test_ddmin_finds_physical_fault_and_unknown_is_not_pass(self):
         a = self.run_revision(self.repo, self.base)
-        memo = {}
+        executions = []
         def physical_probe(changes):
-            if changes in memo:
-                return memo[changes]
-            work = Path(self.tmp.name) / ('patch_' + str(len(memo)))
+            # Never memoize a probe: a second call must execute a fresh native
+            # checkout to falsify nondeterminism, not replay a cached verdict.
+            work = Path(self.tmp.name) / ('patch_' + str(len(executions)))
             command(self.repo, 'clone', '--no-local', '-q', '--', str(self.repo), str(work))
             command(work, 'checkout', '-q', '--detach', self.base)
             prefix = '# innocuous edit\n' if 'noise' in changes else ''
@@ -208,12 +208,14 @@ class P3NativeCounterfactualTests(unittest.TestCase):
             head = command(work, 'rev-parse', 'HEAD')
             b = self.run_revision(work, head)
             verdict = ('FAIL' if b['effects'] != a['effects'] else 'PASS')
-            memo[changes] = verdict
+            executions.append((changes, head, verdict))
             return verdict
         result = self.op.minimize_native_failure(['noise', 'fault'],
                                                   physical_probe, max_probes=64)
         self.assertEqual(result['status'], 'FAIL_1_MINIMAL_NATIVE_WITNESS')
         self.assertEqual(result['minimized'], ['fault'])
+        self.assertEqual(len(executions), len(result['trials']) * 2)
+        self.assertGreaterEqual(len({x[1] for x in executions}), 2)
         self.assertFalse(result['safe_deletion'])
         flaky = iter(['FAIL', 'PASS'])
         unknown = self.op.minimize_native_failure(['fault'],
