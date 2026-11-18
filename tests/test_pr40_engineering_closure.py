@@ -771,16 +771,24 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         self.assertEqual(set(before), set(at_pr69))
         self.assertGreaterEqual(len(before), 60)
         self.assertEqual(before, at_pr69)
-        # Later PR72 has exactly two intentional engine changes for the
-        # integrated H-FORGE source stage. Every other module remains
-        # source-identical to the PR69 baseline; neither fact alone proves
-        # universal behavioral equivalence or external acceptance.
-        current = module_oids(self.sha)
-        self.assertEqual(set(before), set(current))
-        changed = {p for p in before if before[p] != current[p]}
-        self.assertEqual(changed, {
+        # Keep the PR72 historical claim on its original, immutable epoch.
+        # Later P0 legitimately changes the CLI and its continuous owner;
+        # its distinct source delta is checked against the exact P0 base,
+        # not silently excused by the old PR69/PR72 source receipt.
+        p0_base = "7b32e8e9114523c3af975bb6240933b6cad83c0f"
+        at_p0_base = module_oids(p0_base)
+        self.assertEqual(set(before), set(at_p0_base))
+        historical_delta = {p for p in before if before[p] != at_p0_base[p]}
+        self.assertEqual(historical_delta, {
             "src/cora/integrated_run.py",
             "src/cora/integrated_registry.py",
+        })
+        current = module_oids(self.sha)
+        self.assertEqual(set(at_p0_base), set(current))
+        p0_successor_delta = {p for p in at_p0_base if at_p0_base[p] != current[p]}
+        self.assertEqual(p0_successor_delta, {
+            "src/cora/cli.py",
+            "src/cora/continuous.py",
         })
         # The assurance verifier does change; do not call the entire repo equal.
         verifier = "tools/verify_engineering_closure.py"
