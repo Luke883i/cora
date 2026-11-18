@@ -40,7 +40,7 @@ from .portable_assurance import run_portable, verify_portable, render_portable_h
 from .integrated_run import run_integrated, verify_integrated as verify_integrated_one_run
 from .integrated_html import render_integrated_html
 from .chat_bundle import append_chat_iteration, verify_chat_bundle, load_chat_step
-from .continuous import evaluate as development_gate, verify_gate, agent_check
+from .continuous import evaluate as development_gate, verify_gate, agent_check, self_development_plan, SELF_P0
 from .continuous_stress import stress_continuous
 from .archive_intake import inspect_zip, verify_intake
 from .runtime_observation import observe_runtime
@@ -514,8 +514,13 @@ def main(argv: list[str] | None = None) -> int:
             code=2 if result['status']=='REFUTED' or (args.require_full and
                 result['status']!='PASS_SCOPED_FINITE_MODEL') else 0
         elif args.cmd == 'convergence-plan':
-            contract=load_convergence_contract(args.contract)
-            result=convergent_plan(contract,args.goal)
+            if args.contract == Path(SELF_P0):
+                if args.goal != 'G_R1_R4_COMPLETE':
+                    raise ValueError('self-P0 has its own canonical non-promoting A0/G0')
+                result=self_development_plan(Path.cwd(), 'HEAD')
+            else:
+                contract=load_convergence_contract(args.contract)
+                result=convergent_plan(contract,args.goal)
             code=0
         elif args.cmd == 'stress-convergence':
             if args.synergic:

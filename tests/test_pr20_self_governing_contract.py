@@ -76,3 +76,74 @@ class ContractTests(unittest.TestCase):
                 except ValueError:results[family]+=1
         self.assertEqual(results,[1000]*10)
         print('CORA CONTRACT 10000/10000 synthetically rejected, 100 controls retained, runtime mutants 0, G0 HOLD')
+
+
+class ExecutableP0Tests(unittest.TestCase):
+    def test_exact_git_source_report_and_cli_replay(self):
+        import tempfile
+        from cora.continuous import self_development_plan, verify_self_development_plan
+        from cora.cli import main
+        report = self_development_plan(R)
+        self.assertEqual(report['global_dod'], 'HOLD')
+        self.assertEqual(report['assessment']['status'], 'BLOCKED_EXTERNAL')
+        self.assertFalse(report['product_go'])
+        self.assertEqual(report['local_obligations'], 32)
+        self.assertTrue(verify_self_development_plan(R, report))
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / 'plan.json'
+            from unittest.mock import patch
+            with patch('pathlib.Path.cwd', return_value=R):
+                self.assertEqual(main(['convergence-plan', '--contract',
+                                       str(P.relative_to(R)), '--output', str(path)]), 0)
+            self.assertEqual(json.loads(path.read_text()), report)
+            self.assertTrue(verify_self_development_plan(R, json.loads(path.read_text())))
+        for field, forged in (('global_dod', 'PASS'), ('product_go', True),
+                              ('contract_blob', '0' * 40), ('authority', 'RELEASE_MANAGER'),
+                              ('report_digest', '0' * 64)):
+            fake = copy.deepcopy(report)
+            fake[field] = forged
+            with self.assertRaises(ValueError, msg=field):
+                verify_self_development_plan(R, fake)
+
+    def test_physical_git_contract_mutations_are_not_promoted(self):
+        import subprocess, tempfile
+        from cora.continuous import self_development_plan
+        base = json.loads(P.read_text())
+        owners = sorted({x['owner'] for x in base['nodes'] if x.get('owner')}
+                        | {x['owner'] for x in base['golds']})
+        def git(repo, *args):
+            return subprocess.check_output(['git', '-C', str(repo), *args],
+                                           stderr=subprocess.PIPE).decode().strip()
+        with tempfile.TemporaryDirectory() as td:
+            repo = Path(td)
+            git(repo, 'init', '-q')
+            git(repo, 'config', 'user.name', 'P0 fixture')
+            git(repo, 'config', 'user.email', 'p0@example.invalid')
+            contract = repo / '.cora/contracts/dod/self-governing-portable-development-v1.json'
+            contract.parent.mkdir(parents=True)
+            contract.write_text(json.dumps(base))
+            for owner in owners:
+                path = repo / owner
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text('# original owner stand-in, no target execution\n')
+            git(repo, 'add', '.')
+            git(repo, 'commit', '-qm', 'original P0 physical fixture')
+            self.assertEqual(self_development_plan(repo)['global_dod'], 'HOLD')
+            mutations = [
+                lambda x: x.update(product_go=True),
+                lambda x: x['nodes'][1].update(depends_on=['G1']),
+                lambda x: x['golds'][0].update(owner='src/cora/unknown_owner.py'),
+                lambda x: next(n for n in x['nodes'] if n['id']=='L12').update(scope='SOURCE'),
+            ]
+            for i, mutate in enumerate(mutations):
+                changed = copy.deepcopy(base)
+                mutate(changed)
+                contract.write_text(json.dumps(changed))
+                git(repo, 'add', '.')
+                git(repo, 'commit', '-qm', f'physical negative {i}')
+                with self.assertRaises(ValueError, msg=f'mutation {i}'):
+                    self_development_plan(repo)
+            contract.write_text(json.dumps(base))
+            git(repo, 'add', '.')
+            git(repo, 'commit', '-qm', 'original valid contract restored')
+            self.assertEqual(self_development_plan(repo)['global_dod'], 'HOLD')
