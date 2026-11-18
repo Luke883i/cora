@@ -50,12 +50,20 @@ def _profile(data: object, commit: str) -> dict:
     schema = data.get("schema")
     if schema == "cora-portable-target/2":
         keys |= {"goal", "claims"}
-    if set(data) != keys or schema not in (PROFILE, "cora-portable-target/2"):
+    if schema == "cora-portable-target/3":
+        keys |= {"source_manifests"}
+    if set(data) != keys or schema not in (PROFILE, "cora-portable-target/2", "cora-portable-target/3"):
         _reject("invalid target-owned identity contract")
     if not isinstance(data["target_repo"], str) or not TARGET.fullmatch(data["target_repo"]):
         _reject("invalid target repo")
     if not _sha(data["revision"]) or data["revision"] != commit:
         _reject("stale source revision")
+    if schema == "cora-portable-target/3":
+        manifests = data["source_manifests"]
+        if not isinstance(manifests,dict) or set(manifests) != {"artifact_roles","ontology"}:
+            _reject("missing typed source manifest paths")
+        if any(not _path(p) for p in manifests.values()):
+            _reject("unsafe manifest path")
     owners = data["owners"]
     if not isinstance(owners, list) or not owners or len(owners) > 64:
         _reject("missing or oversized source owner list")
@@ -180,8 +188,11 @@ def run_portable(repo: Path, revision: str, profile: Path, *,
             "oracle_id": w["oracle_id"], "sha256": w["sha256"],
             "reported_outcome": w["reported_outcome"], "state": state
         })
+    manifest_paths = doc.get("source_manifests", {})
     suite = run_suite(repo, commit, process="full", max_commits=64,
-                      source_mode="target_neutral")
+                      source_mode="target_neutral",
+                      role_manifest=manifest_paths.get("artifact_roles","cora.artifact-roles.json"),
+                      ontology_manifest=manifest_paths.get("ontology","cora.ontology.json"))
     js_candidates = "NOT_OBSERVED_NONPYTHON_CONSUMERS_UNKNOWN"
     if parse_js:
         parser_resource = package_files("cora").joinpath("portable_js_imports.mjs")
