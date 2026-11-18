@@ -1,0 +1,112 @@
+{
+  "schema": "cora-paper-reticular-DoD/1",
+  "goal": "Publish a standalone, source-bound Word paper that states a falsifiable low-competence orchestration hypothesis without promoting it to established fact",
+  "claim_ceiling": "AUTHOR_SCOPED_RESEARCH_AND_DOCUMENT",
+  "non_compensatory": true,
+  "source_git_blob": "5ead919a008d6a08eb11fb774854f53cedab5037",
+  "docx_sha256": "75a5cfd30a3281877d21e0278aa9f5853eab9beb3639d1b83b85a1bdd5c68ef2",
+  "source_bundle_git_blob": "8a70abca67c4b5652d40d26d35a9601d18184431",
+  "required_nodes": [
+    {
+      "id": "C01",
+      "obligation": "Human-outcome narrative differentiates novice orchestration from specialist validation",
+      "evidence_class": "SOURCE_READER",
+      "status": "CANDIDATE_NEEDS_REPLAY"
+    },
+    {
+      "id": "C02",
+      "obligation": "Product, software and repository stay distinct in every case",
+      "evidence_class": "SOURCE_READER",
+      "status": "CANDIDATE_NEEDS_REPLAY"
+    },
+    {
+      "id": "C03",
+      "obligation": "ROA/RLA/CRC/ECNN/ECU interpreted as proposals without formal proof claims",
+      "evidence_class": "SOURCE_READER",
+      "status": "CANDIDATE_NEEDS_REPLAY"
+    },
+    {
+      "id": "C04",
+      "obligation": "Bryophyte 20 levels/42 parameters and simulator original commit pinned",
+      "evidence_class": "EXACT_GIT_SOURCE",
+      "status": "CANDIDATE_NEEDS_REPLAY"
+    },
+    {
+      "id": "C05",
+      "obligation": "Botanist blind real-vs-synthetic study identified as not executed",
+      "evidence_class": "SOURCE_READER",
+      "status": "CANDIDATE_NEEDS_REPLAY"
+    },
+    {
+      "id": "C06",
+      "obligation": "AOSP explicitly identified as an ecosystem rather than a product",
+      "evidence_class": "SOURCE_READER",
+      "status": "CANDIDATE_NEEDS_REPLAY"
+    },
+    {
+      "id": "C07",
+      "obligation": "CORA Project prompt+ZIP novice route and authorization requirements described",
+      "evidence_class": "SOURCE_READER",
+      "status": "CANDIDATE_NEEDS_REPLAY"
+    },
+    {
+      "id": "C08",
+      "obligation": "120 original source/file pins split across six product studies",
+      "evidence_class": "EXACT_GIT_SOURCE",
+      "status": "CANDIDATE_NEEDS_REPLAY"
+    },
+    {
+      "id": "C09",
+      "obligation": "Cryptographic digest, authenticated issuer, semantic truth and runtime separated",
+      "evidence_class": "SOURCE_READER",
+      "status": "CANDIDATE_NEEDS_REPLAY"
+    },
+    {
+      "id": "C10",
+      "obligation": "Security mutation value bounded by real original negative oracles",
+      "evidence_class": "SOURCE_READER",
+      "status": "CANDIDATE_NEEDS_REPLAY"
+    },
+    {
+      "id": "C11",
+      "obligation": "100 scientific challenge questions and 10,000 repeatable model mutants",
+      "evidence_class": "LOCAL_AUTHOR_TEST",
+      "status": "CANDIDATE_NEEDS_REPLAY"
+    },
+    {
+      "id": "C12",
+      "obligation": "147 physical OOXML mutants detected and 10 benign controls preserved",
+      "evidence_class": "LOCAL_AUTHOR_TEST",
+      "status": "CANDIDATE_NEEDS_REPLAY"
+    },
+    {
+      "id": "C13",
+      "obligation": "Word exact SHA-256 reproduced and same Git blob embedded in PR",
+      "evidence_class": "SOURCE_REPRODUCIBILITY",
+      "status": "CANDIDATE_NEEDS_REPLAY"
+    },
+    {
+      "id": "C14",
+      "obligation": "Independent user expertise threshold and causal comparison",
+      "evidence_class": "EXTERNAL_UNOBSERVED",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "C15",
+      "obligation": "Native product/runtime, independently judged security/biology",
+      "evidence_class": "EXTERNAL_UNOBSERVED",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "C16",
+      "obligation": "Effective protected branch review and release authorization",
+      "evidence_class": "EXTERNAL_UNOBSERVED",
+      "status": "BLOCKED_EXTERNAL"
+    }
+  ],
+  "inference_ceiling": "Git hashes prove neither identity of reviewer, effectiveness of software, human labor reduction, nor biological truth",
+  "acceptance": {
+    "local": "exact reproducibility + finite author-defined negative controls + readable Word",
+    "publication": "needs independent scientific/domain review; cannot be self-issued"
+  }
+}

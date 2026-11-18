@@ -1396,6 +1396,35 @@
         "CONTRACT_VERIFIER"
       ],
       "rationale": "Source-only plain-copy and original Git-link falsification on finite author-defined edits; no foreign product tests or review authority."
+    },
+    {
+      "pattern": "research/decision-ready-assurance/observer-compiler-paper/*.docx",
+      "roles": [
+        "DOCUMENTATION"
+      ],
+      "rationale": "Published, byte-pinned standalone research paper. Not a verified product, independent reviewer or scientific proof."
+    },
+    {
+      "pattern": "research/decision-ready-assurance/observer-compiler-paper/*.zip",
+      "roles": [
+        "ARTIFACT_INDEX"
+      ],
+      "rationale": "Deterministic source/test archive for author-scoped reproducer; not a new engine, trust authority or release."
+    },
+    {
+      "pattern": "research/decision-ready-assurance/observer-compiler-paper/*.json",
+      "roles": [
+        "ARTIFACT_INDEX",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Non-compensatory research DoD with explicit external debt; a research contract, not runtime authority."
+    },
+    {
+      "pattern": "research/decision-ready-assurance/observer-compiler-paper/*.markdown",
+      "roles": [
+        "DOCUMENTATION"
+      ],
+      "rationale": "Reproduction notes, scientific scope and limits; no approval."
     }
   ]
 }
