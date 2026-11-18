@@ -244,7 +244,7 @@ class PortableCrossRepo(unittest.TestCase):
                str(self.repos[0][0]), "--one-run", "--portable-profile",
                str(self.profile), "--output", str(receipt), "--atlas-html", str(html)]
         launched = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
-        self.assertIn(launched.returncode, (0, 2), launched.stderr)
+        self.assertEqual(launched.returncode, 2, launched.stderr)
         self.assertTrue(receipt.is_file(), launched.stderr)
         replay = subprocess.run([sys.executable, "-m", "cora.cli", "verify-process",
                                   str(receipt), "--repo", str(self.repos[0][0]),
