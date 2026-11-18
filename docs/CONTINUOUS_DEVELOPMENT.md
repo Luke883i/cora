@@ -75,6 +75,67 @@ independent review/host authority as an orthogonal, never waived external gate.
 Run P6's three-arm causal labor study only on independently qualified target
 slices. This is a reduction of scheduling overhead, **not** of DoD obligations.
 
+## Unified consumer-source hypergraph: bounded P2
+
+The original `graph.py` now offers an **opt-in** typed source projection
+using original Git blob reads, `workflow_rationalization.py` and canonical
+`reticulum.assess_cut`. It does not add an engine, change the historical
+`graph_from_commit` API, or execute target source. The target may be a
+manifestless Python/JavaScript repository; no CORA root files are installed.
+
+**Global P2 = AND(P2-G1, P2-G2, P2-G3, P2-G4).** The four
+non-compensatory intermediate gates have three local obligations each:
+
+| Gate | Local falsifiable DoDs | Owner / observation limit |
+| --- | --- | --- |
+| P2-G1 committed origin | L_GIT_SHA exact resolved Git commit; L_GIT_CENSUS every tracked file accounted for; L_BOUNDED_SOURCE file/byte limits and skipped reads remain visible | `git_snapshot` and `graph.py`, source readback only |
+| P2-G2 typed consumers | L_PYTHON candidate imports; L_TESTS explicit test consumers; L_WORKFLOWS reuse the bounded original workflow analyser | Static Python syntax and partial YAML/literal evidence, not runtime resolution |
+| P2-G3 unresolved/generation | L_GENERATED generated-path candidates; L_DYNAMIC_UNKNOWN dynamic/non-Python/parse uncertainty retained; L_TYPED_HYPEREDGES a per-file AND set of observed candidates without a safe-deletion inference | Generated producer, Node ESM and runtime callers need independent corroboration |
+| P2-G4 independent admission | L_REPLAY exact source replay (not self-attested by construction); L_EXTERNAL_CONSUMERS external consumers; L_INDEPENDENT_REVIEW nonauthor owner/provider reviewer | Last two leaves are always BLOCKED_EXTERNAL |
+
+The report is `cora-unified-consumer-hypergraph/1`, with deterministic
+`edges`, `hyperedges`, `generated_path_candidates`, `unknowns`,
+`and_assessment` and `graph_digest`. Each edge records its original
+consumer Git blob. The source language of an edge is **CANDIDATE**, not
+verified runtime dependency. Test literals and documentation references
+introduced by the analyser do **not** automatically acquire authority
+over production behavior. Missing edges are never negative evidence.
+
+For reproducible source-only use without new CLI syntax:
+
+```python
+from pathlib import Path
+from cora.graph import unified_consumer_hypergraph, verify_unified_consumer_hypergraph
+
+report = unified_consumer_hypergraph(Path("/path/to/target"), "HEAD")
+assert verify_unified_consumer_hypergraph(Path("/path/to/target"), report)
+assert report["global_status"] == "BLOCKED_EXTERNAL"
+```
+
+The existing portable One-Run Python API offers
+`run_portable(repo, revision, external_profile, include_consumers=True)`
+and exact source/profile replay with
+`verify_portable(repo, receipt, external_profile, include_consumers=True)`.
+The **default** `include_consumers=False` retains old receipts and the
+71-command CLI interface. The additional summary carries the original
+projection digest and explicit `BLOCKED_EXTERNAL`, not an independent
+product success or additional target execution. The existing opt-in Node
+parser remains the owner for syntactic ESM candidates; non-Python consumers
+are currently UNKNOWN in this P2 projection until separately bound.
+
+**Falsification boundary:** source tests include two committed Git revisions,
+dirty worktree immunity, an intentionally changed test import, missing
+consumer edges, forged authority, discarded UNKNOWNs, rehashed receipts and
+10,000 deterministic finite **receipt-model** mutations. They are not 10,000
+physical Git mutations, a complete interpreter, independent consumer closure,
+or proof that a source file is safe to retire.
+
+**Minimal continuation:** treat the next original-native counterfactual and
+first semantic responsibility contraction as one iterative P3/P4 workstream.
+Retain independent reviewer/provider/host authority as an orthogonal P5
+constraint, then run P6's randomized three-arm human-cost study only after
+the comparable target slices have been independently accepted.
+
 <a id="current-change-range-discipline-pr59"></a>
 ## Current change-range discipline
 
