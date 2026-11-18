@@ -151,3 +151,138 @@ def verify_graph_against_git(repo: Path, graph: dict) -> bool:
     if actual != graph:
         raise ValueError('graph differs from committed Git evidence')
     return True
+
+# P2 opt-in projection: one source graph, one workflow owner, one AND kernel.
+def consumer_hypergraph(repo: Path, revision: str = 'HEAD', *,
+                        ontology_path: str = 'cora.ontology.json') -> dict:
+    """Inventory typed *candidates* from pinned Git; never infer safe deletion."""
+    from .reticulum import assess_cut, MODEL, BLOCKED
+    from .workflow_rationalization import audit_workflows
+    from .evidence import valid_path
+
+    if not valid_path(ontology_path):
+        raise ValueError('unsafe P2 ontology path')
+    repo = Path(repo).resolve(strict=True)
+    ledger = snapshot(repo, revision)
+    validate_ledger(ledger)
+    commit = ledger['commit']
+    files = {r['path']: r for r in ledger['records']}
+    if len(files) > 8192:
+        raise ValueError('P2 source census exceeded')
+    seen = set()
+    edges, unknown = [], set()
+    def add(source, target, kind, origin):
+        if source not in files or target not in files:
+            unknown.add((source, 'UNRESOLVED_SOURCE_REFERENCE'))
+            return
+        key = (source, target, kind)
+        if key in seen:
+            return
+        seen.add(key)
+        edges.append({'consumer': 'file:' + source, 'dependency': 'file:' + target,
+                      'kind': kind, 'evidence': origin,
+                      'consumer_blob': files[source]['git_oid'],
+                      'claim': 'STATIC_CANDIDATE_NOT_RUNTIME_DEPENDENCY'})
+        if len(edges) > 16384:
+            raise ValueError('P2 edge budget exceeded')
+
+    source_graph = None
+    if ontology_path not in files:
+        unknown.add((ontology_path, 'ONTOLOGY_NOT_CONFIGURED_IN_COMMIT'))
+    else:
+        try:
+            source_graph = graph_from_commit(repo, commit, ontology_path)
+        except (ValueError, KeyError) as exc:
+            unknown.add((ontology_path, 'ONTOLOGY_OR_GRAPH_' + type(exc).__name__.upper()))
+    if source_graph:
+        for edge in source_graph['edges']:
+            if edge['kind'] != 'static_import_candidate':
+                continue
+            source, target = edge['source'][5:], edge['target'][5:]
+            kind = ('GENERATED_PYTHON_CONSUMER_CANDIDATE'
+                    if '/generated/' in '/' + source or source.startswith('generated/')
+                    else 'TEST_PYTHON_CONSUMER_CANDIDATE'
+                    if source.startswith('tests/') else 'PYTHON_CONSUMER_CANDIDATE')
+            add(source, target, kind, edge['evidence'])
+        for finding in source_graph['findings']:
+            unknown.add((finding['source'].removeprefix('file:'),
+                         'GRAPH_' + finding['kind'].upper()))
+    try:
+        workflows = audit_workflows(repo, commit)
+    except (ValueError, KeyError) as exc:
+        workflows = None
+        unknown.add(('.github/workflows', 'WORKFLOW_ANALYZER_' + type(exc).__name__.upper()))
+    if workflows:
+        for wf in workflows['workflows']:
+            for caller in wf['in_repo_callers']:
+                add(caller, wf['path'], 'REUSABLE_WORKFLOW_CALL_CANDIDATE', wf['git_oid'])
+            for caller in wf['other_literal_references']:
+                add(caller, wf['path'], 'WORKFLOW_LITERAL_REFERENCE_CANDIDATE', wf['git_oid'])
+            if wf['flags']:
+                unknown.add((wf['path'], 'WORKFLOW_PARTIAL_YAML_OR_HOST_UNKNOWN'))
+        if not workflows['source_scan_complete']:
+            unknown.add(('.github/workflows', 'WORKFLOW_CONSUMER_SCAN_INCOMPLETE'))
+    generated = sorted(p for p in files if p.startswith(('gen/', 'generated/', 'dist/', 'build/'))
+                       or '/generated/' in p)
+    for path in generated:
+        unknown.add((path, 'GENERATED_PRODUCER_UNATTESTED'))
+    for path in files:
+        if path.endswith(('.js', '.mjs', '.cjs', '.ts', '.tsx')):
+            unknown.add((path, 'NON_PYTHON_PARSER_NOT_INVOKED'))
+    edges.sort(key=lambda e: (e['dependency'], e['consumer'], e['kind'], e['evidence']))
+    incoming = {}
+    for edge in edges:
+        incoming.setdefault(edge['dependency'], []).append(edge)
+    groups = [{'dependency': target, 'operator': 'AND',
+               'candidate_consumers': sorted(set(e['consumer'] for e in inbound)),
+               'candidate_kinds': sorted(set(e['kind'] for e in inbound)),
+               'external_and_runtime_completeness': 'UNKNOWN', 'safe_to_delete': False}
+              for target, inbound in sorted(incoming.items())]
+    gates = {
+        'P2_G1': ('L_GIT', 'L_OWNERS', 'L_BOUNDS'),
+        'P2_G2': ('L_PYTHON', 'L_TEST', 'L_WORKFLOW'),
+        'P2_G3': ('L_GENERATED', 'L_DYNAMIC', 'L_HYPEREDGES'),
+        'P2_G4': ('L_REPLAY', 'L_EXTERNAL', 'L_REVIEW'),
+    }
+    nodes = [{'id': 'P2_G0', 'depends_on': list(gates), 'scope': 'EXTERNAL'}]
+    for gate, leaves in gates.items():
+        nodes.append({'id': gate, 'depends_on': list(leaves),
+                      'scope': 'EXTERNAL' if gate == 'P2_G4' else 'SOURCE'})
+        nodes.extend({'id': leaf, 'depends_on': [],
+                      'scope': 'EXTERNAL' if leaf in ('L_EXTERNAL', 'L_REVIEW') else 'SOURCE'}
+                     for leaf in leaves)
+    obs = {leaf: MODEL for leaves in gates.values() for leaf in leaves}
+    if source_graph is None:
+        obs['L_PYTHON'] = BLOCKED
+        obs['L_TEST'] = BLOCKED
+    if workflows is None or not workflows['source_scan_complete']:
+        obs['L_WORKFLOW'] = BLOCKED
+    obs['L_REPLAY'] = BLOCKED  # cannot self-attest its later independent verification
+    cut = assess_cut(nodes, 'P2_G0', {key: val for key, val in obs.items()
+                                   if key not in ('L_EXTERNAL', 'L_REVIEW')})
+    result = {'schema': 'cora-consumer-hypergraph/1', 'commit': commit,
+              'ontology_path': ontology_path, 'ledger_digest': ledger['ledger_digest'],
+              'source_graph_digest': source_graph['graph_digest'] if source_graph else None,
+              'workflow_digest': workflows['receipt_sha256'] if workflows else None,
+              'file_count': len(files), 'edges': edges, 'hyperedges': groups,
+              'generated_path_candidates': generated,
+              'unknowns': [{'path': p, 'kind': k} for p, k in sorted(unknown)],
+              'assessment': cut, 'global_status': cut['status'],
+              'authority': 'NONE', 'safe_to_delete': False,
+              'scope': 'GIT_STATIC_CANDIDATES_UNCLOSED_RUNTIME_AND_EXTERNAL'}
+    result['digest'] = domain_hash('CORA:consumer-hypergraph:1', result)
+    return result
+
+
+def verify_consumer_hypergraph(repo: Path, report: dict) -> bool:
+    """Independent of the report digest: replay original committed Git source."""
+    if not isinstance(report, dict) or report.get('schema') != 'cora-consumer-hypergraph/1':
+        raise ValueError('invalid P2 consumer graph receipt')
+    if report.get('digest') != domain_hash('CORA:consumer-hypergraph:1',
+                                           {k: v for k, v in report.items() if k != 'digest'}):
+        raise ValueError('P2 consumer receipt digest mismatch')
+    expected = consumer_hypergraph(repo, report.get('commit', ''),
+                                   ontology_path=report.get('ontology_path', ''))
+    if expected != report:
+        raise ValueError('P2 consumer graph differs from immutable Git source')
+    return True
