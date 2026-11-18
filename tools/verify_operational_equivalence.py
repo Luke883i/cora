@@ -478,6 +478,69 @@ def minimize_native_failure(changes: list[str], native_probe, *,
     result['digest'] = domain_hash('CORA:native-ddmin:1', result)
     return result
 
+
+def native_counterfactual_cut(native: dict, minimized: dict | None = None) -> dict:
+    """P3 four-gate AND cut: typed model evidence, NEVER product admission.
+
+    The cut is structural: caller-provided receipts are not independently
+    authenticated. The external reviewer, provider and rollback never PASS.
+    """
+    from cora.evidence import domain_hash
+    from cora.reticulum import assess_cut, MODEL, BLOCKED, EXTERNAL, REFUTED
+    if (not isinstance(native, dict) or native.get('schema') != 'cora-native-counterfactual/1' or
+            native.get('digest') != domain_hash('CORA:native-counterfactual:1',
+                {k:v for k,v in native.items() if k != 'digest'})):
+        raise ValueError('P3 invalid native receipt for AND cut')
+    if minimized is not None and (not isinstance(minimized, dict) or
+            minimized.get('schema') != 'cora-native-ddmin/1' or
+            minimized.get('digest') != domain_hash('CORA:native-ddmin:1',
+                {k:v for k,v in minimized.items() if k != 'digest'})):
+        raise ValueError('P3 invalid ddmin receipt for AND cut')
+    gates = {
+        'P3_G1': ('L1_GIT', 'L2_TEST_IDENTITY', 'L3_DENOMINATOR'),
+        'P3_G2': ('L4_NATIVE_OBSERVATIONS', 'L5_PERSISTED_EFFECTS', 'L6_NEGATIVE_UNKNOWN'),
+        'P3_G3': ('L7_PHYSICAL_WITNESS', 'L8_REPEATABILITY', 'L9_ONE_MINIMAL'),
+        'P3_G4': ('L10_INDEPENDENT_REPLAY', 'L11_AUTHENTICATED_REVIEW', 'L12_ROLLBACK'),
+    }
+    nodes = [{'id':'P3_G0','scope':'EXTERNAL','depends_on':list(gates)}]
+    for gate, leaves in gates.items():
+        nodes.append({'id':gate,'scope':'EXTERNAL' if gate == 'P3_G4' else 'MODEL',
+                      'depends_on':list(leaves)})
+        nodes.extend({'id':leaf,'scope': ('EXTERNAL' if leaf in
+                       ('L11_AUTHENTICATED_REVIEW','L12_ROLLBACK') else 'MODEL'),
+                      'depends_on':[]} for leaf in leaves)
+    rows = native.get('tests', [])
+    good_ids = bool(rows) and native.get('denominator') == len(rows)
+    test_stable = good_ids and all(x.get('base_oracle_oid') is not None and
+                                   x.get('base_oracle_oid') == x.get('head_oracle_oid')
+                                   for x in rows)
+    statuses = [x.get('status','') for x in rows]
+    native_state = (REFUTED if any(x.startswith('FAIL_') for x in statuses) else
+                    BLOCKED if any(x.startswith('UNKNOWN_') for x in statuses) or not statuses
+                    else MODEL)
+    obs = {'L1_GIT': MODEL, 'L2_TEST_IDENTITY': MODEL if test_stable else BLOCKED,
+           'L3_DENOMINATOR': MODEL if good_ids else BLOCKED,
+           'L4_NATIVE_OBSERVATIONS': native_state,
+           'L5_PERSISTED_EFFECTS': native_state,
+           'L6_NEGATIVE_UNKNOWN': (MODEL if any(
+               x.get('id','').startswith('negative:') and
+               not x.get('status','').startswith('UNKNOWN_') for x in rows) else BLOCKED),
+           'L7_PHYSICAL_WITNESS': BLOCKED,  # caller labels are not Git physical proof
+           'L8_REPEATABILITY': (MODEL if minimized and minimized.get('trials') and
+               all(x.get('first') == x.get('second') and x.get('status') in ('PASS','FAIL')
+                   for x in minimized['trials']) else BLOCKED),
+           'L9_ONE_MINIMAL': MODEL if minimized and minimized.get('status') ==
+               'FAIL_1_MINIMAL_NATIVE_WITNESS' else BLOCKED,
+           'L10_INDEPENDENT_REPLAY': BLOCKED}
+    assessment = assess_cut(nodes, 'P3_G0', obs)
+    result = {'schema': 'cora-p3-native-cut/1', 'cut': assessment,
+              'source_receipts': {'native': native['digest'],
+                                  'ddmin': minimized['digest'] if minimized else None},
+              'physical_git_linkage': 'NOT_AUTHENTICATED_FROM_LABELS',
+              'external_evidence': 'BLOCKED_EXTERNAL', 'product_go': False}
+    result['digest'] = domain_hash('CORA:p3-native-cut:1', result)
+    return result
+
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--repo", type=Path, default=Path("."))
