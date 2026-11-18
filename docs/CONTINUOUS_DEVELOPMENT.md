@@ -13,7 +13,7 @@
 
 ## CORA self-governing portable development (source contract, P0)
 
-Canonical [machine contract](../.cora/contracts/dod/self-governing-portable-development-v1.json) is a *declared program*, not a new engine, external release gate, owner registry or approval. It pins CORA main 23034955f84257839ad83468a58234dbf81c51dc and observed iKant_EDU PR251; neither ZIP comment nor Git hash proves real target behavior.
+Canonical [machine contract](../.cora/contracts/dod/self-governing-portable-development-v1.json) is a *declared program*, not a new engine, external release gate, owner registry or approval. It pins CORA main 23034955f84257839ad83468a58234dbf81c51dc and observed iKant_EDU source epoch; neither ZIP comment nor Git hash proves real target behavior.
 
 **A0:** govern CORA's own complexity, transfer its method to heterogeneous repositories and demonstrate independently that engineering quality is noninferior while total human and maintained-assurance cost is lower than a strong coding-agent control.
 
@@ -23,7 +23,7 @@ Canonical [machine contract](../.cora/contracts/dod/self-governing-portable-deve
 
 **iKant Gold:** hypergraph AND, physical ddmin, ownership-preserving quotient, temporal source succession, generated/dynamic consumers, native test identity, value/byte/trace/effects ladder, contradictory retention-policy diagnosis, denial+zero-write, manifest-neutral target, CI/expt status separation and cost-sensitive active probe. Cherry-pick semantics and negative oracles, **not** JavaScript runtime code or iKant authority.
 
-Run existing CI's PR20 discovery: `python -m unittest discover -s tests -p 'test_pr20_*.py' -v`. P0 injects 10,000 deterministic *contract-model* faults, checks 100 valid metamorphic controls and performs zero target runtime mutations. Passing the campaign cannot close G0, attest human labor, authorize file retirement or replace provider review.
+Run existing convergence-suite discovery: `python -m unittest discover -s tests -p 'test_pr20_*.py' -v`. P0 injects 10,000 deterministic *contract-model* faults, checks 100 valid metamorphic controls and performs zero target runtime mutations. Passing the campaign cannot close G0, attest human labor, authorize file retirement or replace provider review.
 
 <a id="current-change-range-discipline-pr59"></a>
 ## Current change-range discipline
