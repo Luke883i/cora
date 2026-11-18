@@ -42,19 +42,37 @@ def process_catalog() -> dict:
 
 def run_suite(repo:Path,revision:str='HEAD',*,process:str='full',
               max_commits:int=64,focus:str|None=None,measure:bool=False,
-              change_base:str|None=None)->dict:
+              change_base:str|None=None,source_mode:str='strict')->dict:
     if process not in PROCESSES or type(max_commits) is not int or not 1<=max_commits<=1000:
         raise ValueError('unknown CORA process or invalid history limit')
+    if source_mode not in ('strict', 'target_neutral'):
+        raise ValueError('unknown source manifest policy')
     if focus is not None and not valid_path(focus):
         raise ValueError('unsafe focus')
     repo=Path(repo).resolve(strict=True)
-    commit=snapshot(repo,revision)['commit']
+    ledger=snapshot(repo,revision)
+    commit=ledger['commit']
+    tracked={row['path'] for row in ledger['records']}
+    absent = ({'artifact_roles': 'cora.artifact-roles.json',
+               'python_candidate_graph': 'cora.ontology.json'}
+              if source_mode=='target_neutral' else {})
+    absent={method: path for method,path in absent.items() if path not in tracked}
     checks=[]
     started=monotonic() if measure else None
     methods=[]
     requested=set(IMPLEMENTED[process])
     def record(name:str,fn):
         begun=monotonic() if measure else None
+        if name in absent:
+            item={'method':name,'status':'NOT_CONFIGURED',
+                  'required_manifest':absent[name],
+                  'reason':'ABSENT_IN_PINNED_GIT'}
+            if measure:
+                item['elapsed_ms']=None
+                item['timing_basis']='NOT_INVOKED'
+            checks.append(item)
+            methods.append(name)
+            return
         try:
             v=fn()
             digest=next((v[k] for k in ('report_digest','ledger_digest','graph_digest','digest','selection_digest') if k in v),None)
@@ -74,7 +92,8 @@ def run_suite(repo:Path,revision:str='HEAD',*,process:str='full',
     if process == 'full':
         holistic_started=monotonic() if measure else None
         try:
-            holistic = holistic_audit(repo,commit,max_commits=max_commits,focus=focus)
+            holistic = holistic_audit(repo,commit,max_commits=max_commits,focus=focus,
+                                       manifest_mode=source_mode)
         except (ValueError,KeyError,TypeError):
             pass  # Explicit fallback below still records failed methods.
         if measure:
@@ -93,7 +112,8 @@ def run_suite(repo:Path,revision:str='HEAD',*,process:str='full',
         'manifest_adapters': lambda:adapter_audit(repo,commit),
         'git_archaeology': lambda:mine_history(repo,commit,max_commits=max_commits),
         'python_candidate_graph': lambda:graph_from_commit(repo,commit),
-        'holistic_archaeology': lambda:holistic_audit(repo,commit,max_commits=max_commits,focus=focus),
+        'holistic_archaeology': lambda:holistic_audit(repo,commit,max_commits=max_commits,
+                                                        focus=focus,manifest_mode=source_mode),
         'debt_signals': lambda:debt_scan(repo,commit,max_commits=max_commits,_holistic_report=holistic),
     }
     for name in IMPLEMENTED[process]:
@@ -103,8 +123,17 @@ def run_suite(repo:Path,revision:str='HEAD',*,process:str='full',
             field,ledger_field=derived[name]
             digest=holistic.get(field)
             method_status=holistic['method_ledger'].get(ledger_field)
-            if digest is not None and method_status not in ('NOT_AVAILABLE','NOT_RUN'):
-                item={'method':name,'status':'REUSED_SCOPED_FROM_HOLISTIC',
+            if name in absent:
+                item={'method':name,'status':'NOT_CONFIGURED',
+                      'required_manifest':absent[name],
+                      'reason':'ABSENT_IN_PINNED_GIT'}
+                if measure:
+                    item['elapsed_ms']=None
+                    item['timing_basis']='NOT_INVOKED'
+                checks.append(item)
+            elif digest is not None and method_status not in ('NOT_AVAILABLE','NOT_RUN', 'NOT_CONFIGURED'):
+                item={'method':name,'status':('PARTIAL_SCOPED_NOT_CONFIGURED'
+                      if name=='holistic_archaeology' and absent else 'REUSED_SCOPED_FROM_HOLISTIC'),
                       'source_digest':digest}
                 if measure:
                     item['elapsed_ms']=holistic_duration if name=='holistic_archaeology' else None
@@ -127,7 +156,10 @@ def run_suite(repo:Path,revision:str='HEAD',*,process:str='full',
             item['elapsed_ms']=None
             item['timing_basis']='NOT_INVOKED'
         checks.append(item)
-    status='DEBT_BLOCKED' if any(c['status']=='DEBT_BLOCKED' for c in checks) else 'PASS_SCOPED_WITH_UNVERIFIED_GAPS'
+    status=('DEBT_BLOCKED' if any(c['status']=='DEBT_BLOCKED' for c in checks)
+            else 'SOURCE_PARTIAL_NOT_CONFIGURED' if any(
+                c['status'] in ('NOT_CONFIGURED','PARTIAL_SCOPED_NOT_CONFIGURED') for c in checks)
+            else 'PASS_SCOPED_WITH_UNVERIFIED_GAPS')
     result={'schema':'cora-process-run/1', 'commit':commit,'process':process,'history_limit':max_commits,
             'focus':focus,'results':checks,'status':status,
             'methods_not_invoked':sorted(set(IMPLEMENTED['full'])-set(methods)),
@@ -135,6 +167,10 @@ def run_suite(repo:Path,revision:str='HEAD',*,process:str='full',
             'coverage':'Selected read-only source methods only; full does not mean all real-world behavior',
             'authorized_action':'NONE',
             'practice_obligations':practice_project(repo, commit, change_base=change_base)}
+    if source_mode == 'target_neutral':
+        result['source_mode']=source_mode
+        result['unconfigured_manifests']=dict(sorted(
+            (method,path) for method,path in absent.items() if method in requested))
     if change_base is not None:
         result['change_base']=result['practice_obligations']['change_base']
     if measure:
@@ -158,7 +194,8 @@ def verify_suite(repo:Path,report:dict)->bool:
         raise ValueError('legacy receipt cannot declare new range')
     expected=run_suite(repo,report['commit'],process=report['process'],
                        max_commits=report['history_limit'],focus=report['focus'],
-                       change_base=report.get('change_base'))
+                       change_base=report.get('change_base'),
+                       source_mode=report.get('source_mode','strict'))
     if not has_practices:
         # An old, source-replayed receipt does not magically acquire the
         # implementation added after its commit; historical bytes stay intact.
