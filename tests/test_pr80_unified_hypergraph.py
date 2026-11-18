@@ -115,6 +115,33 @@ class UnifiedHypergraphTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'integrity mismatch|differs'):
             verify_unified_consumer_hypergraph(self.repo, mutated)
 
+    def test_portable_one_run_opt_in_reuses_graph_and_replays(self):
+        import json
+        from cora.portable_assurance import run_portable, verify_portable
+        profile = {"schema": "cora-portable-target/1", "target_repo": "Fixture/target",
+                   "revision": self.sha,
+                   "owners": [{"id": "original-owner", "path": "src/pkg/lib.py"}],
+                   "witnesses": [], "method_links": []}
+        with tempfile.TemporaryDirectory() as outside:
+            path = Path(outside) / 'profile.json'
+            path.write_text(json.dumps(profile))
+            report = run_portable(self.repo, self.sha, path, include_consumers=True)
+            self.assertEqual(report['source_status'], 'SOURCE_PARTIAL_NOT_CONFIGURED')
+            self.assertEqual(report['consumer_hypergraph']['graph_digest'],
+                             self.report()['graph_digest'])
+            self.assertEqual(report['consumer_hypergraph']['global_status'],
+                             'BLOCKED_EXTERNAL')
+            self.assertEqual(report['authorization'], 'NONE')
+            self.assertTrue(verify_portable(self.repo, report, path, include_consumers=True))
+            with self.assertRaisesRegex(ValueError, 'replay mismatch'):
+                verify_portable(self.repo, report, path, include_consumers=False)
+            forged = copy.deepcopy(report)
+            forged['consumer_hypergraph']['global_status'] = 'PASS'
+            with self.assertRaisesRegex(ValueError, 'replay mismatch'):
+                verify_portable(self.repo, forged, path, include_consumers=True)
+            self.assertFalse((self.repo / 'cora.ontology.json').exists())
+            self.assertFalse((self.repo / 'cora.artifact-roles.json').exists())
+
     def test_10k_finite_receipt_faults_and_rehashed_forgery(self):
         # 10,000 bounded receipt-model faults, NOT 10,000 physical source edits.
         r = self.report()
