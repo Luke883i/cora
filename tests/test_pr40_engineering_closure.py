@@ -531,23 +531,26 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         self.assertEqual(p0["content_byte_different_paths"], [
             "src/cora/cli.py", "src/cora/continuous.py",
             "src/cora/integrated_registry.py", "src/cora/integrated_run.py"])
-        p1 = ekc.git_engine_source_universe(ROOT, p0_merge, self.sha)
+        p1 = ekc.git_engine_source_universe(ROOT, p0_merge, "1c26400db242032dd8fc69e138a22774eed4b100")
         self.assertEqual(p1["changed_blobs"], 4)
         self.assertEqual(p1["content_byte_different_paths"], [
             "src/cora/cli.py", "src/cora/holistic.py",
             "src/cora/portable_assurance.py", "src/cora/process_suite.py"])
+        p2 = ekc.git_engine_source_universe(ROOT, "1c26400db242032dd8fc69e138a22774eed4b100", self.sha)
+        self.assertEqual(p2["changed_blobs"], 1)
+        self.assertEqual(p2["content_byte_different_paths"], ["src/cora/graph.py"])
         changed = ["src/cora/cli.py", "src/cora/continuous.py",
-                   "src/cora/holistic.py", "src/cora/integrated_registry.py",
-                   "src/cora/integrated_run.py", "src/cora/portable_assurance.py",
-                   "src/cora/process_suite.py"]
-        self.assertEqual(universe["identical_blobs"], universe["denominator"] - 7)
-        self.assertEqual(universe["changed_blobs"], 7)
+                   "src/cora/graph.py", "src/cora/holistic.py",
+                   "src/cora/integrated_registry.py", "src/cora/integrated_run.py",
+                   "src/cora/portable_assurance.py", "src/cora/process_suite.py"]
+        self.assertEqual(universe["identical_blobs"], universe["denominator"] - 8)
+        self.assertEqual(universe["changed_blobs"], 8)
         self.assertEqual(universe["added_blobs"], 0)
         self.assertEqual(universe["removed_blobs"], 0)
         self.assertEqual(universe["source_oid_identity"], "REFUTED")
         self.assertEqual(universe["source_byte_identity"], "REFUTED")
         self.assertEqual(universe["content_readback_paths"], universe["denominator"])
-        self.assertEqual(universe["content_byte_equal_paths"], universe["denominator"] - 7)
+        self.assertEqual(universe["content_byte_equal_paths"], universe["denominator"] - 8)
         self.assertEqual(universe["content_byte_different_paths"], changed)
         self.assertEqual(universe["exact_content_parity"], "REFUTED_SOURCE_CONTENT_PARITY")
         self.assertEqual(universe["full_runtime_behavior_equivalence"],
@@ -585,19 +588,23 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             self.assertEqual(p0["content_byte_different_paths"], [
                 "src/cora/cli.py", "src/cora/continuous.py",
                 "src/cora/integrated_registry.py", "src/cora/integrated_run.py"])
-            p1 = ekc.git_engine_source_universe(clone, "1fa3570b86c91262b5d196fe5456950240ca7962", "HEAD")
+            p1 = ekc.git_engine_source_universe(
+                clone, "1fa3570b86c91262b5d196fe5456950240ca7962", "1c26400db242032dd8fc69e138a22774eed4b100")
             self.assertEqual(p1["changed_blobs"], 4)
             self.assertEqual(p1["content_byte_different_paths"], [
                 "src/cora/cli.py", "src/cora/holistic.py",
                 "src/cora/portable_assurance.py", "src/cora/process_suite.py"])
+            p2 = ekc.git_engine_source_universe(clone, "1c26400db242032dd8fc69e138a22774eed4b100", "HEAD")
+            self.assertEqual(p2["changed_blobs"], 1)
+            self.assertEqual(p2["content_byte_different_paths"], ["src/cora/graph.py"])
             baseline = ekc.git_engine_source_universe(clone, base, "HEAD")
             self.assertEqual(baseline["source_byte_identity"], "REFUTED")
-            self.assertEqual(baseline["changed_blobs"], 7)
+            self.assertEqual(baseline["changed_blobs"], 8)
             self.assertEqual(baseline["content_byte_different_paths"], [
                 "src/cora/cli.py", "src/cora/continuous.py",
-                "src/cora/holistic.py", "src/cora/integrated_registry.py",
-                "src/cora/integrated_run.py", "src/cora/portable_assurance.py",
-                "src/cora/process_suite.py"])
+                "src/cora/graph.py", "src/cora/holistic.py",
+                "src/cora/integrated_registry.py", "src/cora/integrated_run.py",
+                "src/cora/portable_assurance.py", "src/cora/process_suite.py"])
             path = clone / "src/cora/reticulum.py"
             path.write_text(path.read_text("utf-8") +
                             "\n# source universe falsifier\n", "utf-8")
@@ -615,12 +622,13 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             self.assertEqual(index["identical_blobs"] + index["changed_blobs"],
                              index["denominator"])
             self.assertEqual(index["content_readback_paths"], index["denominator"])
-            self.assertEqual(index["content_byte_equal_paths"], index["denominator"] - 8)
+            self.assertEqual(index["content_byte_equal_paths"], index["denominator"] - 9)
             self.assertEqual(index["content_byte_different_paths"], [
                 "src/cora/cli.py", "src/cora/continuous.py",
-                "src/cora/holistic.py", "src/cora/integrated_registry.py",
-                "src/cora/integrated_run.py", "src/cora/portable_assurance.py",
-                "src/cora/process_suite.py", "src/cora/reticulum.py"])
+                "src/cora/graph.py", "src/cora/holistic.py",
+                "src/cora/integrated_registry.py", "src/cora/integrated_run.py",
+                "src/cora/portable_assurance.py", "src/cora/process_suite.py",
+                "src/cora/reticulum.py"])
             self.assertEqual(index["exact_content_parity"],
                              "REFUTED_SOURCE_CONTENT_PARITY")
             self.assertEqual(index["full_runtime_behavior_equivalence"],
@@ -664,9 +672,9 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
                              "REFUTED_SOURCE_CONTENT_PARITY")
             self.assertEqual(document["engine_source_universe"]["content_byte_different_paths"],
                              ["src/cora/cli.py", "src/cora/continuous.py",
-                              "src/cora/holistic.py", "src/cora/integrated_registry.py",
-                              "src/cora/integrated_run.py", "src/cora/portable_assurance.py",
-                              "src/cora/process_suite.py"])
+                              "src/cora/graph.py", "src/cora/holistic.py",
+                              "src/cora/integrated_registry.py", "src/cora/integrated_run.py",
+                              "src/cora/portable_assurance.py", "src/cora/process_suite.py"])
             replay = subprocess.run(
                 [sys.executable, str(ROOT / "tools/verify_engineering_closure.py"),
                  "--repo", str(ROOT), "--verify-report", str(receipt)],
@@ -833,11 +841,14 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             "src/cora/cli.py",
             "src/cora/continuous.py",
         })
-        p1_successor_delta = {p for p in p0_merge if p0_merge[p] != current[p]}
+        p1_merge = module_oids("1c26400db242032dd8fc69e138a22774eed4b100")
+        p1_successor_delta = {p for p in p0_merge if p0_merge[p] != p1_merge[p]}
         self.assertEqual(p1_successor_delta, {
             "src/cora/cli.py", "src/cora/holistic.py",
             "src/cora/portable_assurance.py", "src/cora/process_suite.py",
         })
+        p2_successor_delta = {p for p in p1_merge if p1_merge[p] != current[p]}
+        self.assertEqual(p2_successor_delta, {"src/cora/graph.py"})
         # The assurance verifier does change; do not call the entire repo equal.
         verifier = "tools/verify_engineering_closure.py"
         self.assertNotEqual(git(ROOT, "rev-parse", base + ":" + verifier),
