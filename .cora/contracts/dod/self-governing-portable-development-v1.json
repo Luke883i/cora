@@ -1,0 +1,761 @@
+{
+  "schema": "cora-self-governing-portable-development/1",
+  "authority": "NONE",
+  "product_go": false,
+  "release": "HOLD",
+  "global_status": "OPEN",
+  "baseline": {
+    "cora_main": "23034955f84257839ad83468a58234dbf81c51dc",
+    "cora_zip_sha256": "5daca18012712259b911721bcc41ef76f47b424ca538244a6a799f2c79411d33",
+    "zip_has_git": false,
+    "ikant_pr251_head": "ab8187ab3a44706b81a1f249179746ae43e648ed",
+    "target_runtime_tested": false
+  },
+  "setup": {
+    "python": ">=3.11",
+    "requires_git": true,
+    "original_owner_only": true,
+    "untrusted_target_execution": "NOT_AUTHORIZED",
+    "source_first": "EXACT_MAIN_GIT_SHA",
+    "external_review": "NOT_ATTESTED"
+  },
+  "as_is": {
+    "bundle_files": 323,
+    "python_modules": 63,
+    "python_lines": 13745,
+    "workflow_files": 14,
+    "ast_candidate_relative_imports": 204,
+    "root_manifest_gap": "DEBT_BLOCKED_ON_UNPROFILED_FOREIGN_TARGET"
+  },
+  "abstract_dod": "CORA method and engine support equal-or-better independently observed engineering with lower total human and assurance cost across heterogeneous repositories, without self-authorization.",
+  "global_dod": "G0=AND(G1,G2,G3,G4,G5,G6,G7,G8); no compensation and no self-issued PASS",
+  "nodes": [
+    {
+      "id": "A0",
+      "kind": "ABSTRACT",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "G0"
+      ],
+      "status": "OPEN",
+      "claim": "CORA governs its own complexity and transfers to heterogeneous targets with lower net human and assurance cost without weaker independent quality"
+    },
+    {
+      "id": "G0",
+      "kind": "GLOBAL",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5",
+        "G6",
+        "G7",
+        "G8"
+      ],
+      "status": "OPEN",
+      "claim": "Strict noncompensatory conjunction of eight engineering gates"
+    },
+    {
+      "id": "G1",
+      "kind": "INTERMEDIATE",
+      "scope": "MIXED",
+      "depends_on": [
+        "L01",
+        "L02",
+        "L03",
+        "L04"
+      ],
+      "status": "OPEN",
+      "claim": "Git truth"
+    },
+    {
+      "id": "G2",
+      "kind": "INTERMEDIATE",
+      "scope": "MIXED",
+      "depends_on": [
+        "L05",
+        "L06",
+        "L07",
+        "L08"
+      ],
+      "status": "OPEN",
+      "claim": "One-owner reticular coherence"
+    },
+    {
+      "id": "G3",
+      "kind": "INTERMEDIATE",
+      "scope": "MIXED",
+      "depends_on": [
+        "L09",
+        "L10",
+        "L11",
+        "L12"
+      ],
+      "status": "OPEN",
+      "claim": "Cross-repository portability"
+    },
+    {
+      "id": "G4",
+      "kind": "INTERMEDIATE",
+      "scope": "MIXED",
+      "depends_on": [
+        "L13",
+        "L14",
+        "L15",
+        "L16"
+      ],
+      "status": "OPEN",
+      "claim": "Consumer closure and controlled retirement"
+    },
+    {
+      "id": "G5",
+      "kind": "INTERMEDIATE",
+      "scope": "MIXED",
+      "depends_on": [
+        "L17",
+        "L18",
+        "L19",
+        "L20"
+      ],
+      "status": "OPEN",
+      "claim": "Native and adversarial falsification"
+    },
+    {
+      "id": "G6",
+      "kind": "INTERMEDIATE",
+      "scope": "MIXED",
+      "depends_on": [
+        "L21",
+        "L22",
+        "L23",
+        "L24"
+      ],
+      "status": "OPEN",
+      "claim": "Net responsibility and cost reduction"
+    },
+    {
+      "id": "G7",
+      "kind": "INTERMEDIATE",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "L25",
+        "L26",
+        "L27",
+        "L28"
+      ],
+      "status": "OPEN",
+      "claim": "Evidence and external authority separation"
+    },
+    {
+      "id": "G8",
+      "kind": "INTERMEDIATE",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "L29",
+        "L30",
+        "L31",
+        "L32"
+      ],
+      "status": "OPEN",
+      "claim": "Blinded causal benefit"
+    },
+    {
+      "id": "L01",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "owner": "src/cora/git_snapshot.py",
+      "depends_on": [],
+      "claim": "Exact main Git/tree/blob provenance",
+      "oracle": "Original owner native or source test with explicit negative: Wrong SHA or stale HEAD",
+      "status": "OPEN"
+    },
+    {
+      "id": "L02",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "owner": "src/cora/archaeology.py",
+      "depends_on": [],
+      "claim": "Separate ZIP evidence from authentic Git history",
+      "oracle": "Original owner native or source test with explicit negative: ZIP comment cannot prove Git ancestry",
+      "status": "OPEN"
+    },
+    {
+      "id": "L03",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "owner": "src/cora/ontology.py",
+      "depends_on": [],
+      "claim": "Distinct product software repository and owner identities",
+      "oracle": "Original owner native or source test with explicit negative: Mention of owner cannot grant authority",
+      "status": "OPEN"
+    },
+    {
+      "id": "L04",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "owner": "src/cora/process_suite.py",
+      "depends_on": [],
+      "claim": "Measured as-is with explicitly untested methods",
+      "oracle": "Original owner native or source test with explicit negative: Untested process cannot become PASS",
+      "status": "OPEN"
+    },
+    {
+      "id": "L05",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "owner": "src/cora/reticulum.py",
+      "depends_on": [],
+      "claim": "Reuse canonical AND ordered_cut and assess_cut",
+      "oracle": "Original owner native or source test with explicit negative: Cycle or missing leaf fails",
+      "status": "OPEN"
+    },
+    {
+      "id": "L06",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "owner": "src/cora/method_synthesis.py",
+      "depends_on": [],
+      "claim": "Typed evidence graph without a second graph engine",
+      "oracle": "Original owner native or source test with explicit negative: No duplicate planner or authority",
+      "status": "OPEN"
+    },
+    {
+      "id": "L07",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "owner": "src/cora/continuous.py",
+      "depends_on": [],
+      "claim": "Historical retention separated from runtime necessity",
+      "oracle": "Original owner native or source test with explicit negative: Frozen V12 path cardinality not functional lower bound",
+      "status": "OPEN"
+    },
+    {
+      "id": "L08",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "owner": "src/cora/workflow_rationalization.py",
+      "depends_on": [],
+      "claim": "Separate generated and test observer edges",
+      "oracle": "Original owner native or source test with explicit negative: A TEST_LITERAL is not production effect",
+      "status": "OPEN"
+    },
+    {
+      "id": "L09",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "owner": "src/cora/process_suite.py",
+      "depends_on": [],
+      "claim": "Manifestless target reports NOT_CONFIGURED explicitly",
+      "oracle": "Original owner native or source test with explicit negative: Missing CORA manifests cannot be PASS",
+      "status": "OPEN"
+    },
+    {
+      "id": "L10",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "owner": "src/cora/portable_assurance.py",
+      "depends_on": [],
+      "claim": "Target-owned profiled and manifestless modes",
+      "oracle": "Original owner native or source test with explicit negative: No writing forbidden target root contracts",
+      "status": "OPEN"
+    },
+    {
+      "id": "L11",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "owner": "src/cora/holistic.py",
+      "depends_on": [],
+      "claim": "Git source evidence usable despite other method debt",
+      "oracle": "Original owner native or source test with explicit negative: Partial source PASS cannot close G0",
+      "status": "OPEN"
+    },
+    {
+      "id": "L12",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "owner": "src/cora/independent_qualification.py",
+      "depends_on": [],
+      "claim": "Two real heterogeneous targets independently observed",
+      "oracle": "Original owner native or source test with explicit negative: Synthetic target cannot prove real provider",
+      "status": "OPEN"
+    },
+    {
+      "id": "L13",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "owner": "src/cora/graph.py",
+      "depends_on": [],
+      "claim": "Typed import workflow package generated doc test edges",
+      "oracle": "Original owner native or source test with explicit negative: Lexical absence cannot prove no consumer",
+      "status": "OPEN"
+    },
+    {
+      "id": "L14",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "owner": "src/cora/method_synthesis.py",
+      "depends_on": [],
+      "claim": "Dynamic and external consumer unknown retained",
+      "oracle": "Original owner native or source test with explicit negative: UNKNOWN never becomes proven unused",
+      "status": "OPEN"
+    },
+    {
+      "id": "L15",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "owner": "src/cora/git_snapshot.py",
+      "depends_on": [],
+      "claim": "Reversible git path mode blob preimages",
+      "oracle": "Original owner native or source test with explicit negative: Historical blob deleted without successor",
+      "status": "OPEN"
+    },
+    {
+      "id": "L16",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "owner": "src/cora/independent_qualification.py",
+      "depends_on": [],
+      "claim": "Owner-qualified external consumer retirement",
+      "oracle": "Original owner native or source test with explicit negative: Static min-cut alone cannot authorize delete",
+      "status": "OPEN"
+    },
+    {
+      "id": "L17",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "owner": "src/cora/gold_mutations.py",
+      "depends_on": [],
+      "claim": "Ten thousand finite contract mutants plus controls",
+      "oracle": "Original owner native or source test with explicit negative: Finite model not target source mutation",
+      "status": "OPEN"
+    },
+    {
+      "id": "L18",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "owner": "src/cora/ci_repro.py",
+      "depends_on": [],
+      "claim": "Compare base and candidate test identities",
+      "oracle": "Original owner native or source test with explicit negative: Same PASS count hides new failure",
+      "status": "OPEN"
+    },
+    {
+      "id": "L19",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "owner": "src/cora/native_gold.py",
+      "depends_on": [],
+      "claim": "Physical isolated worktree counterexample ddmin",
+      "oracle": "Original owner native or source test with explicit negative: One-minimal failure not safe deletion",
+      "status": "OPEN"
+    },
+    {
+      "id": "L20",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "owner": "src/cora/independent_qualification.py",
+      "depends_on": [],
+      "claim": "Native external denied effects and zero-write",
+      "oracle": "Original owner native or source test with explicit negative: Model STOP not authenticated host",
+      "status": "OPEN"
+    },
+    {
+      "id": "L21",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "owner": "src/cora/debt.py",
+      "depends_on": [],
+      "claim": "Count responsibility overlap and assurance overhead",
+      "oracle": "Original owner native or source test with explicit negative: Root directory count not semantic contraction",
+      "status": "OPEN"
+    },
+    {
+      "id": "L22",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "owner": "src/cora/selection.py",
+      "depends_on": [],
+      "claim": "First unresolved low-cost causal probe",
+      "oracle": "Original owner native or source test with explicit negative: Extra framework without new oracle",
+      "status": "OPEN"
+    },
+    {
+      "id": "L23",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "owner": "src/cora/gold_effects.py",
+      "depends_on": [],
+      "claim": "Byte value trace effect oracle ladder",
+      "oracle": "Original owner native or source test with explicit negative: JSON value equality misses byte-pinned consumer",
+      "status": "OPEN"
+    },
+    {
+      "id": "L24",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "owner": "src/cora/independent_qualification.py",
+      "depends_on": [],
+      "claim": "Net human and maintenance cost qualified",
+      "oracle": "Original owner native or source test with explicit negative: Source LOC alone not labor savings",
+      "status": "OPEN"
+    },
+    {
+      "id": "L25",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "owner": "src/cora/one_run.py",
+      "depends_on": [],
+      "claim": "Evidence SHA exact replay independent of wording",
+      "oracle": "Original owner native or source test with explicit negative: Old HEAD receipt cannot attest new HEAD",
+      "status": "OPEN"
+    },
+    {
+      "id": "L26",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "owner": "src/cora/ci_repro.py",
+      "depends_on": [],
+      "claim": "CI success separate from experimental verdict",
+      "oracle": "Original owner native or source test with explicit negative: Green job with rejected cut remains rejected",
+      "status": "OPEN"
+    },
+    {
+      "id": "L27",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "owner": "src/cora/independent_qualification.py",
+      "depends_on": [],
+      "claim": "Independent reviewer and host rules enforced",
+      "oracle": "Original owner native or source test with explicit negative: Self-issued human approval forbidden",
+      "status": "OPEN"
+    },
+    {
+      "id": "L28",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "owner": "src/cora/host_release.py",
+      "depends_on": [],
+      "claim": "Real deployment rollback qualified independently",
+      "oracle": "Original owner native or source test with explicit negative: Git revert not operational rollback",
+      "status": "OPEN"
+    },
+    {
+      "id": "L29",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "owner": "src/cora/group_hypotheses.py",
+      "depends_on": [],
+      "claim": "Preregister randomized tri-arm A B C experiment",
+      "oracle": "Original owner native or source test with explicit negative: Post-hoc chosen benefit threshold",
+      "status": "OPEN"
+    },
+    {
+      "id": "L30",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "owner": "src/cora/independent_qualification.py",
+      "depends_on": [],
+      "claim": "Blinded native reference across three arms",
+      "oracle": "Original owner native or source test with explicit negative: Agent anecdotes cannot isolate CORA",
+      "status": "OPEN"
+    },
+    {
+      "id": "L31",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "owner": "src/cora/independent_qualification.py",
+      "depends_on": [],
+      "claim": "Native quality noninferior zero critical false PASS",
+      "oracle": "Original owner native or source test with explicit negative: One critical false PASS invalidates success",
+      "status": "OPEN"
+    },
+    {
+      "id": "L32",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "owner": "src/cora/independent_qualification.py",
+      "depends_on": [],
+      "claim": "Lower total human plus assurance maintenance cost",
+      "oracle": "Original owner native or source test with explicit negative: More documentation not saved operator work",
+      "status": "OPEN"
+    }
+  ],
+  "golds": [
+    {
+      "id": "GOLD01",
+      "origin_pr": 251,
+      "origin_url": "https://github.com/Luke883i/iKant_EDU/pull/251",
+      "method": "Typed AND hypergraph",
+      "owner": "src/cora/reticulum.py",
+      "leaf": "L05",
+      "transfer": "SEMANTIC_NOT_CODE",
+      "state": "CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "GOLD02",
+      "origin_pr": 251,
+      "origin_url": "https://github.com/Luke883i/iKant_EDU/pull/251",
+      "method": "Physical worktree ddmin",
+      "owner": "src/cora/gold_mutations.py",
+      "leaf": "L19",
+      "transfer": "SEMANTIC_NOT_CODE",
+      "state": "CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "GOLD03",
+      "origin_pr": 251,
+      "origin_url": "https://github.com/Luke883i/iKant_EDU/pull/251",
+      "method": "Responsibility quotient",
+      "owner": "src/cora/gold_effects.py",
+      "leaf": "L23",
+      "transfer": "SEMANTIC_NOT_CODE",
+      "state": "CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "GOLD04",
+      "origin_pr": 245,
+      "origin_url": "https://github.com/Luke883i/iKant_EDU/pull/245",
+      "method": "Historical source retirement",
+      "owner": "src/cora/continuous.py",
+      "leaf": "L15",
+      "transfer": "SEMANTIC_NOT_CODE",
+      "state": "CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "GOLD05",
+      "origin_pr": 251,
+      "origin_url": "https://github.com/Luke883i/iKant_EDU/pull/251",
+      "method": "Typed multi-consumer closure",
+      "owner": "src/cora/graph.py",
+      "leaf": "L13",
+      "transfer": "SEMANTIC_NOT_CODE",
+      "state": "CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "GOLD06",
+      "origin_pr": 251,
+      "origin_url": "https://github.com/Luke883i/iKant_EDU/pull/251",
+      "method": "Test-identity differential",
+      "owner": "src/cora/ci_repro.py",
+      "leaf": "L18",
+      "transfer": "SEMANTIC_NOT_CODE",
+      "state": "CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "GOLD07",
+      "origin_pr": 251,
+      "origin_url": "https://github.com/Luke883i/iKant_EDU/pull/251",
+      "method": "Value-byte-trace-effects ladder",
+      "owner": "src/cora/gold_effects.py",
+      "leaf": "L23",
+      "transfer": "SEMANTIC_NOT_CODE",
+      "state": "CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "GOLD08",
+      "origin_pr": 251,
+      "origin_url": "https://github.com/Luke883i/iKant_EDU/pull/251",
+      "method": "Historical constraint contradiction",
+      "owner": "src/cora/reticulum.py",
+      "leaf": "L07",
+      "transfer": "SEMANTIC_NOT_CODE",
+      "state": "CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "GOLD09",
+      "origin_pr": 242,
+      "origin_url": "https://github.com/Luke883i/iKant_EDU/pull/242",
+      "method": "Denial zero-write original oracle",
+      "owner": "src/cora/native_gold.py",
+      "leaf": "L20",
+      "transfer": "SEMANTIC_NOT_CODE",
+      "state": "CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "GOLD10",
+      "origin_pr": 251,
+      "origin_url": "https://github.com/Luke883i/iKant_EDU/pull/251",
+      "method": "Manifestless foreign target",
+      "owner": "src/cora/process_suite.py",
+      "leaf": "L09",
+      "transfer": "SEMANTIC_NOT_CODE",
+      "state": "CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "GOLD11",
+      "origin_pr": 238,
+      "origin_url": "https://github.com/Luke883i/iKant_EDU/pull/238",
+      "method": "CI result versus experiment verdict",
+      "owner": "src/cora/ci_repro.py",
+      "leaf": "L26",
+      "transfer": "SEMANTIC_NOT_CODE",
+      "state": "CANDIDATE_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "GOLD12",
+      "origin_pr": 251,
+      "origin_url": "https://github.com/Luke883i/iKant_EDU/pull/251",
+      "method": "Cost-sensitive probe hypothesis",
+      "owner": "src/cora/selection.py",
+      "leaf": "L22",
+      "transfer": "SEMANTIC_NOT_CODE",
+      "state": "CANDIDATE_NOT_IMPLEMENTED"
+    }
+  ],
+  "phases": [
+    {
+      "id": "P0",
+      "depends_on": [],
+      "leaves": [
+        "L01",
+        "L02",
+        "L03",
+        "L04",
+        "L05",
+        "L17"
+      ],
+      "delivery": "Pinned baseline + 10000 finite mutants",
+      "status": "OPEN"
+    },
+    {
+      "id": "P1",
+      "depends_on": [
+        "P0"
+      ],
+      "leaves": [
+        "L09",
+        "L10",
+        "L11",
+        "L12"
+      ],
+      "delivery": "Manifestless portable target with honest statuses",
+      "status": "OPEN"
+    },
+    {
+      "id": "P2",
+      "depends_on": [
+        "P1"
+      ],
+      "leaves": [
+        "L06",
+        "L07",
+        "L08",
+        "L13",
+        "L14",
+        "L15",
+        "L16"
+      ],
+      "delivery": "One typed hypergraph projected from existing owners",
+      "status": "OPEN"
+    },
+    {
+      "id": "P3",
+      "depends_on": [
+        "P2"
+      ],
+      "leaves": [
+        "L18",
+        "L19",
+        "L20",
+        "L25",
+        "L26"
+      ],
+      "delivery": "Native same-identity differential and physical ddmin",
+      "status": "OPEN"
+    },
+    {
+      "id": "P4",
+      "depends_on": [
+        "P3"
+      ],
+      "leaves": [
+        "L21",
+        "L22",
+        "L23",
+        "L24"
+      ],
+      "delivery": "One positively qualified net responsibility contraction",
+      "status": "OPEN"
+    },
+    {
+      "id": "P5",
+      "depends_on": [
+        "P4"
+      ],
+      "leaves": [
+        "L27",
+        "L28"
+      ],
+      "delivery": "Independent provider reviewer and host rollback",
+      "status": "OPEN"
+    },
+    {
+      "id": "P6",
+      "depends_on": [
+        "P5"
+      ],
+      "leaves": [
+        "L29",
+        "L30",
+        "L31",
+        "L32"
+      ],
+      "delivery": "Preregistered A/B/C benchmark and causal cost",
+      "status": "OPEN"
+    }
+  ],
+  "portability": {
+    "modes": [
+      "SELF_CORA",
+      "FOREIGN_PROFILED",
+      "FOREIGN_UNPROFILED"
+    ],
+    "unprofiled_manifest_status": "NOT_CONFIGURED_NOT_PASS",
+    "unknown_external_consumer": "UNKNOWN_NOT_UNUSED",
+    "source_only_status": "SCOPED_NOT_GOVERNED",
+    "must_not_write_target_root": true
+  },
+  "nonpromotion": {
+    "synthetic_mutants_to_product": false,
+    "git_sha_to_factual_truth": false,
+    "ci_success_to_accepted_cut": false,
+    "source_to_external_review": false,
+    "manifestless_to_pass": false,
+    "git_revert_to_deployment_rollback": false
+  },
+  "minimality": {
+    "new_parallel_graph_engine": "FORBIDDEN",
+    "new_owner_registry": "FORBIDDEN",
+    "reuse_existing_owner": "REQUIRED",
+    "candidate_cut": "FIRST_OPEN_CAUSAL_GATE",
+    "accepted_cut": "NATIVE_EQUIVALENCE_PLUS_NET_COST",
+    "file_count_only": "NOT_SUFFICIENT"
+  },
+  "science": {
+    "status": "NOT_RUN",
+    "arms": [
+      "AGENT_ROADMAP",
+      "AGENT_CORA_METHOD",
+      "AGENT_METHOD_AND_ENGINE"
+    ],
+    "min_heterogeneous_targets": 2,
+    "min_matched_tasks_per_target": 12,
+    "randomized_counterbalanced": true,
+    "blinded_independent_oracle": true,
+    "quality": "NO_CRITICAL_FALSE_PASS_AND_NO_WORSE_NATIVE_ACCEPTANCE",
+    "cost": "TOTAL_HUMAN_MINUTES_PLUS_ASSURANCE_MAINTENANCE",
+    "effort_ratio_hypothesis": 0.8,
+    "claimed_causal_benefit": false
+  },
+  "mutation_campaign": {
+    "kind": "FINITE_CONTRACT_MODEL_NOT_RUNTIME",
+    "cases": 10000,
+    "families": 10,
+    "each": 1000,
+    "positive_metamorphic_controls": 100,
+    "physical_runtime_mutants": 0,
+    "result": "NOT_ATTESTED_BY_CONTRACT"
+  }
+}

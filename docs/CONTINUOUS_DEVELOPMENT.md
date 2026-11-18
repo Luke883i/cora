@@ -10,6 +10,21 @@
 
 **Status:** v1.experimental, evidence and review framework, **not** a coding assistant or a GitHub administrator. The supported package remains `cora-audit` with one CLI, `cora`. The source of truth is a Git commit; CI and review attestations require separately trusted GitHub controls.
 
+
+## CORA self-governing portable development (source contract, P0)
+
+Canonical [machine contract](../.cora/contracts/dod/self-governing-portable-development-v1.json) is a *declared program*, not a new engine, external release gate, owner registry or approval. It pins CORA main 23034955f84257839ad83468a58234dbf81c51dc and observed iKant_EDU PR251; neither ZIP comment nor Git hash proves real target behavior.
+
+**A0:** govern CORA's own complexity, transfer its method to heterogeneous repositories and demonstrate independently that engineering quality is noninferior while total human and maintained-assurance cost is lower than a strong coding-agent control.
+
+**G0 = AND(G1..G8):** G1 true baseline; G2 one canonical reticulum/owner; G3 manifest-neutral portability; G4 typed consumer/retirement closure; G5 original native and physical counterfactual falsification; G6 semantic responsibility and net-cost reduction; G7 SHA-exact receipts plus independent host/reviewer authority; G8 preregistered causal outcome. Each intermediate requires four explicitly scoped local leaves, L01..L32. All begin OPEN.
+
+**Phases:** P0 contract + finite mutants; P1 foreign target configuration; P2 typed consumer graph reusing current owners; P3 native A/B test-ID and physical worktree ddmin; P4 first approved net contraction; P5 independent real host/reviewer/rollback; P6 blinded randomized three-arm experiment (agent+roadmap, agent+method, agent+method+engine) on >=2 heterogeneous targets with >=12 matched tasks per target. A 20% human effort reduction is a hypothesis, never an established outcome.
+
+**iKant Gold:** hypergraph AND, physical ddmin, ownership-preserving quotient, temporal source succession, generated/dynamic consumers, native test identity, value/byte/trace/effects ladder, contradictory retention-policy diagnosis, denial+zero-write, manifest-neutral target, CI/expt status separation and cost-sensitive active probe. Cherry-pick semantics and negative oracles, **not** JavaScript runtime code or iKant authority.
+
+Run existing CI's PR20 discovery: `python -m unittest discover -s tests -p 'test_pr20_*.py' -v`. P0 injects 10,000 deterministic *contract-model* faults, checks 100 valid metamorphic controls and performs zero target runtime mutations. Passing the campaign cannot close G0, attest human labor, authorize file retirement or replace provider review.
+
 <a id="current-change-range-discipline-pr59"></a>
 ## Current change-range discipline
 

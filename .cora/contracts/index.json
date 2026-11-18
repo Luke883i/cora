@@ -134,6 +134,11 @@
       "scope": "INTERNAL_DOD"
     },
     {
+      "logical": "cora.self-governing-portable-development-v1.json",
+      "canonical": ".cora/contracts/dod/self-governing-portable-development-v1.json",
+      "scope": "INTERNAL_DOD"
+    },
+    {
       "logical": "cora.type-assurance-profile.json",
       "canonical": ".cora/contracts/profiles/type-assurance-profile.json",
       "scope": "INTERNAL_PROFILE"

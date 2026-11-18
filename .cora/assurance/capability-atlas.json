@@ -759,6 +759,7 @@
       "tests/test_pr18_agent_hardening.py",
       "tests/test_pr19_gold_assurance.py",
       "tests/test_pr20_convergence.py",
+      "tests/test_pr20_self_governing_contract.py",
       "tests/test_pr21_documentation.py",
       "tests/test_pr22_documentation_proofs.py",
       "tests/test_pr23_navigation.py",
@@ -809,6 +810,7 @@
       ".cora/contracts/dod/one-run-dod.json",
       ".cora/contracts/dod/postmerge-release-dod.json",
       ".cora/contracts/dod/postmerge-repro-dod.json",
+      ".cora/contracts/dod/self-governing-portable-development-v1.json",
       ".cora/contracts/dod/workflow-dod.json"
     ],
     "internal_profiles": [
