@@ -384,3 +384,140 @@ def verify_contextual_gate(repo: Path, report: dict, *,
     if expected != report:
         raise ValueError("contextual report differs from actual Git/source policy")
     return True
+
+# P0 is a source-bound development programme, not a new release or graph owner.
+SELF_P0 = '.cora/contracts/dod/self-governing-portable-development-v1.json'
+SELF_P0_SCHEMA = 'cora-self-governing-portable-development/1'
+SELF_P0_REPORT = 'cora-self-development-plan/1'
+
+
+def _validate_self_program(document: dict, tracked: set[str]) -> None:
+    """Validate normative topology and negative authority claims against committed owners."""
+    from .reticulum import ordered_cut, assess_cut, EXTERNAL
+    if (not isinstance(document, dict) or document.get('schema') != SELF_P0_SCHEMA
+            or document.get('authority') != 'NONE'
+            or document.get('product_go') is not False
+            or document.get('release') != 'HOLD'
+            or document.get('global_status') != 'OPEN'
+            or document.get('baseline', {}).get('zip_has_git') is not False
+            or document.get('baseline', {}).get('target_runtime_tested') is not False):
+        raise ValueError('P0 source contract or authority invalid')
+    nodes = document.get('nodes')
+    expected_leaves = {f'L{i:02d}' for i in range(1, 33)}
+    expected = {'A0', 'G0'} | {f'G{i}' for i in range(1, 9)} | expected_leaves
+    if not isinstance(nodes, list) or len(nodes) != len(expected):
+        raise ValueError('P0 incomplete nodes')
+    if any(not isinstance(node, dict) or not isinstance(node.get('id'), str)
+           for node in nodes):
+        raise ValueError('P0 malformed nodes')
+    by_id = {n['id']: n for n in nodes}
+    if len(by_id) != len(nodes) or set(by_id) != expected:
+        raise ValueError('P0 duplicate or missing node')
+    if (by_id['A0'].get('kind') != 'ABSTRACT'
+            or by_id['A0'].get('scope') != 'EXTERNAL'
+            or by_id['A0'].get('depends_on') != ['G0']
+            or by_id['G0'].get('kind') != 'GLOBAL'
+            or by_id['G0'].get('scope') != 'EXTERNAL'
+            or by_id['G0'].get('depends_on') != [f'G{i}' for i in range(1, 9)]):
+        raise ValueError('P0 global AND contract drift')
+    external_leaves = {f'L{i:02d}' for i in (12, 16, 20, 24, 27, 28, 30, 31, 32)}
+    for i in range(1, 9):
+        gate = by_id[f'G{i}']
+        if (gate.get('kind') != 'INTERMEDIATE'
+                or gate.get('depends_on') != [f'L{j:02d}' for j in range(i * 4 - 3, i * 4 + 1)]
+                or gate.get('scope') != ('EXTERNAL' if i >= 7 else 'MIXED')):
+            raise ValueError('P0 local AND edge or authority drift')
+    for leaf in expected_leaves:
+        item = by_id[leaf]
+        if (item.get('kind') != 'LOCAL' or item.get('depends_on') != []
+                or item.get('status') != 'OPEN'
+                or item.get('scope') != ('EXTERNAL' if leaf in external_leaves else 'SOURCE')
+                or not isinstance(item.get('oracle'), str)
+                or len(item['oracle']) < 20 or 'ASSUMED_PASS' in item['oracle']
+                or not isinstance(item.get('owner'), str)
+                or not item['owner'].startswith('src/cora/')
+                or item['owner'] not in tracked):
+            raise ValueError('P0 unowned leaf or false witness')
+    if len(ordered_cut(nodes, 'A0')) != 42:
+        raise ValueError('P0 cut not complete')
+    if assess_cut(nodes, 'A0', {})['status'] != EXTERNAL:
+        raise ValueError('P0 external status incorrectly closable')
+    golds = document.get('golds')
+    if not isinstance(golds, list) or len(golds) != 12 or {
+            g.get('id') for g in golds if isinstance(g, dict)} != {
+            f'GOLD{i:02d}' for i in range(1, 13)}:
+        raise ValueError('P0 gold inventory drift')
+    for gold in golds:
+        if (gold.get('transfer') != 'SEMANTIC_NOT_CODE'
+                or gold.get('state') != 'CANDIDATE_NOT_IMPLEMENTED'
+                or gold.get('owner') not in tracked
+                or gold.get('leaf') not in expected_leaves
+                or gold.get('origin_url') !=
+                f"https://github.com/Luke883i/iKant_EDU/pull/{gold.get('origin_pr')}"):
+            raise ValueError('P0 unauthorized gold promotion')
+    phases = document.get('phases')
+    if not isinstance(phases, list) or len(phases) != 7:
+        raise ValueError('P0 phase count drift')
+    by_phase = {p.get('id'): p for p in phases if isinstance(p, dict)}
+    if len(by_phase) != 7 or set(by_phase) != {f'P{i}' for i in range(7)}:
+        raise ValueError('P0 missing phase')
+    all_leaves = []
+    for i in range(7):
+        phase = by_phase[f'P{i}']
+        if (phase.get('status') != 'OPEN'
+                or phase.get('depends_on') != ([f'P{i-1}'] if i else [])
+                or not isinstance(phase.get('leaves'), list)):
+            raise ValueError('P0 phase dependency drift')
+        all_leaves.extend(phase['leaves'])
+    if len(all_leaves) != 32 or set(all_leaves) != expected_leaves:
+        raise ValueError('P0 phase coverage drift')
+    if (document.get('portability', {}).get('unprofiled_manifest_status') != 'NOT_CONFIGURED_NOT_PASS'
+            or document.get('portability', {}).get('must_not_write_target_root') is not True
+            or any(value is not False for value in document.get('nonpromotion', {}).values())
+            or len(document.get('nonpromotion', {})) != 6
+            or document.get('minimality', {}).get('new_parallel_graph_engine') != 'FORBIDDEN'
+            or document.get('science', {}).get('status') != 'NOT_RUN'
+            or document.get('science', {}).get('claimed_causal_benefit') is not False
+            or document.get('mutation_campaign', {}).get('kind') != 'FINITE_CONTRACT_MODEL_NOT_RUNTIME'
+            or document.get('mutation_campaign', {}).get('physical_runtime_mutants') != 0):
+        raise ValueError('P0 external outcome or evidence promotion')
+
+
+def self_development_plan(repo: Path, revision: str = 'HEAD') -> dict:
+    """Read original committed P0 and return a non-promoting, source-only plan."""
+    from .reticulum import assess_cut
+    repo = Path(repo).resolve(strict=True)
+    commit = _commit(repo, revision)
+    tree = _git(repo, 'rev-parse', commit + '^{tree}', limit=128).decode().strip()
+    blob = _git(repo, 'rev-parse', commit + ':' + SELF_P0, limit=128).decode().strip()
+    source = _git(repo, 'show', commit + ':' + SELF_P0, limit=256 * 1024)
+    try:
+        data = json.loads(source.decode('utf-8'))
+    except (UnicodeError, json.JSONDecodeError) as exc:
+        raise ValueError('P0 committed contract cannot be parsed') from exc
+    tracked = set(_git(repo, 'ls-tree', '-r', '--name-only', '-z', commit,
+                       limit=8 * 1024 * 1024).decode('utf-8').split('\0'))
+    _validate_self_program(data, tracked)
+    assessment = assess_cut(data['nodes'], 'A0', {})
+    result = {'schema': SELF_P0_REPORT, 'commit': commit, 'tree': tree,
+              'contract_path': SELF_P0, 'contract_blob': blob,
+              'contract_digest': domain_hash('CORA:self-program-contract:1', data),
+              'assessment': assessment, 'first_open_phase': 'P0',
+              'gold_count': len(data['golds']), 'local_obligations': 32,
+              'global_dod': 'HOLD', 'product_go': False,
+              'classification': 'GIT_SOURCE_MODEL_NOT_INDEPENDENT_EXECUTION',
+              'evidence': 'COMMITTED_SOURCE_READBACK_ONLY',
+              'authority': 'NONE', 'independent_review': 'NOT_ATTESTED'}
+    result['report_digest'] = domain_hash('CORA:self-development-plan:1', result)
+    return result
+
+
+def verify_self_development_plan(repo: Path, report: dict, revision: str = 'HEAD') -> bool:
+    """Reopen Git objects, reject stale or tampered reports; never grant approval."""
+    if not isinstance(report, dict) or report.get('schema') != SELF_P0_REPORT:
+        raise ValueError('invalid P0 plan receipt')
+    if report.get('commit') != _commit(Path(repo).resolve(strict=True), revision):
+        raise ValueError('P0 receipt is not for requested exact source revision')
+    if report != self_development_plan(repo, revision):
+        raise ValueError('P0 plan receipt differs from committed source')
+    return True
