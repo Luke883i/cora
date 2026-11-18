@@ -75,6 +75,50 @@ independent review/host authority as an orthogonal, never waived external gate.
 Run P6's three-arm causal labor study only on independently qualified target
 slices. This is a reduction of scheduling overhead, **not** of DoD obligations.
 
+## P2 original-source consumer hypergraph: one graph, four gates
+
+The optional `cora.graph.consumer_hypergraph(repo, revision, ontology_path=...)` projects
+**typed source candidates** from the existing `graph_from_commit`, original workflow
+rationalization source scan, and canonical `reticulum.assess_cut`. It does not add
+a second graph engine, target parser, CLI command or target-root manifest. P1's
+Git-committed non-root ontology is accepted; an unconfigured ontology blocks
+Python coverage instead of being presented as a PASS.
+
+**P2_G0 = AND(P2_G1, P2_G2, P2_G3, P2_G4), twelve local leaves:**
+
+| Gate | Local DoD leaves | Source boundary and explicit falsifier |
+| --- | --- | --- |
+| G1: Git provenance | L_GIT, L_OWNERS, L_BOUNDS | Exact commit, per-consumer OIDs and bounded source file census; never target execution |
+| G2: typed consumers | L_PYTHON, L_TEST, L_WORKFLOW | Original Python import candidates, test consumers, original partial YAML workflow scan |
+| G3: incompleteness | L_GENERATED, L_DYNAMIC, L_HYPEREDGES | Producer not inferred; dynamic/non-Python consumers UNKNOWN; per-dependency AND candidates are not runtime closure |
+| G4: external proof | L_REPLAY, L_EXTERNAL, L_REVIEW | Exact Git replay rejects forged receipts; external consumers and independent reviewer BLOCKED_EXTERNAL |
+
+Source use via the original Python API (without adding CLI help flags):
+
+```python
+from pathlib import Path
+from cora.graph import consumer_hypergraph, verify_consumer_hypergraph
+report = consumer_hypergraph(Path('/target'), 'HEAD',
+                             ontology_path='contracts/ontology.json')
+assert verify_consumer_hypergraph(Path('/target'), report)
+assert report['global_status'] == 'BLOCKED_EXTERNAL'
+```
+
+Every observed edge is a typed **source candidate**, not a proven runtime dependency.
+`safe_to_delete` always remains false, even for a file with no incoming candidates.
+Original workflow parsing is partial YAML; JavaScript source needs the separately
+opt-in packaged Node parser and is conservatively UNKNOWN in this projection.
+
+Native falsifiers include real Git commits and one physical import mutation,
+untracked-worktree independence, a rehashed authority forgery, 10,000 deterministic
+**finite receipt-model** corruptions, a non-root ontology and an independent
+original CORA checkout source replay in CI. The 10,000 count does not denote
+10,000 physical or runtime source mutations.
+
+**Next unit:** unify P3/P4 native base/candidate counterfactual, deletion effect
+and net responsibility/assurance cost in one iteration; preserve P5 independent
+host/reviewer controls and P6 prospective blinded human-cost experiment.
+
 <a id="current-change-range-discipline-pr59"></a>
 ## Current change-range discipline
 
