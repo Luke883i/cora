@@ -94,6 +94,26 @@ class UnifiedHypergraphTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'differs'):
             verify_unified_consumer_hypergraph(self.repo, js, parse_js=False)
         self.assertFalse((self.repo / 'src/dynamic.mjs').exists())
+        import json
+        from cora.portable_assurance import run_portable, verify_portable
+        with tempfile.TemporaryDirectory() as external:
+            profile = Path(external) / 'target.json'
+            profile.write_text(json.dumps({
+                "schema":"cora-portable-target/1", "target_repo":"Fixture/javascript",
+                "revision":sha,
+                "owners":[{"id":"js-owner", "path":"src/client.mjs"}],
+                "witnesses":[], "method_links":[]
+            }))
+            receipt = run_portable(self.repo, sha, profile,
+                                   parse_js=True, include_consumers=True)
+            self.assertEqual(receipt['consumer_hypergraph']['graph_digest'],
+                             js['graph_digest'])
+            self.assertEqual(receipt['governed_status'], 'BLOCKED_EXTERNAL')
+            self.assertTrue(verify_portable(self.repo, receipt, profile,
+                                            parse_js=True, include_consumers=True))
+            with self.assertRaisesRegex(ValueError, 'replay mismatch'):
+                verify_portable(self.repo, receipt, profile,
+                                parse_js=False, include_consumers=True)
 
     def test_readback_not_dirty_worktree_and_physical_import_mutation(self):
         original = self.report()
