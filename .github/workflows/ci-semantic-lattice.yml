@@ -141,14 +141,14 @@ jobs:
           work=$(mktemp -d)
           trap 'rm -rf "$work"' EXIT
           cp "$root/Research_Source_And_Verification.zip" "$work/src.zip"
-          cp "$root/From_Intent_to_Evidence.docx" "$work/published.docx"
+          git show "c331ea2ecad080083f61f221f4991b4030a74b8c:$root/From_Intent_to_Evidence.docx" > "$work/published.docx"
           (cd "$work" && unzip -q src.zip)
           (cd "$work" && python build_paper.py && python science_and_falsification.py && python audit_paper.py)
           cmp "$work/From_Intent_to_Evidence.docx" "$work/published.docx"
           python - "$work" "$root" <<'PY'
           import hashlib, json, pathlib, sys
           tmp, root = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2])
-          data = (root/'From_Intent_to_Evidence.docx').read_bytes()
+          data = (tmp/'published.docx').read_bytes()
           assert hashlib.sha256(data).hexdigest() == '75a5cfd30a3281877d21e0278aa9f5853eab9beb3639d1b83b85a1bdd5c68ef2'
           a=json.loads((tmp/'Document_Adversarial_Audit.json').read_text())
           s=json.loads((tmp/'Scientific_Challenge_Audit.json').read_text())
@@ -158,6 +158,34 @@ jobs:
           assert s['benign_accepted']==10 and s['original_bryophyte_empirical_validation']=='NOT_DONE'
           assert a['original_repo_runtime']=='NOT_RERUN' and a['human_test']=='NOT_PERFORMED'
           print('paper exact Word + source-only adversarial suites PASS_AUTHOR_SCOPED')
+          PY
+      - name: Rebuild scientific paper and falsify 162 physical DOCX faults on exact HEAD
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="research/decision-ready-assurance/observer-compiler-paper"
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+          mkdir -p /tmp/cora-paper-science
+          unzip -oq "$root/Scientific_Editorial_Source_And_Audit.zip" -d /tmp/cora-paper-science
+          (cd /tmp/cora-paper-science && python polish_paper.py && python audit_paper.py > /tmp/cora-science-audit-stdout.json)
+          cmp /tmp/cora-paper-science/From_Intent_to_Evidence.docx "$root/From_Intent_to_Evidence.docx"
+          python - <<'PY'
+          import hashlib, json, pathlib
+          root=pathlib.Path('research/decision-ready-assurance/observer-compiler-paper')
+          work=pathlib.Path('/tmp/cora-paper-science')
+          word=(root/'From_Intent_to_Evidence.docx').read_bytes()
+          assert hashlib.sha256(word).hexdigest() == '988b8df4d4e90b172c17d5fe199b3818360d32a883b7320ff1c80135cb7cabf0'
+          audit=json.loads((work/'Paper_Adversarial_Audit.json').read_text())
+          dod=json.loads((root/'Scientific_Editorial_DoD.json').read_text())
+          assert audit['negative_physical_docx_mutations']==162 and audit['negatives_rejected']==162
+          assert audit['benign_physical_docx_mutations']==10 and audit['benign_accepted']==10
+          assert audit['original_git_witnesses']==138 and audit['new_git_commit_file_oid_pins']==18
+          assert audit['survivors']==[] and audit['false_positives']==[]
+          assert audit['independent_review']=='NOT_ATTESTED' and audit['product_runtimes']=='NOT_EXECUTED'
+          assert dod['logic']=='NON_COMPENSATORY_AND' and dod['authority']=='NONE'
+          assert all(x['status']=='BLOCKED_EXTERNAL' for x in dod['nodes'] if x['id'].startswith('E'))
+          assert dod['word_git_blob']=='77fc302848772c4d34b8c0b60df932f1f9703f48'
+          print('SCIENTIFIC_PAPER_PASS_AUTHOR_SCOPED_NOT_PUBLICATION_GRADE')
           PY
       - name: Archive evidence with explicit limitations
         if: always()
