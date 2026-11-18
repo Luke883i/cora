@@ -75,6 +75,26 @@ class UnifiedHypergraphTests(unittest.TestCase):
         self.assertEqual(group['external_consumer_closure'], 'UNKNOWN_NOT_ABSENT')
         self.assertFalse(group['safe_to_delete'])
 
+    def test_original_opt_in_js_parser_edges_and_unknowns(self):
+        # Use the previously installed Node ESM parser; do not evaluate JS.
+        source = self.repo / 'src/client.mjs'
+        source.write_text('import "./exact.mjs"; import("./dynamic.mjs");\n')
+        (self.repo / 'src/exact.mjs').write_text('export const safe = true;\n')
+        git(self.repo, 'add', '.')
+        git(self.repo, 'commit', '-qm', 'committed ESM source and dynamic import')
+        sha = git(self.repo, 'rev-parse', 'HEAD')
+        js = unified_consumer_hypergraph(self.repo, sha, parse_js=True)
+        self.assertIn(('file:src/client.mjs', 'file:src/exact.mjs',
+                       'STATIC_ESM_IMPORT_CANDIDATE'),
+                      {(e['consumer'], e['dependency'], e['kind']) for e in js['edges']})
+        self.assertIn(('src/client.mjs', 'ESM_DYNAMIC_IMPORT_CANDIDATE'),
+                      {(u['path'], u['kind']) for u in js['unknowns']})
+        self.assertEqual(js['global_status'], 'BLOCKED_EXTERNAL')
+        self.assertTrue(verify_unified_consumer_hypergraph(self.repo, js, parse_js=True))
+        with self.assertRaisesRegex(ValueError, 'differs'):
+            verify_unified_consumer_hypergraph(self.repo, js, parse_js=False)
+        self.assertFalse((self.repo / 'src/dynamic.mjs').exists())
+
     def test_readback_not_dirty_worktree_and_physical_import_mutation(self):
         original = self.report()
         p = self.repo / 'tests/test_consumer.py'
