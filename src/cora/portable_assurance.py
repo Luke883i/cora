@@ -180,7 +180,8 @@ def run_portable(repo: Path, revision: str, profile: Path, *,
             "oracle_id": w["oracle_id"], "sha256": w["sha256"],
             "reported_outcome": w["reported_outcome"], "state": state
         })
-    suite = run_suite(repo, commit, process="full", max_commits=64)
+    suite = run_suite(repo, commit, process="full", max_commits=64,
+                      source_mode="target_neutral")
     js_candidates = "NOT_OBSERVED_NONPYTHON_CONSUMERS_UNKNOWN"
     if parse_js:
         parser_resource = package_files("cora").joinpath("portable_js_imports.mjs")
@@ -239,10 +240,12 @@ def run_portable(repo: Path, revision: str, profile: Path, *,
         "owners": doc["owners"], "source_process": suite,
         "evidence": evidence, "method_links": transfer,
         "js_import_graph": js_candidates,
-        "source_status": "DEBT_BLOCKED" if (
+        "source_status": ("DEBT_BLOCKED" if (
             suite["status"] == "DEBT_BLOCKED" or
-            (isinstance(js_candidates, dict) and js_candidates["syntaxErrors"])
-        ) else "PASS_SCOPED_GIT_SOURCE_ONLY",
+            (isinstance(js_candidates, dict) and js_candidates["syntaxErrors"]))
+            else "SOURCE_PARTIAL_NOT_CONFIGURED" if
+            suite["status"] == "SOURCE_PARTIAL_NOT_CONFIGURED"
+            else "PASS_SCOPED_GIT_SOURCE_ONLY"),
         "behavior_status": "BLOCKED_EXTERNAL",
         "crossrepo_runtime_status": "BLOCKED_EXTERNAL",
         "governed_status": "BLOCKED_EXTERNAL",
