@@ -226,5 +226,32 @@ class P3NativeCounterfactualTests(unittest.TestCase):
 
 
 
+    def test_global_and_intermediate_dods_never_self_promote(self):
+        a = self.run_revision(self.repo, self.base)
+        b = self.run_revision(self.repo, self.head)
+        key = 'original-native-oracle'
+        report = self.op.native_counterfactual(
+            self.repo, self.base, self.head, self.tests, {key:a}, {key:b})
+        cut = self.op.native_counterfactual_cut(report)
+        self.assertEqual(cut['cut']['status'], 'REFUTED')
+        self.assertEqual(cut['cut']['states']['P3_G2'], 'REFUTED')
+        self.assertEqual(cut['cut']['states']['P3_G4'], 'BLOCKED_EXTERNAL')
+        self.assertEqual(len(cut['cut']['ordered_cut']), 17)
+        self.assertFalse(cut['product_go'])
+        from cora.evidence import domain_hash
+        self.assertEqual(cut['cut']['digest'], domain_hash(
+            'CORA:reticular-assessment:1',
+            {k:v for k,v in cut['cut'].items() if k!='digest'}))
+        missing = self.op.native_counterfactual(
+            self.repo, self.base, self.head, self.tests, {key:a}, {})
+        unobserved = self.op.native_counterfactual_cut(missing)
+        self.assertEqual(unobserved['cut']['states']['P3_G2'], 'BLOCKED_UNOBSERVED')
+        self.assertEqual(unobserved['cut']['status'], 'BLOCKED_EXTERNAL')
+        tamper = dict(report)
+        tamper['status'] = 'PASS_SCOPED_FINITE_NATIVE'
+        with self.assertRaisesRegex(ValueError, 'invalid native receipt'):
+            self.op.native_counterfactual_cut(tamper)
+
+
 if __name__ == "__main__":
     unittest.main()
