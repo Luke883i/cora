@@ -154,7 +154,8 @@ def verify_graph_against_git(repo: Path, graph: dict) -> bool:
 
 # P2: Git-source projection over the original graph and canonical AND engine.
 # No second engine or dependency scanner with runtime authority is created.
-def unified_consumer_hypergraph(repo: Path, revision: str = 'HEAD') -> dict:
+def unified_consumer_hypergraph(repo: Path, revision: str = 'HEAD', *,
+                                parse_js: bool = False) -> dict:
     """Read a pinned source tree; expose typed consumer candidates and unknowns.
 
     This is a bounded, opt-in source projection. A missing candidate is never
@@ -234,7 +235,8 @@ def unified_consumer_hypergraph(repo: Path, revision: str = 'HEAD') -> dict:
             unknown(path, 'SOURCE_ENCODING_UNKNOWN')
             continue
         if not path.endswith('.py'):
-            if path.endswith(('.js', '.mjs', '.cjs', '.ts', '.tsx')):
+            if path.endswith(('.js', '.mjs', '.cjs', '.ts', '.tsx')) and (
+                    not parse_js or not path.endswith(('.js', '.mjs'))):
                 unknown(path, 'NON_PYTHON_CONSUMERS_REQUIRE_ORIGINAL_PARSER')
             continue
         try:
@@ -265,6 +267,19 @@ def unified_consumer_hypergraph(repo: Path, revision: str = 'HEAD') -> dict:
                             resolve(path, expr.module + '.' + item.name, role)
                 else:
                     unknown(path, 'IMPORT_TARGET_UNKNOWN')
+
+    # The original Node parser may be requested explicitly, never executed by default.
+    if parse_js:
+        js = original_js_source_candidates(repo, commit)
+        for row in js['candidateEdges']:
+            if row['status'] == 'RESOLVED_EXACT_COMMITTED_GIT_PATH':
+                add(row['path'], row['candidate'], 'STATIC_ESM_IMPORT_CANDIDATE')
+            else:
+                unknown(row['path'], 'ESM_' + row['status'])
+        for row in js['unknown']:
+            unknown(row['path'], 'ESM_' + row['kind'])
+        for row in js['syntaxErrors']:
+            unknown(row['path'], 'ESM_PARSE_FAILED')
 
     # Reuse the original partial YAML/source workflow owner, not a second parser.
     try:
@@ -322,7 +337,9 @@ def unified_consumer_hypergraph(repo: Path, revision: str = 'HEAD') -> dict:
         observations['L_BOUNDED_SOURCE'] = BLOCKED
     if workflows is None or not workflows['source_scan_complete']:
         observations['L_WORKFLOWS'] = BLOCKED
-    if any(kind == 'DYNAMIC_PYTHON_IMPORT_UNKNOWN' for _, kind in unknowns):
+    if any(kind in ('DYNAMIC_PYTHON_IMPORT_UNKNOWN',
+                     'ESM_DYNAMIC_IMPORT_CANDIDATE',
+                     'ESM_COMMONJS_REQUIRE_CANDIDATE') for _, kind in unknowns):
         observations['L_DYNAMIC_UNKNOWN'] = BLOCKED
     # A constructed report has not replayed itself; only a separate verifier can.
     observations['L_REPLAY'] = BLOCKED
@@ -355,7 +372,8 @@ def unified_consumer_hypergraph(repo: Path, revision: str = 'HEAD') -> dict:
     return result
 
 
-def verify_unified_consumer_hypergraph(repo: Path, report: dict) -> bool:
+def verify_unified_consumer_hypergraph(repo: Path, report: dict, *,
+                                       parse_js: bool = False) -> bool:
     """Recompute exact Git source, and reject stale/tampered output."""
     if not isinstance(report, dict) or report.get('schema') != 'cora-unified-consumer-hypergraph/1':
         raise ValueError('invalid unified consumer hypergraph receipt')
@@ -363,7 +381,35 @@ def verify_unified_consumer_hypergraph(repo: Path, report: dict) -> bool:
                          {k: v for k, v in report.items() if k != 'graph_digest'})
     if digest != report.get('graph_digest'):
         raise ValueError('unified consumer graph integrity mismatch')
-    actual = unified_consumer_hypergraph(repo, report.get('commit', ''))
+    actual = unified_consumer_hypergraph(repo, report.get('commit', ''),
+                                         parse_js=parse_js)
     if actual != report:
         raise ValueError('unified consumer graph differs from original committed source')
     return True
+
+
+def original_js_source_candidates(repo: Path, commit: str) -> dict:
+    """Invoke the existing packaged Node ESM parser, never target code."""
+    import json
+    import subprocess
+    from importlib.resources import as_file, files as package_files
+
+    resource = package_files('cora').joinpath('portable_js_imports.mjs')
+    if not resource.is_file():
+        raise ValueError('packaged JS source parser not available; source unknown')
+    with as_file(resource) as parser:
+        proc = subprocess.run(['node', '--experimental-vm-modules', str(parser),
+                               str(repo), commit], capture_output=True, text=True,
+                              timeout=120, check=False)
+    if proc.returncode:
+        raise ValueError('bounded JS parser failed: ' + proc.stderr[-160:])
+    parsed = json.loads(proc.stdout)
+    if (parsed.get('schema') != 'cora-js-static-source/1' or
+            parsed.get('commit') != commit or parsed.get('authority') != 'NONE' or
+            parsed.get('runtimeObserved') is not False or
+            not isinstance(parsed.get('syntaxErrors'), list) or
+            not isinstance(parsed.get('imports'), list) or
+            not isinstance(parsed.get('unknown'), list) or
+            parsed.get('scope') != 'PARSED_ESM_ONLY_DYNAMIC_AND_RUNTIME_UNKNOWN'):
+        raise ValueError('invalid bounded JS source parser output')
+    return parsed

@@ -10,15 +10,13 @@ import hashlib
 import html
 import json
 import re
-import subprocess
-from importlib.resources import as_file, files as package_files
 from pathlib import Path
 
 from .evidence import domain_hash, valid_path
 from .gold_bridge import bridge_gold
 from .native_gold import replay_native
 from .git_snapshot import git, snapshot
-from .graph import unified_consumer_hypergraph
+from .graph import unified_consumer_hypergraph, original_js_source_candidates
 from .process_suite import run_suite
 
 SCHEMA = "cora-portable-one-run/1"
@@ -186,28 +184,7 @@ def run_portable(repo: Path, revision: str, profile: Path, *,
                       source_mode="target_neutral")
     js_candidates = "NOT_OBSERVED_NONPYTHON_CONSUMERS_UNKNOWN"
     if parse_js:
-        parser_resource = package_files("cora").joinpath("portable_js_imports.mjs")
-        if not parser_resource.is_file():
-            _reject("packaged JS source parser not available; source unknown")
-        # Resolve package resource inside the installed wheel, never relative to
-        # an arbitrary checkout or writable target repository.
-        with as_file(parser_resource) as parser:
-            proc = subprocess.run(
-                ["node", "--experimental-vm-modules", str(parser), str(repo), commit],
-                capture_output=True, text=True, timeout=120, check=False)
-        if proc.returncode:
-            _reject("bounded JS parser failed: " + proc.stderr[-160:])
-        parsed = json.loads(proc.stdout)
-        if (parsed.get("schema") != "cora-js-static-source/1"
-                or parsed.get("commit") != commit
-                or parsed.get("authority") != "NONE"
-                or parsed.get("runtimeObserved") is not False
-                or not isinstance(parsed.get("syntaxErrors"), list)
-                or not isinstance(parsed.get("imports"), list)
-                or not isinstance(parsed.get("unknown"), list)
-                or parsed.get("scope") != "PARSED_ESM_ONLY_DYNAMIC_AND_RUNTIME_UNKNOWN"):
-            _reject("invalid bounded JS source parser output")
-        js_candidates = parsed
+        js_candidates = original_js_source_candidates(repo, commit)
     upstream_paths = upstream_paths or {}
     if any(name not in {x["source_repo"] for x in doc["method_links"]} for name in upstream_paths):
         _reject("unbound upstream checkout")
@@ -256,7 +233,7 @@ def run_portable(repo: Path, revision: str, profile: Path, *,
                      "dynamic callers", "real user acceptance", "release permission"]
     }
     if include_consumers:
-        graph = unified_consumer_hypergraph(repo, commit)
+        graph = unified_consumer_hypergraph(repo, commit, parse_js=parse_js)
         result["consumer_hypergraph"] = {
             "graph_digest": graph["graph_digest"],
             "typed_source_edges": len(graph["edges"]),
