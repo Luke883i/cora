@@ -60,6 +60,49 @@ class OneRunAssuranceTests(unittest.TestCase):
             if row["state"] == "REUSED_SCOPED" and row["elapsed_ms"] is None:
                 self.assertEqual(row["timing_basis"], "REUSED_NOT_INDEPENDENTLY_TIMED")
 
+    def test_full_process_original_git_p05_physical_refusal(self):
+        """A committed omitted subgroup cannot silently become a full PASS."""
+        import os
+        import sys
+        from cora.process_suite import IMPLEMENTED, PROCESSES, process_catalog
+        expected = ("git_snapshot", "artifact_roles", "manifest_adapters",
+                    "git_archaeology", "python_candidate_graph", "holistic_archaeology",
+                    "debt_signals", "file_selection_if_focus")
+        self.assertEqual(tuple(IMPLEMENTED), PROCESSES)
+        self.assertEqual(IMPLEMENTED["full"], expected)
+        self.assertEqual([x["id"] for x in process_catalog()["processes"]], list(PROCESSES))
+        with tempfile.TemporaryDirectory(prefix="cora-e2a-p05-") as d:
+            clone = Path(d) / "mutant"
+            subprocess.run(["git", "clone", "-q", "--no-local", "--",
+                            str(ROOT), str(clone)], check=True, timeout=90)
+            git(clone, "checkout", "-q", "--detach", self.sha)
+            path = clone / "src/cora/process_suite.py"
+            code = path.read_text(encoding="utf-8")
+            original = "'debt': ('debt_signals',),"
+            self.assertEqual(code.count(original), 1)
+            path.write_text(code.replace(original, "'debt': (),", 1), encoding="utf-8")
+            git(clone, "add", "src/cora/process_suite.py")
+            subprocess.run(["git", "-C", str(clone),
+                            "-c", "user.name=CORA E2A Native Mutant",
+                            "-c", "user.email=e2a@example.invalid",
+                            "commit", "-qm", "mutant: remove debt source method"],
+                           check=True, timeout=30)
+            mutant = git(clone, "rev-parse", "HEAD")
+            self.assertNotEqual(mutant, self.sha)
+            script = ("import sys\nfrom pathlib import Path\n"
+                      "from cora.process_suite import run_suite\n"
+                      "run_suite(Path(sys.argv[1]),sys.argv[2],process='full',max_commits=2)\n")
+            env = {k: v for k, v in os.environ.items()
+                   if not k.startswith("GITHUB_") and not k.startswith("GH_")}
+            env.update(PYTHONPATH=str(clone / "src"), PYTHONNOUSERSITE="1")
+            observed = subprocess.run([sys.executable, "-c", script,
+                                       str(clone), self.sha], cwd=clone,
+                                      env=env, capture_output=True, text=True,
+                                      timeout=90, check=False)
+            self.assertNotEqual(observed.returncode, 0,
+                                "physical P05 mutation silently passed")
+            self.assertIn("full incomplete", observed.stderr)
+
     def test_source_replay_and_html_byte_replay(self):
         report = self.source
         page = render_one_html(report)
