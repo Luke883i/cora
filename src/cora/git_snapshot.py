@@ -17,6 +17,8 @@ def git(repo: Path, *args: str, max_output: int = 32 * 1024 * 1024,
         timeout: int = 120) -> bytes:
     if type(timeout) is not int or not 1 <= timeout <= 120:
         raise ValueError("invalid bounded Git timeout")
+    if type(max_output) is not int or not 1 <= max_output <= 256 * 1024 * 1024:
+        raise ValueError("invalid bounded Git output budget")
     cmd = ['git', '-C', str(repo), *args]
     proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False, timeout=timeout)
     if proc.returncode != 0:

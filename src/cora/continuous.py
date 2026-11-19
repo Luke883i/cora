@@ -36,17 +36,13 @@ def _is_ancestor(repo: Path, base: str, head: str) -> bool:
 
 
 def _source_policy(repo: Path, commit: str) -> dict | None:
-    p=subprocess.run(['git','-C',str(repo),'show',commit+':'+POLICY_PATH],capture_output=True,timeout=45)
-    if p.returncode:
-        # Distinguish an absent file from a damaged/missing committed object.
-        existing=git(repo,'ls-tree','--name-only',commit,'--',POLICY_PATH,max_output=1024,timeout=45).decode().strip()
-        if existing:
-            raise ValueError('committed policy cannot be read')
+    # Tree absence is not a failed show: inspect the committed path first.
+    if not git(repo,'ls-tree','--name-only',commit,'--',POLICY_PATH,
+               max_output=1024,timeout=45):
         return None
-    if len(p.stdout)>128 * 1024:
-        raise ValueError('committed policy too large')
+    raw=git(repo,'show',commit+':'+POLICY_PATH,max_output=128 * 1024,timeout=45)
     try:
-        document=json.loads(p.stdout.decode('utf-8'))
+        document=json.loads(raw.decode('utf-8'))
     except (UnicodeDecodeError,json.JSONDecodeError) as exc:
         raise ValueError('invalid committed policy encoding') from exc
     _validate_policy(document)
