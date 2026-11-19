@@ -20,6 +20,8 @@ directory outside the repository (`/tmp` below is a Unix example).
 
 **Vocabulary:** a *repository* is a Git-tracked project folder; a *commit SHA* names its exact revision; a *pull request* is a proposed change requiring review; a *DoD* lists acceptance obligations; a *falsifier* is a test designed to uncover failure; `PASS_SCOPED` is a bounded observation, not approval.
 
+**What the method does—and does not do (noncanonical explanation).** A person without specialist programming skills may coordinate requirements, tests and reversible changes with an AI assistant. That lowers the *coordination* barrier in principle; it does not remove the expertise required to *validate* high-stakes behavior. A proposed test, an executed test receipt, a user observation and a release decision answer different questions. The benefit over an equally equipped coding agent and checklist remains an empirical question, not a demonstrated claim.
+
 ## GitHub and ChatGPT Project from zero
 
 **1. Create the target repository.** Open [GitHub](https://github.com), sign in, choose
