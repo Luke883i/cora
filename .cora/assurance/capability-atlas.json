@@ -788,6 +788,7 @@
       "tests/test_pr62_enterprise_docs.py",
       "tests/test_pr68_project_prompt.py",
       "tests/test_pr70_operational_equivalence.py",
+      "tests/test_pr87_cockpit.py",
       "tests/test_selection.py"
     ],
     "internal_dod": [
