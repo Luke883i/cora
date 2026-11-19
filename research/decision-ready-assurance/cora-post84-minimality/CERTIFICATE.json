@@ -1,0 +1,38 @@
+{
+  "schema": "cora-post84-conditional-minimality-certificate/1",
+  "source_main_sha": "84fd1f4515418afcb2bf8f0638ce6f7baeb99a4b",
+  "authority": "NONE",
+  "product_go": false,
+  "model_sha256": "165d59dc36101ea1ab7d0a0a628282838af9ecec360849a0f4ad2b493e1a8098",
+  "model_falsifiers": {
+    "executed": 24,
+    "passed": 24,
+    "kind": "FINITE_POLICY_TESTS_NOT_CORAGIT_NATIVE"
+  },
+  "scope": "CONDITIONAL_FINITE_CANDIDATE_GRAPH",
+  "atomic_pr_policy": {
+    "minimum": 2,
+    "path": [
+      "C1",
+      "I1"
+    ],
+    "condition": "One independently reviewable causal change per PR; C1 must precede I1"
+  },
+  "bundled_pr_policy": {
+    "minimum": 1,
+    "path": [
+      "C1I1"
+    ],
+    "counterexample": "One PR suffices in abstract if independent commits are permitted"
+  },
+  "source_implementation": "NOT_RUN",
+  "native_equivalence": "NOT_RUN",
+  "repository_global_minimality": "NOT_PROVEN",
+  "software_global_minimality": "NOT_PROVEN",
+  "product_global_minimality": "NOT_PROVEN",
+  "external_maintainer_cost": "BLOCKED_EXTERNAL",
+  "new_engines": 0,
+  "new_authorities": 0,
+  "pr85": "NOT_CREATED",
+  "pr86": "NOT_CREATED"
+}
