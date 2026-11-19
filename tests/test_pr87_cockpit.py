@@ -41,7 +41,7 @@ class CockpitTests(unittest.TestCase):
             'authority': 'NONE', 'release_authorized': False})['cockpit']
         self.assertEqual(cockpit, report['cockpit'])
         self.assertEqual(cockpit['status'], 'HUMAN_DECISION_REQUIRED')
-        self.assertEqual(cockpit['recommended'], 'ASK_FOR_WITNESS')
+        self.assertEqual(cockpit['recommended'], 'PROPOSE_NEXT_CHECK')
         self.assertEqual(cockpit['reported_open_dod_leaves'], 1)
         self.assertEqual([x['id'] for x in cockpit['choices']],
                          ['EXPLAIN', 'REPLAN', 'PROPOSE_NEXT_CHECK'])
@@ -50,6 +50,20 @@ class CockpitTests(unittest.TestCase):
         self.assertEqual(cockpit['execution'], 'NONE')
         self.assertEqual(cockpit['authorization'], 'NONE')
         self.assertIs(cockpit['product_accepted'], False)
+        self.assertIn(cockpit['recommended'], [x['id'] for x in cockpit['choices']])
+
+    def test_all_recommendations_are_visible_choices(self):
+        report, _ = self.fixture()
+        for decision in ('PAUSE_CAPACITY_AND_REBASE', 'REVIEW_CHANGED_CONTRACT',
+                         'REVALIDATE_CHANGED_SOURCE', 'REPLAN_STALLED_REPORTS',
+                         'REQUEST_INDEPENDENT_ACCEPTANCE', 'REQUEST_EXTERNAL_WITNESS',
+                         'PROPOSE_NEXT_SCOPED_STEP'):
+            state = dict(report['continuation'], decision=decision)
+            cockpit = _cockpit(state, 'a' * 40)
+            self.assertIn(cockpit['recommended'],
+                          [choice['id'] for choice in cockpit['choices']])
+            self.assertEqual(cockpit['authorization'], 'NONE')
+            self.assertIs(cockpit['product_accepted'], False)
 
     def test_10000_abstract_semantic_mutants_fail_closed(self):
         report, _ = self.fixture()

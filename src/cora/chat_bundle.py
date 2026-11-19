@@ -426,11 +426,7 @@ def _cockpit(continuation: dict, commit: str) -> dict:
         "time_estimate": None,
         "recommended": ("REPLAN" if decision in (
             "PAUSE_CAPACITY_AND_REBASE", "REVIEW_CHANGED_CONTRACT", "REPLAN_STALLED_REPORTS")
-            else "REVALIDATE" if decision == "REVALIDATE_CHANGED_SOURCE"
-            else "ASK_FOR_WITNESS" if decision in (
-                "REQUEST_INDEPENDENT_ACCEPTANCE", "REQUEST_EXTERNAL_WITNESS")
-            else "PROPOSE_NEXT_CHECK" if decision == "PROPOSE_NEXT_SCOPED_STEP"
-            else "EXPLAIN"),
+            else "PROPOSE_NEXT_CHECK"),
         "choices": [
             {"id": "EXPLAIN", "label": "Explain what is blocking us"},
             {"id": "REPLAN", "label": "Recalculate the roadmap and explain why"},
