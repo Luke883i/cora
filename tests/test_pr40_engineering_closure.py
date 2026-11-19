@@ -847,8 +847,12 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             "src/cora/cli.py", "src/cora/holistic.py",
             "src/cora/portable_assurance.py", "src/cora/process_suite.py",
         })
-        p2_successor_delta = {p for p in p1_merge if p1_merge[p] != current[p]}
+        p2_merge = module_oids("d29323c3ee4ef2c27116f93205f45224310eebc3")
+        p2_successor_delta = {p for p in p1_merge if p1_merge[p] != p2_merge[p]}
         self.assertEqual(p2_successor_delta, {"src/cora/graph.py"})
+        post_p2_delta = {p for p in p2_merge if p2_merge[p] != current[p]}
+        self.assertEqual(post_p2_delta, {
+            "src/cora/continuous.py", "src/cora/git_snapshot.py"})
         # The assurance verifier does change; do not call the entire repo equal.
         verifier = "tools/verify_engineering_closure.py"
         self.assertNotEqual(git(ROOT, "rev-parse", base + ":" + verifier),
