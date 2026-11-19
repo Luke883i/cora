@@ -40,6 +40,33 @@ class GitLifecycleFixtures(unittest.TestCase):
         self.head=git(self.repo,'rev-parse','HEAD')
     def tearDown(self):self.tmp.cleanup()
 
+    def test_p4_canonical_ancestry_matches_independent_git_on_divergence_and_merge(self):
+        from cora.continuous import _is_ancestor
+        git(self.repo,'checkout','-q','-b','left',self.base)
+        (self.repo/'left.txt').write_text('left\n')
+        git(self.repo,'add','-A');git(self.repo,'commit','-qm','left')
+        left=git(self.repo,'rev-parse','HEAD')
+        git(self.repo,'checkout','-q','-b','right',self.base)
+        (self.repo/'right.txt').write_text('right\n')
+        git(self.repo,'add','-A');git(self.repo,'commit','-qm','right')
+        right=git(self.repo,'rev-parse','HEAD')
+        git(self.repo,'checkout','-q','left')
+        git(self.repo,'merge','-q','--no-ff','right','-m','merged')
+        merged=git(self.repo,'rev-parse','HEAD')
+        git(self.repo,'checkout','--orphan','unrelated')
+        git(self.repo,'rm','-qrf','.')
+        (self.repo/'orphan.txt').write_text('isolated\n')
+        git(self.repo,'add','-A');git(self.repo,'commit','-qm','orphan')
+        orphan=git(self.repo,'rev-parse','HEAD')
+        refs=(self.base,self.head,left,right,merged,orphan)
+        for source in refs:
+            for target in refs:
+                original=subprocess.run(['git','-C',str(self.repo),'merge-base',
+                    '--is-ancestor',source,target],capture_output=True,timeout=45)
+                self.assertIn(original.returncode,(0,1))
+                self.assertEqual(_is_ancestor(self.repo,source,target),
+                                 original.returncode == 0)
+
     def test_p4_canonical_git_bounds_fail_before_any_git_invocation(self):
         from unittest.mock import patch
         from cora.git_snapshot import git as canonical_git

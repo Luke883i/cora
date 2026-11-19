@@ -204,6 +204,8 @@ class OriginalGitP4ContractionTests(unittest.TestCase):
         # The historic P4 observation must remain immutable after future work.
         head = '987de6407c75a3978ca41cf544d098ff33bf6268'
         hardened = 'd59eb015d5627971037fca26628a04f6ef23dc00'
+        before_final = '2fd4167a4b797e8cd19baa92784294eb324fa63c'
+        final = '85b3bbd8196c5d721b234ee39ea47b81d3d9f525'
         for path, before, after in (
             ('src/cora/continuous.py',
              '66150559c14f89aeb0f84cca6a50d00828ee6161',
@@ -289,7 +291,15 @@ class OriginalGitP4ContractionTests(unittest.TestCase):
             self.assertEqual(followon['status'], 'PASS_SCOPED_FINITE_NATIVE')
             self.assertTrue(op.verify_native_counterfactual(ROOT, followon, test,
                 {'p4-native-policy': b}, {'p4-native-policy': c}))
-            mutant = clone_at(hardened, 'mutant')
+            before_last = execute(clone_at(before_final, 'before-final'), 'before-final')
+            after_last = execute(clone_at(final, 'final'), 'final')
+            self.assertEqual(before_last, after_last)
+            last = op.native_counterfactual(ROOT, before_final, final, test,
+                {'p4-native-policy': before_last}, {'p4-native-policy': after_last})
+            self.assertEqual(last['status'], 'PASS_SCOPED_FINITE_NATIVE')
+            self.assertTrue(op.verify_native_counterfactual(ROOT, last, test,
+                {'p4-native-policy': before_last}, {'p4-native-policy': after_last}))
+            mutant = clone_at(final, 'mutant')
             file = mutant / 'src/cora/git_snapshot.py'
             original = file.read_text('utf-8')
             marker = '    return proc.stdout\n\n\ndef _batch('
@@ -302,11 +312,11 @@ class OriginalGitP4ContractionTests(unittest.TestCase):
                 'user.email=fixture@example.invalid', 'commit', '-qm', 'native physical mutant')
             mutant_head = git(mutant, 'rev-parse', 'HEAD')
             corrupted = execute(mutant, 'mutated')
-            self.assertEqual((c['exit_code'], c['stdout'], c['stderr']),
+            self.assertEqual((after_last['exit_code'], after_last['stdout'], after_last['stderr']),
                              (corrupted['exit_code'], corrupted['stdout'], corrupted['stderr']))
-            self.assertNotEqual(c['effects'], corrupted['effects'])
-            bad = op.native_counterfactual(mutant, hardened, mutant_head, test,
-                 {'p4-native-policy': c}, {'p4-native-policy': corrupted})
+            self.assertNotEqual(after_last['effects'], corrupted['effects'])
+            bad = op.native_counterfactual(mutant, final, mutant_head, test,
+                 {'p4-native-policy': after_last}, {'p4-native-policy': corrupted})
             self.assertEqual(bad['status'], 'FAIL_OBSERVED')
 
 
@@ -316,20 +326,22 @@ class OriginalGitP4ContractionTests(unittest.TestCase):
         base = 'cd897deb297a18fae9bf2910e2a7474fe04d6beb'
         p4 = '987de6407c75a3978ca41cf544d098ff33bf6268'
         hardened = 'd59eb015d5627971037fca26628a04f6ef23dc00'
+        final = '85b3bbd8196c5d721b234ee39ea47b81d3d9f525'
         paths = ('src/cora/continuous.py', 'src/cora/git_snapshot.py')
         epochs = {sha: {path: op.git(ROOT, 'show', sha + ':' + path)
-                        for path in paths} for sha in (base, p4, hardened)}
+                        for path in paths} for sha in (base, p4, hardened, final)}
         measured = {sha: sum(len(data) for data in files.values())
                     for sha, files in epochs.items()}
         self.assertLess(measured[p4], measured[base])
         self.assertLess(measured[hardened], measured[p4])
-        before, after = epochs[base][paths[0]], epochs[hardened][paths[0]]
+        self.assertLess(measured[final], measured[hardened])
+        before, after = epochs[base][paths[0]], epochs[final][paths[0]]
         self.assertIn(b'def _git(', before)
         self.assertNotIn(b'def _git(', after)
-        self.assertEqual(after.count(b'subprocess.run('), 1)  # ancestry only
+        self.assertNotIn(b'subprocess.run(', after)  # all Git process owners retired
         self.assertIn(b'from .git_snapshot import git', after)
-        self.assertIn(b'invalid bounded Git output budget', epochs[hardened][paths[1]])
-        self.assertEqual(set(git(ROOT, 'diff', '--name-only', p4, hardened,
+        self.assertIn(b'invalid bounded Git output budget', epochs[final][paths[1]])
+        self.assertEqual(set(git(ROOT, 'diff', '--name-only', p4, final,
                                  '--', 'src/cora').splitlines()), set(paths))
 
 
