@@ -40,6 +40,28 @@ class GitLifecycleFixtures(unittest.TestCase):
         self.head=git(self.repo,'rev-parse','HEAD')
     def tearDown(self):self.tmp.cleanup()
 
+    def test_p4_canonical_git_bounds_fail_before_any_git_invocation(self):
+        from unittest.mock import patch
+        from cora.git_snapshot import git as canonical_git
+        with patch('cora.git_snapshot.subprocess.run') as run:
+            for output in (0, -1, True, 256 * 1024 * 1024 + 1, '32'):
+                with self.subTest(output=output), self.assertRaisesRegex(
+                        ValueError, 'output budget'):
+                    canonical_git(self.repo, 'status', max_output=output)
+            for timeout in (0, True, 121, 1.5):
+                with self.subTest(timeout=timeout), self.assertRaisesRegex(
+                        ValueError, 'timeout'):
+                    canonical_git(self.repo, 'status', timeout=timeout)
+            run.assert_not_called()
+
+    def test_p4_missing_policy_and_unreadable_present_policy_stay_separate(self):
+        self.assertEqual(evaluate(self.repo,self.no_policy,self.no_policy)['status'], 'BLOCKED')
+        p=self.repo/'.cora/continuous-policy.json'
+        p.write_bytes(b'not json')
+        git(self.repo,'add','.');git(self.repo,'commit','-qm','invalid present policy')
+        with self.assertRaisesRegex(ValueError, 'invalid committed policy'):
+            evaluate(self.repo,self.base,'HEAD')
+
     def test_regular_premerge_is_observational_only(self):
         x=evaluate(self.repo,self.base,self.head)
         self.assertEqual(x['status'],'OBSERVED_REVIEW_REQUIRED')

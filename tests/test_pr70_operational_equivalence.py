@@ -203,6 +203,7 @@ class OriginalGitP4ContractionTests(unittest.TestCase):
         base = 'cd897deb297a18fae9bf2910e2a7474fe04d6beb'
         # The historic P4 observation must remain immutable after future work.
         head = '987de6407c75a3978ca41cf544d098ff33bf6268'
+        hardened = 'd59eb015d5627971037fca26628a04f6ef23dc00'
         for path, before, after in (
             ('src/cora/continuous.py',
              '66150559c14f89aeb0f84cca6a50d00828ee6161',
@@ -275,13 +276,20 @@ class OriginalGitP4ContractionTests(unittest.TestCase):
             a, b = execute(earlier, 'earlier'), execute(later, 'later')
             self.assertEqual(a, b)
             self.assertEqual(json.loads(b['effects']['receipt.json'])['denial'], 'DENIED')
+            c = execute(clone_at(hardened, 'hardened'), 'hardened')
+            self.assertEqual(b, c)  # same persistent receipt and denial
             test = [{'id': 'p4-native-policy', 'path': test_path}]
             receipt = op.native_counterfactual(ROOT, base, head, test,
                  {'p4-native-policy': a}, {'p4-native-policy': b})
             self.assertEqual(receipt['status'], 'PASS_SCOPED_FINITE_NATIVE')
             self.assertTrue(op.verify_native_counterfactual(ROOT, receipt, test,
                 {'p4-native-policy': a}, {'p4-native-policy': b}))
-            mutant = clone_at(head, 'mutant')
+            followon = op.native_counterfactual(ROOT, head, hardened, test,
+                {'p4-native-policy': b}, {'p4-native-policy': c})
+            self.assertEqual(followon['status'], 'PASS_SCOPED_FINITE_NATIVE')
+            self.assertTrue(op.verify_native_counterfactual(ROOT, followon, test,
+                {'p4-native-policy': b}, {'p4-native-policy': c}))
+            mutant = clone_at(hardened, 'mutant')
             file = mutant / 'src/cora/git_snapshot.py'
             original = file.read_text('utf-8')
             marker = '    return proc.stdout\n\n\ndef _batch('
@@ -294,12 +302,35 @@ class OriginalGitP4ContractionTests(unittest.TestCase):
                 'user.email=fixture@example.invalid', 'commit', '-qm', 'native physical mutant')
             mutant_head = git(mutant, 'rev-parse', 'HEAD')
             corrupted = execute(mutant, 'mutated')
-            self.assertEqual((b['exit_code'], b['stdout'], b['stderr']),
+            self.assertEqual((c['exit_code'], c['stdout'], c['stderr']),
                              (corrupted['exit_code'], corrupted['stdout'], corrupted['stderr']))
-            self.assertNotEqual(b['effects'], corrupted['effects'])
-            bad = op.native_counterfactual(mutant, head, mutant_head, test,
-                 {'p4-native-policy': b}, {'p4-native-policy': corrupted})
+            self.assertNotEqual(c['effects'], corrupted['effects'])
+            bad = op.native_counterfactual(mutant, hardened, mutant_head, test,
+                 {'p4-native-policy': c}, {'p4-native-policy': corrupted})
             self.assertEqual(bad['status'], 'FAIL_OBSERVED')
+
+
+    def test_p4_net_runtime_source_contraction_and_no_second_executor(self):
+        if not (ROOT / '.git').exists():
+            self.skipTest('full original Git history required')
+        base = 'cd897deb297a18fae9bf2910e2a7474fe04d6beb'
+        p4 = '987de6407c75a3978ca41cf544d098ff33bf6268'
+        hardened = 'd59eb015d5627971037fca26628a04f6ef23dc00'
+        paths = ('src/cora/continuous.py', 'src/cora/git_snapshot.py')
+        epochs = {sha: {path: op.git(ROOT, 'show', sha + ':' + path)
+                        for path in paths} for sha in (base, p4, hardened)}
+        measured = {sha: sum(len(data) for data in files.values())
+                    for sha, files in epochs.items()}
+        self.assertLess(measured[p4], measured[base])
+        self.assertLess(measured[hardened], measured[p4])
+        before, after = epochs[base][paths[0]], epochs[hardened][paths[0]]
+        self.assertIn(b'def _git(', before)
+        self.assertNotIn(b'def _git(', after)
+        self.assertEqual(after.count(b'subprocess.run('), 1)  # ancestry only
+        self.assertIn(b'from .git_snapshot import git', after)
+        self.assertIn(b'invalid bounded Git output budget', epochs[hardened][paths[1]])
+        self.assertEqual(set(git(ROOT, 'diff', '--name-only', p4, hardened,
+                                 '--', 'src/cora').splitlines()), set(paths))
 
 
 if __name__ == "__main__":
