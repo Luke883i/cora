@@ -106,3 +106,87 @@ class CockpitTests(unittest.TestCase):
             'families': 10, 'distinct_inputs': 10000, 'rejected': 10000,
             'survivors': 0, 'scope': 'DTO_ONLY_NOT_MODEL_OR_PHYSICAL_GIT',
             'model_calls': 0, 'authorization': 'NONE'}))
+
+
+# PR87 C9: source-bound CI ownership, not a new runtime gate or proof issuer.
+from pathlib import Path
+
+
+def _pr36_ci_owner_contract(documentation: str, integrated: str) -> None:
+    """Require exact native PR36 checks in one owner; fail on false PASS cuts."""
+    marker = '  pr36-native-owner:\n'
+    boundary = '  diagnose-comprehensive:\n'
+    assert integrated.count(marker) == 1, 'missing or duplicated PR36 owner'
+    block = integrated.split(marker, 1)[1].split(boundary, 1)[0]
+    assert 'PR36 execute original Git' not in documentation, 'duplicated PR36 execution'
+    assert '/tmp/cora-one-run.json' not in documentation, 'stale owned artifact in docs'
+    assert "python-version: ['3.11', '3.13']" in block
+    assert 'fail-fast: false' in block and 'timeout-minutes: 50' in block
+    assert 'ref: ${{ github.event.pull_request.head.sha || github.sha }}' in block
+    assert 'fetch-depth: 0' in block and 'persist-credentials: false' in block
+    assert 'test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"' in block
+    required = (
+        'PR36 execute original Git one-run methods and render JSON/HTML',
+        'PR36 replay underlying deterministic original source-process receipt',
+        'PR36 verify one-run JSON original source identity and report integrity',
+        'PR36 assert offline HTML byte-equivalence to verified run',
+        'PR36 physical Git DoD mutants and one-run negative tests',
+        'PR36 falsify 100k distinct preseeded semantic receipts twice',
+        '--model-stress-cases 100000',
+        'assert verify_suite(',
+        'assert verify_one(',
+        'test_pr36_one_run.py',
+        'cmp /tmp/cora-one-run-100k.json /tmp/cora-one-run-100k-replay.json',
+        'a["authorization"]=="NONE"',
+        'not a["release_authorized"]',
+        'r["unauthorized_promotions"]==0',
+    )
+    for clause in required:
+        assert block.count(clause) == 1, 'missing/duplicated PR36 oracle: ' + clause
+    assert block.count('--cases 100000') == 2, 'both seeded replays required'
+    assert 'if: always()' in block
+    assert 'cora-pr36-source-${{ matrix.python-version }}' in block
+    assert 'continue-on-error: true' not in block and '|| true' not in block
+
+
+def _mutate_pr36_owner(owner: str, old: str, new: str) -> str:
+    marker = '  pr36-native-owner:\n'
+    boundary = '  diagnose-comprehensive:\n'
+    prefix, rest = owner.split(marker, 1)
+    block, suffix = rest.split(boundary, 1)
+    assert old in block, 'mutation did not target PR36 owner'
+    return prefix + marker + block.replace(old, new, 1) + boundary + suffix
+
+
+class Pr87CiOwnershipTests(unittest.TestCase):
+    def test_native_owner_and_sixteen_negative_mutants(self):
+        # Workflows are tracked source; this is an exact current-tree *static*
+        # contract, while GitHub owns the actual job execution and results.
+        documentation = Path('.github/workflows/ci-documentation.yml').read_text()
+        integrated = Path('.github/workflows/ci-one-run-integrated.yml').read_text()
+        _pr36_ci_owner_contract(documentation, integrated)
+        alterations = [
+            ('--model-stress-cases 100000', '--model-stress-cases 0'),
+            ('assert verify_suite(', 'if verify_suite('),
+            ('assert verify_one(', 'if verify_one('),
+            ('test_pr36_one_run.py', 'test_pr35_one_run.py'),
+            ('--cases 100000', '--cases 99999'),
+            ('cmp /tmp/cora-one-run-100k.json', ': /tmp/cora-one-run-100k.json'),
+            ('if: always()', 'if: false'),
+            ('timeout-minutes: 50', 'timeout-minutes: 12'),
+            ('test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"', 'echo "$EXPECTED_SHA"'),
+            ("python-version: ['3.11', '3.13']", "python-version: ['3.11']"),
+            ('PR36 execute original Git one-run methods', 'PR36 execute original Git one-run methods\n        continue-on-error: true'),
+            ('persist-credentials: false', 'persist-credentials: true'),
+            ('fetch-depth: 0', 'fetch-depth: 1'),
+            ('not a["release_authorized"]', 'a["release_authorized"]'),
+            ('r["unauthorized_promotions"]==0', 'r["unauthorized_promotions"]>=0'),
+        ]
+        for i, (old, new) in enumerate(alterations):
+            with self.subTest(mutant=i), self.assertRaises(AssertionError):
+                _pr36_ci_owner_contract(documentation, _mutate_pr36_owner(integrated, old, new))
+        with self.assertRaises(AssertionError):
+            _pr36_ci_owner_contract(
+                documentation + '      - name: PR36 execute original Git one-run methods and render JSON/HTML\n',
+                integrated)
+        self.assertEqual(len(alterations) + 1, 16)
