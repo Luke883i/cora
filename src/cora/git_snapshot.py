@@ -13,9 +13,12 @@ BATCH_BYTES = 16 * 1024 * 1024
 OID = re.compile(rb'^[0-9a-f]{40}(?:[0-9a-f]{24})?$')
 
 
-def git(repo: Path, *args: str, max_output: int = 32 * 1024 * 1024) -> bytes:
+def git(repo: Path, *args: str, max_output: int = 32 * 1024 * 1024,
+        timeout: int = 120) -> bytes:
+    if type(timeout) is not int or not 1 <= timeout <= 120:
+        raise ValueError("invalid bounded Git timeout")
     cmd = ['git', '-C', str(repo), *args]
-    proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False, timeout=120)
+    proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False, timeout=timeout)
     if proc.returncode != 0:
         raise ValueError('Git operation failed: ' + proc.stderr.decode('utf-8', 'replace')[:300])
     if len(proc.stdout) > max_output:

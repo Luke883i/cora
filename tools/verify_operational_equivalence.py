@@ -290,6 +290,256 @@ def verify(repo: Path, report: dict, *, execute_pinned_native: bool) -> bool:
         raise ValueError("operational equivalence report does not independently replay")
     return True
 
+# P3: native counterfactual adjudication reuses this original operational owner.
+# These functions classify caller-observed native effects; they NEVER launch
+# arbitrary foreign-target code or authenticate the evidence producer.
+def native_counterfactual(repo: Path, base: str, head: str,
+                          tests: list[dict], baseline: dict,
+                          candidate: dict) -> dict:
+    """Classify a closed native test universe with exact Git test identity.
+
+    Observation = {exit_code:int, stdout:bytes, stderr:bytes,
+                   effects:{relative_path:bytes}}. An absent observation or
+    missing effect is UNKNOWN, not a false PASS. Only the operator may execute
+    target code in separately trusted isolation.
+    """
+    from cora.evidence import domain_hash, valid_path
+    if (not isinstance(tests, list) or not 1 <= len(tests) <= 256 or
+            any(not isinstance(t, dict) or set(t) != {'id', 'path'} or
+                not isinstance(t['id'], str) or not t['id'] or
+                not isinstance(t['path'], str) or not valid_path(t['path'])
+                for t in tests) or
+            len({t['id'] for t in tests}) != len(tests) or
+            not isinstance(baseline, dict) or not isinstance(candidate, dict) or
+            set(baseline) - {t['id'] for t in tests} or
+            set(candidate) - {t['id'] for t in tests}):
+        raise ValueError('P3 native test denominator invalid')
+    repo = Path(repo).resolve(strict=True)
+    b, h = revision(repo, base), revision(repo, head)
+    if b == h:
+        raise ValueError('P3 distinct Git revisions required')
+    ancestor = subprocess.run(['git', '-C', str(repo), 'merge-base',
+                               '--is-ancestor', b, h],
+                              capture_output=True, timeout=30, check=False)
+    if ancestor.returncode:
+        raise ValueError('P3 source revisions must have original ancestry')
+    def original_oid(sha, path):
+        row = git(repo, 'ls-tree', '-z', sha, '--', path)
+        if (row.count(b'\0') != 1 or not row.endswith(b'\0') or
+                b'\t' not in row or
+                row.split(b'\t', 1)[1][:-1].decode('utf-8') != path or
+                not row.startswith((b'100644 blob ', b'100755 blob '))):
+            return None
+        return row.split(b'\t', 1)[0].decode('ascii').split()[-1]
+    def valid_observation(obs):
+        return (isinstance(obs, dict) and set(obs) ==
+                {'exit_code', 'stdout', 'stderr', 'effects'} and
+                type(obs['exit_code']) is int and
+                isinstance(obs['stdout'], bytes) and
+                isinstance(obs['stderr'], bytes) and
+                isinstance(obs['effects'], dict) and
+                bool(obs['effects']) and len(obs['effects']) <= 32 and
+                all(isinstance(p, str) and valid_path(p) and
+                    isinstance(v, bytes) and len(v) <= 1024 * 1024
+                    for p, v in obs['effects'].items()) and
+                len(obs['stdout']) <= MAX_OUTPUT and
+                len(obs['stderr']) <= MAX_OUTPUT)
+    def fingerprint(obs):
+        if not valid_observation(obs):
+            return None
+        return {
+            'exit_code': obs['exit_code'],
+            'stdout_sha256': hashlib.sha256(obs['stdout']).hexdigest(),
+            'stderr_sha256': hashlib.sha256(obs['stderr']).hexdigest(),
+            'effect_sha256': {p: hashlib.sha256(data).hexdigest()
+                              for p, data in sorted(obs['effects'].items())},
+        }
+    rows = []
+    for item in tests:
+        key, path = item['id'], item['path']
+        left_oid, right_oid = original_oid(b, path), original_oid(h, path)
+        left, right = fingerprint(baseline.get(key)), fingerprint(candidate.get(key))
+        if left_oid is None or right_oid is None:
+            status = 'UNKNOWN_TEST_NOT_IN_ORIGINAL_GIT'
+        elif left_oid != right_oid:
+            status = 'UNKNOWN_TEST_IDENTITY_DRIFT'
+        elif left is None or right is None:
+            status = 'UNKNOWN_NATIVE_OBSERVATION_OR_EFFECT_MISSING'
+        elif left['exit_code'] != 0:
+            status = 'UNKNOWN_BASELINE_ORACLE_NOT_ACCEPTED'
+        elif left != right:
+            status = 'FAIL_OBSERVED_NATIVE_COUNTERFACTUAL'
+        else:
+            status = 'PASS_SCOPED_SAME_OBSERVED_NATIVE_EFFECTS'
+        rows.append({'id': key, 'path': path, 'base_oracle_oid': left_oid,
+                     'head_oracle_oid': right_oid, 'baseline': left,
+                     'candidate': right, 'status': status})
+    bad = [row['id'] for row in rows if row['status'].startswith('FAIL_')]
+    unknown = [row['id'] for row in rows if row['status'].startswith('UNKNOWN_')]
+    result = {'schema': 'cora-native-counterfactual/1', 'base': b, 'head': h,
+              'tests': rows, 'denominator': len(tests), 'failed': bad,
+              'unknown': unknown,
+              'status': ('FAIL_OBSERVED' if bad else
+                         'UNKNOWN_INCOMPLETE' if unknown else
+                         'PASS_SCOPED_FINITE_NATIVE'),
+              'execution': 'OPERATOR_SUPPLIED_ORIGINAL_GIT_NATIVE_OBSERVATIONS',
+              'producer_authenticated': False,
+              'external_and_runtime_closure': 'BLOCKED_EXTERNAL',
+              'release_authorization': 'NONE'}
+    result['digest'] = domain_hash('CORA:native-counterfactual:1', result)
+    return result
+
+
+
+def verify_native_counterfactual(repo: Path, report: dict, tests: list[dict],
+                                 baseline: dict, candidate: dict) -> bool:
+    """Reopen original Git oracle blobs and recompare caller-supplied evidence.
+
+    A changed caller-controlled observation can be rehashed; this replay
+    detects report-only forgery, NOT producer collusion or missing effects.
+    """
+    from cora.evidence import domain_hash
+    if not isinstance(report, dict) or report.get('schema') != 'cora-native-counterfactual/1':
+        raise ValueError('invalid P3 counterfactual receipt')
+    if report.get('digest') != domain_hash('CORA:native-counterfactual:1',
+                                            {k: v for k, v in report.items() if k != 'digest'}):
+        raise ValueError('P3 counterfactual digest mismatch')
+    actual = native_counterfactual(repo, report['base'], report['head'],
+                                   tests, baseline, candidate)
+    if actual != report:
+        raise ValueError('P3 counterfactual Git and native evidence replay mismatch')
+    return True
+
+
+def minimize_native_failure(changes: list[str], native_probe, *,
+                            max_probes: int = 128) -> dict:
+    """Deterministic 1-minimal source-change witness, never semantic deletion proof.
+
+    The caller must explicitly supply an isolated *native* oracle that returns
+    FAIL, PASS, or UNKNOWN for a selected subset of physical changes. Probe
+    twice and refuse to shrink across nondeterministic/unknown outcomes.
+    """
+    from cora.evidence import domain_hash
+    if (not isinstance(changes, list) or not 1 <= len(changes) <= 128 or
+            any(not isinstance(x, str) or not x for x in changes) or
+            len(set(changes)) != len(changes) or
+            type(max_probes) is not int or not 2 <= max_probes <= 512 or
+            not callable(native_probe)):
+        raise ValueError('P3 ddmin changes, oracle or budget invalid')
+    trials = []
+    def check(subset):
+        if 2 * len(trials) + 2 > max_probes:
+            return 'UNKNOWN_BUDGET'
+        a, b = native_probe(tuple(subset)), native_probe(tuple(subset))
+        if a not in ('FAIL', 'PASS', 'UNKNOWN') or b not in ('FAIL', 'PASS', 'UNKNOWN'):
+            raise ValueError('P3 native oracle returned unrecognized outcome')
+        state = a if a == b else 'UNKNOWN_FLAKY'
+        trials.append({'subset': list(subset), 'first': a, 'second': b,
+                       'status': state})
+        return state
+    current = list(changes)
+    initial = check(current)
+    if initial != 'FAIL':
+        state = 'UNKNOWN_OR_NOT_REPRODUCED'
+    else:
+        granularity = 2
+        while len(current) > 1:
+            width = max(1, (len(current) + granularity - 1) // granularity)
+            parts = [current[i:i + width] for i in range(0, len(current), width)]
+            reduced = False
+            for group in parts:
+                complement = [x for x in current if x not in group]
+                if complement and check(complement) == 'FAIL':
+                    current, reduced = complement, True
+                    granularity = max(2, granularity - 1)
+                    break
+            if reduced:
+                continue
+            if granularity >= len(current):
+                break
+            granularity = min(len(current), granularity * 2)
+        # Final 1-minimality check is mandatory; unknown/budget never certifies it.
+        checked = True
+        for idx in range(len(current)):
+            subset = current[:idx] + current[idx + 1:]
+            verdict = check(subset)
+            if verdict != 'PASS':
+                checked = False
+                break
+        state = ('FAIL_1_MINIMAL_NATIVE_WITNESS' if checked and
+                 all(t['status'] in ('PASS', 'FAIL') for t in trials) else
+                 'UNKNOWN_MINIMALITY')
+    result = {'schema': 'cora-native-ddmin/1', 'source_changes': changes,
+              'minimized': current, 'trials': trials, 'status': state,
+              'scope': 'OPERATOR_SUPPLIED_NATIVE_PROBE_NOT_CAUSAL_UNIVERSALITY',
+              'unknown_trials': sum(x['status'] == 'UNKNOWN_FLAKY' or
+                                    x['status'] == 'UNKNOWN' for x in trials),
+              'execution_authority': 'NONE', 'safe_deletion': False}
+    result['digest'] = domain_hash('CORA:native-ddmin:1', result)
+    return result
+
+
+def native_counterfactual_cut(native: dict, minimized: dict | None = None) -> dict:
+    """P3 four-gate AND cut: typed model evidence, NEVER product admission.
+
+    The cut is structural: caller-provided receipts are not independently
+    authenticated. The external reviewer, provider and rollback never PASS.
+    """
+    from cora.evidence import domain_hash
+    from cora.reticulum import assess_cut, MODEL, BLOCKED, EXTERNAL, REFUTED
+    if (not isinstance(native, dict) or native.get('schema') != 'cora-native-counterfactual/1' or
+            native.get('digest') != domain_hash('CORA:native-counterfactual:1',
+                {k:v for k,v in native.items() if k != 'digest'})):
+        raise ValueError('P3 invalid native receipt for AND cut')
+    if minimized is not None and (not isinstance(minimized, dict) or
+            minimized.get('schema') != 'cora-native-ddmin/1' or
+            minimized.get('digest') != domain_hash('CORA:native-ddmin:1',
+                {k:v for k,v in minimized.items() if k != 'digest'})):
+        raise ValueError('P3 invalid ddmin receipt for AND cut')
+    gates = {
+        'P3_G1': ('L1_GIT', 'L2_TEST_IDENTITY', 'L3_DENOMINATOR'),
+        'P3_G2': ('L4_NATIVE_OBSERVATIONS', 'L5_PERSISTED_EFFECTS', 'L6_NEGATIVE_UNKNOWN'),
+        'P3_G3': ('L7_PHYSICAL_WITNESS', 'L8_REPEATABILITY', 'L9_ONE_MINIMAL'),
+        'P3_G4': ('L10_INDEPENDENT_REPLAY', 'L11_AUTHENTICATED_REVIEW', 'L12_ROLLBACK'),
+    }
+    nodes = [{'id':'P3_G0','scope':'EXTERNAL','depends_on':list(gates)}]
+    for gate, leaves in gates.items():
+        nodes.append({'id':gate,'scope':'EXTERNAL' if gate == 'P3_G4' else 'MODEL',
+                      'depends_on':list(leaves)})
+        nodes.extend({'id':leaf,'scope': ('EXTERNAL' if leaf in
+                       ('L11_AUTHENTICATED_REVIEW','L12_ROLLBACK') else 'MODEL'),
+                      'depends_on':[]} for leaf in leaves)
+    rows = native.get('tests', [])
+    good_ids = bool(rows) and native.get('denominator') == len(rows)
+    test_stable = good_ids and all(x.get('base_oracle_oid') is not None and
+                                   x.get('base_oracle_oid') == x.get('head_oracle_oid')
+                                   for x in rows)
+    statuses = [x.get('status','') for x in rows]
+    native_state = (REFUTED if any(x.startswith('FAIL_') for x in statuses) else
+                    BLOCKED if any(x.startswith('UNKNOWN_') for x in statuses) or not statuses
+                    else MODEL)
+    obs = {'L1_GIT': MODEL, 'L2_TEST_IDENTITY': MODEL if test_stable else BLOCKED,
+           'L3_DENOMINATOR': MODEL if good_ids else BLOCKED,
+           'L4_NATIVE_OBSERVATIONS': native_state,
+           'L5_PERSISTED_EFFECTS': native_state,
+           'L6_NEGATIVE_UNKNOWN': (MODEL if any(
+               x.get('id','').startswith('negative:') and
+               not x.get('status','').startswith('UNKNOWN_') for x in rows) else BLOCKED),
+           'L7_PHYSICAL_WITNESS': BLOCKED,  # caller labels are not Git physical proof
+           'L8_REPEATABILITY': (MODEL if minimized and minimized.get('trials') and
+               all(x.get('first') == x.get('second') and x.get('status') in ('PASS','FAIL')
+                   for x in minimized['trials']) else BLOCKED),
+           'L9_ONE_MINIMAL': MODEL if minimized and minimized.get('status') ==
+               'FAIL_1_MINIMAL_NATIVE_WITNESS' else BLOCKED,
+           'L10_INDEPENDENT_REPLAY': BLOCKED}
+    assessment = assess_cut(nodes, 'P3_G0', obs)
+    result = {'schema': 'cora-p3-native-cut/1', 'cut': assessment,
+              'source_receipts': {'native': native['digest'],
+                                  'ddmin': minimized['digest'] if minimized else None},
+              'physical_git_linkage': 'NOT_AUTHENTICATED_FROM_LABELS',
+              'external_evidence': 'BLOCKED_EXTERNAL', 'product_go': False}
+    result['digest'] = domain_hash('CORA:p3-native-cut:1', result)
+    return result
 
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)

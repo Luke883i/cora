@@ -119,6 +119,81 @@ original CORA checkout source replay in CI. The 10,000 count does not denote
 and net responsibility/assurance cost in one iteration; preserve P5 independent
 host/reviewer controls and P6 prospective blinded human-cost experiment.
 
+## P3 native counterfactuals: original-runner oracle, effects and 1-minimal witnesses
+
+P3 is **Controfattuali nativi**; target-neutral portability was P1. The first
+P3 implementation extends the existing `tools/verify_operational_equivalence.py`
+without changing its original closed 77-case CLI behavior, adding a second
+runner, modifying the target root, or silently executing untrusted targets.
+
+**Canonical-contract alignment (not an invented new source of authority).**
+The twelve P3 diagnostic leaves below refine, but do **not replace**, the
+five P3 leaves in committed
+`.cora/contracts/dod/self-governing-portable-development-v1.json`:
+
+| Canonical leaf and original owner | Current source observation | Admission |
+| --- | --- | --- |
+| L18 – `src/cora/ci_repro.py`: same-identity test comparison | Original Git test OIDs checked by the existing operational-equivalence owner on synthetic Python targets | OPEN: no provider-independent cross-target attestation |
+| L19 – `src/cora/native_gold.py`: isolated physical ddmin | Native fixture clones, un-memoized repeat probes, one physical 1-minimal counterexample | OPEN: canonical Gold owner and external target execution remain unqualified |
+| L20 – `src/cora/independent_qualification.py`: denied effects and zero-write | Neither source-level refutation nor local fixture proves authenticated host denial | BLOCKED_EXTERNAL |
+| L25 – `src/cora/one_run.py`: exact-SHA replay | The receipt replay verifies reported Git test blobs; not an independently issued One-Run runtime receipt | OPEN / source only |
+| L26 – `src/cora/ci_repro.py`: distinguish CI from experiment | Native fixture FAIL stays FAIL even with green CI; machine AND never promotes external approval | OPEN: required exact HEAD CI and independent acceptance separate |
+
+Each canonical status remains governed by the original contract and owner.
+Neither a new P3 diagnostic label nor `PASS_SCOPED_FINITE_NATIVE` changes
+the foundational P3 leaf state or the P0 global release decision.
+**Global P3 = AND(G1,G2,G3,G4), with twelve noncompensatory local DoDs:**
+
+| Gate | Local DoDs | Native falsifier or independent requirement |
+| --- | --- | --- |
+| G1 – original identity | L1 exact distinct ancestor commits; L2 identical Git blob of each test oracle; L3 enumerated, unique test identity and denominator | Missing/changed oracle yields UNKNOWN, never equivalence |
+| G2 – native behavioral observation | L4 exit/stdout/stderr equality; L5 persisted-effect comparison and negative input; L6 missing native observations classified UNKNOWN | Equal stdout but different persisted receipt is FAIL; missing effect UNKNOWN |
+| G3 – physical source causality | L7 at least one committed real source mutation; L8 same native probe twice per subset; L9 a 1-minimal failing subset with total probe budget | ddmin must retain one real fault and discard a harmless edit; flakiness/budget UNKNOWN |
+| G4 – admissibility and recovery | L10 independently replayed original Git/observation receipts; L11 provider/reviewer authentication; L12 actual rollback and broader runtime effects | Local replay is not producer authentication; external leaves remain BLOCKED_EXTERNAL |
+
+`native_counterfactual(repo, base, head, tests, baseline, candidate)` performs
+read-only source-identity checks and classifies **caller-supplied** observations:
+`FAIL_OBSERVED`, `UNKNOWN_INCOMPLETE`, or `PASS_SCOPED_FINITE_NATIVE`.
+Each observation explicitly includes exit code, stdout, stderr and a nonempty
+map of observed persisted-effect bytes. A changed original test, missing
+observation, missing effect or failed baseline is UNKNOWN. A native difference
+in a registered, stable test is FAIL. An observed finite PASS does not imply
+absence of dynamic consumers, unregistered inputs or unobserved side effects.
+
+`verify_native_counterfactual` recomputes the report from the actual Git
+test blobs and the supplied observations, rejecting report-only forgeries
+even when the attacker recomputes the digest. It does not authenticate the
+operator or prove that those observations were really executed.
+
+`minimize_native_failure` accepts an explicitly operator-governed native
+probe returning PASS/FAIL/UNKNOWN for each subset of physical mutations.
+It invokes each subset twice, seeks a 1-minimal failure, checks removals
+including the empty set, and never promotes flaky, unobserved or
+budget-exhausted tests into proof. ddmin returns **local 1-minimality** only;
+not a universally minimal cause, a deployment guarantee or safe deletion.
+
+`native_counterfactual_cut(native_receipt, ddmin_receipt)` now materializes
+these exact four intermediate gates and twelve leaves using the original
+`reticulum.assess_cut`. The reticular digest stays intact in a separate
+`cora-p3-native-cut/1` envelope. Incomplete observations remain BLOCKED,
+observed native regressions propagate REFUTED through every affected gate,
+and independent reviewer/rollback remain BLOCKED_EXTERNAL. Source-change
+labels supplied to ddmin never, by themselves, authenticate physical Git
+provenance; L7 stays blocked until that linkage can be independently checked.
+**Executed fixtures:** two real Git source revisions, unchanged original test
+blob, a harmless source comment plus an independently failing behavioral
+change, persisted receipt divergence with identical stdout/exit, source
+mutation and oracle-identity drift, forged/rehashed outcome and missing
+observations. These are executed *synthetic target* tests, not a production
+runtime run on iKant_EDU or an independently signed provider receipt.
+
+**Roadmap, minimized without waiving any leaf:** P3 and P4 share one
+iterated native-counterfactual / responsibility-removal workstream.
+Every P4 proposed removal must separately conserve consumer behavior
+and persistent effects and show a net decrease in owner and assurance
+cost; P5 independent authority and rollback remain distinct; P6 then
+pre-registers A/B/C human-cost measures. Product authorization remains NONE.
+
 <a id="current-change-range-discipline-pr59"></a>
 ## Current change-range discipline
 

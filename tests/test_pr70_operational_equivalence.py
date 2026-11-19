@@ -194,5 +194,112 @@ class EndToEndOperationalReceiptTests(unittest.TestCase):
                 op.verify(ROOT, tampered, execute_pinned_native=True)
 
 
+class OriginalGitP4ContractionTests(unittest.TestCase):
+    """Source-exact P3/P4 native receipt parity, not an external acceptance verdict."""
+
+    def test_original_git_before_after_receipt_and_physical_negative(self):
+        if not (ROOT / '.git').exists():
+            self.skipTest('full original Git history required')
+        base = 'cd897deb297a18fae9bf2910e2a7474fe04d6beb'
+        head = git(ROOT, 'rev-parse', 'HEAD')
+        for path, before, after in (
+            ('src/cora/continuous.py',
+             '66150559c14f89aeb0f84cca6a50d00828ee6161',
+             '517c1c53ac4c398efb7d283ba93a2700ede39cc2'),
+            ('src/cora/git_snapshot.py',
+             '1cad583f29c31791ae43b50f115785ee35670c05',
+             'a32fddb65b2b4bdd05fe905094156183744d6e7f'),
+        ):
+            self.assertEqual(git(ROOT, 'rev-parse', base + ':' + path), before)
+            self.assertEqual(git(ROOT, 'rev-parse', head + ':' + path), after)
+        test_path = 'tests/test_continuous_pr14.py'
+        self.assertEqual(git(ROOT, 'rev-parse', base + ':' + test_path),
+                         git(ROOT, 'rev-parse', head + ':' + test_path))
+        with tempfile.TemporaryDirectory(prefix='cora-p4-original-native-') as td:
+            root = Path(td)
+            fixture = root / 'fixture'
+            fixture.mkdir()
+            git(fixture, 'init', '-q')
+            git(fixture, 'config', 'user.name', 'fixture')
+            git(fixture, 'config', 'user.email', 'fixture@example.invalid')
+            (fixture / 'example.py').write_text('print(1)\n')
+            git(fixture, 'add', '-A')
+            git(fixture, 'commit', '-qm', 'base')
+            (fixture / '.cora').mkdir()
+            (fixture / '.cora/continuous-policy.json').write_text(json.dumps({
+                'schema': 'cora-continuous-policy/1', 'version': 1,
+                'max_changed_paths': 20, 'high_risk_prefixes': ['.github/workflows', '.cora'],
+                'high_risk_paths': ['GOVERNANCE.md', 'pyproject.toml'],
+                'required_human_roles': ['MAINTAINER', 'INDEPENDENT_SECURITY_REVIEWER'],
+                'review_processes': ['source', 'history', 'debt', 'verification']}))
+            git(fixture, 'add', '-A')
+            git(fixture, 'commit', '-qm', 'policy')
+            target_base = git(fixture, 'rev-parse', 'HEAD')
+            (fixture / 'example.py').write_text('print(2)\n')
+            git(fixture, 'add', '-A')
+            git(fixture, 'commit', '-qm', 'candidate')
+            target_head = git(fixture, 'rev-parse', 'HEAD')
+            runner = (
+                'import json,sys\nfrom pathlib import Path\n'
+                'from cora.continuous import evaluate,agent_check\n'
+                'repo,base,head,out=sys.argv[1:]\n'
+                'receipt=evaluate(Path(repo),base,head)\n'
+                "claim={'schema':'cora-agent-proposal/1','agent_id':'negative',"
+                "'base_commit':base,'head_commit':head,'intent':'unsafe',"
+                "'changed_paths':['forged.py'],'test_claims':[],"
+                "'unknowns':[],'authorized_action':'DELETE'}\n"
+                "try:\n agent_check(Path(repo),claim)\n decision='ACCEPTED_IN_ERROR'\n"
+                "except ValueError:\n decision='DENIED'\n"
+                "Path(out).write_text(json.dumps({'receipt':receipt,'denial':decision},sort_keys=True))\n"
+                "print('OK')\n"
+            )
+            def execute(checkout, label):
+                effect = root / (label + '.json')
+                env = {**os.environ, 'PYTHONPATH': str(checkout / 'src'),
+                       'PYTHONNOUSERSITE': '1', 'PYTHONHASHSEED': '0'}
+                run = subprocess.run(
+                    [sys.executable, '-c', runner, str(fixture), target_base,
+                     target_head, str(effect)], cwd=checkout, env=env,
+                    capture_output=True, timeout=40, check=False)
+                self.assertEqual(run.returncode, 0, run.stderr)
+                return {'exit_code': run.returncode, 'stdout': run.stdout,
+                        'stderr': run.stderr,
+                        'effects': {'receipt.json': effect.read_bytes()}}
+            def clone_at(sha, label):
+                checkout = root / label
+                git(ROOT, 'clone', '--no-local', '-q', '--', str(ROOT), str(checkout))
+                git(checkout, 'checkout', '-q', '--detach', sha)
+                return checkout
+            earlier, later = clone_at(base, 'earlier'), clone_at(head, 'later')
+            a, b = execute(earlier, 'earlier'), execute(later, 'later')
+            self.assertEqual(a, b)
+            self.assertEqual(json.loads(b['effects']['receipt.json'])['denial'], 'DENIED')
+            test = [{'id': 'p4-native-policy', 'path': test_path}]
+            receipt = op.native_counterfactual(ROOT, base, head, test,
+                 {'p4-native-policy': a}, {'p4-native-policy': b})
+            self.assertEqual(receipt['status'], 'PASS_SCOPED_FINITE_NATIVE')
+            self.assertTrue(op.verify_native_counterfactual(ROOT, receipt, test,
+                {'p4-native-policy': a}, {'p4-native-policy': b}))
+            mutant = clone_at(head, 'mutant')
+            file = mutant / 'src/cora/git_snapshot.py'
+            original = file.read_text('utf-8')
+            marker = '    return proc.stdout\n\n\ndef _batch('
+            self.assertEqual(original.count(marker), 1)
+            file.write_text(original.replace(marker,
+                "    if args and args[0] == 'diff':\n        return b''\n"
+                '    return proc.stdout\n\n\ndef _batch(', 1), encoding='utf-8')
+            git(mutant, 'add', 'src/cora/git_snapshot.py')
+            git(mutant, '-c', 'user.name=fixture', '-c',
+                'user.email=fixture@example.invalid', 'commit', '-qm', 'native physical mutant')
+            mutant_head = git(mutant, 'rev-parse', 'HEAD')
+            corrupted = execute(mutant, 'mutated')
+            self.assertEqual((b['exit_code'], b['stdout'], b['stderr']),
+                             (corrupted['exit_code'], corrupted['stdout'], corrupted['stderr']))
+            self.assertNotEqual(b['effects'], corrupted['effects'])
+            bad = op.native_counterfactual(mutant, head, mutant_head, test,
+                 {'p4-native-policy': b}, {'p4-native-policy': corrupted})
+            self.assertEqual(bad['status'], 'FAIL_OBSERVED')
+
+
 if __name__ == "__main__":
     unittest.main()
