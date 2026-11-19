@@ -36,7 +36,7 @@ cora snapshot . --revision HEAD --output /tmp/cora-ledger.json
 cora verify-ledger /tmp/cora-ledger.json --repo .
 ```
 
-For a scoped dossier, run [One-Run](#one-run--one-command-one-evidence-dossier). The snapshot is Git-only; neither command tests target runtime. [Getting started](docs/GETTING_STARTED.md) covers setup.
+For scoped evidence see [One-Run](#one-run--one-command-one-evidence-dossier); snapshots are Git-only, not target tests. [Getting started](docs/GETTING_STARTED.md) explains setup.
 
 **ChatGPT Project:** see the complete, first-time setup below; the [canonical beta prompt](docs/AGENT_ADOPTION.md#chatgpt-project-beta-adapter) is optional and does not execute software.
 
@@ -44,7 +44,7 @@ For a scoped dossier, run [One-Run](#one-run--one-command-one-evidence-dossier).
 
 ## Use CORA in a ChatGPT Project — beginner walkthrough
 
-**Start here:** the beta describes **ChatGPT Plus or Edu**; Pro or Edu may suit demanding workflows. Projects are available on other plans, and tool permissions vary.
+**Start here:** **ChatGPT Plus or Edu** beta; Projects are available on other plans; permissions vary.
 
 1. **Create your GitHub repository:** on [GitHub](https://github.com) select **New repository**, name your issue webapp, add a README and record its Git SHA. This is your **target repository**, not CORA.
 2. **Install the Project instructions:** open [Luke883i/cora](https://github.com/Luke883i/cora), choose **Code → Download ZIP** from `main` (source only, no `.git`). Copy the [single canonical CORA beta prompt](docs/AGENT_ADOPTION.md#chatgpt-project-beta-adapter). In ChatGPT choose **New project**, then **Project settings** → **Project instructions**; paste it and attach the source ZIP.
@@ -62,18 +62,18 @@ For a scoped dossier, run [One-Run](#one-run--one-command-one-evidence-dossier).
 
 ## What works today
 
-**CTO snapshot — source-scoped, not enterprise-certified**
+**CTO evaluation snapshot — source-scoped, not an enterprise-readiness certificate**
 
 | Decision question | Current answer |
 | --- | --- |
-| **Who / what?** | Review one bounded software change, its DoD and open obligations. |
+| **Who / what?** | CTOs, reviewers, AI coding-agent operators: bounded software change, falsifiable DoD, unresolved obligations. |
 | **Method / engine** | **CORA-METHOD** guides third-party agents; **CORA-ENGINE** is the local Python CLI. The agent edits; CORA checks evidence, not approval. |
-| **Targets / runtime** | Git, partial Python AST/static JS ESM, bounded **Teddy Node** and **ICTC HTTP/SQLite**; browser/remote unobserved. |
-| **Delivery / compatibility** | **MIT**, **Python 3.11+**, `1.0.0a5`; wheel/sdist candidates, no supported public release. |
+| **Targets / runtime** | Git-bound source inspection, partial Python AST, static JavaScript ESM; **Teddy Node** and **ICTC HTTP/SQLite** pilots. |
+| **Delivery / compatibility** | **MIT**, **Python 3.11+**, `cora-audit 1.0.0a5`; no declared mandatory Python runtime dependencies. |
 | **Supply chain** | **SBOM (CycloneDX 1.6): GENERATION_IN_CANDIDATE_CI**; **SCA/CVE: SCAN_CI_BUILD_TOOLS_ONLY**; **artifact signing / SLSA provenance: NOT_ATTESTED**. |
-| **Governance** | Authorization required; independent reviewer, host rules and release **BLOCKED_EXTERNAL**. [Security](SECURITY.md) · [Release](docs/RELEASE.md). |
+| **Governance** | Execution needs authorization. **Independent reviewer, enforced branch rules, release: BLOCKED_EXTERNAL**; no production security SLA. [Security](SECURITY.md) · [Release](docs/RELEASE.md). |
 
-**Assurance:** **L1** Git/source; **L2** bounded product experiments; **L3** optional external review. CI PASS cannot approve release.
+**Assurance levels:** **L1** = Git/source checks; **L2** = bounded product experiments; **L3** = optional external assurance. L1/L2 may be useful without L3; CI cannot approve a release.
 
 **71 declared CLI commands** in [capability atlas](.cora/assurance/capability-atlas.json) are inventory, not 71 independently proven features. [parser-checked CLI reference](docs/CLI_REFERENCE.md) · [complete documentation index](docs/INDEX.md).
 
