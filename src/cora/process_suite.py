@@ -25,6 +25,9 @@ IMPLEMENTED = {
  'debt': ('debt_signals',),
  'verification': ('git_snapshot', 'artifact_roles', 'manifest_adapters', 'git_archaeology'),
 }
+# The full method set is derived from existing process groups, not copied to a
+# second list. Keep focus-sensitive selection last; it can report NOT_RUN when
+# no focus is supplied without pretending an external target test ran.
 IMPLEMENTED['full'] = tuple(dict.fromkeys(
     m for g in IMPLEMENTED.values() for m in g if m != 'file_selection_if_focus')) + ('file_selection_if_focus',)
 PROCESSES = tuple(IMPLEMENTED)
