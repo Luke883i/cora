@@ -201,7 +201,8 @@ class OriginalGitP4ContractionTests(unittest.TestCase):
         if not (ROOT / '.git').exists():
             self.skipTest('full original Git history required')
         base = 'cd897deb297a18fae9bf2910e2a7474fe04d6beb'
-        head = git(ROOT, 'rev-parse', 'HEAD')
+        # The historic P4 observation must remain immutable after future work.
+        head = '987de6407c75a3978ca41cf544d098ff33bf6268'
         for path, before, after in (
             ('src/cora/continuous.py',
              '66150559c14f89aeb0f84cca6a50d00828ee6161',

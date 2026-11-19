@@ -12,6 +12,7 @@ from unittest.mock import patch
 from tools import verify_engineering_closure as ekc
 
 ROOT = Path(__file__).resolve().parents[1]
+P4_MERGED = "987de6407c75a3978ca41cf544d098ff33bf6268"
 
 
 def git(repo, *args):
@@ -540,7 +541,7 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         p2 = ekc.git_engine_source_universe(ROOT, "1c26400db242032dd8fc69e138a22774eed4b100", p2_merge)
         self.assertEqual(p2["changed_blobs"], 1)
         self.assertEqual(p2["content_byte_different_paths"], ["src/cora/graph.py"])
-        p4 = ekc.git_engine_source_universe(ROOT, p2_merge, self.sha)
+        p4 = ekc.git_engine_source_universe(ROOT, p2_merge, P4_MERGED)
         self.assertEqual(p4["changed_blobs"], 2)
         self.assertEqual(p4["content_byte_different_paths"], [
             "src/cora/continuous.py", "src/cora/git_snapshot.py"])
@@ -603,7 +604,7 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             p2 = ekc.git_engine_source_universe(clone, "1c26400db242032dd8fc69e138a22774eed4b100", p2_merge)
             self.assertEqual(p2["changed_blobs"], 1)
             self.assertEqual(p2["content_byte_different_paths"], ["src/cora/graph.py"])
-            p4 = ekc.git_engine_source_universe(clone, p2_merge, "HEAD")
+            p4 = ekc.git_engine_source_universe(clone, p2_merge, P4_MERGED)
             self.assertEqual(p4["changed_blobs"], 2)
             self.assertEqual(p4["content_byte_different_paths"], [
                 "src/cora/continuous.py", "src/cora/git_snapshot.py"])
@@ -860,7 +861,11 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         p2_merge = module_oids("d29323c3ee4ef2c27116f93205f45224310eebc3")
         p2_successor_delta = {p for p in p1_merge if p1_merge[p] != p2_merge[p]}
         self.assertEqual(p2_successor_delta, {"src/cora/graph.py"})
-        post_p2_delta = {p for p in p2_merge if p2_merge[p] != current[p]}
+        p4_historical = module_oids(P4_MERGED)
+        historical_p4_delta = {p for p in p2_merge if p2_merge[p] != p4_historical[p]}
+        self.assertEqual(historical_p4_delta, {
+            "src/cora/continuous.py", "src/cora/git_snapshot.py"})
+        post_p2_delta = {p for p in p4_historical if p4_historical[p] != current[p]}
         self.assertEqual(post_p2_delta, {
             "src/cora/continuous.py", "src/cora/git_snapshot.py"})
         # The assurance verifier does change; do not call the entire repo equal.
