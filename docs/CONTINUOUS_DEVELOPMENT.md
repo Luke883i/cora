@@ -194,6 +194,44 @@ and persistent effects and show a net decrease in owner and assurance
 cost; P5 independent authority and rollback remain distinct; P6 then
 pre-registers A/B/C human-cost measures. Product authorization remains NONE.
 
+## P4 first net source-owner contraction — original Git evidence and non-promotion
+
+P4 is not complete merely because a smaller module or a green workflow exists.
+The first candidate removes the private Git executor from `continuous.py`
+and then retires its redundant policy-read subprocess, retaining the distinct
+ancestry return-code semantics. `git_snapshot.git` remains the sole bounded
+Git stdout/readback owner for those paths, with explicit 45-second limits and
+fail-closed output budgets. This is a **source-owner** contraction, not
+proof that dynamic consumers or human maintenance costs disappeared.
+
+**P4 scoped AND, no weighted compensation:** G1 exact original Git epochs,
+immutable P3/P4 history and committed blob readback; G2 physically reduced
+runtime source bytes **and** independently maintained executor responsibilities;
+G3 equal native policy receipts, same denied unauthorized agent action and
+physical persisted-effect mutant detected with unchanged process outputs;
+G4 unchanged CLI, committed test-oracle identities, negative-case controls and
+replay on the original Git repository, not a synthetic ZIP ancestry. Each gate
+is necessary. Run existing lifecycle, engineering-closure and operational-
+equivalence test owners, plus repository contracts and exact-HEAD Actions;
+a locally re-created Git history is preflight
+only. A rehashed receipt is not evidence-producer authentication.
+
+**Measured source epochs:** P3 original two-owner Python source 35,508 bytes;
+first P4 merged source 35,425 bytes (−83); subsequent hardening code 35,334
+bytes (−91 further, −174 cumulative). These figures exclude tests, docs and
+other repository costs, which must be reported separately. No improvement in
+human work, comprehensive maintenance or total PR size follows from these
+source counts alone; the maintained-assurance cost remains unmeasured.
+
+**Promotion boundary:** This establishes a *candidate* P4 source-scoped
+contraction, not a self-approved P4 global result. Canonical L21–L23 require
+source and native observations; L24 requires independent human/maintenance-cost
+qualification and is **BLOCKED_EXTERNAL** without it. Independent reviewer,
+protected host checks, operational rollback (P5) and causal tri-arm benefit
+(P6) remain distinct. `authority=NONE`, `PRODUCT_GO=false` and `G0=HOLD`
+regardless of local PASS or passing CI. Human approval and real external
+consumer evidence cannot be fabricated from code or Git digests.
+
 <a id="current-change-range-discipline-pr59"></a>
 ## Current change-range discipline
 
