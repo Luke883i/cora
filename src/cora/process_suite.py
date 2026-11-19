@@ -17,7 +17,6 @@ from .selection import select_file
 from .debt import debt_scan
 from .practice_contract import project as practice_project
 
-PROCESSES = ('source', 'history', 'architecture', 'forensics', 'debt', 'verification', 'full')
 IMPLEMENTED = {
  'source': ('git_snapshot', 'artifact_roles', 'manifest_adapters'),
  'history': ('git_archaeology',),
@@ -25,10 +24,10 @@ IMPLEMENTED = {
  'forensics': ('holistic_archaeology', 'file_selection_if_focus'),
  'debt': ('debt_signals',),
  'verification': ('git_snapshot', 'artifact_roles', 'manifest_adapters', 'git_archaeology'),
- 'full': ('git_snapshot', 'artifact_roles', 'manifest_adapters', 'git_archaeology',
-          'python_candidate_graph', 'holistic_archaeology', 'debt_signals',
-          'file_selection_if_focus'),
 }
+IMPLEMENTED['full'] = tuple(dict.fromkeys(
+    m for g in IMPLEMENTED.values() for m in g if m != 'file_selection_if_focus')) + ('file_selection_if_focus',)
+PROCESSES = tuple(IMPLEMENTED)
 
 
 def process_catalog() -> dict:
@@ -62,7 +61,6 @@ def run_suite(repo:Path,revision:str='HEAD',*,process:str='full',
     checks=[]
     started=monotonic() if measure else None
     methods=[]
-    requested=set(IMPLEMENTED[process])
     def record(name:str,fn):
         begun=monotonic() if measure else None
         if name in absent:
@@ -119,9 +117,15 @@ def run_suite(repo:Path,revision:str='HEAD',*,process:str='full',
                                                         focus=focus,manifest_mode=source_mode,
                                                         role_manifest=role_manifest,ontology_manifest=ontology_manifest),
         'debt_signals': lambda:debt_scan(repo,commit,max_commits=max_commits,_holistic_report=holistic),
+        'file_selection_if_focus': lambda:select_file(repo,focus,revision=commit),
     }
     for name in IMPLEMENTED[process]:
-        if name == 'file_selection_if_focus':
+        if name == 'file_selection_if_focus' and focus is None:
+            item={'method':name,'status':'NOT_RUN_REQUIRES_FOCUS'}
+            if measure:
+                item['elapsed_ms']=None
+                item['timing_basis']='NOT_INVOKED'
+            checks.append(item)
             continue
         if name in derived and holistic is not None:
             field,ledger_field=derived[name]
@@ -152,14 +156,8 @@ def run_suite(repo:Path,revision:str='HEAD',*,process:str='full',
             methods.append(name)
         else:
             record(name,sources[name])
-    if focus is not None and 'file_selection_if_focus' in requested:
-        record('file_selection_if_focus',lambda:select_file(repo,focus,revision=commit))
-    if focus is None and 'file_selection_if_focus' in requested:
-        item={'method':'file_selection_if_focus','status':'NOT_RUN_REQUIRES_FOCUS'}
-        if measure:
-            item['elapsed_ms']=None
-            item['timing_basis']='NOT_INVOKED'
-        checks.append(item)
+    if process=='full' and set(sources)-{row['method'] for row in checks}:
+        raise ValueError('full incomplete')
     status=('DEBT_BLOCKED' if any(c['status']=='DEBT_BLOCKED' for c in checks)
             else 'SOURCE_PARTIAL_NOT_CONFIGURED' if any(
                 c['status'] in ('NOT_CONFIGURED','PARTIAL_SCOPED_NOT_CONFIGURED') for c in checks)
@@ -174,7 +172,7 @@ def run_suite(repo:Path,revision:str='HEAD',*,process:str='full',
     if source_mode == 'target_neutral':
         result['source_mode']=source_mode
         result['unconfigured_manifests']=dict(sorted(
-            (method,path) for method,path in absent.items() if method in requested))
+            (method,path) for method,path in absent.items() if method in IMPLEMENTED[process]))
     if change_base is not None:
         result['change_base']=result['practice_obligations']['change_base']
     if measure:
