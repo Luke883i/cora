@@ -69,6 +69,28 @@ The **continuous lifecycle** path is a distinct observational route: committed B
 The optional **maintenance** path is deliberately separate: clean Git worktree -> read-only document rename plan -> explicit digest approval -> controlled owned-file changes -> user-specified test command -> owned-file hash validation -> receipt or compensating rollback. The local guard monitors selected Git/AST changes and must be protected by an independent required check in the hosting platform.
 
 ## Repo navigation / novice engineer challenge
+### Filesystem anatomy at the current Git revision
+
+This **reader map** is derived from committed paths, not an additional machine registry; the capability atlas and artifact-roles manifest retain that authority. A ZIP downloaded from GitHub is a set of files **without** original Git history. For native replay clone the repository. The current tree has the following recognizable owners:
+
+| Path | Human translation | Engineering / authority boundary |
+| --- | --- | --- |
+| `README.md` | Start page | Non-executable overview; not release authority |
+| `docs/GETTING_STARTED.md` | Installation and first session | One operational user path; no claim of a beginner trial |
+| `docs/AGENT_ADOPTION.md` | One Project prompt | Instructions for an assistant; not code execution |
+| `docs/ARCHITECTURE.md`, `docs/INDEX.md` | Where everything belongs | Current architecture map and complete documentation index |
+| `docs/archive/` | Historical records | Git-provenanced history, not present-day normative authority |
+| `src/cora/cli.py` | Main entrance | The single declared Python command entrypoint |
+| `src/cora/process_suite.py` | Safe process orchestration | No implicit target testing or release execution |
+| `src/cora/one_run.py`, `src/cora/chat_bundle.py` | Receipt and ZIP continuation | Source evidence and caller reports; no trusted human witness |
+| `.cora/contracts/`, `.cora/assurance/` | Acceptance rules and inventories | The contracts/atlases are not independent runtime proof |
+| `tests/`, `tools/` | Tests and reproducibility utilities | Test source existence is not a passed test run |
+| `.github/workflows/` | CI job definitions | Workflow YAML alone does not prove effective host enforcement |
+| `schemas/`, `examples/` | Data shapes and teaching samples | Examples are not production executions |
+| `pyproject.toml`, `LICENSE`, `GOVERNANCE.md`, `SECURITY.md` | Package and decision conditions | Licensing, maintainership and reporting boundaries |
+
+**How to navigate:** an end user reads README → Getting started → Project prompt (without copying this map into the prompt). A maintainer follows README → Architecture → one source owner → its tests → source-bound receipt. A reviewer follows the Git commit → claims/DoD → negative oracles → explicit external approval blockers. Adding a new file means reconciling the existing registries; adding another owner of this map would be a regression.
+
 
 Starting at the root, an engineer should find answers without prior PR history: What is CORA? What is deliberately not supported? How do I install and audit a repo? Which source modules implement the capabilities? What evidence proves the last revision? Where do I run tests and report security issues? The [README](../README.md) answers the first three; this map and `src/cora/` answer the next; [current product DoD](DOD_V1_EXPERIMENTAL.md), `tests/`, `.github/workflows/` and [security](../SECURITY.md) answer the rest. Automatic checks validate links and commands; genuine human comprehension requires the independent first-read review described in the [documentation acceptance DoD](DOCUMENTATION_DOD.md).
 
