@@ -376,6 +376,71 @@ def _continuation_from_verified_bundle(path: Path, count: int) -> dict:
     }
 
 
+
+# PR87: presentation is a *projection* of verified continuation metadata.
+# No separate roadmap owner, untrusted user prose, timer, command runner or approval.
+_COCKPIT_WHY = {
+    "PAUSE_CAPACITY_AND_REBASE": "The portable session has reached its round limit; review the evidence before restarting.",
+    "REVIEW_CHANGED_CONTRACT": "The declared goal or acceptance conditions changed; previous evidence must be reconciled.",
+    "REVALIDATE_CHANGED_SOURCE": "The Git revision changed; source-bound evidence must be checked again.",
+    "REPLAN_STALLED_REPORTS": "Recent reports show no new source evidence; reconsider the next falsification.",
+    "REQUEST_INDEPENDENT_ACCEPTANCE": "No reported DoD leaf remains open; an independent decision is still required.",
+    "REQUEST_EXTERNAL_WITNESS": "The next necessary observation belongs to an external reviewer or runtime.",
+    "PROPOSE_NEXT_SCOPED_STEP": "A necessary reported DoD leaf remains unresolved; propose one reversible check.",
+}
+
+
+def _cockpit(continuation: dict, commit: str) -> dict:
+    """Plain-language decision projection; not an engine or independent witness.
+
+    The caller must first replay the ZIP with _read_archive. None of the
+    choices executes actions, authorizes changes, or estimates elapsed time.
+    """
+    if (not isinstance(continuation, dict) or
+            continuation.get("schema") != "cora-chat-continuation-advice/1" or
+            continuation.get("decision") not in _COCKPIT_WHY or
+            continuation.get("proof_boundary") !=
+                "SOURCE_REPLAY_AND_CALLER_REPORTS_NOT_TARGET_ATTESTATION" or
+            continuation.get("authorization") != "NONE" or
+            continuation.get("product_accepted") is not False or
+            continuation.get("automatic_execution") is not False or
+            not isinstance(commit, str) or not SHA.fullmatch(commit) or
+            type(continuation.get("reported_open_leaves")) is not int or
+            not 0 <= continuation["reported_open_leaves"] <= 128 or
+            (continuation.get("next_unresolved") is not None and
+             (not isinstance(continuation["next_unresolved"], str) or
+              not ID.fullmatch(continuation["next_unresolved"])))):
+        raise ValueError("unsafe/unverified cockpit projection input")
+    decision = continuation["decision"]
+    why = _COCKPIT_WHY[decision]
+    open_leaves = continuation["reported_open_leaves"]
+    return {
+        "schema": "cora-chat-cockpit/1",
+        "source_commit": commit,
+        "evidence_level": "REPLAYED_SOURCE_AND_CALLER_REPORTS_NOT_TARGET_ATTESTATION",
+        "status": "HUMAN_DECISION_REQUIRED",
+        "what_changed": why,
+        "next_unresolved": continuation["next_unresolved"],
+        "reported_open_dod_leaves": open_leaves,
+        "remaining_phases_estimate": None,
+        "time_estimate": None,
+        "recommended": ("REPLAN" if decision in (
+            "PAUSE_CAPACITY_AND_REBASE", "REVIEW_CHANGED_CONTRACT", "REPLAN_STALLED_REPORTS")
+            else "REVALIDATE" if decision == "REVALIDATE_CHANGED_SOURCE"
+            else "ASK_FOR_WITNESS" if decision in (
+                "REQUEST_INDEPENDENT_ACCEPTANCE", "REQUEST_EXTERNAL_WITNESS")
+            else "PROPOSE_NEXT_CHECK" if decision == "PROPOSE_NEXT_SCOPED_STEP"
+            else "EXPLAIN"),
+        "choices": [
+            {"id": "EXPLAIN", "label": "Explain what is blocking us"},
+            {"id": "REPLAN", "label": "Recalculate the roadmap and explain why"},
+            {"id": "PROPOSE_NEXT_CHECK", "label": "Propose one next check (do not execute)"},
+        ],
+        "execution": "NONE", "authorization": "NONE", "product_accepted": False,
+    }
+
+
+
 def verify_chat_bundle(path: Path, *, expected_receipt: dict | None = None) -> dict:
     meta, count, latest_hash, commit = _read_archive(Path(path))
     if expected_receipt is not None:
@@ -383,11 +448,12 @@ def verify_chat_bundle(path: Path, *, expected_receipt: dict | None = None) -> d
             actual = _strict_json(z.read(f"iterations/{count:06d}/source-receipt.json"))
         if actual != expected_receipt:
             raise ValueError("chat bundle latest receipt does not match One-Run report")
+    continuation = _continuation_from_verified_bundle(Path(path), count)
     return {"schema": "cora-chat-bundle-verification/1", "session_id": meta["session_id"],
             "iterations": count, "last_commit": commit, "last_manifest_sha256": latest_hash,
             "status": "PORTABLE_BYTES_REPLAYED_NOT_INDEPENDENTLY_ATTESTED",
             "authorization": "NONE", "product_status": "BLOCKED_EXTERNAL",
-            "continuation": _continuation_from_verified_bundle(Path(path), count)}
+            "continuation": continuation, "cockpit": _cockpit(continuation, commit)}
 
 
 def append_chat_iteration(bundle: Path, *, repo: Path, step: dict, receipt: dict) -> dict:
