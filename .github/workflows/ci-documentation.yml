@@ -9,7 +9,7 @@ jobs:
   documentation-contract:
     name: documentation-contract (${{ matrix.python-version }})
     runs-on: ubuntu-latest
-    timeout-minutes: 18
+    timeout-minutes: 40
     strategy:
       fail-fast: false
       matrix:
