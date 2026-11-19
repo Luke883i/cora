@@ -9,7 +9,7 @@
 
 CORA is a local, offline-first Python 3.11+ framework. It helps developers and AI coding assistants inspect a Git repository and **produce reproducible pre/post-merge review reports**. It connects **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**. Authorized agents edit; CORA evaluates evidence. It is **not a coding agent** or an approver.
 
-**Why it matters:** plausible patches are not proof. Readers need decisions, next tests and visible unresolved risks. CTOs get decisions; beginners get steps.
+**Why it matters:** patches are not proof; readers need decisions, tests and unresolved risks.
 
 ```text
 GitHub repo + CORA main ZIP/prompt -> ChatGPT Project
@@ -40,6 +40,8 @@ For a scoped dossier, run [One-Run](#one-run--one-command-one-evidence-dossier).
 
 **ChatGPT Project:** see the complete, first-time setup below; the [canonical beta prompt](docs/AGENT_ADOPTION.md#chatgpt-project-beta-adapter) is optional and does not execute software.
 
+**Chat only:** follow the Project guide (`METHOD_ONLY` / `NOT_RUN`). **Real evidence:** authorized Git clone, runner and target tests; a ZIP has no Git history.
+
 ## Use CORA in a ChatGPT Project — beginner walkthrough
 
 **Start here:** the beta describes **ChatGPT Plus or Edu**; Pro or Edu may suit demanding workflows. Projects are available on other plans, and tool permissions vary.
@@ -50,20 +52,28 @@ For a scoped dossier, run [One-Run](#one-run--one-command-one-evidence-dossier).
 4. **Plan backwards and implement:** ask for **backward requirements decomposition** (all necessary AND acceptance tests), a falsifiable roadmap and one reversible slice: POST → SQLite → GET; test bad input and unauthorized closure. A **write-capable coding tool**, such as Codex, requires separate authorization; a **separate Python runner** provides actual test evidence. CORA-METHOD guides you **without** executing CORA-ENGINE. With no runner, report `METHOD_ONLY` / `NOT_RUN`.
 5. **Verify and continue:** commit the slice, execute One-Run and replay on the same SHA. With a runner create `--chat-step` and `--chat-bundle`, verify the temporary ZIP, then attach its latest copy to this Project chat. Read `iterations/000001/handoff.md` and open DoD; the archive is neither automatic chat capture nor authenticated review. [Detailed webapp and ZIP walkthrough](docs/GETTING_STARTED.md#github-and-chatgpt-project-from-zero).
 
+### Repository anatomy — one minute
+
+`README.md` starts; `docs/GETTING_STARTED.md` installs; `docs/AGENT_ADOPTION.md` owns the **single prompt**. [Architecture](docs/ARCHITECTURE.md#filesystem-anatomy-at-the-current-git-revision) maps `src/cora/` (engine), `tests/` (tests), `tools/` (verifiers), `.cora/` and `schemas/` (contracts), `.github/workflows/` (CI), and `examples/` (samples). Existence does not prove execution.
+
+### Humanistic, legal and organizational perspectives — noncanonical
+
+**Humanistic:** tests cannot choose values. **Legal:** receipts are not signatures or compliance proof. **Organizational:** approval requires people and host controls. These are analogies, not normative contracts.
+
 ## What works today
 
-**CTO evaluation snapshot — source-scoped, not an enterprise-readiness certificate**
+**CTO snapshot — source-scoped, not enterprise-certified**
 
 | Decision question | Current answer |
 | --- | --- |
-| **Who / what?** | CTOs, developers, reviewers and AI coding-agent operators assess one bounded software change, its falsifiable DoD and unresolved obligations. |
+| **Who / what?** | Review one bounded software change, its DoD and open obligations. |
 | **Method / engine** | **CORA-METHOD** guides third-party agents; **CORA-ENGINE** is the local Python CLI. The agent edits; CORA checks evidence, not approval. |
-| **Targets / runtime** | Git-bound source inspection, partial Python AST and static JavaScript ESM; native pilots **Teddy Node** and **ICTC HTTP/SQLite**. Browser/remote unobserved. |
-| **Delivery / compatibility** | **MIT**, **Python 3.11+**, `cora-audit 1.0.0a5`, no declared mandatory Python runtime dependencies. Wheel/sdist candidates; no supported public release. |
+| **Targets / runtime** | Git, partial Python AST/static JS ESM, bounded **Teddy Node** and **ICTC HTTP/SQLite**; browser/remote unobserved. |
+| **Delivery / compatibility** | **MIT**, **Python 3.11+**, `1.0.0a5`; wheel/sdist candidates, no supported public release. |
 | **Supply chain** | **SBOM (CycloneDX 1.6): GENERATION_IN_CANDIDATE_CI**; **SCA/CVE: SCAN_CI_BUILD_TOOLS_ONLY**; **artifact signing / SLSA provenance: NOT_ATTESTED**. |
-| **Governance** | Execution needs authorization and isolation. **Independent reviewer, enforced branch rules, release: BLOCKED_EXTERNAL**; no production security SLA. [Security](SECURITY.md) · [Release](docs/RELEASE.md). |
+| **Governance** | Authorization required; independent reviewer, host rules and release **BLOCKED_EXTERNAL**. [Security](SECURITY.md) · [Release](docs/RELEASE.md). |
 
-**Assurance levels:** **L1** = Git/source checks; **L2** = bounded product experiments; **L3** = optional external assurance. L1/L2 may be useful without L3. CI PASS cannot approve a release.
+**Assurance:** **L1** Git/source; **L2** bounded product experiments; **L3** optional external review. CI PASS cannot approve release.
 
 **71 declared CLI commands** in [capability atlas](.cora/assurance/capability-atlas.json) are inventory, not 71 independently proven features. [parser-checked CLI reference](docs/CLI_REFERENCE.md) · [complete documentation index](docs/INDEX.md).
 
@@ -79,13 +89,13 @@ cora verify-process /tmp/cora-run.json --repo . --one-run --atlas-html /tmp/cora
 
 The dossier distinguishes `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTERNAL`. **The default does not execute arbitrary target tests**. Keep native test receipts separate. [Chat handoff](docs/AGENT_ADOPTION.md#portable-chatgpt-handoff-opt-in) uses `--chat-step` / `--chat-bundle`: a temporary, operator-produced ZIP of numbered steps, evidence gaps and handoffs, **not** automatic chat memory, a signature or approval.
 
-**Change range:** `--change-base BASE_SHA` compares an explicit base against HEAD; without it, the default covers one commit. Neither mode authenticates PR metadata or rewrites code.
+**Change range:** `--change-base BASE_SHA` selects BASE→HEAD; default covers one commit. Neither authenticates PR metadata.
 
 **Native Gold pilots:** bounded, consented Teddy Node and ICTC HTTP/SQLite tests. LUMEN browser and NILO remote remain unobserved; local PASS cannot attest productivity or runner identity. [Pilot evidence](docs/GOLD_ASSURANCE.md).
 
-**Other Git repos:** `--one-run --portable-profile /path/to/target.json` enables source replay, not transplanted DoD. `--portable-parse-js` parses static ESM without execution. [Cross-repository limits](docs/CONTINUOUS_DEVELOPMENT.md).
+**Other Git repos:** `--portable-profile` supports source replay; `--portable-parse-js` parses static ESM. Neither executes targets. [Limits](docs/CONTINUOUS_DEVELOPMENT.md).
 
-**H-FORGE:** [Safe source stage](docs/HOLISTIC_FORENSICS.md#h-forge-optional-experimental-profile) joins comprehensive One-Run; native 77-case replay, effects, dynamic consumers and P5 acceptance remain separately unverified.
+**H-FORGE:** [safe source stage](docs/HOLISTIC_FORENSICS.md#h-forge-optional-experimental-profile); 77 native cases, dynamic consumers and P5 acceptance remain unverified.
 
 ## How CORA works
 
@@ -151,7 +161,7 @@ The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) di
 
 ## Enterprise evaluation boundary
 
-**Enterprise evaluation candidate, not enterprise-qualified.** **Product:** `cora` scope defined; independent user acceptance open. **Software:** `cora-engine` and `cora-release-verification` source tested, without a supported release. **Repository:** Git, contracts and CI exist; effective host rules and non-author review are unverified. Adoption needs real target oracles, isolation, security/support commitments, provenance, rollback and accountable human acceptance. [Formal three-boundary DoD](docs/DOD_RELEASE_READINESS.md) · [release](docs/RELEASE.md) · [governance](GOVERNANCE.md).
+**Enterprise evaluation only.** Product usability, maintained-target oracles, isolation, support, provenance, rollback, effective host rules and non-author review are not independently qualified. [Formal three-boundary DoD](docs/DOD_RELEASE_READINESS.md) · [release](docs/RELEASE.md) · [governance](GOVERNANCE.md).
 
 **Decision rule:** `PASS_SCOPED` covers only measured scope; `NOT_RUN` and `BLOCKED_EXTERNAL` cannot be converted into approval.
 
