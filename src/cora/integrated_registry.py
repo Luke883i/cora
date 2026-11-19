@@ -8,56 +8,15 @@ from pathlib import Path
 
 from .evidence import domain_hash
 from .git_snapshot import git
-from .one_run import METHOD_FILES, _original_dod
+from .one_run import METHOD_FILES, _method_files, _original_dod
 from .reticulum import ordered_cut
 
 SCHEMA = "cora-integrated-activity-registry/2"
 DOD = ".cora/contracts/dod/integrated-one-run-dod.json"
 ATLAS = ".cora/assurance/capability-atlas.json"
-SOURCE_LEAVES = frozenset((
-    "S_PR36_IMPORTED S_DISCOVER_CLI S_DISCOVER_NONCLI S_REGISTRY_SCHEMA "
-    "S_REGISTRY_BIJECTION S_SCOPE_SEPARATION S_PLAN_DAG S_PLAN_INPUTS "
-    "S_PLAN_REUSE S_PLAN_RESOURCES S_EFFECT_GATING S_RUNTIME_POLICY "
-    "S_SOURCE_METHODS S_EXECUTOR_ADAPTERS S_TASK_RESULTS S_TEST_CASE_EVENTS "
-    "S_FAIL_PROPAGATION S_MANIFEST_GIT S_MANIFEST_ENV S_MANIFEST_TASK "
-    "S_PROOF_LINEAGE S_EVIDENCE_MISSING S_ORIGINAL_SOURCE_REPLAY "
-    "S_EXECUTION_RECONCILE S_REPORT_REPLAY S_ATLAS_OVERVIEW "
-    "S_ATLAS_DRILLDOWN S_ATLAS_DOD S_ATLAS_ACCESSIBILITY S_RESULT_METRICS "
-    "S_GAP_REGISTER S_DOCUMENT_STATE S_MODEL_FALSIFIERS "
-    "S_EXTENDED_MUTANTS S_CI_REGRESSION"
-).split())
-EXTERNAL_LEAVES = frozenset((
-    "E_ISOLATION_VERIFIED E_AUTHORIZATION_VERIFIED E_RUNTIME_INDEPENDENCE "
-    "E_BENCHMARK_GROUND_TRUTH E_HOST_ENFORCEMENT E_NEW_USER_UX "
-    "E_RELEASE_AND_ROLLBACK E_OPERATIONAL_VALUE"
-).split())
-CUTS = {
-    "G_REGISTRY": ["S_DISCOVER_CLI", "S_DISCOVER_NONCLI", "S_REGISTRY_SCHEMA",
-                   "S_REGISTRY_BIJECTION", "S_SCOPE_SEPARATION"],
-    "G_PLANNING": ["S_PLAN_DAG", "S_PLAN_INPUTS", "S_PLAN_REUSE", "S_PLAN_RESOURCES"],
-    "G_SAFE_EXECUTION_DESIGN": ["S_EFFECT_GATING", "S_RUNTIME_POLICY",
-                "S_SOURCE_METHODS", "S_EXECUTOR_ADAPTERS", "S_TASK_RESULTS",
-                "S_TEST_CASE_EVENTS", "S_FAIL_PROPAGATION"],
-    "G_DOSSIER": ["S_MANIFEST_GIT", "S_MANIFEST_ENV", "S_MANIFEST_TASK",
-                   "S_PROOF_LINEAGE", "S_EVIDENCE_MISSING"],
-    "G_REPLAY": ["S_ORIGINAL_SOURCE_REPLAY", "S_EXECUTION_RECONCILE",
-                 "S_REPORT_REPLAY"],
-    "G_ATLAS": ["S_ATLAS_OVERVIEW", "S_ATLAS_DRILLDOWN",
-                "S_ATLAS_DOD", "S_ATLAS_ACCESSIBILITY"],
-    "G_COMPLETENESS": ["S_RESULT_METRICS", "S_GAP_REGISTER", "S_DOCUMENT_STATE"],
-    "G_FALSIFICATION": ["S_MODEL_FALSIFIERS", "S_EXTENDED_MUTANTS", "S_CI_REGRESSION"],
-    "G_ONE_RUN_INTEGRATED_SOURCE": [
-        "S_PR36_IMPORTED", "G_REGISTRY", "G_PLANNING",
-        "G_SAFE_EXECUTION_DESIGN", "G_DOSSIER", "G_REPLAY",
-        "G_ATLAS", "G_COMPLETENESS", "G_FALSIFICATION"],
-    "G_AUTHORIZED_OPERATION": ["G_ONE_RUN_INTEGRATED_SOURCE",
-                     "E_ISOLATION_VERIFIED", "E_AUTHORIZATION_VERIFIED",
-                     "E_RUNTIME_INDEPENDENCE"],
-    "G_PRODUCT_ACCEPTANCE": ["G_AUTHORIZED_OPERATION",
-                    "E_BENCHMARK_GROUND_TRUTH", "E_HOST_ENFORCEMENT",
-                    "E_NEW_USER_UX", "E_OPERATIONAL_VALUE"],
-    "G_ONE_RUN_PRODUCT": ["G_PRODUCT_ACCEPTANCE", "E_RELEASE_AND_ROLLBACK"],
-}
+# Exact immutable topology fingerprint; the contract JSON owns the node graph.
+# Independent of ordering, this rejects omissions, substitutions and edge/scope drift.
+DOD_GRAPH_DIGEST = "a10466976148b9ef2a7a3e4423e517f7296fc073433c1c93b7893aa4edeefe34"
 REQUIRED = (
     "activity_id", "version", "owner_software", "source_paths", "entrypoint",
     "call_path", "input_contract", "output_contract", "dependencies",
@@ -72,6 +31,19 @@ EFFECTFUL_CLI = {
     "runtime-observe": "LOCAL_EXECUTION",
     "gold-mutate": "LOCAL_EXECUTION",
     "zip-intake": "LOCAL_EXECUTION",
+}
+# Preserve the exact three effect classes of the existing Git-pinned interactions.
+INTERACTION_EFFECT = {
+    **dict.fromkeys(("OPTIONAL_UNTRUSTED_AI_HYPOTHESES PACKAGE_VERSION_ONLY "
+        "SOURCE_ANALYSIS_OR_PROPOSAL SOURCE_OR_CLAIM_REPLAY_SCOPED "
+        "SOURCE_PILOT_REQUIRES_AUTHORIZED_CHECKOUTS SYNTHETIC_MODEL_NOT_RUNTIME "
+        "UNTRUSTED_WORKFLOW_TEXT_STATIC WORKTREE_NOT_IMMUTABLE_GIT").split(), "READ_ONLY"),
+    **dict.fromkeys(("MUTATES_TARGET_AFTER_EXPLICIT_APPROVAL_AND_TEST "
+        "WRITES_LOCAL_GUARD").split(), "REPOSITORY_WRITE"),
+    **dict.fromkeys(("ANNOTATES_UNTRUSTED_AI_HYPOTHESES "
+        "OPTIONAL_DOCKER_RUNTIME_UNATTESTED OPTIONAL_EXTRACTION_PRECHECK "
+        "RECORDS_HUMAN_CLAIM_NOT_APPROVAL "
+        "STAGED_PHYSICAL_MUTATIONS_OPTIONAL_DOCKER").split(), "LOCAL_EXECUTION"),
 }
 SHA = re.compile(r"[0-9a-f]{40}|[0-9a-f]{64}")
 
@@ -153,22 +125,17 @@ def verify_contract(repo: Path, sha: str) -> dict:
     if _original_dod(repo, sha)["nodes"] != 27:
         raise ValueError("PR36 original DoD not preserved")
     nodes = doc.get("nodes")
-    expected = SOURCE_LEAVES | EXTERNAL_LEAVES | set(CUTS)
     if (not isinstance(nodes, list) or len(nodes) != 55
             or len({n.get("id") for n in nodes}) != len(nodes)
-            or {n["id"] for n in nodes} != expected
             or len(doc.get("checklist", [])) != 30
             or len(doc.get("metrics", {})) != 14
             or doc.get("activity_registry", {}).get("required_fields") != list(REQUIRED)):
         raise ValueError("integrated DoD node or registry contract drift")
-    for node in nodes:
-        key = node["id"]
-        scope = "EXTERNAL" if key in EXTERNAL_LEAVES or key in (
-            "G_AUTHORIZED_OPERATION", "G_PRODUCT_ACCEPTANCE", "G_ONE_RUN_PRODUCT") else "SOURCE"
-        if node.get("scope") != scope or node.get("depends_on") != CUTS.get(key, []):
-            raise ValueError("integrated DoD mandatory edge/scope drift")
-        if key in EXTERNAL_LEAVES and node.get("witness_paths"):
-            raise ValueError("external acceptance forged from source")
+    topology = sorted((n["id"], n["scope"], n["depends_on"]) for n in nodes)
+    if domain_hash("CORA:integrated-dod-graph:2", topology) != DOD_GRAPH_DIGEST:
+        raise ValueError("integrated DoD mandatory edge/scope drift")
+    if any(n["id"].startswith("E_") and n.get("witness_paths") for n in nodes):
+        raise ValueError("external acceptance forged from source")
     if len(ordered_cut(nodes, "G_ONE_RUN_PRODUCT")) != len(nodes):
         raise ValueError("DoD orphan or cycle")
     return doc
@@ -208,6 +175,15 @@ def build_registry(repo: Path, sha: str) -> dict:
     by_name = {row["command"]: row for row in commands}
     if len(by_name) != len(commands) or set(parsed) != set(by_name):
         raise ValueError("registered 71-command inventory not equal to original parser")
+    # Same implementation, same declared test file: no independent binding table.
+    test_by_source = {}
+    for row in commands:
+        source, test = row["method_source"], row["test_source"]
+        if source in test_by_source and test_by_source[source] != test:
+            raise ValueError("inconsistent test source for shared owner: " + source)
+        if not test.startswith("tests/test_") or not test.endswith(".py"):
+            raise ValueError("declared test source must be a test suite: " + test)
+        test_by_source[source] = test
     items = []
     for name in parsed:
         row = by_name[name]
@@ -215,15 +191,17 @@ def build_registry(repo: Path, sha: str) -> dict:
         if source not in files or test not in files:
             raise ValueError("command source or test witness absent: " + name)
         effect = EFFECTFUL_CLI.get(name, "READ_ONLY")
-        if effect == "READ_ONLY" and row["interaction"] in (
-                "MUTATES_TARGET_AFTER_EXPLICIT_APPROVAL_AND_TEST",
-                "WRITES_LOCAL_GUARD", "OPTIONAL_DOCKER_RUNTIME_UNATTESTED"):
-            raise ValueError("unsafe CLI reclassification")
+        expected_effect = INTERACTION_EFFECT.get(row["interaction"])
+        if expected_effect != effect:
+            raise ValueError("unsafe CLI reclassification: " + name)
         items.append(_activity("cli:" + name, "CLI_COMMAND", source,
             owner="cora-engine", entry="cora " + name, effect=effect,
             adapter="NOT_AUTO_EXECUTABLE", policy="INDIVIDUAL_INVOCATION_ONLY",
             verifier="NOT_INDEPENDENTLY_REGISTERED", paths=["src/cora/cli.py", source, test],
-            detail="PARSER_AND_DISPATCH_OBSERVED;NOT_INDIVIDUALLY_EXECUTED"))
+            detail="PARSER_AND_DISPATCH_OBSERVED;NOT_INDIVIDUALLY_EXECUTED;"
+                   "DECLARED_TEST_UNATTESTED;BEHAVIOR_UNATTESTED"))
+    if METHOD_FILES != _method_files():
+        raise ValueError("source method owner does not match executor")
     for name, source in sorted(METHOD_FILES.items()):
         if source not in files:
             raise ValueError("source executor missing: " + name)
@@ -267,7 +245,10 @@ def build_registry(repo: Path, sha: str) -> dict:
                 effect="LOCAL_EXECUTION", adapter="NOT_AUTO_EXECUTABLE",
                 policy="EXPLICIT_OPT_IN_AND_TRUST_BOUNDARY",
                 verifier="LOCAL_EXIT_NOT_INDEPENDENT_ORACLE"))
-            for name, lineno in _cases(_source(repo, sha, path), path):
+            cases = _cases(_source(repo, sha, path), path)
+            if path in test_by_source.values() and not cases:
+                raise ValueError("declared test source has no test cases: " + path)
+            for name, lineno in cases:
                 items.append(_activity("case:" + path + ":" + name,
                     "TEST_CASE", path, owner="cora-engine", entry=name,
                     effect="LOCAL_EXECUTION", adapter="NOT_AUTO_EXECUTABLE",
