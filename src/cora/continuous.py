@@ -29,10 +29,10 @@ def _commit(repo: Path, name: str) -> str:
 
 
 def _is_ancestor(repo: Path, base: str, head: str) -> bool:
-    p=subprocess.run(['git','-C',str(repo),'merge-base','--is-ancestor',base,head],capture_output=True,timeout=45)
-    if p.returncode not in (0,1):
-        raise ValueError('Git ancestry check failed')
-    return p.returncode==0
+    if base == head:
+        return True
+    return bool(git(repo,'rev-list','--ancestry-path','--max-count=1',
+                    base+'..'+head,max_output=128,timeout=45))
 
 
 def _source_policy(repo: Path, commit: str) -> dict | None:
