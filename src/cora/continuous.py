@@ -11,6 +11,7 @@ import subprocess
 from pathlib import Path
 
 from .evidence import domain_hash, valid_path
+from .git_snapshot import git
 
 SCHEMA = 'cora-continuous-gate/1'
 POLICY_SCHEMA = 'cora-continuous-policy/1'
@@ -23,17 +24,8 @@ ROLES = frozenset({'PRODUCT_OWNER', 'MAINTAINER', 'INDEPENDENT_SECURITY_REVIEWER
 STATUS = ('OBSERVED_REVIEW_REQUIRED', 'BOOTSTRAP_REVIEW_REQUIRED', 'BLOCKED')
 
 
-def _git(repo: Path, *args: str, limit: int=8 * 1024 * 1024) -> bytes:
-    p = subprocess.run(['git', '-C', str(repo), *args], capture_output=True, check=False, timeout=45)
-    if p.returncode:
-        raise ValueError('Git verification failed: ' + p.stderr.decode('utf-8','replace')[:240])
-    if len(p.stdout)>limit:
-        raise ValueError('Git verification exceeds output budget')
-    return p.stdout
-
-
 def _commit(repo: Path, name: str) -> str:
-    return _git(repo,'rev-parse','--verify','--end-of-options',name+'^{commit}',limit=256).decode().strip()
+    return git(repo,'rev-parse','--verify','--end-of-options',name+'^{commit}',max_output=256,timeout=45).decode().strip()
 
 
 def _is_ancestor(repo: Path, base: str, head: str) -> bool:
@@ -47,7 +39,7 @@ def _source_policy(repo: Path, commit: str) -> dict | None:
     p=subprocess.run(['git','-C',str(repo),'show',commit+':'+POLICY_PATH],capture_output=True,timeout=45)
     if p.returncode:
         # Distinguish an absent file from a damaged/missing committed object.
-        existing=_git(repo,'ls-tree','--name-only',commit,'--',POLICY_PATH,limit=1024).decode().strip()
+        existing=git(repo,'ls-tree','--name-only',commit,'--',POLICY_PATH,max_output=1024,timeout=45).decode().strip()
         if existing:
             raise ValueError('committed policy cannot be read')
         return None
@@ -80,7 +72,7 @@ def _validate_policy(data:dict)->None:
 
 
 def _changes(repo:Path,base:str,head:str)->list[dict]:
-    raw=_git(repo,'diff','--no-ext-diff','--find-renames','--name-status','-z',base,head,'--')
+    raw=git(repo,'diff','--no-ext-diff','--find-renames','--name-status','-z',base,head,'--',max_output=8 * 1024 * 1024,timeout=45)
     chunks=raw.split(b'\0');rows=[];i=0
     while i<len(chunks) and chunks[i]:
         try:status=chunks[i].decode('ascii');i+=1
@@ -307,7 +299,7 @@ def evaluate_contextual(repo: Path, base: str, head: str, *,
         if not item.startswith(".github/workflows/") or not item.endswith((".yml", ".yaml")):
             continue
         try:
-            source = _git(repo, "show", after + ":" + item, limit=256000).decode("utf-8")
+            source = git(repo, "show", after + ":" + item, max_output=256000, timeout=45).decode("utf-8")
             effects.append(audit_workflow(source, path=item, revision=after))
         except (ValueError, OSError, UnicodeDecodeError, subprocess.TimeoutExpired):
             effects.append({"workflow": item, "status": "UNKNOWN_DELETED_OR_UNREADABLE",
@@ -488,15 +480,15 @@ def self_development_plan(repo: Path, revision: str = 'HEAD') -> dict:
     from .reticulum import assess_cut
     repo = Path(repo).resolve(strict=True)
     commit = _commit(repo, revision)
-    tree = _git(repo, 'rev-parse', commit + '^{tree}', limit=128).decode().strip()
-    blob = _git(repo, 'rev-parse', commit + ':' + SELF_P0, limit=128).decode().strip()
-    source = _git(repo, 'show', commit + ':' + SELF_P0, limit=256 * 1024)
+    tree = git(repo, 'rev-parse', commit + '^{tree}', max_output=128, timeout=45).decode().strip()
+    blob = git(repo, 'rev-parse', commit + ':' + SELF_P0, max_output=128, timeout=45).decode().strip()
+    source = git(repo, 'show', commit + ':' + SELF_P0, max_output=256 * 1024, timeout=45)
     try:
         data = json.loads(source.decode('utf-8'))
     except (UnicodeError, json.JSONDecodeError) as exc:
         raise ValueError('P0 committed contract cannot be parsed') from exc
-    tracked = set(_git(repo, 'ls-tree', '-r', '--name-only', '-z', commit,
-                       limit=8 * 1024 * 1024).decode('utf-8').split('\0'))
+    tracked = set(git(repo, 'ls-tree', '-r', '--name-only', '-z', commit,
+                       max_output=8 * 1024 * 1024, timeout=45).decode('utf-8').split('\0'))
     _validate_self_program(data, tracked)
     assessment = assess_cut(data['nodes'], 'A0', {})
     result = {'schema': SELF_P0_REPORT, 'commit': commit, 'tree': tree,
