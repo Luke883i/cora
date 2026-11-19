@@ -7,7 +7,9 @@ behavior, a third-party review, or a release.
 """
 from __future__ import annotations
 
+import ast
 import copy
+import inspect
 import hashlib
 import html
 import json
@@ -37,38 +39,27 @@ STATUS_MAP = {
 }
 OUTCOMES = {"EXECUTED_SCOPED", "REUSED_SCOPED", "FAIL", "BLOCKED",
             "NOT_RUN", "RUN_REPORTED_UNATTESTED"}
-METHOD_FILES = {
-    "git_snapshot": "src/cora/git_snapshot.py",
-    "artifact_roles": "src/cora/artifact_roles.py",
-    "manifest_adapters": "src/cora/adapters.py",
-    "git_archaeology": "src/cora/archaeology.py",
-    "python_candidate_graph": "src/cora/graph.py",
-    "holistic_archaeology": "src/cora/holistic.py",
-    "debt_signals": "src/cora/debt.py",
-    "file_selection_if_focus": "src/cora/selection.py",
-}
-# This exact dependency graph is independent of editable JSON declarations.
-EDGES = {
-    "G_EXECUTION": ["L_GIT", "L_ENTRY", "L_SOURCE_RUN", "L_OUTCOMES", "L_TIMINGS", "L_LINEAGE"],
-    "G_PRESENTATION": ["L_CATALOG", "L_GAPS", "L_CONSENT", "L_JSON", "L_HTML", "L_ESCAPE"],
-    "G_SOURCE_REPLAY": ["L_REPLAY", "L_100K", "L_REAL_MUTANTS"],
-    "G_ONE_RUN_SOURCE": ["G_EXECUTION", "G_PRESENTATION", "G_SOURCE_REPLAY"],
-    "G_GOVERNED_ONE_RUN": [
-        "G_ONE_RUN_SOURCE", "E_TARGET_RUNTIME", "E_TEST_ORACLE",
-        "E_USABILITY", "E_HOST", "E_REVIEW"],
-    "G_ONE_RUN_PRODUCT": ["G_GOVERNED_ONE_RUN", "E_RELEASE"],
-}
-SOURCE_LEAVES = {
-    "L_GIT", "L_ENTRY", "L_SOURCE_RUN", "L_OUTCOMES", "L_TIMINGS",
-    "L_LINEAGE", "L_CATALOG", "L_GAPS", "L_CONSENT", "L_JSON",
-    "L_HTML", "L_ESCAPE", "L_REPLAY", "L_100K", "L_REAL_MUTANTS",
-}
-EXTERNAL_LEAVES = {
-    "E_TARGET_RUNTIME", "E_TEST_ORACLE", "E_USABILITY",
-    "E_HOST", "E_REVIEW", "E_RELEASE",
-}
-ALL_IDS = set(EDGES) | SOURCE_LEAVES | EXTERNAL_LEAVES
+def _method_files() -> dict[str, str]:
+    """Single source of owner identity: actual run_suite callable dispatch."""
+    tables = [n.value for n in ast.walk(ast.parse(inspect.getsource(run_suite)))
+              if isinstance(n, ast.Assign) and any(
+                  isinstance(t, ast.Name) and t.id == "sources" for t in n.targets)]
+    if len(tables) != 1 or not isinstance(tables[0], ast.Dict):
+        raise ValueError("source method dispatch not statically attributable")
+    try:
+        owners = {k.value: "src/" + run_suite.__globals__[v.body.func.id].__module__.replace(".", "/") + ".py"
+                  for k, v in zip(tables[0].keys, tables[0].values)}
+    except (AttributeError, KeyError, TypeError) as exc:
+        raise ValueError("unattributable source executor") from exc
+    if (set(owners) != set(IMPLEMENTED['full']) or len(owners) != len(tables[0].keys)
+            or any(not p.startswith('src/cora/') or p.count('/') != 2 for p in owners.values())):
+        raise ValueError("missing or non-CORA source method owner")
+    return owners
 
+
+METHOD_FILES = _method_files()
+# Pinned topology commitment to the canonical Git DoD; no second graph owner.
+ONE_RUN_DOD_GRAPH = "427a0fd1404765be6fe39b62b03584ed0d6955209dc6af6c724f91c987c1cc80"
 
 def _original_dod(repo: Path, sha: str) -> dict:
     data = json.loads(git(repo, "show", sha + ":" + DOD, max_output=128 * 1024))
@@ -77,18 +68,14 @@ def _original_dod(repo: Path, sha: str) -> dict:
             or data.get("authority") != "NONE"
             or data.get("source_goal") != "G_ONE_RUN_SOURCE"
             or data.get("global_goal") != "G_ONE_RUN_PRODUCT"
-            or not isinstance(nodes, list) or len(nodes) != len(ALL_IDS)
-            or len({n.get("id") for n in nodes}) != len(nodes)
-            or {n["id"] for n in nodes} != ALL_IDS):
+            or not isinstance(nodes, list) or len(nodes) != 27
+            or len({n.get("id") for n in nodes}) != len(nodes)):
         raise ValueError("one-run original Git DoD identity drift")
-    for node in nodes:
-        key = node["id"]
-        scope = "EXTERNAL" if key in EXTERNAL_LEAVES or key in (
-            "G_GOVERNED_ONE_RUN", "G_ONE_RUN_PRODUCT") else "SOURCE"
-        if node.get("scope") != scope or node.get("depends_on") != EDGES.get(key, []):
-            raise ValueError("one-run mandatory DoD edge/scope drift")
-        if key in EXTERNAL_LEAVES and node.get("witness_paths"):
-            raise ValueError("external DoD promoted from source")
+    topology = sorted((n["id"], n["scope"], n["depends_on"]) for n in nodes)
+    if domain_hash("CORA:one-run-dod-graph:1", topology) != ONE_RUN_DOD_GRAPH:
+        raise ValueError("one-run mandatory DoD edge/scope drift")
+    if any(n["id"].startswith("E_") and n.get("witness_paths") for n in nodes):
+        raise ValueError("external DoD promoted from source")
     if len(ordered_cut(nodes, "G_ONE_RUN_PRODUCT")) != len(nodes):
         raise ValueError("orphan one-run DoD nodes")
     m = data.get("metrics", {})
@@ -101,7 +88,7 @@ def _original_dod(repo: Path, sha: str) -> dict:
             or m.get("publication_authorized") is not False):
         raise ValueError("one-run quantitative DoD drift")
     assessed = assess_cut(nodes, "G_ONE_RUN_PRODUCT",
-                          {name: MODEL for name in SOURCE_LEAVES})
+                          {n["id"]: MODEL for n in nodes if n["id"].startswith("L_")})
     if (assessed["states"]["G_ONE_RUN_SOURCE"] != MODEL
             or assessed["status"] != EXTERNAL
             or assessed["authorization"] != "NONE"):
@@ -146,7 +133,8 @@ def validate_execution_row(row: dict) -> bool:
     elapsed = row["elapsed_ms"]
     timing = row["timing_basis"]
     digest = row["source_digest"]
-    if (name not in METHOD_FILES or row["source"] != METHOD_FILES[name]
+    if (METHOD_FILES != _method_files() or name not in METHOD_FILES
+            or row["source"] != METHOD_FILES[name]
             or not isinstance(row["commit"], str) or not SHA.fullmatch(row["commit"])
             or raw not in STATUS_MAP or state != STATUS_MAP[raw]
             or state not in OUTCOMES

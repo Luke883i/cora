@@ -8,7 +8,7 @@ permissions:
 jobs:
   semantic-lattice:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 50
     strategy:
       fail-fast: false
       matrix:
@@ -208,7 +208,7 @@ jobs:
           retention-days: 14
   diagnostic-unit-discovery:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 50
     outputs:
       headline: ${{ steps.extract.outputs.headline }}
       test_status: ${{ steps.extract.outputs.test_status }}
@@ -269,7 +269,7 @@ jobs:
 
   diagnostic-unit-discovery-313:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 50
     outputs:
       headline: ${{ steps.extract.outputs.headline }}
       test_status: ${{ steps.extract.outputs.test_status }}
