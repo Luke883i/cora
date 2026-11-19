@@ -12,6 +12,14 @@ coding agent, a sandbox attestation, a merge approver or a product certificate.
 Start from an authorized checkout with Python 3.11+ and Git. Use an output
 directory outside the repository (`/tmp` below is a Unix example).
 
+## Choose your path before installing anything
+
+**Path A — I only have ChatGPT and a ZIP:** create a Project, paste the [existing canonical prompt](AGENT_ADOPTION.md#chatgpt-project-beta-adapter) into its instructions and attach CORA's source ZIP. Describe what you want to build. Ask the assistant to explain its assumptions, necessary AND conditions, counterexamples and the next proposed choice. This is a **planning and review experience only**: no source code has been executed merely because a ZIP was attached. Report `METHOD_ONLY` / `NOT_RUN`.
+
+**Path B — I need real Git and test evidence:** also use a properly authorized Git checkout, Python 3.11+, Git and a runner. For example on a terminal: `git clone https://github.com/Luke883i/cora.git` followed by `cd cora` and `python -m pip install -e .`. Do not paste secrets into the Project or a public repository. Use the appropriate system's shell; on Windows the example `/tmp` paths below should be replaced by a writable folder. A separate coding agent or write-enabled connector needs explicit permissions for changes.
+
+**Vocabulary:** a *repository* is a Git-tracked project folder; a *commit SHA* names its exact revision; a *pull request* is a proposed change requiring review; a *DoD* lists acceptance obligations; a *falsifier* is a test designed to uncover failure; `PASS_SCOPED` is a bounded observation, not approval.
+
 ## GitHub and ChatGPT Project from zero
 
 **1. Create the target repository.** Open [GitHub](https://github.com), sign in, choose
@@ -114,6 +122,14 @@ avoid retaining multiple unlabelled stale attachments as competing current
 truth. A missing runner means `NOT_RUN`; no file attachment can create a
 Git execution or authenticate an external reviewer. Review secrets and
 sharing permissions before transfer.
+
+### Read the decision cockpit without surrendering control
+
+A verified continuation bundle can expose a **derived cockpit** when the installed CORA revision supports that capability. Its status is an observation of **reported** work, not a verified user-interface study or an external certification. It should show: **what changed**, **why the roadmap was recalculated**, the **first unresolved DoD obligation**, and three non-executing choices — **explain**, **recalculate**, or **propose one next check**. Recalculation is warranted when the goal changes, the Git revision changes, an essential proof is missing, or repeated iterations produce no new evidence. The AI may simplify the explanation; it cannot rewrite the original receipt.
+
+A count of *reported open DoD leaves* is **not** the number of remaining phases. CORA must not invent calendar durations or hours from an unmeasured dependency graph; expect an unknown estimate (`null`) until a real method and observations justify one. No button or suggested choice may silently approve a PR, commit code or execute target tests. If the runner is unavailable, there is no verified cockpit: request a clearly labeled planning-only summary instead.
+
+**Sample questions to ask the chat:** “What did the verified ZIP actually prove?” “Why does the next slice differ from the previous plan?” “What is my single simplest choice now?” “What would disprove this proposed PASS?”
 
 ### Worked example: develop an issue webapp by evidence
 
