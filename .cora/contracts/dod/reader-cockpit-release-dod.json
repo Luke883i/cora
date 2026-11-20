@@ -189,5 +189,224 @@
       "claim": "External beginner usability, maintained-target execution and independently authenticated host/reviewer decision are required"
     }
   ],
-  "contract_shape": "CANONICAL_DOD_NODES_AND_DEPENDENCIES_SOURCE_NOT_RELEASE_AUTHORITY"
+  "contract_shape": "CANONICAL_DOD_NODES_AND_DEPENDENCIES_SOURCE_NOT_RELEASE_AUTHORITY",
+  "self_audit_closure": {
+    "schema": "cora-pr90-self-audit-closure-reticulum/1",
+    "based_on_main": "298997878c449e72f9bfca0a05e40c00af922953",
+    "source_pr_head_observed": "8b4b17b797d883b37367bf67331a352351de75ae",
+    "semantics": "AND_DEPENDENCY_DAG_NONCOMPENSATORY_UNTRUSTED_SOURCE_CONTRACT",
+    "evidence_policy": "Each leaf needs named exact-SHA witness; model PASS cannot override Git, browser, independent host or reviewer FAIL",
+    "nodes": [
+      {
+        "id": "P0_GIT_HISTORY",
+        "priority": "P0",
+        "kind": "SOURCE_RUNTIME",
+        "depends_on": [],
+        "witnesses": [
+          "tests/test_comprehensive_history_preflight.py",
+          "original checkout historical ancestry"
+        ],
+        "falsifiers": [
+          "ZIP without .git",
+          "synthetic root commit",
+          "shallow clone",
+          "forged historical register",
+          "missing Git object"
+        ],
+        "acceptance": "Typed CORA_HISTORY_UNAVAILABLE with safe ZIP source-only path; original history never inferred from fabricated commits"
+      },
+      {
+        "id": "P0_HOST_CI",
+        "priority": "P0",
+        "kind": "HOST",
+        "depends_on": [],
+        "witnesses": [
+          "GitHub check-runs of final PR HEAD",
+          "complete workflow/run conclusions"
+        ],
+        "falsifiers": [
+          "failed or cancelled check",
+          "wrong sha",
+          "unavailable check",
+          "unexamined required job"
+        ],
+        "acceptance": "All applicable candidate CI required source jobs green on the very same final SHA; missing or failing cannot be compensated"
+      },
+      {
+        "id": "P0_NONPROMOTION",
+        "priority": "P0",
+        "kind": "BOUNDARY",
+        "depends_on": [],
+        "witnesses": [
+          "tests/test_chat_continuation_cockpit.py",
+          "tests/test_release_readiness.py"
+        ],
+        "falsifiers": [
+          "forged ZIP",
+          "forged receipt",
+          "self-authorized merge",
+          "external PASS injected into source report"
+        ],
+        "acceptance": "No self-approval, autonomous writes, merge, publication, time estimate or release promotion"
+      },
+      {
+        "id": "P1_ZIP_MATRIX",
+        "priority": "P1",
+        "kind": "SOURCE_RUNTIME",
+        "depends_on": [
+          "P0_GIT_HISTORY"
+        ],
+        "witnesses": [
+          "tests/test_comprehensive_history_preflight.py"
+        ],
+        "falsifiers": [
+          "ZIP classified as original Git",
+          "unobserved ancestry classified as available"
+        ],
+        "acceptance": "ZIP-safe source inspection and original-Git-only genealogy are explicitly distinguished"
+      },
+      {
+        "id": "P1_COCKPIT_NAV",
+        "priority": "P1",
+        "kind": "SOURCE_RUNTIME",
+        "depends_on": [
+          "P0_NONPROMOTION"
+        ],
+        "witnesses": [
+          "tests/test_chat_continuation_cockpit.py",
+          "browser exercise of generated HTML"
+        ],
+        "falsifiers": [
+          "broken internal anchors",
+          "unescaped untrusted content",
+          "forged ZIP renders",
+          "missing EXPLAIN/REPLAN/PROPOSE_NEXT_CHECK"
+        ],
+        "acceptance": "Verified ZIP navigable with all three nonexecuting human-mediated choices; browser test separate from link-model test"
+      },
+      {
+        "id": "P1_HOST_READBACK",
+        "priority": "P1",
+        "kind": "HOST",
+        "depends_on": [
+          "P0_HOST_CI"
+        ],
+        "witnesses": [
+          "GitHub API PR final-head readback",
+          "branch protection/ruleset observation"
+        ],
+        "falsifiers": [
+          "host data copied from stale SHA",
+          "missing authentication presented as protected host",
+          "green report implies protection"
+        ],
+        "acceptance": "Native metadata bound to exact final SHA, explicit BLOCKED_EXTERNAL if branch/reviewer enforcement unavailable"
+      },
+      {
+        "id": "P1_DIAGNOSTICS",
+        "priority": "P1",
+        "kind": "SOURCE_RUNTIME",
+        "depends_on": [
+          "P0_GIT_HISTORY"
+        ],
+        "witnesses": [
+          "typed error tests",
+          "CI diagnostics retained at failing step"
+        ],
+        "falsifiers": [
+          "raw not-a-tree-object error shown as source PASS",
+          "skipped or nonzero job swallowed"
+        ],
+        "acceptance": "Structured classification and inspectable failure, never silent fallback or blanket green"
+      },
+      {
+        "id": "P1_BEGINNER",
+        "priority": "P1",
+        "kind": "SOURCE",
+        "depends_on": [],
+        "witnesses": [
+          "README.md",
+          "docs/GETTING_STARTED.md",
+          "documentation negative tests"
+        ],
+        "falsifiers": [
+          "invisible definition",
+          "method mode misdescribed as engine execution"
+        ],
+        "acceptance": "Two modes and for-beginner entry with accurate runner/ZIP boundaries"
+      },
+      {
+        "id": "P1_SCOPE",
+        "priority": "P1",
+        "kind": "SOURCE",
+        "depends_on": [
+          "P1_ZIP_MATRIX",
+          "P1_COCKPIT_NAV",
+          "P1_HOST_READBACK",
+          "P1_DIAGNOSTICS",
+          "P1_BEGINNER"
+        ],
+        "witnesses": [
+          "exact SHA reticulum replay",
+          "CI final HEAD"
+        ],
+        "falsifiers": [
+          "any missing leaf silently filled",
+          "scope-only PASS turned into external approval"
+        ],
+        "acceptance": "All P1 source/CI leaves verified, external observations explicitly distinguished"
+      },
+      {
+        "id": "G_P0",
+        "priority": "GATE",
+        "kind": "AND",
+        "depends_on": [
+          "P0_GIT_HISTORY",
+          "P0_HOST_CI",
+          "P0_NONPROMOTION"
+        ],
+        "acceptance": "P0 source readiness at final HEAD, no skipped failure"
+      },
+      {
+        "id": "G_SOURCE",
+        "priority": "GATE",
+        "kind": "AND",
+        "depends_on": [
+          "G_P0",
+          "P1_SCOPE",
+          "G_SOURCE_CANDIDATE"
+        ],
+        "acceptance": "Source review candidate only; cannot grant release"
+      },
+      {
+        "id": "G_EXTERNAL",
+        "priority": "GATE",
+        "kind": "AND",
+        "depends_on": [
+          "G_SOURCE",
+          "R5_HUMAN",
+          "R6_TARGET",
+          "R7_HOST"
+        ],
+        "acceptance": "Independent human, target and host gates; not satisfiable by PR alone"
+      }
+    ],
+    "deferred_p2": [
+      {
+        "id": "P2_COMPLEXITY_102",
+        "status": "TOBE_UNVERIFIED",
+        "count": 102,
+        "count_provenance": "previous local heuristic debt-scan",
+        "obligation": "Triaging candidates by measured implementation and responsibility reduction; characterize runtime, prove preserved external behavior, avoid delete-by-import"
+      },
+      {
+        "id": "P2_RADICAL_CONTRACTION",
+        "status": "TOBE_UNVERIFIED",
+        "obligation": "Separately measure physical, implementational and architectural contraction after equivalence and owner review"
+      }
+    ],
+    "current_evidence_state": "PENDING_EXACT_FINAL_HEAD_VERIFICATION",
+    "product_release": "BLOCKED_EXTERNAL",
+    "authorization": "NONE"
+  }
 }
