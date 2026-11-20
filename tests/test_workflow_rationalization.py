@@ -98,7 +98,7 @@ class WorkflowRationalizationTests(unittest.TestCase):
                     self.assertNotRegex(selected_pattern,
                                         r'(?i)(?:^|_)pr\d+(?=_|\.|$)')
                 selectors.append((workflow.name, selected_pattern, selected))
-        self.assertEqual(len(selectors), 55)
+        self.assertEqual(len(selectors), 56)
         for forged in ('test_pr07.py', 'test_pr25_method_synthesis.py',
                        'test_nonexistent_module.py'):
             self.assertFalse(any(fnmatch.fnmatchcase(n, forged) for n in modules))
