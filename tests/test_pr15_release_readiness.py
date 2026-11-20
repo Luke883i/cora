@@ -142,6 +142,28 @@ class ReadinessTest(unittest.TestCase):
         finally:
             path.write_text(original, encoding="utf-8")
 
+    def test_current_first_read_identity_requires_one_h1_without_duplicate(self):
+        report=inspect_source(self.repo)
+        self.assertEqual(report["source_status"],"PASS_SCOPED",report["source_errors"])
+        title="# CORA — Continuous Ontological Repository Assurance"
+        text=(self.repo/"README.md").read_text("utf-8")
+        self.assertEqual(text.count(title),1)
+        for modified,expected in (
+            (text.replace(title,"# CORA — unexplained acronym",1),
+             "PRODUCT_FIRST_READ_IDENTITY_MISSING"),
+            (text.replace("**Engineering evidence for AI-assisted software changes.**",
+                 "**CORA (Continuous Ontological Repository Assurance)** — "
+                 "**Engineering evidence for AI-assisted software changes.**",1),
+             "PRODUCT_FIRST_READ_DUPLICATION"),
+            (text.replace(title,title+"\n"+title,1),
+             "PRODUCT_FIRST_READ_IDENTITY_MISSING"),
+        ):
+            (self.repo/"README.md").write_text(modified,encoding="utf-8")
+            try:
+                self.deny(expected)
+            finally:
+                (self.repo/"README.md").write_text(text,encoding="utf-8")
+
     def test_title_counterexample(self):
         self.swap("README.md","Continuous Ontological Repository Assurance","Code Ontology Repo Audit")
         self.deny("PRODUCT_EXPANSION_MISSING")
