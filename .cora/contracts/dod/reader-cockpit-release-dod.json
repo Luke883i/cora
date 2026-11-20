@@ -22,108 +22,6 @@
       "green CI cannot authenticate host/reviewer"
     ]
   },
-  "gates": [
-    {
-      "id": "R0_HISTORY",
-      "kind": "SOURCE",
-      "requires": [
-        "89 GitHub PRs",
-        "86 merged",
-        "three unmerged",
-        "base Git SHA"
-      ],
-      "witness": "GitHub API"
-    },
-    {
-      "id": "R1_BEGINNER",
-      "kind": "SOURCE",
-      "requires": [
-        "product definition first",
-        "two modes in table",
-        "beginner default METHOD_ONLY",
-        "five accurate steps",
-        "no runner implication"
-      ],
-      "witness": "README + documentation verifiers"
-    },
-    {
-      "id": "R2_COCKPIT",
-      "kind": "SOURCE_AND_RUNTIME",
-      "requires": [
-        "verify ZIP against integrated receipt",
-        "all anchor links resolve",
-        "HTML injection escaped",
-        "no JS or outbound network",
-        "real One-Run CLI execution"
-      ],
-      "witness": "cockpit_view + test + native GitHub CI"
-    },
-    {
-      "id": "R3_SCENARIOS",
-      "kind": "FINITE_MODEL",
-      "requires": [
-        "12 interacting dimensions",
-        "1000000 distinct semantic tuples",
-        "seed 883 replay twice",
-        "independent outcome oracle",
-        "zero mismatches and authority promotions"
-      ],
-      "witness": "finite scenario generator + CI retained artifacts"
-    },
-    {
-      "id": "R4_HEAD_CI",
-      "kind": "SOURCE_CI",
-      "requires": [
-        "14 active workflows pass on final HEAD",
-        "no acceptance bypass"
-      ],
-      "witness": "GitHub native checks"
-    },
-    {
-      "id": "R5_HUMAN",
-      "kind": "EXTERNAL",
-      "requires": [
-        "independent beginner and CTO task studies with browser and ChatGPT",
-        "user confusion and failure observations"
-      ],
-      "status": "BLOCKED_EXTERNAL"
-    },
-    {
-      "id": "R6_TARGET",
-      "kind": "EXTERNAL",
-      "requires": [
-        "maintained target native API/browser/security evidence",
-        "rollback rehearsal"
-      ],
-      "status": "BLOCKED_EXTERNAL"
-    },
-    {
-      "id": "R7_HOST",
-      "kind": "EXTERNAL",
-      "requires": [
-        "verified branch rules",
-        "non-author review",
-        "provenance and signed artifact",
-        "publication authorization"
-      ],
-      "status": "BLOCKED_EXTERNAL"
-    }
-  ],
-  "and_graph": {
-    "G_SOURCE_CANDIDATE": [
-      "R0_HISTORY",
-      "R1_BEGINNER",
-      "R2_COCKPIT",
-      "R3_SCENARIOS",
-      "R4_HEAD_CI"
-    ],
-    "G_PUBLIC_RELEASE": [
-      "G_SOURCE_CANDIDATE",
-      "R5_HUMAN",
-      "R6_TARGET",
-      "R7_HOST"
-    ]
-  },
   "invariants": {
     "authorization": "NONE",
     "automatic_execution": false,
@@ -139,5 +37,157 @@
     "replays": 2,
     "max_mismatches": 0,
     "release_authorization": "NEVER_FROM_SOURCE_CI"
-  }
+  },
+  "nodes": [
+    {
+      "id": "R0_HISTORY",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "title": "R0_HISTORY — SOURCE obligation",
+      "claim": "89 GitHub PRs; 86 merged; three unmerged; base Git SHA",
+      "requires": [
+        "89 GitHub PRs",
+        "86 merged",
+        "three unmerged",
+        "base Git SHA"
+      ],
+      "witness": "GitHub API",
+      "status": "PENDING_VERIFICATION"
+    },
+    {
+      "id": "R1_BEGINNER",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "title": "R1_BEGINNER — SOURCE obligation",
+      "claim": "product definition first; two modes in table; beginner default METHOD_ONLY; five accurate steps; no runner implication",
+      "requires": [
+        "product definition first",
+        "two modes in table",
+        "beginner default METHOD_ONLY",
+        "five accurate steps",
+        "no runner implication"
+      ],
+      "witness": "README + documentation verifiers",
+      "status": "PENDING_VERIFICATION"
+    },
+    {
+      "id": "R2_COCKPIT",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "title": "R2_COCKPIT — SOURCE_AND_RUNTIME obligation",
+      "claim": "verify ZIP against integrated receipt; all anchor links resolve; HTML injection escaped; no JS or outbound network; real One-Run CLI execution",
+      "requires": [
+        "verify ZIP against integrated receipt",
+        "all anchor links resolve",
+        "HTML injection escaped",
+        "no JS or outbound network",
+        "real One-Run CLI execution"
+      ],
+      "witness": "cockpit_view + test + native GitHub CI",
+      "status": "PENDING_VERIFICATION"
+    },
+    {
+      "id": "R3_SCENARIOS",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "title": "R3_SCENARIOS — FINITE_MODEL obligation",
+      "claim": "12 interacting dimensions; 1000000 distinct semantic tuples; seed 883 replay twice; independent outcome oracle; zero mismatches and authority promotions",
+      "requires": [
+        "12 interacting dimensions",
+        "1000000 distinct semantic tuples",
+        "seed 883 replay twice",
+        "independent outcome oracle",
+        "zero mismatches and authority promotions"
+      ],
+      "witness": "finite scenario generator + CI retained artifacts",
+      "status": "PENDING_VERIFICATION"
+    },
+    {
+      "id": "R4_HEAD_CI",
+      "kind": "LOCAL",
+      "scope": "SOURCE",
+      "depends_on": [],
+      "title": "R4_HEAD_CI — SOURCE_CI obligation",
+      "claim": "14 active workflows pass on final HEAD; no acceptance bypass",
+      "requires": [
+        "14 active workflows pass on final HEAD",
+        "no acceptance bypass"
+      ],
+      "witness": "GitHub native checks",
+      "status": "PENDING_VERIFICATION"
+    },
+    {
+      "id": "R5_HUMAN",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "title": "R5_HUMAN — EXTERNAL obligation",
+      "claim": "independent beginner and CTO task studies with browser and ChatGPT; user confusion and failure observations",
+      "requires": [
+        "independent beginner and CTO task studies with browser and ChatGPT",
+        "user confusion and failure observations"
+      ],
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "R6_TARGET",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "title": "R6_TARGET — EXTERNAL obligation",
+      "claim": "maintained target native API/browser/security evidence; rollback rehearsal",
+      "requires": [
+        "maintained target native API/browser/security evidence",
+        "rollback rehearsal"
+      ],
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "R7_HOST",
+      "kind": "LOCAL",
+      "scope": "EXTERNAL",
+      "depends_on": [],
+      "title": "R7_HOST — EXTERNAL obligation",
+      "claim": "verified branch rules; non-author review; provenance and signed artifact; publication authorization",
+      "requires": [
+        "verified branch rules",
+        "non-author review",
+        "provenance and signed artifact",
+        "publication authorization"
+      ],
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "G_SOURCE_CANDIDATE",
+      "kind": "INTERMEDIATE",
+      "scope": "SOURCE",
+      "depends_on": [
+        "R0_HISTORY",
+        "R1_BEGINNER",
+        "R2_COCKPIT",
+        "R3_SCENARIOS",
+        "R4_HEAD_CI"
+      ],
+      "status": "PENDING_EXACT_HEAD_CHECKS",
+      "claim": "All R0-R4 must pass on one authentic final HEAD; source-only acceptance without promotion of external evidence"
+    },
+    {
+      "id": "G_PUBLIC_RELEASE",
+      "kind": "GLOBAL",
+      "scope": "EXTERNAL",
+      "depends_on": [
+        "G_SOURCE_CANDIDATE",
+        "R5_HUMAN",
+        "R6_TARGET",
+        "R7_HOST"
+      ],
+      "status": "BLOCKED_EXTERNAL",
+      "claim": "External beginner usability, maintained-target execution and independently authenticated host/reviewer decision are required"
+    }
+  ],
+  "contract_shape": "CANONICAL_DOD_NODES_AND_DEPENDENCIES_SOURCE_NOT_RELEASE_AUTHORITY"
 }
