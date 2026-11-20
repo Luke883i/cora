@@ -385,6 +385,11 @@ jobs:
             python - <<'PY' > /tmp/cora-pr37-diagnostic/assert-out.txt 2> /tmp/cora-pr37-diagnostic/assert-error.txt
           import json, sys
           a=json.load(open('/tmp/cora-pr37-diagnostic/run.json'))
+          q=a.get('qualification') or {}
+          g=a.get('genealogy') or {}
+          retained=g.get('retention') or {}
+          future=g.get('future_delta') or {}
+          manifest=a.get('evidence_manifest') or {}
           checks={
             'declared_71':a['registry']['declared_commands']==71,
             'activities_accounted':a['metrics']['activity_accounted']==a['metrics']['registered_total'],
@@ -395,7 +400,18 @@ jobs:
               'authority':'NONE','external':'BLOCKED_EXTERNAL'},
             'source_debt_visible':a['dod']['source_goal']=='DEBT_BLOCKED',
             'product_externally_blocked':a['product_status']=='BLOCKED_EXTERNAL',
-            'authority_none':a['authorization']=='NONE'
+            'authority_none':a['authorization']=='NONE',
+            'q_4_external':q.get('external_gates_unclosed')==4,
+            'q_product_blocked':q.get('product_status')=='BLOCKED_EXTERNAL',
+            'q_4_gates':len(q.get('gates') or [])==4,
+            'q_all_blocked':all(x.get('state')=='BLOCKED_EXTERNAL' for x in (q.get('gates') or [])),
+            'q_receipt':any(x.get('path')=='qualification.json' for x in manifest.get('files',[])),
+            'g_37_prs':g.get('pr_count')==37,
+            'g_305_commits':g.get('commit_count')==305,
+            'g_unmerged_34':g.get('closed_unmerged')==[34],
+            'g_relocated_28':retained.get('historical_or_relocated_count')==28,
+            'g_zero_removal':retained.get('current_source_modules_removal_authorized')==0,
+            'g_future_status':future.get('catalog_status')=='SOURCE_CATALOG_COVERED_NOT_BEHAVIORAL_PROOF'
           }
           failures=[k for k,passed in checks.items() if not passed]
           if failures:
