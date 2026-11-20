@@ -231,26 +231,51 @@ class CiSchedulingSourceContract(unittest.TestCase):
         if ('PR36 replay underlying deterministic original source-process receipt' in block
                 or 'PR36 verify one-run JSON original source identity' in block):
             errors.append('pr36:redundant-direct-replay')
-        diagnostic = (
-            "  diagnose-comprehensive:\n"
-            "    name: Diagnose comprehensive one-run source output\n"
-            "    needs: [integrated-source, pr36-native-owner]\n"
-            "    if: ${{ failure() && (needs['integrated-source'].result == 'failure' || "
-            "needs['pr36-native-owner'].result == 'failure') }}")
-        if diagnostic not in one:
-            errors.append('pr37:unconditional-comprehensive-diagnostic')
+        diag_parts = one.split('  diagnose-comprehensive:\n', 1)
+        if len(diag_parts) != 2 or '  diagnose-visible:\n' not in diag_parts[1]:
+            errors.append('pr37:missing-fast-diagnostic')
+        else:
+            diag, visible = diag_parts[1].split('  diagnose-visible:\n', 1)
+            checks = (
+                "if: ${{ github.event_name == 'pull_request' }}",
+                "ref: ${{ github.event.pull_request.head.sha || github.sha }}",
+                "cora process-run . --revision HEAD --process full --one-run --profile comprehensive",
+                "cora verify-process /tmp/cora-pr37-diagnostic/run.json --repo . --one-run",
+                "'model_optin_absent':a['baseline_pr36']['model_stress']=={",
+                "'g_future_status':future.get('catalog_status')=='SOURCE_CATALOG_COVERED_NOT_BEHAVIORAL_PROOF'",
+                "echo \"exit_code=$status\" >> \"$GITHUB_OUTPUT\"",
+            )
+            if (any(term not in diag for term in checks) or
+                    '--model-stress-cases 100000' in diag or
+                    "if: ${{ always() && needs.diagnose-comprehensive.result == 'success' }}" not in visible or
+                    'run: test "$STATUS" -eq 0' not in visible):
+                errors.append('pr37:fast-diagnostic-and-fail-visibility-degraded')
         if 'PR36 execute original Git one-run methods' in workflows.get('ci-documentation.yml', ''):
             errors.append('documentation:duplicate-pr36-owner')
         selection = workflows.get('ci-selection.yml', '')
         if (selection.count('cora stress-selection --seed 883 --cases 1000000') != 2
                 or 'cmp /tmp/selection-a.json /tmp/selection-b.json' not in selection):
             errors.append('selection:dual-1m-source-replay-degraded')
+        selector_checks = (
+            'ref: ${{ github.event.pull_request.head.sha || github.sha }}',
+            'fetch-depth: 0',
+            'persist-credentials: false',
+            'python -m pip install .',
+            'python -m unittest discover -s tests -p test_selection.py -v',
+            'test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"',
+            'cora select-file . --revision HEAD --path src/cora/selection.py',
+            'cora verify-selection /tmp/selection.json --repo .',
+            'not x["selection"]["safe_deletion_proven"]',
+        )
+        if (any(term not in selection for term in selector_checks) or
+                'continue-on-error: true' in selection or '|| true' in selection):
+            errors.append('selection:original-head-test-and-replay-degraded')
         return sorted(errors)
 
     def test_all_required_ci_owners_and_impact_unknown_fail_closed(self):
         self.assertEqual(self._issues(self._workflow_sources()), [])
 
-    def test_nine_real_ci_config_counterexamples(self):
+    def test_thirteen_real_ci_config_counterexamples(self):
         base = self._workflow_sources()
         mutants = (
             ('ci-documentation.yml', 'concurrency:', 'missing-ci-owner-key:'),
@@ -274,6 +299,18 @@ class CiSchedulingSourceContract(unittest.TestCase):
              'cora verify-process /tmp/cora-one-run.json --repo . --one-run --atlas-json /tmp/cora-one-run-atlas.json --atlas-html /tmp/forged.html'),
             ('ci-selection.yml', 'cora stress-selection --seed 883 --cases 1000000',
              'echo finite model NOT_RUN'),
+            ('ci-one-run-integrated.yml',
+             "if: ${{ github.event_name == 'pull_request' }}",
+             "if: ${{ false }}"),
+            ('ci-one-run-integrated.yml',
+             "cora verify-process /tmp/cora-pr37-diagnostic/run.json --repo . --one-run",
+             "echo unverified-dossier"),
+            ('ci-selection.yml',
+             'ref: ${{ github.event.pull_request.head.sha || github.sha }}',
+             'ref: ${{ github.sha }}'),
+            ('ci-selection.yml',
+             'cora verify-selection /tmp/selection.json --repo .',
+             'echo forged-selection-pass'),
         )
         for path, old, altered in mutants:
             with self.subTest(path=path, altered=altered):
@@ -281,7 +318,7 @@ class CiSchedulingSourceContract(unittest.TestCase):
                 changed = dict(base)
                 changed[path] = base[path].replace(old, altered, 1)
                 self.assertTrue(self._issues(changed))
-        self.assertEqual(len(mutants), 9)
+        self.assertEqual(len(mutants), 13)
 
     def test_source_cost_metrics_not_claimed_as_runner_benchmark(self):
         paths = self._workflow_sources()
