@@ -62,9 +62,9 @@ For scoped evidence see [One-Run](#one-run--one-command-one-evidence-dossier); s
 
 1. **Create your GitHub repository:** on [GitHub](https://github.com) select **New repository**, name your webapp and add README. Record its Git SHA. The **target repository** holds your application, not CORA.
 2. **Prepare ChatGPT:** from [Luke883i/cora](https://github.com/Luke883i/cora) select **Code → Download ZIP** on main (source reference, **no `.git` history**). Copy the [single canonical prompt](docs/AGENT_ADOPTION.md#chatgpt-project-beta-adapter). Choose **New project** → **Project settings** → **Project instructions**; paste the prompt and attach ZIP. This neither installs CORA nor runs code.
-3. **Share only authorized source:** attach a verified target ZIP or grant **read access** to repositories. GitHub connector abilities vary: **read-only** is not push permission; write actions require verified permissions and explicit authorization. Example A0: "A reporter creates an issue; a reviewer sees it after reload; an outsider cannot close it."
+3. **Share only authorized source:** attach a verified target ZIP or grant **read access** to repositories. GitHub connector abilities vary: read-only is not permission to push or merge; write actions require verified permissions and explicit authorization. Example A0: "A reporter creates an issue; a reviewer sees it after reload; an outsider cannot close it."
 4. **Plan, then authorize separately:** ask CORA-METHOD for **backward requirements decomposition**, AND tests, a falsifiable roadmap and reversible POST → SQLite → GET slice. In Project chat this is *a proposal*. A **write-capable coding tool**, such as Codex, needs authorization; a **separate Python runner** executes tests. CORA-METHOD guides you **without** executing CORA-ENGINE. Without an authorized runner, say `METHOD_ONLY` / `NOT_RUN`.
-5. **Verify, then continue:** with permission, commit, run target-native tests and One-Run at the **same SHA**. With a runner create `--chat-step` and `--chat-bundle`, verify ZIP and upload its latest copy to this Project chat. Read `iterations/000001/handoff.md` and DoD. ZIP is **neither automatic chat capture nor authenticated review**. [Complete guide](docs/GETTING_STARTED.md#github-and-chatgpt-project-from-zero).
+5. **Verify, then continue:** with permission, commit, run target-native tests and One-Run at the **same SHA**. With a runner create `--chat-step` and `--chat-bundle`, verify ZIP and upload its latest copy to this Project chat. Read `iterations/000001/handoff.md` and DoD. ZIP is **not** automatic chat memory and **neither automatic chat capture nor authenticated review**. [Complete guide](docs/GETTING_STARTED.md#github-and-chatgpt-project-from-zero).
 
 **Verified offline cockpit (requires One-Run):**
 
@@ -136,11 +136,11 @@ The dossier distinguishes `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTER
 
 ## How CORA works
 
-**Standard engineering contract:** actor, outcome, environment, data/permission owner, negative oracle, rollback and requirement-to-test traceability. This **does not certify compliance** with ISO/IEC/IEEE 29148, ISO/IEC 25010 or NIST SSDF. [Worked contract](docs/GETTING_STARTED.md).
+**Standard engineering contract:** actor, outcome, owner, negative oracle, rollback and test trace. This **does not certify compliance** with ISO/IEC/IEEE 29148, ISO/IEC 25010 or NIST SSDF. [Worked contract](docs/GETTING_STARTED.md).
 
 **Micro-example — three evidence planes:** **Product:** an issue survives restart and outsiders cannot close it. **Software:** UI/API behavior, durable database readback and access denial require **separate real observations**. **Repository:** bind test receipts and rollback to a named Git SHA; source PASS is not product acceptance.
 
-**Additional analytical lenses (research, not standards):** rival explanations, unknown consumers and contradicted receipts are hypotheses, not proof.
+**Additional analytical lenses (research, not standards):** contradicted receipts and unknown consumers remain hypotheses.
 
 **1. Specify the outcome.** Translate natural-language intent into an **AND-dependency graph**. Reason **backward**; an **unknown prerequisite** remains open. [Worked application contract](docs/CONTINUOUS_DEVELOPMENT.md#example-contract-and-evidence-ladder--portable-corrective-action-app).
 
