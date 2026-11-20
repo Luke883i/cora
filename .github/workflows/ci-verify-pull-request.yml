@@ -27,8 +27,28 @@ jobs:
           python-version: '3.11'
       - name: Install independently built CORA package (not editable)
         run: python -m pip install .
-      - name: Full original-Git unit suite against installed distribution
-        run: python -m unittest discover -s tests -v
+      - name: Execute full original-Git suite and expose exact failing test IDs
+        id: full_native_suite
+        run: |
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+          status=0
+          python -m unittest discover -s tests -v > /tmp/cora-full-native-unit.log 2>&1 || status=$?
+          cat /tmp/cora-full-native-unit.log
+          python - <<'PY'
+          import os,re
+          from pathlib import Path
+          source=Path('/tmp/cora-full-native-unit.log').read_text(encoding='utf-8',errors='replace')
+          found=re.findall(r'(?m)^(?:FAIL|ERROR):\s*(test_[A-Za-z0-9_]+)\b',source)
+          failures=','.join(found[:8]) if found else 'NO_NAMED_FAIL'
+          match=re.findall(r'(?m)^Ran ([0-9]+) tests? in ',source)
+          ran=match[-1] if match else 'UNKNOWN'
+          with open(os.environ['GITHUB_OUTPUT'],'a',encoding='utf-8') as out:
+              out.write('failures='+failures+chr(10))
+              out.write('ran='+ran+chr(10))
+          PY
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+      - name: "Enforce original unit suite - ${{ steps.full_native_suite.outputs.failures }}"
+        run: test "${{ steps.full_native_suite.outputs.status }}" -eq 0
       - name: Verify installed CLI version
         run: cora version
       - name: Verify immutable Git snapshot and ledger
