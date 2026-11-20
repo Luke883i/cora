@@ -216,7 +216,7 @@ class OriginalGitP4ContractionTests(unittest.TestCase):
         ):
             self.assertEqual(git(ROOT, 'rev-parse', base + ':' + path), before)
             self.assertEqual(git(ROOT, 'rev-parse', head + ':' + path), after)
-        test_path = 'tests/test_continuous_pr14.py'
+        test_path = 'tests/test_change_lifecycle_governance.py'
         self.assertEqual(git(ROOT, 'rev-parse', base + ':' + test_path),
                          git(ROOT, 'rev-parse', head + ':' + test_path))
         with tempfile.TemporaryDirectory(prefix='cora-p4-original-native-') as td:
