@@ -404,6 +404,9 @@ class Pr90ComprehensiveDiagnosticsTests(unittest.TestCase):
         self.assertNotIn("continue-on-error: true", pr36)
         self.assertIn("if: ${{ github.event_name == 'pull_request' }}", probe)
         self.assertNotIn("--model-stress-cases 100000", probe)
+        self.assertIn("'model_optin_absent':a['baseline_pr36']['model_stress']=={", probe)
+        self.assertIn("'status':'NOT_RUN'", probe)
+        self.assertIn("'cases':0,'reason':'EXPLICIT_OPT_IN_REQUIRED'", probe)
         self.assertIn("cora verify-process /tmp/cora-pr37-diagnostic/run.json", probe)
         self.assertIn("headline='scoped-source-run-and-replay-no-stress'", probe)
         self.assertIn("if: ${{ always() && needs.diagnose-comprehensive.result == 'success' }}", shown)
@@ -425,6 +428,8 @@ class Pr90ComprehensiveDiagnosticsTests(unittest.TestCase):
              "echo /tmp/cora-one-run-100k.json /tmp/cora-one-run-100k-replay.json"),
             ("if: ${{ github.event_name == 'pull_request' }}",
              "if: ${{ false }}"),
+            ("'model_optin_absent':a['baseline_pr36']['model_stress']=={",
+             "'model_optin_absent':True or a['baseline_pr36']['model_stress']=={"),
             ("headline='scoped-source-run-and-replay-no-stress'",
              "headline='no-diagnostic'"),
         )
