@@ -90,7 +90,7 @@ class DocumentationDoDTests(unittest.TestCase):
             ("cli-reference-incomplete", lambda: change("docs/CLI_REFERENCE.md",
              lambda x: x.replace("- `version` —", "- OMITTED —", 1)), "cli-reference-parser-drift"),
             ("readme-promise-removed", lambda: change("README.md",
-             lambda x: x.replace("## Use CORA with an AI coding assistant",
+             lambda x: x.replace("## Path B — authorized coding agent and local CORA-ENGINE",
                                  "## Obscured method", 1)), "readme-contract-regression"),
             ("intent-guide-removed", lambda: change("docs/AGENT_ADOPTION.md",
              lambda x: x.replace("--intent", "--with-goal")), "contextual-intent-omitted:docs/AGENT_ADOPTION.md"),
