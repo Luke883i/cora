@@ -541,7 +541,9 @@ def verify_project_zip_lifecycle(readme: str, adoption: str,
     if not path or any(x < 0 for x in offsets) or offsets != sorted(offsets):
         errors.append("project-readme-beginner-journey-drift")
     figure = readme.split("## First five minutes", 1)[0]
-    for term in ("GitHub repo + CORA main ZIP/prompt -> ChatGPT Project",
+    for term in ("TARGET Git repository = application source of truth",
+                 "CORA source ZIP = optional read-only reference (no Git history)",
+                 "ChatGPT Project = canonical prompt + authorized attachments, not a runner",
                  "backward AND acceptance tests",
                  "NO runner: METHOD_ONLY / NOT_RUN",
                  "WITH separately authorized coding agent + runner",

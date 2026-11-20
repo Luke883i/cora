@@ -253,6 +253,7 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         self.assertEqual(verify_project_zip_lifecycle(readme, adoption, guide), [])
         wrong = (
             ("NO runner: METHOD_ONLY / NOT_RUN", "NO runner: PASS_SCOPED", "readme"),
+            ("CORA source ZIP = optional read-only reference (no Git history)", "CORA ZIP is an executed engine with full Git history", "readme"),
             ("WITH separately authorized coding agent + runner", "WITH a chat message", "readme"),
             ("In Project chat this is *a proposal*", "Project chat creates a real commit", "readme"),
             ("Without an authorized runner", "After asking in chat", "readme"),
@@ -611,7 +612,7 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         oracle = DOC.verify_project_zip_lifecycle
         self.assertEqual(oracle(self.readme, adoption, guide), [])
         targets = (
-            ("README", "GitHub repo + CORA main ZIP/prompt -> ChatGPT Project",
+            ("README", "ChatGPT Project = canonical prompt + authorized attachments, not a runner",
              "a screenshot proves project installation"),
             ("README", "**New repository**", "**Automatically provision production**"),
             ("README", "**Code → Download ZIP**", "**Deploy CORA ZIP**"),

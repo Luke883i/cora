@@ -12,7 +12,9 @@ CORA is a local, offline-first Python 3.11+ source-assurance engine and a method
 **Why it matters:** patches are not proof; readers need decisions, tests and unresolved risks.
 
 ```text
-GitHub repo + CORA main ZIP/prompt -> ChatGPT Project
+TARGET Git repository = application source of truth
+CORA source ZIP = optional read-only reference (no Git history)
+ChatGPT Project = canonical prompt + authorized attachments, not a runner
   -> A0 goal -> backward AND acceptance tests -> proposed slice
   -> NO runner: METHOD_ONLY / NOT_RUN; explain the next choice
   -> WITH separately authorized coding agent + runner:
