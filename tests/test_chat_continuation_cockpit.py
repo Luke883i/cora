@@ -373,49 +373,60 @@ class NavigationTests(unittest.TestCase):
         self.assertNotIn("<form", page.lower())
 
 
-class Pr90NonDuplicatedStressOwnerTests(unittest.TestCase):
-    """Separate scope witnesses, not removing PR36's exact Git falsification."""
+class Pr90ComprehensiveDiagnosticsTests(unittest.TestCase):
+    """Do not remove comprehensive stress to hide a failing composite run."""
 
     def _assert_workflow_owner(self, workflow):
         marker = "  integrated-source:\n"
         boundary = "  pr36-native-owner:\n"
         diagnostic = "  diagnose-comprehensive:\n"
-        self.assertEqual(workflow.count(marker), 1)
-        self.assertEqual(workflow.count(boundary), 1)
-        self.assertEqual(workflow.count(diagnostic), 1)
+        visible = "  diagnose-visible:\n"
+        for key in (marker, boundary, diagnostic, visible):
+            self.assertEqual(workflow.count(key), 1)
         integrated = workflow.split(marker, 1)[1].split(boundary, 1)[0]
         pr36 = workflow.split(boundary, 1)[1].split(diagnostic, 1)[0]
+        probe = workflow.split(diagnostic, 1)[1].split(visible, 1)[0]
+        shown = workflow.split(visible, 1)[1]
         self.assertIn("--profile comprehensive", integrated)
         self.assertIn("cora verify-process /tmp/cora-pr37/run.json", integrated)
-        self.assertNotIn("--model-stress-cases 100000", integrated)
-        self.assertIn("'schema': 'cora-one-run-model-not-run/1'", integrated)
-        self.assertIn("'cases': 0, 'reason': 'EXPLICIT_OPT_IN_REQUIRED'", integrated)
-        self.assertIn("'authority': 'NONE', 'external': 'BLOCKED_EXTERNAL'", integrated)
+        self.assertEqual(integrated.count("--model-stress-cases 100000"), 1)
+        self.assertIn("assert x['baseline_pr36']['model_stress']['cases'] == 100000", integrated)
+        self.assertIn("assert x['baseline_pr36']['model_stress']['oracle_disagreements'] == 0", integrated)
+        self.assertIn("assert x['baseline_pr36']['model_stress']['unauthorized_promotions'] == 0", integrated)
         self.assertIn("assert x['genealogy']['commit_count'] == 305", integrated)
         self.assertIn("assert x['qualification']['external_gates_unclosed'] == 4", integrated)
         self.assertEqual(pr36.count("--model-stress-cases 100000"), 1)
         self.assertEqual(pr36.count("--cases 100000"), 2)
         self.assertIn("cmp /tmp/cora-one-run-100k.json /tmp/cora-one-run-100k-replay.json", pr36)
         self.assertIn("cora verify-process /tmp/cora-one-run.json", pr36)
-        self.assertIn("r[\"unauthorized_promotions\"]==0", pr36)
-        self.assertIn("not a[\"release_authorized\"]", pr36)
+        self.assertIn('r["unauthorized_promotions"]==0', pr36)
+        self.assertIn('not a["release_authorized"]', pr36)
         self.assertNotIn("continue-on-error: true", pr36)
+        self.assertIn("if: ${{ github.event_name == 'pull_request' }}", probe)
+        self.assertNotIn("--model-stress-cases 100000", probe)
+        self.assertIn("cora verify-process /tmp/cora-pr37-diagnostic/run.json", probe)
+        self.assertIn("headline='scoped-source-run-and-replay-no-stress'", probe)
+        self.assertIn("if: ${{ always() && needs.diagnose-comprehensive.result == 'success' }}", shown)
+        self.assertIn('run: test "$STATUS" -eq 0', shown)
 
-    def test_one_pr36_stress_owner_and_source_only_comprehensive(self):
-        path = Path(".github/workflows/ci-one-run-integrated.yml")
-        source = path.read_text("utf-8")
+    def test_original_stress_and_fast_diagnostic_falsifiers(self):
+        source = Path(".github/workflows/ci-one-run-integrated.yml").read_text("utf-8")
         self._assert_workflow_owner(source)
         mutations = (
-            ("--output /tmp/cora-pr37/run.json",
-             "--model-stress-cases 100000 --output /tmp/cora-pr37/run.json"),
-            ("'schema': 'cora-one-run-model-not-run/1'",
-             "'schema': 'cora-one-run-stress/1'"),
+            ("--model-stress-cases 100000 --output /tmp/cora-pr37/run.json",
+             "--output /tmp/cora-pr37/run.json"),
+            ("assert x['baseline_pr36']['model_stress']['cases'] == 100000",
+             "assert x['baseline_pr36']['model_stress']['cases'] == 0"),
             ("cora verify-process /tmp/cora-pr37/run.json",
              "echo /tmp/cora-pr37/run.json"),
             ("--cases 100000 --seed 883 --output /tmp/cora-one-run-100k.json",
              "--cases 99999 --seed 883 --output /tmp/cora-one-run-100k.json"),
             ("cmp /tmp/cora-one-run-100k.json /tmp/cora-one-run-100k-replay.json",
              "echo /tmp/cora-one-run-100k.json /tmp/cora-one-run-100k-replay.json"),
+            ("if: ${{ github.event_name == 'pull_request' }}",
+             "if: ${{ false }}"),
+            ("headline='scoped-source-run-and-replay-no-stress'",
+             "headline='no-diagnostic'"),
         )
         for before, after in mutations:
             self.assertIn(before, source)
