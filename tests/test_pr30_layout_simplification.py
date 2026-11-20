@@ -37,6 +37,52 @@ class LayoutSimplificationTests(unittest.TestCase):
             raise unittest.SkipTest("original Git checkout required")
         cls.head=git(ROOT,"rev-parse","HEAD")
 
+    def test_pr88_live_claim_links_preserve_migration_evidence(self):
+        """Current reader anchors may change, but historical proof must not.
+
+        This small test validates the transition predicate in memory; the full
+        original-Git migration and physical mutants run in separate PR30 tests.
+        """
+        live=json.loads((ROOT/".cora/assurance/documentation-proofs.json").read_text("utf-8"))
+        historical=copy.deepcopy(live)
+        for node in historical["nodes"]:
+            if node["id"]=="S03":
+                node["readme_phrase"]=(
+                    "helps developers and AI coding assistants inspect a Git repository")
+            elif node["id"]=="S04":
+                node["readme_section"]="## First five minutes — Quickstart"
+            elif node["id"] in {"S05","S09","S12","S15"}:
+                node["readme_section"]="## Use CORA with an AI coding assistant"
+        source=(ROOT/"README.md").read_text("utf-8")
+        verify=LAYOUT._validate_current_documentation_proofs
+        verify(historical,live,source)
+        rejected=0
+        for i in range(18):
+            for field,evil in (("predicate","APPROVED_BY_SOURCE"),
+                               ("falsifier","ALL_REAL_TESTS_PASS"),
+                               ("evidence",[])):
+                mutant=copy.deepcopy(live)
+                mutant["nodes"][i][field]=evil
+                with self.assertRaisesRegex(ValueError,
+                        "unauthorized postmigration S01-S18 proof edit"):
+                    verify(historical,mutant,source)
+                rejected+=1
+        for i in (2,3,4,8,11,14):
+            mutant=copy.deepcopy(live)
+            mutant["nodes"][i]["readme_section"]="## Self-approved source"
+            with self.assertRaisesRegex(ValueError,
+                    "unauthorized postmigration S01-S18 proof edit"):
+                verify(historical,mutant,source)
+            rejected+=1
+        self.assertEqual(rejected,60)
+        # Presentation edits that preserve named source-owned phrases are not
+        # a new claim, whereas a missing proof phrase is an actual regression.
+        verify(historical,live,source+"\nHarmless editorial appendix.\n")
+        with self.assertRaisesRegex(ValueError,
+                "unauthorized postmigration S01-S18 proof edit"):
+            verify(historical,live,source.replace("CORA is not a coding agent",
+                                                "CORA is an autonomous coding agent"))
+
     def test_01_lossless_archive_root_and_source_replay(self):
         report=LAYOUT.check(ROOT,self.head)
         self.assertEqual(report["root_before"],25)
