@@ -741,6 +741,7 @@
       "tests/test_chat_continuation_cockpit.py",
       "tests/test_ci_git_reproducibility.py",
       "tests/test_cli_capability_atlas.py",
+      "tests/test_comprehensive_history_preflight.py",
       "tests/test_counterfactual_blindspots.py",
       "tests/test_cross_repository_portability.py",
       "tests/test_debt_governance.py",
