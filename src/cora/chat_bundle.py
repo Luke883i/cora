@@ -589,6 +589,7 @@ code{{overflow-wrap:anywhere}}blockquote{{border-left:3px solid #334155;padding:
 <p><strong>Read-only, offline and non-executing.</strong> Not a live ChatGPT plugin. Links navigate only within this document.</p>
 <nav aria-label="Decision navigation">{nav}</nav></header><main>
 <section id="overview"><h2>Current decision</h2>
+<p><strong>Declared intent:</strong> {h(step["intent"])}</p>
 <p><strong>Status:</strong> {h(cockpit["status"])} |
 <strong>Recommended:</strong> {h(cockpit["recommended"])} |
 <strong>Reported open leaves:</strong> {h(cockpit["reported_open_dod_leaves"])}</p>
