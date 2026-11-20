@@ -407,6 +407,9 @@ class Pr90ComprehensiveDiagnosticsTests(unittest.TestCase):
         self.assertIn("'model_optin_absent':a['baseline_pr36']['model_stress']=={", probe)
         self.assertIn("'status':'NOT_RUN'", probe)
         self.assertIn("'cases':0,'reason':'EXPLICIT_OPT_IN_REQUIRED'", probe)
+        self.assertIn("'q_4_external':q.get('external_gates_unclosed')==4", probe)
+        self.assertIn("'g_305_commits':g.get('commit_count')==305", probe)
+        self.assertIn("'q_receipt':any(", probe)
         self.assertIn("cora verify-process /tmp/cora-pr37-diagnostic/run.json", probe)
         self.assertIn("headline='scoped-source-run-and-replay-no-stress'", probe)
         self.assertIn("if: ${{ always() && needs.diagnose-comprehensive.result == 'success' }}", shown)
@@ -430,6 +433,10 @@ class Pr90ComprehensiveDiagnosticsTests(unittest.TestCase):
              "if: ${{ false }}"),
             ("'model_optin_absent':a['baseline_pr36']['model_stress']=={",
              "'model_optin_absent':True or a['baseline_pr36']['model_stress']=={"),
+            ("'q_4_external':q.get('external_gates_unclosed')==4",
+             "'q_4_external':True"),
+            ("'g_305_commits':g.get('commit_count')==305",
+             "'g_305_commits':True"),
             ("headline='scoped-source-run-and-replay-no-stress'",
              "headline='no-diagnostic'"),
         )
