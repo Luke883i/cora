@@ -168,6 +168,11 @@ def inspect_source(root: Path) -> dict:
             or (chr(92) * 2 + "n") in note_line
             or re.search(r"printf 'CORA [0-9]+[.][0-9]+[.][0-9]+a[0-9]+", note_workflow)):
         errors.append("REVIEW_NOTE_VERSION_OR_SHA_DRIFT")
+    # README wording may change; negative claims are never made equivalent.
+    # Check the whole document, not just the CTO panel or an historical slogan.
+    if re.search(r"\b(?:enterprise[- ]ready|enterprise approved|enterprise certified|release approved)\b",
+                 txt("README.md"), flags=re.I):
+        errors.append("CLOSURE_BOUNDARY_DRIFT:README.md")
     for rel in ("docs/archive/decisions/ADR-PR15.md","docs/RELEASE.md","docs/ARCHITECTURE.md"):
         if NAME not in txt(rel):
             errors.append("NAME_NOT_CONSISTENT:"+rel)
@@ -178,7 +183,7 @@ def inspect_source(root: Path) -> dict:
     # self-issued enterprise certificate or host/release authority.
     boundaries = {
         "README.md": (
-            "**Enterprise evaluation candidate, not enterprise-qualified.**",
+            "## Enterprise evaluation boundary",
             "**Product:**", "**Software:**", "**Repository:**",
             "Formal three-boundary DoD", "NOT_RUN", "BLOCKED_EXTERNAL"),
         "GOVERNANCE.md": (

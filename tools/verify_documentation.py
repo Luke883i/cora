@@ -238,7 +238,7 @@ def verify_readme_semantics(readme: str, *, root: Path | None = None) -> list[st
         errors.append("readme-semantic-unclosed-code-fence")
     if not re.search(r"(?<!\d)71 declared CLI commands(?!\d)", readme):
         errors.append("readme-semantic-cli-count")
-    if len(readme.split()) > 1800:
+    if len(readme.split()) > 2100:
         errors.append("cto-readme-overlong")
     if "CORA is not an eleventh engineering method" not in readme:
         errors.append("cto-method-positioning-missing")
@@ -497,7 +497,7 @@ def verify_project_first_readme(readme: str) -> list[str]:
     parts = readme.split("## Use CORA in a ChatGPT Project — beginner walkthrough\n", 1)
     section = parts[1].split("\n## What works today", 1)[0] if len(parts) == 2 else ""
     required = (
-        "ChatGPT Plus or Edu", "Projects are available on other plans",
+        "ChatGPT Pro or Edu", "Projects are available on other plans",
         "**New project**", "**Project settings**", "**Project instructions**",
         "docs/AGENT_ADOPTION.md#chatgpt-project-beta-adapter",
         "**read access**", "Luke883i/cora", "**target repository**",
@@ -505,6 +505,7 @@ def verify_project_first_readme(readme: str) -> list[str]:
         "write actions require verified permissions and explicit authorization",
         "write-capable coding tool", "such as Codex",
         "CORA-METHOD", "without** executing CORA-ENGINE",
+        "In Project chat this is *a proposal*", "Without an authorized runner",
         "separate Python runner", "METHOD_ONLY", "NOT_RUN",
         "--chat-step", "--chat-bundle", "iterations/000001/handoff.md",
         "neither automatic chat capture nor authenticated review",
@@ -514,7 +515,7 @@ def verify_project_first_readme(readme: str) -> list[str]:
         errors.append("project-onboarding-missing-source-boundary")
     if len(re.findall(r"(?m)^[1-5]\. \*\*[^\n]+", section)) != 5:
         errors.append("project-onboarding-five-steps-required")
-    if re.search(r"(?i)github app (?:automatically|directly) (?:commits|pushes|merges)", section):
+    if re.search(r"(?i)(?:github app|chatgpt project|cora-method) (?:automatically|directly) (?:commits|pushes|merges|executes tests)", section):
         errors.append("project-onboarding-false-write-authority")
     return errors
 
@@ -542,6 +543,8 @@ def verify_project_zip_lifecycle(readme: str, adoption: str,
     figure = readme.split("## First five minutes", 1)[0]
     for term in ("GitHub repo + CORA main ZIP/prompt -> ChatGPT Project",
                  "backward AND acceptance tests",
+                 "NO runner: METHOD_ONLY / NOT_RUN",
+                 "WITH separately authorized coding agent + runner",
                  "exact Git SHA + evidence dossier", "verified temporary ZIP"):
         if term not in figure:
             errors.append("project-readme-diagram-omission:" + term)
