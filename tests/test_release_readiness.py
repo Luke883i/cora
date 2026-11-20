@@ -306,7 +306,8 @@ class Pr90SelfAuditReticulumTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         from cora.reticulum import ordered_cut, assess_cut
-        cls.ordered_cut, cls.assess_cut = ordered_cut, assess_cut
+        cls.ordered_cut = staticmethod(ordered_cut)
+        cls.assess_cut = staticmethod(assess_cut)
         cls.contract = json.loads((ROOT / ".cora/contracts/dod/reader-cockpit-release-dod.json").read_text("utf-8"))
         cls.closure = cls.contract["self_audit_closure"]
         cls.nodes = cls.contract["nodes"] + cls.closure["nodes"]
