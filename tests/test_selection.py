@@ -220,7 +220,7 @@ class CiSchedulingSourceContract(unittest.TestCase):
         block = parts[1].split('  diagnose-comprehensive:\n', 1)[0] if len(parts) == 2 else ''
         required = ('cora verify-process /tmp/cora-one-run.json --repo . --one-run --atlas-json /tmp/cora-one-run-atlas.json --atlas-html /tmp/cora-one-run.html',
                     '--model-stress-cases 100000',
-                    "python -m unittest discover -s tests -p 'test_pr36_one_run.py' -v",
+                    "python -m unittest discover -s tests -p 'test_one_run_orchestration.py' -v",
                     'cmp /tmp/cora-one-run-100k.json /tmp/cora-one-run-100k-replay.json',
                     'r["unauthorized_promotions"]==0',
                     'not a["release_authorized"]',
