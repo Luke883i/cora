@@ -175,7 +175,7 @@ The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) di
 **Product or release owner:** [Governance](GOVERNANCE.md) · [Security](SECURITY.md) · [Release](docs/RELEASE.md).
 **Full documentation, history and contracts:** [Index](docs/INDEX.md) · [Documentation DoD](docs/DOCUMENTATION_DOD.md). [PR #1–#89 trajectory, gaps and release gate](docs/AUDIT_PR01_89_AND_RELEASE_GATE.txt).
 
-**Decision rights:** external people and host. **Source of record:** Git, not chat. **Runtime:** local CLI. **Reading order:** README → guide → contract → evidence.
+**Decision rights are external:** people and host. **Source of record:** Git, not chat. **Why:** source is not authority. **Runtime:** local CLI. **Read in order:** README → guide → contract → evidence.
 
 <details>
 <summary>Product | Outcome and limits</summary>
