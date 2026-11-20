@@ -299,6 +299,70 @@ class ReadinessTest(unittest.TestCase):
         self.assertIn("UNPINNED",a["source_scope"])
         self.assertIn("PROTECTED_MAIN_REQUIRED_CHECKS_NOT_ATTESTED",a["external_obligations"])
 
+
+class Pr90SelfAuditReticulumTests(unittest.TestCase):
+    """Falsify the exact source AND-graph; this is not host or user acceptance."""
+
+    @classmethod
+    def setUpClass(cls):
+        from cora.reticulum import ordered_cut, assess_cut
+        cls.ordered_cut, cls.assess_cut = ordered_cut, assess_cut
+        cls.contract = json.loads((ROOT / ".cora/contracts/dod/reader-cockpit-release-dod.json").read_text("utf-8"))
+        cls.closure = cls.contract["self_audit_closure"]
+        cls.nodes = cls.contract["nodes"] + cls.closure["nodes"]
+
+    def test_global_noncompensatory_cut_and_deferred_p2(self):
+        self.assertEqual(self.closure["schema"], "cora-pr90-self-audit-closure-reticulum/1")
+        self.assertEqual(self.closure["authorization"], "NONE")
+        self.assertEqual(self.closure["product_release"], "BLOCKED_EXTERNAL")
+        order = self.ordered_cut(self.nodes, "G_EXTERNAL")
+        self.assertEqual(len(order), len(set(order)))
+        for key in ("P0_GIT_HISTORY", "P0_HOST_CI", "P0_NONPROMOTION",
+                    "P1_ZIP_MATRIX", "P1_COCKPIT_NAV", "P1_HOST_READBACK",
+                    "P1_DIAGNOSTICS", "P1_BEGINNER", "P1_SCOPE",
+                    "G_P0", "G_SOURCE", "G_EXTERNAL", "R5_HUMAN", "R6_TARGET", "R7_HOST"):
+            self.assertIn(key, order)
+        by_id = {node["id"]: node for node in self.nodes}
+        self.assertEqual(len(by_id), len(self.nodes))
+        expected_edges = {
+            "G_P0": {"P0_GIT_HISTORY", "P0_HOST_CI", "P0_NONPROMOTION"},
+            "P1_SCOPE": {"P1_ZIP_MATRIX", "P1_COCKPIT_NAV", "P1_HOST_READBACK",
+                         "P1_DIAGNOSTICS", "P1_BEGINNER"},
+            "G_SOURCE": {"G_P0", "P1_SCOPE", "G_SOURCE_CANDIDATE"},
+            "G_EXTERNAL": {"G_SOURCE", "R5_HUMAN", "R6_TARGET", "R7_HOST"},
+        }
+        for gate, required in expected_edges.items():
+            self.assertEqual(set(by_id[gate]["depends_on"]), required)
+        self.assertEqual({row["id"] for row in self.closure["deferred_p2"]},
+                         {"P2_COMPLEXITY_102", "P2_RADICAL_CONTRACTION"})
+        self.assertTrue(all(row["status"] == "TOBE_UNVERIFIED"
+                            for row in self.closure["deferred_p2"]))
+
+    def test_even_all_positive_source_reports_cannot_authorize_release(self):
+        from cora.reticulum import MODEL, EXTERNAL
+        order = self.ordered_cut(self.nodes, "G_EXTERNAL")
+        index = {node["id"]: node for node in self.nodes}
+        observations = {key: MODEL for key in order if not index[key]["depends_on"]}
+        report = self.assess_cut(self.nodes, "G_EXTERNAL", observations)
+        self.assertEqual(report["authorization"], "NONE")
+        self.assertNotEqual(report["status"], MODEL)
+        for key in ("R5_HUMAN", "R6_TARGET", "R7_HOST"):
+            self.assertEqual(report["states"][key], EXTERNAL)
+
+    def test_duplicate_cycle_or_dangling_edges_are_refuted(self):
+        import copy
+        for mutation in ("duplicate", "cycle", "missing"):
+            changed = copy.deepcopy(self.nodes)
+            if mutation == "duplicate":
+                changed.append(copy.deepcopy(changed[0]))
+            elif mutation == "cycle":
+                next(x for x in changed if x["id"] == "G_P0")["depends_on"].append("G_EXTERNAL")
+            else:
+                next(x for x in changed if x["id"] == "G_P0")["depends_on"].append("FAKE_PASS")
+            with self.subTest(mutation=mutation), self.assertRaises(ValueError):
+                self.ordered_cut(changed, "G_EXTERNAL")
+
+
 if __name__=="__main__":unittest.main()
 
 
