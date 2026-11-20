@@ -379,6 +379,41 @@ class Pr90SelfAuditReticulumTests(unittest.TestCase):
             with self.subTest(field=field), self.assertRaises(ValueError):
                 validate(damaged)
 
+    def test_canonical_routing_covers_every_internal_dod_including_pr90(self):
+        import copy
+        atlas = json.loads((ROOT / ".cora/assurance/capability-atlas.json").read_text("utf-8"))
+        routes = json.loads((ROOT / ".cora/contracts/index.json").read_text("utf-8"))
+        expected = set(atlas["repository_surfaces"]["internal_dod"])
+        logical = "cora.reader-cockpit-release-dod.json"
+        canonical = ".cora/contracts/dod/reader-cockpit-release-dod.json"
+
+        def assert_closed(index):
+            self.assertEqual(index["authority"], "NONE")
+            self.assertEqual(index["external_consumers"], "UNKNOWN")
+            entries = index["bindings"]
+            self.assertEqual(len({r["logical"] for r in entries}), len(entries))
+            self.assertEqual(len({r["canonical"] for r in entries}), len(entries))
+            internal = {r["canonical"] for r in entries if r["scope"] == "INTERNAL_DOD"}
+            self.assertEqual(internal, expected)
+            selected = [r for r in entries if r["logical"] == logical]
+            self.assertEqual(len(selected), 1)
+            self.assertEqual(selected[0], {
+                "logical": logical, "canonical": canonical, "scope": "INTERNAL_DOD"})
+        assert_closed(routes)
+        for mutation in ("removed", "wrong_path", "false_scope", "duplicated"):
+            candidate = copy.deepcopy(routes)
+            row = next(r for r in candidate["bindings"] if r["logical"] == logical)
+            if mutation == "removed":
+                candidate["bindings"].remove(row)
+            elif mutation == "wrong_path":
+                row["canonical"] = ".cora/contracts/dod/forged.json"
+            elif mutation == "false_scope":
+                row["scope"] = "PUBLIC_STABLE"
+            else:
+                candidate["bindings"].append(copy.deepcopy(row))
+            with self.subTest(mutation=mutation), self.assertRaises(AssertionError):
+                assert_closed(candidate)
+
     def test_even_all_positive_source_reports_cannot_authorize_release(self):
         from cora.reticulum import MODEL, EXTERNAL
         order = self.ordered_cut(self.nodes, "G_EXTERNAL")
