@@ -96,7 +96,7 @@ jobs:
           python tools/verify_artifact_roles.py --repo . --output /tmp/cora-self-v1.json
           cora artifact-audit . --revision HEAD --output /tmp/cora-artifacts.json
           cora verify-artifacts /tmp/cora-artifacts.json --repo .
-          cora file-lab . --path tests/test_pr10_artifact_roles.py --revision HEAD --output /tmp/cora-role-lab.json
+          cora file-lab . --path tests/test_artifact_role_classification.py --revision HEAD --output /tmp/cora-role-lab.json
           cora verify-file-lab /tmp/cora-role-lab.json --repo .
           cora stress-artifact-semantics --seed 883 --minimum-cases 1000000 --no-novelty 10000000 --output /tmp/cora-saturation.json
           python -c 'import json; a=json.load(open("/tmp/cora-saturation.json")); assert a["total_cases"]==11000000 and a["semantic_classes_observed"]==12288 and a["new_classes_after_M"]==0 and a["mismatches"]==0 and a["stream_sha256"]=="523cdad1ebd659071a645aedc567de1ceeb65ee5fd0d356c8f17c0c4f5e9844f"'

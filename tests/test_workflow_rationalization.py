@@ -103,6 +103,23 @@ class WorkflowRationalizationTests(unittest.TestCase):
                        'test_nonexistent_module.py'):
             self.assertFalse(any(fnmatch.fnmatchcase(n, forged) for n in modules))
 
+    def test_workflow_literal_test_paths_are_live_and_falsifiable(self):
+        # A selector can be correct while a separate CLI --path is stale.
+        import re
+        live = {p.name for p in (ROOT / "tests").glob("test_*.py")}
+        pattern = re.compile(r"tests/(test_[A-Za-z0-9_.-]+[.]py)")
+        observed = 0
+        for workflow in sorted((ROOT / ".github/workflows").glob("*.yml")):
+            for name in pattern.findall(workflow.read_text(encoding="utf-8")):
+                with self.subTest(workflow=workflow.name, source=name):
+                    self.assertIn(name, live, "dangling workflow test-path consumer")
+                observed += 1
+        self.assertGreater(observed, 0, "no workflow test-path consumers inspected")
+        for mutant in ("tests/test_pr10_artifact_roles.py",
+                       "tests/test_nonexistent_semantic_contract.py"):
+            self.assertTrue(set(pattern.findall(mutant)) - live,
+                            "adversarial stale path escaped the source oracle")
+
     def test_real_git_inbound_and_priviliged_workflows(self):
         with tempfile.TemporaryDirectory() as t:
             repo = create(Path(t), {
