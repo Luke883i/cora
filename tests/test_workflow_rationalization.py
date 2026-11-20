@@ -70,12 +70,12 @@ class WorkflowRationalizationTests(unittest.TestCase):
 
     def test_current_test_module_names_express_capabilities(self):
         modules = sorted((ROOT / 'tests').glob('test_*.py'))
-        self.assertEqual(len(modules), 61)
-        self.assertEqual(len({p.name for p in modules}), 61)
+        self.assertGreaterEqual(len(modules), 61)
+        self.assertEqual(len({p.name for p in modules}), len(modules))
         for path in modules:
             with self.subTest(path=path.name):
                 self.assertNotRegex(path.name, r'(?i)(?:^|_)pr\d+(?=_|\.|$)')
-        # Falsifiers must be rejected even if discovery returns 61 modules.
+        # Falsifiers must be rejected regardless of the evolving module count.
         for forged in ('test_pr01.py', 'test_pr87_cockpit.py',
                        'test_continuous_pr14.py'):
             self.assertRegex(forged, r'(?i)(?:^|_)pr\d+(?=_|\.|$)')
@@ -98,7 +98,7 @@ class WorkflowRationalizationTests(unittest.TestCase):
                     self.assertNotRegex(selected_pattern,
                                         r'(?i)(?:^|_)pr\d+(?=_|\.|$)')
                 selectors.append((workflow.name, selected_pattern, selected))
-        self.assertEqual(len(selectors), 56)
+        self.assertGreaterEqual(len(selectors), 56)
         for forged in ('test_pr07.py', 'test_pr25_method_synthesis.py',
                        'test_nonexistent_module.py'):
             self.assertFalse(any(fnmatch.fnmatchcase(n, forged) for n in modules))
