@@ -131,12 +131,32 @@ jobs:
             --output /tmp/cora-pr46/run2.json --atlas-html /tmp/cora-pr46/run2.html \
             --chat-step /tmp/cora-pr46/step.json --chat-bundle /tmp/cora-pr46/session.zip
           cora verify-process /tmp/cora-pr46/run2.json --repo . --one-run \
-            --atlas-html /tmp/cora-pr46/run2.html --chat-bundle /tmp/cora-pr46/session.zip
+            --atlas-html /tmp/cora-pr46/run2.html --chat-bundle /tmp/cora-pr46/session.zip \
+            --chat-cockpit-html /tmp/cora-pr46/cockpit.html
           python - <<'PY'
           from cora.chat_bundle import verify_chat_bundle
+          from html.parser import HTMLParser
+          from pathlib import Path
           x=verify_chat_bundle('/tmp/cora-pr46/session.zip')
           assert x['iterations']==2 and x['authorization']=='NONE'
           assert x['product_status']=='BLOCKED_EXTERNAL'
+          p=Path('/tmp/cora-pr46/cockpit.html').read_text('utf-8')
+          assert 'CORA — verified ZIP decision navigator' in p
+          assert '<script' not in p.lower() and 'onclick=' not in p.lower()
+          class InternalLinks(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.ids=set()
+                  self.links=[]
+              def handle_starttag(self, name, attributes):
+                  attrs=dict(attributes)
+                  if 'id' in attrs: self.ids.add(attrs['id'])
+                  if name=='a' and 'href' in attrs: self.links.append(attrs['href'])
+          links=InternalLinks()
+          links.feed(p)
+          assert links.links and all(ref.startswith('#') and ref[1:] in links.ids for ref in links.links)
+          for marker in ('overview','dod','gaps','actions','explain','replan','propose'):
+              assert marker in links.ids
           PY
       - name: PR46 hostile bundle negative regression
         run: python -m unittest discover -s tests -p 'test_chat_bundle_portability.py' -v

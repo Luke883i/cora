@@ -300,3 +300,73 @@ class ReadinessTest(unittest.TestCase):
         self.assertIn("PROTECTED_MAIN_REQUIRED_CHECKS_NOT_ATTESTED",a["external_obligations"])
 
 if __name__=="__main__":unittest.main()
+
+
+
+# PR90: preregistered scenario model and independent expected-result boundary.
+from tools.release_readiness_scenarios import (
+    FIELDS, SPACE, STRIDE, candidate, case_at, independent_oracle, run,
+)
+
+class ReleaseScenarioTests(unittest.TestCase):
+    def test_cardinality_and_two_seeded_replays(self):
+        self.assertEqual(len(FIELDS), 12)
+        self.assertGreater(SPACE, 1_000_000)
+        a = run(cases=2000, seed=883)
+        b = run(cases=2000, seed=883)
+        self.assertEqual(a, b)
+        self.assertEqual(a["distinct_semantic_tuples_observed"], 2000)
+        self.assertEqual(a["model_oracle_mismatches"], 0)
+        self.assertEqual(a["false_release_promotions"], 0)
+        self.assertEqual(a["forged_results_tested"], 8)
+        self.assertEqual(a["forged_results_rejected"], 8)
+        self.assertEqual(a["release"], "BLOCKED_EXTERNAL")
+        self.assertEqual(a["physical_git_mutants"], 0)
+        self.assertNotEqual(a["sha256"], run(cases=2000, seed=884)["sha256"])
+
+    def test_no_claimed_host_or_adversarial_mode_grants_authority(self):
+        for i in range(2000):
+            case = case_at(i, 883)
+            self.assertEqual(candidate(case), independent_oracle(case))
+            self.assertEqual(candidate(case)["authorization"], "NONE")
+            self.assertEqual(candidate(case)["release"], "BLOCKED_EXTERNAL")
+            self.assertFalse(candidate(case)["auto_execution"])
+
+    def test_verified_chat_navigation_requires_all_prerequisites(self):
+        valid = {
+            "persona": "beginner", "mode": "chat-method", "target": "issue-webapp",
+            "revision": "exact-git", "evidence": "git-replay",
+            "runner": "separate-authorized", "cockpit": "verified-zip",
+            "action": "next-check", "dod": "unresolved", "host": "self-claimed",
+            "rollback": "unplanned", "impact": "privacy",
+        }
+        result = candidate(valid)
+        self.assertEqual(result["navigation"], "VERIFIED_OFFLINE_NAVIGATOR")
+        self.assertEqual(result["source"], "PASS_SCOPED_SOURCE")
+        for field, bad in (("revision", "stale-git"),
+                           ("evidence", "caller-claim"),
+                           ("runner", "none"), ("cockpit", "forged-zip"),
+                           ("mode", "local-engine")):
+            mutated = dict(valid, **{field: bad})
+            with self.subTest(field=field):
+                self.assertEqual(candidate(mutated)["navigation"], "NO_VERIFIED_NAVIGATOR")
+
+    def test_autonomous_action_is_refused_even_with_idealized_source(self):
+        case = {name: choices[0] for name, choices in FIELDS}
+        case.update(revision="exact-git", evidence="target-native",
+                    runner="separate-authorized", cockpit="verified-zip",
+                    mode="chat-method", action="auto-merge")
+        result = candidate(case)
+        self.assertEqual(result["choice"], "BLOCKED")
+        self.assertFalse(result["auto_execution"])
+
+    def test_bounds_and_full_seed_space_are_explicit(self):
+        for invalid in (0, -1, 1000001):
+            with self.assertRaises(ValueError):
+                run(cases=invalid)
+        sample = [tuple(case_at(i, 883).items()) for i in range(10000)]
+        self.assertEqual(len(sample), len(set(sample)))
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -203,3 +203,101 @@ class Pr87CiOwnershipTests(unittest.TestCase):
                                (one, 'if not verify_suite(repo, plain):'),
                                (suite, 'expected=run_suite(repo,report[')):
             self.assertNotIn(anchor, source.replace(anchor, 'FORGED_BYPASS', 1))
+
+
+
+# PR90: verify real offline navigation, escaped user prose and receipt boundaries.
+from html.parser import HTMLParser
+import zipfile
+from cora.cockpit_view import render_verified_cockpit
+from tests import test_chat_bundle_portability as fixtures
+
+class Links(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.ids = []
+        self.refs = []
+
+    def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        if "id" in attrs:
+            self.ids.append(attrs["id"])
+        if tag == "a" and "href" in attrs:
+            self.refs.append(attrs["href"])
+
+
+class NavigationTests(unittest.TestCase):
+    def make_bundle(self, *, attack=False):
+        case = fixtures.ChatBundleTests("test_append_roundtrip_two_rounds_and_exact_handoff")
+        case.setUp()
+        self.addCleanup(case.doCleanups)
+        step = case.step()
+        if attack:
+            step["intent"] = '<script>alert("hijack")</script>'
+            step["roadmap"][0]["action"] = '<img src=x onerror=alert(1)>'
+            step["gaps"][0]["description"] = '"><iframe src="https://evil.invalid">'
+        receipt = case.receipt()
+        append_chat_iteration(case.bundle, repo=case.repo, step=step, receipt=receipt)
+        return case.bundle, receipt
+
+    def test_verified_offline_links_have_real_targets(self):
+        bundle, receipt = self.make_bundle()
+        page = render_verified_cockpit(bundle, expected_receipt=receipt)
+        parser = Links()
+        parser.feed(page)
+        self.assertEqual(len(parser.ids), len(set(parser.ids)))
+        self.assertTrue(parser.refs)
+        self.assertTrue(all(ref.startswith("#") for ref in parser.refs))
+        self.assertTrue(all(ref[1:] in parser.ids for ref in parser.refs))
+        for anchor in ("overview", "dod", "roadmap", "gaps", "actions",
+                       "explain", "replan", "propose", "boundary", "dod-1", "dod-2"):
+            self.assertIn(anchor, parser.ids)
+        for label in ("EXPLAIN", "REPLAN", "PROPOSE_NEXT_CHECK"):
+            self.assertIn(label, page)
+        self.assertIn(receipt["commit"], page)
+        self.assertIn("BLOCKED_EXTERNAL", page)
+        self.assertNotIn("<script", page.lower())
+        self.assertNotIn("onclick=", page.lower())
+
+    def test_untrusted_prose_never_becomes_html_markup(self):
+        bundle, receipt = self.make_bundle(attack=True)
+        page = render_verified_cockpit(bundle, expected_receipt=receipt)
+        self.assertNotIn("<script>", page)
+        self.assertNotIn("<img src=", page)
+        self.assertNotIn("<iframe", page)
+        self.assertIn("&lt;script&gt;", page)
+        self.assertIn("&lt;img", page)
+        self.assertIn("&lt;iframe", page)
+        self.assertIn("default-src 'none'", page)
+
+    def test_wrong_receipt_never_renders(self):
+        bundle, receipt = self.make_bundle()
+        wrong = dict(receipt, commit="b" * 40)
+        with self.assertRaises(ValueError):
+            render_verified_cockpit(bundle, expected_receipt=wrong)
+
+    def test_modified_zip_never_renders(self):
+        bundle, receipt = self.make_bundle()
+        corrupted = bundle.with_name("tampered.zip")
+        with zipfile.ZipFile(bundle) as source, zipfile.ZipFile(corrupted, "w") as target:
+            for name in source.namelist():
+                original = source.read(name)
+                if name.endswith("/step.json"):
+                    original += b"\n"
+                target.writestr(name, original)
+        with self.assertRaises(ValueError):
+            render_verified_cockpit(corrupted, expected_receipt=receipt)
+
+    def test_navigation_does_not_promote_authority(self):
+        bundle, receipt = self.make_bundle()
+        page = render_verified_cockpit(bundle, expected_receipt=receipt)
+        report = verify_chat_bundle(bundle)
+        self.assertEqual(report["authorization"], "NONE")
+        self.assertFalse(report["cockpit"]["product_accepted"])
+        self.assertIn("Authorization: NONE", page)
+        self.assertIn("No link writes Git", page)
+        self.assertNotIn("<form", page.lower())
+
+
+if __name__ == "__main__":
+    unittest.main()

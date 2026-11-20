@@ -40,6 +40,7 @@ from .portable_assurance import run_portable, verify_portable, render_portable_h
 from .integrated_run import run_integrated, verify_integrated as verify_integrated_one_run
 from .integrated_html import render_integrated_html
 from .chat_bundle import append_chat_iteration, verify_chat_bundle, load_chat_step
+from .cockpit_view import render_verified_cockpit
 from .continuous import evaluate as development_gate, verify_gate, agent_check, self_development_plan, SELF_P0
 from .continuous_stress import stress_continuous
 from .archive_intake import inspect_zip, verify_intake
@@ -396,6 +397,7 @@ def main(argv: list[str] | None = None) -> int:
     pv.add_argument('--portable-upstream',action='append',default=[],help='Re-read original Git upstream objects as owner/repo=/path')
     pv.add_argument('--evidence-dir',type=Path,help='Recompute byte hashes against retained integrated evidence files')
     pv.add_argument('--chat-bundle',type=Path,help='Replay ZIP chain and match latest comprehensive One-Run receipt')
+    pv.add_argument('--chat-cockpit-html',type=Path,help='Render an offline read-only navigator only after source+ZIP replay')
     dsx = sub.add_parser('stress-debt',help='1M seeded debt-policy model mutations')
     dsx.add_argument('--seed',type=int,default=883)
     dsx.add_argument('--cases',type=int,default=1000000)
@@ -850,6 +852,8 @@ def main(argv: list[str] | None = None) -> int:
                                    change_base=args.change_base)
                 code = 0 if result['status']!='DEBT_BLOCKED' else 2
         elif args.cmd == 'verify-process':
+            if args.chat_cockpit_html and (not args.one_run or not args.chat_bundle):
+                raise ValueError('cockpit HTML requires --one-run --chat-bundle with integrated source receipt')
             item = json.loads(args.report.read_text(encoding='utf-8'))
             if args.one_run:
                 if (args.portable_evidence_dir or args.portable_parse_js or args.portable_upstream or args.portable_native_probe) and not args.portable_profile:
@@ -879,6 +883,10 @@ def main(argv: list[str] | None = None) -> int:
                               'product_status':'BLOCKED_EXTERNAL','authorization':'NONE'}
                     if args.chat_bundle:
                         result['chat_bundle'] = verify_chat_bundle(args.chat_bundle, expected_receipt=item)
+                        if args.chat_cockpit_html:
+                            args.chat_cockpit_html.write_text(
+                                render_verified_cockpit(args.chat_bundle, expected_receipt=item),
+                                encoding='utf-8')
                 else:
                     if args.evidence_dir or args.chat_bundle:
                         raise ValueError('integrated source receipt required for evidence/chat ZIP')

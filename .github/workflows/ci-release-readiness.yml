@@ -142,6 +142,23 @@ jobs:
           assert r['external_gates']=='BLOCKED_EXTERNAL'
           assert r['status']=='PASS_BOUNDED_FINITE_MODEL'
           PY
+      - name: PR90 execute two exact 1M 12-dimensional semantic scenario replays
+        run: |
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+          python tools/release_readiness_scenarios.py --seed 883 --cases 1000000 --output /tmp/pr90-scenarios-a.json
+          python tools/release_readiness_scenarios.py --seed 883 --cases 1000000 --output /tmp/pr90-scenarios-b.json
+          cmp /tmp/pr90-scenarios-a.json /tmp/pr90-scenarios-b.json
+          python - <<'PY'
+          import json
+          r=json.load(open('/tmp/pr90-scenarios-a.json'))
+          assert r['status']=='PASS_BOUNDED_FINITE_MODEL'
+          assert r['seed']==883 and r['cases']==1000000
+          assert r['semantic_dimensions']==12 and r['distinct_semantic_tuples_observed']==1000000
+          assert r['model_oracle_mismatches']==0 and r['false_release_promotions']==0
+          assert r['forged_results_tested']==r['forged_results_rejected']==8
+          assert r['physical_git_mutants']==0 and r['independent_reader_trials']==0
+          assert r['release']=='BLOCKED_EXTERNAL' and r['authorization']=='NONE'
+          PY
       - name: Retain reproducible bounded fault stream for independent comparison
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -150,5 +167,7 @@ jobs:
           path: |
             /tmp/pr41-final-1m.json
             /tmp/pr41-final-1m-replay.json
+            /tmp/pr90-scenarios-a.json
+            /tmp/pr90-scenarios-b.json
           if-no-files-found: warn
           retention-days: 30
