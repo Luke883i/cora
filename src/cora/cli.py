@@ -39,8 +39,8 @@ from .one_run import run_one, verify_one, render_one_html
 from .portable_assurance import run_portable, verify_portable, render_portable_html, parse_upstream_paths
 from .integrated_run import run_integrated, verify_integrated as verify_integrated_one_run
 from .integrated_html import render_integrated_html
-from .chat_bundle import append_chat_iteration, verify_chat_bundle, load_chat_step
-from .cockpit_view import render_verified_cockpit
+from .chat_bundle import append_chat_iteration, verify_chat_bundle, load_chat_step, render_verified_cockpit
+
 from .continuous import evaluate as development_gate, verify_gate, agent_check, self_development_plan, SELF_P0
 from .continuous_stress import stress_continuous
 from .archive_intake import inspect_zip, verify_intake

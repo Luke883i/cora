@@ -209,7 +209,7 @@ class Pr87CiOwnershipTests(unittest.TestCase):
 # PR90: verify real offline navigation, escaped user prose and receipt boundaries.
 from html.parser import HTMLParser
 import zipfile
-from cora.cockpit_view import render_verified_cockpit
+from cora.chat_bundle import render_verified_cockpit
 from tests import test_chat_bundle_portability as fixtures
 
 class Links(HTMLParser):
