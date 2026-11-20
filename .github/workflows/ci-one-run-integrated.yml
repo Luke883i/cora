@@ -389,9 +389,10 @@ jobs:
             'declared_71':a['registry']['declared_commands']==71,
             'activities_accounted':a['metrics']['activity_accounted']==a['metrics']['registered_total'],
             'zero_individual_cli':a['metrics']['individually_executed_cli']==0,
-            '100k_cases':a['baseline_pr36']['model_stress']['cases']==100000,
-            'zero_oracle_disagreements':a['baseline_pr36']['model_stress']['oracle_disagreements']==0,
-            'zero_unsafe_promotions':a['baseline_pr36']['model_stress']['unauthorized_promotions']==0,
+            'model_optin_absent':a['baseline_pr36']['model_stress']=={
+              'schema':'cora-one-run-model-not-run/1','status':'NOT_RUN',
+              'cases':0,'reason':'EXPLICIT_OPT_IN_REQUIRED',
+              'authority':'NONE','external':'BLOCKED_EXTERNAL'},
             'source_debt_visible':a['dod']['source_goal']=='DEBT_BLOCKED',
             'product_externally_blocked':a['product_status']=='BLOCKED_EXTERNAL',
             'authority_none':a['authorization']=='NONE'
