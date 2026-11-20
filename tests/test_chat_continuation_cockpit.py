@@ -302,6 +302,23 @@ class NavigationTests(unittest.TestCase):
         self.assertIn("pv.add_argument('--chat-cockpit-html',type=Path,help=argparse.SUPPRESS)",
                       source)
 
+    def test_three_choices_have_exact_navigable_targets_and_copy_only_actions(self):
+        bundle, receipt = self.make_bundle()
+        page = render_verified_cockpit(bundle, expected_receipt=receipt)
+        for destination, label in (
+                ("explain", "EXPLAIN"),
+                ("replan", "REPLAN"),
+                ("propose", "PROPOSE_NEXT_CHECK")):
+            link = '<a class="choice" href="#' + destination + '">' + label + '</a>'
+            self.assertIn(link, page)
+            self.assertIn('<section id="' + destination + '">', page)
+            self.assertIn("Copy this into your authorized chat:", page)
+            self.assertNotIn(link, page.replace('href="#' + destination + '"',
+                                                'href="#missing-' + destination + '"'))
+        self.assertIn("Not a live ChatGPT plugin", page)
+        self.assertIn("No link writes Git", page)
+        self.assertIn("Authorization: NONE", page)
+
     def test_navigation_does_not_promote_authority(self):
         bundle, receipt = self.make_bundle()
         page = render_verified_cockpit(bundle, expected_receipt=receipt)
