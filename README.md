@@ -39,8 +39,8 @@ ChatGPT Project = canonical prompt + authorized attachments, not a runner
 | **B — CORA-ENGINE on a computer or with an authorized coding agent** | Use Python, Git and explicit permissions; run native tests and the local CLI at a named SHA. | Produce source-bound reports and a verified offline handoff. This does **not** approve a PR or prove the product works. |
 
 **Remember:**
-- **Beginner:** describe the outcome; plan without Python.
-- **Authorized work:** the agent edits, the runner tests; CORA reports gaps.
+- **Beginner:** plan without Python.
+- **Authorized:** agent edits; runner tests; CORA reports gaps.
 
 
 **Choose A:** five ChatGPT steps; no installation. **Choose B:** Git, Python and permission. Terminal commands:
@@ -66,15 +66,15 @@ For scoped evidence see [One-Run](#one-run--one-command-one-evidence-dossier); s
 4. **Plan, then authorize separately:** ask CORA-METHOD for **backward requirements decomposition**, AND tests, a falsifiable roadmap and reversible POST → SQLite → GET slice. In Project chat this is *a proposal*. A **write-capable coding tool**, such as Codex, needs authorization; a **separate Python runner** executes tests. CORA-METHOD guides you **without** executing CORA-ENGINE. Without an authorized runner, say `METHOD_ONLY` / `NOT_RUN`.
 5. **Verify, then continue:** with permission, commit, run target-native tests and One-Run at the **same SHA**. With a runner create `--chat-step` and `--chat-bundle`, verify ZIP and upload its latest copy to this Project chat. Read `iterations/000001/handoff.md` and DoD. ZIP is **neither automatic chat capture nor authenticated review**. [Complete guide](docs/GETTING_STARTED.md#github-and-chatgpt-project-from-zero).
 
-**After a real verified One-Run, open the optional local cockpit:**
+**Verified offline cockpit (requires One-Run):**
 
 ```sh
 cora verify-process /tmp/cora-run.json --repo . --one-run \
   --chat-bundle /tmp/cora-session.zip --chat-cockpit-html /tmp/cora-cockpit.html
 ```
 
-- Open `/tmp/cora-cockpit.html` in a browser; use **Overview**, **DoD & evidence**, **Blockers** and **Choices**.
-- **EXPLAIN**, **REPLAN** and **PROPOSE_NEXT_CHECK** only navigate to copyable prompts. No ChatGPT call, execution or automatic replanning.
+- Open `/tmp/cora-cockpit.html`; navigate **Overview**, **DoD & evidence**, **Blockers**, **Choices**.
+- **EXPLAIN**, **REPLAN**, **PROPOSE_NEXT_CHECK** link to copyable prompts; no execution or automatic replanning.
 - No runner/verified ZIP? Stay METHOD_ONLY; never invent PASS.
 
 
@@ -205,7 +205,7 @@ The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) di
 
 ## Enterprise evaluation boundary
 
-**Enterprise evaluation only.** Product usability, maintained-target tests, rollback, host enforcement and non-author review remain unqualified. [Release DoD](docs/DOD_RELEASE_READINESS.md) · [release](docs/RELEASE.md) · [governance](GOVERNANCE.md). `PASS_SCOPED` is not approval; `NOT_RUN` and `BLOCKED_EXTERNAL` remain open.
+**Enterprise evaluation only.** Usability, target tests, rollback, host controls and review remain unqualified. [Formal three-boundary DoD](docs/DOD_RELEASE_READINESS.md) · [release](docs/RELEASE.md) · [governance](GOVERNANCE.md). `PASS_SCOPED` is not approval; `NOT_RUN` and `BLOCKED_EXTERNAL` remain open.
 
 ## Operating boundaries
 
