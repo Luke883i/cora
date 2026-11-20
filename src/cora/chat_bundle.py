@@ -559,10 +559,29 @@ def _render_verified_snapshot(bundle: Path, *, expected_receipt: dict | None = N
     nav = "".join(f'<a href="#{key}">{label}</a>' for key, label in (
         ("overview", "Overview"), ("dod", "DoD & evidence"),
         ("roadmap", "Roadmap"), ("gaps", "Blockers"), ("actions", "Choices")))
+    # One owner: derive copy-only choices from the already replayed ZIP
+    # metadata, never from independently unverified target or host claims.
+    next_checks = ", ".join(
+        f'{a["action_id"]}: {", ".join(a["falsifier_ids"])}'
+        for a in continuation["next_falsification_actions"]
+    ) or "none reported; request independent acceptance"
+    context = (
+        f"Git SHA {receipt['commit']}; first unresolved DoD "
+        f"{continuation['next_unresolved'] or 'NONE_REPORTED'}; "
+        f"{continuation['reported_open_leaves']} caller-reported open leaves. "
+        "ZIP integrity is not target attestation or release approval. "
+    )
     choices = (
-        ("explain", "EXPLAIN", "Explain blockers, evidence boundaries and the first unresolved AND obligation."),
-        ("replan", "REPLAN", "Recalculate the roadmap from unresolved obligations. Do not execute."),
-        ("propose", "PROPOSE_NEXT_CHECK", "Propose one reversible negative test. Do not execute or approve."),
+        ("explain", "EXPLAIN",
+         context + "Explain what blocks acceptance and identify the missing independent "
+         "witnesses. Do not approve or execute."),
+        ("replan", "REPLAN",
+         context + "Re-derive the AND acceptance roadmap from the unresolved leaf; "
+         "challenge stale reports and propose reversible tests. Do not execute."),
+        ("propose", "PROPOSE_NEXT_CHECK",
+         context + "Caller-proposed check IDs: " + next_checks + ". Select one "
+         "bounded, reversible falsifier for human authorization. Do not execute, "
+         "merge, or grant release."),
     )
     actions = "".join(f'<a class="choice" href="#{key}">{label}</a>'
                       for key, label, _ in choices)
@@ -570,9 +589,6 @@ def _render_verified_snapshot(bundle: Path, *, expected_receipt: dict | None = N
         f'<section id="{key}"><h3>{label}</h3><p>Copy this into your authorized chat:</p>'
         f'<blockquote>{h(instruction)}</blockquote></section>'
         for key, label, instruction in choices)
-    next_checks = ", ".join(
-        f'{a["action_id"]}: {", ".join(a["falsifier_ids"])}'
-        for a in continuation["next_falsification_actions"]) or "No source-backed check; request independent acceptance."
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
