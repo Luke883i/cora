@@ -286,7 +286,7 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         self.assertGreater(index["metrics"]["static_test_import_edges"], 0)
         self.assertGreater(index["metrics"]["modules_with_static_test_import_candidate"], 0)
         # This exact committed test declares an import; that is source linkage only.
-        self.assertIn("tests/test_pr59_consolidation.py",
+        self.assertIn("tests/test_repository_consolidation.py",
                       rows["src/cora/practice_contract.py"]["static_test_import_candidates"])
         self.assertEqual(index["metrics"]["causal_effects_measured"], 0)
         self.assertEqual(index["metrics"]["safe_consolidations_attested"], 0)
@@ -306,20 +306,20 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
                 return next(row["static_test_import_candidates"]
                             for row in document["component_contribution"]["rows"]
                             if row["path"] == target)
-            self.assertIn("tests/test_pr59_consolidation.py", refs(original_report))
-            file = clone / "tests/test_pr59_consolidation.py"
+            self.assertIn("tests/test_repository_consolidation.py", refs(original_report))
+            file = clone / "tests/test_repository_consolidation.py"
             before = file.read_text("utf-8")
             needle = "from cora.practice_contract import classify, project, verify"
             self.assertEqual(before.count(needle), 1)
             file.write_text(before.replace(needle,
                 "# mutant: statically remove practice contract test import"), "utf-8")
             self.assertEqual(ekc.analyze(clone, "HEAD"), original_report)
-            git(clone, "add", "tests/test_pr59_consolidation.py")
+            git(clone, "add", "tests/test_repository_consolidation.py")
             git(clone, "-c", "user.name=fixture", "-c",
                 "user.email=fixture@example.invalid", "commit", "-qm",
                 "mutant: disconnect declarative test import")
             changed = ekc.analyze(clone, "HEAD")
-            self.assertNotIn("tests/test_pr59_consolidation.py", refs(changed))
+            self.assertNotIn("tests/test_repository_consolidation.py", refs(changed))
             self.assertEqual(changed["component_contribution"]["metrics"][
                 "causal_effects_measured"], 0)
             self.assertTrue(ekc.verify_report(clone, changed))
@@ -353,7 +353,7 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
                       rows["src/cora/git_snapshot.py"]["declared_units"]})
         self.assertTrue(any(unit["symbol"].endswith(
             "test_granular_ast_symbol_and_test_case_census_with_exact_git_replay")
-            for unit in rows["tests/test_pr40_engineering_closure.py"]["test_cases"]))
+            for unit in rows["tests/test_engineering_knowledge_closure.py"]["test_cases"]))
         self.assertEqual(metrics["causal_effects_measured"], 0)
         fake = copy.deepcopy(report)
         fake["component_contribution"]["metrics"]["module_declarations"] += 1
@@ -995,7 +995,7 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
                 "import importlib.util\n"
                 "from cora.chat_bundle import validate_step\n"
                 "spec=importlib.util.spec_from_file_location('fixture',"
-                "'tests/test_pr46_chat_bundle.py')\n"
+                "'tests/test_chat_bundle_portability.py')\n"
                 "mod=importlib.util.module_from_spec(spec)\n"
                 "spec.loader.exec_module(mod)\n"
                 "fixture=mod.ChatBundleTests('test_append_roundtrip_two_rounds_and_exact_handoff')\n"
