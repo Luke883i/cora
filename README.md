@@ -7,16 +7,18 @@
 
 **CORA (Continuous Ontological Repository Assurance)** — **Engineering evidence for AI-assisted software changes.**
 
-CORA is a local, offline-first Python 3.11+ framework. It helps developers and AI coding assistants inspect a Git repository and **produce reproducible pre/post-merge review reports**. It connects **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**. Authorized agents edit; CORA evaluates evidence. It is **not a coding agent** or an approver.
+CORA is a local, offline-first Python 3.11+ source-assurance engine and a method for guiding AI-assisted engineering. It helps people and separately authorized coding agents inspect Git and **produce reproducible pre/post-merge review reports**: **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**. **CORA is not a coding agent**, a ChatGPT plug-in that writes code, or a release approver.
 
 **Why it matters:** patches are not proof; readers need decisions, tests and unresolved risks.
 
 ```text
 GitHub repo + CORA main ZIP/prompt -> ChatGPT Project
-  -> A0 goal -> backward AND acceptance tests
-  -> one webapp slice -> falsifiers -> real Git commit
-  -> One-Run + safe H-FORGE -> exact Git SHA + evidence dossier
-  -> verified temporary ZIP -> next slice / PR / human review
+  -> A0 goal -> backward AND acceptance tests -> proposed slice
+  -> NO runner: METHOD_ONLY / NOT_RUN; explain the next choice
+  -> WITH separately authorized coding agent + runner:
+       target Git commit + native tests + falsifiers
+       -> CORA-ENGINE -> exact Git SHA + evidence dossier
+       -> opt-in verified temporary ZIP -> human review
 ```
 
 **Product** = engineering assurance; **software** = the `cora` CLI and verifiers; **repository** = Git source, contracts and CI. None proves target-product readiness.
@@ -44,13 +46,13 @@ For scoped evidence see [One-Run](#one-run--one-command-one-evidence-dossier); s
 
 ## Use CORA in a ChatGPT Project — beginner walkthrough
 
-**Start here:** **ChatGPT Plus or Edu** beta; Projects are available on other plans; permissions vary.
+**Start here:** this documented beta route assumes **ChatGPT Pro or Edu**; Projects are available on other plans, but read/write and runner permissions must be checked separately. CORA-ENGINE does not require ChatGPT.
 
-1. **Create your GitHub repository:** on [GitHub](https://github.com) select **New repository**, name your issue webapp, add a README and record its Git SHA. This is your **target repository**, not CORA.
-2. **Install the Project instructions:** open [Luke883i/cora](https://github.com/Luke883i/cora), choose **Code → Download ZIP** from `main` (source only, no `.git`). Copy the [single canonical CORA beta prompt](docs/AGENT_ADOPTION.md#chatgpt-project-beta-adapter). In ChatGPT choose **New project**, then **Project settings** → **Project instructions**; paste it and attach the source ZIP.
-3. **Connect GitHub; specify success:** grant scoped **read access** to both repositories. GitHub connector abilities vary: **read-only** is not permission to push or merge; write actions require verified permissions and explicit authorization. State A0: "A reporter creates an issue, a reviewer sees it after reload, an outsider cannot close it."
-4. **Plan backwards and implement:** ask for **backward requirements decomposition** (all necessary AND acceptance tests), a falsifiable roadmap and one reversible slice: POST → SQLite → GET; test bad input and unauthorized closure. A **write-capable coding tool**, such as Codex, requires separate authorization; a **separate Python runner** provides actual test evidence. CORA-METHOD guides you **without** executing CORA-ENGINE. With no runner, report `METHOD_ONLY` / `NOT_RUN`.
-5. **Verify and continue:** commit the slice, execute One-Run and replay on the same SHA. With a runner create `--chat-step` and `--chat-bundle`, verify the temporary ZIP, then attach its latest copy to this Project chat. Read `iterations/000001/handoff.md` and open DoD; the archive is neither automatic chat capture nor authenticated review. [Detailed webapp and ZIP walkthrough](docs/GETTING_STARTED.md#github-and-chatgpt-project-from-zero).
+1. **Create your GitHub repository:** on [GitHub](https://github.com) select **New repository**, name your webapp and add a README. Record its Git SHA. This **target repository** holds *your application*, not CORA.
+2. **Prepare a Project, not a code runner:** open [Luke883i/cora](https://github.com/Luke883i/cora), choose **Code → Download ZIP** from `main` (source reference, **no `.git` history**), and copy the [single canonical CORA beta prompt](docs/AGENT_ADOPTION.md#chatgpt-project-beta-adapter). In ChatGPT select **New project**, **Project settings** → **Project instructions**, paste that prompt and attach the ZIP. Do not paste another prompt or imply the ZIP installed CORA.
+3. **Choose authorized source access:** attach a verified target ZIP or grant scoped **read access** to both repositories. GitHub connector abilities vary: **read-only** is not permission to push or merge; write actions require verified permissions and explicit authorization. State A0: "A reporter creates an issue, a reviewer sees it after reload, an outsider cannot close it."
+4. **Plan; implement only with permission:** ask CORA-METHOD for **backward requirements decomposition**, AND acceptance tests, a falsifiable roadmap and a reversible POST → SQLite → GET slice. In Project chat this is *a proposal*. A **write-capable coding tool**, such as Codex, needs distinct authorization to edit the target; a **separate Python runner** must execute native tests and negative oracles. CORA-METHOD guides you **without** executing CORA-ENGINE. Without an authorized runner, report `METHOD_ONLY` / `NOT_RUN`, never a commit or PASS.
+5. **Verify only observed work, then continue:** if authorized, commit the slice, run *target-native tests*, then execute One-Run and replay on the **same SHA**. With a runner create `--chat-step` and `--chat-bundle`, verify the temporary ZIP, then attach its latest copy to this Project chat. Read `iterations/000001/handoff.md` and open DoD. The cockpit suggests choices but does not execute them; the archive is **neither automatic chat capture nor authenticated review**. [Full webapp/ZIP guide](docs/GETTING_STARTED.md#github-and-chatgpt-project-from-zero).
 
 ### Repository anatomy — one minute
 
@@ -58,7 +60,7 @@ For scoped evidence see [One-Run](#one-run--one-command-one-evidence-dossier); s
 
 ### Humanistic, legal and organizational perspectives — noncanonical
 
-**Humanistic:** tests cannot choose values. **Legal:** receipts are not signatures or compliance proof. **Organizational:** approval requires people and host controls. These are analogies, not normative contracts.
+**Humanistic:** the person chooses the goal and acceptable trade-offs; an AI can propose models, not values. **Legal:** a source digest is not a signature, lawful authorization or compliance finding. **Organizational:** reviewers and owners decide whether to accept residual risk. These interpretive lenses are **not** product contracts or proof of reduced expertise.
 
 ## What works today
 
