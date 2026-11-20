@@ -195,7 +195,7 @@
     "based_on_main": "298997878c449e72f9bfca0a05e40c00af922953",
     "source_pr_head_observed": "8b4b17b797d883b37367bf67331a352351de75ae",
     "semantics": "AND_DEPENDENCY_DAG_NONCOMPENSATORY_UNTRUSTED_SOURCE_CONTRACT",
-    "evidence_policy": "Each leaf needs named exact-SHA witness; model PASS cannot override Git, browser, independent host or reviewer FAIL",
+    "evidence_policy": "Each leaf needs named exact-SHA witness; model PASS cannot override Git, browser, independent host or reviewer FAIL; host-control nodes are EXTERNAL and cannot be satisfied by local model observations",
     "nodes": [
       {
         "id": "P0_GIT_HISTORY",
@@ -213,7 +213,8 @@
           "forged historical register",
           "missing Git object"
         ],
-        "acceptance": "Typed CORA_HISTORY_UNAVAILABLE with safe ZIP source-only path; original history never inferred from fabricated commits"
+        "acceptance": "Typed CORA_HISTORY_UNAVAILABLE with safe ZIP source-only path; original history never inferred from fabricated commits",
+        "scope": "SOURCE"
       },
       {
         "id": "P0_HOST_CI",
@@ -230,7 +231,8 @@
           "unavailable check",
           "unexamined required job"
         ],
-        "acceptance": "All applicable candidate CI required source jobs green on the very same final SHA; missing or failing cannot be compensated"
+        "acceptance": "All applicable candidate CI required source jobs green on the very same final SHA; missing or failing cannot be compensated",
+        "scope": "EXTERNAL"
       },
       {
         "id": "P0_NONPROMOTION",
@@ -247,7 +249,8 @@
           "self-authorized merge",
           "external PASS injected into source report"
         ],
-        "acceptance": "No self-approval, autonomous writes, merge, publication, time estimate or release promotion"
+        "acceptance": "No self-approval, autonomous writes, merge, publication, time estimate or release promotion",
+        "scope": "SOURCE"
       },
       {
         "id": "P1_ZIP_MATRIX",
@@ -263,7 +266,8 @@
           "ZIP classified as original Git",
           "unobserved ancestry classified as available"
         ],
-        "acceptance": "ZIP-safe source inspection and original-Git-only genealogy are explicitly distinguished"
+        "acceptance": "ZIP-safe source inspection and original-Git-only genealogy are explicitly distinguished",
+        "scope": "SOURCE"
       },
       {
         "id": "P1_COCKPIT_NAV",
@@ -282,7 +286,8 @@
           "forged ZIP renders",
           "missing EXPLAIN/REPLAN/PROPOSE_NEXT_CHECK"
         ],
-        "acceptance": "Verified ZIP navigable with all three nonexecuting human-mediated choices; browser test separate from link-model test"
+        "acceptance": "Verified ZIP navigable with all three nonexecuting human-mediated choices; browser test separate from link-model test",
+        "scope": "SOURCE"
       },
       {
         "id": "P1_HOST_READBACK",
@@ -300,7 +305,8 @@
           "missing authentication presented as protected host",
           "green report implies protection"
         ],
-        "acceptance": "Native metadata bound to exact final SHA, explicit BLOCKED_EXTERNAL if branch/reviewer enforcement unavailable"
+        "acceptance": "Native metadata bound to exact final SHA, explicit BLOCKED_EXTERNAL if branch/reviewer enforcement unavailable",
+        "scope": "EXTERNAL"
       },
       {
         "id": "P1_DIAGNOSTICS",
@@ -317,7 +323,8 @@
           "raw not-a-tree-object error shown as source PASS",
           "skipped or nonzero job swallowed"
         ],
-        "acceptance": "Structured classification and inspectable failure, never silent fallback or blanket green"
+        "acceptance": "Structured classification and inspectable failure, never silent fallback or blanket green",
+        "scope": "SOURCE"
       },
       {
         "id": "P1_BEGINNER",
@@ -333,7 +340,8 @@
           "invisible definition",
           "method mode misdescribed as engine execution"
         ],
-        "acceptance": "Two modes and for-beginner entry with accurate runner/ZIP boundaries"
+        "acceptance": "Two modes and for-beginner entry with accurate runner/ZIP boundaries",
+        "scope": "SOURCE"
       },
       {
         "id": "P1_SCOPE",
@@ -354,7 +362,8 @@
           "any missing leaf silently filled",
           "scope-only PASS turned into external approval"
         ],
-        "acceptance": "All P1 source/CI leaves verified, external observations explicitly distinguished"
+        "acceptance": "All P1 source/CI leaves verified, external observations explicitly distinguished",
+        "scope": "SOURCE"
       },
       {
         "id": "G_P0",
@@ -365,7 +374,8 @@
           "P0_HOST_CI",
           "P0_NONPROMOTION"
         ],
-        "acceptance": "P0 source readiness at final HEAD, no skipped failure"
+        "acceptance": "P0 source readiness at final HEAD, no skipped failure",
+        "scope": "SOURCE"
       },
       {
         "id": "G_SOURCE",
@@ -376,7 +386,8 @@
           "P1_SCOPE",
           "G_SOURCE_CANDIDATE"
         ],
-        "acceptance": "Source review candidate only; cannot grant release"
+        "acceptance": "Source review candidate only; cannot grant release",
+        "scope": "SOURCE"
       },
       {
         "id": "G_EXTERNAL",
@@ -388,7 +399,8 @@
           "R6_TARGET",
           "R7_HOST"
         ],
-        "acceptance": "Independent human, target and host gates; not satisfiable by PR alone"
+        "acceptance": "Independent human, target and host gates; not satisfiable by PR alone",
+        "scope": "EXTERNAL"
       }
     ],
     "deferred_p2": [

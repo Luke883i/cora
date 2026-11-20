@@ -346,7 +346,8 @@ class Pr90SelfAuditReticulumTests(unittest.TestCase):
         report = self.assess_cut(self.nodes, "G_EXTERNAL", observations)
         self.assertEqual(report["authorization"], "NONE")
         self.assertNotEqual(report["status"], MODEL)
-        for key in ("R5_HUMAN", "R6_TARGET", "R7_HOST"):
+        for key in ("R5_HUMAN", "R6_TARGET", "R7_HOST",
+                    "P0_HOST_CI", "P1_HOST_READBACK"):
             self.assertEqual(report["states"][key], EXTERNAL)
 
     def test_duplicate_cycle_or_dangling_edges_are_refuted(self):
