@@ -249,7 +249,7 @@ def _proven_test_renames(repo:Path,sha:str,head:dict)->dict[str,str]:
     prior=_tree(repo,parent)
     moved=_tree(repo,source)
     raw=_git(repo,"diff","--name-status","-z","-M100%",
-             parent,source,max_bytes=512*1024).split(b"\\0")
+             parent,source,max_bytes=512*1024).split(bytes((0,)))
     if raw[-1:] == [b""]:
         raw.pop()
     changes={}
@@ -259,8 +259,8 @@ def _proven_test_renames(repo:Path,sha:str,head:dict)->dict[str,str]:
         if not status.startswith("R100") or pos+1>=len(raw):
             raise ValueError("semantic test rename is not a pure Git move")
         old=raw[pos].decode("utf-8");new=raw[pos+1].decode("utf-8");pos+=2
-        if (not re.fullmatch(r"tests/test_[^/]+\\.py",old)
-            or not re.fullmatch(r"tests/test_[^/]+\\.py",new)
+        if (not re.fullmatch(r"tests/test_[^/]+[.]py",old)
+            or not re.fullmatch(r"tests/test_[^/]+[.]py",new)
             or old in changes or new in changes.values()
             or old not in prior or old in moved or new in prior or new not in moved
             or moved[new]!=prior[old] or new not in head):
