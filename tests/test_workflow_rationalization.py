@@ -74,11 +74,11 @@ class WorkflowRationalizationTests(unittest.TestCase):
         self.assertEqual(len({p.name for p in modules}), 61)
         for path in modules:
             with self.subTest(path=path.name):
-                self.assertNotRegex(path.name, r'(?i)(?:^|_)pr\\d+(?=_|\\.|$)')
+                self.assertNotRegex(path.name, r'(?i)(?:^|_)pr\d+(?=_|\.|$)')
         # Falsifiers must be rejected even if discovery returns 61 modules.
         for forged in ('test_pr01.py', 'test_pr87_cockpit.py',
                        'test_continuous_pr14.py'):
-            self.assertRegex(forged, r'(?i)(?:^|_)pr\\d+(?=_|\\.|$)')
+            self.assertRegex(forged, r'(?i)(?:^|_)pr\d+(?=_|\.|$)')
 
     def test_real_git_inbound_and_priviliged_workflows(self):
         with tempfile.TemporaryDirectory() as t:
