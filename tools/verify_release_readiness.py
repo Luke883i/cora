@@ -75,8 +75,12 @@ def inspect_source(root: Path) -> dict:
             "Repository-local code, evidence, and governance remain authoritative")))
     if not (legacy or v2):
         errors.append("PRODUCT_EXPANSION_MISSING")
-    if "**CORA ("+NAME+")**" not in readme:
+    # The H1 is the one product-name expansion; duplicated slogans are not
+    # an independent identity witness and must not be required for a PASS.
+    if readme.count(product_title)!=1:
         errors.append("PRODUCT_FIRST_READ_IDENTITY_MISSING")
+    if "**CORA ("+NAME+")**" in readme:
+        errors.append("PRODUCT_FIRST_READ_DUPLICATION")
     if any(v not in readme for v in ("## First five minutes","## Operating boundaries",
             "docs/RELEASE.md","docs/CONTINUOUS_DEVELOPMENT.md","product","software",
             "repository","cora --help")):
