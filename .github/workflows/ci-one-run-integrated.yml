@@ -88,11 +88,11 @@ jobs:
           python tools/verify_artifact_roles.py --repo .
           python tools/verify_capability_atlas.py --repo .
           python tools/verify_documentation.py --repo .
-      - name: Build comprehensive forensic dossier and repeat original PR36 100k finite model
+      - name: Build scoped comprehensive dossier; PR36 independently owns 100k falsifiers
         run: |
           mkdir -p /tmp/cora-pr37
           cora process-run . --revision HEAD --process full --one-run --profile comprehensive \
-            --model-stress-cases 100000 --output /tmp/cora-pr37/run.json \
+            --output /tmp/cora-pr37/run.json \
             --atlas-json /tmp/cora-pr37/machine.json \
             --atlas-html /tmp/cora-pr37/index.html \
             --evidence-dir /tmp/cora-pr37/evidence
@@ -105,9 +105,11 @@ jobs:
           assert x['registry']['declared_commands'] == 71
           assert x['metrics']['activity_accounted'] == x['metrics']['registered_total']
           assert x['metrics']['individually_executed_cli'] == 0
-          assert x['baseline_pr36']['model_stress']['cases'] == 100000
-          assert x['baseline_pr36']['model_stress']['oracle_disagreements'] == 0
-          assert x['baseline_pr36']['model_stress']['unauthorized_promotions'] == 0
+          # Do not launder PR36's separate 100k result into this source-only dossier.
+          assert x['baseline_pr36']['model_stress'] == {
+            'schema': 'cora-one-run-model-not-run/1', 'status': 'NOT_RUN',
+            'cases': 0, 'reason': 'EXPLICIT_OPT_IN_REQUIRED',
+            'authority': 'NONE', 'external': 'BLOCKED_EXTERNAL'}
           assert x['dod']['source_goal'] == 'DEBT_BLOCKED'
           assert x['product_status'] == 'BLOCKED_EXTERNAL'
           assert x['authorization'] == 'NONE'
