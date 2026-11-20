@@ -210,6 +210,8 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
   diagnostic-unit-discovery:
+    needs: [semantic-lattice]
+    if: ${{ failure() && needs.semantic-lattice.result == 'failure' }}
     runs-on: ubuntu-latest
     timeout-minutes: 50
     outputs:
@@ -271,6 +273,8 @@ jobs:
         run: test "$TEST_STATUS" -eq 0
 
   diagnostic-unit-discovery-313:
+    needs: [semantic-lattice]
+    if: ${{ failure() && needs.semantic-lattice.result == 'failure' }}
     runs-on: ubuntu-latest
     timeout-minutes: 50
     outputs:
