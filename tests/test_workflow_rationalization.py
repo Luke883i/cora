@@ -80,6 +80,29 @@ class WorkflowRationalizationTests(unittest.TestCase):
                        'test_continuous_pr14.py'):
             self.assertRegex(forged, r'(?i)(?:^|_)pr\d+(?=_|\.|$)')
 
+    def test_all_explicit_unittest_patterns_reach_live_modules(self):
+        # Detect the silent-zero-tests failure mode for quoted AND unquoted -p.
+        import fnmatch
+        import re
+        modules = {p.name for p in (ROOT / 'tests').glob('test_*.py')}
+        sources = sorted((ROOT / '.github/workflows').glob('*.yml'))
+        pattern = re.compile(
+            r"""python -m unittest discover -s tests -p\s+(?:'([^']+)'|"([^"]+)"|([^\s]+))""")
+        selectors = []
+        for workflow in sources:
+            for match in pattern.finditer(workflow.read_text(encoding='utf-8')):
+                selected_pattern = next(x for x in match.groups() if x is not None)
+                selected = {n for n in modules if fnmatch.fnmatchcase(n, selected_pattern)}
+                with self.subTest(workflow=workflow.name, pattern=selected_pattern):
+                    self.assertTrue(selected, 'empty CI discovery selector')
+                    self.assertNotRegex(selected_pattern,
+                                        r'(?i)(?:^|_)pr\d+(?=_|\.|$)')
+                selectors.append((workflow.name, selected_pattern, selected))
+        self.assertEqual(len(selectors), 55)
+        for forged in ('test_pr07.py', 'test_pr25_method_synthesis.py',
+                       'test_nonexistent_module.py'):
+            self.assertFalse(any(fnmatch.fnmatchcase(n, forged) for n in modules))
+
     def test_real_git_inbound_and_priviliged_workflows(self):
         with tempfile.TemporaryDirectory() as t:
             repo = create(Path(t), {
