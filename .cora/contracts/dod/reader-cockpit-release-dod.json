@@ -417,6 +417,55 @@
     ],
     "current_evidence_state": "PENDING_EXACT_FINAL_HEAD_VERIFICATION",
     "product_release": "BLOCKED_EXTERNAL",
-    "authorization": "NONE"
+    "authorization": "NONE",
+    "history_input_matrix": {
+      "schema": "cora-pr90-history-source-matrix/1",
+      "single_runtime_enforcer": "src/cora/integrated_run.py:preflight_comprehensive_history",
+      "evidence_boundary": "Declared applicability; no matrix row authenticates host, product behavior, or historical Git provenance.",
+      "modes": [
+        {
+          "id": "ZIP_ARCHIVE",
+          "source": "EXTRACTED_ZIP_OR_ARCHIVE",
+          "comprehensive": "REJECT_TYPED",
+          "allowed": "ZIP_INTAKE_ARCHIVE_INTEGRITY_ONLY",
+          "not_proven": "Git ancestry and source execution; extracted bytes are not original Git objects",
+          "witness": "test_zip_directory_fails_typed_with_safe_fallback"
+        },
+        {
+          "id": "SYNTHETIC_ROOT_GIT",
+          "source": "SYNTHETIC_ONE_COMMIT",
+          "comprehensive": "REJECT_TYPED",
+          "allowed": "GIT_SNAPSHOT_OF_SYNTHETIC_SOURCE_ONLY",
+          "not_proven": "Pre-existing Git lineage or PR genealogy",
+          "witness": "test_single_synthetic_commit_does_not_qualify_history"
+        },
+        {
+          "id": "SHALLOW_GIT",
+          "source": "SHALLOW_CHECKOUT",
+          "comprehensive": "REJECT_TYPED",
+          "allowed": "GIT_READ_OF_PRESENT_OBJECTS_ONLY",
+          "not_proven": "Historical completeness or missing objects",
+          "witness": "test_shallow_clone_explicitly_declassifies_history"
+        },
+        {
+          "id": "FORGED_CORPUS",
+          "source": "TWO_COMMITS_WITH_UNRELATED_CORA_REGISTER",
+          "comprehensive": "REJECT_TYPED",
+          "allowed": "LOCAL_SOURCE_ONLY",
+          "not_proven": "Original corpus ancestry",
+          "witness": "test_fabricated_cora_history_cannot_replace_original_ancestry"
+        },
+        {
+          "id": "FULL_GIT",
+          "source": "ORIGINAL_NONSHALLOW_GIT_OBJECTS_WITH_REQUISITE_LINEAGE",
+          "comprehensive": "ELIGIBLE_FOR_SOURCE_REPLAY",
+          "allowed": "COMPREHENSIVE_SOURCE_REPLAY_WITHOUT_AUTO_EXECUTION",
+          "not_proven": "Independent reviewer, target runtime, protected main, release authority",
+          "witness": "PR90 exact-SHA native integrated-source check"
+        }
+      ],
+      "zip_fallback": "cora zip-intake ORIGINAL.zip validates bounded archive content only; it does not run comprehensive or attest target behavior",
+      "no_unverified_promotion": true
+    }
   }
 }
