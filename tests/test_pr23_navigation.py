@@ -705,8 +705,10 @@ class ProgressiveDocumentationTests(unittest.TestCase):
                     m = mutation(src, "**not a stable API or verified public release**",
                                  "**verified public release and stable API** (" + token + ")")
                 elif family == 9:
-                    m = mutation(src, "**not a coding agent**",
-                                 "**is an autonomous coding agent** (" + token + ")")
+                    # Inject an explicit false authority claim independently of
+                    # README typography. A harmless wording change must not
+                    # invalidate the falsifier before its oracle is exercised.
+                    m = src + "\nCORA is an autonomous coding agent (" + token + ").\n"
                 elif family == 10:
                     m = mutation(src, "The default does not execute arbitrary target tests",
                                  "The default automatically executes untrusted target tests " + token)
