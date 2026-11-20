@@ -80,7 +80,7 @@ do not paste an additional competing instruction.
 
 ### Beginner setup: understand, modify, prove
 
-1. **ChatGPT access:** the supported baseline for *this beta recipe* is **Plus or Edu**, subject to workspace and tool availability; a subscription alone is not proof of GitHub or code-execution entitlements. The local CORA Python CLI itself does **not** require ChatGPT.
+1. **ChatGPT access:** the documented *Project beta recipe* assumes **Pro or Edu**, subject to workspace and tool availability; this is **not** a platform-wide Project minimum or proof of GitHub, code-execution or write entitlements. The local CORA Python CLI does **not** require ChatGPT.
 2. **Authorize reading:** connect GitHub in ChatGPT, allow read access to [Luke883i/cora](https://github.com/Luke883i/cora) and the intended target repository, and confirm both are selectable. Never grant blanket repository access just for the tutorial.
 3. **Authorize writing separately:** to implement a feature, the operator needs a **separate write-capable tool** with explicit permission on their own target repository, e.g. an authorized Codex environment or suitable GitHub write actions. **GitHub connector capabilities vary**: a read-only integration cannot write; an integration offering write actions still requires actual delegated permissions and explicit user authorization. Connection alone never authorizes a commit, push or PR. Do not infer tool support from a plan label. See [OpenAI's GitHub connection instructions](https://help.openai.com/en/articles/11145903-connecting-github-to-chatgpt).
 4. **Create a ChatGPT Project:** paste the canonical prompt below, name the target and goal, and distinguish observation from execution. A Project chat is not a CORA subprocess or an independently authenticated reviewer.
@@ -129,12 +129,10 @@ P23 | Resume by comparing target, SHA, DoD, drift and no-progress tail; follow n
 
 STOP / RESULT
 P24 | Protected host checks, reviewer, merge, release and acceptance are external human decisions. Stop on missing source, permission, oracle or owner.
-P25 | Return compact evidence ledger: TARGET/BASE/HEAD, plan vs observed, agent task packet, DoD states, commands, survivors, next slice, rollback. For a replayed bundle, display its cockpit choices without inventing estimates or approvals. If only METHOD_ONLY, say so.
+P25 | Return compact evidence ledger: TARGET/BASE/HEAD, plan vs observed, agent task packet, DoD states, commands, survivors, next slice, rollback. If only METHOD_ONLY, say so.
 
 Modes: METHOD_ONLY (chat), ENGINE_VERIFIED (real CLI receipt), TARGET_NATIVE (actual target tests), PR_MATERIALIZED (Git readback). None grants merge, release or review authority.
 ```
-
-**Decision cockpit (optional).** After an authorized runner executes `cora verify-process --one-run --chat-bundle`, the returned JSON includes `cockpit` alongside the existing `continuation`. Show the cockpit in the Project chat as three understandable, **non-executing** choices: explain the blocker, recalculate the roadmap with a reason, or propose the next check. Its `what_changed` is derived from the verified bundle's continuation decision, not from an AI-invented timeline. `reported_open_dod_leaves` counts **reported** open leaves, not remaining implementation phases; `remaining_phases_estimate` and `time_estimate` are `null` until independently measured. A Project with no runner must label this `METHOD_ONLY` / `NOT_RUN` and must **not** fabricate a verified cockpit. This projection does not write commits, approve reviewers, execute a roadmap, certify usability, or change the portable ZIP format. It does not relocate the repository anatomy into the Project prompt; consult the repository documentation for its structure.
 
 **Use it in practice:** with only chat/read access, prepare the A0/DoD and task packet, mark software execution `NOT_RUN`, and do not invent a branch. With an authorized runner, collect Git, test and optional CORA-ENGINE receipts before reporting `ENGINE_VERIFIED` or `TARGET_NATIVE`. On a later chat, treat an uploaded bundle as untrusted context and verify it using real tools before choosing the next slice. The bundle records *reported* progress, not automatic continuity or a delegated approval.
 

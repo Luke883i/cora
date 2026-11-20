@@ -127,15 +127,12 @@ def _pr36_ci_owner_contract(documentation: str, integrated: str) -> None:
     assert 'test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"' in block
     required = (
         'PR36 execute original Git one-run methods and render JSON/HTML',
-        'PR36 replay underlying deterministic original source-process receipt',
-        'PR36 verify one-run JSON original source identity and report integrity',
+        'cora verify-process /tmp/cora-one-run.json --repo . --one-run --atlas-json /tmp/cora-one-run-atlas.json --atlas-html /tmp/cora-one-run.html',
         'PR36 assert offline HTML byte-equivalence to verified run',
         'PR36 physical Git DoD mutants and one-run negative tests',
         'PR36 falsify 100k distinct preseeded semantic receipts twice',
         '--model-stress-cases 100000',
-        'assert verify_suite(',
-        'assert verify_one(',
-        'test_pr36_one_run.py',
+        "python -m unittest discover -s tests -p 'test_pr36_one_run.py' -v",
         'cmp /tmp/cora-one-run-100k.json /tmp/cora-one-run-100k-replay.json',
         'a["authorization"]=="NONE"',
         'not a["release_authorized"]',
@@ -167,9 +164,9 @@ class Pr87CiOwnershipTests(unittest.TestCase):
         _pr36_ci_owner_contract(documentation, integrated)
         alterations = [
             ('--model-stress-cases 100000', '--model-stress-cases 0'),
-            ('assert verify_suite(', 'if verify_suite('),
-            ('assert verify_one(', 'if verify_one('),
-            ('test_pr36_one_run.py', 'test_pr35_one_run.py'),
+            ('cora verify-process /tmp/cora-one-run.json --repo . --one-run', ': /tmp/cora-one-run.json'),
+            ('PR36 assert offline HTML byte-equivalence to verified run', 'PR36 bypass offline HTML comparison'),
+            ("python -m unittest discover -s tests -p 'test_pr36_one_run.py' -v", "python -m unittest discover -s tests -p 'test_pr35_one_run.py' -v"),
             ('--cases 100000', '--cases 99999'),
             ('cmp /tmp/cora-one-run-100k.json', ': /tmp/cora-one-run-100k.json'),
             ('if: always()', 'if: false'),
@@ -190,3 +187,19 @@ class Pr87CiOwnershipTests(unittest.TestCase):
                 documentation + '      - name: PR36 execute original Git one-run methods and render JSON/HTML\n',
                 integrated)
         self.assertEqual(len(alterations) + 1, 16)
+
+    def test_single_replay_keeps_original_source_oracle_chain(self):
+        """Static call-graph guard; native PR36 tests prove actual execution."""
+        cli = Path('src/cora/cli.py').read_text()
+        one = Path('src/cora/one_run.py').read_text()
+        suite = Path('src/cora/process_suite.py').read_text()
+        negative = Path('tests/test_pr36_one_run.py').read_text()
+        self.assertIn('verify_one(args.repo,item,', cli)
+        self.assertIn('if not verify_suite(repo, plain):', one)
+        self.assertIn('expected=run_suite(repo,report[', suite)
+        self.assertIn('self.assertTrue(verify_one(ROOT, report, html_page=page))', negative)
+        self.assertIn('self.assertTrue(verify_suite(ROOT, legacy))', negative)
+        for source, anchor in ((cli, 'verify_one(args.repo,item,'),
+                               (one, 'if not verify_suite(repo, plain):'),
+                               (suite, 'expected=run_suite(repo,report[')):
+            self.assertNotIn(anchor, source.replace(anchor, 'FORGED_BYPASS', 1))

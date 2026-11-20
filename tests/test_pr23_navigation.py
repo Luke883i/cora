@@ -156,6 +156,109 @@ class ProgressiveDocumentationTests(unittest.TestCase):
                 self.assertTrue(DOC.verify_multichannel_intro(mutant),
                                 "false negative: " + label)
 
+    def test_readme_mode_map_standard_and_unusual_research_lenses(self):
+        """Source-only editorial gates; no assumption that real beginner used it."""
+        readme = self.readme
+        from tools.verify_documentation import verify_readme_semantics, verify_contract_to_application_readme
+        self.assertEqual(verify_readme_semantics(readme), [])
+        self.assertEqual(verify_contract_to_application_readme(readme), [])
+        self.assertNotIn("**CORA (Continuous Ontological Repository Assurance)**", readme)
+        self.assertLess(readme.index("## Use CORA in a ChatGPT Project"),
+                        readme.index("## Path B — authorized coding agent"))
+        self.assertLess(readme.index("## Path B — authorized coding agent"),
+                        readme.index("## What works today"))
+        candidates = (
+            ("**Engineering evidence for AI-assisted software changes.**", "A self-approving autonomous engineer"),
+            ("Executable outside ChatGPT Project, not a third chat mode.", "ChatGPT Project directly runs code"),
+            ("With no runner, this path is `NOT_RUN`", "Without a runner this is PASS_SCOPED"),
+            ("**does not certify compliance**", "certifies compliance"),
+            ("contradicted receipts", "silent receipts"),
+        )
+        for valid, bad in candidates:
+            with self.subTest(invariant=valid):
+                self.assertIn(valid, readme)
+                forged = readme.replace(valid, bad, 1)
+                self.assertTrue(verify_readme_semantics(forged) or verify_contract_to_application_readme(forged) or DOC.verify_multichannel_intro(forged))
+
+    def test_pr88_multiscale_product_software_repository_adversarial_matrix(self):
+        """9 scopes x 3 false variants + cross-plane controls, not target runs.
+
+        Derived from the contract-first, multiscale and receipt/authority
+        distinctions of From Intent to Evidence, not a normative standard.
+        """
+        check = DOC.verify_readme_multiscale_contract
+        src = self.readme
+        self.assertEqual(check(src), [])
+        matrix = {
+            "GLOBAL_PRODUCT": (
+                "CI green certifies target product", "PASS_SCOPED proves product acceptance",
+                "source receipt approves production readiness"),
+            "GLOBAL_SOFTWARE": (
+                "CORA-ENGINE autonomously implements customer features",
+                "CORA-ENGINE independently writes product features",
+                "CORA-ENGINE automatically creates application code"),
+            "GLOBAL_REPOSITORY": (
+                "Repository CI approves deployment automatically",
+                "Repository CI authorizes release automatically",
+                "Repository CI merges pull requests automatically"),
+            "INTERMEDIATE_PRODUCT": (
+                "A proposed user outcome is completed product acceptance",
+                "A proposed user outcome becomes verified product acceptance",
+                "A proposed user outcome constitutes independent product acceptance"),
+            "INTERMEDIATE_SOFTWARE": (
+                "ChatGPT Project runs CORA-ENGINE inside the chat",
+                "ChatGPT Project executes CORA-ENGINE on an uploaded ZIP",
+                "ChatGPT Project installs CORA-ENGINE without a runner"),
+            "INTERMEDIATE_REPOSITORY": (
+                "CORA source ZIP preserves full original Git history",
+                "CORA source ZIP includes actual Git ancestry",
+                "CORA source ZIP proves authenticated commit history"),
+            "LOCAL_PRODUCT": (
+                "The browser screenshot proves durable database state",
+                "The browser screenshot certifies role-based access",
+                "The browser screenshot authenticates product correctness"),
+            "LOCAL_SOFTWARE": (
+                "A simulated 10k model is a completed browser security test",
+                "A simulated 10k model proves real target execution",
+                "A simulated 10k model certifies native behavior"),
+            "LOCAL_REPOSITORY": (
+                "A Git SHA authenticates an independent reviewer",
+                "A Git SHA certifies the human approver",
+                "A Git SHA approves release authorization"),
+        }
+        insertion_points = {
+            "GLOBAL": "**Why it matters:**",
+            "INTERMEDIATE": "## Path B — authorized coding agent and local CORA-ENGINE",
+            "LOCAL": "**Micro-example — three evidence planes:**",
+        }
+        count = 0
+        for cell, false_claims in matrix.items():
+            plane = cell.split("_", 1)[0]
+            anchor = insertion_points[plane]
+            self.assertIn(anchor, src)
+            for claim in false_claims:
+                with self.subTest(cell=cell, claim=claim):
+                    mutant = src.replace(anchor, anchor + "\n\n" + claim + ".", 1)
+                    self.assertIn("readme-multiscale-false-promotion:" + cell,
+                                  check(mutant))
+                    count += 1
+        self.assertEqual(count, 27)
+        # Contradictions in two independent planes must NOT cancel each other.
+        for a, b in (("GLOBAL_PRODUCT", "LOCAL_REPOSITORY"),
+                     ("INTERMEDIATE_SOFTWARE", "LOCAL_PRODUCT"),
+                     ("GLOBAL_REPOSITORY", "INTERMEDIATE_PRODUCT")):
+            mutant = src + "\n" + matrix[a][0] + ". " + matrix[b][0] + ".\n"
+            findings = check(mutant)
+            self.assertIn("readme-multiscale-false-promotion:" + a, findings)
+            self.assertIn("readme-multiscale-false-promotion:" + b, findings)
+        # Harmless style changes and preserved uncertainty are accepted.
+        equivalent = src.replace("**Why it matters:**", "*Why it matters:*", 1)
+        self.assertEqual(check(equivalent), [])
+        for cell, required in DOC.README_MULTISCALE_REQUIRED.items():
+            with self.subTest(omission=cell):
+                changed = src.replace(required[-1], "UNVERIFIED_OMISSION")
+                self.assertIn("readme-multiscale-omission:" + cell, check(changed))
+
     def test_engineering_method_semantic_falsifiers(self):
         """Source citations and scientific/quantitative boundaries, not mere spellings."""
         self.assertEqual(DOC.verify_development_method_readme(self.readme), [])
@@ -188,7 +291,7 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         for label, old, new in cases:
             with self.subTest(label=label):
                 self.assertIn(old, tail)
-                mutant = self.readme[:heading] + tail.replace(old, new, 1)
+                mutant = self.readme[:heading] + tail.replace(old, new)  # all occurrences; no unchanged duplicate witness
                 self.assertTrue(DOC.verify_development_method_readme(mutant),
                                 "false negative: " + label)
         benign = self.readme.replace(
@@ -241,6 +344,35 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         # Metadata-independent formatting edits must not be called evidence loss.
         self.assertEqual(DOC.verify_compact_document_bridge(guide + "\n", index, arch), [])
 
+    def test_pr88_project_runner_and_human_boundaries_resist_false_promotion(self):
+        """Source-only boundary mutants: not an actual ChatGPT user/runner test."""
+        from tools.verify_documentation import (
+            verify_project_first_readme, verify_project_zip_lifecycle,
+        )
+        readme = self.readme
+        adoption = (ROOT / "docs/AGENT_ADOPTION.md").read_text("utf-8")
+        guide = (ROOT / "docs/GETTING_STARTED.md").read_text("utf-8")
+        self.assertEqual(verify_project_first_readme(readme), [])
+        self.assertEqual(verify_project_zip_lifecycle(readme, adoption, guide), [])
+        wrong = (
+            ("NO runner: METHOD_ONLY / NOT_RUN", "NO runner: PASS_SCOPED", "readme"),
+            ("CORA source ZIP = optional read-only reference (no Git history)", "CORA ZIP is an executed engine with full Git history", "readme"),
+            ("WITH separately authorized coding agent + runner", "WITH a chat message", "readme"),
+            ("In Project chat this is *a proposal*", "Project chat creates a real commit", "readme"),
+            ("Without an authorized runner", "After asking in chat", "readme"),
+            ("**read access**", "**automatic write permission**", "readme"),
+        )
+        for before, after, surface in wrong:
+            self.assertIn(before, readme)
+            candidate = readme.replace(before, after, 1)
+            with self.subTest(forgery=before):
+                self.assertTrue(verify_project_first_readme(candidate)
+                                or verify_project_zip_lifecycle(candidate, adoption, guide))
+        # A benign reader-facing editorial paraphrase is not a source authority drift.
+        equivalent = readme.replace("**Why it matters:** patches are not proof",
+                                    "**Why it matters:** a patch is not proof", 1)
+        self.assertEqual(verify_project_first_readme(equivalent), [])
+
     def test_pr60_machine_reader_and_current_document_budget(self):
         """Machine-observable proxies only; NOT independent human-reader acceptance."""
         from pathlib import Path
@@ -254,9 +386,9 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         self.assertIn("tests or counterexamples", intro)
         self.assertIn("the work still needed", intro)
         # Editorial budgets are review proxies, never evidence of comprehension.
-        self.assertLessEqual(len(self.readme.split()), 1750)
+        self.assertLessEqual(len(self.readme.split()), 2100)
         self.assertLessEqual(len(release.split()), 1900)
-        self.assertLessEqual(len(arch.split()), 2300)
+        self.assertLessEqual(len(arch.split()), 2800)
         self.assertNotIn("## PR32 —", release)
         self.assertNotIn("## PR34 —", release)
         self.assertNotIn("## PR40 —", release)
@@ -532,7 +664,10 @@ class ProgressiveDocumentationTests(unittest.TestCase):
             elif family == 5:
                 r = mutation(r, "source/UX verification", content)
             elif family == 6:
-                r = mutation(r, "unknown consumers", content)
+                # Defeat every redundant copy of this obligation; one intact
+                # disclosure must still prevent a false-negative promotion.
+                self.assertIn("unknown consumers", r)
+                r = r.replace("unknown consumers", content)
             elif family == 7:
                 g = mutation(g, "SQLite with versioned schema migrations", content)
             elif family == 8:
@@ -583,7 +718,7 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         oracle = DOC.verify_project_zip_lifecycle
         self.assertEqual(oracle(self.readme, adoption, guide), [])
         targets = (
-            ("README", "GitHub repo + CORA main ZIP/prompt -> ChatGPT Project",
+            ("README", "ChatGPT Project = canonical prompt + authorized attachments, not a runner",
              "a screenshot proves project installation"),
             ("README", "**New repository**", "**Automatically provision production**"),
             ("README", "**Code → Download ZIP**", "**Deploy CORA ZIP**"),
@@ -676,8 +811,9 @@ class ProgressiveDocumentationTests(unittest.TestCase):
                     m = mutation(src, "**not a stable API or verified public release**",
                                  "**verified public release and stable API** (" + token + ")")
                 elif family == 9:
-                    m = mutation(src, "**not a coding agent**",
-                                 "**is an autonomous coding agent** (" + token + ")")
+                    # Forge a false claim independently of README wording.
+                    # An existing disclaimer must not be a fragile anchor.
+                    m = src + "\nCORA is an autonomous coding agent (" + token + ").\n"
                 elif family == 10:
                     m = mutation(src, "The default does not execute arbitrary target tests",
                                  "The default automatically executes untrusted target tests " + token)

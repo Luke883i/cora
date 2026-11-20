@@ -206,8 +206,12 @@ def audit_contract(root: Path, *, readme_override: str | None = None) -> list[st
           and body.startswith(title))
     if not (legacy or v2):
         errors.append('full-product-name-missing')
-    if '**CORA (Continuous Ontological Repository Assurance)**' not in readme:
+    # The H1 is the sole canonical acronym expansion. Requiring a second
+    # identical expansion in the subtitle made the reader-facing README worse.
+    if readme.count(title) != 1:
         errors.append('first-read-acronym-expansion-missing')
+    if '**CORA (Continuous Ontological Repository Assurance)**' in readme:
+        errors.append('first-read-duplicated-product-name')
     if not (legacy or v2):
         errors.append('missing-title')
     for heading in ('## First five minutes', '## What works', '## Operating boundaries', '## Engineering map'):

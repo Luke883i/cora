@@ -1,4 +1,7 @@
 name: CI | PR16 semantic assurance lattice
+concurrency:
+  group: cora-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 on:
   pull_request:
   push:
@@ -207,6 +210,8 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
   diagnostic-unit-discovery:
+    needs: [semantic-lattice]
+    if: ${{ failure() && needs.semantic-lattice.result == 'failure' }}
     runs-on: ubuntu-latest
     timeout-minutes: 50
     outputs:
@@ -268,6 +273,8 @@ jobs:
         run: test "$TEST_STATUS" -eq 0
 
   diagnostic-unit-discovery-313:
+    needs: [semantic-lattice]
+    if: ${{ failure() && needs.semantic-lattice.result == 'failure' }}
     runs-on: ubuntu-latest
     timeout-minutes: 50
     outputs:

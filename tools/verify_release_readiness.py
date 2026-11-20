@@ -75,8 +75,12 @@ def inspect_source(root: Path) -> dict:
             "Repository-local code, evidence, and governance remain authoritative")))
     if not (legacy or v2):
         errors.append("PRODUCT_EXPANSION_MISSING")
-    if "**CORA ("+NAME+")**" not in readme:
+    # The H1 is the one product-name expansion; duplicated slogans are not
+    # an independent identity witness and must not be required for a PASS.
+    if readme.count(product_title)!=1:
         errors.append("PRODUCT_FIRST_READ_IDENTITY_MISSING")
+    if "**CORA ("+NAME+")**" in readme:
+        errors.append("PRODUCT_FIRST_READ_DUPLICATION")
     if any(v not in readme for v in ("## First five minutes","## Operating boundaries",
             "docs/RELEASE.md","docs/CONTINUOUS_DEVELOPMENT.md","product","software",
             "repository","cora --help")):
@@ -168,6 +172,11 @@ def inspect_source(root: Path) -> dict:
             or (chr(92) * 2 + "n") in note_line
             or re.search(r"printf 'CORA [0-9]+[.][0-9]+[.][0-9]+a[0-9]+", note_workflow)):
         errors.append("REVIEW_NOTE_VERSION_OR_SHA_DRIFT")
+    # README wording may change; negative claims are never made equivalent.
+    # Check the whole document, not just the CTO panel or an historical slogan.
+    if re.search(r"\b(?:enterprise[- ](?:ready|approved|certified)|release[- ]approved)\b",
+                 txt("README.md"), flags=re.I):
+        errors.append("CLOSURE_BOUNDARY_DRIFT:README.md")
     for rel in ("docs/archive/decisions/ADR-PR15.md","docs/RELEASE.md","docs/ARCHITECTURE.md"):
         if NAME not in txt(rel):
             errors.append("NAME_NOT_CONSISTENT:"+rel)
@@ -178,7 +187,7 @@ def inspect_source(root: Path) -> dict:
     # self-issued enterprise certificate or host/release authority.
     boundaries = {
         "README.md": (
-            "**Enterprise evaluation candidate, not enterprise-qualified.**",
+            "## Enterprise evaluation boundary",
             "**Product:**", "**Software:**", "**Repository:**",
             "Formal three-boundary DoD", "NOT_RUN", "BLOCKED_EXTERNAL"),
         "GOVERNANCE.md": (

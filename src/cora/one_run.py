@@ -39,6 +39,9 @@ STATUS_MAP = {
 }
 OUTCOMES = {"EXECUTED_SCOPED", "REUSED_SCOPED", "FAIL", "BLOCKED",
             "NOT_RUN", "RUN_REPORTED_UNATTESTED"}
+# Static AST attribution is deliberately narrow: a dynamic dispatch refactor
+# must fail closed, not silently produce an apparently complete owner inventory.
+# The actual dispatch remains the single source; no duplicate method-owner list.
 def _method_files() -> dict[str, str]:
     """Single source of owner identity: actual run_suite callable dispatch."""
     tables = [n.value for n in ast.walk(ast.parse(inspect.getsource(run_suite)))

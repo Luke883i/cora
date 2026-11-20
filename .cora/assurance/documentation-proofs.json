@@ -52,7 +52,7 @@
       "id": "S03",
       "predicate": "agent-boundary",
       "readme_section": "ROOT",
-      "readme_phrase": "helps developers and AI coding assistants inspect a Git repository",
+      "readme_phrase": "CORA is not a coding agent",
       "evidence": [
         {
           "path": "README.md",
@@ -72,7 +72,7 @@
     {
       "id": "S04",
       "predicate": "first-use",
-      "readme_section": "## First five minutes — Quickstart",
+      "readme_section": "## First five minutes — choose your path",
       "readme_phrase": "cora verify-ledger /tmp/cora-ledger.json --repo .",
       "evidence": [
         {
@@ -93,7 +93,7 @@
     {
       "id": "S05",
       "predicate": "agent-adoption",
-      "readme_section": "## Use CORA with an AI coding assistant",
+      "readme_section": "## Path B — authorized coding agent and local CORA-ENGINE",
       "readme_phrase": "--contextual --intent",
       "evidence": [
         {
@@ -177,7 +177,7 @@
     {
       "id": "S09",
       "predicate": "precedence",
-      "readme_section": "## Use CORA with an AI coding assistant",
+      "readme_section": "## Path B — authorized coding agent and local CORA-ENGINE",
       "readme_phrase": "[R1–R4 DoD](docs/DOD_PR20_CONVERGENCE.md)",
       "evidence": [
         {
@@ -252,7 +252,7 @@
     {
       "id": "S12",
       "predicate": "intent-replay",
-      "readme_section": "## Use CORA with an AI coding assistant",
+      "readme_section": "## Path B — authorized coding agent and local CORA-ENGINE",
       "readme_phrase": "The same intent is required for replay",
       "evidence": [
         {
@@ -315,7 +315,7 @@
     {
       "id": "S15",
       "predicate": "negative-oracles",
-      "readme_section": "## Use CORA with an AI coding assistant",
+      "readme_section": "## Path B — authorized coding agent and local CORA-ENGINE",
       "readme_phrase": "Run real tests and obtain independent review separately.",
       "evidence": [
         {

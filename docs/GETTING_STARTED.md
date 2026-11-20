@@ -12,6 +12,16 @@ coding agent, a sandbox attestation, a merge approver or a product certificate.
 Start from an authorized checkout with Python 3.11+ and Git. Use an output
 directory outside the repository (`/tmp` below is a Unix example).
 
+## Choose your path before installing anything
+
+**Path A — ChatGPT Project / no runner:** create a Project, paste the [single canonical method prompt](AGENT_ADOPTION.md#chatgpt-project-beta-adapter) into its instructions, and attach CORA's source ZIP and an authorized target source snapshot if needed. Ask for an A0 goal, backward AND-DoD conditions, counterexamples and the next reversible choice. ChatGPT may explain, plan or draft a task packet; without connected and authorized execution tools, **no code, test, commit or verified cockpit has been executed**. Report `METHOD_ONLY` / `NOT_RUN`.
+
+**Path B — authorized coding and verification:** use separate target and CORA Git checkouts, Python 3.11+, Git and a runner. For example: `git clone https://github.com/Luke883i/cora.git`, `cd cora`, `python -m pip install -e .`. A separately authorized coding agent can change *the target*; CORA-ENGINE, if actually executed, inspects its exact Git SHA. Run target-native tests separately, then replay CORA receipts. Do not paste secrets into Project files; on Windows replace Unix `/tmp` examples with a writable directory. A GitHub read connection alone cannot commit, run target tests or approve a PR.
+
+**Vocabulary:** a *repository* is a Git-tracked project folder; a *commit SHA* names its exact revision; a *pull request* is a proposed change requiring review; a *DoD* lists acceptance obligations; a *falsifier* is a test designed to uncover failure; `PASS_SCOPED` is a bounded observation, not approval.
+
+**From Intent to Evidence — a research interpretation, not an additional product contract.** A non-specialist may coordinate requirements, competing models, falsifiers and small reversible changes with an AI assistant. That is a hypothesis about the *coordination* burden, not demonstrated substitution for expert validation. Keep distinct: (1) the requested human outcome, (2) a requirements/architecture proposal, (3) actually executed native tests or observations, and (4) an accountable human decision. One-Run and the verified cockpit do not merge those evidence levels. Comparative benefit over a strong checklist and equally capable agent remains unmeasured.
+
 ## GitHub and ChatGPT Project from zero
 
 **1. Create the target repository.** Open [GitHub](https://github.com), sign in, choose
@@ -114,6 +124,14 @@ avoid retaining multiple unlabelled stale attachments as competing current
 truth. A missing runner means `NOT_RUN`; no file attachment can create a
 Git execution or authenticate an external reviewer. Review secrets and
 sharing permissions before transfer.
+
+### Read the decision cockpit without surrendering control
+
+A verified continuation bundle can expose a **derived cockpit** when the installed CORA revision supports that capability. Its status is an observation of **reported** work, not a verified user-interface study or an external certification. It should show: **what changed**, **why the roadmap was recalculated**, the **first unresolved DoD obligation**, and three non-executing choices — **explain**, **recalculate**, or **propose one next check**. Recalculation is warranted when the goal changes, the Git revision changes, an essential proof is missing, or repeated iterations produce no new evidence. The AI may simplify the explanation; it cannot rewrite the original receipt.
+
+A count of *reported open DoD leaves* is **not** the number of remaining phases. CORA must not invent calendar durations or hours from an unmeasured dependency graph; expect an unknown estimate (`null`) until a real method and observations justify one. No button or suggested choice may silently approve a PR, commit code or execute target tests. If the runner is unavailable, there is no verified cockpit: request a clearly labeled planning-only summary instead.
+
+**Sample questions to ask the chat:** “What did the verified ZIP actually prove?” “Why does the next slice differ from the previous plan?” “What is my single simplest choice now?” “What would disprove this proposed PASS?”
 
 ### Worked example: develop an issue webapp by evidence
 

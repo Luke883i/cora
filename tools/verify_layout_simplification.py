@@ -247,6 +247,57 @@ def _rewrite_original_json(value):
     return value
 
 
+def _validate_current_documentation_proofs(historical:dict, current:dict,
+                                           readme:str)->None:
+    """Preserve PR30 migration facts while admitting source-bound reader edits.
+
+    Only binding coordinates for the six intentionally reworded README claims may
+    move. IDs, predicates, roles, witness files and falsifiers remain immutable.
+    An edited reference must resolve to actual bytes in the same Git revision.
+    """
+    failure="unauthorized postmigration S01-S18 proof edit"
+    old=historical.get("nodes") if isinstance(historical,dict) else None
+    new=current.get("nodes") if isinstance(current,dict) else None
+    if (not isinstance(old,list) or not isinstance(new,list) or len(old)!=18 or
+        len(new)!=18 or set(historical)!=set(current)):
+        raise ValueError(failure)
+    mutable={"S03","S04","S05","S09","S12","S15"}
+    for before,after in zip(old,new):
+        if (not isinstance(before,dict) or not isinstance(after,dict) or
+            before.get("id")!=after.get("id") or set(before)!=set(after)):
+            raise ValueError(failure)
+        label=before["id"]
+        if label not in mutable:
+            if before!=after:
+                raise ValueError(failure)
+            continue
+        for key in before:
+            if key not in ("readme_section","readme_phrase") and before[key]!=after[key]:
+                raise ValueError(failure)
+        section=after.get("readme_section")
+        phrase=after.get("readme_phrase")
+        if not isinstance(section,str) or not isinstance(phrase,str) or not phrase:
+            raise ValueError(failure)
+        if label=="S03":
+            if section!="ROOT" or phrase!="CORA is not a coding agent":
+                raise ValueError(failure)
+        elif label=="S04":
+            if not section.startswith("## First five minutes") or phrase!=before["readme_phrase"]:
+                raise ValueError(failure)
+        else:
+            if (not section.startswith("## Path B — authorized coding agent") or
+                    phrase!=before["readme_phrase"]):
+                raise ValueError(failure)
+        if section=="ROOT":
+            source=readme.split("\n## ",1)[0]
+        else:
+            if readme.splitlines().count(section)!=1:
+                raise ValueError(failure)
+            source=readme.split(section+"\n",1)[1].split("\n## ",1)[0]
+        if phrase not in source:
+            raise ValueError(failure)
+
+
 def _validate_theme(repo:Path,sha:str,baseline:dict,head:dict,manifest:dict)->dict:
     source_tree=_tree(repo,THEMATIC_BASE)
     ancestor=subprocess.run(["git","-C",str(repo),"merge-base","--is-ancestor",
@@ -340,8 +391,8 @@ def _validate_theme(repo:Path,sha:str,baseline:dict,head:dict,manifest:dict)->di
                 if len(anchor)!=1 or anchor[0].get("readme_section")!="## First five minutes":
                     raise ValueError("thematic source S04 identity drift")
                 anchor[0]["readme_section"]="## First five minutes — Quickstart"
-                if observed!=original:
-                    raise ValueError("unauthorized postmigration S01-S18 proof edit")
+                _validate_current_documentation_proofs(
+                    original,observed,_read(repo,sha,"README.md").decode("utf-8"))
             elif original!=observed:
                 raise ValueError("thematic structural rewrite introduced semantic drift: "+old)
             rewritten+=1

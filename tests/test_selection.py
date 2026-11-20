@@ -178,4 +178,125 @@ class SelectionPolicyProperties(unittest.TestCase):
         x=stress_selection(cases=333)
         self.assertEqual(x['authorized_destructive_changes'],0)
 
+
+
+class CiSchedulingSourceContract(unittest.TestCase):
+    """Fail-closed CI owner/source contract; runner time needs external readback."""
+
+    @staticmethod
+    def _workflow_sources():
+        root = Path(__file__).resolve().parents[1] / '.github' / 'workflows'
+        return {p.name: p.read_text('utf-8') for p in root.glob('*.yml')}
+
+    @staticmethod
+    def _issues(workflows):
+        errors = []
+        cancel = "cancel-in-progress: ${{ github.event_name == 'pull_request' }}"
+        if len(workflows) != 14:
+            errors.append('workflow-owner-count-drift')
+        seen = set()
+        for path, source in sorted(workflows.items()):
+            name = source.splitlines()[0] if source else ''
+            if not name.startswith('name: CI | ') or name in seen:
+                errors.append(path + ':owner-identity')
+            seen.add(name)
+            if source.count('concurrency:') != 1 or cancel not in source:
+                errors.append(path + ':pr-supersession-or-main-boundary')
+            if '  pull_request:' not in source:
+                errors.append(path + ':missing-pr-entry')
+            if __import__('re').search(r'(?m)^\s+paths(?:-ignore)?:', source):
+                errors.append(path + ':unproven-impact-selection')
+        semantic = workflows.get('ci-semantic-lattice.yml', '')
+        for job in ('diagnostic-unit-discovery', 'diagnostic-unit-discovery-313'):
+            conditional = ("  " + job + ":\n    needs: [semantic-lattice]\n"
+                           "    if: ${{ failure() && needs.semantic-lattice.result == 'failure' }}")
+            if conditional not in semantic:
+                errors.append(job + ':duplicate-unconditional-unit-suite')
+        if ("coverage run --branch --source=src/cora -m unittest discover -s tests -q"
+                not in semantic or "python-version: ['3.11', '3.13']" not in semantic):
+            errors.append('semantic-lattice:missing-native-suite')
+        one = workflows.get('ci-one-run-integrated.yml', '')
+        parts = one.split('  pr36-native-owner:\n', 1)
+        block = parts[1].split('  diagnose-comprehensive:\n', 1)[0] if len(parts) == 2 else ''
+        required = ('cora verify-process /tmp/cora-one-run.json --repo . --one-run --atlas-json /tmp/cora-one-run-atlas.json --atlas-html /tmp/cora-one-run.html',
+                    '--model-stress-cases 100000',
+                    "python -m unittest discover -s tests -p 'test_pr36_one_run.py' -v",
+                    'cmp /tmp/cora-one-run-100k.json /tmp/cora-one-run-100k-replay.json',
+                    'r["unauthorized_promotions"]==0',
+                    'not a["release_authorized"]',
+                    "python-version: ['3.11', '3.13']")
+        if any(x not in block for x in required):
+            errors.append('pr36:required-original-git-coverage-lost')
+        if ('PR36 replay underlying deterministic original source-process receipt' in block
+                or 'PR36 verify one-run JSON original source identity' in block):
+            errors.append('pr36:redundant-direct-replay')
+        diagnostic = (
+            "  diagnose-comprehensive:\n"
+            "    name: Diagnose comprehensive one-run source output\n"
+            "    needs: [integrated-source, pr36-native-owner]\n"
+            "    if: ${{ failure() && (needs['integrated-source'].result == 'failure' || "
+            "needs['pr36-native-owner'].result == 'failure') }}")
+        if diagnostic not in one:
+            errors.append('pr37:unconditional-comprehensive-diagnostic')
+        if 'PR36 execute original Git one-run methods' in workflows.get('ci-documentation.yml', ''):
+            errors.append('documentation:duplicate-pr36-owner')
+        selection = workflows.get('ci-selection.yml', '')
+        if (selection.count('cora stress-selection --seed 883 --cases 1000000') != 2
+                or 'cmp /tmp/selection-a.json /tmp/selection-b.json' not in selection):
+            errors.append('selection:dual-1m-source-replay-degraded')
+        return sorted(errors)
+
+    def test_all_required_ci_owners_and_impact_unknown_fail_closed(self):
+        self.assertEqual(self._issues(self._workflow_sources()), [])
+
+    def test_nine_real_ci_config_counterexamples(self):
+        base = self._workflow_sources()
+        mutants = (
+            ('ci-documentation.yml', 'concurrency:', 'missing-ci-owner-key:'),
+            ('ci-documentation.yml',
+             "cancel-in-progress: ${{ github.event_name == 'pull_request' }}",
+             'cancel-in-progress: true'),
+            ('ci-documentation.yml', '  pull_request:',
+             '  pull_request:\n    paths-ignore: [README.md]'),
+            ('ci-semantic-lattice.yml', '    needs: [semantic-lattice]', '    needs: []'),
+            ('ci-semantic-lattice.yml',
+             "    if: ${{ failure() && needs.semantic-lattice.result == 'failure' }}",
+             '    if: ${{ always() }}'),
+            ('ci-one-run-integrated.yml',
+             'cora process-run . --revision HEAD --process full --one-run --output /tmp/cora-one-run.json --atlas-json /tmp/cora-one-run-atlas.json --atlas-html /tmp/cora-one-run.html --model-stress-cases 100000',
+             'cora process-run . --revision HEAD --process full --one-run --output /tmp/cora-one-run.json --atlas-json /tmp/cora-one-run-atlas.json --atlas-html /tmp/cora-one-run.html --model-stress-cases 0'),
+            ('ci-one-run-integrated.yml',
+             'cora verify-process /tmp/cora-one-run.json --repo . --one-run',
+             'echo forged-PASS'),
+            ('ci-one-run-integrated.yml',
+             'cora verify-process /tmp/cora-one-run.json --repo . --one-run --atlas-json /tmp/cora-one-run-atlas.json --atlas-html /tmp/cora-one-run.html',
+             'cora verify-process /tmp/cora-one-run.json --repo . --one-run --atlas-json /tmp/cora-one-run-atlas.json --atlas-html /tmp/forged.html'),
+            ('ci-selection.yml', 'cora stress-selection --seed 883 --cases 1000000',
+             'echo finite model NOT_RUN'),
+        )
+        for path, old, altered in mutants:
+            with self.subTest(path=path, altered=altered):
+                self.assertIn(old, base[path])
+                changed = dict(base)
+                changed[path] = base[path].replace(old, altered, 1)
+                self.assertTrue(self._issues(changed))
+        self.assertEqual(len(mutants), 9)
+
+    def test_source_cost_metrics_not_claimed_as_runner_benchmark(self):
+        paths = self._workflow_sources()
+        summary = {
+            'owners': len(paths),
+            'pr_supersession_configured': sum(
+                "cancel-in-progress: ${{ github.event_name == 'pull_request' }}" in s
+                for s in paths.values()),
+            'pr16_suite_source_invocations': paths['ci-semantic-lattice.yml'].count(
+                'coverage run --branch --source=src/cora -m unittest discover -s tests -q'),
+            'pr16_diagnostic_runs_on_green': 0,
+            'pr36_redundant_direct_replays': 0,
+            'scope': 'SOURCE_ONLY_NOT_RUNNER_TIME',
+        }
+        self.assertEqual(summary['pr_supersession_configured'], 14)
+        self.assertEqual(summary['pr16_suite_source_invocations'], 3)
+        print('CORA_CI_OWNER_COST ' + json.dumps(summary, sort_keys=True))
+
 if __name__=='__main__':unittest.main()

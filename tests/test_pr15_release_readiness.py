@@ -60,8 +60,8 @@ class ReadinessTest(unittest.TestCase):
 
     def test_six_live_source_owners_reject_removed_closeout_obligations(self):
         masks = (
-            ("README.md", "Enterprise evaluation candidate",
-             "Enterprise approved", "CLOSURE_BOUNDARY_DRIFT:README.md"),
+            ("README.md", "## Enterprise evaluation boundary",
+             "## Enterprise approved", "CLOSURE_BOUNDARY_DRIFT:README.md"),
             ("GOVERNANCE.md", "SOURCE_SCOPE_DEFINED", "PRODUCT_APPROVED",
              "CLOSURE_BOUNDARY_DRIFT:GOVERNANCE.md"),
             ("GOVERNANCE.md", "IMPLEMENTED_SOURCE_SCOPED", "UNIVERSAL_RUNTIME_PASS",
@@ -97,6 +97,18 @@ class ReadinessTest(unittest.TestCase):
         report = inspect_source(self.repo)
         self.assertEqual(report["source_status"], "PASS_SCOPED")
 
+    def test_readme_equivalent_disclosure_and_false_approval(self):
+        """A new reader heading may replace PR-era wording, never approval."""
+        self.assertEqual(inspect_source(self.repo)["source_status"], "PASS_SCOPED")
+        p = self.repo / "README.md"
+        old = p.read_text("utf-8")
+        self.assertIn("## Enterprise evaluation boundary", old)
+        for forged in ("Enterprise approved", "enterprise-approved", "enterprise certified",
+                       "enterprise-ready", "release-approved"):
+            with self.subTest(forged=forged):
+                p.write_text(old + "\n" + forged + "\n", encoding="utf-8")
+                self.deny("CLOSURE_BOUNDARY_DRIFT:README.md")
+
     def test_source_closure_cannot_hide_other_blockers_or_forged_authority(self):
         baseline = inspect_source(self.repo)
         self.assertEqual(baseline["object_closeout"]["closure_status"],
@@ -129,6 +141,28 @@ class ReadinessTest(unittest.TestCase):
                              "BLOCKED_SOURCE")
         finally:
             path.write_text(original, encoding="utf-8")
+
+    def test_current_first_read_identity_requires_one_h1_without_duplicate(self):
+        report=inspect_source(self.repo)
+        self.assertEqual(report["source_status"],"PASS_SCOPED",report["source_errors"])
+        title="# CORA — Continuous Ontological Repository Assurance"
+        text=(self.repo/"README.md").read_text("utf-8")
+        self.assertEqual(text.count(title),1)
+        for modified,expected in (
+            (text.replace(title,"# CORA — unexplained acronym",1),
+             "PRODUCT_FIRST_READ_IDENTITY_MISSING"),
+            (text.replace("**Engineering evidence for AI-assisted software changes.**",
+                 "**CORA (Continuous Ontological Repository Assurance)** — "
+                 "**Engineering evidence for AI-assisted software changes.**",1),
+             "PRODUCT_FIRST_READ_DUPLICATION"),
+            (text.replace(title,title+"\n"+title,1),
+             "PRODUCT_FIRST_READ_IDENTITY_MISSING"),
+        ):
+            (self.repo/"README.md").write_text(modified,encoding="utf-8")
+            try:
+                self.deny(expected)
+            finally:
+                (self.repo/"README.md").write_text(text,encoding="utf-8")
 
     def test_title_counterexample(self):
         self.swap("README.md","Continuous Ontological Repository Assurance","Code Ontology Repo Audit")
