@@ -35,6 +35,21 @@ class RepositoryContract(unittest.TestCase):
         no_header = readme.replace('<!-- programme-header:v2 -->', '<!-- unsigned-banner -->', 1)
         self.assertIn('full-product-name-missing', audit_contract(ROOT, readme_override=no_header))
 
+    def test_single_acronym_expansion_and_nonduplicated_subtitle(self):
+        readme = (ROOT / 'README.md').read_text('utf-8')
+        title = '# CORA — Continuous Ontological Repository Assurance'
+        self.assertEqual(readme.count(title), 1)
+        self.assertNotIn('**CORA (Continuous Ontological Repository Assurance)**', readme)
+        self.assertEqual(audit_contract(ROOT), [])
+        missing = readme.replace(title, '# CORA — unexpanded abbreviation', 1)
+        self.assertIn('first-read-acronym-expansion-missing',
+                      audit_contract(ROOT, readme_override=missing))
+        duplicated = readme.replace('**Engineering evidence for AI-assisted software changes.**',
+                                    '**CORA (Continuous Ontological Repository Assurance)** — '
+                                    '**Engineering evidence for AI-assisted software changes.**', 1)
+        self.assertIn('first-read-duplicated-product-name',
+                      audit_contract(ROOT, readme_override=duplicated))
+
     def test_readme_missing_limit_is_detected(self):
         doc = (ROOT / 'README.md').read_text('utf-8')
         changed = doc.replace('## Operating boundaries', '## Undocumented')
