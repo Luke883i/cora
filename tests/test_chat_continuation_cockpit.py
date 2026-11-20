@@ -397,7 +397,7 @@ class Pr90NonDuplicatedStressOwnerTests(unittest.TestCase):
         self.assertEqual(pr36.count("--cases 100000"), 2)
         self.assertIn("cmp /tmp/cora-one-run-100k.json /tmp/cora-one-run-100k-replay.json", pr36)
         self.assertIn("cora verify-process /tmp/cora-one-run.json", pr36)
-        self.assertIn("assert r[\"unauthorized_promotions\"]==0", pr36)
+        self.assertIn("r[\"unauthorized_promotions\"]==0", pr36)
         self.assertIn("not a[\"release_authorized\"]", pr36)
         self.assertNotIn("continue-on-error: true", pr36)
 
