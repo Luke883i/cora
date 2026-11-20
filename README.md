@@ -9,9 +9,9 @@
 
 **CORA helps plan software changes, verify Git evidence and expose gaps.** It combines a conversational method with a local Python 3.11+ assurance engine.
 
-**CORA is not a coding agent**, a ChatGPT plug-in, an automatic runner or a release approver. It produces **reproducible pre/post-merge review reports** describing **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**.
+**CORA is not a coding agent**, a ChatGPT plug-in, an automatic runner or a release approver. It can **produce reproducible pre/post-merge review reports** describing **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**.
 
-**Why it matters:** patches are not proof; readers need decisions, tests and unresolved risks.
+**Why it matters:** patches are not proof.
 
 ```text
 TARGET Git repository = application source of truth
@@ -43,7 +43,7 @@ ChatGPT Project = canonical prompt + authorized attachments, not a runner
 - **Authorized work:** the agent edits, the runner tests; CORA reports gaps.
 
 
-**Choose A:** follow five ChatGPT steps below; planning needs no installation. **Choose B:** Git, Python and permission required. These are terminal commands:
+**Choose A:** five ChatGPT steps; no installation. **Choose B:** Git, Python and permission. Terminal commands:
 
 ```sh
 python -m pip install -e .
@@ -110,7 +110,7 @@ The [LEVEL / NILO experiment](docs/CONTINUOUS_DEVELOPMENT.md#level-demonstration
 | **Supply chain** | **SBOM (CycloneDX 1.6): GENERATION_IN_CANDIDATE_CI**; **SCA/CVE: SCAN_CI_BUILD_TOOLS_ONLY**; **artifact signing / SLSA provenance: NOT_ATTESTED**. |
 | **Governance** | Execution needs authorization. **Independent reviewer, enforced branch rules, release: BLOCKED_EXTERNAL**; no production security SLA. [Security](SECURITY.md) · [Release](docs/RELEASE.md). |
 
-**Levels:** **L1** = Git/source; **L2** = bounded product experiments; **L3** = optional external assurance. CI cannot approve release.
+**Assurance levels:** **L1** = Git/source checks; **L2** = bounded product experiments; **L3** = optional external assurance. L1/L2 may be useful without L3; CI cannot approve a release.
 
 **71 declared CLI commands** in [capability atlas](.cora/assurance/capability-atlas.json) are inventory, not 71 independently proven features. [parser-checked CLI reference](docs/CLI_REFERENCE.md) · [complete documentation index](docs/INDEX.md).
 
