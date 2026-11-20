@@ -113,9 +113,15 @@ jobs:
           echo "Original integrated-main commit: $(git -C "$original" rev-parse HEAD)"
           echo "Original integrated-main tree: $(git -C "$original" rev-parse HEAD^{tree})"
           echo "Proposed source tree: $(git rev-parse HEAD^{tree})"
+          # The immutable base retains test_pr25_method_synthesis.py, while
+          # the candidate uses the capability name test_method_synthesis.py.
+          # One live historical module is mandatory; no empty-suite PASS.
+          baseline_files=("$original"/tests/test_*method_synthesis.py)
+          test "${#baseline_files[@]}" -eq 1
+          test -f "${baseline_files[0]}"
           for attempt in 1 2 3; do
             echo "MAIN ORIGINAL PR25 physical Git repeat $attempt/3"
-            (cd "$original" && PYTHONPATH="$original/src" python -m unittest discover -s tests -p test_method_synthesis.py -q)
+            (cd "$original" && PYTHONPATH="$original/src" python -m unittest discover -s tests -p 'test_*method_synthesis.py' -q)
           done
       - name: C8 independent critical coverage floor
         run: |
