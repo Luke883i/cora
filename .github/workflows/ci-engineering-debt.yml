@@ -38,12 +38,16 @@ jobs:
           cora process-run . --revision HEAD --process full --max-commits 12 --focus src/cora/debt.py --output /tmp/full.json
           cora verify-process /tmp/full.json --repo .
           python -c 'import json; d=json.load(open("/tmp/full.json")); assert d["status"]=="PASS_SCOPED_WITH_UNVERIFIED_GAPS" and d["authorized_action"]=="NONE" and any(x["method"]=="debt_signals" for x in d["results"])'
-      - name: PR40 Git-bound static/dynamic knowledge and physical mutant witnesses
+      - name: Verify original-Git knowledge cases and physical mutants
         run: |
           test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
           python -m unittest discover -s tests -p 'test_engineering_knowledge_closure.py' -v
+      - name: Build and replay source-bound knowledge receipt
+        run: |
           python tools/verify_engineering_closure.py --repo . --revision HEAD --output /tmp/ekc-source.json
           python tools/verify_engineering_closure.py --repo . --verify-report /tmp/ekc-source.json --output /tmp/ekc-replay.json
+      - name: Verify capability inventory and prevent authority promotion
+        run: |
           python tools/verify_capability_atlas.py --repo .
           python - <<'PY'
           import json
