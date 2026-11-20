@@ -83,6 +83,31 @@ class LayoutSimplificationTests(unittest.TestCase):
             verify(historical,live,source.replace("CORA is not a coding agent",
                                                 "CORA is an autonomous coding agent"))
 
+    def test_semantic_test_rebinding_uses_exact_pure_git_moves(self):
+        head = LAYOUT._tree(ROOT, self.head)
+        moves = LAYOUT._proven_test_renames(ROOT, self.head, head)
+        self.assertEqual(len(moves), 56)
+        self.assertEqual(moves["tests/test_pr24_workflow_rationalization.py"],
+                         "tests/test_workflow_rationalization.py")
+        self.assertEqual(len(set(moves.values())), len(moves))
+        self.assertTrue(all(path in head for path in moves.values()))
+        mutant = dict(head)
+        mutant.pop("tests/test_workflow_rationalization.py")
+        with self.assertRaisesRegex(ValueError, "semantic test identity/provenance drift"):
+            LAYOUT._proven_test_renames(ROOT, self.head, mutant)
+        source = LAYOUT._rewrite_original_json(
+            LAYOUT._json(ROOT, LAYOUT.THEMATIC_BASE, "cora.documentation-proofs.json"))
+        rebound = LAYOUT._renamed_test_witnesses(source, moves)
+        self.assertEqual(len(rebound["nodes"]), 18)
+        for old, new in moves.items():
+            self.assertNotIn(old, json.dumps(rebound))
+        live = json.loads((ROOT / ".cora/assurance/documentation-proofs.json").read_text())
+        wrong = copy.deepcopy(live)
+        wrong["nodes"][0]["evidence"][0]["path"] = "tests/forged_pass.py"
+        with self.assertRaisesRegex(ValueError, "unauthorized postmigration S01-S18 proof edit"):
+            LAYOUT._validate_current_documentation_proofs(rebound, wrong,
+                (ROOT / "README.md").read_text())
+
     def test_01_lossless_archive_root_and_source_replay(self):
         report=LAYOUT.check(ROOT,self.head)
         self.assertEqual(report["root_before"],25)
