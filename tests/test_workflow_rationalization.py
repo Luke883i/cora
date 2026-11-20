@@ -54,6 +54,20 @@ class WorkflowRationalizationTests(unittest.TestCase):
         doc = json.loads((ROOT / ".cora/contracts/dod/workflow-dod.json").read_text("utf-8"))
         self.assertEqual(len(ordered_cut(doc["nodes"], "G_WORKFLOW_GOVERNED")), 15)
 
+    def test_workflow_labels_express_permanent_business_obligations(self):
+        workflows = sorted((ROOT / '.github/workflows').glob('*.yml'))
+        self.assertEqual(len(workflows), 14)
+        labels = []
+        for path in workflows:
+            with self.subTest(workflow=path.name):
+                first = path.read_text(encoding='utf-8').splitlines()[0]
+                self.assertTrue(first.startswith('name: CORA | '), first)
+                label = first.partition('name: CORA | ')[2].strip()
+                self.assertGreaterEqual(len(label.split()), 2)
+                self.assertNotRegex(label, r'(?i)\bpr[-_# ]?\d+\b')
+                labels.append(label)
+        self.assertEqual(len(labels), len(set(labels)))
+
     def test_real_git_inbound_and_priviliged_workflows(self):
         with tempfile.TemporaryDirectory() as t:
             repo = create(Path(t), {
