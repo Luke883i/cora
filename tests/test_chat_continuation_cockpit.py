@@ -6,7 +6,7 @@ import json
 import unittest
 
 from cora.chat_bundle import _cockpit, append_chat_iteration, verify_chat_bundle
-from tests import test_pr46_chat_bundle as fixture_module
+from tests import test_chat_bundle_portability as fixture_module
 
 
 class CockpitTests(unittest.TestCase):
