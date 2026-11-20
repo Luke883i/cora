@@ -1,4 +1,4 @@
-name: CI | CORA continuous development controls
+name: CORA | Change lifecycle controls
 concurrency:
   group: cora-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
@@ -27,18 +27,18 @@ jobs:
       - name: Install CORA and test source-bound lifecycle contracts
         run: |
           python -m pip install .
-          python -m unittest discover -s tests -p 'test_continuous_pr14.py' -q
+          python -m unittest discover -s tests -p 'test_change_lifecycle_governance.py' -q
           python tools/verify_repository_contract.py --repo .
           python tools/verify_artifact_roles.py --repo .
       - name: Source-only CI workflow discovery and physical regression
         run: |
-          python -m unittest discover -s tests -p 'test_pr24_workflow_rationalization.py' -v
+          python -m unittest discover -s tests -p 'test_workflow_rationalization.py' -v
           cora workflow-audit . --revision HEAD --output /tmp/cora-workflow-plan.json
           cora verify-workflows /tmp/cora-workflow-plan.json --repo .
           python -c 'import json; p=json.load(open("/tmp/cora-workflow-plan.json")); assert p["workflow_count"]>=12 and p["authorization"]=="NONE" and p["governed_status"]=="BLOCKED_EXTERNAL" and all(not x["retirement_authorized"] for x in p["workflows"])'
       - name: Synthesize existing method receipts and adversarial source cases
         run: |
-          python -m unittest discover -s tests -p 'test_pr25_method_synthesis.py' -v
+          python -m unittest discover -s tests -p 'test_method_synthesis.py' -v
           cora method-synthesize . --revision HEAD --output /tmp/cora-method-case.json --analyst-request /tmp/cora-method-questions.json
           cora verify-method-synthesis /tmp/cora-method-case.json --repo .
           python -c 'import json; x=json.load(open("/tmp/cora-method-case.json")); assert x["reference_count"]==9 and x["procedure_count"]==14 and x["governed_model"]=="BLOCKED_EXTERNAL" and x["authorization"]=="NONE"'

@@ -1,4 +1,4 @@
-name: CI | CORA finite operational equivalence
+name: CORA | Bounded behavior equivalence
 on:
   pull_request:
   push:
@@ -29,7 +29,7 @@ jobs:
         run: |
           test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
           python -m pip install .
-          python -m unittest discover -s tests -p 'test_pr70_operational_equivalence.py' -v
+          python -m unittest discover -s tests -p 'test_bounded_operational_equivalence.py' -v
       - name: Execute exact-base/head native operational observations and independent replay
         env:
           CANDIDATE_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}

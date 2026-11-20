@@ -1,4 +1,4 @@
-name: CI | PR16 semantic assurance lattice
+name: CORA | Semantic evidence consistency
 concurrency:
   group: cora-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
@@ -91,7 +91,7 @@ jobs:
           cora verify-ledger /tmp/cora-snapshot.json --repo .
       - name: PR33 original Git fixture metrics and negative-contract regressions
         run: |
-          python -m unittest discover -s tests -p 'test_pr33_ci_repro.py' -q
+          python -m unittest discover -s tests -p 'test_ci_git_reproducibility.py' -q
           python -m cora.ci_repro --repo . --sha "$(git rev-parse HEAD)" --repetitions 3 --output /tmp/cora-pr33-measured.json
           python -c 'import json; a=json.load(open("/tmp/cora-pr33-measured.json")); assert a["sample_total"]==6 and a["failures_total"]==0 and a["postmerge_status"]=="BLOCKED_EXTERNAL" and a["root_cause"]=="NOT_ATTESTED" and a["authorization"]=="NONE"'
       - name: C6-C7 full unit regression with measured branch coverage

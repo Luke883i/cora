@@ -1,4 +1,4 @@
-name: CI | Verify pull request
+name: CORA | Core change verification
 concurrency:
   group: cora-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}

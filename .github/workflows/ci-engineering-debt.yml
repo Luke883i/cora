@@ -1,4 +1,4 @@
-name: CI | CORA engineering debt and process contracts
+name: CORA | Engineering debt visibility
 concurrency:
   group: cora-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
@@ -28,7 +28,8 @@ jobs:
       - name: Install CORA and run adversarial Git fixtures
         run: |
           python -m pip install .
-          python -m unittest discover -s tests -p 'test_pr13*.py' -v
+          python -m unittest discover -s tests -p 'test_candidate_bundle_versioning.py' -v
+          python -m unittest discover -s tests -p 'test_debt_governance.py' -v
           python tools/verify_repository_contract.py --repo .
       - name: Run CORA on itself and revalidate every receipt
         run: |
@@ -40,7 +41,7 @@ jobs:
       - name: PR40 Git-bound static/dynamic knowledge and physical mutant witnesses
         run: |
           test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
-          python -m unittest discover -s tests -p 'test_pr40_engineering_closure.py' -v
+          python -m unittest discover -s tests -p 'test_engineering_knowledge_closure.py' -v
           python tools/verify_engineering_closure.py --repo . --revision HEAD --output /tmp/ekc-source.json
           python tools/verify_engineering_closure.py --repo . --verify-report /tmp/ekc-source.json --output /tmp/ekc-replay.json
           python tools/verify_capability_atlas.py --repo .

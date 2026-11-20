@@ -1,4 +1,4 @@
-name: CI | CORA documentation source assurance
+name: CORA | Documentation integrity
 concurrency:
   group: cora-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
@@ -35,7 +35,7 @@ jobs:
       - name: PR53 CTO product identity, native scope and supply-chain truth
         run: |
           python tools/verify_repository_contract.py --repo . > /tmp/cora-cto-positioning.json
-          python -m unittest discover -s tests -p 'test_pr08_repository.py' -v
+          python -m unittest discover -s tests -p 'test_repository_product_contract.py' -v
           python - <<'PY'
           import json
           r=json.load(open('/tmp/cora-cto-positioning.json'))
@@ -47,15 +47,15 @@ jobs:
           assert r['positioning']['release_authorization']=='NONE'
           PY
       - name: "PR57 CTO front-door falsifiers: optional L3 and no self-approval"
-        run: python -m unittest discover -s tests -p 'test_pr08_repository.py' -k pr57 -v
+        run: python -m unittest discover -s tests -p 'test_repository_product_contract.py' -k pr57 -v
       - name: PR58 integrated practice obligations and negative Git mutants
-        run: python -m unittest discover -s tests -p 'test_pr58_practice_contract.py' -v
+        run: python -m unittest discover -s tests -p 'test_practice_contract.py' -v
       - name: PR59 exact Git change range, legacy receipts and anti-promotion mutants
-        run: python -m unittest discover -s tests -p 'test_pr59_consolidation.py' -v
+        run: python -m unittest discover -s tests -p 'test_repository_consolidation.py' -v
       - name: Verify documentation inventory and links
         run: python tools/verify_documentation.py --repo .
       - name: PR62 enterprise-evaluable DoD, negative Markdown witnesses and million finite vectors
-        run: python -m unittest discover -s tests -p 'test_pr62_enterprise_docs.py' -v
+        run: python -m unittest discover -s tests -p 'test_enterprise_documentation.py' -v
       - name: PR61 exhaustive Git Markdown census and scoped reader contract
         run: |
           python tools/verify_documentation.py --repo . --census-output /tmp/cora-md-census.json > /tmp/cora-md-verification.json
@@ -81,17 +81,17 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
       - name: Falsify real disposable Markdown and JSON contract mutations
-        run: python -m unittest discover -s tests -p 'test_pr21_documentation.py' -v
+        run: python -m unittest discover -s tests -p 'test_documentation_integrity.py' -v
       - name: PR61 independent markdown graph, positive and negative source mutants
-        run: python -m unittest discover -s tests -p 'test_pr23_navigation.py' -k pr61 -v
+        run: python -m unittest discover -s tests -p 'test_reader_navigation.py' -k pr61 -v
       - name: Falsify original 1k and new 10k README semantic vectors (twice)
         env:
           CORA_NAV_REPORT: /tmp/cora-readme-nav-1000.json
           CORA_README_10K_REPORT: /tmp/cora-readme-10k-a.json
           CORA_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
-          python -m unittest discover -s tests -p 'test_pr23_navigation.py' -v
-          CORA_README_10K_REPORT=/tmp/cora-readme-10k-b.json python -m unittest discover -s tests -p 'test_pr23_navigation.py' -v
+          python -m unittest discover -s tests -p 'test_reader_navigation.py' -v
+          CORA_README_10K_REPORT=/tmp/cora-readme-10k-b.json python -m unittest discover -s tests -p 'test_reader_navigation.py' -v
           python - <<'PY'
           import hashlib,json,subprocess
           a=json.load(open('/tmp/cora-readme-10k-a.json'))
@@ -113,7 +113,7 @@ jobs:
           python tools/verify_claim_evidence.py --repo . --revision HEAD --verify-report /tmp/cora-doc-proofs.json
           python -c 'import json; p=json.load(open("/tmp/cora-doc-proofs.json")); assert p["source_status"]=="PASS_SCOPED_SOURCE" and p["source_claim_count"]==18 and p["governed_status"]=="BLOCKED_EXTERNAL" and p["authorization"]=="NONE" and not p["host_review_attested"]'
       - name: Falsify physical Git-committed semantic, source, DoD and CI mutants
-        run: python -m unittest discover -s tests -p 'test_pr22_documentation_proofs.py' -v
+        run: python -m unittest discover -s tests -p 'test_documentation_proof_binding.py' -v
       - name: PR33 independent PR26 Git fixture repeatability samples
         run: |
           python -m cora.ci_repro --repo . --sha "$(git rev-parse HEAD)" --repetitions 3 --group PR26_CAPABILITY_MUTANTS --output /tmp/cora-pr33-capability-repeats.json
@@ -121,11 +121,11 @@ jobs:
         run: |
           python tools/verify_capability_atlas.py --repo . --revision HEAD --output /tmp/cora-capabilities.json
           python tools/verify_capability_atlas.py --repo . --verify-report /tmp/cora-capabilities.json
-          python -m unittest discover -s tests -p 'test_pr26_capability_atlas.py' -v
+          python -m unittest discover -s tests -p 'test_cli_capability_atlas.py' -v
           python -c 'import json; x=json.load(open("/tmp/cora-capabilities.json")); assert x["command_count"]==71 and x["family_count"]==8 and x["governed_status"]=="BLOCKED_EXTERNAL" and x["authorization"]=="NONE" and all(c["test_execution"]=="NOT_ATTESTED_BY_SOURCE" for c in x["commands"])'
       - name: PR31 integrated HTML/AI atlas and negative original-Git maturity falsifiers
         run: |
-          python -m unittest discover -s tests -p 'test_pr31_maturity_atlas.py' -v
+          python -m unittest discover -s tests -p 'test_maturity_atlas.py' -v
           BASE=$(git rev-parse HEAD^)
           cora method-synthesize . --synergic --revision HEAD --base-sha "$BASE" --output /tmp/cora-pr31-source.json --atlas-json /tmp/cora-pr31-atlas.json --atlas-html /tmp/cora-pr31-atlas.html --ai-request-output /tmp/cora-pr31-ai.json
           cora verify-method-synthesis /tmp/cora-pr31-source.json --repo . --synergic --atlas-json /tmp/cora-pr31-atlas.json --atlas-html /tmp/cora-pr31-atlas.html
@@ -135,14 +135,14 @@ jobs:
         run: |
           test -d .git
           python tools/verify_type_assurance.py --repo . --revision HEAD > /tmp/cora-type-assurance.json
-          python -m unittest discover -s tests -p 'test_pr27_type_assurance.py' -v
+          python -m unittest discover -s tests -p 'test_type_assurance.py' -v
           python -c 'import json; r=json.load(open("/tmp/cora-type-assurance.json")); assert r["result"]=="PASS_SCOPED_STRUCTURAL_MODEL" and r["type_count"]==20 and r["plane_count"]==7 and r["upstream_method_count"]==14 and r["reference_count"]==10 and r["code_durability_count"]==12 and r["formal_standard_count"]==3 and r["authorization"]=="NONE" and r["external"]=="BLOCKED_EXTERNAL" and r["universal_completeness"]=="UNSUPPORTED"'
       - name: Integrated semantic service, real original-source adversarial cases and replay
         run: |
           test -d .git
           cora method-synthesize . --integrated --revision HEAD --output /tmp/cora-integrated.json --ai-request-output /tmp/cora-integrated-ai-request.json
           cora verify-method-synthesis /tmp/cora-integrated.json --repo . --integrated
-          python -m unittest discover -s tests -p 'test_pr28_integrated_service.py' -v
+          python -m unittest discover -s tests -p 'test_integrated_semantic_service.py' -v
           python -c 'import json; r=json.load(open("/tmp/cora-integrated.json")); q=json.load(open("/tmp/cora-integrated-ai-request.json")); assert r["features"]["available_parser_commands"]==71 and r["methods"]["count"]==14 and len(r["dimensions"])==12 and r["claim_to_implementation"]["count"]==18 and len(r["semantic_crosswalk"])==20 and r["reticulum"]["full_status"]=="BLOCKED_EXTERNAL" and not r["features"]["all_behaviors_tested"] and r["authorization"]=="NONE" and q["provider_invoked"] is False and q["authority"]=="NONE"'
       - name: Ten million bounded reticular semantic fault cases
         run: |
@@ -156,7 +156,7 @@ jobs:
           BASE="$(git rev-parse HEAD^)"
           cora method-synthesize . --synergic --revision HEAD --base-sha "$BASE" --execute-source-probes --output /tmp/cora-five-goals.json --ai-request-output /tmp/cora-five-ai-plan.json
           cora verify-method-synthesis /tmp/cora-five-goals.json --repo . --synergic
-          python -m unittest discover -s tests -p 'test_pr29_five_synergies.py' -v
+          python -m unittest discover -s tests -p 'test_five_synergy_goals.py' -v
           python -c 'import json; x=json.load(open("/tmp/cora-five-goals.json")); assert x["method_counts"]=={"commands":71,"families":8,"original_methods":14,"object_types":20,"abstraction_dimensions":12} and x["truth"]["verified_semantic_claims"]==0 and len(x["truth"]["claims"])==18 and x["behavior"]["source_probes_passed"]==3 and x["goals"]["G_UNIFIED"]=="SOURCE_CANDIDATE_NOT_PRODUCT_READY" and x["goals"]["G_GOVERNED"]=="BLOCKED_EXTERNAL" and x["reticulum"]["nodes"]==29 and x["authorization"]=="NONE" and not x["all_71_behaviors_proven"]'
       - name: Falsify one million preseeded semantic cases twice on exact Git HEAD
         run: |
@@ -168,7 +168,7 @@ jobs:
         run: |
           python tools/verify_layout_simplification.py --repo . --revision HEAD --output /tmp/cora-layout-proof.json
           python tools/verify_layout_simplification.py --repo . --revision HEAD --replay /tmp/cora-layout-proof.json > /tmp/cora-layout-replayed.json
-          python -m unittest discover -s tests -p 'test_pr30_layout_simplification.py' -v
+          python -m unittest discover -s tests -p 'test_filesystem_layout_preservation.py' -v
           python -c 'import json; x=json.load(open("/tmp/cora-layout-proof.json")); assert x["root_before"]==25 and x["root_after"]==11 and x["remaining_root_cora_json"]==2 and x["internal_contract_blobs_preserved"]==2 and x["thematic_byte_identical"]==8 and x["thematic_structural_rewrites"]==3 and x["top_level_docs_removed"]==14 and x["historical_blobs_preserved"]==14 and x["historical_records"]==17 and x["registered_markdown"]==48 and x["cli_commands"]==71 and x["dod"]["nodes"]==23 and x["authorization"]=="NONE" and x["safe_deletion"]=="NOT_AUTHORIZED"'
       - name: Falsify ten thousand preseeded layout semantic cases twice
         run: |
@@ -214,8 +214,8 @@ jobs:
           python tools/verify_artifact_roles.py --repo .
       - name: Legacy repository and release regression
         run: |
-          python -m unittest discover -s tests -p 'test_pr08_repository.py' -q
-          python -m unittest discover -s tests -p 'test_pr15_release_readiness.py' -q
+          python -m unittest discover -s tests -p 'test_repository_product_contract.py' -q
+          python -m unittest discover -s tests -p 'test_release_readiness.py' -q
       - name: Reticular source and governed remain separated
         run: |
           python -c 'import json; from cora.reticulum import ordered_cut; r=json.load(open(".cora/contracts/dod/documentation-dod.json")); x={n["id"]:n for n in r["nodes"]}; assert len(ordered_cut(r["nodes"],"G_DOC_SOURCE"))==24; assert len(ordered_cut(r["nodes"],"G_DOC_ACCEPTED"))==28; assert r["authority"]=="NONE" and r["external_status"]=="BLOCKED_EXTERNAL"; assert all(x[n]["scope"]=="EXTERNAL" for n in ("E01","E02","E03"))'

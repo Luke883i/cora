@@ -1,4 +1,4 @@
-name: CI | CORA canonical reticular convergence
+name: CORA | Evidence convergence
 concurrency:
   group: cora-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
@@ -34,10 +34,11 @@ jobs:
         run: python -m pip install -e .
       - name: Canonical kernel and contextual regression
         run: |
-          python -m unittest discover -s tests -p 'test_pr20_*.py' -v
-          python -m unittest discover -s tests -p 'test_pr17_*.py' -q
-          python -m unittest discover -s tests -p 'test_pr18_*.py' -q
-          python -m unittest discover -s tests -p 'test_pr19_*.py' -q
+          python -m unittest discover -s tests -p 'test_reticular_convergence.py' -v
+          python -m unittest discover -s tests -p 'test_self_governing_contract.py' -v
+          python -m unittest discover -s tests -p 'test_agent_assurance_boundaries.py' -q
+          python -m unittest discover -s tests -p 'test_agent_adversarial_coverage.py' -q
+          python -m unittest discover -s tests -p 'test_gold_assurance.py' -q
       - name: Product repository and roles invariants
         run: |
           python tools/verify_repository_contract.py --repo .

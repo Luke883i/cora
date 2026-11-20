@@ -1,4 +1,4 @@
-name: CI | CORA integrated One-Run source dossier PR37
+name: CORA | End-to-end evidence replay
 concurrency:
   group: cora-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
@@ -32,13 +32,13 @@ jobs:
       - name: Install CORA source candidate
         run: python -m pip install -e .
       - name: PR37 original-Git, 10k DoD mutants, physical commit, authority and HTML adversaries
-        run: python -m unittest discover -s tests -p 'test_pr37_*.py' -v
+        run: python -m unittest discover -s tests -p 'test_integrated_one_run.py' -v
       - name: PR38 305 Git-commit units, 10k bounded DoD mutants, original-Git and HTML falsifiers
-        run: python -m unittest discover -s tests -p 'test_pr38_genealogy.py' -v
+        run: python -m unittest discover -s tests -p 'test_git_lineage_genealogy.py' -v
       - name: PR39 four-gate DoD, native Git reference, study and 403 host falsifiers
-        run: python -m unittest discover -s tests -p 'test_pr39_*.py' -v
+        run: python -m unittest discover -s tests -p 'test_independent_qualification.py' -v
       - name: PR57 L1/L2/L3 presentation cannot promote source, local tests or external assurance
-        run: python -m unittest discover -s tests -p 'test_pr39_qualification.py' -k pr57 -v
+        run: python -m unittest discover -s tests -p 'test_independent_qualification.py' -k pr57 -v
       - name: Produce source-only native Git oracle and no-token host blocker on PR
         run: |
           mkdir -p /tmp/cora-pr39
@@ -139,7 +139,7 @@ jobs:
           assert x['product_status']=='BLOCKED_EXTERNAL'
           PY
       - name: PR46 hostile bundle negative regression
-        run: python -m unittest discover -s tests -p 'test_pr46_chat_bundle.py' -v
+        run: python -m unittest discover -s tests -p 'test_chat_bundle_portability.py' -v
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version: '24.19.0'
@@ -148,9 +148,9 @@ jobs:
           mkdir -p /tmp/cora-pr50
           python tools/verify_crossrepo_convergence.py --repo . --output /tmp/cora-pr50/reticulum.json
           python tools/verify_crossrepo_convergence.py --repo . --verify /tmp/cora-pr50/reticulum.json
-          python -m unittest discover -s tests -p 'test_pr50_portable.py' -v
+          python -m unittest discover -s tests -p 'test_cross_repository_portability.py' -v
       - name: PR51 Gold claim, oracle, evidence and adversarial replay
-        run: python -m unittest discover -s tests -p 'test_pr51_gold_bridge.py' -v
+        run: python -m unittest discover -s tests -p 'test_gold_evidence_bridge.py' -v
       - name: PR50 real public Git target source-only replay (Teddy and NILO)
         run: |
           mkdir -p /tmp/cora-pr50/targets
@@ -278,7 +278,7 @@ jobs:
           cora verify-process /tmp/cora-one-run.json --repo . --one-run --atlas-json /tmp/cora-one-run-atlas.json --atlas-html /tmp/cora-one-run.html
       - name: PR36 physical Git DoD mutants and one-run negative tests
         run: |
-          python -m unittest discover -s tests -p 'test_pr36_one_run.py' -v
+          python -m unittest discover -s tests -p 'test_one_run_orchestration.py' -v
       - name: PR36 falsify 100k distinct preseeded semantic receipts twice
         run: |
           python -m cora.one_run_stress --cases 100000 --seed 883 --output /tmp/cora-one-run-100k.json
@@ -425,7 +425,7 @@ jobs:
         run: |
           test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
           python -m pip install -e .
-          python -m unittest discover -s tests -p 'test_pr52_native_gold.py' -v
+          python -m unittest discover -s tests -p 'test_native_gold_target_execution.py' -v
       - name: Pin four original public target checkouts, no persisted credentials
         run: |
           mkdir -p /tmp/cora-pr52/targets /tmp/cora-pr52/evidence

@@ -1,4 +1,4 @@
-name: CI | CORA release source readiness
+name: CORA | Release readiness evidence
 concurrency:
   group: cora-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
@@ -28,7 +28,7 @@ jobs:
       - name: Install candidate and run independent negative release oracles
         run: |
           python -m pip install .
-          python -m unittest discover -s tests -p 'test_pr15_release_readiness.py' -v
+          python -m unittest discover -s tests -p 'test_release_readiness.py' -v
       - name: Verify source contracts, not external approval
         run: |
           python tools/verify_repository_contract.py --repo .
@@ -83,7 +83,7 @@ jobs:
           python -m pip install .
       - name: Independently replay source chronology and physical Git behavior
         run: |
-          python -m unittest discover -s tests -p 'test_pr41_final_experimental.py' -v
+          python -m unittest discover -s tests -p 'test_final_experimental_gates.py' -v
           python tools/verify_documentation.py --repo .
           python tools/verify_capability_atlas.py --repo .
           python tools/verify_final_experimental.py --repo . --revision HEAD --run-behavior --output /tmp/pr41-final-source.json
