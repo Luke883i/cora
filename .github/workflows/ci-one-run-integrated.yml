@@ -271,25 +271,8 @@ jobs:
         run: |
           cora process-run . --revision HEAD --process full --one-run --output /tmp/cora-one-run.json --atlas-json /tmp/cora-one-run-atlas.json --atlas-html /tmp/cora-one-run.html --model-stress-cases 100000
           python -c 'import json; a=json.load(open("/tmp/cora-one-run.json")); assert len(a["activities"])==8 and a["catalog_commands_declared"]==71 and a["catalog_commands_executed_individually"]==0 and a["runtime_status"]=="NOT_RUN" and a["model_stress"]["cases"]==100000 and a["model_stress"]["oracle_disagreements"]==0 and a["dod"]["nodes"]==27 and a["global_status"]=="BLOCKED_EXTERNAL" and a["authorization"]=="NONE" and not a["release_authorized"]'
-      - name: PR36 replay underlying deterministic original source-process receipt
-        run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          from cora.one_run import _plain_receipt
-          from cora.process_suite import verify_suite
-          data=json.load(open("/tmp/cora-one-run.json"))
-          assert verify_suite(Path("."), _plain_receipt(data["source_process"]))
-          PY
-      - name: PR36 verify one-run JSON original source identity and report integrity
-        run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          from cora.one_run import verify_one
-          data=json.load(open("/tmp/cora-one-run.json"))
-          assert verify_one(Path("."), data)
-          PY
+      # The canonical CLI below already calls verify_one -> verify_suite;
+      # the direct method oracles and negative mutants remain in test_pr36_one_run.py.
       - name: PR36 assert offline HTML byte-equivalence to verified run
         run: |
           cora verify-process /tmp/cora-one-run.json --repo . --one-run --atlas-json /tmp/cora-one-run-atlas.json --atlas-html /tmp/cora-one-run.html
@@ -318,6 +301,8 @@ jobs:
 
   diagnose-comprehensive:
     name: Diagnose comprehensive one-run source output
+    needs: [integrated-source, pr36-native-owner]
+    if: ${{ failure() && (needs['integrated-source'].result == 'failure' || needs['pr36-native-owner'].result == 'failure') }}
     runs-on: ubuntu-latest
     timeout-minutes: 40
     outputs:
