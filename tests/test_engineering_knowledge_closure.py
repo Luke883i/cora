@@ -705,12 +705,28 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
              previous.__dict__)
         a = previous.analyze(ROOT, self.sha)
         b = ekc.analyze(ROOT, self.sha)
+        # The original verifier names the original test witness; the current
+        # verifier names the same capability after its pure Git blob move.
+        # Normalize ONLY that one source path, using the independently checked
+        # 56-file Git rename proof. Do not rewrite the historic signed receipt.
+        from tools import verify_layout_simplification as layout
+        renames = layout._proven_test_renames(
+            ROOT, self.sha, layout._tree(ROOT, self.sha))
+        legacy = "tests/test_pr25_method_synthesis.py"
+        self.assertEqual(len(renames), 56)
+        self.assertEqual(renames[legacy], "tests/test_method_synthesis.py")
+        normalized = copy.deepcopy(a)
+        changed = [r for r in normalized["debt_register"]
+                   if r["id"] == "P0_CI_GIT_CLONE"]
+        self.assertEqual(len(changed), 1)
+        self.assertEqual(changed[0]["witness"], legacy)
+        changed[0]["witness"] = renames[legacy]
         self.assertEqual(set(b) - set(a), {"component_contribution", "component_dod"})
         self.assertEqual(set(a) - set(b), set())
         for field in a:
             if field != "source_digest_sha256":
                 with self.subTest(field=field):
-                    self.assertEqual(a[field], b[field])
+                    self.assertEqual(normalized[field], b[field])
         self.assertTrue(previous.verify_report(ROOT, a))
         self.assertTrue(ekc.verify_report(ROOT, b))
         self.assertEqual(a["commit"], b["commit"])
