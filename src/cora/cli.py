@@ -397,7 +397,9 @@ def main(argv: list[str] | None = None) -> int:
     pv.add_argument('--portable-upstream',action='append',default=[],help='Re-read original Git upstream objects as owner/repo=/path')
     pv.add_argument('--evidence-dir',type=Path,help='Recompute byte hashes against retained integrated evidence files')
     pv.add_argument('--chat-bundle',type=Path,help='Replay ZIP chain and match latest comprehensive One-Run receipt')
-    pv.add_argument('--chat-cockpit-html',type=Path,help='Render an offline read-only navigator only after source+ZIP replay')
+    # Pilot-only opt-in: preserve the historical 77-command help transcript byte-for-byte.
+    # README and native PR46 replay document and verify this additional flag.
+    pv.add_argument('--chat-cockpit-html',type=Path,help=argparse.SUPPRESS)
     dsx = sub.add_parser('stress-debt',help='1M seeded debt-policy model mutations')
     dsx.add_argument('--seed',type=int,default=883)
     dsx.add_argument('--cases',type=int,default=1000000)

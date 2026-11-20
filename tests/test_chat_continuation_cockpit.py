@@ -288,6 +288,20 @@ class NavigationTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             render_verified_cockpit(corrupted, expected_receipt=receipt)
 
+    def test_pilot_optin_does_not_change_historical_cli_help(self):
+        import subprocess
+        import sys
+        from pathlib import Path
+        p = subprocess.run([sys.executable, "-m", "cora.cli", "verify-process", "--help"],
+                           capture_output=True, text=True, check=False)
+        self.assertEqual(p.returncode, 0, p.stderr)
+        self.assertNotIn("--chat-cockpit-html", p.stdout)
+        self.assertIn("--chat-cockpit-html",
+                      (Path(__file__).resolve().parents[1] / "README.md").read_text("utf-8"))
+        source = (Path(__file__).resolve().parents[1] / "src/cora/cli.py").read_text("utf-8")
+        self.assertIn("pv.add_argument('--chat-cockpit-html',type=Path,help=argparse.SUPPRESS)",
+                      source)
+
     def test_navigation_does_not_promote_authority(self):
         bundle, receipt = self.make_bundle()
         page = render_verified_cockpit(bundle, expected_receipt=receipt)
