@@ -145,7 +145,7 @@
       "depends_on": [],
       "description": "Named source tests and synthetic falsifiers, not behavioral population statistics.",
       "witness_paths": [
-        "tests/test_pr29_five_synergies.py"
+        "tests/test_five_synergy_goals.py"
       ]
     },
     {
@@ -219,7 +219,7 @@
       "description": "Deterministic accessible self-contained navigable HTML and machine report.",
       "witness_paths": [
         "src/cora/maturity_atlas.py",
-        "tests/test_pr31_maturity_atlas.py"
+        "tests/test_maturity_atlas.py"
       ]
     },
     {
@@ -244,7 +244,7 @@
       "depends_on": [],
       "description": "Source-scoped regressions and exact-head gate.",
       "witness_paths": [
-        "tests/test_pr31_maturity_atlas.py",
+        "tests/test_maturity_atlas.py",
         ".github/workflows/ci-documentation.yml"
       ]
     },

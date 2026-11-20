@@ -74,133 +74,133 @@
       "command": "version",
       "family": "git-evidence",
       "method_source": "src/cora/__init__.py",
-      "test_source": "tests/test_pr01.py",
+      "test_source": "tests/test_repository_identity_audit.py",
       "interaction": "PACKAGE_VERSION_ONLY"
     },
     {
       "command": "audit",
       "family": "git-evidence",
       "method_source": "src/cora/audit.py",
-      "test_source": "tests/test_pr01.py",
+      "test_source": "tests/test_repository_identity_audit.py",
       "interaction": "WORKTREE_NOT_IMMUTABLE_GIT"
     },
     {
       "command": "snapshot",
       "family": "git-evidence",
       "method_source": "src/cora/git_snapshot.py",
-      "test_source": "tests/test_pr02.py",
+      "test_source": "tests/test_evidence_contract_and_git_snapshot.py",
       "interaction": "SOURCE_ANALYSIS_OR_PROPOSAL"
     },
     {
       "command": "verify-ledger",
       "family": "git-evidence",
       "method_source": "src/cora/git_snapshot.py",
-      "test_source": "tests/test_pr02.py",
+      "test_source": "tests/test_evidence_contract_and_git_snapshot.py",
       "interaction": "SOURCE_OR_CLAIM_REPLAY_SCOPED"
     },
     {
       "command": "graph",
       "family": "git-evidence",
       "method_source": "src/cora/graph.py",
-      "test_source": "tests/test_pr03.py",
+      "test_source": "tests/test_dependency_graph.py",
       "interaction": "SOURCE_ANALYSIS_OR_PROPOSAL"
     },
     {
       "command": "explain",
       "family": "git-evidence",
       "method_source": "src/cora/graph.py",
-      "test_source": "tests/test_pr03.py",
+      "test_source": "tests/test_dependency_graph.py",
       "interaction": "SOURCE_ANALYSIS_OR_PROPOSAL"
     },
     {
       "command": "adapter-audit",
       "family": "git-evidence",
       "method_source": "src/cora/adapters.py",
-      "test_source": "tests/test_pr04.py",
+      "test_source": "tests/test_dependency_adapter_contracts.py",
       "interaction": "SOURCE_ANALYSIS_OR_PROPOSAL"
     },
     {
       "command": "verify-adapters",
       "family": "git-evidence",
       "method_source": "src/cora/adapters.py",
-      "test_source": "tests/test_pr04.py",
+      "test_source": "tests/test_dependency_adapter_contracts.py",
       "interaction": "SOURCE_OR_CLAIM_REPLAY_SCOPED"
     },
     {
       "command": "artifact-audit",
       "family": "git-evidence",
       "method_source": "src/cora/artifact_roles.py",
-      "test_source": "tests/test_pr10_artifact_roles.py",
+      "test_source": "tests/test_artifact_role_classification.py",
       "interaction": "SOURCE_ANALYSIS_OR_PROPOSAL"
     },
     {
       "command": "verify-artifacts",
       "family": "git-evidence",
       "method_source": "src/cora/artifact_roles.py",
-      "test_source": "tests/test_pr10_artifact_roles.py",
+      "test_source": "tests/test_artifact_role_classification.py",
       "interaction": "SOURCE_OR_CLAIM_REPLAY_SCOPED"
     },
     {
       "command": "closure",
       "family": "git-evidence",
       "method_source": "src/cora/closure.py",
-      "test_source": "tests/test_pr05.py",
+      "test_source": "tests/test_dependency_closure.py",
       "interaction": "SOURCE_ANALYSIS_OR_PROPOSAL"
     },
     {
       "command": "verify-certificate",
       "family": "git-evidence",
       "method_source": "src/cora/closure.py",
-      "test_source": "tests/test_pr05.py",
+      "test_source": "tests/test_dependency_closure.py",
       "interaction": "SOURCE_OR_CLAIM_REPLAY_SCOPED"
     },
     {
       "command": "workflow-audit",
       "family": "workflow-governance",
       "method_source": "src/cora/workflow_rationalization.py",
-      "test_source": "tests/test_pr24_workflow_rationalization.py",
+      "test_source": "tests/test_workflow_rationalization.py",
       "interaction": "SOURCE_ANALYSIS_OR_PROPOSAL"
     },
     {
       "command": "verify-workflows",
       "family": "workflow-governance",
       "method_source": "src/cora/workflow_rationalization.py",
-      "test_source": "tests/test_pr24_workflow_rationalization.py",
+      "test_source": "tests/test_workflow_rationalization.py",
       "interaction": "SOURCE_OR_CLAIM_REPLAY_SCOPED"
     },
     {
       "command": "method-synthesize",
       "family": "method-synthesis",
       "method_source": "src/cora/method_synthesis.py",
-      "test_source": "tests/test_pr25_method_synthesis.py",
+      "test_source": "tests/test_method_synthesis.py",
       "interaction": "OPTIONAL_UNTRUSTED_AI_HYPOTHESES"
     },
     {
       "command": "verify-method-synthesis",
       "family": "method-synthesis",
       "method_source": "src/cora/method_synthesis.py",
-      "test_source": "tests/test_pr25_method_synthesis.py",
+      "test_source": "tests/test_method_synthesis.py",
       "interaction": "SOURCE_OR_CLAIM_REPLAY_SCOPED"
     },
     {
       "command": "file-lab",
       "family": "forensic-debt",
       "method_source": "src/cora/file_lab.py",
-      "test_source": "tests/test_pr09_file_lab.py",
+      "test_source": "tests/test_source_file_lab.py",
       "interaction": "SOURCE_ANALYSIS_OR_PROPOSAL"
     },
     {
       "command": "verify-file-lab",
       "family": "forensic-debt",
       "method_source": "src/cora/file_lab.py",
-      "test_source": "tests/test_pr09_file_lab.py",
+      "test_source": "tests/test_source_file_lab.py",
       "interaction": "SOURCE_OR_CLAIM_REPLAY_SCOPED"
     },
     {
       "command": "file-decision",
       "family": "forensic-debt",
       "method_source": "src/cora/file_lab.py",
-      "test_source": "tests/test_pr09_file_lab.py",
+      "test_source": "tests/test_source_file_lab.py",
       "interaction": "RECORDS_HUMAN_CLAIM_NOT_APPROVAL"
     },
     {
@@ -221,301 +221,301 @@
       "command": "holistic-audit",
       "family": "forensic-debt",
       "method_source": "src/cora/holistic.py",
-      "test_source": "tests/test_archaeology_pr12.py",
+      "test_source": "tests/test_repository_archaeology.py",
       "interaction": "SOURCE_ANALYSIS_OR_PROPOSAL"
     },
     {
       "command": "verify-holistic",
       "family": "forensic-debt",
       "method_source": "src/cora/holistic.py",
-      "test_source": "tests/test_archaeology_pr12.py",
+      "test_source": "tests/test_repository_archaeology.py",
       "interaction": "SOURCE_OR_CLAIM_REPLAY_SCOPED"
     },
     {
       "command": "archaeology",
       "family": "forensic-debt",
       "method_source": "src/cora/archaeology.py",
-      "test_source": "tests/test_archaeology_pr12.py",
+      "test_source": "tests/test_repository_archaeology.py",
       "interaction": "SOURCE_ANALYSIS_OR_PROPOSAL"
     },
     {
       "command": "verify-archaeology",
       "family": "forensic-debt",
       "method_source": "src/cora/archaeology.py",
-      "test_source": "tests/test_archaeology_pr12.py",
+      "test_source": "tests/test_repository_archaeology.py",
       "interaction": "SOURCE_OR_CLAIM_REPLAY_SCOPED"
     },
     {
       "command": "annotate-groups",
       "family": "forensic-debt",
       "method_source": "src/cora/group_hypotheses.py",
-      "test_source": "tests/test_archaeology_pr12.py",
+      "test_source": "tests/test_repository_archaeology.py",
       "interaction": "ANNOTATES_UNTRUSTED_AI_HYPOTHESES"
     },
     {
       "command": "debt-scan",
       "family": "forensic-debt",
       "method_source": "src/cora/debt.py",
-      "test_source": "tests/test_pr13_debt_governance.py",
+      "test_source": "tests/test_debt_governance.py",
       "interaction": "SOURCE_ANALYSIS_OR_PROPOSAL"
     },
     {
       "command": "verify-debt",
       "family": "forensic-debt",
       "method_source": "src/cora/debt.py",
-      "test_source": "tests/test_pr13_debt_governance.py",
+      "test_source": "tests/test_debt_governance.py",
       "interaction": "SOURCE_OR_CLAIM_REPLAY_SCOPED"
     },
     {
       "command": "debt-diff",
       "family": "forensic-debt",
       "method_source": "src/cora/debt.py",
-      "test_source": "tests/test_pr13_debt_governance.py",
+      "test_source": "tests/test_debt_governance.py",
       "interaction": "SOURCE_ANALYSIS_OR_PROPOSAL"
     },
     {
       "command": "process-list",
       "family": "forensic-debt",
       "method_source": "src/cora/process_suite.py",
-      "test_source": "tests/test_pr13_debt_governance.py",
+      "test_source": "tests/test_debt_governance.py",
       "interaction": "SOURCE_ANALYSIS_OR_PROPOSAL"
     },
     {
       "command": "process-run",
       "family": "forensic-debt",
       "method_source": "src/cora/process_suite.py",
-      "test_source": "tests/test_pr13_debt_governance.py",
+      "test_source": "tests/test_debt_governance.py",
       "interaction": "SOURCE_ANALYSIS_OR_PROPOSAL"
     },
     {
       "command": "verify-process",
       "family": "forensic-debt",
       "method_source": "src/cora/process_suite.py",
-      "test_source": "tests/test_pr13_debt_governance.py",
+      "test_source": "tests/test_debt_governance.py",
       "interaction": "SOURCE_OR_CLAIM_REPLAY_SCOPED"
     },
     {
       "command": "plan-rename-doc",
       "family": "controlled-maintenance",
       "method_source": "src/cora/transform.py",
-      "test_source": "tests/test_pr06.py",
+      "test_source": "tests/test_change_transform_and_guard.py",
       "interaction": "SOURCE_ANALYSIS_OR_PROPOSAL"
     },
     {
       "command": "apply-rename-doc",
       "family": "controlled-maintenance",
       "method_source": "src/cora/transform.py",
-      "test_source": "tests/test_pr06.py",
+      "test_source": "tests/test_change_transform_and_guard.py",
       "interaction": "MUTATES_TARGET_AFTER_EXPLICIT_APPROVAL_AND_TEST"
     },
     {
       "command": "guard-install",
       "family": "controlled-maintenance",
       "method_source": "src/cora/guard.py",
-      "test_source": "tests/test_pr06.py",
+      "test_source": "tests/test_change_transform_and_guard.py",
       "interaction": "WRITES_LOCAL_GUARD"
     },
     {
       "command": "guard-check",
       "family": "controlled-maintenance",
       "method_source": "src/cora/guard_runtime.py",
-      "test_source": "tests/test_pr08_repository.py",
+      "test_source": "tests/test_repository_product_contract.py",
       "interaction": "SOURCE_OR_CLAIM_REPLAY_SCOPED"
     },
     {
       "command": "dev-premerge",
       "family": "agent-devops",
       "method_source": "src/cora/continuous.py",
-      "test_source": "tests/test_continuous_pr14.py",
+      "test_source": "tests/test_change_lifecycle_governance.py",
       "interaction": "SOURCE_ANALYSIS_OR_PROPOSAL"
     },
     {
       "command": "dev-postmerge",
       "family": "agent-devops",
       "method_source": "src/cora/continuous.py",
-      "test_source": "tests/test_continuous_pr14.py",
+      "test_source": "tests/test_change_lifecycle_governance.py",
       "interaction": "SOURCE_ANALYSIS_OR_PROPOSAL"
     },
     {
       "command": "verify-dev-gate",
       "family": "agent-devops",
       "method_source": "src/cora/continuous.py",
-      "test_source": "tests/test_continuous_pr14.py",
+      "test_source": "tests/test_change_lifecycle_governance.py",
       "interaction": "SOURCE_OR_CLAIM_REPLAY_SCOPED"
     },
     {
       "command": "agent-check",
       "family": "agent-devops",
       "method_source": "src/cora/continuous.py",
-      "test_source": "tests/test_continuous_pr14.py",
+      "test_source": "tests/test_change_lifecycle_governance.py",
       "interaction": "SOURCE_ANALYSIS_OR_PROPOSAL"
     },
     {
       "command": "dod-plan",
       "family": "agent-devops",
       "method_source": "src/cora/agent_assurance.py",
-      "test_source": "tests/test_pr17_agent_assurance.py",
+      "test_source": "tests/test_agent_assurance_boundaries.py",
       "interaction": "SOURCE_ANALYSIS_OR_PROPOSAL"
     },
     {
       "command": "dod-assess",
       "family": "agent-devops",
       "method_source": "src/cora/agent_assurance.py",
-      "test_source": "tests/test_pr17_agent_assurance.py",
+      "test_source": "tests/test_agent_assurance_boundaries.py",
       "interaction": "SOURCE_ANALYSIS_OR_PROPOSAL"
     },
     {
       "command": "verify-dod",
       "family": "agent-devops",
       "method_source": "src/cora/agent_assurance.py",
-      "test_source": "tests/test_pr17_agent_assurance.py",
+      "test_source": "tests/test_agent_assurance_boundaries.py",
       "interaction": "SOURCE_OR_CLAIM_REPLAY_SCOPED"
     },
     {
       "command": "convergence-plan",
       "family": "agent-devops",
       "method_source": "src/cora/gold_assurance.py",
-      "test_source": "tests/test_pr19_gold_assurance.py",
+      "test_source": "tests/test_gold_assurance.py",
       "interaction": "SOURCE_ANALYSIS_OR_PROPOSAL"
     },
     {
       "command": "verify-contextual-gate",
       "family": "agent-devops",
       "method_source": "src/cora/continuous.py",
-      "test_source": "tests/test_continuous_pr14.py",
+      "test_source": "tests/test_change_lifecycle_governance.py",
       "interaction": "SOURCE_OR_CLAIM_REPLAY_SCOPED"
     },
     {
       "command": "gold-plan",
       "family": "agent-devops",
       "method_source": "src/cora/gold_assurance.py",
-      "test_source": "tests/test_pr19_gold_assurance.py",
+      "test_source": "tests/test_gold_assurance.py",
       "interaction": "SOURCE_ANALYSIS_OR_PROPOSAL"
     },
     {
       "command": "gold-pilot",
       "family": "agent-devops",
       "method_source": "src/cora/gold_assurance.py",
-      "test_source": "tests/test_pr19_gold_assurance.py",
+      "test_source": "tests/test_gold_assurance.py",
       "interaction": "SOURCE_PILOT_REQUIRES_AUTHORIZED_CHECKOUTS"
     },
     {
       "command": "gold-mutate",
       "family": "agent-devops",
       "method_source": "src/cora/gold_mutations.py",
-      "test_source": "tests/test_pr19_gold_assurance.py",
+      "test_source": "tests/test_gold_assurance.py",
       "interaction": "STAGED_PHYSICAL_MUTATIONS_OPTIONAL_DOCKER"
     },
     {
       "command": "gold-effects",
       "family": "agent-devops",
       "method_source": "src/cora/gold_effects.py",
-      "test_source": "tests/test_pr19_gold_assurance.py",
+      "test_source": "tests/test_gold_assurance.py",
       "interaction": "UNTRUSTED_WORKFLOW_TEXT_STATIC"
     },
     {
       "command": "zip-intake",
       "family": "zip-runtime",
       "method_source": "src/cora/archive_intake.py",
-      "test_source": "tests/test_pr16_zip_intake.py",
+      "test_source": "tests/test_hostile_archive_intake.py",
       "interaction": "OPTIONAL_EXTRACTION_PRECHECK"
     },
     {
       "command": "verify-zip-intake",
       "family": "zip-runtime",
       "method_source": "src/cora/archive_intake.py",
-      "test_source": "tests/test_pr16_zip_intake.py",
+      "test_source": "tests/test_hostile_archive_intake.py",
       "interaction": "SOURCE_OR_CLAIM_REPLAY_SCOPED"
     },
     {
       "command": "runtime-observe",
       "family": "zip-runtime",
       "method_source": "src/cora/runtime_observation.py",
-      "test_source": "tests/test_pr16_runtime_fusion.py",
+      "test_source": "tests/test_runtime_observation_fusion.py",
       "interaction": "OPTIONAL_DOCKER_RUNTIME_UNATTESTED"
     },
     {
       "command": "fuse-evidence",
       "family": "zip-runtime",
       "method_source": "src/cora/observation_fusion.py",
-      "test_source": "tests/test_pr16_runtime_fusion.py",
+      "test_source": "tests/test_runtime_observation_fusion.py",
       "interaction": "SOURCE_ANALYSIS_OR_PROPOSAL"
     },
     {
       "command": "verify-fusion",
       "family": "zip-runtime",
       "method_source": "src/cora/observation_fusion.py",
-      "test_source": "tests/test_pr16_runtime_fusion.py",
+      "test_source": "tests/test_runtime_observation_fusion.py",
       "interaction": "SOURCE_OR_CLAIM_REPLAY_SCOPED"
     },
     {
       "command": "lattice-audit",
       "family": "zip-runtime",
       "method_source": "src/cora/semantic_lattice.py",
-      "test_source": "tests/test_pr16_lattice.py",
+      "test_source": "tests/test_semantic_lattice.py",
       "interaction": "SOURCE_ANALYSIS_OR_PROPOSAL"
     },
     {
       "command": "verify-lattice",
       "family": "zip-runtime",
       "method_source": "src/cora/semantic_lattice.py",
-      "test_source": "tests/test_pr16_lattice.py",
+      "test_source": "tests/test_semantic_lattice.py",
       "interaction": "SOURCE_OR_CLAIM_REPLAY_SCOPED"
     },
     {
       "command": "stress",
       "family": "finite-models",
       "method_source": "src/cora/mutations.py",
-      "test_source": "tests/test_pr01.py",
+      "test_source": "tests/test_repository_identity_audit.py",
       "interaction": "SYNTHETIC_MODEL_NOT_RUNTIME"
     },
     {
       "command": "stress-evidence",
       "family": "finite-models",
       "method_source": "src/cora/mutation_evidence.py",
-      "test_source": "tests/test_pr02.py",
+      "test_source": "tests/test_evidence_contract_and_git_snapshot.py",
       "interaction": "SYNTHETIC_MODEL_NOT_RUNTIME"
     },
     {
       "command": "stress-graph",
       "family": "finite-models",
       "method_source": "src/cora/graph_stress.py",
-      "test_source": "tests/test_pr03.py",
+      "test_source": "tests/test_dependency_graph.py",
       "interaction": "SYNTHETIC_MODEL_NOT_RUNTIME"
     },
     {
       "command": "stress-adapters",
       "family": "finite-models",
       "method_source": "src/cora/adapter_stress.py",
-      "test_source": "tests/test_pr04.py",
+      "test_source": "tests/test_dependency_adapter_contracts.py",
       "interaction": "SYNTHETIC_MODEL_NOT_RUNTIME"
     },
     {
       "command": "stress-closure",
       "family": "finite-models",
       "method_source": "src/cora/closure_stress.py",
-      "test_source": "tests/test_pr05.py",
+      "test_source": "tests/test_dependency_closure.py",
       "interaction": "SYNTHETIC_MODEL_NOT_RUNTIME"
     },
     {
       "command": "stress-transform",
       "family": "finite-models",
       "method_source": "src/cora/transform_stress.py",
-      "test_source": "tests/test_pr06.py",
+      "test_source": "tests/test_change_transform_and_guard.py",
       "interaction": "SYNTHETIC_MODEL_NOT_RUNTIME"
     },
     {
       "command": "stress-file-lab",
       "family": "finite-models",
       "method_source": "src/cora/file_lab_stress.py",
-      "test_source": "tests/test_pr09_file_lab.py",
+      "test_source": "tests/test_source_file_lab.py",
       "interaction": "SYNTHETIC_MODEL_NOT_RUNTIME"
     },
     {
       "command": "stress-artifact-semantics",
       "family": "finite-models",
       "method_source": "src/cora/artifact_saturation.py",
-      "test_source": "tests/test_pr10_artifact_roles.py",
+      "test_source": "tests/test_artifact_role_classification.py",
       "interaction": "SYNTHETIC_MODEL_NOT_RUNTIME"
     },
     {
@@ -529,42 +529,42 @@
       "command": "stress-archaeology",
       "family": "finite-models",
       "method_source": "src/cora/archaeology_stress.py",
-      "test_source": "tests/test_archaeology_pr12.py",
+      "test_source": "tests/test_repository_archaeology.py",
       "interaction": "SYNTHETIC_MODEL_NOT_RUNTIME"
     },
     {
       "command": "stress-debt",
       "family": "finite-models",
       "method_source": "src/cora/debt_stress.py",
-      "test_source": "tests/test_pr13_debt_governance.py",
+      "test_source": "tests/test_debt_governance.py",
       "interaction": "SYNTHETIC_MODEL_NOT_RUNTIME"
     },
     {
       "command": "stress-continuous",
       "family": "finite-models",
       "method_source": "src/cora/continuous_stress.py",
-      "test_source": "tests/test_continuous_pr14.py",
+      "test_source": "tests/test_change_lifecycle_governance.py",
       "interaction": "SYNTHETIC_MODEL_NOT_RUNTIME"
     },
     {
       "command": "stress-agent-dod",
       "family": "finite-models",
       "method_source": "src/cora/agent_saturation.py",
-      "test_source": "tests/test_pr17_agent_assurance.py",
+      "test_source": "tests/test_agent_assurance_boundaries.py",
       "interaction": "SYNTHETIC_MODEL_NOT_RUNTIME"
     },
     {
       "command": "stress-gold",
       "family": "finite-models",
       "method_source": "src/cora/gold_saturation.py",
-      "test_source": "tests/test_pr19_gold_assurance.py",
+      "test_source": "tests/test_gold_assurance.py",
       "interaction": "SYNTHETIC_MODEL_NOT_RUNTIME"
     },
     {
       "command": "stress-convergence",
       "family": "finite-models",
       "method_source": "src/cora/gold_saturation.py",
-      "test_source": "tests/test_pr19_gold_assurance.py",
+      "test_source": "tests/test_gold_assurance.py",
       "interaction": "SYNTHETIC_MODEL_NOT_RUNTIME"
     }
   ],
@@ -729,67 +729,67 @@
       "docs/archive/dod/DOD_PR17_AGENT.md"
     ],
     "test_modules": [
-      "tests/test_archaeology_pr12.py",
-      "tests/test_continuous_pr14.py",
+      "tests/test_agent_adversarial_coverage.py",
+      "tests/test_agent_assurance_boundaries.py",
+      "tests/test_artifact_role_classification.py",
+      "tests/test_bounded_operational_equivalence.py",
+      "tests/test_candidate_bundle_versioning.py",
+      "tests/test_change_lifecycle_governance.py",
+      "tests/test_change_transform_and_guard.py",
+      "tests/test_chat_bundle_portability.py",
+      "tests/test_chat_continuation_cockpit.py",
+      "tests/test_ci_git_reproducibility.py",
+      "tests/test_cli_capability_atlas.py",
       "tests/test_counterfactual_blindspots.py",
+      "tests/test_cross_repository_portability.py",
+      "tests/test_debt_governance.py",
+      "tests/test_dependency_adapter_contracts.py",
+      "tests/test_dependency_closure.py",
+      "tests/test_dependency_closure_refutation.py",
+      "tests/test_dependency_graph.py",
+      "tests/test_documentation_integrity.py",
+      "tests/test_documentation_proof_binding.py",
+      "tests/test_engineering_knowledge_closure.py",
+      "tests/test_enterprise_documentation.py",
+      "tests/test_evidence_contract_and_git_snapshot.py",
+      "tests/test_filesystem_layout_preservation.py",
+      "tests/test_final_experimental_gates.py",
+      "tests/test_five_synergy_goals.py",
+      "tests/test_git_lineage_genealogy.py",
+      "tests/test_git_object_batching.py",
+      "tests/test_gold_assurance.py",
+      "tests/test_gold_evidence_bridge.py",
       "tests/test_hforge_native_pilot.py",
+      "tests/test_hforge_operational_observation_binding.py",
       "tests/test_hforge_original_source_mutants.py",
-      "tests/test_hforge_pr70_binding.py",
       "tests/test_hforge_profile.py",
-      "tests/test_pr01.py",
-      "tests/test_pr02.py",
-      "tests/test_pr03.py",
-      "tests/test_pr04.py",
-      "tests/test_pr05.py",
-      "tests/test_pr05_refinement.py",
-      "tests/test_pr06.py",
-      "tests/test_pr07.py",
-      "tests/test_pr08_repository.py",
-      "tests/test_pr09_file_lab.py",
-      "tests/test_pr10_artifact_roles.py",
-      "tests/test_pr13_bundle_version.py",
-      "tests/test_pr13_debt_governance.py",
-      "tests/test_pr15_release_readiness.py",
-      "tests/test_pr16_benchmark_contract.py",
-      "tests/test_pr16_git_batch.py",
-      "tests/test_pr16_lattice.py",
-      "tests/test_pr16_runtime_fusion.py",
-      "tests/test_pr16_zip_intake.py",
-      "tests/test_pr17_agent_assurance.py",
-      "tests/test_pr18_agent_hardening.py",
-      "tests/test_pr19_gold_assurance.py",
-      "tests/test_pr20_convergence.py",
-      "tests/test_pr20_self_governing_contract.py",
-      "tests/test_pr21_documentation.py",
-      "tests/test_pr22_documentation_proofs.py",
-      "tests/test_pr23_navigation.py",
-      "tests/test_pr24_workflow_rationalization.py",
-      "tests/test_pr25_method_synthesis.py",
-      "tests/test_pr26_capability_atlas.py",
-      "tests/test_pr27_type_assurance.py",
-      "tests/test_pr28_integrated_service.py",
-      "tests/test_pr29_five_synergies.py",
-      "tests/test_pr30_layout_simplification.py",
-      "tests/test_pr31_maturity_atlas.py",
-      "tests/test_pr32_host_release.py",
-      "tests/test_pr33_ci_repro.py",
-      "tests/test_pr36_one_run.py",
-      "tests/test_pr37_integrated_one_run.py",
-      "tests/test_pr38_genealogy.py",
-      "tests/test_pr39_qualification.py",
-      "tests/test_pr40_engineering_closure.py",
-      "tests/test_pr41_final_experimental.py",
-      "tests/test_pr46_chat_bundle.py",
-      "tests/test_pr50_portable.py",
-      "tests/test_pr51_gold_bridge.py",
-      "tests/test_pr52_native_gold.py",
-      "tests/test_pr58_practice_contract.py",
-      "tests/test_pr59_consolidation.py",
-      "tests/test_pr62_enterprise_docs.py",
-      "tests/test_pr68_project_prompt.py",
-      "tests/test_pr70_operational_equivalence.py",
-      "tests/test_pr87_cockpit.py",
-      "tests/test_selection.py"
+      "tests/test_hostile_archive_intake.py",
+      "tests/test_independent_qualification.py",
+      "tests/test_integrated_one_run.py",
+      "tests/test_integrated_semantic_service.py",
+      "tests/test_maturity_atlas.py",
+      "tests/test_method_synthesis.py",
+      "tests/test_native_gold_target_execution.py",
+      "tests/test_one_run_orchestration.py",
+      "tests/test_performance_benchmark_contract.py",
+      "tests/test_practice_contract.py",
+      "tests/test_project_instructions.py",
+      "tests/test_reader_navigation.py",
+      "tests/test_release_artifact_integrity.py",
+      "tests/test_release_host_boundaries.py",
+      "tests/test_release_readiness.py",
+      "tests/test_repository_archaeology.py",
+      "tests/test_repository_consolidation.py",
+      "tests/test_repository_identity_audit.py",
+      "tests/test_repository_product_contract.py",
+      "tests/test_reticular_convergence.py",
+      "tests/test_runtime_observation_fusion.py",
+      "tests/test_selection.py",
+      "tests/test_self_governing_contract.py",
+      "tests/test_semantic_lattice.py",
+      "tests/test_source_file_lab.py",
+      "tests/test_type_assurance.py",
+      "tests/test_workflow_rationalization.py"
     ],
     "internal_dod": [
       ".cora/contracts/dod/agent-dod.json",

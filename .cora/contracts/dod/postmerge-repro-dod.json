@@ -73,7 +73,7 @@
       "depends_on": [],
       "description": "Three independent tests of original Git PR25 mutants.",
       "witness_paths": [
-        "tests/test_pr25_method_synthesis.py"
+        "tests/test_method_synthesis.py"
       ]
     },
     {
@@ -82,7 +82,7 @@
       "depends_on": [],
       "description": "Three independent tests of PR26 original Git capability mutants.",
       "witness_paths": [
-        "tests/test_pr26_capability_atlas.py"
+        "tests/test_cli_capability_atlas.py"
       ]
     },
     {

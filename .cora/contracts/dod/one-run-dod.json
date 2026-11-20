@@ -198,7 +198,7 @@
       "depends_on": [],
       "description": "Real Git and output-forgery negative tests",
       "witness_paths": [
-        "tests/test_pr36_one_run.py"
+        "tests/test_one_run_orchestration.py"
       ]
     },
     {

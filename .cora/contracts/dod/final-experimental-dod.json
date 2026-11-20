@@ -167,7 +167,7 @@
       "depends_on": [],
       "claim": "Physical committed changed bytes and stale SHA rejected by independent comparator",
       "witness_paths": [
-        "tests/test_pr39_qualification.py"
+        "tests/test_independent_qualification.py"
       ],
       "acceptance": "EXECUTE_EXACT_GIT_ORACLE_AND_REPLAY",
       "status": "UNPROVEN_BY_DECLARATION"
