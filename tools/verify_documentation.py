@@ -178,10 +178,11 @@ README_SEMANTIC_DOD = json.loads(r'''{"schema":"cora-readme-semantic-refactor-do
 
 README_SECTION_ORDER = (
     r"^## First five minutes\b",
+    r"^## Use CORA in a ChatGPT Project — beginner walkthrough$",
+    r"^## Path B — authorized coding agent and local CORA-ENGINE$",
     r"^## What works today\b",
     r"^## One-Run\b",
     r"^## How CORA works\b",
-    r"^## Use CORA with an AI coding assistant\b",
     r"^## (?:Interpret a CORA result|Understanding CORA results)\b",
     r"^## Final Experimental Baseline\b",
     r"^## Documentation by goal\b",
@@ -217,6 +218,49 @@ README_FALSE_PROMOTIONS = (
 )
 
 
+# PR88: finite three-plane / three-scale reading contract. This is a lexical
+# guard on publicly observable claims, NOT semantic completeness or user trials.
+README_MULTISCALE_REQUIRED = {
+    "GLOBAL_PRODUCT": ("**Product** = engineering assurance", "None proves target-product readiness"),
+    "GLOBAL_SOFTWARE": ("**software** = the `cora` CLI", "CORA is not a coding agent"),
+    "GLOBAL_REPOSITORY": ("**repository** = Git source", "Verify the exact checked-out Git revision"),
+    "INTERMEDIATE_PRODUCT": ("Path A — Project chat", "METHOD_ONLY"),
+    "INTERMEDIATE_SOFTWARE": ("Path B — authorized coding agent", "With no runner"),
+    "INTERMEDIATE_REPOSITORY": ("CORA source ZIP = optional read-only reference", "no Git history"),
+    "LOCAL_PRODUCT": ("**Micro-example — three evidence planes:**", "**Product:**"),
+    "LOCAL_SOFTWARE": ("**Software:** UI/API behavior", "separate real observations"),
+    "LOCAL_REPOSITORY": ("**Repository:** bind test receipts", "named Git SHA"),
+}
+# All patterns encode affirmative *false* claims. Disclaimers such as
+# 'does not approve' must not trigger a false positive.
+README_MULTISCALE_FORGERIES = {
+    "GLOBAL_PRODUCT": r"\b(?:CI green|PASS_SCOPED|source receipt) (?:certifies|proves|approves) (?:target product|product acceptance|production readiness)\b",
+    "GLOBAL_SOFTWARE": r"\bCORA-ENGINE (?:autonomously implements|independently writes|automatically creates) (?:customer features|product features|application code)\b",
+    "GLOBAL_REPOSITORY": r"\bRepository CI (?:approves|authorizes|merges) (?:deployment|release|pull requests) automatically\b",
+    "INTERMEDIATE_PRODUCT": r"\bA proposed user outcome (?:is|becomes|constitutes) (?:completed|verified|independent) product acceptance\b",
+    "INTERMEDIATE_SOFTWARE": r"\bChatGPT Project (?:runs|executes|installs) CORA-ENGINE (?:inside the chat|on an uploaded ZIP|without a runner)\b",
+    "INTERMEDIATE_REPOSITORY": r"\bCORA source ZIP (?:preserves|includes|proves) (?:full original Git history|actual Git ancestry|authenticated commit history)\b",
+    "LOCAL_PRODUCT": r"\bThe browser screenshot (?:proves|certifies|authenticates) (?:durable database state|role-based access|product correctness)\b",
+    "LOCAL_SOFTWARE": r"\bA simulated 10k model (?:is|proves|certifies) (?:a completed browser security test|real target execution|native behavior)\b",
+    "LOCAL_REPOSITORY": r"\bA Git SHA (?:authenticates|certifies|approves) (?:an independent reviewer|the human approver|release authorization)\b",
+}
+
+
+def verify_readme_multiscale_contract(readme: str) -> list[str]:
+    """Cross-check product/software/repository at global/intermediate/local scale.
+
+    Does not certify the truth of unknown claims or replace external witnesses.
+    """
+    errors = []
+    for name, required in README_MULTISCALE_REQUIRED.items():
+        if any(term not in readme for term in required):
+            errors.append("readme-multiscale-omission:" + name)
+    for name, pattern in README_MULTISCALE_FORGERIES.items():
+        if re.search(pattern, readme, flags=re.I):
+            errors.append("readme-multiscale-false-promotion:" + name)
+    return sorted(errors)
+
+
 def verify_readme_semantics(readme: str, *, root: Path | None = None) -> list[str]:
     """Finite editorial claims and navigation; not open-world language understanding.
 
@@ -234,6 +278,13 @@ def verify_readme_semantics(readme: str, *, root: Path | None = None) -> list[st
             positions.append(m.start())
     if len(positions) != len(README_SECTION_ORDER) or positions != sorted(positions):
         errors.append("readme-semantic-progression")
+    errors.extend(verify_readme_multiscale_contract(readme))
+    if "**CORA (Continuous Ontological Repository Assurance)**" in readme:
+        errors.append("readme-semantic-duplicated-product-name")
+    if "**Standard engineering contract:**" not in readme or "**Additional analytical lenses (research, not standards):**" not in readme:
+        errors.append("readme-semantic-standards-and-research-boundary")
+    if "**does not certify compliance**" not in readme or "contradicted receipts" not in readme:
+        errors.append("readme-semantic-evidence-translation-boundary")
     if len(re.findall(r"^\x60\x60\x60", readme, flags=re.MULTILINE)) % 2:
         errors.append("readme-semantic-unclosed-code-fence")
     if not re.search(r"(?<!\d)71 declared CLI commands(?!\d)", readme):
@@ -286,7 +337,7 @@ NAVIGATION_READERS = {
 def verify_development_method_readme(readme: str) -> list[str]:
     """Scoped engineering-fidelity checks, not independent semantic understanding."""
     part = readme.split("## How CORA works\n", 1)
-    section = part[1].split("\n## Use CORA with an AI coding assistant", 1)[0] if len(part) == 2 else ""
+    section = part[1].split("\n## Interpret a CORA result", 1)[0] if len(part) == 2 else ""
     if not section:
         return ["cto-method-absent"]
     errors = []
@@ -308,7 +359,7 @@ def verify_development_method_readme(readme: str) -> list[str]:
                              "unknown consumers", "reversible repository contraction")),
         ("evidence-ownership", ("Source histories and native pilot evidence have distinct owners",
                                 "CORA did not independently certify these products")),
-        ("glossary", ("Terminology, only after the engineering method:",
+        ("glossary", ("**Terms:**",
                       "intent mining", "reticular DoD", "semantic slices",
                       "blobbing/materialization", "semantic mutations",
                       "semantic saturation")),
@@ -320,7 +371,7 @@ def verify_development_method_readme(readme: str) -> list[str]:
         "**1. Specify the outcome.**", "**2. Change one coherent unit.**",
         "**3. Try to disprove it, then stop intelligently.**",
         "**Target examples, not universal validation:**",
-        "**Terminology, only after the engineering method:")]
+        "**Terms:**")]
     if min(order) < 0 or order != sorted(order):
         errors.append("cto-method-progressive-order")
     if any(x in section.lower() for x in (
@@ -333,8 +384,8 @@ def verify_development_method_readme(readme: str) -> list[str]:
 
 def verify_contract_to_application_readme(readme: str) -> list[str]:
     """Short route to application contract and runtime boundaries."""
-    parts = readme.split("## Use CORA with an AI coding assistant\n", 1)
-    body = parts[1].split("\n## Interpret a CORA result", 1)[0] if len(parts) == 2 else ""
+    parts = readme.split("## Path B — authorized coding agent and local CORA-ENGINE\n", 1)
+    body = parts[1].split("\n## What works today", 1)[0] if len(parts) == 2 else ""
     required = ("[agent adoption](docs/AGENT_ADOPTION.md)",
                 "[R1–R4 DoD](docs/DOD_PR20_CONVERGENCE.md)",
                 "--contextual --intent", "The same intent is required for replay",
@@ -343,6 +394,8 @@ def verify_contract_to_application_readme(readme: str) -> list[str]:
                 "LEVEL / NILO experiment", "genuine browser tests",
                 "not an already delivered game",
                 "docs/CONTINUOUS_DEVELOPMENT.md#level-demonstration-local-evidence-verifiable-engineering-lifecycle")
+    required += ("Executable outside ChatGPT Project, not a third chat mode.",
+                 "CORA-ENGINE (local Python CLI)", "With no runner", "target-native tests")
     return [] if body and all(x in body for x in required) else [
         "cto-contract-to-application-or-source-link-lost"]
 
@@ -355,7 +408,6 @@ def verify_multichannel_intro(readme: str) -> list[str]:
         errors.append("cto-intro-compression-budget")
     groups = {
         "identity": ("# CORA — Continuous Ontological Repository Assurance",
-                     "**CORA (Continuous Ontological Repository Assurance)**",
                      "**Engineering evidence for AI-assisted software changes.**"),
         "chain": ("the proposed change", "the source evidence", "tests or counterexamples",
                   "the work still needed", "exact Git SHA + evidence dossier"),
@@ -495,7 +547,7 @@ def verify_project_adapter_prompt(guide: str) -> list[str]:
 def verify_project_first_readme(readme: str) -> list[str]:
     """Source-only Project onboarding guard; no plan or connector attestation."""
     parts = readme.split("## Use CORA in a ChatGPT Project — beginner walkthrough\n", 1)
-    section = parts[1].split("\n## What works today", 1)[0] if len(parts) == 2 else ""
+    section = parts[1].split("\n## Path B — authorized coding agent and local CORA-ENGINE", 1)[0] if len(parts) == 2 else ""
     required = (
         "ChatGPT Pro or Edu", "Projects are available on other plans",
         "**New project**", "**Project settings**", "**Project instructions**",
@@ -530,7 +582,7 @@ def verify_project_zip_lifecycle(readme: str, adoption: str,
     errors = []
     section = readme.split(
         "## Use CORA in a ChatGPT Project — beginner walkthrough\n", 1)
-    path = section[1].split("\n## What works today", 1)[0] if len(section) == 2 else ""
+    path = section[1].split("\n## Path B — authorized coding agent and local CORA-ENGINE", 1)[0] if len(section) == 2 else ""
     ordered = ("**New repository**", "**Code → Download ZIP**",
                "**New project**", "**Project instructions**",
                "**read access**", "backward requirements decomposition",
@@ -608,7 +660,7 @@ def verify_method_crosswalk(readme: str, crosswalk: str, index: str) -> list[str
     """Finite source-only methodology/claim bridge; not method conformance."""
     errors = []
     anchor = "docs/CONVERGENT_ASSURANCE.md#method-crosswalk--borrowed-perspectives-not-full-implementations"
-    if f"[method crosswalk]({anchor})" not in readme:
+    if not re.search(r"\[method crosswalk\]\(" + re.escape(anchor) + r"\)", readme, flags=re.I):
         errors.append("cto-method-crosswalk-unreachable")
     if "[Method crosswalk](CONVERGENT_ASSURANCE.md#method-crosswalk--borrowed-perspectives-not-full-implementations)" not in index:
         errors.append("cto-method-index-route-missing")
@@ -794,9 +846,9 @@ def verify(root: Path) -> list[str]:
     if not (root / "LICENSE").is_file() or not (root / "LICENSE").read_text("utf-8").startswith("MIT License"):
         errors.append("navigation-mit-license-file-drift")
     required = ("# CORA — Continuous Ontological Repository Assurance",
-                "**CORA (Continuous Ontological Repository Assurance)**",
+                "**Engineering evidence for AI-assisted software changes.**",
                 "## First five minutes", "## What works today",
-                "## Use CORA with an AI coding assistant", "## Operating boundaries",
+                "## Path B — authorized coding agent and local CORA-ENGINE", "## Operating boundaries",
                 "## Engineering map", "1.0.0a5", "cora --help", "cora snapshot",
                 "docs/INDEX.md", "BLOCKED_EXTERNAL", "--intent")
     if any(token not in readme for token in required):
