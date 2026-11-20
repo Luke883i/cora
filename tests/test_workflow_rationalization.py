@@ -68,6 +68,18 @@ class WorkflowRationalizationTests(unittest.TestCase):
                 labels.append(label)
         self.assertEqual(len(labels), len(set(labels)))
 
+    def test_current_test_module_names_express_capabilities(self):
+        modules = sorted((ROOT / 'tests').glob('test_*.py'))
+        self.assertEqual(len(modules), 61)
+        self.assertEqual(len({p.name for p in modules}), 61)
+        for path in modules:
+            with self.subTest(path=path.name):
+                self.assertNotRegex(path.name, r'(?i)(?:^|_)pr\\d+(?=_|\\.|$)')
+        # Falsifiers must be rejected even if discovery returns 61 modules.
+        for forged in ('test_pr01.py', 'test_pr87_cockpit.py',
+                       'test_continuous_pr14.py'):
+            self.assertRegex(forged, r'(?i)(?:^|_)pr\\d+(?=_|\\.|$)')
+
     def test_real_git_inbound_and_priviliged_workflows(self):
         with tempfile.TemporaryDirectory() as t:
             repo = create(Path(t), {
