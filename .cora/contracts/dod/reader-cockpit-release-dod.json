@@ -195,7 +195,7 @@
     "based_on_main": "298997878c449e72f9bfca0a05e40c00af922953",
     "source_pr_head_observed": "8b4b17b797d883b37367bf67331a352351de75ae",
     "semantics": "AND_DEPENDENCY_DAG_NONCOMPENSATORY_UNTRUSTED_SOURCE_CONTRACT",
-    "evidence_policy": "Each leaf needs named exact-SHA witness; model PASS cannot override Git, browser, independent host or reviewer FAIL; host-control nodes are EXTERNAL and cannot be satisfied by local model observations",
+    "evidence_policy": "Each leaf needs named exact-SHA witness; model PASS cannot override Git, browser, independent host or reviewer FAIL; host-control nodes are EXTERNAL and cannot be satisfied by local model observations; the original G_PUBLIC_RELEASE root is explicitly reached and retains its independent external gates",
     "nodes": [
       {
         "id": "P0_GIT_HISTORY",
@@ -395,9 +395,7 @@
         "kind": "AND",
         "depends_on": [
           "G_SOURCE",
-          "R5_HUMAN",
-          "R6_TARGET",
-          "R7_HOST"
+          "G_PUBLIC_RELEASE"
         ],
         "acceptance": "Independent human, target and host gates; not satisfiable by PR alone",
         "scope": "EXTERNAL"

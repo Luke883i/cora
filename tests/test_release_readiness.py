@@ -324,12 +324,13 @@ class Pr90SelfAuditReticulumTests(unittest.TestCase):
             self.assertIn(key, order)
         by_id = {node["id"]: node for node in self.nodes}
         self.assertEqual(len(by_id), len(self.nodes))
+        self.assertEqual(set(order), set(by_id), "orphan global reticular node")
         expected_edges = {
             "G_P0": {"P0_GIT_HISTORY", "P0_HOST_CI", "P0_NONPROMOTION"},
             "P1_SCOPE": {"P1_ZIP_MATRIX", "P1_COCKPIT_NAV", "P1_HOST_READBACK",
                          "P1_DIAGNOSTICS", "P1_BEGINNER"},
             "G_SOURCE": {"G_P0", "P1_SCOPE", "G_SOURCE_CANDIDATE"},
-            "G_EXTERNAL": {"G_SOURCE", "R5_HUMAN", "R6_TARGET", "R7_HOST"},
+            "G_EXTERNAL": {"G_SOURCE", "G_PUBLIC_RELEASE"},
         }
         for gate, required in expected_edges.items():
             self.assertEqual(set(by_id[gate]["depends_on"]), required)
