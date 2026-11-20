@@ -11,7 +11,7 @@
 
 **CORA is not a coding agent**, a ChatGPT plug-in, an automatic runner or a release approver. It can **produce reproducible pre/post-merge review reports** describing **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**.
 
-**Why it matters:** patches are not proof.
+**Why it matters:** patches are not proof; readers need decisions, tests and unresolved risks.
 
 ```text
 TARGET Git repository = application source of truth
