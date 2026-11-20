@@ -340,6 +340,45 @@ class Pr90SelfAuditReticulumTests(unittest.TestCase):
         self.assertTrue(all(row["status"] == "TOBE_UNVERIFIED"
                             for row in self.closure["deferred_p2"]))
 
+    def test_zip_original_git_matrix_is_explicit_and_mutation_resistant(self):
+        import copy
+        policy = self.closure["history_input_matrix"]
+        self.assertEqual(policy["schema"], "cora-pr90-history-source-matrix/1")
+        self.assertTrue(policy["no_unverified_promotion"])
+        self.assertIn("preflight_comprehensive_history", policy["single_runtime_enforcer"])
+        expected = {
+            "ZIP_ARCHIVE": "REJECT_TYPED",
+            "SYNTHETIC_ROOT_GIT": "REJECT_TYPED",
+            "SHALLOW_GIT": "REJECT_TYPED",
+            "FORGED_CORPUS": "REJECT_TYPED",
+            "FULL_GIT": "ELIGIBLE_FOR_SOURCE_REPLAY",
+        }
+
+        def validate(matrix):
+            modes = matrix["modes"]
+            by_id = {mode["id"]: mode for mode in modes}
+            if (len(by_id) != len(modes) or set(by_id) != set(expected) or
+                matrix["no_unverified_promotion"] is not True or
+                not matrix["zip_fallback"].startswith("cora zip-intake")):
+                raise ValueError("unsafe or incomplete input source matrix")
+            for ident, state in expected.items():
+                if by_id[ident]["comprehensive"] != state:
+                    raise ValueError("ZIP/Git capability was falsely promoted")
+                if not by_id[ident]["not_proven"] or not by_id[ident]["witness"]:
+                    raise ValueError("unwitnessed capability matrix row")
+        validate(policy)
+        for ident in expected:
+            damaged = copy.deepcopy(policy)
+            next(x for x in damaged["modes"] if x["id"] == ident)["comprehensive"] = "PASS"
+            with self.subTest(ident=ident), self.assertRaises(ValueError):
+                validate(damaged)
+        for field, value in (("no_unverified_promotion", False),
+                             ("zip_fallback", "git-commit-from-extracted-zip")):
+            damaged = copy.deepcopy(policy)
+            damaged[field] = value
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                validate(damaged)
+
     def test_even_all_positive_source_reports_cannot_authorize_release(self):
         from cora.reticulum import MODEL, EXTERNAL
         order = self.ordered_cut(self.nodes, "G_EXTERNAL")

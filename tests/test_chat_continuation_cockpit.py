@@ -319,6 +319,49 @@ class NavigationTests(unittest.TestCase):
         self.assertIn("No link writes Git", page)
         self.assertIn("Authorization: NONE", page)
 
+    def test_human_choices_are_contextualized_by_verified_source_receipt(self):
+        bundle, receipt = self.make_bundle()
+        verified = verify_chat_bundle(bundle, expected_receipt=receipt)
+        page = render_verified_cockpit(bundle, expected_receipt=receipt)
+        unresolved = verified["continuation"]["next_unresolved"] or "NONE_REPORTED"
+        self.assertEqual(page.count("Git SHA " + receipt["commit"] + ";"), 3)
+        self.assertEqual(page.count("first unresolved DoD " + unresolved + ";"), 3)
+        self.assertIn("Caller-proposed check IDs:", page)
+        self.assertIn("ZIP integrity is not target attestation or release approval.", page)
+        self.assertIn("reversible falsifier for human authorization", page)
+        self.assertIn("No link writes Git", page)
+        self.assertNotIn("<script", page.lower())
+
+    def test_hostile_caller_prose_cannot_become_a_copied_instruction(self):
+        bundle, receipt = self.make_bundle(attack=True)
+        page = render_verified_cockpit(bundle, expected_receipt=receipt)
+
+        class CopiedInstructions(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.open = False
+                self.prompts = []
+            def handle_starttag(self, name, attrs):
+                if name == "blockquote":
+                    self.open = True
+                    self.prompts.append("")
+            def handle_endtag(self, name):
+                if name == "blockquote":
+                    self.open = False
+            def handle_data(self, data):
+                if self.open:
+                    self.prompts[-1] += data
+
+        captured = CopiedInstructions()
+        captured.feed(page)
+        self.assertEqual(len(captured.prompts), 3)
+        for prompt in captured.prompts:
+            self.assertIn(receipt["commit"], prompt)
+            self.assertNotIn("hijack", prompt)
+            self.assertNotIn("evil.invalid", prompt)
+            self.assertNotIn("onerror", prompt)
+            self.assertIn("Do not", prompt)
+
     def test_navigation_does_not_promote_authority(self):
         bundle, receipt = self.make_bundle()
         page = render_verified_cockpit(bundle, expected_receipt=receipt)
