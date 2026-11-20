@@ -103,8 +103,11 @@ class ReadinessTest(unittest.TestCase):
         p = self.repo / "README.md"
         old = p.read_text("utf-8")
         self.assertIn("## Enterprise evaluation boundary", old)
-        p.write_text(old + "\nEnterprise approved\n", encoding="utf-8")
-        self.deny("CLOSURE_BOUNDARY_DRIFT:README.md")
+        for forged in ("Enterprise approved", "enterprise-approved", "enterprise certified",
+                       "enterprise-ready", "release-approved"):
+            with self.subTest(forged=forged):
+                p.write_text(old + "\n" + forged + "\n", encoding="utf-8")
+                self.deny("CLOSURE_BOUNDARY_DRIFT:README.md")
 
     def test_source_closure_cannot_hide_other_blockers_or_forged_authority(self):
         baseline = inspect_source(self.repo)

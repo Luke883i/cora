@@ -170,7 +170,7 @@ def inspect_source(root: Path) -> dict:
         errors.append("REVIEW_NOTE_VERSION_OR_SHA_DRIFT")
     # README wording may change; negative claims are never made equivalent.
     # Check the whole document, not just the CTO panel or an historical slogan.
-    if re.search(r"\b(?:enterprise[- ]ready|enterprise approved|enterprise certified|release approved)\b",
+    if re.search(r"\b(?:enterprise[- ](?:ready|approved|certified)|release[- ]approved)\b",
                  txt("README.md"), flags=re.I):
         errors.append("CLOSURE_BOUNDARY_DRIFT:README.md")
     for rel in ("docs/archive/decisions/ADR-PR15.md","docs/RELEASE.md","docs/ARCHITECTURE.md"):
