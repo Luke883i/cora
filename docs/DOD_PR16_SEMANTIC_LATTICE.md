@@ -17,9 +17,9 @@
 | Gate | Intermediate DoD | Local witness and negative oracle | Forbidden promotion |
 | --- | --- | --- | --- |
 | C5 contract closure | Document new CLI; map source roles, architecture and agent boundary | README command check; repository/role verifier | New CLI must not be undocumented |
-| C6 hostile input and runtime | ZIP traversal/collision/symlink/bombs rejected; opt-in execution; runtime receipts bounded and fail-closed | `test_pr16_zip_intake.py`; `test_pr16_runtime_fusion.py` | Docker flags are not sandbox proof |
-| C7 lattice semantics | Cross-receipt equality, status distinction, machine-replay, dependency failure and no authorization escalation | Independent adversarial `test_pr16_lattice.py` and typed `semantic_lattice.py` | Digest is not signature; mocked success is not actual execution |
-| C8 bounded performance and regression | Git objects batch-read with ≤5 Git subprocesses for 104-path fixture; differential oracle and entire regression on CI | `test_pr16_git_batch.py`, main unit suite, deterministic measured counters | Synthetic ratio not general performance guarantee |
+| C6 hostile input and runtime | ZIP traversal/collision/symlink/bombs rejected; opt-in execution; runtime receipts bounded and fail-closed | `test_hostile_archive_intake.py`; `test_runtime_observation_fusion.py` | Docker flags are not sandbox proof |
+| C7 lattice semantics | Cross-receipt equality, status distinction, machine-replay, dependency failure and no authorization escalation | Independent adversarial `test_semantic_lattice.py` and typed `semantic_lattice.py` | Digest is not signature; mocked success is not actual execution |
+| C8 bounded performance and regression | Git objects batch-read with ≤5 Git subprocesses for 104-path fixture; differential oracle and entire regression on CI | `test_git_object_batching.py`, main unit suite, deterministic measured counters | Synthetic ratio not general performance guarantee |
 | C9 CI and PR closure | Source checks on head in Python 3.11 and 3.13; real GitHub PR and per-job conclusions independently inspected | `ci-semantic-lattice.yml` on PR and push; GitHub check-runs on exact SHA | Existence of workflow ≠ required check; PR ≠ reviewer approval |
 
 ## Evidence classification and dependencies

@@ -26,7 +26,7 @@ When adding or changing files, update `cora.artifact-roles.json` to preserve all
 
 ## Debt and process DoD
 
-Run `python -m unittest discover -s tests -q`, `python tools/verify_repository_contract.py --repo .`, and the dedicated `test_pr13_debt_governance.py` fixture suite before requesting review. For a new debt rule, document its AST/Git/third-party provenance, uncertainty, false-positive counterexamples, review category, owner role and a non-destructive remediation hypothesis. The `full` process must never execute repository scripts, AI models, or automatically remediate findings. CI must pass on the exact reviewed commit; branch protection must be separately configured and verified.
+Run `python -m unittest discover -s tests -q`, `python tools/verify_repository_contract.py --repo .`, and the dedicated `test_debt_governance.py` fixture suite before requesting review. For a new debt rule, document its AST/Git/third-party provenance, uncertainty, false-positive counterexamples, review category, owner role and a non-destructive remediation hypothesis. The `full` process must never execute repository scripts, AI models, or automatically remediate findings. CI must pass on the exact reviewed commit; branch protection must be separately configured and verified.
 
 ## Continuous PR and coding-agent contract
 

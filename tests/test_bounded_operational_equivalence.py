@@ -216,6 +216,8 @@ class OriginalGitP4ContractionTests(unittest.TestCase):
         ):
             self.assertEqual(git(ROOT, 'rev-parse', base + ':' + path), before)
             self.assertEqual(git(ROOT, 'rev-parse', head + ':' + path), after)
+        # Historical Git oracle: this path predates the semantic rename and
+        # must be looked up in the original commit trees, not current HEAD.
         test_path = 'tests/test_continuous_pr14.py'
         self.assertEqual(git(ROOT, 'rev-parse', base + ':' + test_path),
                          git(ROOT, 'rev-parse', head + ':' + test_path))

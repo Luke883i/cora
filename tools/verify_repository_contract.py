@@ -34,7 +34,7 @@ CORE_DOCS = [
     '.cora/contracts/dod/documentation-dod.json', 'docs/documentation-registry.json',
     'docs/INDEX.md', 'docs/GETTING_STARTED.md', 'docs/AGENT_ADOPTION.md',
     'docs/CLI_REFERENCE.md', 'docs/DOCUMENTATION_DOD.md',
-    'tools/verify_documentation.py', 'tests/test_pr21_documentation.py',
+    'tools/verify_documentation.py', 'tests/test_documentation_integrity.py',
     '.github/workflows/ci-documentation.yml',
 ]
 COMMANDS = (
@@ -272,10 +272,19 @@ def audit_contract(root: Path, *, readme_override: str | None = None) -> list[st
             errors.append('cli-reference-command-drift')
     else:
         errors.append('missing-cli-reference')
-    # Each foundational provenance/guard capability must have a test file.
-    for n in range(1, 8):
-        if not (root / 'tests' / f'test_pr0{n}.py').is_file():
-            errors.append('missing-pr-regression:' + str(n))
+    # Permanent capability identity, not its introducing PR number.
+    foundational_tests = (
+        'test_repository_identity_audit.py',
+        'test_evidence_contract_and_git_snapshot.py',
+        'test_dependency_graph.py',
+        'test_dependency_adapter_contracts.py',
+        'test_dependency_closure.py',
+        'test_change_transform_and_guard.py',
+        'test_release_artifact_integrity.py',
+    )
+    for name in foundational_tests:
+        if not (root / 'tests' / name).is_file():
+            errors.append('missing-foundational-regression:' + name)
     return errors
 
 

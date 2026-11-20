@@ -141,7 +141,7 @@
       "witness_paths": [
         ".cora/contracts/dod/one-run-dod.json",
         "src/cora/one_run.py",
-        "tests/test_pr36_one_run.py"
+        "tests/test_one_run_orchestration.py"
       ]
     },
     {
@@ -358,7 +358,7 @@
       "obligation": "Preserve PR36 100k preseeded distinct vectors, 32 families, seed 883, two deterministic replays and zero oracle disagreements/unsafe promotions.",
       "witness_paths": [
         "src/cora/one_run_stress.py",
-        "tests/test_pr36_one_run.py"
+        "tests/test_one_run_orchestration.py"
       ]
     },
     {

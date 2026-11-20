@@ -43,18 +43,18 @@ HASH = re.compile(r"^[a-f0-9]{64}$")
 # File witnesses prove presence in a Git tree, not successful execution.
 WITNESSES = {
     "BEHAVIOR": (
-        "tools/independent_git_oracle.py", "tests/test_pr39_qualification.py",
+        "tools/independent_git_oracle.py", "tests/test_independent_qualification.py",
         "tools/external_validate.py"),
     "USABILITY": (
         "docs/RELEASE.md",
-        "tests/test_pr39_qualification.py"),
+        "tests/test_independent_qualification.py"),
     "ISOLATION": (
-        "src/cora/runtime_observation.py", "tests/test_pr16_runtime_fusion.py",
-        "tests/test_pr39_qualification.py"),
+        "src/cora/runtime_observation.py", "tests/test_runtime_observation_fusion.py",
+        "tests/test_independent_qualification.py"),
     "GOVERNANCE": (
         ".github/workflows/ci-one-run-integrated.yml",
         "docs/RELEASE.md",
-        "tests/test_pr39_qualification.py"),
+        "tests/test_independent_qualification.py"),
 }
 
 

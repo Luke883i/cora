@@ -15,7 +15,7 @@
 ```bash
 cora artifact-audit . --revision HEAD --output /tmp/roles.json
 cora verify-artifacts /tmp/roles.json --repo .
-cora file-lab . --path tests/test_pr10_artifact_roles.py --output /tmp/lab.json
+cora file-lab . --path tests/test_artifact_role_classification.py --output /tmp/lab.json
 python tools/verify_artifact_roles.py --repo .
 ```
 

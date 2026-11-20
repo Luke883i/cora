@@ -7,6 +7,7 @@ from __future__ import annotations
 import argparse
 import ast
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -54,8 +55,13 @@ def verify(repo:Path,base:str|None=None) -> dict:
     doc=json.loads(path.read_text(encoding='utf-8'))
     if not isinstance(doc,dict) or set(doc)!={'schema','baseline_commit','products','exceptions'} or doc['schema']!=POLICY:
         raise ValueError('invalid guard policy schema')
+    # Validate the declared baseline even when a caller supplies --base. This is
+    # structural contract validation, not a substitute for Git ancestry checks.
+    declared_base=doc['baseline_commit']
+    if not isinstance(declared_base,str) or re.fullmatch(r'[0-9a-f]{40}(?:[0-9a-f]{24})?',declared_base) is None:
+        raise ValueError('invalid policy baseline_commit')
     products=doc['products']
-    if not isinstance(products,list) or not isinstance(doc['exceptions'],list):raise ValueError('invalid policy collections')
+    if not isinstance(products,list) or not products or not isinstance(doc['exceptions'],list):raise ValueError('invalid policy collections')
     for p in products:
         if set(p)!={'id','root','module_prefix'} or not all(isinstance(v,str) and v for v in p.values()):
             raise ValueError('invalid product policy entry')

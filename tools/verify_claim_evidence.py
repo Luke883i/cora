@@ -345,8 +345,8 @@ def _semantic_oracles(store: SourceStore, errors: list[str]) -> None:
         convergence_ci.count('--intent "$CHANGE_INTENT"') >= 3,
         errors, "H3:change-specific-intent-not-replayed")
     workflow = r(".github/workflows/ci-documentation.yml")
-    _ok("test_pr21_documentation.py" in workflow and
-        "test_pr22_documentation_proofs.py" in workflow and
+    _ok("test_documentation_integrity.py" in workflow and
+        "test_documentation_proof_binding.py" in workflow and
         "tools/verify_claim_evidence.py" in workflow and
         "--verify-report" in workflow,
         errors, "S15:missing-actual-falsification-ci")

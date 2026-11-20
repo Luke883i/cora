@@ -1,4 +1,4 @@
-name: CI | CORA engineering debt and process contracts
+name: CORA | Engineering debt visibility
 concurrency:
   group: cora-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
@@ -28,7 +28,8 @@ jobs:
       - name: Install CORA and run adversarial Git fixtures
         run: |
           python -m pip install .
-          python -m unittest discover -s tests -p 'test_pr13*.py' -v
+          python -m unittest discover -s tests -p 'test_candidate_bundle_versioning.py' -v
+          python -m unittest discover -s tests -p 'test_debt_governance.py' -v
           python tools/verify_repository_contract.py --repo .
       - name: Run CORA on itself and revalidate every receipt
         run: |
@@ -37,12 +38,31 @@ jobs:
           cora process-run . --revision HEAD --process full --max-commits 12 --focus src/cora/debt.py --output /tmp/full.json
           cora verify-process /tmp/full.json --repo .
           python -c 'import json; d=json.load(open("/tmp/full.json")); assert d["status"]=="PASS_SCOPED_WITH_UNVERIFIED_GAPS" and d["authorized_action"]=="NONE" and any(x["method"]=="debt_signals" for x in d["results"])'
-      - name: PR40 Git-bound static/dynamic knowledge and physical mutant witnesses
+      - name: Execute original-Git knowledge cases and collect source-bound failure IDs
+        id: knowledge_cases
         run: |
           test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
-          python -m unittest discover -s tests -p 'test_pr40_engineering_closure.py' -v
+          result=0
+          python -m unittest discover -s tests -p 'test_engineering_knowledge_closure.py' -v > /tmp/cora-knowledge-unit.log 2>&1 || result=$?
+          cat /tmp/cora-knowledge-unit.log
+          python - <<'PY'
+          import os,re
+          from pathlib import Path
+          source=Path('/tmp/cora-knowledge-unit.log').read_text(encoding='utf-8',errors='replace')
+          found=re.findall(r'(?m)^(?:FAIL|ERROR):[ ]+(test_[A-Za-z0-9_]+)(?=[ (])',source)
+          summary=','.join(found[:6]) if found else 'NO_FAILURE_ID'
+          with open(os.environ['GITHUB_OUTPUT'],'a',encoding='utf-8') as f:
+              f.write('failures='+summary+chr(10))
+          PY
+          echo "status=$result" >> "$GITHUB_OUTPUT"
+      - name: "Enforce knowledge tests - ${{ steps.knowledge_cases.outputs.failures }}"
+        run: test "${{ steps.knowledge_cases.outputs.status }}" -eq 0
+      - name: Build and replay source-bound knowledge receipt
+        run: |
           python tools/verify_engineering_closure.py --repo . --revision HEAD --output /tmp/ekc-source.json
           python tools/verify_engineering_closure.py --repo . --verify-report /tmp/ekc-source.json --output /tmp/ekc-replay.json
+      - name: Verify capability inventory and prevent authority promotion
+        run: |
           python tools/verify_capability_atlas.py --repo .
           python - <<'PY'
           import json

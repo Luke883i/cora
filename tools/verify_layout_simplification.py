@@ -235,6 +235,54 @@ def _preseed(repo:Path,sha:str)->dict:
             raise ValueError("preseed case oracle poisoned: "+str(i))
     return m
 
+# Native-Git source witness for the pure, blob-preserving capability rename.
+# The fixed commit is a provenance coordinate, not a current capability name.
+TEST_IDENTITY_MOVE = "051913fc059efca8d9455f71aa46b68dacb0b998"
+
+def _proven_test_renames(repo:Path,sha:str,head:dict)->dict[str,str]:
+    source=_commit(repo,TEST_IDENTITY_MOVE)
+    if subprocess.run(["git","-C",str(repo),"merge-base","--is-ancestor",
+                       source,sha],capture_output=True,timeout=45).returncode:
+        # Earlier revisions legitimately predate the migration.
+        return {}
+    parent=_commit(repo,source+"^")
+    prior=_tree(repo,parent)
+    moved=_tree(repo,source)
+    raw=_git(repo,"diff","--name-status","-z","-M100%",
+             parent,source,max_bytes=512*1024).split(bytes((0,)))
+    if raw[-1:] == [b""]:
+        raw.pop()
+    changes={}
+    pos=0
+    while pos<len(raw):
+        status=raw[pos].decode("ascii");pos+=1
+        if not status.startswith("R100") or pos+1>=len(raw):
+            raise ValueError("semantic test rename is not a pure Git move")
+        old=raw[pos].decode("utf-8");new=raw[pos+1].decode("utf-8");pos+=2
+        if (not re.fullmatch(r"tests/test_[^/]+[.]py",old)
+            or not re.fullmatch(r"tests/test_[^/]+[.]py",new)
+            or old in changes or new in changes.values()
+            or old not in prior or old in moved or new in prior or new not in moved
+            or moved[new]!=prior[old] or new not in head):
+            raise ValueError("semantic test identity/provenance drift")
+        changes[old]=new
+    if len(changes)!=56:
+        raise ValueError("semantic test rename denominator drift")
+    return changes
+
+
+def _renamed_test_witnesses(value, moves:dict[str,str]):
+    # Strictly transform entire path values, never free-form prose or source IDs.
+    if isinstance(value,str):
+        return moves.get(value,value)
+    if isinstance(value,list):
+        return [_renamed_test_witnesses(item,moves) for item in value]
+    if isinstance(value,dict):
+        return {key:_renamed_test_witnesses(v,moves)
+                for key,v in value.items()}
+    return value
+
+
 def _rewrite_original_json(value):
     if isinstance(value,str):
         for old,new in THEME.items():
@@ -304,6 +352,7 @@ def _validate_theme(repo:Path,sha:str,baseline:dict,head:dict,manifest:dict)->di
                              THEMATIC_BASE,sha],capture_output=True,timeout=45)
     if ancestor.returncode:
         raise ValueError("thematic source baseline is not an ancestor")
+    renames=_proven_test_renames(repo,sha,head)
     exact=rewritten=0
     for row in manifest["thematic_moves"]:
         old,new=row["old"],row["new"]
@@ -337,6 +386,8 @@ def _validate_theme(repo:Path,sha:str,baseline:dict,head:dict,manifest:dict)->di
             exact+=1  # bytes matched on migration day, not permanently frozen
         else:
             original=_rewrite_original_json(_json(repo,THEMATIC_BASE,old))
+            if old in ("cora.capability-atlas.json","cora.documentation-proofs.json"):
+                original=_renamed_test_witnesses(original,renames)
             if old=="cora.capability-atlas.json":
                 surfaces=original["repository_surfaces"]
                 surfaces["contracts"]=sorted(x for x in surfaces["contracts"]
@@ -512,7 +563,7 @@ def check(repo:Path,revision:str="HEAD")->dict:
     validate_declarations(roles)
     for path,role in ((".cora/fixtures/five-synergies-mutants.json","FIXTURE"),
                       ("tools/verify_layout_simplification.py","CONTRACT_VERIFIER"),
-                      ("tests/test_pr30_layout_simplification.py","TEST")):
+                      ("tests/test_filesystem_layout_preservation.py","TEST")):
         if role not in roles_for(path,roles["rules"])["roles"]:
             raise ValueError("moved artifact lost declared role: "+path)
     src=_read(repo,sha,"src/cora/synergy.py").decode("utf-8")

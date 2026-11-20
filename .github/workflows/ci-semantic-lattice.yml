@@ -1,4 +1,4 @@
-name: CI | PR16 semantic assurance lattice
+name: CORA | Semantic evidence consistency
 concurrency:
   group: cora-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
@@ -91,7 +91,7 @@ jobs:
           cora verify-ledger /tmp/cora-snapshot.json --repo .
       - name: PR33 original Git fixture metrics and negative-contract regressions
         run: |
-          python -m unittest discover -s tests -p 'test_pr33_ci_repro.py' -q
+          python -m unittest discover -s tests -p 'test_ci_git_reproducibility.py' -q
           python -m cora.ci_repro --repo . --sha "$(git rev-parse HEAD)" --repetitions 3 --output /tmp/cora-pr33-measured.json
           python -c 'import json; a=json.load(open("/tmp/cora-pr33-measured.json")); assert a["sample_total"]==6 and a["failures_total"]==0 and a["postmerge_status"]=="BLOCKED_EXTERNAL" and a["root_cause"]=="NOT_ATTESTED" and a["authorization"]=="NONE"'
       - name: C6-C7 full unit regression with measured branch coverage
@@ -100,7 +100,7 @@ jobs:
         run: |
           for attempt in 1 2 3; do
             echo "PR25 original-Git test attempt $attempt / 3, exact HEAD $(git rev-parse HEAD), tree $(git rev-parse HEAD^{tree})"
-            python -m unittest discover -s tests -p test_pr25_method_synthesis.py -q
+            python -m unittest discover -s tests -p test_method_synthesis.py -q
           done
       - name: Replay PR25 Git falsifiers on exact pre-PR main commit (not a synthetic tree)
         if: github.event_name == 'pull_request'
@@ -113,9 +113,15 @@ jobs:
           echo "Original integrated-main commit: $(git -C "$original" rev-parse HEAD)"
           echo "Original integrated-main tree: $(git -C "$original" rev-parse HEAD^{tree})"
           echo "Proposed source tree: $(git rev-parse HEAD^{tree})"
+          # The immutable base retains test_pr25_method_synthesis.py, while
+          # the candidate uses the capability name test_method_synthesis.py.
+          # One live historical module is mandatory; no empty-suite PASS.
+          baseline_files=("$original"/tests/test_*method_synthesis.py)
+          test "${#baseline_files[@]}" -eq 1
+          test -f "${baseline_files[0]}"
           for attempt in 1 2 3; do
             echo "MAIN ORIGINAL PR25 physical Git repeat $attempt/3"
-            (cd "$original" && PYTHONPATH="$original/src" python -m unittest discover -s tests -p test_pr25_method_synthesis.py -q)
+            (cd "$original" && PYTHONPATH="$original/src" python -m unittest discover -s tests -p 'test_*method_synthesis.py' -q)
           done
       - name: C8 independent critical coverage floor
         run: |

@@ -54,6 +54,72 @@ class WorkflowRationalizationTests(unittest.TestCase):
         doc = json.loads((ROOT / ".cora/contracts/dod/workflow-dod.json").read_text("utf-8"))
         self.assertEqual(len(ordered_cut(doc["nodes"], "G_WORKFLOW_GOVERNED")), 15)
 
+    def test_workflow_labels_express_permanent_business_obligations(self):
+        workflows = sorted((ROOT / '.github/workflows').glob('*.yml'))
+        self.assertEqual(len(workflows), 14)
+        labels = []
+        for path in workflows:
+            with self.subTest(workflow=path.name):
+                first = path.read_text(encoding='utf-8').splitlines()[0]
+                self.assertTrue(first.startswith('name: CORA | '), first)
+                label = first.partition('name: CORA | ')[2].strip()
+                self.assertGreaterEqual(len(label.split()), 2)
+                self.assertNotRegex(label, r'(?i)\bpr[-_# ]?\d+\b')
+                labels.append(label)
+        self.assertEqual(len(labels), len(set(labels)))
+
+    def test_current_test_module_names_express_capabilities(self):
+        modules = sorted((ROOT / 'tests').glob('test_*.py'))
+        self.assertEqual(len(modules), 61)
+        self.assertEqual(len({p.name for p in modules}), 61)
+        for path in modules:
+            with self.subTest(path=path.name):
+                self.assertNotRegex(path.name, r'(?i)(?:^|_)pr\d+(?=_|\.|$)')
+        # Falsifiers must be rejected even if discovery returns 61 modules.
+        for forged in ('test_pr01.py', 'test_pr87_cockpit.py',
+                       'test_continuous_pr14.py'):
+            self.assertRegex(forged, r'(?i)(?:^|_)pr\d+(?=_|\.|$)')
+
+    def test_all_explicit_unittest_patterns_reach_live_modules(self):
+        # Detect the silent-zero-tests failure mode for quoted AND unquoted -p.
+        import fnmatch
+        import re
+        modules = {p.name for p in (ROOT / 'tests').glob('test_*.py')}
+        sources = sorted((ROOT / '.github/workflows').glob('*.yml'))
+        pattern = re.compile(
+            r"""python -m unittest discover -s tests -p\s+(?:'([^']+)'|"([^"]+)"|([^\s]+))""")
+        selectors = []
+        for workflow in sources:
+            for match in pattern.finditer(workflow.read_text(encoding='utf-8')):
+                selected_pattern = next(x for x in match.groups() if x is not None)
+                selected = {n for n in modules if fnmatch.fnmatchcase(n, selected_pattern)}
+                with self.subTest(workflow=workflow.name, pattern=selected_pattern):
+                    self.assertTrue(selected, 'empty CI discovery selector')
+                    self.assertNotRegex(selected_pattern,
+                                        r'(?i)(?:^|_)pr\d+(?=_|\.|$)')
+                selectors.append((workflow.name, selected_pattern, selected))
+        self.assertEqual(len(selectors), 56)
+        for forged in ('test_pr07.py', 'test_pr25_method_synthesis.py',
+                       'test_nonexistent_module.py'):
+            self.assertFalse(any(fnmatch.fnmatchcase(n, forged) for n in modules))
+
+    def test_workflow_literal_test_paths_are_live_and_falsifiable(self):
+        # A selector can be correct while a separate CLI --path is stale.
+        import re
+        live = {p.name for p in (ROOT / "tests").glob("test_*.py")}
+        pattern = re.compile(r"tests/(test_[A-Za-z0-9_.-]+[.]py)")
+        observed = 0
+        for workflow in sorted((ROOT / ".github/workflows").glob("*.yml")):
+            for name in pattern.findall(workflow.read_text(encoding="utf-8")):
+                with self.subTest(workflow=workflow.name, source=name):
+                    self.assertIn(name, live, "dangling workflow test-path consumer")
+                observed += 1
+        self.assertGreater(observed, 0, "no workflow test-path consumers inspected")
+        for mutant in ("tests/test_pr10_artifact_roles.py",
+                       "tests/test_nonexistent_semantic_contract.py"):
+            self.assertTrue(set(pattern.findall(mutant)) - live,
+                            "adversarial stale path escaped the source oracle")
+
     def test_real_git_inbound_and_priviliged_workflows(self):
         with tempfile.TemporaryDirectory() as t:
             repo = create(Path(t), {

@@ -197,7 +197,8 @@ class CiSchedulingSourceContract(unittest.TestCase):
         seen = set()
         for path, source in sorted(workflows.items()):
             name = source.splitlines()[0] if source else ''
-            if not name.startswith('name: CI | ') or name in seen:
+            if (not name.startswith('name: CORA | ') or name in seen
+                    or __import__('re').search(r'(?i)\bpr[-_# ]?\d+\b', name)):
                 errors.append(path + ':owner-identity')
             seen.add(name)
             if source.count('concurrency:') != 1 or cancel not in source:
@@ -220,7 +221,7 @@ class CiSchedulingSourceContract(unittest.TestCase):
         block = parts[1].split('  diagnose-comprehensive:\n', 1)[0] if len(parts) == 2 else ''
         required = ('cora verify-process /tmp/cora-one-run.json --repo . --one-run --atlas-json /tmp/cora-one-run-atlas.json --atlas-html /tmp/cora-one-run.html',
                     '--model-stress-cases 100000',
-                    "python -m unittest discover -s tests -p 'test_pr36_one_run.py' -v",
+                    "python -m unittest discover -s tests -p 'test_one_run_orchestration.py' -v",
                     'cmp /tmp/cora-one-run-100k.json /tmp/cora-one-run-100k-replay.json',
                     'r["unauthorized_promotions"]==0',
                     'not a["release_authorized"]',

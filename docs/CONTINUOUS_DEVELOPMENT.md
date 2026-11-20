@@ -306,7 +306,7 @@ The twenty lenses below are **ten established engineering practices (S01–S10) 
 | S09 OWASP ASVS-style negative controls | Target-owned authentication/authorization input cases and behavioral oracles | Web-service or application assessment not executed here |
 | S10 ISO/IEC 25010 quality lenses | `independent_qualification.py`: measurable reliability/usability/cost criteria | Real user, workload and operating-environment measurements |
 | F01 Physical mutation | `gold_mutations.py` and committed Git fixture tests: a deliberate source fault must be detected | Unsampled code paths |
-| F02 Metamorphic invariants | `tests/test_pr26_capability_atlas.py`: unchanged committed source with dirty worktree yields same ledger | Actual product correctness |
+| F02 Metamorphic invariants | `tests/test_cli_capability_atlas.py`: unchanged committed source with dirty worktree yields same ledger | Actual product correctness |
 | F03 Differential source oracle | `independent_git_oracle.py`: independent Git readback disagrees with receipt | Runtime target equivalence |
 | F04 Non-compensatory reticular DoD | `reticulum.py`: remove one required edge and global eligibility must fail | External evidence is not synthesized |
 | F05 Model-based fault combinations | `*_stress.py`: prespecified masks and independently computed expected decisions | Open-world fault prevalence |
@@ -493,7 +493,7 @@ not scope-specific conformity assessments.
 
 ### Minimal local falsification and qualification
 
-The paired unit tests in \`tests/test_pr46_chat_bundle.py\` reject
+The paired unit tests in \`tests/test_chat_bundle_portability.py\` reject
 false progress from reworded plans, fabricated independent
 acceptance, changed policy/goal, changed exact source revision and
 self-reported evidence. The original ZIP duplicate/path/size/hash

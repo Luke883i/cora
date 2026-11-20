@@ -189,7 +189,7 @@
       "rationale": "Python executable test suite; status remains declared, not proof of passing."
     },
     {
-      "pattern": "tests/test_pr09_file_lab.py",
+      "pattern": "tests/test_source_file_lab.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
@@ -198,7 +198,7 @@
       "rationale": "Tests AI/runtime import contract with independent temporary Git fixtures."
     },
     {
-      "pattern": "tests/test_pr10_artifact_roles.py",
+      "pattern": "tests/test_artifact_role_classification.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
@@ -294,7 +294,7 @@
       "rationale": "Independent source-only release contract verifier; external authorization blocked."
     },
     {
-      "pattern": "tests/test_pr15_release_readiness.py",
+      "pattern": "tests/test_release_readiness.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
@@ -335,7 +335,43 @@
       "rationale": "Cross-domain evidence reconciliation with mandatory unknown/authorization boundaries."
     },
     {
-      "pattern": "tests/test_pr16_*.py",
+      "pattern": "tests/test_performance_benchmark_contract.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "PR-16 negative and contract fixtures; role declaration is not passing-test proof."
+    },
+    {
+      "pattern": "tests/test_git_object_batching.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "PR-16 negative and contract fixtures; role declaration is not passing-test proof."
+    },
+    {
+      "pattern": "tests/test_semantic_lattice.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "PR-16 negative and contract fixtures; role declaration is not passing-test proof."
+    },
+    {
+      "pattern": "tests/test_runtime_observation_fusion.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "PR-16 negative and contract fixtures; role declaration is not passing-test proof."
+    },
+    {
+      "pattern": "tests/test_hostile_archive_intake.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
@@ -368,15 +404,6 @@
       "rationale": "Fail-closed branch coverage floor for named critical modules."
     },
     {
-      "pattern": "tests/test_pr16_benchmark_contract.py",
-      "roles": [
-        "CONTRACT_VERIFIER",
-        "FIXTURE",
-        "TEST"
-      ],
-      "rationale": "Negative coverage and positive performance fixture, not real-repo calibration."
-    },
-    {
       "pattern": ".cora/contracts/dod/agent-dod.json",
       "roles": [
         "POLICY",
@@ -401,7 +428,7 @@
       "rationale": "Finite seeded model and independent reference oracle."
     },
     {
-      "pattern": "tests/test_pr17_agent_assurance.py",
+      "pattern": "tests/test_agent_assurance_boundaries.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
@@ -410,7 +437,7 @@
       "rationale": "Physical JSON mutants, anti-promotion and CLI regression."
     },
     {
-      "pattern": "tests/test_pr18_agent_hardening.py",
+      "pattern": "tests/test_agent_adversarial_coverage.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
@@ -459,7 +486,7 @@
       "rationale": "Preseeded 10M bounded fault models."
     },
     {
-      "pattern": "tests/test_pr19_gold_assurance.py",
+      "pattern": "tests/test_gold_assurance.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
@@ -524,7 +551,7 @@
       "rationale": "CORA self-governing source-level AND development program; never a release or external authority."
     },
     {
-      "pattern": "tests/test_pr20_self_governing_contract.py",
+      "pattern": "tests/test_self_governing_contract.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
@@ -533,7 +560,7 @@
       "rationale": "Finite 10000 contract-model mutants and 100 positive controls; no target runtime execution."
     },
     {
-      "pattern": "tests/test_pr20_convergence.py",
+      "pattern": "tests/test_reticular_convergence.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
@@ -629,7 +656,7 @@
       "rationale": "Static checks for source inventory, links, CLI, historical status and DoD."
     },
     {
-      "pattern": "tests/test_pr21_documentation.py",
+      "pattern": "tests/test_documentation_integrity.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
@@ -662,7 +689,7 @@
       "rationale": "Git-blob replay and bounded semantic source counterexamples with revision-bound receipts."
     },
     {
-      "pattern": "tests/test_pr22_documentation_proofs.py",
+      "pattern": "tests/test_documentation_proof_binding.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
@@ -671,7 +698,7 @@
       "rationale": "Physical disposable Git-commit semantic/source/CI mutants and source receipt replay."
     },
     {
-      "pattern": "tests/test_pr23_navigation.py",
+      "pattern": "tests/test_reader_navigation.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
@@ -696,7 +723,7 @@
       "rationale": "Git-bound workflow inventory, review-only plans and replay."
     },
     {
-      "pattern": "tests/test_pr24_workflow_rationalization.py",
+      "pattern": "tests/test_workflow_rationalization.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
@@ -729,7 +756,7 @@
       "rationale": "Cross-method source correlation with bounded scope and independent review."
     },
     {
-      "pattern": "tests/test_pr25_method_synthesis.py",
+      "pattern": "tests/test_method_synthesis.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
@@ -770,7 +797,7 @@
       "rationale": "Scoped capability evidence; not a runtime or release attestation."
     },
     {
-      "pattern": "tests/test_pr26_capability_atlas.py",
+      "pattern": "tests/test_cli_capability_atlas.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
@@ -795,7 +822,7 @@
       "rationale": "Git-bound source qualifier for declared types and durability; no target execution."
     },
     {
-      "pattern": "tests/test_pr27_type_assurance.py",
+      "pattern": "tests/test_type_assurance.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
@@ -820,7 +847,7 @@
       "rationale": "Source/external AND-gate lattice; not a release or human approval."
     },
     {
-      "pattern": "tests/test_pr28_integrated_service.py",
+      "pattern": "tests/test_integrated_semantic_service.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
@@ -845,7 +872,7 @@
       "rationale": "Explicit source/external retrograde AND lattice; cannot grant production or review approval."
     },
     {
-      "pattern": "tests/test_pr29_five_synergies.py",
+      "pattern": "tests/test_five_synergy_goals.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
@@ -894,7 +921,7 @@
       "rationale": "Checks layout archive blob identities and source navigation; no filesystem mutations."
     },
     {
-      "pattern": "tests/test_pr30_layout_simplification.py",
+      "pattern": "tests/test_filesystem_layout_preservation.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
@@ -927,7 +954,7 @@
       "rationale": "Pinned original-Git HTML/JSON projection, never behavioral truth."
     },
     {
-      "pattern": "tests/test_pr31_maturity_atlas.py",
+      "pattern": "tests/test_maturity_atlas.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
@@ -952,7 +979,7 @@
       "rationale": "Reticular source/external release prerequisites, never a release attestation."
     },
     {
-      "pattern": "tests/test_pr32_host_release.py",
+      "pattern": "tests/test_release_host_boundaries.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
@@ -977,7 +1004,7 @@
       "rationale": "Read-only Git-bound measured repeatability probe for existing PR25/PR26 tests; never independent RCA or release authority."
     },
     {
-      "pattern": "tests/test_pr33_ci_repro.py",
+      "pattern": "tests/test_ci_git_reproducibility.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
@@ -1010,7 +1037,7 @@
       "rationale": "100k deterministic preseeded semantic receipt mutations, 32 independent families; no physical source mutation or test authorization."
     },
     {
-      "pattern": "tests/test_pr36_one_run.py",
+      "pattern": "tests/test_one_run_orchestration.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
@@ -1107,7 +1134,7 @@
       "rationale": "Read-only host protection probe; 403 and missing checks are blockers."
     },
     {
-      "pattern": "tests/test_pr39_qualification.py",
+      "pattern": "tests/test_independent_qualification.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
@@ -1132,7 +1159,7 @@
       "rationale": "PR40 original-Git static/dynamic-boundary debt census, source-only replay and 10M finite-model campaign; no extra orchestrator."
     },
     {
-      "pattern": "tests/test_pr40_engineering_closure.py",
+      "pattern": "tests/test_engineering_knowledge_closure.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
@@ -1165,7 +1192,7 @@
       "rationale": "Git-bound current-document chronology, independent-implementation behavior and external host/finish refusal; no publish"
     },
     {
-      "pattern": "tests/test_pr41_final_experimental.py",
+      "pattern": "tests/test_final_experimental_gates.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
@@ -1181,7 +1208,7 @@
       "rationale": "Portable chat ZIP, exact source receipt and bounded non-authoritative DoD/gap record"
     },
     {
-      "pattern": "tests/test_pr46_chat_bundle.py",
+      "pattern": "tests/test_chat_bundle_portability.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
@@ -1220,7 +1247,7 @@
       "rationale": "PR51 original-Git claim/oracle/native witness correlation over portable One-Run; no effectful runner or authority."
     },
     {
-      "pattern": "tests/test_pr51_gold_bridge.py",
+      "pattern": "tests/test_gold_evidence_bridge.py",
       "roles": [
         "FIXTURE",
         "TEST"
@@ -1235,7 +1262,7 @@
       "rationale": "PR52 narrow opt-in local Node subprocess capture, exact-Git oracle and retained-log replay, nonpromotable visual/remote controls; no independent CI or release authority."
     },
     {
-      "pattern": "tests/test_pr52_native_gold.py",
+      "pattern": "tests/test_native_gold_target_execution.py",
       "roles": [
         "FIXTURE",
         "TEST"

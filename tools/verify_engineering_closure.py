@@ -742,7 +742,7 @@ def analyze(repo: Path, revision: str = "HEAD", *, equivalence_base: str | None 
         "debt_register": [
             {"id": "P0_CI_GIT_CLONE", "layer": "REPOSITORY",
              "state": "REQUIRES_EXACT_HEAD_CI_AND_INDEPENDENT_RCA",
-             "witness": "tests/test_pr25_method_synthesis.py"},
+             "witness": "tests/test_method_synthesis.py"},
             {"id": "P0_GITHUB_GOVERNANCE", "layer": "PRODUCT",
              "state": "BLOCKED_EXTERNAL_HOST_REQUIRED_CHECKS_AND_REVIEW",
              "witness": "tools/governance_readback.py"},

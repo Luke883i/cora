@@ -26,7 +26,7 @@ def verify_self(repo: Path, revision: str='HEAD') -> dict:
         findings.append({'id':'PRODUCT_IDENTITY_DRIFT'})
     if {s['id'] for s in identity['software']}!={'cora-engine','cora-release-verification'}:
         findings.append({'id':'SOFTWARE_IDENTITY_DRIFT'})
-    test_contract = next((a for a in report['artifacts'] if a['path']=='tests/test_pr10_artifact_roles.py'),None)
+    test_contract = next((a for a in report['artifacts'] if a['path']=='tests/test_artifact_role_classification.py'),None)
     if not test_contract or not {'TEST','CONTRACT_VERIFIER','FIXTURE'}.issubset(test_contract['roles']):
         findings.append({'id':'MULTI_ROLE_CONTRACT_NOT_DEMONSTRATED'})
     return {'schema':'cora-self-audit-v1-experimental/1', 'commit':ledger['commit'],

@@ -6,7 +6,7 @@ import json
 import unittest
 
 from cora.chat_bundle import _cockpit, append_chat_iteration, verify_chat_bundle
-from tests import test_pr46_chat_bundle as fixture_module
+from tests import test_chat_bundle_portability as fixture_module
 
 
 class CockpitTests(unittest.TestCase):
@@ -132,7 +132,7 @@ def _pr36_ci_owner_contract(documentation: str, integrated: str) -> None:
         'PR36 physical Git DoD mutants and one-run negative tests',
         'PR36 falsify 100k distinct preseeded semantic receipts twice',
         '--model-stress-cases 100000',
-        "python -m unittest discover -s tests -p 'test_pr36_one_run.py' -v",
+        "python -m unittest discover -s tests -p 'test_one_run_orchestration.py' -v",
         'cmp /tmp/cora-one-run-100k.json /tmp/cora-one-run-100k-replay.json',
         'a["authorization"]=="NONE"',
         'not a["release_authorized"]',
@@ -166,7 +166,7 @@ class Pr87CiOwnershipTests(unittest.TestCase):
             ('--model-stress-cases 100000', '--model-stress-cases 0'),
             ('cora verify-process /tmp/cora-one-run.json --repo . --one-run', ': /tmp/cora-one-run.json'),
             ('PR36 assert offline HTML byte-equivalence to verified run', 'PR36 bypass offline HTML comparison'),
-            ("python -m unittest discover -s tests -p 'test_pr36_one_run.py' -v", "python -m unittest discover -s tests -p 'test_pr35_one_run.py' -v"),
+            ("python -m unittest discover -s tests -p 'test_one_run_orchestration.py' -v", "python -m unittest discover -s tests -p 'test_pr35_one_run.py' -v"),
             ('--cases 100000', '--cases 99999'),
             ('cmp /tmp/cora-one-run-100k.json', ': /tmp/cora-one-run-100k.json'),
             ('if: always()', 'if: false'),
@@ -193,7 +193,7 @@ class Pr87CiOwnershipTests(unittest.TestCase):
         cli = Path('src/cora/cli.py').read_text()
         one = Path('src/cora/one_run.py').read_text()
         suite = Path('src/cora/process_suite.py').read_text()
-        negative = Path('tests/test_pr36_one_run.py').read_text()
+        negative = Path('tests/test_one_run_orchestration.py').read_text()
         self.assertIn('verify_one(args.repo,item,', cli)
         self.assertIn('if not verify_suite(repo, plain):', one)
         self.assertIn('expected=run_suite(repo,report[', suite)

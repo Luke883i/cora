@@ -152,6 +152,38 @@ class LocalGuardFixtures(unittest.TestCase):
     def test_missing_policy_fails_closed(self):
         (self.repo/'.cora/policy.json').unlink()
         with self.assertRaises(ValueError):verify(self.repo,self.base)
+    def test_guard_rejects_invalid_declared_baseline_even_with_override(self):
+        policy_path = self.repo / '.cora/policy.json'
+        original = json.loads(policy_path.read_text())
+        for bad in (None, 42, 'bad-commit', 'f' * 39):
+            with self.subTest(declared_baseline=bad):
+                changed = dict(original, baseline_commit=bad)
+                policy_path.write_text(json.dumps(changed, sort_keys=True) + '\n')
+                g(self.repo, 'add', '.'); g(self.repo, 'commit', '-qm', 'invalid baseline fixture')
+                with self.assertRaisesRegex(ValueError, 'invalid policy baseline_commit'):
+                    verify(self.repo, base=self.base)
+
+    def test_guard_rejects_empty_product_collection(self):
+        policy_path = self.repo / '.cora/policy.json'
+        policy = json.loads(policy_path.read_text())
+        policy['products'] = []
+        policy_path.write_text(json.dumps(policy, sort_keys=True) + '\n')
+        g(self.repo, 'add', '.'); g(self.repo, 'commit', '-qm', 'empty products fixture')
+        with self.assertRaisesRegex(ValueError, 'invalid policy collections'):
+            verify(self.repo, base=self.base)
+
+    def test_guard_rejects_empty_product_identity_fields(self):
+        policy_path = self.repo / '.cora/policy.json'
+        original = json.loads(policy_path.read_text())
+        for field in ('id', 'root', 'module_prefix'):
+            with self.subTest(field=field):
+                changed = json.loads(json.dumps(original))
+                changed['products'][0][field] = ''
+                policy_path.write_text(json.dumps(changed, sort_keys=True) + '\n')
+                g(self.repo, 'add', '.'); g(self.repo, 'commit', '-qm', 'empty identity fixture')
+                with self.assertRaisesRegex(ValueError, 'invalid product policy entry'):
+                    verify(self.repo, base=self.base)
+
     def test_no_guard_overwrite(self):
         with self.assertRaises(ValueError):install_guard(self.repo,['alpha=apps/alpha=apps.alpha'])
     def test_installer_rejects_overlapping_roots(self):
