@@ -1,0 +1,143 @@
+{
+  "schema": "cora-pr90-reader-cockpit-release-dod/1",
+  "baseline": {
+    "repository": "Luke883i/cora",
+    "through_pr": 89,
+    "main_sha": "298997878c449e72f9bfca0a05e40c00af922953",
+    "pull_requests": 89,
+    "merged": 86,
+    "closed_without_merge": [
+      34,
+      80,
+      85
+    ],
+    "evidence_level": "GitHub PR metadata and original Git; title not runtime proof"
+  },
+  "decision": {
+    "selected": "README first-screen two-mode table + offline verified ZIP navigator via existing verify-process + seeded 12-dimensional semantic replay",
+    "reject": [
+      "README-only cannot make cockpit navigable",
+      "new web server adds unneeded auth/runtime risk",
+      "ChatGPT plugin connection unobserved",
+      "green CI cannot authenticate host/reviewer"
+    ]
+  },
+  "gates": [
+    {
+      "id": "R0_HISTORY",
+      "kind": "SOURCE",
+      "requires": [
+        "89 GitHub PRs",
+        "86 merged",
+        "three unmerged",
+        "base Git SHA"
+      ],
+      "witness": "GitHub API"
+    },
+    {
+      "id": "R1_BEGINNER",
+      "kind": "SOURCE",
+      "requires": [
+        "product definition first",
+        "two modes in table",
+        "beginner default METHOD_ONLY",
+        "five accurate steps",
+        "no runner implication"
+      ],
+      "witness": "README + documentation verifiers"
+    },
+    {
+      "id": "R2_COCKPIT",
+      "kind": "SOURCE_AND_RUNTIME",
+      "requires": [
+        "verify ZIP against integrated receipt",
+        "all anchor links resolve",
+        "HTML injection escaped",
+        "no JS or outbound network",
+        "real One-Run CLI execution"
+      ],
+      "witness": "cockpit_view + test + native GitHub CI"
+    },
+    {
+      "id": "R3_SCENARIOS",
+      "kind": "FINITE_MODEL",
+      "requires": [
+        "12 interacting dimensions",
+        "1000000 distinct semantic tuples",
+        "seed 883 replay twice",
+        "independent outcome oracle",
+        "zero mismatches and authority promotions"
+      ],
+      "witness": "finite scenario generator + CI retained artifacts"
+    },
+    {
+      "id": "R4_HEAD_CI",
+      "kind": "SOURCE_CI",
+      "requires": [
+        "14 active workflows pass on final HEAD",
+        "no acceptance bypass"
+      ],
+      "witness": "GitHub native checks"
+    },
+    {
+      "id": "R5_HUMAN",
+      "kind": "EXTERNAL",
+      "requires": [
+        "independent beginner and CTO task studies with browser and ChatGPT",
+        "user confusion and failure observations"
+      ],
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "R6_TARGET",
+      "kind": "EXTERNAL",
+      "requires": [
+        "maintained target native API/browser/security evidence",
+        "rollback rehearsal"
+      ],
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "R7_HOST",
+      "kind": "EXTERNAL",
+      "requires": [
+        "verified branch rules",
+        "non-author review",
+        "provenance and signed artifact",
+        "publication authorization"
+      ],
+      "status": "BLOCKED_EXTERNAL"
+    }
+  ],
+  "and_graph": {
+    "G_SOURCE_CANDIDATE": [
+      "R0_HISTORY",
+      "R1_BEGINNER",
+      "R2_COCKPIT",
+      "R3_SCENARIOS",
+      "R4_HEAD_CI"
+    ],
+    "G_PUBLIC_RELEASE": [
+      "G_SOURCE_CANDIDATE",
+      "R5_HUMAN",
+      "R6_TARGET",
+      "R7_HOST"
+    ]
+  },
+  "invariants": {
+    "authorization": "NONE",
+    "automatic_execution": false,
+    "automatic_merge": false,
+    "public_release_authorized": false,
+    "external_status": "BLOCKED_EXTERNAL",
+    "model_limit": "1M finite cases, not independently executed Git changes, human trials or universal correctness"
+  },
+  "scenario_model": {
+    "seed": 883,
+    "cases": 1000000,
+    "dimensions": 12,
+    "replays": 2,
+    "max_mismatches": 0,
+    "release_authorization": "NEVER_FROM_SOURCE_CI"
+  }
+}
