@@ -197,7 +197,8 @@ class CiSchedulingSourceContract(unittest.TestCase):
         seen = set()
         for path, source in sorted(workflows.items()):
             name = source.splitlines()[0] if source else ''
-            if not name.startswith('name: CI | ') or name in seen:
+            if (not name.startswith('name: CORA | ') or name in seen
+                    or __import__('re').search(r'(?i)\bpr[-_# ]?\d+\b', name)):
                 errors.append(path + ':owner-identity')
             seen.add(name)
             if source.count('concurrency:') != 1 or cancel not in source:
