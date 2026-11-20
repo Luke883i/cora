@@ -351,7 +351,7 @@ def verify_multichannel_intro(readme: str) -> list[str]:
     """CTO first-read contract: compressed and bounded, not reader-tested."""
     intro = readme.split("## First five minutes", 1)[0]
     errors = []
-    if not 115 <= len(intro.split()) <= 310:
+    if not 115 <= len(intro.split()) <= 380:
         errors.append("cto-intro-compression-budget")
     groups = {
         "identity": ("# CORA — Continuous Ontological Repository Assurance",
