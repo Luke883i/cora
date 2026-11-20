@@ -60,8 +60,8 @@ class ReadinessTest(unittest.TestCase):
 
     def test_six_live_source_owners_reject_removed_closeout_obligations(self):
         masks = (
-            ("README.md", "Enterprise evaluation candidate",
-             "Enterprise approved", "CLOSURE_BOUNDARY_DRIFT:README.md"),
+            ("README.md", "## Enterprise evaluation boundary",
+             "## Enterprise approved", "CLOSURE_BOUNDARY_DRIFT:README.md"),
             ("GOVERNANCE.md", "SOURCE_SCOPE_DEFINED", "PRODUCT_APPROVED",
              "CLOSURE_BOUNDARY_DRIFT:GOVERNANCE.md"),
             ("GOVERNANCE.md", "IMPLEMENTED_SOURCE_SCOPED", "UNIVERSAL_RUNTIME_PASS",
@@ -96,6 +96,15 @@ class ReadinessTest(unittest.TestCase):
                     (self.repo / rel).write_text(original, encoding="utf-8")
         report = inspect_source(self.repo)
         self.assertEqual(report["source_status"], "PASS_SCOPED")
+
+    def test_readme_equivalent_disclosure_and_false_approval(self):
+        """A new reader heading may replace PR-era wording, never approval."""
+        self.assertEqual(inspect_source(self.repo)["source_status"], "PASS_SCOPED")
+        p = self.repo / "README.md"
+        old = p.read_text("utf-8")
+        self.assertIn("## Enterprise evaluation boundary", old)
+        p.write_text(old + "\nEnterprise approved\n", encoding="utf-8")
+        self.deny("CLOSURE_BOUNDARY_DRIFT:README.md")
 
     def test_source_closure_cannot_hide_other_blockers_or_forged_authority(self):
         baseline = inspect_source(self.repo)

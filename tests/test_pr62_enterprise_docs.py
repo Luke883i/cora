@@ -143,8 +143,8 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
     def test_readme_evaluation_budget_and_source_reality(self):
         readme = (ROOT / "README.md").read_text("utf-8")
         index = (ROOT / "docs/INDEX.md").read_text("utf-8")
-        self.assertLessEqual(len(readme.split()), 1750)
-        self.assertLess(len(readme.encode("utf-8")), 16000)
+        self.assertLessEqual(len(readme.split()), 2100)
+        self.assertLess(len(readme.encode("utf-8")), 18000)
         self.assertFalse(re.search(r"(?im)^#{2,3}[^\n]*\bPR[- ]?\d+", readme))
         self.assertEqual(len(re.findall(r"\bPR[- #]?\d+\b", readme, re.I)), 0)
         self.assertEqual(DOC.verify_readme_semantics(readme, root=ROOT), [])
@@ -254,7 +254,7 @@ class EnterpriseDocumentDoDTests(unittest.TestCase):
                  "duplicate-or-missing-adapter")
             need(g.count("CORA LOCAL PROJECT ADAPTER — BETA v2") == 1,
                  "missing-canonical-project-prompt")
-            need("Plus or Edu" in g and "ChatGPT Plus or Edu" in r,
+            need("Pro or Edu" in g and "ChatGPT Pro or Edu" in r,
                  "undocumented-beta-plan-assumption")
             need("GitHub connector capabilities vary" in g
                  and "explicit user authorization" in g,

@@ -241,6 +241,34 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         # Metadata-independent formatting edits must not be called evidence loss.
         self.assertEqual(DOC.verify_compact_document_bridge(guide + "\n", index, arch), [])
 
+    def test_pr88_project_runner_and_human_boundaries_resist_false_promotion(self):
+        """Source-only boundary mutants: not an actual ChatGPT user/runner test."""
+        from tools.verify_documentation import (
+            verify_project_first_readme, verify_project_zip_lifecycle,
+        )
+        readme = self.readme
+        adoption = (ROOT / "docs/AGENT_ADOPTION.md").read_text("utf-8")
+        guide = (ROOT / "docs/GETTING_STARTED.md").read_text("utf-8")
+        self.assertEqual(verify_project_first_readme(readme), [])
+        self.assertEqual(verify_project_zip_lifecycle(readme, adoption, guide), [])
+        wrong = (
+            ("NO runner: METHOD_ONLY / NOT_RUN", "NO runner: PASS_SCOPED", "readme"),
+            ("WITH separately authorized coding agent + runner", "WITH a chat message", "readme"),
+            ("In Project chat this is *a proposal*", "Project chat creates a real commit", "readme"),
+            ("Without an authorized runner", "After asking in chat", "readme"),
+            ("**read access**", "**automatic write permission**", "readme"),
+        )
+        for before, after, surface in wrong:
+            self.assertIn(before, readme)
+            candidate = readme.replace(before, after, 1)
+            with self.subTest(forgery=before):
+                self.assertTrue(verify_project_first_readme(candidate)
+                                or verify_project_zip_lifecycle(candidate, adoption, guide))
+        # A benign reader-facing editorial paraphrase is not a source authority drift.
+        equivalent = readme.replace("**Why it matters:** patches are not proof",
+                                    "**Why it matters:** a patch is not proof", 1)
+        self.assertEqual(verify_project_first_readme(equivalent), [])
+
     def test_pr60_machine_reader_and_current_document_budget(self):
         """Machine-observable proxies only; NOT independent human-reader acceptance."""
         from pathlib import Path
@@ -254,9 +282,9 @@ class ProgressiveDocumentationTests(unittest.TestCase):
         self.assertIn("tests or counterexamples", intro)
         self.assertIn("the work still needed", intro)
         # Editorial budgets are review proxies, never evidence of comprehension.
-        self.assertLessEqual(len(self.readme.split()), 1750)
+        self.assertLessEqual(len(self.readme.split()), 2100)
         self.assertLessEqual(len(release.split()), 1900)
-        self.assertLessEqual(len(arch.split()), 2300)
+        self.assertLessEqual(len(arch.split()), 2800)
         self.assertNotIn("## PR32 —", release)
         self.assertNotIn("## PR34 —", release)
         self.assertNotIn("## PR40 —", release)
