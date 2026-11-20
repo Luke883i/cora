@@ -22,8 +22,8 @@ from .reticulum import EXTERNAL, MODEL, assess_cut, ordered_cut
 SCHEMA = "cora-postmerge-repro-metrics/1"
 DOD = ".cora/contracts/dod/postmerge-repro-dod.json"
 GROUPS = {
-    "PR25_GIT_MUTANTS": "test_pr25_method_synthesis.py",
-    "PR26_CAPABILITY_MUTANTS": "test_pr26_capability_atlas.py",
+    "PR25_GIT_MUTANTS": "test_method_synthesis.py",
+    "PR26_CAPABILITY_MUTANTS": "test_cli_capability_atlas.py",
 }
 EDGES = {
     "G_GIT_IDENTITY": ["L_COMMIT", "L_TREE"],

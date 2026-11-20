@@ -512,7 +512,7 @@ def check(repo:Path,revision:str="HEAD")->dict:
     validate_declarations(roles)
     for path,role in ((".cora/fixtures/five-synergies-mutants.json","FIXTURE"),
                       ("tools/verify_layout_simplification.py","CONTRACT_VERIFIER"),
-                      ("tests/test_pr30_layout_simplification.py","TEST")):
+                      ("tests/test_filesystem_layout_preservation.py","TEST")):
         if role not in roles_for(path,roles["rules"])["roles"]:
             raise ValueError("moved artifact lost declared role: "+path)
     src=_read(repo,sha,"src/cora/synergy.py").decode("utf-8")
