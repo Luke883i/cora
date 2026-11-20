@@ -518,8 +518,6 @@ def append_chat_iteration(bundle: Path, *, repo: Path, step: dict, receipt: dict
         lock.unlink(missing_ok=True)
 
 
-from __future__ import annotations
-
 from html import escape
 
 

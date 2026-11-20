@@ -159,7 +159,9 @@ jobs:
               assert marker in links.ids
           PY
       - name: PR46 hostile bundle negative regression
-        run: python -m unittest discover -s tests -p 'test_chat_bundle_portability.py' -v
+        run: |
+          python -m py_compile src/cora/chat_bundle.py src/cora/cli.py
+          python -m unittest discover -s tests -p 'test_chat_bundle_portability.py' -v
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version: '24.19.0'
