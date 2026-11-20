@@ -373,5 +373,55 @@ class NavigationTests(unittest.TestCase):
         self.assertNotIn("<form", page.lower())
 
 
+class Pr90NonDuplicatedStressOwnerTests(unittest.TestCase):
+    """Separate scope witnesses, not removing PR36's exact Git falsification."""
+
+    def _assert_workflow_owner(self, workflow):
+        marker = "  integrated-source:\n"
+        boundary = "  pr36-native-owner:\n"
+        diagnostic = "  diagnose-comprehensive:\n"
+        self.assertEqual(workflow.count(marker), 1)
+        self.assertEqual(workflow.count(boundary), 1)
+        self.assertEqual(workflow.count(diagnostic), 1)
+        integrated = workflow.split(marker, 1)[1].split(boundary, 1)[0]
+        pr36 = workflow.split(boundary, 1)[1].split(diagnostic, 1)[0]
+        self.assertIn("--profile comprehensive", integrated)
+        self.assertIn("cora verify-process /tmp/cora-pr37/run.json", integrated)
+        self.assertNotIn("--model-stress-cases 100000", integrated)
+        self.assertIn("'schema': 'cora-one-run-model-not-run/1'", integrated)
+        self.assertIn("'cases': 0, 'reason': 'EXPLICIT_OPT_IN_REQUIRED'", integrated)
+        self.assertIn("'authority': 'NONE', 'external': 'BLOCKED_EXTERNAL'", integrated)
+        self.assertIn("assert x['genealogy']['commit_count'] == 305", integrated)
+        self.assertIn("assert x['qualification']['external_gates_unclosed'] == 4", integrated)
+        self.assertEqual(pr36.count("--model-stress-cases 100000"), 1)
+        self.assertEqual(pr36.count("--cases 100000"), 2)
+        self.assertIn("cmp /tmp/cora-one-run-100k.json /tmp/cora-one-run-100k-replay.json", pr36)
+        self.assertIn("cora verify-process /tmp/cora-one-run.json", pr36)
+        self.assertIn("assert r[\"unauthorized_promotions\"]==0", pr36)
+        self.assertIn("not a[\"release_authorized\"]", pr36)
+        self.assertNotIn("continue-on-error: true", pr36)
+
+    def test_one_pr36_stress_owner_and_source_only_comprehensive(self):
+        path = Path(".github/workflows/ci-one-run-integrated.yml")
+        source = path.read_text("utf-8")
+        self._assert_workflow_owner(source)
+        mutations = (
+            ("--output /tmp/cora-pr37/run.json",
+             "--model-stress-cases 100000 --output /tmp/cora-pr37/run.json"),
+            ("'schema': 'cora-one-run-model-not-run/1'",
+             "'schema': 'cora-one-run-stress/1'"),
+            ("cora verify-process /tmp/cora-pr37/run.json",
+             "echo /tmp/cora-pr37/run.json"),
+            ("--cases 100000 --seed 883 --output /tmp/cora-one-run-100k.json",
+             "--cases 99999 --seed 883 --output /tmp/cora-one-run-100k.json"),
+            ("cmp /tmp/cora-one-run-100k.json /tmp/cora-one-run-100k-replay.json",
+             "echo /tmp/cora-one-run-100k.json /tmp/cora-one-run-100k-replay.json"),
+        )
+        for before, after in mutations:
+            self.assertIn(before, source)
+            with self.subTest(mutant=before), self.assertRaises(AssertionError):
+                self._assert_workflow_owner(source.replace(before, after, 1))
+
+
 if __name__ == "__main__":
     unittest.main()
