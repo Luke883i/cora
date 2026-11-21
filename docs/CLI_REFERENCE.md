@@ -57,6 +57,9 @@ The [complete capability atlas](../.cora/assurance/capability-atlas.json) enumer
 - `process-run` — see `cora process-run --help` for the supported inputs and scope.
 - `verify-process` — see `cora verify-process --help` for the supported inputs and scope.
 
+External tool candidates use the same read-only catalog: `cora process-list --intent "security scan SARIF"`. Suggestions are lexical candidates, not installations or execution. `cora process-list --probe-tool semgrep --authorize-probe` opt-in launches only a bounded upstream `--version` probe when installed; it never scans a target. Upstream tools own their output, which remains untrusted until independently verified. ChatGPT Project instructions alone cannot execute tools. See [optimal tool acquisition DoD](../.cora/contracts/dod/optimal-tool-acquisition.json).
+
+
 ## Controlled maintenance
 
 - `plan-rename-doc` — see `cora plan-rename-doc --help` for the supported inputs and scope.

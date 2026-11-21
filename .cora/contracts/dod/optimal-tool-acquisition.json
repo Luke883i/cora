@@ -1,0 +1,189 @@
+{
+  "schema": "cora-optimal-tool-acquisition/1",
+  "authority": "NONE",
+  "target_repository": "Luke883i/cora",
+  "source_of_truth": "GIT_AT_EXACT_HEAD",
+  "upstream_owners": "EXTERNAL_NOT_CORA",
+  "global_status": "NOT_ACCEPTED",
+  "acceptance_rule": "AND(SOURCE,TARGET_RUNTIME,EXTERNAL); missing necessary evidence blocks acceptance",
+  "nodes": [
+    {
+      "id": "G_TOOLS_ACCEPTED",
+      "scope": "GLOBAL",
+      "status": "BLOCKED_EXTERNAL",
+      "depends_on": [
+        "I_PRODUCT",
+        "I_SOFTWARE",
+        "I_REPOSITORY",
+        "E_EXTERNAL"
+      ],
+      "falsifier": "Any missing child, forged PASS or unverified external authority leaves global BLOCKED."
+    },
+    {
+      "id": "I_PRODUCT",
+      "scope": "INTERMEDIATE",
+      "status": "NOT_ACCEPTED",
+      "depends_on": [
+        "L_DISCOVER",
+        "L_INFER",
+        "L_NO_AUTHORITY"
+      ],
+      "falsifier": "Novice cannot discover candidates or distinguish them from tool execution."
+    },
+    {
+      "id": "I_SOFTWARE",
+      "scope": "INTERMEDIATE",
+      "status": "NOT_ACCEPTED",
+      "depends_on": [
+        "L_PROBE",
+        "L_NO_AUTHORITY"
+      ],
+      "falsifier": "Unknown ID or unconsented tool triggers subprocess, network, installation, scanning or approval."
+    },
+    {
+      "id": "I_REPOSITORY",
+      "scope": "INTERMEDIATE",
+      "status": "NOT_ACCEPTED",
+      "depends_on": [
+        "L_PACKAGING",
+        "L_CI"
+      ],
+      "falsifier": "Contract or CLI is detached from the original owner, package or exact-HEAD tests."
+    },
+    {
+      "id": "E_EXTERNAL",
+      "scope": "EXTERNAL",
+      "status": "BLOCKED_EXTERNAL",
+      "depends_on": [],
+      "falsifier": "Without independent host, target runtime and usability study product acceptance is not supported."
+    },
+    {
+      "id": "L_DISCOVER",
+      "scope": "SOURCE",
+      "status": "NOT_RUN",
+      "acceptance": "Ten typed upstream owners, handoffs and all seven existing CORA processes.",
+      "falsifier": "Missing candidate, owner or method.",
+      "oracle": "Catalog regression test"
+    },
+    {
+      "id": "L_INFER",
+      "scope": "SOURCE",
+      "status": "NOT_RUN",
+      "acceptance": "Bounded deterministic intents yield ranked candidates and matched terms, no tool execution.",
+      "falsifier": "Injection, unrelated intent or hidden execution yields false readiness or PASS.",
+      "oracle": "Deterministic lexical negative tests"
+    },
+    {
+      "id": "L_PROBE",
+      "scope": "TARGET_RUNTIME",
+      "status": "NOT_RUN",
+      "acceptance": "Exact allowlisted version/help probe only after explicit consent, bounded execution.",
+      "falsifier": "Unknown tool, unconsented subprocess, oversized output or timeout accepted as success.",
+      "oracle": "Mocked bounded runner plus real hosted CI"
+    },
+    {
+      "id": "L_NO_AUTHORITY",
+      "scope": "SOURCE",
+      "status": "NOT_RUN",
+      "acceptance": "Upstream retains installs, code, acceptance, release and identities.",
+      "falsifier": "Discovery or unverified evidence becomes approval.",
+      "oracle": "No-authority negative cases"
+    },
+    {
+      "id": "L_PACKAGING",
+      "scope": "SOURCE",
+      "status": "NOT_RUN",
+      "acceptance": "One CORA CLI, one process owner, no duplicate scanner/agent/policy engine.",
+      "falsifier": "Second CLI, missing docs or source census drift.",
+      "oracle": "Capability atlas and contract index"
+    },
+    {
+      "id": "L_CI",
+      "scope": "TARGET_RUNTIME",
+      "status": "NOT_RUN",
+      "acceptance": "Native tests and concluded GitHub CI checked at the exact PR SHA.",
+      "falsifier": "Status for another SHA, skip, timeout or pending presented as all green.",
+      "oracle": "GitHub exact-head CI and comprehensive replay"
+    }
+  ],
+  "metrics": {
+    "tool_catalog_count": 10,
+    "existing_cora_processes": 7,
+    "unconsented_subprocess_calls_target": 0,
+    "unknown_tool_executions_target": 0,
+    "false_PASS_target": 0,
+    "required_negative_falsifiers": 6,
+    "required_exact_head_ci": "ALL_CONCLUDED_SUCCESS_OR_NEUTRAL_WITH_NO_REQUIRED_SKIPS",
+    "independent_product_trials": "NOT_RUN"
+  },
+  "roadmap": [
+    {
+      "priority": "P1",
+      "slice": "S1",
+      "outcome": "Discover and infer upstream tools through process-list",
+      "owner": "process_suite.py; cli.py",
+      "gate": [
+        "L_DISCOVER",
+        "L_INFER",
+        "L_NO_AUTHORITY"
+      ]
+    },
+    {
+      "priority": "P1",
+      "slice": "S2",
+      "outcome": "Consent-bound, finite version/help probe only",
+      "owner": "process_suite.py uses process_bounds.py",
+      "gate": [
+        "L_PROBE"
+      ]
+    },
+    {
+      "priority": "P2",
+      "slice": "S3",
+      "outcome": "Canonical contract, integration/readback in real Git, no duplicate owner",
+      "owner": "contracts/index; artifact roles; atlas; docs/CLI_REFERENCE",
+      "gate": [
+        "L_PACKAGING",
+        "L_CI"
+      ]
+    },
+    {
+      "priority": "P3",
+      "slice": "S4",
+      "outcome": "Independent host and usability validation; optional upstream tool integration",
+      "owner": "external reviewer and target runner",
+      "gate": [
+        "E_EXTERNAL"
+      ]
+    }
+  ],
+  "checklist": {
+    "development": [
+      "Pin actual main commit and target ownership",
+      "Patch original source owner, not a new engine",
+      "Keep target-specific agents/tools upstream",
+      "Preserve native CLI and backwards-compatible schemas"
+    ],
+    "tests": [
+      "Test positive candidate selection",
+      "Test unrelated and injected input",
+      "Test unknown ID and no authorization",
+      "Test bounded probe and missing binary",
+      "Test no automatic target execution",
+      "Test exact-SHA CI and no false PASS"
+    ],
+    "cleanup": [
+      "No copied third-party code",
+      "No new installer, network client, policy engine",
+      "Update canonical contract index and atlas",
+      "No deletion based solely on static imports"
+    ],
+    "closure": [
+      "Git blob/tree readback on feature branch",
+      "Native test exit and failing IDs",
+      "Physical mutants and survivors",
+      "All GitHub CI conclusions for exact HEAD",
+      "External acceptance independently blocked"
+    ]
+  }
+}
