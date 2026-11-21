@@ -816,6 +816,7 @@
       ".cora/contracts/dod/method-synthesis-dod.json",
       ".cora/contracts/dod/one-run-dod.json",
       ".cora/contracts/dod/optimal-tool-acquisition.json",
+      ".cora/contracts/dod/post94-cli-behavior-dod.json",
       ".cora/contracts/dod/postmerge-release-dod.json",
       ".cora/contracts/dod/postmerge-repro-dod.json",
       ".cora/contracts/dod/reader-cockpit-release-dod.json",
