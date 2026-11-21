@@ -630,6 +630,27 @@ def contribution_index(paths: list[str], modules: list[str], tools: list[str],
     }
 
 
+def readme_source_boundaries(readme: str) -> bool:
+    """Read three source-scoped product roles, independent of legacy slogan text.
+
+    Use the first-read surface only; external runtime evidence is a separate gate.
+    """
+    first_read = "\n".join(readme.splitlines()[:55])
+    roles = {
+        label.lower(): description.lower()
+        for label, description in re.findall(
+            r"\*\*(Product|software|repository)\*\*\s*=\s*([^;\n]+)",
+            first_read, flags=re.IGNORECASE)
+    }
+    required = {
+        "product": ("assurance",),
+        "software": ("`cora`", "cli", "verifier"),
+        "repository": ("git", "source", "ci"),
+    }
+    return all(all(token in roles.get(role, "") for token in tokens)
+               for role, tokens in required.items())
+
+
 def analyze(repo: Path, revision: str = "HEAD", *, equivalence_base: str | None = None) -> dict:
     """Exact committed source/static inspection; dynamic behavior remains unknown."""
     repo = Path(repo).resolve(strict=True)
@@ -700,10 +721,7 @@ def analyze(repo: Path, revision: str = "HEAD", *, equivalence_base: str | None 
     if stale:
         raise ValueError("current documentation chronology drift: " + ",".join(stale))
     # Product/software/repository truth is current; original Git is the historical oracle.
-    if not all(token in readme for token in (
-            "**Product:** assurance",
-            "**Software:** `cora-engine` and `cora-release-verification`",
-            "**Repository:** source, tests, CI and **historical ADRs**")):
+    if not readme_source_boundaries(readme):
         raise ValueError("README current product/software/repository boundaries missing")
     # Review the current operator contract, not the wording of a historical PR.
     # Neither a merged source commit nor a source test is publication authority.

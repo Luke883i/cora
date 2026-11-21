@@ -60,6 +60,18 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "current release source identity"):
                 ekc.analyze(clone, "HEAD")
 
+    def test_reader_roles_preserve_semantic_boundaries_without_legacy_slogan(self):
+        readme = (ROOT / "README.md").read_text("utf-8")
+        self.assertTrue(ekc.readme_source_boundaries(readme))
+        for old, new in (
+            ("engineering assurance", "unrelated marketing"),
+            ("the `cora` CLI and verifiers", "an autonomous coding agent"),
+            ("Git source, contracts and CI", "unattributed slides"),
+        ):
+            with self.subTest(mutant=old):
+                self.assertFalse(ekc.readme_source_boundaries(readme.replace(old, new, 1)))
+        self.assertFalse(ekc.readme_source_boundaries("\n" * 60 + readme))
+
     def test_report_tampering_and_source_promotions_refused(self):
         report = ekc.analyze(ROOT, self.sha)
         for field, value in (
