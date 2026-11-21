@@ -251,5 +251,45 @@ class OneRunAssuranceTests(unittest.TestCase):
         self.assertEqual(a["external"], "BLOCKED_EXTERNAL")
 
 
+
+class UniversalIntentCLIRoutingRegression(unittest.TestCase):
+    """No new CLI owner: preserve ordinary source mode and route only One-Run."""
+
+    def test_plain_process_run_never_passes_unrecognized_intent_kwarg(self):
+        with patch("cora.cli.run_suite") as source:
+            source.return_value = {"status": "PASS_SCOPED"}
+            self.assertEqual(main(["process-run", "."]), 0)
+            self.assertNotIn("capability_intent", source.call_args.kwargs)
+
+    def test_non_one_run_intent_rejected_before_source_execution(self):
+        with patch("cora.cli.run_suite") as source:
+            self.assertEqual(main(["process-run", ".", "--capability-intent",
+                                   "security scan"]), 3)
+            source.assert_not_called()
+
+    def test_comprehensive_receives_exact_bounded_intent(self):
+        with patch("cora.cli.run_integrated") as runner:
+            runner.return_value = {
+                "baseline_pr36": {"source_status": "PASS_SCOPED",
+                                   "model_stress": {"status": "NOT_RUN"}},
+                "tests": {"state": "NOT_RUN"}}
+            self.assertEqual(main(["process-run", ".", "--one-run",
+                                   "--profile", "comprehensive",
+                                   "--capability-intent", "security scan SARIF"]), 0)
+            self.assertEqual(runner.call_args.kwargs["capability_intent"],
+                             "security scan SARIF")
+
+    def test_standard_one_run_receives_intent(self):
+        with patch("cora.cli.run_one") as runner:
+            runner.return_value = {
+                "source_status": "PASS_SCOPED",
+                "runtime_status": "NOT_RUN",
+                "model_stress": {"status": "NOT_RUN"}}
+            self.assertEqual(main(["process-run", ".", "--one-run",
+                                   "--capability-intent", "architecture imports"]), 0)
+            self.assertEqual(runner.call_args.kwargs["capability_intent"],
+                             "architecture imports")
+
+
 if __name__ == "__main__":
     unittest.main()
