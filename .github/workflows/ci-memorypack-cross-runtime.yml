@@ -1,0 +1,54 @@
+name: CORA | MemoryPack cross-runtime F5
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/ci-memorypack-cross-runtime.yml'
+      - 'experiments/memorypack-cross-runtime/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cross-process-dotnet:
+    name: Cross-process .NET 8/9/10 binary compatibility
+    runs-on: ubuntu-22.04
+    timeout-minutes: 35
+    steps:
+      - name: Checkout CORA experiment
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: cora
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Checkout target locked by Git SHA
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: Cysharp/MemoryPack
+          ref: 239ffa0df2f7ccad63d276457557b49e88acae4b
+          path: target-f5
+          persist-credentials: false
+      - name: Install .NET 8 9 10 SDK and runtimes
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
+      - name: Reject missing or fraudulent CORA F5 receipts
+        env:
+          PYTHONPATH: cora/src:cora/experiments/memorypack-cross-runtime
+        run: python3 -m unittest discover -s cora/experiments/memorypack-cross-runtime -p 'test_*.py' -v
+      - name: Execute isolated cross-process native matrix and negative controls
+        run: python3 cora/experiments/memorypack-cross-runtime/run_f5.py --target target-f5 --output artifacts/f5
+      - name: Assess bounded CORA reticulum and external blockers
+        if: always()
+        env:
+          PYTHONPATH: cora/src
+        run: python3 cora/experiments/memorypack-cross-runtime/cora_f5_gate.py --receipt artifacts/f5/receipt.json --output artifacts/f5/reticulum.json
+      - name: Preserve independent CI evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cora-memorypack-cross-runtime-f5
+          path: artifacts/f5/
+          if-no-files-found: warn
+          retention-days: 14
