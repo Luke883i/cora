@@ -628,12 +628,23 @@ def render_one_html(receipt: dict) -> str:
                          '</p><ul>' + obligations + '</ul><p>Editorial: ' +
                          safe(practice["editorial_refactor"]["state"]) +
                          '</p><ul>' + docs + '</ul></section>')
+    cli_html = ""
+    if "cli_capability_attempts" in receipt:
+        attempts = receipt["cli_capability_attempts"]
+        observed_cli = sum(x["state"] == "RUN_REPORTED_UNATTESTED" for x in attempts)
+        items = "".join('<li><code>' + safe(x["command"]) + '</code> — ' +
+                        safe(x["state"]) + ' · ' + safe(x["reason"]) +
+                        ' · SHA256: ' + safe(x["stdout_sha256"]) + '</li>' for x in attempts)
+        cli_html = ('<section id="cli-capability-attempts"><h3>CLI command outcomes</h3>'
+                    '<p>' + safe(observed_cli) + ' locally reported bounded read-only CLI exits; '
+                    'remaining routes BLOCKED. No host or product acceptance.</p>'
+                    '<ul>' + items + '</ul></section>')
     panel = (f'<section id="run-execution"><h2>00 · Esiti realmente osservati</h2>'
              f'<p>Commit <code>{safe(receipt["commit"])}</code> · tree '
              f'<code>{safe(receipt["tree"])}</code> · processo <strong>{safe(receipt["process"])}</strong>. '
              'I risultati sorgente eseguiti, riutilizzati e non eseguiti non sono equivalenti.</p>'
              f'<div class="metrics" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr))">{metric_html}</div>'
-             '<h3>Attività sorgente</h3>'+''.join(rows)+test_row+model_html+practice_html+
+             '<h3>Attività sorgente</h3>'+''.join(rows)+cli_html+test_row+model_html+practice_html+
              '<h3>Attività escluse / non eseguite</h3><div class="panel"><ul>'+excluded+
              '</ul></div><h3>Reticolo DoD e checklist</h3><div class="panel">'+gate_html+
              '<p class="small">Il reticolo sorgente è un modello, non prova '

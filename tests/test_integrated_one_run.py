@@ -71,6 +71,8 @@ class IntegratedOneRunTests(unittest.TestCase):
         page = render_integrated_html(report)
         self.assertTrue(verify_integrated(ROOT, report, html_page=page))
         self.assertIn('id="review-path"', page)
+        self.assertIn('Locally reported bounded CLI operations: 3', page)
+        self.assertNotIn('Catalogued CLI commands were not individually executed', page)
         for phrase in ("1. What can be concluded?", "2. Where is the evidence?",
                        "3. What could disprove it?", "BLOCKED_EXTERNAL"):
             self.assertIn(phrase, page)
