@@ -267,7 +267,7 @@ class Universal81CapabilityTests(unittest.TestCase):
         result = universal_capability_plan(names, commit="a" * 40)
         self.assertEqual(result["counts"], {
             "native": 71, "external": 10, "total": 81,
-            "selected": 3, "run_reported": 0, "blocked": 3,
+            "selected": 3, "run_reported": 0, "source_reused": 0, "blocked": 3,
             "not_selected": 78})
         self.assertTrue(verify_universal_capability_plan(names, result))
         self.assertEqual(result["authority"], "NONE")
@@ -340,6 +340,43 @@ class Universal81CapabilityTests(unittest.TestCase):
         self.assertTrue(any(n["scope"] == "EXTERNAL" and n["status"] == "BLOCKED_EXTERNAL"
                             for n in nodes.values()))
         self.assertIn("NOT_81_EXECUTED", cut["nonclaims"])
+
+    def test_existing_source_method_is_reused_not_duplicated_cli_execution(self):
+        from cora.process_suite import (
+            IMPLEMENTED, universal_capability_plan, verify_universal_capability_plan)
+        names = self.native()
+        names[3]["command"] = "graph"
+        names[3]["family"] = "architecture"
+        sha = "a" * 40
+        methods = [
+            {"method": m, "status": "EXECUTED_SCOPED", "source_digest": "f" * 64}
+            if m == "python_candidate_graph" else
+            {"method": m, "status": "DEBT_BLOCKED"} for m in IMPLEMENTED["full"]]
+        report = universal_capability_plan(
+            names, commit=sha, intent="architecture imports", source_methods=methods)
+        graph = next(x for x in report["rows"] if x["id"] == "cora:graph")
+        self.assertEqual(graph["state"], "REUSED_SOURCE_METHOD_SCOPED")
+        self.assertEqual(graph["reason"], "SOURCE_METHOD_REUSED_NOT_INDIVIDUAL_CLI_EXECUTION")
+        self.assertEqual(graph["source_digest_sha256"], "f" * 64)
+        self.assertIsNone(graph["output_sha256"])
+        self.assertEqual(report["counts"]["source_reused"], 1)
+        self.assertEqual(report["counts"]["run_reported"], 0)
+        self.assertTrue(verify_universal_capability_plan(
+            names, report, source_methods=methods))
+        for changed in ("source_digest_sha256", "state", "reason"):
+            forged = json.loads(json.dumps(report))
+            wrong = next(x for x in forged["rows"] if x["id"] == "cora:graph")
+            wrong[changed] = "FORGED"
+            with self.subTest(mutated=changed):
+                with self.assertRaises(ValueError):
+                    verify_universal_capability_plan(names, forged, source_methods=methods)
+        with self.assertRaises(ValueError):
+            universal_capability_plan(names, commit=sha, intent="architecture",
+                                      source_methods=methods[:-1])
+        wrong_methods = [dict(x) for x in methods]
+        wrong_methods[0]["source_digest"] = "f" * 64
+        with self.assertRaises(ValueError):
+            universal_capability_plan(names, commit=sha, source_methods=wrong_methods)
 
     def test_invalid_inputs_and_duplicate_native_rejected(self):
         from cora.process_suite import universal_capability_plan
