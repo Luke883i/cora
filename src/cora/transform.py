@@ -8,16 +8,16 @@ from __future__ import annotations
 import hashlib
 import json
 import os
-import shlex
 import stat
-import subprocess
 import tempfile
 from pathlib import Path
 
 from .evidence import domain_hash, valid_path
 from .git_snapshot import git
+from .process_bounds import run_bounded
 
 MAX_EDIT = 2 * 1024 * 1024
+MAX_VERIFIER_LOG = 2 * 1024 * 1024
 DOC_EXT = ('.md', '.txt', '.rst')
 
 
@@ -160,7 +160,7 @@ def apply_rename_docs(repo: Path, plan: dict, *, approval: str, test_command: li
                 scratch.write(new_contents)
             os.chmod(temp, before_modes[entry['path']])
             os.replace(temp,target)
-        check = subprocess.run(test_command, cwd=repo, capture_output=True, timeout=timeout, check=False)
+        check = run_bounded(test_command, cwd=repo, timeout=timeout, max_output=MAX_VERIFIER_LOG)
         if check.returncode != 0:
             raise ValueError('verification command failed with exit '+str(check.returncode))
         # Revalidate all owned postimages *after* the verifier ran.

@@ -989,7 +989,7 @@
       "priority": "P1",
       "proposed_owner_role": "Maintainer / Runtime security owner",
       "qualification": "SOURCE_SUPPORTED_RISK_NOT_RUNTIME_REFUTED",
-      "resolution_status": "OPEN_NOT_ACCEPTED",
+      "resolution_status": "PATCH_CANDIDATE_SOURCE_TESTED_NOT_INDEPENDENTLY_ACCEPTED",
       "rollback": "Discard local fixture; no host settings change.",
       "title": "Output non limitato prima dell’acquisizione per verifier e native probe"
     },
@@ -1663,12 +1663,12 @@
         {
           "id": "SOURCE",
           "predicate": "exact target BASE/TREE provenance, scoped diff and affected consumers characterized",
-          "status": "NOT_RUN"
+          "status": "PASS_SCOPED_LOCAL"
         },
         {
           "id": "TARGET_RUNTIME",
           "predicate": "positive behavior and separately defined negative expected counterexample tested with exit/status/footprint",
-          "status": "NOT_RUN"
+          "status": "PASS_SCOPED_LOCAL"
         },
         {
           "id": "EXTERNAL",
@@ -1702,7 +1702,7 @@
       ],
       "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
       "slice_id": "C04",
-      "state": "PROPOSED_NOT_RUN"
+      "state": "LOCAL_PATCH_REPLAY_PENDING_AUTHENTIC_GIT_CI"
     },
     {
       "A0_outcome": "Reference oracles separate from algorithm under test",

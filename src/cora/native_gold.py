@@ -16,6 +16,7 @@ from pathlib import Path
 
 from .evidence import domain_hash
 from .git_snapshot import git
+from .process_bounds import run_bounded
 
 SCHEMA = "cora-native-gold-probe/1"
 HASH = re.compile(r"^[0-9a-f]{64}$")
@@ -119,12 +120,11 @@ def capture_native(repo: Path, target_repo: str, commit: str,
     output.mkdir(parents=True, exist_ok=False)
     start = monotonic()
     try:
-        execution = subprocess.run(
+        execution = run_bounded(
             list(command), cwd=repo, env=_safe_env(),
-            stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-            timeout=120, check=False)
-    except (FileNotFoundError, subprocess.TimeoutExpired, OSError) as exc:
-        _reject("native subprocess unavailable/timeout: " + str(exc)[:100])
+            timeout=120, max_output=MAX_LOG)
+    except (FileNotFoundError, subprocess.TimeoutExpired, OSError, ValueError) as exc:
+        _reject("native subprocess unavailable/timeout/log budget: " + str(exc)[:100])
     elapsed_ms = max(0, int((monotonic() - start) * 1000))
     if len(execution.stdout) > MAX_LOG:
         _reject("native process log too large")
