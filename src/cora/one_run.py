@@ -74,6 +74,12 @@ _CLI_PROBE_BUDGET = 2 * 1024 * 1024
 _CLI_PROBE_TIMEOUT = 15
 
 
+def _cli_frontier_at_revision(repo: Path, sha: str) -> bool:
+    """Old Git histories and receipts retain their pre-frontier source semantics."""
+    return bool(git(repo, "ls-tree", "--name-only", sha,
+                    ".cora/contracts/dod/post94-cli-behavior-dod.json").strip())
+
+
 def _cli_expected_output(command: str, repo: Path, sha: str) -> bytes:
     """Independent direct owner oracle, not a claim of external runtime proof."""
     if command == "version":
@@ -439,7 +445,7 @@ def run_one(repo: Path, revision: str = "HEAD", *,
         "authorization": "NONE", "release_authorized": False,
         "replay_scope": "SOURCE_REEXECUTABLE_TIMINGS_AND_RUNTIME_EXITS_NOT_REPLAY_ATTESTED",
     }
-    if catalog is not None:
+    if catalog is not None and _cli_frontier_at_revision(repo, commit):
         receipt["cli_capability_attempts"] = run_cli_capabilities(repo, commit, catalog["capabilities"])
         receipt["catalog_commands_executed_individually"] = sum(
             row["state"] == "RUN_REPORTED_UNATTESTED" for row in receipt["cli_capability_attempts"])
@@ -518,7 +524,7 @@ def verify_one(repo: Path, receipt: dict, *, html_page: str | None = None) -> bo
             raise ValueError("preseeded model benchmark is not reproducible")
     cora = _is_cora(repo, sha)
     expected_catalog = build_atlas(repo, unified_assurance(repo, sha)) if cora else None
-    if cora:
+    if cora and _cli_frontier_at_revision(repo, sha):
         observations = receipt.get("cli_capability_attempts")
         verify_cli_capabilities(repo, sha, expected_catalog["capabilities"], observations)
         if receipt.get("catalog_commands_executed_individually") != sum(
@@ -534,7 +540,9 @@ def verify_one(repo: Path, receipt: dict, *, html_page: str | None = None) -> bo
             receipt.get("catalog_commands_declared") != (
                 len(expected_catalog["capabilities"]) if expected_catalog else 0) or
             receipt.get("catalog_scope") != (
-                "CORA_PINNED_CATALOG_WITH_BOUNDED_LOCAL_CLI_EXITS_NOT_PRODUCT_ACCEPTANCE" if cora else
+                "CORA_PINNED_CATALOG_WITH_BOUNDED_LOCAL_CLI_EXITS_NOT_PRODUCT_ACCEPTANCE"
+                if cora and _cli_frontier_at_revision(repo, sha) else
+                "CORA_ORIGINAL_GIT_DECLARATIONS_NOT_71_EXECUTIONS" if cora else
                 "NOT_APPLICABLE_NONCORA_REPOSITORY") or
             receipt.get("dod") != expected_dod or
             receipt.get("source_status") != (

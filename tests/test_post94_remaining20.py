@@ -408,6 +408,13 @@ class OneRun71FrontierTests(unittest.TestCase):
                           if x["id"].startswith("E_")}, {"BLOCKED_EXTERNAL"})
         self.assertFalse(f["observed_local_expected"]["release_approved"])
 
+    def test_frontier_requires_pinned_original_git_contract(self):
+        from cora.one_run import _cli_frontier_at_revision
+        self.assertFalse(_cli_frontier_at_revision(self.repo, self.sha))
+        current = subprocess.check_output(
+            ["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True).strip()
+        self.assertTrue(_cli_frontier_at_revision(ROOT, current))
+
     def test_integrated_dossier_attribution_is_bounded_and_non_authorizing(self):
         from cora.one_run import run_cli_capabilities
         from cora.integrated_run import _attempts, _metrics
