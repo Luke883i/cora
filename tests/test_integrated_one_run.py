@@ -46,7 +46,12 @@ class IntegratedOneRunTests(unittest.TestCase):
         self.assertGreater(registry["class_counts"]["CI_WORKFLOW"], 5)
         self.assertEqual(report["metrics"]["registered_total"], len(registry["activities"]))
         self.assertEqual(report["metrics"]["activity_accounted"], len(report["attempts"]))
-        self.assertEqual(report["metrics"]["individually_executed_cli"], 0)
+        self.assertEqual(report["metrics"]["individually_executed_cli"], 3)
+        bounded_cli = [x for x in report["attempts"]
+                       if x["activity_id"].startswith("cli:") and
+                       x["state"] == "RUN_REPORTED_UNATTESTED"]
+        self.assertEqual({x["activity_id"] for x in bounded_cli},
+                         {"cli:version", "cli:process-list", "cli:snapshot"})
         self.assertEqual(report["source_status"], "DEBT_BLOCKED")
         self.assertEqual(report["product_status"], "BLOCKED_EXTERNAL")
         self.assertEqual(report["authority"], "NONE")
@@ -66,6 +71,8 @@ class IntegratedOneRunTests(unittest.TestCase):
         page = render_integrated_html(report)
         self.assertTrue(verify_integrated(ROOT, report, html_page=page))
         self.assertIn('id="review-path"', page)
+        self.assertIn('Locally reported bounded CLI operations: 3', page)
+        self.assertNotIn('Catalogued CLI commands were not individually executed', page)
         for phrase in ("1. What can be concluded?", "2. Where is the evidence?",
                        "3. What could disprove it?", "BLOCKED_EXTERNAL"):
             self.assertIn(phrase, page)

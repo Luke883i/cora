@@ -126,7 +126,8 @@ def render_integrated_html(receipt: dict) -> str:
         '<main id="overview"><h2>Overview</h2>',
         '<div class="note" role="note"><strong>Proof boundary:</strong> ' +
         'source Git replay is not independent execution attestation. ' +
-        'Catalogued CLI commands were not individually executed. Test results, ' +
+        'Locally reported bounded CLI operations: ' + _h(m['individually_executed_cli']) +
+        ' of 71; remaining routes are not independently qualified. Test results, ' +
         'if supplied, remain unauthenticated local observations. No merge/release approval.</div>',
         '<section class="panel" id="review-path" aria-label="Review in three questions">',
         '<h2>Review in three questions</h2>',

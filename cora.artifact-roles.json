@@ -1505,6 +1505,13 @@
         "POLICY"
       ],
       "rationale": "Source-only integration DoD: tool candidates are not execution, acceptance or authority."
+    },
+    {
+      "pattern": ".cora/contracts/dod/post94-cli-behavior-dod.json",
+      "roles": [
+        "POLICY"
+      ],
+      "rationale": "Reticular, source-scoped 71 CLI inventory and 20 owner-fixture behavioral leaves; no independent target acceptance or release authority."
     }
   ]
 }

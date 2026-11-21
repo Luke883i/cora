@@ -153,6 +153,7 @@ def _topological(registry: dict) -> list[str]:
 def _attempts(registry: dict, baseline: dict, test: dict,
               hforge: dict | None = None) -> list[dict]:
     executed = {row["id"]: row for row in baseline["activities"]}
+    cli_observed = {x["command"]: x for x in baseline.get("cli_capability_attempts", [])}
     observed = {row["activity_id"]: row for row in test["parsed_cases"]}
     ids = {row["activity_id"] for row in registry["activities"]}
     if any(k not in ids for k in observed):
@@ -191,7 +192,12 @@ def _attempts(registry: dict, baseline: dict, test: dict,
         elif key == CONTROL_PLANE:
             reason = "ORCHESTRATOR_ENTRY_ALREADY_OBSERVED_NOT_INDIVIDUAL_CLI_EXECUTION"
         elif row["kind"] == "CLI_COMMAND":
-            reason = "CLI_CATALOG_ONLY_NOT_INDIVIDUALLY_RUN"
+            bounded = cli_observed.get(key.removeprefix("cli:"))
+            if bounded is not None:
+                state, reason = bounded["state"], bounded["reason"]
+                origin = bounded["stdout_sha256"]
+            else:
+                reason = "CLI_CATALOG_ONLY_NOT_INDIVIDUALLY_RUN"
         elif row["kind"] == "CI_WORKFLOW":
             reason = "REMOTE_HOST_WORKFLOW_NOT_TRIGGERED_OR_AUTHENTICATED"
         elif row["kind"] == "SOFTWARE_MODULE":
@@ -206,10 +212,14 @@ def _attempts(registry: dict, baseline: dict, test: dict,
             "evidence_refs": (["PR36:activity:" + key.removeprefix("method:")]
                               if row["kind"] == "INTERNAL_METHOD" and key.removeprefix("method:") in executed
                               else ["LOCAL_LOG_SHA256:" + test["log_sha256"]]
-                              if key in observed and test["log_sha256"] else []),
+                              if key in observed and test["log_sha256"] else
+                              ["BOUNDED_CLI_OUTPUT_SHA256:" + origin]
+                              if row["kind"] == "CLI_COMMAND" and state == "RUN_REPORTED_UNATTESTED"
+                              and origin else []),
             "verification": ("SOURCE_REPLAY_ELIGIBLE" if row["kind"] == "INTERNAL_METHOD"
                              and state in ("EXECUTED_SCOPED", "REUSED_SCOPED")
-                             else "UNATTESTED_LOCAL_EXIT" if key in observed
+                             else "UNATTESTED_LOCAL_EXIT" if key in observed or
+                             row["kind"] == "CLI_COMMAND" and state == "RUN_REPORTED_UNATTESTED"
                              else "NOT_VERIFIED"),
             "authority": "NONE",
         })
@@ -278,7 +288,8 @@ def _metrics(registry: dict, attempts: list[dict], test: dict) -> dict:
     return {
         "registered_total": len(registry["activities"]),
         "registered_cli": registry["registered_commands"],
-        "individually_executed_cli": 0,
+        "individually_executed_cli": sum(x["state"] == "RUN_REPORTED_UNATTESTED"
+                                         and x["activity_id"].startswith("cli:") for x in attempts),
         "activity_accounted": len(attempts),
         "activity_accountability_ratio": 1.0 if len(attempts) == len(registry["activities"]) else 0.0,
         "status_counts": dict(sorted(counters.items())),
