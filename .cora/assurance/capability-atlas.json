@@ -778,6 +778,7 @@
       "tests/test_native_gold_target_execution.py",
       "tests/test_one_run_orchestration.py",
       "tests/test_performance_benchmark_contract.py",
+      "tests/test_post94_remaining20.py",
       "tests/test_practice_contract.py",
       "tests/test_project_instructions.py",
       "tests/test_reader_navigation.py",
