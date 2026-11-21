@@ -159,8 +159,6 @@ class ModelFalsification(unittest.TestCase):
     def test_invalid_case_counts(self):
         with self.assertRaises(ValueError):stress_debt(cases=1_000_001)
 
-if __name__=='__main__':unittest.main()
-
 
 class ExternalToolOptimalContract(unittest.TestCase):
     """Contract tests: discovery is not execution or an approval boundary."""
@@ -248,3 +246,6 @@ class ExternalToolOptimalContract(unittest.TestCase):
                          'L_PROBE','L_NO_AUTHORITY','L_PACKAGING','L_CI'})
         self.assertTrue(all(x.get('falsifier') for x in doc['nodes'] if x['id'].startswith('L_')))
         self.assertEqual(doc['global_status'], 'NOT_ACCEPTED')
+
+if __name__=='__main__':unittest.main()
+
