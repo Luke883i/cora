@@ -159,4 +159,94 @@ class ModelFalsification(unittest.TestCase):
     def test_invalid_case_counts(self):
         with self.assertRaises(ValueError):stress_debt(cases=1_000_001)
 
+
+class ExternalToolOptimalContract(unittest.TestCase):
+    """Contract tests: discovery is not execution or an approval boundary."""
+    def test_all_candidates_are_unexecuted_and_owned_upstream(self):
+        c = process_catalog(intent='')
+        self.assertEqual(len(c['processes']), 7)
+        self.assertNotIn('external_tools', process_catalog())
+        self.assertEqual(len(c['external_tools']), 10)
+        self.assertEqual(c['authorized_action'], 'NONE')
+        self.assertEqual(c['inference'], [])
+        self.assertTrue(all(t['owner'] == 'UPSTREAM_EXTERNAL' and
+                            t['approval'] == 'NONE' and t['installation'] == 'NOT_CHECKED' and
+                            t['execution'].startswith('NOT_RUN') for t in c['external_tools']))
+
+    def test_intent_inference_is_bounded_deterministic_and_not_execution(self):
+        i = 'Please do a security scan and produce SARIF'
+        a = process_catalog(intent=i)
+        self.assertEqual(a, process_catalog(intent=i))
+        self.assertEqual(a['inference'][0]['id'], 'semgrep')
+        self.assertNotIn('explicit_version_probe', a)
+        self.assertEqual(process_catalog(intent='some unrelated sentence')['inference'], [])
+        with self.assertRaises(ValueError): process_catalog(intent='a' * 1025)
+        with self.assertRaises(ValueError): process_catalog(intent=123)
+
+    def test_probe_needs_exact_opt_in_and_closed_identity(self):
+        with self.assertRaises(ValueError): process_catalog(probe_tool='semgrep')
+        with self.assertRaises(ValueError): process_catalog(authorize_probe=True)
+        with self.assertRaises(ValueError): process_catalog(probe_tool='bash', authorize_probe=True)
+        with self.assertRaises(ValueError): process_catalog(probe_tool='../semgrep', authorize_probe=True)
+        with self.assertRaises(ValueError): process_catalog(probe_tool='semgrep;id', authorize_probe=True)
+
+    def test_probe_no_binary_does_not_execute_or_promote(self):
+        from unittest.mock import patch
+        with patch('cora.process_suite.shutil.which', return_value=None):
+            r = process_catalog(probe_tool='semgrep', authorize_probe=True)
+        self.assertEqual(r['explicit_version_probe']['status'], 'NOT_INSTALLED')
+        self.assertEqual(r['explicit_version_probe']['target_execution'], 'NOT_RUN')
+        r = process_catalog(probe_tool='hypothesis', authorize_probe=True)
+        self.assertEqual(r['explicit_version_probe']['status'], 'NO_SAFE_STANDALONE_PROBE')
+
+    def test_probed_executable_uses_bounded_upstream_runner(self):
+        from unittest.mock import patch
+        from types import ModuleType
+        import subprocess as sp
+        import sys
+        fake = ModuleType('cora.process_bounds')
+        called = []
+        def bounded(argv, **kw):
+            called.append((argv, kw))
+            return sp.CompletedProcess(argv, 0, b'0.9.1\n', None)
+        fake.run_bounded = bounded
+        with patch('cora.process_suite.shutil.which', return_value='/tmp/fake-semgrep'), \
+             patch.dict(sys.modules, {'cora.process_bounds': fake}):
+            r = process_catalog(probe_tool='semgrep', authorize_probe=True)
+        self.assertEqual(r['explicit_version_probe']['status'], 'VERSION_PROBE_EXECUTED_UNTRUSTED')
+        self.assertEqual(r['explicit_version_probe']['target_execution'], 'NOT_RUN')
+        self.assertEqual(called[0][0], ['/tmp/fake-semgrep', '--version'])
+        self.assertLessEqual(called[0][1]['max_output'], 8192)
+
+    def test_cli_inference_and_deny_probe_no_side_effects(self):
+        from contextlib import redirect_stdout
+        from io import StringIO
+        out=StringIO()
+        with redirect_stdout(out):
+            self.assertEqual(main(['process-list','--intent','signature verification']), 0)
+        parsed=json.loads(out.getvalue())
+        self.assertEqual(parsed['inference'][0]['id'], 'cosign')
+        self.assertNotIn('explicit_version_probe', parsed)
+        with redirect_stdout(StringIO()):
+            self.assertNotEqual(main(['process-list','--probe-tool','cosign']), 0)
+
+    def test_optimal_contract_and_falsifier_presence(self):
+        r = Path(__file__).resolve().parents[1]
+        doc=json.loads((r/'.cora/contracts/dod/optimal-tool-acquisition.json').read_text())
+        self.assertEqual(doc['authority'], 'NONE')
+        nodes={x['id']: x for x in doc['nodes']}
+        self.assertEqual(nodes['G_TOOLS_ACCEPTED']['depends_on'],
+                         ['I_PRODUCT','I_SOFTWARE','I_REPOSITORY','E_EXTERNAL'])
+        self.assertEqual(nodes['E_EXTERNAL']['status'], 'BLOCKED_EXTERNAL')
+        self.assertEqual(nodes['G_TOOLS_ACCEPTED']['status'], 'BLOCKED_EXTERNAL')
+        self.assertEqual(doc['global_status'], 'NOT_ACCEPTED')
+        self.assertTrue(all(nodes[k]['status'] == 'NOT_ACCEPTED'
+                            for k in ('I_PRODUCT','I_SOFTWARE','I_REPOSITORY')))
+        self.assertEqual(set(nodes), {'G_TOOLS_ACCEPTED','I_PRODUCT','I_SOFTWARE',
+                         'I_REPOSITORY','E_EXTERNAL','L_DISCOVER','L_INFER',
+                         'L_PROBE','L_NO_AUTHORITY','L_PACKAGING','L_CI'})
+        self.assertTrue(all(x.get('falsifier') for x in doc['nodes'] if x['id'].startswith('L_')))
+        self.assertEqual(doc['global_status'], 'NOT_ACCEPTED')
+
 if __name__=='__main__':unittest.main()
+

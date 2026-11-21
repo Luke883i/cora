@@ -51,7 +51,7 @@ class DocumentationDoDTests(unittest.TestCase):
     def test_contract_path_index_cardinality_mutations_are_rejected(self):
         index=(ROOT/'docs/INDEX.md').read_text('utf-8')
         registry=json.loads((ROOT/'.cora/contracts/index.json').read_text('utf-8'))
-        for phrase in ('22 internal DoDs','3 profiles','2 assurance records'):
+        for phrase in ('23 internal DoDs','3 profiles','2 assurance records'):
             self.assertIn(phrase,index)
             forged=index.replace(phrase, '100 '+phrase.split(' ',1)[1],1)
             with self.subTest(phrase=phrase):
@@ -89,7 +89,7 @@ class DocumentationDoDTests(unittest.TestCase):
                  "](../README.md#use-cora-in-a-chatgpt-project--beginner-walkthrough)",
                  "](https://example.invalid)")), "not-indexed:README.md"),
             ("stale-contract-index-cardinality", lambda: change("docs/INDEX.md",
-             lambda x: x.replace("22 internal DoDs", "21 internal DoDs", 1)),
+             lambda x: x.replace("23 internal DoDs", "22 internal DoDs", 1)),
              "contract-index-cardinality-drift"),
             ("missing-doc", lambda: (fixture / "docs/FILE_LAB.md").unlink(), "missing:docs/FILE_LAB.md"),
             ("unregistered-doc", lambda: (fixture / "docs/rogue.md").write_text("# Unregistered", encoding="utf-8"), "unregistered:docs/rogue.md"),

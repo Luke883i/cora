@@ -1498,6 +1498,13 @@
         "ARTIFACT_INDEX"
       ],
       "rationale": "Historical scoped evidence and decision register; does not attest target runtime, human approval or release."
+    },
+    {
+      "pattern": ".cora/contracts/dod/optimal-tool-acquisition.json",
+      "roles": [
+        "POLICY"
+      ],
+      "rationale": "Source-only integration DoD: tool candidates are not execution, acceptance or authority."
     }
   ]
 }

@@ -5,6 +5,10 @@ LLMs, target test commands, transforms, publication or runtime probes.
 """
 from __future__ import annotations
 from pathlib import Path
+import hashlib
+import re
+import shutil
+import subprocess
 from time import monotonic
 from .evidence import domain_hash, valid_path
 from .git_snapshot import snapshot, git
@@ -32,14 +36,99 @@ IMPLEMENTED['full'] = tuple(dict.fromkeys(
     m for g in IMPLEMENTED.values() for m in g if m != 'file_selection_if_focus')) + ('file_selection_if_focus',)
 PROCESSES = tuple(IMPLEMENTED)
 
+# Declared third-party candidates, never installed or automatically executed.
+# Existing CORA owners remain authoritative for source, evidence and consent.
+EXTERNAL_TOOLS = (
+    ('openspec', 'openspec', ('--version',), ('openspec', 'spec driven', 'specification delta', 'requirements change'), 'source', 'SPEC_DELTA'),
+    ('itself', 'itself', ('--version',), ('itself', 'claim verification', 'claim evidence', 'reasoning receipt'), 'verification', 'CLAIM_LEDGER'),
+    ('agent-assure', 'agent-assure', ('--version',), ('agent assure', 'process regression', 'evidence link', 'agent release'), 'verification', 'PROCESS_EVIDENCE'),
+    ('agent-workflow-bench', 'awb', ('--help',), ('workflow benchmark', 'agent workflow', 'trace observer', 'workflow regression'), 'verification', 'WORKFLOW_TRACE'),
+    ('semgrep', 'semgrep', ('--version',), ('semgrep', 'static analysis', 'security scan', 'sarif'), 'debt', 'SARIF'),
+    ('ast-grep', 'sg', ('--version',), ('ast grep', 'structural search', 'syntax tree', 'code pattern'), 'architecture', 'STRUCTURAL_FINDINGS'),
+    ('hypothesis', None, (), ('hypothesis', 'property based', 'generative test', 'shrinking'), 'verification', 'TARGET_NATIVE_TEST'),
+    ('cosign', 'cosign', ('version',), ('cosign', 'artifact signing', 'signature verification', 'provenance signature'), 'verification', 'SIGNED_ATTESTATION'),
+    ('in-toto', 'in-toto-verify', ('--help',), ('in toto', 'supply chain attestation', 'supply chain integrity'), 'verification', 'ATTESTATION'),
+    ('openhands', None, (), ('openhands', 'coding agent execution', 'autonomous coding'), 'source', 'EXTERNAL_AGENT'),
+)
 
-def process_catalog() -> dict:
-    return {'schema':'cora-process-catalog/1', 'processes':[
+
+def _external_tools(intent: str | None, probe_tool: str | None,
+                    authorize_probe: bool) -> tuple[list[dict], list[dict], dict | None]:
+    if intent is not None and (not isinstance(intent, str) or len(intent) > 1024):
+        raise ValueError('intent must be a bounded string')
+    if authorize_probe != (probe_tool is not None):
+        raise ValueError('tool probe requires explicit matched authorization and identifier')
+    allowed = {row[0] for row in EXTERNAL_TOOLS}
+    if probe_tool is not None and probe_tool not in allowed:
+        raise ValueError('tool not in closed CORA external catalog')
+    found = []
+    matches = []
+    normalized = re.sub(r'[^a-z0-9]+', ' ', intent.casefold()).strip() if intent else ''
+    for key, binary, args, terms, process, handoff in EXTERNAL_TOOLS:
+        row = {'id': key, 'owner': 'UPSTREAM_EXTERNAL', 'cora_process': process,
+               'execution': 'NOT_RUN_REQUIRES_EXPLICIT_EXTERNAL_AUTHORIZATION',
+               'installation': 'NOT_CHECKED', 'executable': binary,
+               'handoff': handoff, 'activation': 'EXTERNAL_OWNER_OR_AUTHORIZED_RUNNER',
+               'approval': 'NONE'}
+        found.append(row)
+        hits = sorted({term for term in terms if re.search(
+            r'(?<![a-z0-9])' + re.escape(re.sub(r'[^a-z0-9]+', ' ', term.casefold()).strip())
+            + r'(?![a-z0-9])', normalized)}) if normalized else []
+        if hits:
+            matches.append({'id': key, 'cora_process': process,
+                            'matched_terms': hits, 'status': 'CANDIDATE_NOT_EXECUTED',
+                            'approval': 'NONE'})
+    matches.sort(key=lambda item: (-max(map(len, item['matched_terms'])), item['id']))
+    probe = None
+    if probe_tool is not None:
+        item = next(x for x in EXTERNAL_TOOLS if x[0] == probe_tool)
+        binary = item[1]
+        if binary is None:
+            probe = {'id': probe_tool, 'status': 'NO_SAFE_STANDALONE_PROBE',
+                     'authorization': 'EXPLICIT_VERSION_PROBE_ONLY', 'target_execution': 'NOT_RUN'}
+        else:
+            resolved = shutil.which(binary)
+            if resolved is None:
+                probe = {'id': probe_tool, 'status': 'NOT_INSTALLED',
+                         'authorization': 'EXPLICIT_VERSION_PROBE_ONLY', 'target_execution': 'NOT_RUN'}
+            else:
+                from .process_bounds import run_bounded
+                try:
+                    result = run_bounded([resolved, *item[2]], cwd=Path.cwd(),
+                                         timeout=5, max_output=8192)
+                except (OSError, ValueError, subprocess.TimeoutExpired) as exc:
+                    probe = {'id': probe_tool, 'status': 'PROBE_FAILED',
+                             'error_type': type(exc).__name__,
+                             'authorization': 'EXPLICIT_VERSION_PROBE_ONLY', 'target_execution': 'NOT_RUN'}
+                else:
+                    probe = {'id': probe_tool,
+                             'status': 'VERSION_PROBE_EXECUTED_UNTRUSTED' if result.returncode == 0 else 'PROBE_FAILED_EXIT',
+                             'exit_code': result.returncode,
+                             'stdout_sha256': hashlib.sha256(result.stdout).hexdigest(),
+                             'authorization': 'EXPLICIT_VERSION_PROBE_ONLY', 'target_execution': 'NOT_RUN'}
+    return found, matches, probe
+
+
+def process_catalog(*, intent: str | None = None, probe_tool: str | None = None,
+                    authorize_probe: bool = False) -> dict:
+
+    catalog = {'schema':'cora-process-catalog/1', 'processes':[
       {'id':p,'methods':list(IMPLEMENTED[p]),'mode':'READ_ONLY_PINNED_GIT'} for p in PROCESSES],
       'excluded_unsafe_methods':['target_test_execution', 'arbitrary_LLM_calls',
          'SARIF_scanner_execution', 'external_network_calls',
          'rename_archive_quarantine_delete_transform', 'release_publication'],
       'test_process_policy':'verification means source revalidation, not executing target tests'}
+    # Preserve exact historical process-list bytes and 77-operation behavioral oracle.
+    # External capability discovery is a separately requested expansion.
+    if intent is None and probe_tool is None and not authorize_probe:
+        return catalog
+    found, suggestions, probe = _external_tools(intent, probe_tool, authorize_probe)
+    catalog.update({'external_tools':found, 'inference':suggestions,
+                    'external_evidence':'UNTRUSTED_UNTIL_SEPARATELY_VERIFIED',
+                    'authorized_action':'NONE'})
+    if probe is not None:
+        catalog['explicit_version_probe'] = probe
+    return catalog
 
 
 def run_suite(repo:Path,revision:str='HEAD',*,process:str='full',

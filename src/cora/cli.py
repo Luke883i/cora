@@ -358,6 +358,9 @@ def main(argv: list[str] | None = None) -> int:
     dd.add_argument('--max-commits',type=int,default=64)
     dd.add_argument('--output',type=Path)
     pc = sub.add_parser('process-list',help='List safe independent CORA processes')
+    pc.add_argument('--intent',help=argparse.SUPPRESS)
+    pc.add_argument('--probe-tool',help=argparse.SUPPRESS)
+    pc.add_argument('--authorize-probe',action='store_true',help=argparse.SUPPRESS)
     pc.add_argument('--output',type=Path)
     pr = sub.add_parser('process-run',help='Run one bounded process or full source-only suite')
     pr.add_argument('repo',type=Path)
@@ -780,7 +783,8 @@ def main(argv: list[str] | None = None) -> int:
             result = compare_debt(args.repo,args.base,args.head,max_commits=args.max_commits)
             code = 0
         elif args.cmd == 'process-list':
-            result = process_catalog()
+            result = process_catalog(intent=args.intent,probe_tool=args.probe_tool,
+                                     authorize_probe=args.authorize_probe)
             code = 0
         elif args.cmd == 'process-run':
             if bool(args.chat_step) != bool(args.chat_bundle):
