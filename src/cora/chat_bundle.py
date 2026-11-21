@@ -557,8 +557,9 @@ def _render_verified_snapshot(bundle: Path, *, expected_receipt: dict | None = N
         gaps.append(f'<li><strong>{h(item["id"])}</strong>: {h(item["description"])} '
                     f'({links}). Next: {h(item["next_action"])}</li>')
     nav = "".join(f'<a href="#{key}">{label}</a>' for key, label in (
-        ("overview", "Overview"), ("dod", "DoD & evidence"),
-        ("roadmap", "Roadmap"), ("gaps", "Blockers"), ("actions", "Choices")))
+        ("start", "Start here"), ("overview", "Overview"),
+        ("dod", "DoD & evidence"), ("roadmap", "Roadmap"),
+        ("gaps", "Blockers"), ("actions", "Choices")))
     # One owner: derive copy-only choices from the already replayed ZIP
     # metadata, never from independently unverified target or host claims.
     next_checks = ", ".join(
@@ -573,15 +574,19 @@ def _render_verified_snapshot(bundle: Path, *, expected_receipt: dict | None = N
     )
     choices = (
         ("explain", "EXPLAIN",
-         context + "Explain what blocks acceptance and identify the missing independent "
-         "witnesses. Do not approve or execute."),
+         context + "Explain A0 and its first unresolved AND-DoD leaf in plain language; "
+         "separate SOURCE, TARGET_RUNTIME and EXTERNAL evidence, and identify missing "
+         "independent witnesses. Do not approve or execute."),
         ("replan", "REPLAN",
-         context + "Re-derive the AND acceptance roadmap from the unresolved leaf; "
-         "challenge stale reports and propose reversible tests. Do not execute."),
+         context + "Re-derive backwards from A0 all AND acceptance leaves and the "
+         "next unresolved leaf; challenge stale assumptions using observed counterexamples, "
+         "reorder one reversible next slice and name its oracle and rollback. "
+         "Do not execute."),
         ("propose", "PROPOSE_NEXT_CHECK",
          context + "Caller-proposed check IDs: " + next_checks + ". Select one "
-         "bounded, reversible falsifier for human authorization. Do not execute, "
-         "merge, or grant release."),
+         "bounded, reversible falsifier for human authorization with expected oracle, affected consumers, "
+         "rollback and pinned Git SHA. Send it only as a proposed coding-agent task "
+         "for explicit authorization. Do not execute, merge, or grant release."),
     )
     actions = "".join(f'<a class="choice" href="#{key}">{label}</a>'
                       for key, label, _ in choices)
@@ -604,6 +609,13 @@ code{{overflow-wrap:anywhere}}blockquote{{border-left:3px solid #334155;padding:
 <header><h1>CORA — verified ZIP decision navigator</h1>
 <p><strong>Read-only, offline and non-executing.</strong> Not a live ChatGPT plugin. Links navigate only within this document.</p>
 <nav aria-label="Decision navigation">{nav}</nav></header><main>
+<section id="start"><h2>Start here — four beginner steps</h2>
+<ol><li><strong>Read Overview:</strong> note the exact Git SHA, the reported state and the first open condition.</li>
+<li><strong>Inspect DoD, Roadmap and Blockers:</strong> each necessary AND condition needs evidence; a caller's report is not independent proof.</li>
+<li><strong>Open Choices:</strong> EXPLAIN explains the blocker, REPLAN challenges the backwards roadmap, PROPOSE_NEXT_CHECK offers one copy-only test for your chat.</li>
+<li><strong>Before any change:</strong> authorize a separate agent and runner for the selected reversible slice. Review tests, remaining risks and rollback; clicking this file never executes.</li></ol>
+<p><strong>Path A:</strong> use a ChatGPT Project for a proposed plan; no runner = METHOD_ONLY / NOT_RUN.
+<strong>Path B:</strong> only an authorized coding tool and real target tests can materialize and check a slice. This HTML is a source-bound handoff, not an approval.</p></section>
 <section id="overview"><h2>Current decision</h2>
 <p><strong>Declared intent:</strong> {h(step["intent"])}</p>
 <p><strong>Status:</strong> {h(cockpit["status"])} |
