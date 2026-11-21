@@ -54,9 +54,9 @@ cora verify-ledger /tmp/cora-ledger.json --repo .
 
 For scoped evidence see [One-Run](#one-run--one-command-one-evidence-dossier); snapshots are Git-only, not target tests. [Getting started](docs/GETTING_STARTED.md) explains setup.
 
-## Use CORA in a ChatGPT Project — beginner walkthrough
+## Path A — Use CORA in a ChatGPT Project — beginner walkthrough
 
-**Path A — Project chat and method guidance (`METHOD_ONLY` unless a runner is separately authorized).** ChatGPT proposes a contract and an agent task packet; attaching a ZIP does not install or run CORA.
+**Project chat and method guidance (`METHOD_ONLY` unless a runner is separately authorized).** ChatGPT proposes a contract and an agent task packet; attaching a ZIP does not install or run CORA.
 
 **Start here:** this documented beta route assumes **ChatGPT Pro or Edu**; Projects are available on other plans, but read/write and runner permissions must be checked separately. CORA-ENGINE does not require ChatGPT.
 
