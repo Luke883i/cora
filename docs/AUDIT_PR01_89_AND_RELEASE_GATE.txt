@@ -1,0 +1,246 @@
+# CORA PR #1–#89 — audit and release gate
+
+**Baseline:** merged PR #89 and main SHA 298997878c449e72f9bfca0a05e40c00af922953 (20 November 2026). This is a GitHub metadata/source audit, NOT an independent runtime or human usability study. Machine-readable contract: ../.cora/contracts/dod/reader-cockpit-release-dod.json.
+
+## Historical census
+
+The GitHub PR list includes **89 PRs: 86 merged and 3 closed without merge** (#34, #80 and #85). Titles classify intent; they do not attest behavior, implementation quality or external authority. Subsequent implementation belongs in PR #90.
+
+| PRs | Source-level trajectory | Unresolved limitation |
+| --- | --- | --- |
+| #1–#20 | Installable CLI, Git receipts and provenance, ontology, graph, guards, adaptors, bounded fuzzing | Partial consumer discovery, source is not product behavior |
+| #21–#42 | README, claim evidence, CI, source DoDs, One-Run, offline dossier, release semantics | Proof vocabulary and review complexity increased |
+| #43–#67 | Consolidation, ChatGPT handoff ZIP, cross-repo profiles, pilots, packaging and SBOM | Handoffs not executed code, reviewer decisions or external user trials |
+| #68–#86 | Target portability, dependency/consumer graph, physical Git counterfactuals and contraction | Dynamic callers and side effects remain partially unknown |
+| #87–#89 | JSON cockpit decisions, beginner README, capability-named tests, CI workflow naming | JSON choices lacked a real navigable cockpit; usability unmeasured |
+
+**Current code inventory:** 71 declared CLI commands; 14 workflows; exact Git receipts, bounded semantic models, one-run source dossier, portable iteration ZIP, code and documentation tests. This is inventory and bounded evidence, not 71 independently certified product functions.
+
+## Gap register — closure is noncompensatory
+
+| Gap | Negative oracle | Corrective contract | State |
+| --- | --- | --- | --- |
+| First-time reader confuses ChatGPT method and installed engine | Source ZIP mistaken for runner | Product definition before commands, side-by-side table, recommended beginner METHOD_ONLY path | Source candidate |
+| README overload | Critical authorization detail missed | Progressive disclosure, lists and short action table | Source candidate, external comprehension unmeasured |
+| Cockpit has JSON choices but no navigable HTML | Click unavailable, no DoD-to-gap navigation | Render verified offline HTML through existing verify-process, local anchors and three non-executing choices | Source candidate |
+| Archive spoofing and HTML injection | Forged ZIP or untrusted prose becomes executable markup | Reverify source receipt, escape text, strict CSP and no scripts | Tests and real CLI required |
+| Stale session artifacts | Earlier ZIP read as current commit | Exact source SHA, latest verified round and fail-closed mismatch | Runtime tests required |
+| Superficial scenario counting | A million IDs mistaken for semantic coverage | 12 interacting dimensions, seeded unique tuples, distinct expected-result oracle, repeat | Finite model, not target runtime |
+| Product usability unknown | Static anchor PASS promoted to browser success | Independent novice/CTO click-and-task study | BLOCKED_EXTERNAL |
+| Product and recovery unobserved | Git evidence promoted to target acceptance | Maintained target native tests, auth-denial, persistence and rollback | BLOCKED_EXTERNAL |
+| Release authority assumed from CI | Author self-approves | Authenticated host controls, reviewer, signed artifact, rollback and publish decision | BLOCKED_EXTERNAL |
+
+This table lists **identified** release-relevant gaps, not all possible unknown bugs or organizational risks. New evidence may add blocking leaves.
+
+## Architectural options and decision
+
+| Candidate | Advantage | Refutation |
+| --- | --- | --- |
+| README only | Minimal edit | Does not repair JSON-only cockpit navigation |
+| New hosted cockpit | Rich UI | New server, trust, deployment, attack and maintenance boundaries |
+| Native ChatGPT plugin | Seamless-looking | No evidence of an installed live runner or such user interface |
+| **Offline verified HTML** | Minimal existing owner, clickable internal sections, no executable controls | Must survive hostile ZIPs, script injection, actual CLI replay and novice tasks |
+
+Chosen: README first-screen editorial simplification; a **verified local offline HTML navigator** generated after One-Run ZIP replay; no new service, no new command family, no automatic replan or merge.
+
+## Decision gates
+
+- **G_SOURCE_CANDIDATE = R0 AND R1 AND R2 AND R3 AND R4.** History, reader front door, navigation, 1M reproducible typed model outcomes and all 14 workflows on the same final HEAD.
+- **G_PUBLIC_RELEASE = G_SOURCE_CANDIDATE AND R5 AND R6 AND R7.** External novice/CTO usability, target-runtime and rollback evidence, authenticated host and independent release decision. The release gate is BLOCKED_EXTERNAL.
+- One million refers to **1,000,000 distinct modeled combinations**, with 12 semantic dimensions, seed 883, two byte-identical replay reports and an independent deterministic oracle. It is not one million physical source mutations, a human trial or a general proof.
+- A failure in any dependency, an unsafe HTML projection, stale SHA or missing external witness cannot be compensated by unrelated green tests. Do not infer permission from a source receipt.
+
+## Release actions for beginners
+
+1. Choose ChatGPT Project (method-only) unless an actual authorized Python/Git runner exists.
+2. Create a real target repository and record its Git commit. The CORA source ZIP is only a reference snapshot.
+3. Explain your desired outcome; derive AND obligations, negative tests and one reversible change. Execute only with separate authorization.
+4. Produce a temporary session ZIP only from real local One-Run; verify the exact receipt and produce the optional offline cockpit HTML.
+5. Open the HTML in a browser and navigate its anchors, DoD, gaps and next checks. Copy the proposed question to ChatGPT; links do not execute actions.
+6. Require independent target observations, non-author review, authenticated host protection and a responsible release decision before public publication.
+
+**Proof limits:** this document does not itself execute any step or attest reader comprehension. Keep scope differences between product, software and repository explicit.
+
+## Appendix A — original GitHub PR registry, #1–#89 (metadata-level audit)
+
+The following is a source-metadata inventory pinned to the GitHub PR list queried on 20 November 2026, not a proof of individual test outcomes, review decisions or runtime maturity. Dates indicate GitHub merge or closure events; no PR is retrospectively treated as a validated product milestone.
+
+| PR | Original GitHub title (stated scope) | Disposition | Event date UTC | Phase |
+| --- | --- | --- | --- | --- |
+| [#1](https://github.com/Luke883i/cora/pull/1) | PR-01: constitute installable CORA package and falsifiable repository baseline | Merged | 2026-11-02 | Kernel/Git |
+| [#2](https://github.com/Luke883i/cora/pull/2) | PR-02: immutable Git evidence ledger, provenance and million-case falsification | Merged | 2026-11-02 | Kernel/Git |
+| [#3](https://github.com/Luke883i/cora/pull/3) | PR-03: committed product ontology and explainable evidence-linked graph kernel | Merged | 2026-11-02 | Kernel/Git |
+| [#4](https://github.com/Luke883i/cora/pull/4) | PR-04: versioned adaptive manifest contracts and explicit evidence coverage | Merged | 2026-11-02 | Kernel/Git |
+| [#5](https://github.com/Luke883i/cora/pull/5) | PR-05: Git-backed evidence closure and scoped certificate engine | Merged | 2026-11-02 | Kernel/Git |
+| [#6](https://github.com/Luke883i/cora/pull/6) | PR-06: scoped transactional refactoring and persistent local architecture guard | Merged | 2026-11-02 | Kernel/Git |
+| [#7](https://github.com/Luke883i/cora/pull/7) | PR-07: reproducible release-candidate packaging, independent installs and falsification | Merged | 2026-11-02 | Kernel/Git |
+| [#8](https://github.com/Luke883i/cora/pull/8) | PR-08: harden guard bootstrap and make CORA repository self-describing with verifiable DoD | Merged | 2026-11-02 | Kernel/Git |
+| [#9](https://github.com/Luke883i/cora/pull/9) | PR-09: human-governed multi-scale AI-assisted per-file forensic lab | Merged | 2026-11-02 | Kernel/Git |
+| [#10](https://github.com/Luke883i/cora/pull/10) | v1.experimental: semantic artifact lattice, self-audit and governed release candidate | Merged | 2026-11-03 | Kernel/Git |
+| [#11](https://github.com/Luke883i/cora/pull/11) | Selection DoD: evidence-verifiable fail-closed triage and million-case semantic falsification | Merged | 2026-11-03 | Kernel/Git |
+| [#12](https://github.com/Luke883i/cora/pull/12) | PR-12: holistic development archaeology, group forensics and source-verified AI review | Merged | 2026-11-03 | Kernel/Git |
+| [#13](https://github.com/Luke883i/cora/pull/13) | PR-13: multiscale engineering-debt signals, process suite and evidence governance | Merged | 2026-11-03 | Kernel/Git |
+| [#14](https://github.com/Luke883i/cora/pull/14) | PR-14: continuous development gates, agent governance and post-merge evidence | Merged | 2026-11-03 | Kernel/Git |
+| [#15](https://github.com/Luke883i/cora/pull/15) | PR-15: CORA full name, severe self-audit and governed release readiness | Merged | 2026-11-03 | Kernel/Git |
+| [#16](https://github.com/Luke883i/cora/pull/16) | PR-16: falsifiable semantic assurance lattice, bounded ZIP/runtime and source CI | Merged | 2026-11-03 | Kernel/Git |
+| [#17](https://github.com/Luke883i/cora/pull/17) | PR-17: backward-derived agent DoD, 10M seeded semantic qualification and non-authorizing DevOps framework | Merged | 2026-11-03 | Kernel/Git |
+| [#18](https://github.com/Luke883i/cora/pull/18) | PR-18: CORA-on-CORA historiography, falsifiable agent saturation and source-model hardening | Merged | 2026-11-03 | Kernel/Git |
+| [#19](https://github.com/Luke883i/cora/pull/19) | PR-19: contextual gold assurance R1–R4 / P01–P12, physical mutants, effects and 10M typed-model lattice | Merged | 2026-11-03 | Kernel/Git |
+| [#20](https://github.com/Luke883i/cora/pull/20) | PR-20: converge CORA DoD kernel, contextual Git DevOps, 10M typed falsifiers and complete R1–R4 lattice | Merged | 2026-11-03 | Kernel/Git |
+| [#21](https://github.com/Luke883i/cora/pull/21) | PR-21: make CORA discoverable through value-first README and verified documentation lattice | Merged | 2026-11-03 | Assurance/OneRun |
+| [#22](https://github.com/Luke883i/cora/pull/22) | PR-22: Git-bound semantic documentation proof for README and S01–S18 | Merged | 2026-11-03 | Assurance/OneRun |
+| [#23](https://github.com/Luke883i/cora/pull/23) | PR-23: Progressive CORA README and minimal documentation navigation DoD | Merged | 2026-11-04 | Assurance/OneRun |
+| [#24](https://github.com/Luke883i/cora/pull/24) | PR-24: Git-bound CI/CD workflow discovery and safe rationalization DoD | Merged | 2026-11-04 | Assurance/OneRun |
+| [#25](https://github.com/Luke883i/cora/pull/25) | PR-25: CORA cross-method epistemic synthesis and Git-bound AI case assurance | Merged | 2026-11-04 | Assurance/OneRun |
+| [#26](https://github.com/Luke883i/cora/pull/26) | PR-26: Complete CORA capability/source evidence atlas and documentation hardening | Merged | 2026-11-04 | Assurance/OneRun |
+| [#27](https://github.com/Luke883i/cora/pull/27) | CORA-on-CORA R3/3: typed-method lattice, code-durability falsifiers and exact-HEAD CI | Merged | 2026-11-04 | Assurance/OneRun |
+| [#28](https://github.com/Luke883i/cora/pull/28) | CORA integrated semantic service: document-to-code convergence, bounded AI lattice, 10M falsifiers | Merged | 2026-11-05 | Assurance/OneRun |
+| [#29](https://github.com/Luke883i/cora/pull/29) | CORA five synergies: semantic truth, grounded AI, source probes, continuous evolution, unified 1M proof lattice | Merged | 2026-11-05 | Assurance/OneRun |
+| [#30](https://github.com/Luke883i/cora/pull/30) | CORA-on-CORA: lossless documentation archive, simpler root/README and 10k seeded layout falsifiers | Merged | 2026-11-05 | Assurance/OneRun |
+| [#31](https://github.com/Luke883i/cora/pull/31) | PR31: noncompensatory maturity DoD and offline integrated CORA HTML atlas | Merged | 2026-11-05 | Assurance/OneRun |
+| [#32](https://github.com/Luke883i/cora/pull/32) | PR32: post-merge reproducibility falsifiers, live GitHub governance observation and gated alpha release DoD | Merged | 2026-11-05 | Assurance/OneRun |
+| [#33](https://github.com/Luke883i/cora/pull/33) | PR33: measured post-merge Git-fixture reproducibility, no retry masking and reticular DoD | Merged | 2026-11-05 | Assurance/OneRun |
+| [#34](https://github.com/Luke883i/cora/pull/34) | PR34 (stacked): exact-HEAD alpha wheel/sdist manifest and nonauthorizing release checklist | Closed unmerged | 2026-11-05 | Assurance/OneRun |
+| [#35](https://github.com/Luke883i/cora/pull/35) | PR35: alpha candidate exact-HEAD manifest (rebased scope after PR33 merge) | Merged | 2026-11-05 | Assurance/OneRun |
+| [#36](https://github.com/Luke883i/cora/pull/36) | PR36: One-Run CORA source assurance + actual-results HTML atlas, 27-node DoD and 100k semantic falsifiers | Merged | 2026-11-06 | Assurance/OneRun |
+| [#37](https://github.com/Luke883i/cora/pull/37) | PR37: integrated One-Run activity registry, evidence dossier and forensic atlas (55-node DoD, falsifiers) | Merged | 2026-11-06 | Assurance/OneRun |
+| [#38](https://github.com/Luke883i/cora/pull/38) | PR38: audit PR1–37 / 305 commit deltas, converge future DoD and harden One-Run forensic atlas | Merged | 2026-11-06 | Assurance/OneRun |
+| [#39](https://github.com/Luke883i/cora/pull/39) | PR39: Independent product qualification — behavioral oracles, usability, isolation and host governance | Merged | 2026-11-06 | Assurance/OneRun |
+| [#40](https://github.com/Luke883i/cora/pull/40) | PR40: CORA-on-CORA engineering knowledge closure — CI RCA, static/dynamic debt, 10M semantic falsifiers | Merged | 2026-11-07 | Assurance/OneRun |
+| [#41](https://github.com/Luke883i/cora/pull/41) | PR41: final experimental CORA baseline — Git-document truth, observed behavioral oracle, governed release AND | Merged | 2026-11-07 | Assurance/OneRun |
+| [#42](https://github.com/Luke883i/cora/pull/42) | PR42: lossless final README and semantic-first documentation DoD (10k falsifiers) | Merged | 2026-11-07 | Assurance/OneRun |
+| [#43](https://github.com/Luke883i/cora/pull/43) | PR43: measure obligation growth without self-certified closure | Merged | 2026-11-07 | Portability/qualification |
+| [#44](https://github.com/Luke883i/cora/pull/44) | PR44: independently challenge closure claims and provide plain-language review | Merged | 2026-11-07 | Portability/qualification |
+| [#45](https://github.com/Luke883i/cora/pull/45) | PR45: subtract review work; one evidence-first Atlas, dynamic PR baseline, no new engine | Merged | 2026-11-07 | Portability/qualification |
+| [#46](https://github.com/Luke883i/cora/pull/46) | CORA 1.0.0a5 candidate: practical ChatGPT onboarding + portable append-only session dossier | Merged | 2026-11-08 | Portability/qualification |
+| [#47](https://github.com/Luke883i/cora/pull/47) | docs: CORA README as an engineering development method and multi-channel product entry | Merged | 2026-11-08 | Portability/qualification |
+| [#48](https://github.com/Luke883i/cora/pull/48) | docs: compress CORA README into CTO-facing method and evidence-linked product examples | Merged | 2026-11-09 | Portability/qualification |
+| [#49](https://github.com/Luke883i/cora/pull/49) | docs: cora standalone positioning and shared programme header | Merged | 2026-11-10 | Portability/qualification |
+| [#50](https://github.com/Luke883i/cora/pull/50) | feat(CORA): reticular cross-repository portability and evidence-convergence DoD | Merged | 2026-11-11 | Portability/qualification |
+| [#51](https://github.com/Luke883i/cora/pull/51) | feat(CORA): PR51 Gold claim-to-native-witness convergence in portable One-Run | Merged | 2026-11-11 | Portability/qualification |
+| [#52](https://github.com/Luke883i/cora/pull/52) | feat(CORA): PR52 Native Gold pilots, source/runtime replay and PR51 hardening | Merged | 2026-11-11 | Portability/qualification |
+| [#53](https://github.com/Luke883i/cora/pull/53) | PR53 — CTO-facing CORA identity, target and supply-chain truth (source-scoped) | Merged | 2026-11-11 | Portability/qualification |
+| [#54](https://github.com/Luke883i/cora/pull/54) | PR54 — Fail closed on stale release-candidate version and SHA | Merged | 2026-11-11 | Portability/qualification |
+| [#55](https://github.com/Luke883i/cora/pull/55) | PR55 — Physical CycloneDX SBOM, scoped build SCA and Git-linked unsigned provenance | Merged | 2026-11-11 | Portability/qualification |
+| [#56](https://github.com/Luke883i/cora/pull/56) | PR56 — Independent qualification: paired real-Git pilots, measured-work protocol and fail-closed host gates | Merged | 2026-11-11 | Portability/qualification |
+| [#57](https://github.com/Luke883i/cora/pull/57) | PR57 — L1 engineering / L2 experimentation / optional L3 external assurance: semantic truth refactor | Merged | 2026-11-12 | Portability/qualification |
+| [#58](https://github.com/Luke883i/cora/pull/58) | PR58 — Integrated engineering practices: Git-bound obligations and automatic editorial impact review | Merged | 2026-11-12 | Portability/qualification |
+| [#59](https://github.com/Luke883i/cora/pull/59) | PR59 — Consolidate CORA: full change-scope proof, receipt replay, One-Run obligations and editorial truth | Merged | 2026-11-12 | Portability/qualification |
+| [#60](https://github.com/Luke883i/cora/pull/60) | PR60 — Reader-first CORA: source-preserving editorial contraction and legacy de-duplication | Merged | 2026-11-12 | Portability/qualification |
+| [#61](https://github.com/Luke883i/cora/pull/61) | PR61 — 48-document Git-bound census, standalone current docs and temporal refactoring | Merged | 2026-11-12 | Portability/qualification |
+| [#62](https://github.com/Luke883i/cora/pull/62) | PR62 — Enterprise-evaluable documentation: minimum source truth, reticular DoD, finite falsification | Merged | 2026-11-12 | Portability/qualification |
+| [#63](https://github.com/Luke883i/cora/pull/63) | PR63 — Canonical ChatGPT Project adapter, reader-first README and falsifiable minimum DoD | Merged | 2026-11-12 | Portability/qualification |
+| [#64](https://github.com/Luke883i/cora/pull/64) | PR64 — Project-first CORA README, timeless navigation and source-bound onboarding oracles | Merged | 2026-11-13 | Portability/qualification |
+| [#65](https://github.com/Luke883i/cora/pull/65) | docs: qualify enterprise evaluation boundary after PR64 | Merged | 2026-11-13 | Portability/qualification |
+| [#66](https://github.com/Luke883i/cora/pull/66) | assurance: exercise full Git source inventory and 71 installed CLI surfaces | Merged | 2026-11-13 | Portability/qualification |
+| [#67](https://github.com/Luke883i/cora/pull/67) | PR67 — Bounded product/software/repository closeout and enterprise governance truth | Merged | 2026-11-13 | Portability/qualification |
+| [#68](https://github.com/Luke883i/cora/pull/68) | docs/test: actionable ChatGPT Project adapter v2 and 10k adversarial prompt-source evaluations | Merged | 2026-11-13 | Contraction |
+| [#69](https://github.com/Luke883i/cora/pull/69) | assurance: exact-Git component contribution lattice and consolidation falsifiers | Merged | 2026-11-14 | Contraction |
+| [#70](https://github.com/Luke883i/cora/pull/70) | assurance: closed 77-observation operational equivalence and adversarial replay | Merged | 2026-11-14 | Contraction |
+| [#71](https://github.com/Luke883i/cora/pull/71) | assurance: transplant H-FORGE as a non-promoting CORA profile with exact PR70 evidence binding | Merged | 2026-11-14 | Contraction |
+| [#72](https://github.com/Luke883i/cora/pull/72) | feat(assurance): absorb H-FORGE into canonical One-Run with exact-Git replay | Merged | 2026-11-15 | Contraction |
+| [#73](https://github.com/Luke883i/cora/pull/73) | research(ms10): final decision-ready assurance paper and bounded evidence corpus | Merged | 2026-11-17 | Contraction |
+| [#74](https://github.com/Luke883i/cora/pull/74) | research(r5): seven-repository source atlas, semantic review and falsifiable Git replay | Merged | 2026-11-17 | Contraction |
+| [#75](https://github.com/Luke883i/cora/pull/75) | docs(r6): standalone public field guide, deterministic Word and physical copy falsification | Merged | 2026-11-17 | Contraction |
+| [#76](https://github.com/Luke883i/cora/pull/76) | research(paper): contract-first novice leverage, ROA bryophyte observer and reproducible Word proof | Merged | 2026-11-18 | Contraction |
+| [#77](https://github.com/Luke883i/cora/pull/77) | research(paper): conventional science first, 138 pinned sources and falsifiable Word final | Merged | 2026-11-18 | Contraction |
+| [#78](https://github.com/Luke883i/cora/pull/78) | feat(P0): executable self-governing development contract with exact-Git falsification | Merged | 2026-11-18 | Contraction |
+| [#79](https://github.com/Luke883i/cora/pull/79) | feat(P1): target-neutral Git source portability without false PASS | Merged | 2026-11-18 | Contraction |
+| [#80](https://github.com/Luke883i/cora/pull/80) | feat(P2): unified Git consumer hypergraph with replayable AND DoDs | Closed unmerged | 2026-11-18 | Contraction |
+| [#81](https://github.com/Luke883i/cora/pull/81) | feat(portable): source-exact non-root role and ontology manifests for external targets | Merged | 2026-11-18 | Contraction |
+| [#82](https://github.com/Luke883i/cora/pull/82) | feat(P2): original-owner Git consumer hypergraph with falsifiable AND cut | Merged | 2026-11-18 | Contraction |
+| [#83](https://github.com/Luke883i/cora/pull/83) | feat(P3): original Git native counterfactuals with side effects and physical ddmin | Merged | 2026-11-19 | Contraction |
+| [#84](https://github.com/Luke883i/cora/pull/84) | feat(P4): original-Git owner contraction, native counterfactuals and postmerge hardening | Merged | 2026-11-19 | Contraction |
+| [#85](https://github.com/Luke883i/cora/pull/85) | refactor(E2-A): original-Git full-process completeness and P05 native proof | Closed unmerged | 2026-11-19 | Contraction |
+| [#86](https://github.com/Luke883i/cora/pull/86) | refactor(CORA K7): contract-safe net contraction with three semantic commits | Merged | 2026-11-19 | Contraction |
+| [#87](https://github.com/Luke883i/cora/pull/87) | feat(PR87): verified chat cockpit from one-run continuation, finite contract falsification | Merged | 2026-11-19 | Beginner/cockpit |
+| [#88](https://github.com/Luke883i/cora/pull/88) | docs(PR88): beginner-first README, filesystem anatomy and source-bounded explainability | Merged | 2026-11-20 | Beginner/cockpit |
+| [#89](https://github.com/Luke883i/cora/pull/89) | refactor: capability-named tests, readable assurance CI and V6 contract parity | Merged | 2026-11-20 | Beginner/cockpit |
+
+## Appendix B — original main capability atlas, 71 declared CLI commands
+
+**Source-of-truth at merged PR #89:** `.cora/assurance/capability-atlas.json` on original main SHA `298997878c449e72f9bfca0a05e40c00af922953`. Interactions are the original atlas classifications, not a claim that the whole source was executed end-to-end. Group counts: agent-devops=13; controlled-maintenance=4; finite-models=15; forensic-debt=16; git-evidence=12; method-synthesis=2; workflow-governance=2; zip-runtime=7. Total: 71.
+
+| Command | Family | Source owner declared | Test source declared | Source interaction class |
+| --- | --- | --- | --- | --- |
+| `version` | git-evidence | `src/cora/__init__.py` | `tests/test_repository_identity_audit.py` | `PACKAGE_VERSION_ONLY` |
+| `audit` | git-evidence | `src/cora/audit.py` | `tests/test_repository_identity_audit.py` | `WORKTREE_NOT_IMMUTABLE_GIT` |
+| `snapshot` | git-evidence | `src/cora/git_snapshot.py` | `tests/test_evidence_contract_and_git_snapshot.py` | `SOURCE_ANALYSIS_OR_PROPOSAL` |
+| `verify-ledger` | git-evidence | `src/cora/git_snapshot.py` | `tests/test_evidence_contract_and_git_snapshot.py` | `SOURCE_OR_CLAIM_REPLAY_SCOPED` |
+| `graph` | git-evidence | `src/cora/graph.py` | `tests/test_dependency_graph.py` | `SOURCE_ANALYSIS_OR_PROPOSAL` |
+| `explain` | git-evidence | `src/cora/graph.py` | `tests/test_dependency_graph.py` | `SOURCE_ANALYSIS_OR_PROPOSAL` |
+| `adapter-audit` | git-evidence | `src/cora/adapters.py` | `tests/test_dependency_adapter_contracts.py` | `SOURCE_ANALYSIS_OR_PROPOSAL` |
+| `verify-adapters` | git-evidence | `src/cora/adapters.py` | `tests/test_dependency_adapter_contracts.py` | `SOURCE_OR_CLAIM_REPLAY_SCOPED` |
+| `artifact-audit` | git-evidence | `src/cora/artifact_roles.py` | `tests/test_artifact_role_classification.py` | `SOURCE_ANALYSIS_OR_PROPOSAL` |
+| `verify-artifacts` | git-evidence | `src/cora/artifact_roles.py` | `tests/test_artifact_role_classification.py` | `SOURCE_OR_CLAIM_REPLAY_SCOPED` |
+| `closure` | git-evidence | `src/cora/closure.py` | `tests/test_dependency_closure.py` | `SOURCE_ANALYSIS_OR_PROPOSAL` |
+| `verify-certificate` | git-evidence | `src/cora/closure.py` | `tests/test_dependency_closure.py` | `SOURCE_OR_CLAIM_REPLAY_SCOPED` |
+| `workflow-audit` | workflow-governance | `src/cora/workflow_rationalization.py` | `tests/test_workflow_rationalization.py` | `SOURCE_ANALYSIS_OR_PROPOSAL` |
+| `verify-workflows` | workflow-governance | `src/cora/workflow_rationalization.py` | `tests/test_workflow_rationalization.py` | `SOURCE_OR_CLAIM_REPLAY_SCOPED` |
+| `method-synthesize` | method-synthesis | `src/cora/method_synthesis.py` | `tests/test_method_synthesis.py` | `OPTIONAL_UNTRUSTED_AI_HYPOTHESES` |
+| `verify-method-synthesis` | method-synthesis | `src/cora/method_synthesis.py` | `tests/test_method_synthesis.py` | `SOURCE_OR_CLAIM_REPLAY_SCOPED` |
+| `file-lab` | forensic-debt | `src/cora/file_lab.py` | `tests/test_source_file_lab.py` | `SOURCE_ANALYSIS_OR_PROPOSAL` |
+| `verify-file-lab` | forensic-debt | `src/cora/file_lab.py` | `tests/test_source_file_lab.py` | `SOURCE_OR_CLAIM_REPLAY_SCOPED` |
+| `file-decision` | forensic-debt | `src/cora/file_lab.py` | `tests/test_source_file_lab.py` | `RECORDS_HUMAN_CLAIM_NOT_APPROVAL` |
+| `select-file` | forensic-debt | `src/cora/selection.py` | `tests/test_selection.py` | `SOURCE_ANALYSIS_OR_PROPOSAL` |
+| `verify-selection` | forensic-debt | `src/cora/selection.py` | `tests/test_selection.py` | `SOURCE_OR_CLAIM_REPLAY_SCOPED` |
+| `holistic-audit` | forensic-debt | `src/cora/holistic.py` | `tests/test_repository_archaeology.py` | `SOURCE_ANALYSIS_OR_PROPOSAL` |
+| `verify-holistic` | forensic-debt | `src/cora/holistic.py` | `tests/test_repository_archaeology.py` | `SOURCE_OR_CLAIM_REPLAY_SCOPED` |
+| `archaeology` | forensic-debt | `src/cora/archaeology.py` | `tests/test_repository_archaeology.py` | `SOURCE_ANALYSIS_OR_PROPOSAL` |
+| `verify-archaeology` | forensic-debt | `src/cora/archaeology.py` | `tests/test_repository_archaeology.py` | `SOURCE_OR_CLAIM_REPLAY_SCOPED` |
+| `annotate-groups` | forensic-debt | `src/cora/group_hypotheses.py` | `tests/test_repository_archaeology.py` | `ANNOTATES_UNTRUSTED_AI_HYPOTHESES` |
+| `debt-scan` | forensic-debt | `src/cora/debt.py` | `tests/test_debt_governance.py` | `SOURCE_ANALYSIS_OR_PROPOSAL` |
+| `verify-debt` | forensic-debt | `src/cora/debt.py` | `tests/test_debt_governance.py` | `SOURCE_OR_CLAIM_REPLAY_SCOPED` |
+| `debt-diff` | forensic-debt | `src/cora/debt.py` | `tests/test_debt_governance.py` | `SOURCE_ANALYSIS_OR_PROPOSAL` |
+| `process-list` | forensic-debt | `src/cora/process_suite.py` | `tests/test_debt_governance.py` | `SOURCE_ANALYSIS_OR_PROPOSAL` |
+| `process-run` | forensic-debt | `src/cora/process_suite.py` | `tests/test_debt_governance.py` | `SOURCE_ANALYSIS_OR_PROPOSAL` |
+| `verify-process` | forensic-debt | `src/cora/process_suite.py` | `tests/test_debt_governance.py` | `SOURCE_OR_CLAIM_REPLAY_SCOPED` |
+| `plan-rename-doc` | controlled-maintenance | `src/cora/transform.py` | `tests/test_change_transform_and_guard.py` | `SOURCE_ANALYSIS_OR_PROPOSAL` |
+| `apply-rename-doc` | controlled-maintenance | `src/cora/transform.py` | `tests/test_change_transform_and_guard.py` | `MUTATES_TARGET_AFTER_EXPLICIT_APPROVAL_AND_TEST` |
+| `guard-install` | controlled-maintenance | `src/cora/guard.py` | `tests/test_change_transform_and_guard.py` | `WRITES_LOCAL_GUARD` |
+| `guard-check` | controlled-maintenance | `src/cora/guard_runtime.py` | `tests/test_repository_product_contract.py` | `SOURCE_OR_CLAIM_REPLAY_SCOPED` |
+| `dev-premerge` | agent-devops | `src/cora/continuous.py` | `tests/test_change_lifecycle_governance.py` | `SOURCE_ANALYSIS_OR_PROPOSAL` |
+| `dev-postmerge` | agent-devops | `src/cora/continuous.py` | `tests/test_change_lifecycle_governance.py` | `SOURCE_ANALYSIS_OR_PROPOSAL` |
+| `verify-dev-gate` | agent-devops | `src/cora/continuous.py` | `tests/test_change_lifecycle_governance.py` | `SOURCE_OR_CLAIM_REPLAY_SCOPED` |
+| `agent-check` | agent-devops | `src/cora/continuous.py` | `tests/test_change_lifecycle_governance.py` | `SOURCE_ANALYSIS_OR_PROPOSAL` |
+| `dod-plan` | agent-devops | `src/cora/agent_assurance.py` | `tests/test_agent_assurance_boundaries.py` | `SOURCE_ANALYSIS_OR_PROPOSAL` |
+| `dod-assess` | agent-devops | `src/cora/agent_assurance.py` | `tests/test_agent_assurance_boundaries.py` | `SOURCE_ANALYSIS_OR_PROPOSAL` |
+| `verify-dod` | agent-devops | `src/cora/agent_assurance.py` | `tests/test_agent_assurance_boundaries.py` | `SOURCE_OR_CLAIM_REPLAY_SCOPED` |
+| `convergence-plan` | agent-devops | `src/cora/gold_assurance.py` | `tests/test_gold_assurance.py` | `SOURCE_ANALYSIS_OR_PROPOSAL` |
+| `verify-contextual-gate` | agent-devops | `src/cora/continuous.py` | `tests/test_change_lifecycle_governance.py` | `SOURCE_OR_CLAIM_REPLAY_SCOPED` |
+| `gold-plan` | agent-devops | `src/cora/gold_assurance.py` | `tests/test_gold_assurance.py` | `SOURCE_ANALYSIS_OR_PROPOSAL` |
+| `gold-pilot` | agent-devops | `src/cora/gold_assurance.py` | `tests/test_gold_assurance.py` | `SOURCE_PILOT_REQUIRES_AUTHORIZED_CHECKOUTS` |
+| `gold-mutate` | agent-devops | `src/cora/gold_mutations.py` | `tests/test_gold_assurance.py` | `STAGED_PHYSICAL_MUTATIONS_OPTIONAL_DOCKER` |
+| `gold-effects` | agent-devops | `src/cora/gold_effects.py` | `tests/test_gold_assurance.py` | `UNTRUSTED_WORKFLOW_TEXT_STATIC` |
+| `zip-intake` | zip-runtime | `src/cora/archive_intake.py` | `tests/test_hostile_archive_intake.py` | `OPTIONAL_EXTRACTION_PRECHECK` |
+| `verify-zip-intake` | zip-runtime | `src/cora/archive_intake.py` | `tests/test_hostile_archive_intake.py` | `SOURCE_OR_CLAIM_REPLAY_SCOPED` |
+| `runtime-observe` | zip-runtime | `src/cora/runtime_observation.py` | `tests/test_runtime_observation_fusion.py` | `OPTIONAL_DOCKER_RUNTIME_UNATTESTED` |
+| `fuse-evidence` | zip-runtime | `src/cora/observation_fusion.py` | `tests/test_runtime_observation_fusion.py` | `SOURCE_ANALYSIS_OR_PROPOSAL` |
+| `verify-fusion` | zip-runtime | `src/cora/observation_fusion.py` | `tests/test_runtime_observation_fusion.py` | `SOURCE_OR_CLAIM_REPLAY_SCOPED` |
+| `lattice-audit` | zip-runtime | `src/cora/semantic_lattice.py` | `tests/test_semantic_lattice.py` | `SOURCE_ANALYSIS_OR_PROPOSAL` |
+| `verify-lattice` | zip-runtime | `src/cora/semantic_lattice.py` | `tests/test_semantic_lattice.py` | `SOURCE_OR_CLAIM_REPLAY_SCOPED` |
+| `stress` | finite-models | `src/cora/mutations.py` | `tests/test_repository_identity_audit.py` | `SYNTHETIC_MODEL_NOT_RUNTIME` |
+| `stress-evidence` | finite-models | `src/cora/mutation_evidence.py` | `tests/test_evidence_contract_and_git_snapshot.py` | `SYNTHETIC_MODEL_NOT_RUNTIME` |
+| `stress-graph` | finite-models | `src/cora/graph_stress.py` | `tests/test_dependency_graph.py` | `SYNTHETIC_MODEL_NOT_RUNTIME` |
+| `stress-adapters` | finite-models | `src/cora/adapter_stress.py` | `tests/test_dependency_adapter_contracts.py` | `SYNTHETIC_MODEL_NOT_RUNTIME` |
+| `stress-closure` | finite-models | `src/cora/closure_stress.py` | `tests/test_dependency_closure.py` | `SYNTHETIC_MODEL_NOT_RUNTIME` |
+| `stress-transform` | finite-models | `src/cora/transform_stress.py` | `tests/test_change_transform_and_guard.py` | `SYNTHETIC_MODEL_NOT_RUNTIME` |
+| `stress-file-lab` | finite-models | `src/cora/file_lab_stress.py` | `tests/test_source_file_lab.py` | `SYNTHETIC_MODEL_NOT_RUNTIME` |
+| `stress-artifact-semantics` | finite-models | `src/cora/artifact_saturation.py` | `tests/test_artifact_role_classification.py` | `SYNTHETIC_MODEL_NOT_RUNTIME` |
+| `stress-selection` | finite-models | `src/cora/selection_stress.py` | `tests/test_selection.py` | `SYNTHETIC_MODEL_NOT_RUNTIME` |
+| `stress-archaeology` | finite-models | `src/cora/archaeology_stress.py` | `tests/test_repository_archaeology.py` | `SYNTHETIC_MODEL_NOT_RUNTIME` |
+| `stress-debt` | finite-models | `src/cora/debt_stress.py` | `tests/test_debt_governance.py` | `SYNTHETIC_MODEL_NOT_RUNTIME` |
+| `stress-continuous` | finite-models | `src/cora/continuous_stress.py` | `tests/test_change_lifecycle_governance.py` | `SYNTHETIC_MODEL_NOT_RUNTIME` |
+| `stress-agent-dod` | finite-models | `src/cora/agent_saturation.py` | `tests/test_agent_assurance_boundaries.py` | `SYNTHETIC_MODEL_NOT_RUNTIME` |
+| `stress-gold` | finite-models | `src/cora/gold_saturation.py` | `tests/test_gold_assurance.py` | `SYNTHETIC_MODEL_NOT_RUNTIME` |
+| `stress-convergence` | finite-models | `src/cora/gold_saturation.py` | `tests/test_gold_assurance.py` | `SYNTHETIC_MODEL_NOT_RUNTIME` |
+
+## Remaining uncertainty and priority debt register
+
+- **D-HISTORY:** PR metadata is complete at 89 items, but individually replaying all 89 diffs, trees and runtime outcomes was not performed; no per-PR DoD is promoted by this index.
+- **D-SOURCE:** source/consumer graphs remain conservative around dynamic imports, runtime reflection, inaccessible target systems and unregistered effects.
+- **D-CONTINUITY:** session ZIP stores claimed iterations, not memory or automatic ChatGPT control. The new offline navigator is an explicitly bounded presentation; independent usability remains open.
+- **D-MODEL:** 1M typed combinations are a preregistered finite universe, not 1M separately mutated source trees or production trials. Outcome oracle and representative counterfactual probes are required.
+- **D-ASSURANCE:** an exact-SHA source PASS is neither independent target correctness, host enforcement, review acceptance nor signed release provenance.
+- **D-COST:** adding documentation, tests and model code increases physical byte footprint; PR90 does not claim radical net contraction. The renderer was consolidated into the existing chat-bundle owner specifically to avoid a redundant production module.
+- **D-RELEASE:** R5–R7 independently observed reader, target/recovery and host/human release obligations cannot be waived by any source-level pass; G_PUBLIC_RELEASE remains BLOCKED_EXTERNAL.

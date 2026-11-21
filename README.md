@@ -7,7 +7,9 @@
 
 **Engineering evidence for AI-assisted software changes.**
 
-CORA is a local, offline-first Python 3.11+ source-assurance engine and a method for guiding AI-assisted engineering. It helps people and separately authorized coding agents inspect Git and **produce reproducible pre/post-merge review reports**: **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**. **CORA is not a coding agent**, a ChatGPT plug-in that writes code, or a release approver.
+**CORA helps plan software changes, verify Git evidence and expose gaps.** It combines a conversational method with a local Python 3.11+ assurance engine.
+
+**CORA is not a coding agent**, a ChatGPT plug-in, an automatic runner or a release approver. It can **produce reproducible pre/post-merge review reports** describing **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**.
 
 **Why it matters:** patches are not proof; readers need decisions, tests and unresolved risks.
 
@@ -31,7 +33,17 @@ ChatGPT Project = canonical prompt + authorized attachments, not a runner
 
 ## First five minutes — choose your path
 
-**A — ChatGPT Project:** plan in natural language; no software execution without a separately authorized runner. **B — Local CLI:** run the following commands in an authorized terminal, not in chat.
+| Choose one of two modes | What you do | What CORA can actually do |
+| --- | --- | --- |
+| **A — CORA-METHOD in ChatGPT Project (recommended for beginners)** | Explain your desired application in normal language, ask for a falsifiable plan and choose the next small step. | Guide the conversation. **No runner = METHOD_ONLY / NOT_RUN**; the Project and a source ZIP do not execute code. |
+| **B — CORA-ENGINE on a computer or with an authorized coding agent** | Use Python, Git and explicit permissions; run native tests and the local CLI at a named SHA. | Produce source-bound reports and a verified offline handoff. This does **not** approve a PR or prove the product works. |
+
+**Remember:**
+- **Beginner:** plan without Python.
+- **Authorized:** agent edits; runner tests; CORA reports gaps.
+
+
+**Choose A:** five ChatGPT steps; no installation. **Choose B:** Git, Python and permission. Terminal commands:
 
 ```sh
 python -m pip install -e .
@@ -48,25 +60,40 @@ For scoped evidence see [One-Run](#one-run--one-command-one-evidence-dossier); s
 
 **Start here:** this documented beta route assumes **ChatGPT Pro or Edu**; Projects are available on other plans, but read/write and runner permissions must be checked separately. CORA-ENGINE does not require ChatGPT.
 
-1. **Create your GitHub repository:** on [GitHub](https://github.com) select **New repository**, name your webapp and add a README. Record its Git SHA. This **target repository** holds *your application*, not CORA.
-2. **Prepare a Project, not a code runner:** open [Luke883i/cora](https://github.com/Luke883i/cora), choose **Code → Download ZIP** from `main` (source reference, **no `.git` history**), and copy the [single canonical CORA beta prompt](docs/AGENT_ADOPTION.md#chatgpt-project-beta-adapter). In ChatGPT select **New project**, **Project settings** → **Project instructions**, paste that prompt and attach the ZIP. Do not paste another prompt or imply the ZIP installed CORA.
-3. **Choose authorized source access:** attach a verified target ZIP or grant scoped **read access** to both repositories. GitHub connector abilities vary: **read-only** is not permission to push or merge; write actions require verified permissions and explicit authorization. State A0: "A reporter creates an issue, a reviewer sees it after reload, an outsider cannot close it."
-4. **Plan; implement only with permission:** ask CORA-METHOD for **backward requirements decomposition**, AND acceptance tests, a falsifiable roadmap and a reversible POST → SQLite → GET slice. In Project chat this is *a proposal*. A **write-capable coding tool**, such as Codex, needs distinct authorization to edit the target; a **separate Python runner** must execute native tests and negative oracles. CORA-METHOD guides you **without** executing CORA-ENGINE. Without an authorized runner, report `METHOD_ONLY` / `NOT_RUN`, never a commit or PASS.
-5. **Verify only observed work, then continue:** if authorized, commit the slice, run *target-native tests*, then execute One-Run and replay on the **same SHA**. With a runner create `--chat-step` and `--chat-bundle`, verify the temporary ZIP, then attach its latest copy to this Project chat. Read `iterations/000001/handoff.md` and open DoD. Cockpit choices do not execute; the archive is **neither automatic chat capture nor authenticated review**. [Full webapp/ZIP guide](docs/GETTING_STARTED.md#github-and-chatgpt-project-from-zero).
+1. **Create your GitHub repository:** on [GitHub](https://github.com) select **New repository**, name your webapp and add README. Record its Git SHA. The **target repository** holds your application, not CORA.
+2. **Prepare ChatGPT:** from [Luke883i/cora](https://github.com/Luke883i/cora) select **Code → Download ZIP** on main (source reference, **no `.git` history**). Copy the [single canonical prompt](docs/AGENT_ADOPTION.md#chatgpt-project-beta-adapter). Choose **New project** → **Project settings** → **Project instructions**; paste the prompt and attach ZIP. This neither installs CORA nor runs code.
+3. **Share only authorized source:** attach a verified target ZIP or grant **read access** to repositories. GitHub connector abilities vary: read-only is not permission to push or merge; write actions require verified permissions and explicit authorization. Example A0: "A reporter creates an issue; a reviewer sees it after reload; an outsider cannot close it."
+4. **Plan, then authorize separately:** ask CORA-METHOD for **backward requirements decomposition**, AND tests, a falsifiable roadmap and reversible POST → SQLite → GET slice. In Project chat this is *a proposal*. A **write-capable coding tool**, such as Codex, needs authorization; a **separate Python runner** executes tests. CORA-METHOD guides you **without** executing CORA-ENGINE. Without an authorized runner, say `METHOD_ONLY` / `NOT_RUN`.
+5. **Verify, then continue:** with permission, commit, run target-native tests and One-Run at the **same SHA**. With a runner create `--chat-step` and `--chat-bundle`, verify ZIP and upload its latest copy to this Project chat. Read `iterations/000001/handoff.md` and DoD. ZIP is **not** automatic chat memory and **neither automatic chat capture nor authenticated review**. [Complete guide](docs/GETTING_STARTED.md#github-and-chatgpt-project-from-zero).
+
+**Verified offline cockpit (requires One-Run):**
+
+```sh
+cora verify-process /tmp/cora-run.json --repo . --one-run \
+  --chat-bundle /tmp/cora-session.zip --chat-cockpit-html /tmp/cora-cockpit.html
+```
+
+- Open `/tmp/cora-cockpit.html`; navigate **Overview**, **DoD & evidence**, **Blockers**, **Choices**.
+- **EXPLAIN**, **REPLAN**, **PROPOSE_NEXT_CHECK** link to copyable prompts; no execution or automatic replanning.
+- No runner/verified ZIP? Stay METHOD_ONLY; never invent PASS.
+
 
 ### Repository anatomy — one minute
 
-`README.md` starts; `docs/GETTING_STARTED.md` installs; `docs/AGENT_ADOPTION.md` owns the **single prompt**. [Architecture](docs/ARCHITECTURE.md#filesystem-anatomy-at-the-current-git-revision) maps `src/cora/` (engine), `tests/` (tests), `tools/` (verifiers), `.cora/` and `schemas/` (contracts), `.github/workflows/` (CI), and `examples/` (samples). Existence does not prove execution.
+`README.md` explains; `docs/GETTING_STARTED.md` installs; `docs/AGENT_ADOPTION.md` owns the **single prompt**. [Architecture](docs/ARCHITECTURE.md#filesystem-anatomy-at-the-current-git-revision): `src/cora/` engine, `tests/` and `tools/` checks, `.cora/` and `schemas/` contracts, `.github/workflows/` CI, `examples/` samples. Existence is not execution.
 
 ### Humanistic, legal and organizational perspectives — noncanonical
 
-**Humanistic:** people choose values and trade-offs. **Legal:** digests are not signatures or compliance findings. **Organizational:** owners accept residual risks. These interpretations are **not** product contracts or proof of reduced expertise.
+Humanistic: people choose ends. Legal: hashes are not signatures. Organizational: owners accept risk. None is product proof.
 
 ## Path B — authorized coding agent and local CORA-ENGINE
 
-**Executable outside ChatGPT Project, not a third chat mode.** An authorized agent edits target Git; a separate runner executes target-native tests. CORA-ENGINE (local Python CLI) checks source at the exact SHA, not the product or reviewer. **With no runner, this path is `NOT_RUN`.**
+**Executable outside ChatGPT Project, not a third chat mode.** Authorized agent edits Git; separate runner executes target-native tests. CORA-ENGINE (local Python CLI) checks the exact SHA, not reviewers or product behavior. **With no runner, this path is `NOT_RUN`.**
 
-**1. Plan:** [agent adoption](docs/AGENT_ADOPTION.md) and [R1–R4 DoD](docs/DOD_PR20_CONVERGENCE.md): requirements, owners, interfaces, negative tests, rollback. **2. Execute:** authorize a bounded change; commit and test. **3. Verify:** run contextual premerge with `--contextual --intent` (see guide). **The same intent is required for replay**. **4. Decide:** review gaps and permission. **Run real tests and obtain independent review separately.** CORA **does not independently write a feature**.
+1. **Plan:** [agent adoption](docs/AGENT_ADOPTION.md), [R1–R4 DoD](docs/DOD_PR20_CONVERGENCE.md), negative tests and rollback.
+2. **Execute:** authorize one slice, commit and test.
+3. **Verify:** premerge with `--contextual --intent`; **The same intent is required for replay**.
+4. **Decide:** inspect gaps. **Run real tests and obtain independent review separately.** CORA **does not independently write a feature**.
 
 The [LEVEL / NILO experiment](docs/CONTINUOUS_DEVELOPMENT.md#level-demonstration-local-evidence-verifiable-engineering-lifecycle) proposes a slice needing genuine browser tests; it is **not an already delivered game**.
 
@@ -103,29 +130,27 @@ The dossier distinguishes `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTER
 
 **Native Gold pilots:** bounded, consented Teddy Node and ICTC HTTP/SQLite tests. LUMEN browser and NILO remote remain unobserved; source PASS cannot attest runner identity. [Pilot evidence](docs/GOLD_ASSURANCE.md).
 
-**Other repos:** `--portable-profile` replays source; `--portable-parse-js` parses ESM without execution. [Limits](docs/CONTINUOUS_DEVELOPMENT.md).
+**Other repos:** `--portable-profile` reads source; `--portable-parse-js` parses ESM, not execution. [Limits](docs/CONTINUOUS_DEVELOPMENT.md).
 
 **H-FORGE:** [source stage](docs/HOLISTIC_FORENSICS.md#h-forge-optional-experimental-profile); 77 cases, dynamic consumers and P5 acceptance unverified.
 
 ## How CORA works
 
-**Standard engineering contract:** actor, outcome, environment, interfaces, data/permission owners, expected result, negative oracle, rollback and requirement-to-test traceability. This **does not certify compliance** with ISO/IEC/IEEE 29148, ISO/IEC 25010 or NIST SSDF. [Worked contract](docs/GETTING_STARTED.md).
+**Standard engineering contract:** actor, outcome, owner, negative oracle, rollback and test trace. This **does not certify compliance** with ISO/IEC/IEEE 29148, ISO/IEC 25010 or NIST SSDF. [Worked contract](docs/GETTING_STARTED.md).
 
-**Micro-example — three evidence planes:** **Product:** a reporter files an issue, finds it after restart, and an outsider cannot close it. **Software:** UI/API behavior, durable database readback and access denial require **separate real observations**. **Repository:** bind test receipts and rollback to a named Git SHA; a source PASS does not certify product acceptance.
+**Micro-example — three evidence planes:** **Product:** an issue survives restart and outsiders cannot close it. **Software:** UI/API behavior, durable database readback and access denial require **separate real observations**. **Repository:** bind test receipts and rollback to a named Git SHA; source PASS is not product acceptance.
 
-**Additional analytical lenses (research, not standards):** rival explanations, UI/API/storage/governance translations, unknown consumers, contradicted receipts. Replan on changed goals/SHA/stalled evidence; these are hypotheses, not proof.
+**Additional analytical lenses (research, not standards):** contradicted receipts and unknown consumers remain hypotheses.
 
-**1. Specify the outcome.** Turn natural-language intent into an **AND-dependency graph** of observable conditions. Reason **backward**: an unknown prerequisite stays open. [Worked application contract](docs/CONTINUOUS_DEVELOPMENT.md#example-contract-and-evidence-ladder--portable-corrective-action-app).
+**1. Specify the outcome.** Translate natural-language intent into an **AND-dependency graph**. Reason **backward**; an **unknown prerequisite** remains open. [Worked application contract](docs/CONTINUOUS_DEVELOPMENT.md#example-contract-and-evidence-ladder--portable-corrective-action-app).
 
-**2. Change one coherent unit.** The agent uses authorized tools; CORA inspects committed evidence. Git preserves **content-addressed blobs**, **directory trees**, commits and PR lineage. **New source SHA** means revalidate. A hash can identify committed bytes; it cannot authenticate a human reviewer.
+**2. Change one coherent unit.** Use **authorized tools**; CORA inspects Git **content-addressed blobs**, **directory trees**, commits and PR history. **New source SHA** requires replay. A hash can identify committed bytes; it cannot authenticate a human reviewer.
 
-**3. Try to disprove it, then stop intelligently.** Use **seeded combinations**, a **separate expected-result rule** and authorized **physical mutation testing**. Keep killed, **surviving and inconclusive** mutants distinct. A **fixed scenario catalog and final window** can establish **bounded convergence**, **not proof of complete correctness**. After **no-progress rounds**, replan; CORA **does not predict N**.
+**3. Try to disprove it, then stop intelligently.** Challenge **seeded combinations** with a **separate expected-result rule** and authorized **physical mutation testing**. Record killed, **surviving and inconclusive** mutations. A **fixed scenario catalog and final window** supports **bounded convergence**, **not proof of complete correctness**. After **no-progress rounds**, replan; CORA **does not predict N**.
 
-**Delete a module?** Candidate consumers and negative tests inform review; an unknown dynamic caller means `BLOCKED`, not safe deletion.
+**Target examples, not universal validation:** [ICTC](https://github.com/Luke883i/ictc) (HTTP/SQLite, source/UX verification), [Teddy](https://github.com/Luke883i/teddy) (Node) and [iKant_EDU](https://github.com/Luke883i/iKant_EDU) (unknown consumers, reversible repository contraction). Source histories and native pilot evidence have distinct owners; CORA did not independently certify these products. [Pilots](docs/GOLD_ASSURANCE.md).
 
-**Target examples, not universal validation:** [ICTC](https://github.com/Luke883i/ictc) exercises HTTP/SQLite and source/UX verification; [Teddy](https://github.com/Luke883i/teddy) exercises Node; [iKant_EDU](https://github.com/Luke883i/iKant_EDU) illustrates unknown consumers and reversible repository contraction. Source histories and native pilot evidence have distinct owners; CORA did not independently certify these products. [Pilot scopes](docs/GOLD_ASSURANCE.md).
-
-**Terms:** *intent mining* extracts obligations; *reticular DoD* tracks dependencies; *semantic slices* bound changes; *blobbing/materialization* writes Git objects; *semantic mutations* challenge claims; *semantic saturation* is only the bounded absence of new findings. Blobs store bytes; trees and commits bind revisions. No finite test proves universal correctness.
+**Terms:** *intent mining* extracts obligations; *reticular DoD* maps dependencies; *semantic slices* bound changes; *blobbing/materialization* writes Git objects; *semantic mutations* challenge claims; *semantic saturation* is a bounded lack of new findings. No finite test proves universal correctness.
 
 ## Interpret a CORA result
 
@@ -148,9 +173,9 @@ The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) di
 **Coding assistant or reviewer:** [Agent adoption](docs/AGENT_ADOPTION.md) · [AGENTS](AGENTS.md) · [Continuous development](docs/CONTINUOUS_DEVELOPMENT.md).
 **Forensic investigator:** [File Lab](docs/FILE_LAB.md) · [Holistic forensics](docs/HOLISTIC_FORENSICS.md) · [Engineering debt](docs/ENGINEERING_DEBT.md).
 **Product or release owner:** [Governance](GOVERNANCE.md) · [Security](SECURITY.md) · [Release](docs/RELEASE.md).
-**Full documentation, history and contracts:** [Index](docs/INDEX.md) · [Documentation DoD](docs/DOCUMENTATION_DOD.md).
+**Full documentation, history and contracts:** [Index](docs/INDEX.md) · [Documentation DoD](docs/DOCUMENTATION_DOD.md). [PR #1–#89 trajectory, gaps and release gate](docs/AUDIT_PR01_89_AND_RELEASE_GATE.txt).
 
-**Decision rights are external:** people/host controls approve. **Source of record:** committed Git, not chat. **Why:** models cannot certify external behavior. **Runtime:** local CLI. **Read in order:** README → task guide → contract → evidence.
+**Decision rights are external:** people and host. **Source of record:** Git, not chat. **Why:** source is not authority. **Runtime:** local CLI. **Read in order:** README → guide → contract → evidence.
 
 <details>
 <summary>Product | Outcome and limits</summary>
@@ -180,9 +205,7 @@ The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) di
 
 ## Enterprise evaluation boundary
 
-**Enterprise evaluation only.** Product usability, maintained-target oracles, isolation, support, provenance, rollback, effective host rules and non-author review are not independently qualified. [Formal three-boundary DoD](docs/DOD_RELEASE_READINESS.md) · [release](docs/RELEASE.md) · [governance](GOVERNANCE.md).
-
-**Decision rule:** `PASS_SCOPED` covers only measured scope; `NOT_RUN` and `BLOCKED_EXTERNAL` cannot be converted into approval.
+**Enterprise evaluation only.** Usability, target tests, rollback, host controls and review remain unqualified. [Formal three-boundary DoD](docs/DOD_RELEASE_READINESS.md) · [release](docs/RELEASE.md) · [governance](GOVERNANCE.md). `PASS_SCOPED` is not approval; `NOT_RUN` and `BLOCKED_EXTERNAL` remain open.
 
 ## Operating boundaries
 

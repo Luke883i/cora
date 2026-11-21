@@ -299,4 +299,215 @@ class ReadinessTest(unittest.TestCase):
         self.assertIn("UNPINNED",a["source_scope"])
         self.assertIn("PROTECTED_MAIN_REQUIRED_CHECKS_NOT_ATTESTED",a["external_obligations"])
 
+
+class Pr90SelfAuditReticulumTests(unittest.TestCase):
+    """Falsify the exact source AND-graph; this is not host or user acceptance."""
+
+    @classmethod
+    def setUpClass(cls):
+        from cora.reticulum import ordered_cut, assess_cut
+        cls.ordered_cut = staticmethod(ordered_cut)
+        cls.assess_cut = staticmethod(assess_cut)
+        cls.contract = json.loads((ROOT / ".cora/contracts/dod/reader-cockpit-release-dod.json").read_text("utf-8"))
+        cls.closure = cls.contract["self_audit_closure"]
+        cls.nodes = cls.contract["nodes"] + cls.closure["nodes"]
+
+    def test_global_noncompensatory_cut_and_deferred_p2(self):
+        self.assertEqual(self.closure["schema"], "cora-pr90-self-audit-closure-reticulum/1")
+        self.assertEqual(self.closure["authorization"], "NONE")
+        self.assertEqual(self.closure["product_release"], "BLOCKED_EXTERNAL")
+        order = self.ordered_cut(self.nodes, "G_EXTERNAL")
+        self.assertEqual(len(order), len(set(order)))
+        for key in ("P0_GIT_HISTORY", "P0_HOST_CI", "P0_NONPROMOTION",
+                    "P1_ZIP_MATRIX", "P1_COCKPIT_NAV", "P1_HOST_READBACK",
+                    "P1_DIAGNOSTICS", "P1_BEGINNER", "P1_SCOPE",
+                    "G_P0", "G_SOURCE", "G_EXTERNAL", "R5_HUMAN", "R6_TARGET", "R7_HOST"):
+            self.assertIn(key, order)
+        by_id = {node["id"]: node for node in self.nodes}
+        self.assertEqual(len(by_id), len(self.nodes))
+        self.assertEqual(set(order), set(by_id), "orphan global reticular node")
+        expected_edges = {
+            "G_P0": {"P0_GIT_HISTORY", "P0_HOST_CI", "P0_NONPROMOTION"},
+            "P1_SCOPE": {"P1_ZIP_MATRIX", "P1_COCKPIT_NAV", "P1_HOST_READBACK",
+                         "P1_DIAGNOSTICS", "P1_BEGINNER"},
+            "G_SOURCE": {"G_P0", "P1_SCOPE", "G_SOURCE_CANDIDATE"},
+            "G_EXTERNAL": {"G_SOURCE", "G_PUBLIC_RELEASE"},
+        }
+        for gate, required in expected_edges.items():
+            self.assertEqual(set(by_id[gate]["depends_on"]), required)
+        self.assertEqual({row["id"] for row in self.closure["deferred_p2"]},
+                         {"P2_COMPLEXITY_102", "P2_RADICAL_CONTRACTION"})
+        self.assertTrue(all(row["status"] == "TOBE_UNVERIFIED"
+                            for row in self.closure["deferred_p2"]))
+
+    def test_zip_original_git_matrix_is_explicit_and_mutation_resistant(self):
+        import copy
+        policy = self.closure["history_input_matrix"]
+        self.assertEqual(policy["schema"], "cora-pr90-history-source-matrix/1")
+        self.assertTrue(policy["no_unverified_promotion"])
+        self.assertIn("preflight_comprehensive_history", policy["single_runtime_enforcer"])
+        expected = {
+            "ZIP_ARCHIVE": "REJECT_TYPED",
+            "SYNTHETIC_ROOT_GIT": "REJECT_TYPED",
+            "SHALLOW_GIT": "REJECT_TYPED",
+            "FORGED_CORPUS": "REJECT_TYPED",
+            "FULL_GIT": "ELIGIBLE_FOR_SOURCE_REPLAY",
+        }
+
+        def validate(matrix):
+            modes = matrix["modes"]
+            by_id = {mode["id"]: mode for mode in modes}
+            if (len(by_id) != len(modes) or set(by_id) != set(expected) or
+                matrix["no_unverified_promotion"] is not True or
+                not matrix["zip_fallback"].startswith("cora zip-intake")):
+                raise ValueError("unsafe or incomplete input source matrix")
+            for ident, state in expected.items():
+                if by_id[ident]["comprehensive"] != state:
+                    raise ValueError("ZIP/Git capability was falsely promoted")
+                if not by_id[ident]["not_proven"] or not by_id[ident]["witness"]:
+                    raise ValueError("unwitnessed capability matrix row")
+        validate(policy)
+        for ident in expected:
+            damaged = copy.deepcopy(policy)
+            next(x for x in damaged["modes"] if x["id"] == ident)["comprehensive"] = "PASS"
+            with self.subTest(ident=ident), self.assertRaises(ValueError):
+                validate(damaged)
+        for field, value in (("no_unverified_promotion", False),
+                             ("zip_fallback", "git-commit-from-extracted-zip")):
+            damaged = copy.deepcopy(policy)
+            damaged[field] = value
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                validate(damaged)
+
+    def test_canonical_routing_covers_every_internal_dod_including_pr90(self):
+        import copy
+        atlas = json.loads((ROOT / ".cora/assurance/capability-atlas.json").read_text("utf-8"))
+        routes = json.loads((ROOT / ".cora/contracts/index.json").read_text("utf-8"))
+        expected = set(atlas["repository_surfaces"]["internal_dod"])
+        logical = "cora.reader-cockpit-release-dod.json"
+        canonical = ".cora/contracts/dod/reader-cockpit-release-dod.json"
+
+        def assert_closed(index):
+            self.assertEqual(index["authority"], "NONE")
+            self.assertEqual(index["external_consumers"], "UNKNOWN")
+            entries = index["bindings"]
+            self.assertEqual(len({r["logical"] for r in entries}), len(entries))
+            self.assertEqual(len({r["canonical"] for r in entries}), len(entries))
+            internal = {r["canonical"] for r in entries if r["scope"] == "INTERNAL_DOD"}
+            self.assertEqual(internal, expected)
+            selected = [r for r in entries if r["logical"] == logical]
+            self.assertEqual(len(selected), 1)
+            self.assertEqual(selected[0], {
+                "logical": logical, "canonical": canonical, "scope": "INTERNAL_DOD"})
+        assert_closed(routes)
+        for mutation in ("removed", "wrong_path", "false_scope", "duplicated"):
+            candidate = copy.deepcopy(routes)
+            row = next(r for r in candidate["bindings"] if r["logical"] == logical)
+            if mutation == "removed":
+                candidate["bindings"].remove(row)
+            elif mutation == "wrong_path":
+                row["canonical"] = ".cora/contracts/dod/forged.json"
+            elif mutation == "false_scope":
+                row["scope"] = "PUBLIC_STABLE"
+            else:
+                candidate["bindings"].append(copy.deepcopy(row))
+            with self.subTest(mutation=mutation), self.assertRaises(AssertionError):
+                assert_closed(candidate)
+
+    def test_even_all_positive_source_reports_cannot_authorize_release(self):
+        from cora.reticulum import MODEL, EXTERNAL
+        order = self.ordered_cut(self.nodes, "G_EXTERNAL")
+        index = {node["id"]: node for node in self.nodes}
+        observations = {key: MODEL for key in order if not index[key]["depends_on"]}
+        report = self.assess_cut(self.nodes, "G_EXTERNAL", observations)
+        self.assertEqual(report["authorization"], "NONE")
+        self.assertNotEqual(report["status"], MODEL)
+        for key in ("R5_HUMAN", "R6_TARGET", "R7_HOST",
+                    "P0_HOST_CI", "P1_HOST_READBACK"):
+            self.assertEqual(report["states"][key], EXTERNAL)
+
+    def test_duplicate_cycle_or_dangling_edges_are_refuted(self):
+        import copy
+        for mutation in ("duplicate", "cycle", "missing"):
+            changed = copy.deepcopy(self.nodes)
+            if mutation == "duplicate":
+                changed.append(copy.deepcopy(changed[0]))
+            elif mutation == "cycle":
+                next(x for x in changed if x["id"] == "G_P0")["depends_on"].append("G_EXTERNAL")
+            else:
+                next(x for x in changed if x["id"] == "G_P0")["depends_on"].append("FAKE_PASS")
+            with self.subTest(mutation=mutation), self.assertRaises(ValueError):
+                self.ordered_cut(changed, "G_EXTERNAL")
+
+
 if __name__=="__main__":unittest.main()
+
+
+
+# PR90: preregistered scenario model and independent expected-result boundary.
+from tools.release_readiness_scenarios import (
+    FIELDS, SPACE, STRIDE, candidate, case_at, independent_oracle, run,
+)
+
+class ReleaseScenarioTests(unittest.TestCase):
+    def test_cardinality_and_two_seeded_replays(self):
+        self.assertEqual(len(FIELDS), 12)
+        self.assertGreater(SPACE, 1_000_000)
+        a = run(cases=2000, seed=883)
+        b = run(cases=2000, seed=883)
+        self.assertEqual(a, b)
+        self.assertEqual(a["distinct_semantic_tuples_observed"], 2000)
+        self.assertEqual(a["model_oracle_mismatches"], 0)
+        self.assertEqual(a["false_release_promotions"], 0)
+        self.assertEqual(a["forged_results_tested"], 8)
+        self.assertEqual(a["forged_results_rejected"], 8)
+        self.assertEqual(a["release"], "BLOCKED_EXTERNAL")
+        self.assertEqual(a["physical_git_mutants"], 0)
+        self.assertNotEqual(a["sha256"], run(cases=2000, seed=884)["sha256"])
+
+    def test_no_claimed_host_or_adversarial_mode_grants_authority(self):
+        for i in range(2000):
+            case = case_at(i, 883)
+            self.assertEqual(candidate(case), independent_oracle(case))
+            self.assertEqual(candidate(case)["authorization"], "NONE")
+            self.assertEqual(candidate(case)["release"], "BLOCKED_EXTERNAL")
+            self.assertFalse(candidate(case)["auto_execution"])
+
+    def test_verified_chat_navigation_requires_all_prerequisites(self):
+        valid = {
+            "persona": "beginner", "mode": "chat-method", "target": "issue-webapp",
+            "revision": "exact-git", "evidence": "git-replay",
+            "runner": "separate-authorized", "cockpit": "verified-zip",
+            "action": "next-check", "dod": "unresolved", "host": "self-claimed",
+            "rollback": "unplanned", "impact": "privacy",
+        }
+        result = candidate(valid)
+        self.assertEqual(result["navigation"], "VERIFIED_OFFLINE_NAVIGATOR")
+        self.assertEqual(result["source"], "PASS_SCOPED_SOURCE")
+        for field, bad in (("revision", "stale-git"),
+                           ("evidence", "caller-claim"),
+                           ("runner", "none"), ("cockpit", "forged-zip"),
+                           ("mode", "local-engine")):
+            mutated = dict(valid, **{field: bad})
+            with self.subTest(field=field):
+                self.assertEqual(candidate(mutated)["navigation"], "NO_VERIFIED_NAVIGATOR")
+
+    def test_autonomous_action_is_refused_even_with_idealized_source(self):
+        case = {name: choices[0] for name, choices in FIELDS}
+        case.update(revision="exact-git", evidence="target-native",
+                    runner="separate-authorized", cockpit="verified-zip",
+                    mode="chat-method", action="auto-merge")
+        result = candidate(case)
+        self.assertEqual(result["choice"], "BLOCKED")
+        self.assertFalse(result["auto_execution"])
+
+    def test_bounds_and_full_seed_space_are_explicit(self):
+        for invalid in (0, -1, 1000001):
+            with self.assertRaises(ValueError):
+                run(cases=invalid)
+        sample = [tuple(case_at(i, 883).items()) for i in range(10000)]
+        self.assertEqual(len(sample), len(set(sample)))
+
+
+if __name__ == "__main__":
+    unittest.main()

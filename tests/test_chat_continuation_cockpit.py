@@ -203,3 +203,248 @@ class Pr87CiOwnershipTests(unittest.TestCase):
                                (one, 'if not verify_suite(repo, plain):'),
                                (suite, 'expected=run_suite(repo,report[')):
             self.assertNotIn(anchor, source.replace(anchor, 'FORGED_BYPASS', 1))
+
+
+
+# PR90: verify real offline navigation, escaped user prose and receipt boundaries.
+from html.parser import HTMLParser
+import zipfile
+from cora.chat_bundle import render_verified_cockpit
+from tests import test_chat_bundle_portability as fixtures
+
+class Links(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.ids = []
+        self.refs = []
+
+    def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        if "id" in attrs:
+            self.ids.append(attrs["id"])
+        if tag == "a" and "href" in attrs:
+            self.refs.append(attrs["href"])
+
+
+class NavigationTests(unittest.TestCase):
+    def make_bundle(self, *, attack=False):
+        case = fixtures.ChatBundleTests("test_append_roundtrip_two_rounds_and_exact_handoff")
+        case.setUp()
+        self.addCleanup(case.doCleanups)
+        step = case.step()
+        if attack:
+            step["intent"] = '<script>alert("hijack")</script>'
+            step["roadmap"][0]["action"] = '<img src=x onerror=alert(1)>'
+            step["gaps"][0]["description"] = '"><iframe src="https://evil.invalid">'
+        receipt = case.receipt()
+        append_chat_iteration(case.bundle, repo=case.repo, step=step, receipt=receipt)
+        return case.bundle, receipt
+
+    def test_verified_offline_links_have_real_targets(self):
+        bundle, receipt = self.make_bundle()
+        page = render_verified_cockpit(bundle, expected_receipt=receipt)
+        parser = Links()
+        parser.feed(page)
+        self.assertEqual(len(parser.ids), len(set(parser.ids)))
+        self.assertTrue(parser.refs)
+        self.assertTrue(all(ref.startswith("#") for ref in parser.refs))
+        self.assertTrue(all(ref[1:] in parser.ids for ref in parser.refs))
+        for anchor in ("overview", "dod", "roadmap", "gaps", "actions",
+                       "explain", "replan", "propose", "boundary", "dod-1", "dod-2"):
+            self.assertIn(anchor, parser.ids)
+        for label in ("EXPLAIN", "REPLAN", "PROPOSE_NEXT_CHECK"):
+            self.assertIn(label, page)
+        self.assertIn(receipt["commit"], page)
+        self.assertIn("BLOCKED_EXTERNAL", page)
+        self.assertNotIn("<script", page.lower())
+        self.assertNotIn("onclick=", page.lower())
+
+    def test_untrusted_prose_never_becomes_html_markup(self):
+        bundle, receipt = self.make_bundle(attack=True)
+        page = render_verified_cockpit(bundle, expected_receipt=receipt)
+        self.assertNotIn("<script>", page)
+        self.assertNotIn("<img src=", page)
+        self.assertNotIn("<iframe", page)
+        self.assertIn("&lt;script&gt;", page)
+        self.assertIn("&lt;img", page)
+        self.assertIn("&lt;iframe", page)
+        self.assertIn("default-src 'none'", page)
+
+    def test_wrong_receipt_never_renders(self):
+        bundle, receipt = self.make_bundle()
+        wrong = dict(receipt, commit="b" * 40)
+        with self.assertRaises(ValueError):
+            render_verified_cockpit(bundle, expected_receipt=wrong)
+
+    def test_modified_zip_never_renders(self):
+        bundle, receipt = self.make_bundle()
+        corrupted = bundle.with_name("tampered.zip")
+        with zipfile.ZipFile(bundle) as source, zipfile.ZipFile(corrupted, "w") as target:
+            for name in source.namelist():
+                original = source.read(name)
+                if name.endswith("/step.json"):
+                    original += b"\n"
+                target.writestr(name, original)
+        with self.assertRaises(ValueError):
+            render_verified_cockpit(corrupted, expected_receipt=receipt)
+
+    def test_pilot_optin_does_not_change_historical_cli_help(self):
+        import subprocess
+        import sys
+        from pathlib import Path
+        p = subprocess.run([sys.executable, "-m", "cora.cli", "verify-process", "--help"],
+                           capture_output=True, text=True, check=False)
+        self.assertEqual(p.returncode, 0, p.stderr)
+        self.assertNotIn("--chat-cockpit-html", p.stdout)
+        self.assertIn("--chat-cockpit-html",
+                      (Path(__file__).resolve().parents[1] / "README.md").read_text("utf-8"))
+        source = (Path(__file__).resolve().parents[1] / "src/cora/cli.py").read_text("utf-8")
+        self.assertIn("pv.add_argument('--chat-cockpit-html',type=Path,help=argparse.SUPPRESS)",
+                      source)
+
+    def test_three_choices_have_exact_navigable_targets_and_copy_only_actions(self):
+        bundle, receipt = self.make_bundle()
+        page = render_verified_cockpit(bundle, expected_receipt=receipt)
+        for destination, label in (
+                ("explain", "EXPLAIN"),
+                ("replan", "REPLAN"),
+                ("propose", "PROPOSE_NEXT_CHECK")):
+            link = '<a class="choice" href="#' + destination + '">' + label + '</a>'
+            self.assertIn(link, page)
+            self.assertIn('<section id="' + destination + '">', page)
+            self.assertIn("Copy this into your authorized chat:", page)
+            self.assertNotIn(link, page.replace('href="#' + destination + '"',
+                                                'href="#missing-' + destination + '"'))
+        self.assertIn("Not a live ChatGPT plugin", page)
+        self.assertIn("No link writes Git", page)
+        self.assertIn("Authorization: NONE", page)
+
+    def test_human_choices_are_contextualized_by_verified_source_receipt(self):
+        bundle, receipt = self.make_bundle()
+        verified = verify_chat_bundle(bundle, expected_receipt=receipt)
+        page = render_verified_cockpit(bundle, expected_receipt=receipt)
+        unresolved = verified["continuation"]["next_unresolved"] or "NONE_REPORTED"
+        self.assertEqual(page.count("Git SHA " + receipt["commit"] + ";"), 3)
+        self.assertEqual(page.count("first unresolved DoD " + unresolved + ";"), 3)
+        self.assertIn("Caller-proposed check IDs:", page)
+        self.assertIn("ZIP integrity is not target attestation or release approval.", page)
+        self.assertIn("reversible falsifier for human authorization", page)
+        self.assertIn("No link writes Git", page)
+        self.assertNotIn("<script", page.lower())
+
+    def test_hostile_caller_prose_cannot_become_a_copied_instruction(self):
+        bundle, receipt = self.make_bundle(attack=True)
+        page = render_verified_cockpit(bundle, expected_receipt=receipt)
+
+        class CopiedInstructions(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.open = False
+                self.prompts = []
+            def handle_starttag(self, name, attrs):
+                if name == "blockquote":
+                    self.open = True
+                    self.prompts.append("")
+            def handle_endtag(self, name):
+                if name == "blockquote":
+                    self.open = False
+            def handle_data(self, data):
+                if self.open:
+                    self.prompts[-1] += data
+
+        captured = CopiedInstructions()
+        captured.feed(page)
+        self.assertEqual(len(captured.prompts), 3)
+        for prompt in captured.prompts:
+            self.assertIn(receipt["commit"], prompt)
+            self.assertNotIn("hijack", prompt)
+            self.assertNotIn("evil.invalid", prompt)
+            self.assertNotIn("onerror", prompt)
+            self.assertIn("Do not", prompt)
+
+    def test_navigation_does_not_promote_authority(self):
+        bundle, receipt = self.make_bundle()
+        page = render_verified_cockpit(bundle, expected_receipt=receipt)
+        report = verify_chat_bundle(bundle)
+        self.assertEqual(report["authorization"], "NONE")
+        self.assertFalse(report["cockpit"]["product_accepted"])
+        self.assertIn("Authorization: NONE", page)
+        self.assertIn("No link writes Git", page)
+        self.assertNotIn("<form", page.lower())
+
+
+class Pr90ComprehensiveDiagnosticsTests(unittest.TestCase):
+    """Do not remove comprehensive stress to hide a failing composite run."""
+
+    def _assert_workflow_owner(self, workflow):
+        marker = "  integrated-source:\n"
+        boundary = "  pr36-native-owner:\n"
+        diagnostic = "  diagnose-comprehensive:\n"
+        visible = "  diagnose-visible:\n"
+        for key in (marker, boundary, diagnostic, visible):
+            self.assertEqual(workflow.count(key), 1)
+        integrated = workflow.split(marker, 1)[1].split(boundary, 1)[0]
+        pr36 = workflow.split(boundary, 1)[1].split(diagnostic, 1)[0]
+        probe = workflow.split(diagnostic, 1)[1].split(visible, 1)[0]
+        shown = workflow.split(visible, 1)[1]
+        self.assertIn("--profile comprehensive", integrated)
+        self.assertIn("cora verify-process /tmp/cora-pr37/run.json", integrated)
+        self.assertEqual(integrated.count("--model-stress-cases 100000"), 1)
+        self.assertIn("assert x['baseline_pr36']['model_stress']['cases'] == 100000", integrated)
+        self.assertIn("assert x['baseline_pr36']['model_stress']['oracle_disagreements'] == 0", integrated)
+        self.assertIn("assert x['baseline_pr36']['model_stress']['unauthorized_promotions'] == 0", integrated)
+        self.assertIn("assert x['genealogy']['commit_count'] == 305", integrated)
+        self.assertIn("assert x['qualification']['external_gates_unclosed'] == 4", integrated)
+        self.assertEqual(pr36.count("--model-stress-cases 100000"), 1)
+        self.assertEqual(pr36.count("--cases 100000"), 2)
+        self.assertIn("cmp /tmp/cora-one-run-100k.json /tmp/cora-one-run-100k-replay.json", pr36)
+        self.assertIn("cora verify-process /tmp/cora-one-run.json", pr36)
+        self.assertIn('r["unauthorized_promotions"]==0', pr36)
+        self.assertIn('not a["release_authorized"]', pr36)
+        self.assertNotIn("continue-on-error: true", pr36)
+        self.assertIn("if: ${{ github.event_name == 'pull_request' }}", probe)
+        self.assertNotIn("--model-stress-cases 100000", probe)
+        self.assertIn("'model_optin_absent':a['baseline_pr36']['model_stress']=={", probe)
+        self.assertIn("'status':'NOT_RUN'", probe)
+        self.assertIn("'cases':0,'reason':'EXPLICIT_OPT_IN_REQUIRED'", probe)
+        self.assertIn("'q_4_external':q.get('external_gates_unclosed')==4", probe)
+        self.assertIn("'g_305_commits':g.get('commit_count')==305", probe)
+        self.assertIn("'q_receipt':any(", probe)
+        self.assertIn("cora verify-process /tmp/cora-pr37-diagnostic/run.json", probe)
+        self.assertIn("headline='scoped-source-run-and-replay-no-stress'", probe)
+        self.assertIn("if: ${{ always() && needs.diagnose-comprehensive.result == 'success' }}", shown)
+        self.assertIn('run: test "$STATUS" -eq 0', shown)
+
+    def test_original_stress_and_fast_diagnostic_falsifiers(self):
+        source = Path(".github/workflows/ci-one-run-integrated.yml").read_text("utf-8")
+        self._assert_workflow_owner(source)
+        mutations = (
+            ("--model-stress-cases 100000 --output /tmp/cora-pr37/run.json",
+             "--output /tmp/cora-pr37/run.json"),
+            ("assert x['baseline_pr36']['model_stress']['cases'] == 100000",
+             "assert x['baseline_pr36']['model_stress']['cases'] == 0"),
+            ("cora verify-process /tmp/cora-pr37/run.json",
+             "echo /tmp/cora-pr37/run.json"),
+            ("--cases 100000 --seed 883 --output /tmp/cora-one-run-100k.json",
+             "--cases 99999 --seed 883 --output /tmp/cora-one-run-100k.json"),
+            ("cmp /tmp/cora-one-run-100k.json /tmp/cora-one-run-100k-replay.json",
+             "echo /tmp/cora-one-run-100k.json /tmp/cora-one-run-100k-replay.json"),
+            ("if: ${{ github.event_name == 'pull_request' }}",
+             "if: ${{ false }}"),
+            ("'model_optin_absent':a['baseline_pr36']['model_stress']=={",
+             "'model_optin_absent':True or a['baseline_pr36']['model_stress']=={"),
+            ("'q_4_external':q.get('external_gates_unclosed')==4",
+             "'q_4_external':True"),
+            ("'g_305_commits':g.get('commit_count')==305",
+             "'g_305_commits':True"),
+            ("headline='scoped-source-run-and-replay-no-stress'",
+             "headline='no-diagnostic'"),
+        )
+        for before, after in mutations:
+            self.assertIn(before, source)
+            with self.subTest(mutant=before), self.assertRaises(AssertionError):
+                self._assert_workflow_owner(source.replace(before, after, 1))
+
+
+if __name__ == "__main__":
+    unittest.main()

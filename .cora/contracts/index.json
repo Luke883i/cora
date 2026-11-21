@@ -134,6 +134,11 @@
       "scope": "INTERNAL_DOD"
     },
     {
+      "logical": "cora.reader-cockpit-release-dod.json",
+      "canonical": ".cora/contracts/dod/reader-cockpit-release-dod.json",
+      "scope": "INTERNAL_DOD"
+    },
+    {
       "logical": "cora.self-governing-portable-development-v1.json",
       "canonical": ".cora/contracts/dod/self-governing-portable-development-v1.json",
       "scope": "INTERNAL_DOD"

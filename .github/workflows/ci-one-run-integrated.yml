@@ -31,6 +31,20 @@ jobs:
         run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
       - name: Install CORA source candidate
         run: python -m pip install -e .
+      - name: PR90 P0 original-history preflight and six native Git/ZIP falsifiers
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python -m unittest discover -s tests -p 'test_comprehensive_history_preflight.py' -v
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from cora.integrated_run import preflight_comprehensive_history
+          r = preflight_comprehensive_history(Path('.'), 'HEAD')
+          assert r['commit'] == os.environ['EXPECTED_SHA']
+          assert r['state'] == 'GIT_OBJECTS_AND_LINEAGE_READABLE_NOT_HOST_ATTESTED'
+          assert r['authority'] == 'NONE'
+          PY
       - name: PR37 original-Git, 10k DoD mutants, physical commit, authority and HTML adversaries
         run: python -m unittest discover -s tests -p 'test_integrated_one_run.py' -v
       - name: PR38 305 Git-commit units, 10k bounded DoD mutants, original-Git and HTML falsifiers
@@ -131,15 +145,37 @@ jobs:
             --output /tmp/cora-pr46/run2.json --atlas-html /tmp/cora-pr46/run2.html \
             --chat-step /tmp/cora-pr46/step.json --chat-bundle /tmp/cora-pr46/session.zip
           cora verify-process /tmp/cora-pr46/run2.json --repo . --one-run \
-            --atlas-html /tmp/cora-pr46/run2.html --chat-bundle /tmp/cora-pr46/session.zip
+            --atlas-html /tmp/cora-pr46/run2.html --chat-bundle /tmp/cora-pr46/session.zip \
+            --chat-cockpit-html /tmp/cora-pr46/cockpit.html
           python - <<'PY'
           from cora.chat_bundle import verify_chat_bundle
+          from html.parser import HTMLParser
+          from pathlib import Path
           x=verify_chat_bundle('/tmp/cora-pr46/session.zip')
           assert x['iterations']==2 and x['authorization']=='NONE'
           assert x['product_status']=='BLOCKED_EXTERNAL'
+          p=Path('/tmp/cora-pr46/cockpit.html').read_text('utf-8')
+          assert 'CORA — verified ZIP decision navigator' in p
+          assert '<script' not in p.lower() and 'onclick=' not in p.lower()
+          class InternalLinks(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.ids=set()
+                  self.links=[]
+              def handle_starttag(self, name, attributes):
+                  attrs=dict(attributes)
+                  if 'id' in attrs: self.ids.add(attrs['id'])
+                  if name=='a' and 'href' in attrs: self.links.append(attrs['href'])
+          links=InternalLinks()
+          links.feed(p)
+          assert links.links and all(ref.startswith('#') and ref[1:] in links.ids for ref in links.links)
+          for marker in ('overview','dod','gaps','actions','explain','replan','propose'):
+              assert marker in links.ids
           PY
       - name: PR46 hostile bundle negative regression
-        run: python -m unittest discover -s tests -p 'test_chat_bundle_portability.py' -v
+        run: |
+          python -m py_compile src/cora/chat_bundle.py src/cora/cli.py
+          python -m unittest discover -s tests -p 'test_chat_bundle_portability.py' -v
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version: '24.19.0'
@@ -301,8 +337,9 @@ jobs:
 
   diagnose-comprehensive:
     name: Diagnose comprehensive one-run source output
-    needs: [integrated-source, pr36-native-owner]
-    if: ${{ failure() && (needs['integrated-source'].result == 'failure' || needs['pr36-native-owner'].result == 'failure') }}
+    # Always run a scoped, fast source check on PR HEAD. Its failure is visible
+    # before slow PR36 stress and comprehensive-matrix jobs complete.
+    if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     timeout-minutes: 40
     outputs:
@@ -330,7 +367,7 @@ jobs:
           mkdir -p /tmp/cora-pr37-diagnostic
           set +e
           cora process-run . --revision HEAD --process full --one-run --profile comprehensive \
-            --model-stress-cases 100000 --output /tmp/cora-pr37-diagnostic/run.json \
+            --output /tmp/cora-pr37-diagnostic/run.json \
             --atlas-json /tmp/cora-pr37-diagnostic/machine.json \
             --atlas-html /tmp/cora-pr37-diagnostic/index.html \
             --evidence-dir /tmp/cora-pr37-diagnostic/evidence \
@@ -348,16 +385,33 @@ jobs:
             python - <<'PY' > /tmp/cora-pr37-diagnostic/assert-out.txt 2> /tmp/cora-pr37-diagnostic/assert-error.txt
           import json, sys
           a=json.load(open('/tmp/cora-pr37-diagnostic/run.json'))
+          q=a.get('qualification') or {}
+          g=a.get('genealogy') or {}
+          retained=g.get('retention') or {}
+          future=g.get('future_delta') or {}
+          manifest=a.get('evidence_manifest') or {}
           checks={
             'declared_71':a['registry']['declared_commands']==71,
             'activities_accounted':a['metrics']['activity_accounted']==a['metrics']['registered_total'],
             'zero_individual_cli':a['metrics']['individually_executed_cli']==0,
-            '100k_cases':a['baseline_pr36']['model_stress']['cases']==100000,
-            'zero_oracle_disagreements':a['baseline_pr36']['model_stress']['oracle_disagreements']==0,
-            'zero_unsafe_promotions':a['baseline_pr36']['model_stress']['unauthorized_promotions']==0,
+            'model_optin_absent':a['baseline_pr36']['model_stress']=={
+              'schema':'cora-one-run-model-not-run/1','status':'NOT_RUN',
+              'cases':0,'reason':'EXPLICIT_OPT_IN_REQUIRED',
+              'authority':'NONE','external':'BLOCKED_EXTERNAL'},
             'source_debt_visible':a['dod']['source_goal']=='DEBT_BLOCKED',
             'product_externally_blocked':a['product_status']=='BLOCKED_EXTERNAL',
-            'authority_none':a['authorization']=='NONE'
+            'authority_none':a['authorization']=='NONE',
+            'q_4_external':q.get('external_gates_unclosed')==4,
+            'q_product_blocked':q.get('product_status')=='BLOCKED_EXTERNAL',
+            'q_4_gates':len(q.get('gates') or [])==4,
+            'q_all_blocked':all(x.get('state')=='BLOCKED_EXTERNAL' for x in (q.get('gates') or [])),
+            'q_receipt':any(x.get('path')=='qualification.json' for x in manifest.get('files',[])),
+            'g_37_prs':g.get('pr_count')==37,
+            'g_305_commits':g.get('commit_count')==305,
+            'g_unmerged_34':g.get('closed_unmerged')==[34],
+            'g_relocated_28':retained.get('historical_or_relocated_count')==28,
+            'g_zero_removal':retained.get('current_source_modules_removal_authorized')==0,
+            'g_future_status':future.get('catalog_status')=='SOURCE_CATALOG_COVERED_NOT_BEHAVIORAL_PROOF'
           }
           failures=[k for k,passed in checks.items() if not passed]
           if failures:
@@ -369,7 +423,7 @@ jobs:
           fi
           set -e
           if test "$status" -eq 0; then
-            headline='complete-source-run-and-replay'
+            headline='scoped-source-run-and-replay-no-stress'
           else
             headline=$(cat /tmp/cora-pr37-diagnostic/stderr.txt /tmp/cora-pr37-diagnostic/verify-error.txt /tmp/cora-pr37-diagnostic/assert-out.txt /tmp/cora-pr37-diagnostic/assert-error.txt 2>/dev/null |
               grep -E '(CORA error:|Error:|AssertionError:|Traceback|ASSERT_MISMATCH:)' | tail -n 1 |
@@ -392,6 +446,7 @@ jobs:
 
   diagnose-visible:
     needs: [diagnose-comprehensive]
+    if: ${{ always() && needs.diagnose-comprehensive.result == 'success' }}
     name: "Diagnostic comprehensive exit ${{ needs.diagnose-comprehensive.outputs.exit_code }} - ${{ needs.diagnose-comprehensive.outputs.headline }}"
     runs-on: ubuntu-latest
     steps:

@@ -1469,6 +1469,21 @@
         "DOCUMENTATION"
       ],
       "rationale": "Reproduction notes, scientific scope and limits; no approval."
+    },
+    {
+      "pattern": "docs/AUDIT_PR01_89_AND_RELEASE_GATE.txt",
+      "roles": [
+        "DOCUMENTATION"
+      ],
+      "rationale": "PR1-89 source and GitHub PR metadata census; historical scope and pending external release gates."
+    },
+    {
+      "pattern": ".cora/contracts/dod/reader-cockpit-release-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Noncompensatory reader and release candidate contract; policy cannot grant external authority."
     }
   ]
 }

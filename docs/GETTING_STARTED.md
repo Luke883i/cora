@@ -245,10 +245,11 @@ cora process-run /path/to/target --revision TARGET_HEAD --one-run --profile comp
   --output /tmp/round.json --atlas-html /tmp/round.html \
   --chat-step /tmp/chat-step.json --chat-bundle /tmp/cora-session.zip
 cora verify-process /tmp/round.json --repo /path/to/target --one-run \
-  --atlas-html /tmp/round.html --chat-bundle /tmp/cora-session.zip
+  --atlas-html /tmp/round.html --chat-bundle /tmp/cora-session.zip \
+  --chat-cockpit-html /tmp/cora-cockpit.html
 ```
 
-Open `/tmp/round.html` for review, then attach `/tmp/cora-session.zip` to your next ChatGPT turn. Request a reading of the **latest** `iterations/000001/handoff.md` (or the highest six-digit iteration), the DoD and the missing evidence. For round 2 set `iteration: 2` in a new input JSON and run again with the *same* ZIP. The command rejects skipped, repeated or different-session rounds; prior records remain logically intact. The ZIP can be moved to another machine and verified there, but independent Git replay needs the original authorized checkout and exact revision.
+Open `/tmp/round.html` for the source dossier and `/tmp/cora-cockpit.html` for the **offline, read-only navigation** of the verified handoff. Its Overview, DoD, Roadmap, Blockers and three Choices are real local anchor links. EXPLAIN/REPLAN/PROPOSE_NEXT_CHECK show copyable prompts; they do not call ChatGPT or execute. Then attach `/tmp/cora-session.zip` to your next ChatGPT turn. Request a reading of the **latest** `iterations/000001/handoff.md` (or the highest six-digit iteration), the DoD and the missing evidence. For round 2 set `iteration: 2` in a new input JSON and run again with the *same* ZIP. The command rejects skipped, repeated or different-session rounds; prior records remain logically intact. The ZIP can be moved to another machine and verified there, but independent Git replay needs the original authorized checkout and exact revision.
 
 **Status vocabulary:** `DONE_REPORTED` is a user's statement, not an executed test; `PASS_REPORTED` is not a certified pass; external DoD obligations cannot be self-promoted; `BLOCKED_EXTERNAL` is an honest open qualification gate. The SHA-256 chain detects inconsistent archive entries but is not a signature. There is no automatic chat capture or hosted service; each iteration requires a deliberate CORA execution or a human-assisted invocation.
 

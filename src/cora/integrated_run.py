@@ -15,7 +15,7 @@ from .evidence import domain_hash
 from .git_snapshot import git, snapshot
 from .integrated_registry import build_registry, verify_contract, SCHEMA as REGISTRY_SCHEMA
 from .one_run import run_one, verify_one
-from .genealogy import build_genealogy, corpus_available
+from .genealogy import build_genealogy, corpus_available, BASE as HISTORIC_GIT_ANCHOR
 from .independent_qualification import build_qualification, verify_qualification, CONTRACT as QUALIFICATION_CONTRACT
 
 SCHEMA = "cora-integrated-one-run/2"
@@ -392,6 +392,52 @@ def _hforge_source(repo: Path, sha: str, baseline: dict) -> dict:
             "legacy_receipt_digest": baseline["receipt_digest"]}
 
 
+class ComprehensiveHistoryUnavailable(ValueError):
+    """Comprehensive replay needs original Git objects, not just ZIP source bytes."""
+
+    code = "CORA_HISTORY_UNAVAILABLE"
+    safe_mode = "ZIP_INTAKE_SOURCE_ONLY"
+
+
+def preflight_comprehensive_history(repo: Path, revision: str = "HEAD") -> dict:
+    """Bounded, read-only history check; never authenticate GitHub or infer provenance.
+
+    A forged local commit graph cannot qualify the historic CORA corpus: where
+    its committed history register exists, the original PR38 anchor must be a
+    real ancestor. All other source repositories still require usable parents.
+    """
+    repo = Path(repo).resolve(strict=True)
+
+    def blocked(reason: str) -> None:
+        raise ComprehensiveHistoryUnavailable(
+            f"CORA_HISTORY_UNAVAILABLE[{reason}]: comprehensive replay needs an "
+            "unshallowed original Git checkout with its historical objects; "
+            "do not claim original Git history from an extracted ZIP. "
+            "Safe source-only alternative: cora zip-intake <original-archive.zip>. "
+            "No release or external authority is inferred.")
+
+    try:
+        if git(repo, "rev-parse", "--is-shallow-repository").strip() == b"true":
+            blocked("SHALLOW_CHECKOUT")
+        sha = git(repo, "rev-parse", "--verify", revision + "^{commit}").decode("ascii").strip()
+        git(repo, "cat-file", "-e", sha + "^{tree}")
+        parents = git(repo, "rev-list", "--parents", "-n", "1", sha).decode("ascii").split()
+    except ComprehensiveHistoryUnavailable:
+        raise
+    except (ValueError, OSError, UnicodeError):
+        blocked("GIT_OBJECTS_MISSING_OR_INVALID")
+    if not parents or parents[0] != sha or len(parents) < 2:
+        blocked("NO_PARENT_HISTORY")
+    if corpus_available(repo, sha):
+        try:
+            git(repo, "merge-base", "--is-ancestor", HISTORIC_GIT_ANCHOR, sha)
+        except ValueError:
+            blocked("ORIGINAL_CORPUS_ANCESTRY_UNAVAILABLE")
+    return {"schema": "cora-comprehensive-history-preflight/1",
+            "commit": sha, "state": "GIT_OBJECTS_AND_LINEAGE_READABLE_NOT_HOST_ATTESTED",
+            "authority": "NONE", "zip_source_mode": "NOT_COMPREHENSIVE"}
+
+
 def run_integrated(repo: Path, revision: str = "HEAD", *, process: str = "full",
                    max_commits: int = 64, focus: str | None = None,
                    execute_self_tests: bool = False,
@@ -400,6 +446,7 @@ def run_integrated(repo: Path, revision: str = "HEAD", *, process: str = "full",
                    test_timeout: int = 240, model_stress_cases: int = 0,
                    change_base: str | None = None) -> dict:
     repo = Path(repo).resolve(strict=True)
+    preflight_comprehensive_history(repo, revision)
     sha = snapshot(repo, revision)["commit"]
     tree = git(repo, "rev-parse", sha + "^{tree}").decode("ascii").strip()
     if execute_self_tests != (authorization_file is not None):

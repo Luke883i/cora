@@ -642,6 +642,7 @@
       "tools/hforge_profile.py",
       "tools/independent_git_oracle.py",
       "tools/make_experimental_bundle.py",
+      "tools/release_readiness_scenarios.py",
       "tools/release_stress.py",
       "tools/release_verify.py",
       "tools/verify_artifact_roles.py",
@@ -740,6 +741,7 @@
       "tests/test_chat_continuation_cockpit.py",
       "tests/test_ci_git_reproducibility.py",
       "tests/test_cli_capability_atlas.py",
+      "tests/test_comprehensive_history_preflight.py",
       "tests/test_counterfactual_blindspots.py",
       "tests/test_cross_repository_portability.py",
       "tests/test_debt_governance.py",
@@ -811,6 +813,7 @@
       ".cora/contracts/dod/one-run-dod.json",
       ".cora/contracts/dod/postmerge-release-dod.json",
       ".cora/contracts/dod/postmerge-repro-dod.json",
+      ".cora/contracts/dod/reader-cockpit-release-dod.json",
       ".cora/contracts/dod/self-governing-portable-development-v1.json",
       ".cora/contracts/dod/workflow-dod.json"
     ],
