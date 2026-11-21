@@ -477,6 +477,33 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             self.assertEqual(run.returncode, 3, run.stdout + run.stderr)
             self.assertIn("component DoD orphan", run.stdout + run.stderr)
 
+    def test_dynamic_only_consumer_is_not_a_safe_deletion_claim(self):
+        # Counterexample: no lexical import edge, yet a runtime consumer exists.
+        # Model static evidence and execute the independently specified consumer.
+        import os
+        modules = ["src/cora/cli.py", "src/cora/runtime_only.py"]
+        tests = ["tests/test_fixture.py"]
+        atlas = {"commands": [{"command": "version", "family": "git-evidence",
+                 "method_source": modules[0], "test_source": tests[0]}]}
+        contribution = ekc.contribution_index(
+            sorted(modules + tests), modules, [], tests, [], atlas)
+        row = next(x for x in contribution["rows"] if x["path"] == modules[1])
+        self.assertEqual(row["cli_static"], "NOT_OBSERVED_STATIC")
+        self.assertEqual(row["consolidation_review"],
+                         "STATIC_ISOLATION_REVIEW_ONLY_DYNAMIC_UNKNOWN")
+        self.assertEqual(row["consolidation"], "NOT_AUTHORIZED_UNTESTED")
+        self.assertEqual(row["consumer_status"], "STATIC_CANDIDATES_DYNAMIC_UNKNOWN")
+        self.assertEqual(contribution["metrics"]["safe_consolidations_attested"], 0)
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / 'runtime_only.py').write_text('VALUE = 37\n')
+            script = ('import importlib, sys; sys.path.insert(0, sys.argv[1]); '
+                      'print(importlib.import_module("runtime_only").VALUE)')
+            probe = subprocess.run([sys.executable, '-c', script, str(root)],
+                capture_output=True, text=True, timeout=10, check=False)
+            self.assertEqual(probe.returncode, 0, probe.stderr)
+            self.assertEqual(probe.stdout.strip(), '37')
+
     def test_closed_world_source_universe_is_exhaustive_not_behavioral(self):
         a = "a" * 40
         b = "b" * 40

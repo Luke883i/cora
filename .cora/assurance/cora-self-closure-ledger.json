@@ -1796,6 +1796,12 @@
       ],
       "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
       "slice_id": "C06",
+      "source_counterexample": {
+        "deletion_authority": "NONE",
+        "fixture": "tests/test_engineering_knowledge_closure.py::test_dynamic_only_consumer_is_not_a_safe_deletion_claim",
+        "result": "LOCAL_DYNAMIC_CONSUMER_OBSERVED_WITH_ZERO_STATIC_EDGES",
+        "target_runtime": "NOT_ATTESTED"
+      },
       "state": "PROPOSED_NOT_RUN"
     },
     {
