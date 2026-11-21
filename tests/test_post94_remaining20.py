@@ -408,6 +408,26 @@ class OneRun71FrontierTests(unittest.TestCase):
                           if x["id"].startswith("E_")}, {"BLOCKED_EXTERNAL"})
         self.assertFalse(f["observed_local_expected"]["release_approved"])
 
+    def test_bounded_runner_only_executes_three_safe_routes(self):
+        from unittest.mock import patch
+        from cora.one_run import run_cli_capabilities
+        from cora.process_bounds import run_bounded
+        with patch("cora.one_run.run_bounded", wraps=run_bounded) as bounded:
+            rows = run_cli_capabilities(self.repo, self.sha, self.catalog)
+        self.assertEqual(bounded.call_count, 3)
+        self.assertEqual({x.args[0][3] for x in bounded.call_args_list},
+                         {"version", "process-list", "snapshot"})
+        self.assertEqual(sum(x["state"] == "RUN_REPORTED_UNATTESTED" for x in rows), 3)
+
+    def test_forged_digest_for_success_cannot_be_a_self_oracle(self):
+        import copy
+        from cora.one_run import run_cli_capabilities, verify_cli_capabilities
+        rows = run_cli_capabilities(self.repo, self.sha, self.catalog)
+        forged = copy.deepcopy(rows)
+        next(x for x in forged if x["command"] == "snapshot")["stdout_sha256"] = "f"*64
+        with self.assertRaisesRegex(ValueError, "differs from source oracle"):
+            verify_cli_capabilities(self.repo, self.sha, self.catalog, forged)
+
     def test_frontier_requires_pinned_original_git_contract(self):
         from cora.one_run import _cli_frontier_at_revision
         self.assertFalse(_cli_frontier_at_revision(self.repo, self.sha))
