@@ -17,6 +17,61 @@ from pathlib import Path
 
 from .reticulum import MODEL, BLOCKED, EXTERNAL, REFUTED, assess_cut, ordered_cut
 
+# Presentation-only CORA adaptation of iKant_EDU's six-slot OneShell.
+# No iKant admission/voice, second state owner, host interception or runtime write.
+# A Project prompt can request this format; only an actual captured reply can be
+# independently checked against the shape below.
+CORA_ONESHELL_KEYS = ("ESITO", "A", "B", "PROVA", "EDGE", "NEXT")
+
+
+def render_cora_oneshell_text(slots: dict[str, str]) -> str:
+    """Lossless six-slot host *text view*, NOT an evidence attestation."""
+    if not isinstance(slots, dict) or set(slots) != set(CORA_ONESHELL_KEYS):
+        raise ValueError("CORA_ONESHELL_SLOTS_INVALID")
+    if any(not isinstance(slots[k], str) or not slots[k].strip()
+           or "\x00" in slots[k] for k in CORA_ONESHELL_KEYS):
+        raise ValueError("CORA_ONESHELL_VALUE_INVALID")
+    if "\n" in slots["NEXT"]:
+        raise ValueError("CORA_ONESHELL_NEXT_NOT_SINGLE_ACTION")
+    result = "\n".join(f"{key} | {slots[key]}" for key in CORA_ONESHELL_KEYS)
+    if verify_cora_oneshell_text(result) != slots:
+        raise ValueError("CORA_ONESHELL_NOT_REVERSIBLE")
+    return result
+
+
+def verify_cora_oneshell_text(text: str) -> dict[str, str]:
+    """Check only presentation, never tool execution, authorization or truth.
+
+    For multiline slot content only exact line-start KEY | delimiters begin
+    another section. Never silently drop text outside the six sections.
+    """
+    if not isinstance(text, str) or not text or "\x00" in text:
+        raise ValueError("CORA_ONESHELL_TEXT_INVALID")
+    markers = list(re.finditer(r"(?m)^(ESITO|A|B|PROVA|EDGE|NEXT) \| ", text))
+    if len(markers) != len(CORA_ONESHELL_KEYS) or markers[0].start() != 0:
+        raise ValueError("CORA_ONESHELL_SECTION_COUNT")
+    if tuple(m.group(1) for m in markers) != CORA_ONESHELL_KEYS:
+        raise ValueError("CORA_ONESHELL_SECTION_ORDER")
+    slots = {}
+    for i, marker in enumerate(markers):
+        end = markers[i + 1].start() if i + 1 < len(markers) else len(text)
+        value = text[marker.end():end]
+        if i + 1 < len(markers):
+            if not value.endswith("\n"):
+                raise ValueError("CORA_ONESHELL_SECTION_BOUNDARY")
+            value = value[:-1]
+        if not value.strip():
+            raise ValueError("CORA_ONESHELL_EMPTY_SLOT")
+        slots[marker.group(1)] = value
+    if "\n" in slots["NEXT"]:
+        raise ValueError("CORA_ONESHELL_OUTSIDE_NEXT")
+    status = slots["ESITO"].split(":", 1)[0]
+    if "\n" in slots["ESITO"] or status not in (
+            "PASS_SCOPED", "REFUTED", "NOT_RUN", "UNKNOWN", "BLOCKED_EXTERNAL"):
+        raise ValueError("CORA_ONESHELL_STATUS_NOT_SCOPED")
+    return slots
+
+
 SCHEMA = "cora-chat-iteration/1"
 BUNDLE_SCHEMA = "cora-chat-bundle/1"
 MAX_ROUNDS = 128
@@ -557,31 +612,45 @@ def _render_verified_snapshot(bundle: Path, *, expected_receipt: dict | None = N
         gaps.append(f'<li><strong>{h(item["id"])}</strong>: {h(item["description"])} '
                     f'({links}). Next: {h(item["next_action"])}</li>')
     nav = "".join(f'<a href="#{key}">{label}</a>' for key, label in (
-        ("overview", "Overview"), ("dod", "DoD & evidence"),
-        ("roadmap", "Roadmap"), ("gaps", "Blockers"), ("actions", "Choices")))
+        ("start", "Start here"), ("overview", "Overview"),
+        ("dod", "DoD & evidence"), ("roadmap", "Roadmap"),
+        ("gaps", "Blockers"), ("actions", "Choices")))
     # One owner: derive copy-only choices from the already replayed ZIP
     # metadata, never from independently unverified target or host claims.
     next_checks = ", ".join(
         f'{a["action_id"]}: {", ".join(a["falsifier_ids"])}'
         for a in continuation["next_falsification_actions"]
     ) or "none reported; request independent acceptance"
+    # An instruction for the user to paste, not host execution or an owner.
+    shell_instruction = (
+        "Reply only in six ordered OneShell sections ESITO | A | B | PROVA | "
+        "EDGE | NEXT. A is the proposed answer, B is observed tool work or "
+        "NOT_RUN, PROVA is real evidence or NOT_ATTESTED, EDGE is the first "
+        "unresolved AND-DoD leaf and NEXT is one reversible action. "
+        "Never imply native UI or approval. "
+    )
     context = (
         f"Git SHA {receipt['commit']}; first unresolved DoD "
         f"{continuation['next_unresolved'] or 'NONE_REPORTED'}; "
         f"{continuation['reported_open_leaves']} caller-reported open leaves. "
         "ZIP integrity is not target attestation or release approval. "
+        + shell_instruction
     )
     choices = (
         ("explain", "EXPLAIN",
-         context + "Explain what blocks acceptance and identify the missing independent "
-         "witnesses. Do not approve or execute."),
+         context + "Explain A0 and its first unresolved AND-DoD leaf in plain language; "
+         "separate SOURCE, TARGET_RUNTIME and EXTERNAL evidence, and identify missing "
+         "independent witnesses. Do not approve or execute."),
         ("replan", "REPLAN",
-         context + "Re-derive the AND acceptance roadmap from the unresolved leaf; "
-         "challenge stale reports and propose reversible tests. Do not execute."),
+         context + "Re-derive backwards from A0 all AND acceptance leaves and the "
+         "next unresolved leaf; challenge stale assumptions using observed counterexamples, "
+         "reorder one reversible next slice and name its oracle and rollback. "
+         "Do not execute."),
         ("propose", "PROPOSE_NEXT_CHECK",
          context + "Caller-proposed check IDs: " + next_checks + ". Select one "
-         "bounded, reversible falsifier for human authorization. Do not execute, "
-         "merge, or grant release."),
+         "bounded, reversible falsifier for human authorization with expected oracle, affected consumers, "
+         "rollback and pinned Git SHA. Send it only as a proposed coding-agent task "
+         "for explicit authorization. Do not execute, merge, or grant release."),
     )
     actions = "".join(f'<a class="choice" href="#{key}">{label}</a>'
                       for key, label, _ in choices)
@@ -604,6 +673,13 @@ code{{overflow-wrap:anywhere}}blockquote{{border-left:3px solid #334155;padding:
 <header><h1>CORA — verified ZIP decision navigator</h1>
 <p><strong>Read-only, offline and non-executing.</strong> Not a live ChatGPT plugin. Links navigate only within this document.</p>
 <nav aria-label="Decision navigation">{nav}</nav></header><main>
+<section id="start"><h2>Start here — four beginner steps</h2>
+<ol><li><strong>Read Overview:</strong> note the exact Git SHA, the reported state and the first open condition.</li>
+<li><strong>Inspect DoD, Roadmap and Blockers:</strong> each necessary AND condition needs evidence; a caller's report is not independent proof.</li>
+<li><strong>Open Choices:</strong> EXPLAIN explains the blocker, REPLAN challenges the backwards roadmap, PROPOSE_NEXT_CHECK offers one copy-only test for your chat.</li>
+<li><strong>Before any change:</strong> authorize a separate agent and runner for the selected reversible slice. Review tests, remaining risks and rollback; clicking this file never executes.</li></ol>
+<p><strong>Path A:</strong> use a ChatGPT Project for a proposed plan; no runner = METHOD_ONLY / NOT_RUN.
+<strong>Path B:</strong> only an authorized coding tool and real target tests can materialize and check a slice. This HTML is a source-bound handoff, not an approval.</p></section>
 <section id="overview"><h2>Current decision</h2>
 <p><strong>Declared intent:</strong> {h(step["intent"])}</p>
 <p><strong>Status:</strong> {h(cockpit["status"])} |

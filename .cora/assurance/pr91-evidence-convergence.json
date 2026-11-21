@@ -1,0 +1,393 @@
+{
+  "schema": "cora-pr91-evidence-convergence/1",
+  "scope": "Historic evidence transfer and source qualification, not independent runtime acceptance",
+  "authority": "UNSIGNED_RECORD_OF_OBSERVED_TESTS_NOT_EXTERNAL_APPROVAL",
+  "source": {
+    "repository": "Luke883i/cora",
+    "original_main_commit": "1285c4f105fa1f7d21933ff8100c06541e577279",
+    "original_main_tree": "9fd56fdd12d76808c721056949080e8e8504fb71",
+    "exact_v2_code_tree": "729dd2fa7efb942d99fda786a8ef08f2fff5b463",
+    "original_patch_files": [
+      "README.md",
+      "tools/verify_documentation.py",
+      "tools/verify_release_readiness.py",
+      "tools/verify_repository_contract.py",
+      "tests/test_enterprise_documentation.py",
+      "tests/test_repository_product_contract.py"
+    ],
+    "identity": "Six modified blobs SHA-identical to previously qualified v2 local overlay, now with real GitHub parent history"
+  },
+  "preserved_bundles": [
+    {
+      "name": "CORA_PR90_1M_NATIVE_QUALIFICATION.zip",
+      "sha256": "fde1b82bcd7ea7069879b2107fd333f27400a97ddd3b4583736bcedcfd1dd50f",
+      "source": "LOCAL_APPEND_ONLY_V1",
+      "included_in_repository": false
+    },
+    {
+      "name": "CORA_PR90_APPENDONLY_V2_COMPLETE.zip",
+      "sha256": "6adea71d9e71427d2a16f1a4a90cd62ef8ed01f56ba1f8bf160c7c62d37461d4",
+      "source": "LOCAL_APPEND_ONLY_V2",
+      "included_in_repository": false
+    }
+  ],
+  "historical_observations": {
+    "prs_total": 90,
+    "prs_merged": 87,
+    "closed_without_merge": [
+      34,
+      80,
+      85
+    ],
+    "github_dag_commits": 1061,
+    "parent_edges": 1149,
+    "missing_parent_links": 0,
+    "merged_pr_commits_reachable": 87,
+    "epochs": [
+      [
+        "I",
+        1,
+        20
+      ],
+      [
+        "II",
+        21,
+        42
+      ],
+      [
+        "III",
+        43,
+        67
+      ],
+      [
+        "IV",
+        68,
+        86
+      ],
+      [
+        "V",
+        87,
+        90
+      ]
+    ],
+    "result": "PASS_METADATA_AND_ANCESTRY",
+    "not_observed": "EXECUTABLE_REPLAY_OF_EVERY_HISTORICAL_PR"
+  },
+  "campaigns": {
+    "path_a_native": {
+      "revision_tree": "9fd56fdd12d76808c721056949080e8e8504fb71",
+      "source": "src/cora/chat_bundle.py:validate_step",
+      "seed": 883021112,
+      "cases_each_replay": 1000000,
+      "replays": 2,
+      "distinct": 1000000,
+      "accepted": 500000,
+      "rejected": 500000,
+      "oracle_mismatches": 0,
+      "stream_sha256": "96ee6dbf16c54d78c76b1c6b7334d50aefa7516c28b8f597f4429584841b43bc",
+      "status": "PASS_SCOPED_MODEL_NOT_REAL_USERS_OR_GIT_MUTATIONS"
+    },
+    "path_b_native": {
+      "revision_tree": "9fd56fdd12d76808c721056949080e8e8504fb71",
+      "source": "tools/release_stress.py",
+      "seed": 883,
+      "cases_each_replay": 1000000,
+      "replays": 2,
+      "distinct": 1000000,
+      "risk_families": 24,
+      "outcomes": {
+        "REJECTED": 743432,
+        "HELD": 136268,
+        "CANDIDATE_SCOPED": 120300
+      },
+      "stream_sha256": "7038de9caeb53ac2449c5259319aa29e3d82938fdc3d2184d924fe29b0d982a8",
+      "independently_frozen_oracle_cases": 1000000,
+      "oracle_mismatches": 0,
+      "metamorphic_mismatches": 0,
+      "injected_classifier_mutants": 500,
+      "killed": 500,
+      "survivors": 0,
+      "status": "PASS_SCOPED_SYNTHETIC_RISK_NOT_RELEASE"
+    },
+    "cockpit_zip": {
+      "selected_tests": 31,
+      "subtests": 39,
+      "positive_zip_roundtrips": 128,
+      "hostile_zips_rejected": 128,
+      "tamper_families": 8,
+      "canonical_payload_stream_sha256": "94ea8a4ab2301c414b38b77e2e9d57cbfef3591a6562653ba5b61414f01c2a2e",
+      "zip_file_bytes_repeatable": false,
+      "reason": "ZIP_ENTRY_TIMESTAMP_VARIABILITY",
+      "status": "PASS_SCOPED_OFFLINE_NOT_HUMAN_USABILITY"
+    },
+    "readme_v2": {
+      "seed": 20261121,
+      "distinct_variants": 1000,
+      "positive_accepted": 500,
+      "hostile_rejected": 500,
+      "oracle_mismatches": 0,
+      "stream_sha256": "9345b30094ec325d24296f03044ed9892fafa576f9169d3e7215b8cbab4cc226",
+      "selected_native_tests": 124,
+      "selected_native_subtests": 148,
+      "full_pytest_collected": 718,
+      "full_pytest_passed": false,
+      "source_lines_before": 216,
+      "source_lines_after": 198,
+      "changed_lines_added": 46,
+      "changed_lines_deleted": 111,
+      "status": "PASS_SCOPED_LOCAL_SOURCE_FULL_SUITE_HOLD"
+    },
+    "path_b_physical_fixture": {
+      "original_git_bundle_sha256": "3a4353a283523bd9fa8d12667e19d00df9a162bcaeadc2a2106c4d09caaf0a33",
+      "baseline_commit": "e150f8e8e8d62bc92d26789ee934465e625d1680",
+      "mutant_commit": "df5aa4bfd1d1ee7d7662732201778cee050e4eb9",
+      "restore_commit": "d10285a2919f5a5e7531ff41214664ff3a2f2fad",
+      "http_sqlite_observations": 6,
+      "denied_unauthorized_close": 403,
+      "restart_persistence_verified": true,
+      "mutation": "invert role!=reviewer to role==reviewer",
+      "native_mutant": "KILLED",
+      "native_restored": "PASS",
+      "status": "PASS_LOCAL_DEMONSTRATOR_NOT_MAINTAINED_EXTERNAL_TARGET"
+    },
+    "project_cockpit_pr91_local": {
+      "status": "PASS_SCOPED_LOCAL_SOURCE_NOT_HUMAN_COMPREHENSION",
+      "scope": "source prompt+HTML navigation+negative tests; not an LLM user study",
+      "prompt_length": 4637,
+      "local_native_tests_passed": 23,
+      "local_native_subtests_passed": 29,
+      "lexical_negative_prompt_mutants": 10000,
+      "benign_presentation_controls": 200,
+      "new_source_negative_cases": 4,
+      "local_checkout_parent": "SYNTHETIC_TESTBED_NOT_ORIGINAL_GITHUB",
+      "source_blob_shas": {
+        "docs/AGENT_ADOPTION.md": "c0bdd5bea877d18cac127ffa45a214e72a9698ee",
+        "README.md": "95bf95a246c9cbe8675b45aa83fec5a26d0c5744",
+        "src/cora/chat_bundle.py": "3610b42030ec0d5e308b9506098dcfe8aa6feacc",
+        "tests/test_project_instructions.py": "80d4ac20e652927a869033536b4f77132e446132",
+        "tests/test_chat_continuation_cockpit.py": "53a4a93193f377c7c5483268fd45070607fd7335"
+      },
+      "checks": {
+        "tools/verify_documentation.py": "PASS_SCOPED_STATIC_LOCAL",
+        "tools/verify_repository_contract.py": "PASS_SCOPED_LOCAL",
+        "current_pr_exact_head_CI": "NOT_ATTESTED_BY_LOCAL",
+        "path_a_real_beginner_trial": "BLOCKED_EXTERNAL",
+        "path_b_independent_maintained_target": "BLOCKED_EXTERNAL"
+      },
+      "commands": [
+        "PYTHONPATH=src:. python -m pytest -q tests/test_project_instructions.py tests/test_chat_continuation_cockpit.py",
+        "PYTHONPATH=src:. python tools/verify_documentation.py --repo .",
+        "PYTHONPATH=src:. python tools/verify_repository_contract.py --repo ."
+      ],
+      "note": "Only a scoped source contract pass on a locally recreated testbed; exact PR HEAD CI must be separately observed after ledger commit."
+    },
+    "oneshell_port_local": {
+      "schema": "cora-oneshell-presentation-qualification/1",
+      "source_iKant_EDU": {
+        "git_head": "888a5878a30864e6db7813b3d8b236cde46cce40",
+        "host_blob": "f7076b3f9de15a7ed3a6ee1bedebd9f81f3604a8",
+        "thread_contract_blob": "3023feaec53436c2d835fa0b87d40110311f79a3"
+      },
+      "source_scope": "SIX_REGION_READ_ONLY_TEXT_PRESENTATION",
+      "new_owners": 0,
+      "imported_ikant_runtime": false,
+      "native_chatgpt_host_interceptor": false,
+      "current_prompt_chars": 4612,
+      "max_prompt_chars": 4800,
+      "source_blobs": {
+        "README.md": "e55d6e6d2767cd233d2e1ba387f02b3309914de1",
+        "docs/AGENT_ADOPTION.md": "a0e46f18aecb6b6fc4da53795a99ac26cc79951c",
+        "src/cora/chat_bundle.py": "1da5b2d2227914036e8feccb1c9ba9fb1ffdfe18",
+        "tools/verify_documentation.py": "7f72b25640236e427969b354b0ee0be3c37d978d",
+        "tests/test_project_instructions.py": "1d84081c7e2189f4751f32b567148ad7b8ed793f"
+      },
+      "local_observations": {
+        "pytest_targeted_tests_passed": 28,
+        "pytest_subtests_passed": 1037,
+        "existing_negative_prompt_vectors": 10000,
+        "new_oneshell_negative_distinct_vectors": 1000,
+        "benign_six_slot_controls": 200,
+        "format_execution_attested": false,
+        "host_automatic_compliance_attested": false,
+        "independent_novice_users": 0,
+        "scope": "PASS_SCOPED_LOCAL_SOURCE"
+      },
+      "local_verifiers": {
+        "documentation": "PASS_SCOPED_STATIC",
+        "repository_contract": "PASS_SCOPED"
+      },
+      "reproduction": [
+        "PYTHONPATH=src:. pytest -q tests/test_project_instructions.py tests/test_chat_continuation_cockpit.py",
+        "PYTHONPATH=src:. python tools/verify_documentation.py --repo .",
+        "PYTHONPATH=src:. python tools/verify_repository_contract.py --repo ."
+      ],
+      "limitations": [
+        "No actual ChatGPT Project installation readback",
+        "No independently captured chat-turn six-slot compliance",
+        "No independent novice comprehension",
+        "No maintained external target acceptance",
+        "No host control or reviewer authorization"
+      ],
+      "product_go": false
+    }
+  },
+  "decisions": [
+    {
+      "id": "D01",
+      "choice": "Prefer one domain-agnostic CORA product H1; no external programme badge",
+      "falsifier": "prefix or title replacement must be rejected"
+    },
+    {
+      "id": "D02",
+      "choice": "Keep the root README short; retain canonical Project instructions in docs/AGENT_ADOPTION.md",
+      "falsifier": "duplicated prompt or broken onboarding route"
+    },
+    {
+      "id": "D03",
+      "choice": "Do not call CORA a coding agent or ChatGPT runner",
+      "falsifier": "unearned write/execution claim"
+    },
+    {
+      "id": "D04",
+      "choice": "Backward AND-DoD; rederive after each counterexample or invalidated roadmap premise",
+      "falsifier": "open prerequisite promoted to PASS"
+    },
+    {
+      "id": "D05",
+      "choice": "Store evidence by exact source SHA, not by vague PR title or local synthetic commit",
+      "falsifier": "wrong-tree evidence reuse"
+    },
+    {
+      "id": "D06",
+      "choice": "Never equate in-memory model vectors with physical Git mutations or humans",
+      "falsifier": "model PASS converted to target release"
+    },
+    {
+      "id": "D07",
+      "choice": "Physical negative target mutation plus restored PASS is a stronger local control",
+      "falsifier": "unauthorized close succeeds undetected"
+    },
+    {
+      "id": "D08",
+      "choice": "Cockpit is human-readable navigation with copy-only proposals, no automation",
+      "falsifier": "UI silently writes repository"
+    },
+    {
+      "id": "D09",
+      "choice": "Keep external acceptance and host rules as noncompensatory AND leaves",
+      "falsifier": "green source workflow auto-releases"
+    },
+    {
+      "id": "D10",
+      "choice": "Preserve original v1/v2 local artifacts by SHA; do not bulk-commit duplicated ZIP source",
+      "falsifier": "changed inherited hash or unverifiable reference"
+    },
+    {
+      "id": "D11",
+      "choice": "Source-level editorial compression must preserve risk, provenance and recovery",
+      "falsifier": "reader loses an essential negative oracle"
+    },
+    {
+      "id": "D12",
+      "choice": "Treat all CI results as revision-specific; re-run on PR final HEAD",
+      "falsifier": "baseline failure described as PR check success"
+    },
+    {
+      "id": "D13",
+      "choice": "One canonical compact 4637-character ChatGPT Project prompt governed in docs/AGENT_ADOPTION.md, not another runtime engine",
+      "falsifier": "Second prompt owner, incorrect code linkage, forged tool rights, or context limit overflow",
+      "witness": "tests/test_project_instructions.py; tools/verify_documentation.py"
+    },
+    {
+      "id": "D14",
+      "choice": "Path A in METHOD_ONLY produces proposed A0, retrograde AND-DoD and reversible slice; absent runner means NOT_RUN",
+      "falsifier": "Chat-only method produces ENGINE_VERIFIED, Git commit or target acceptance",
+      "witness": "docs/AGENT_ADOPTION.md; README.md"
+    },
+    {
+      "id": "D15",
+      "choice": "Path B requires authorized agent task packet, Git-bound native oracles, physical negatives, separate CORA CLI and replay of latest verified session",
+      "falsifier": "Uploaded ZIP treated as command execution; source-only report promoted to target runtime",
+      "witness": "src/cora/chat_bundle.py; docs/GETTING_STARTED.md"
+    },
+    {
+      "id": "D16",
+      "choice": "Three cockpit choices are copy-only and now teach A0, read-only evidence, retrograde replanning and proposed next check",
+      "falsifier": "HTML onclick/script/form, forged receipt, external links or auto-executing choice",
+      "witness": "tests/test_chat_continuation_cockpit.py"
+    },
+    {
+      "id": "D17",
+      "choice": "After every actual slice re-falsify roadmap premises, AND dependencies, survivors and recovery; 'vai avanti' preserves only already-authorized reversible scope",
+      "falsifier": "Unobserved step/failed oracle is converted to PASS; stalled roadmap continues unchanged",
+      "witness": "docs/AGENT_ADOPTION.md; P23; src/cora/chat_bundle.py"
+    },
+    {
+      "id": "D18",
+      "choice": "Semantically port iKant_EDU OneShell's exactly six ordered host presentation slots to CORA's existing ChatGPT Project prompt, without importing iKant ownership, voice, consent, ledger or sender",
+      "falsifier": "A missing/reordered slot, second owner, native host UI, source or approval promise",
+      "source": {
+        "repository": "Luke883i/iKant_EDU",
+        "commit": "888a5878a30864e6db7813b3d8b236cde46cce40",
+        "host_blob": "f7076b3f9de15a7ed3a6ee1bedebd9f81f3604a8",
+        "session_contract_blob": "3023feaec53436c2d835fa0b87d40110311f79a3"
+      }
+    },
+    {
+      "id": "D19",
+      "choice": "Preserve one Project prompt and P01-P25 obligations in docs/AGENT_ADOPTION.md, with S1-S3 six-slot instruction within 4800 characters",
+      "falsifier": "Prompt overflow, duplicated canonical instruction or missing OR lexical contract",
+      "witness": "tools/verify_documentation.py, tests/test_project_instructions.py"
+    },
+    {
+      "id": "D20",
+      "choice": "In CORA OneShell A is a scoped assistant answer or proposal, never iKant owner-bound voice; B is only observed tools/host or NOT_RUN; PROVA is actual evidence or NOT_ATTESTED; EDGE is the first open AND-DoD; NEXT is one reversible action",
+      "falsifier": "Unscoped release status, missing evidence, repeated/surplus slots or an executable cockpit button",
+      "witness": "src/cora/chat_bundle.py; tests/test_project_instructions.py"
+    },
+    {
+      "id": "D21",
+      "choice": "Only the existing src/cora/chat_bundle.py owns portable OneShell text formatting; Project prompt is a presentation request, not host interception or an automatic UI adapter",
+      "falsifier": "Claim that a ChatGPT Project prompt mechanically enforces all LLM turns or provides installed native UI",
+      "witness": "docs/AGENT_ADOPTION.md"
+    },
+    {
+      "id": "D22",
+      "choice": "Each next slice must retain A0 backward-derived DoD, target-native positive/negative oracles, renewed roadmap falsification and exact source readback; every reply should expose the six sections when using CORA Project",
+      "falsifier": "Roadmap continues unchanged after discovered counterexample or shell auto-authorizes a merged/released target",
+      "witness": "docs/AGENT_ADOPTION.md S1-S3; P06/P08/P09/P23"
+    }
+  ],
+  "dod": {
+    "history_metadata": "PASS_SCOPED",
+    "full_history_native_replay": "HOLD",
+    "path_a_model": "PASS_SCOPED_PRIOR_BASELINE",
+    "path_a_independent_humans": "BLOCKED_EXTERNAL",
+    "path_b_risk_model": "PASS_SCOPED_PRIOR_BASELINE",
+    "path_b_local_target": "PASS_SCOPED_FIXTURE",
+    "path_b_independent_target": "BLOCKED_EXTERNAL",
+    "cockpit_offline": "PASS_SCOPED",
+    "readme_source_v2": "PASS_SCOPED_LOCAL_AND_BLOBS_IDENTICAL",
+    "full_suite_at_pr_head": "NOT_ATTESTED_ON_NEW_HEAD",
+    "host_checks_and_review": "BLOCKED_EXTERNAL",
+    "release": "BLOCKED_EXTERNAL",
+    "product_go": false,
+    "project_prompt_local": "PASS_SCOPED_LOCAL",
+    "cockpit_beginner_html_local": "PASS_SCOPED_LOCAL",
+    "path_a_user_independent": "BLOCKED_EXTERNAL",
+    "path_b_independent_external_target": "BLOCKED_EXTERNAL",
+    "oneshell_six_slot_source": "PASS_SCOPED_LOCAL",
+    "project_prompt_oneshell_local": "PASS_SCOPED_LOCAL",
+    "oneshell_actual_host_turn_enforcement": "NOT_VERIFIED",
+    "oneshell_independent_path_a_usability": "BLOCKED_EXTERNAL",
+    "oneshell_path_b_maintained_target": "BLOCKED_EXTERNAL"
+  },
+  "reproduction": {
+    "documentation": "python tools/verify_documentation.py && python tools/verify_repository_contract.py && python tools/verify_release_readiness.py",
+    "source_tests": "PYTHONPATH=src python -m pytest tests/test_enterprise_documentation.py tests/test_repository_product_contract.py",
+    "full_suite": "PYTHONPATH=src python -m pytest -q",
+    "canonical_one_run": "cora process-run . --revision HEAD --process full --one-run --profile comprehensive --output /tmp/cora-run.json",
+    "exact_revision_rule": "Re-evaluate receipt applicability on exact post-change Git SHA; unchanged code identity alone is not independent behavioral replay",
+    "blockers": "Original Git history native tests, full suite, independent Path A usability, independently maintained Path B runtime, authenticated host governance"
+  }
+}

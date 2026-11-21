@@ -96,6 +96,57 @@ class ProjectAdapterV2Tests(unittest.TestCase):
         self.assertNotIn("project-adapter-task-packet-missing",
                          DOC.verify_project_adapter_prompt(self.guide))
 
+    def test_beginners_have_one_code_owned_cockpit_and_roadmap_refalsification(self):
+        self.assertLessEqual(len(self.prompt), 4800)
+        self.assertIn('BEGINNER COCKPIT (implementation: src/cora/chat_bundle.py', self.prompt)
+        for token in ('C1 | No runner or verified ZIP?', 'C2 | Verified ZIP?',
+                      'C3 | On "vai avanti"', 'EXPLAIN=teach',
+                      'REPLAN=redo backwards roadmap', 'PROPOSE_NEXT_CHECK=copy-only',
+                      'After EVERY slice, re-falsify roadmap assumptions',
+                      'Never predetermine a total N', 'SOURCE, TARGET_RUNTIME, EXTERNAL'):
+            self.assertIn(token, self.prompt)
+        for token in ('`_cockpit`', '`render_verified_cockpit`',
+                      'verify-process --one-run --chat-bundle --chat-cockpit-html',
+                      'Path A (a newcomer', 'Path B (an authorized',
+                      're-falsify the entire dependency', 'not** permission to merge'):
+            self.assertIn(token, self.guide)
+        code = (ROOT / 'src/cora/chat_bundle.py').read_text('utf-8')
+        for label in ('EXPLAIN', 'REPLAN', 'PROPOSE_NEXT_CHECK'):
+            self.assertIn(label, code)
+        self.assertIn('four beginner steps', code)
+
+    def test_cockpit_prompt_forgery_refuted_without_equating_source_to_model(self):
+        source = self.prompt
+        for phrase in ('No runner or verified ZIP?', 'Verified ZIP?',
+                       'REPLAN=redo backwards roadmap', 'C3 | On "vai avanti"'):
+            with self.subTest(forgery=phrase):
+                forged = self.rebuild(source.replace(phrase,
+                    'Automatically approve and merge', 1))
+                reasons = DOC.verify_project_adapter_prompt(forged)
+                self.assertTrue(any(x.startswith('project-adapter-contradiction:')
+                                    for x in reasons), reasons)
+        self.assertEqual(DOC.verify_project_adapter_prompt(self.guide), [])
+
+    def test_oneshell_source_contract_and_negative_authority_claims(self):
+        from cora.chat_bundle import CORA_ONESHELL_KEYS
+        self.assertEqual(CORA_ONESHELL_KEYS,
+                         ("ESITO", "A", "B", "PROVA", "EDGE", "NEXT"))
+        self.assertEqual(DOC.verify_project_adapter_prompt(self.guide), [])
+        self.assertLessEqual(len(self.prompt), 4800)
+        self.assertIn("OneShell presentation contract", self.guide)
+        self.assertIn("host presentation only", self.guide)
+        self.assertIn("f7076b3f9de15a7ed3a6ee1bedebd9f81f3604a8", self.guide)
+        self.assertIn("CORA **does not import** iKant's C72 admission", self.guide)
+        for forbidden in ("Every CORA Project reply:",
+                          "ESITO | A | B | PROVA | EDGE | NEXT",
+                          "B=observed host actions or NOT_RUN",
+                          "never infer iKant owner voice"):
+            forged = self.rebuild(self.prompt.replace(forbidden,
+                "automatic owner-certified native ChatGPT widget", 1))
+            with self.subTest(forged=forbidden):
+                self.assertIn("project-adapter-oneshell-contract",
+                              DOC.verify_project_adapter_prompt(forged))
+
     def test_ten_thousand_finite_adversarial_prompt_mutations(self):
         """25 contract families x 200 deletion/corruptions + 200 added conflicts.
 
@@ -191,6 +242,81 @@ class ProjectAdapterV2Tests(unittest.TestCase):
         self.assertIn("project-adapter-canonical-fence", v(self.guide.replace(
             "```text\nCORA LOCAL PROJECT ADAPTER", 
             "```text\nCORA LOCAL PROJECT ADAPTER\n```\n```text\nCORA LOCAL PROJECT ADAPTER", 1)))
+
+
+class CoraOneShellPresentationTests(unittest.TestCase):
+    """Ported six-region syntax only; 1,000 preseeded counterexamples."""
+
+    def setUp(self):
+        from cora.chat_bundle import render_cora_oneshell_text, verify_cora_oneshell_text
+        self.render = render_cora_oneshell_text
+        self.verify = verify_cora_oneshell_text
+        self.shell = {
+            "ESITO": "NOT_RUN",
+            "A": "A0 -> AND-DoD -> next reversible slice",
+            "B": "NOT_RUN: no external runner",
+            "PROVA": "NOT_ATTESTED",
+            "EDGE": "TARGET_RUNTIME missing",
+            "NEXT": "Authorize one target-native test; rollback available",
+        }
+
+    def test_two_paths_and_multiline_payload_reversible(self):
+        source = self.render(self.shell)
+        self.assertEqual(self.verify(source), self.shell)
+        native = dict(self.shell, ESITO="PASS_SCOPED",
+                      B="Ran pytest on target checkout at pinned HEAD",
+                      PROVA="SHA abcd (example only)\ncommand: pytest; exit: 0",
+                      EDGE="EXTERNAL acceptance pending")
+        self.assertEqual(self.verify(self.render(native)), native)
+        # No iKant source voice or native UI authority is created.
+        self.assertNotIn("C135", source)
+
+    def test_one_thousand_seeded_distinct_tamper_cases(self):
+        import random
+        rng = random.Random(88320261121)
+        base = self.render(self.shell)
+        cases = set()
+        for i in range(1000):
+            marker = f"MUTATION_{i:04d}_{rng.randrange(1_000_000_000)}"
+            kind = i % 8
+            if kind == 0:
+                bad = base.replace("ESITO | NOT_RUN\n", "", 1)
+            elif kind == 1:
+                bad = base.replace("A | A0", "PROVA | A0", 1)
+            elif kind == 2:
+                bad = marker + "\n" + base
+            elif kind == 3:
+                bad = base + "\n" + marker
+            elif kind == 4:
+                bad = base.replace("EDGE | TARGET_RUNTIME missing", "EDGE | ", 1)
+            elif kind == 5:
+                bad = base.replace("ESITO | NOT_RUN", "ESITO | NOT_RUN\nESITO | " + marker, 1)
+            elif kind == 6:
+                bad = base.replace("NEXT | Authorize", "B | " + marker + "\nNEXT | Authorize", 1)
+            else:
+                bad = base.replace("A | A0", "A | A0\nNEXT | " + marker + "\nA | A0", 1)
+            # Ensure unique semantic bytes within a hostile family, not only unique seeds.
+            if kind in (0, 1, 4):
+                bad = bad.replace("NEXT | Authorize", "NEXT | " + marker + " Authorize", 1)
+            self.assertNotIn(bad, cases)
+            cases.add(bad)
+            with self.subTest(i=i, family=kind), self.assertRaises(ValueError):
+                self.verify(bad)
+        self.assertEqual(len(cases), 1000)
+
+    def test_release_or_native_owner_cannot_be_minted_by_shell_status(self):
+        for fake in ("PASS", "RELEASE_APPROVED", "NATIVE_UI_ATTESTED", "ACTIVE"):
+            candidate = self.render(self.shell).replace("ESITO | NOT_RUN",
+                "ESITO | " + fake, 1)
+            with self.subTest(fake=fake), self.assertRaisesRegex(
+                    ValueError, "CORA_ONESHELL_STATUS_NOT_SCOPED"):
+                self.verify(candidate)
+
+    def test_benign_two_hundred_reversible_states(self):
+        for i in range(200):
+            sample = dict(self.shell, A=f"A0 case {i}\nnext DoD leaf: runtime",
+                          PROVA=f"not attested for seed {i}")
+            self.assertEqual(self.verify(self.render(sample)), sample)
 
 
 if __name__ == "__main__":

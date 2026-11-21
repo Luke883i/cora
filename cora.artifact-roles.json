@@ -1484,6 +1484,13 @@
         "PRODUCT_CONTRACT"
       ],
       "rationale": "Noncompensatory reader and release candidate contract; policy cannot grant external authority."
+    },
+    {
+      "pattern": ".cora/assurance/pr91-evidence-convergence.json",
+      "roles": [
+        "ARTIFACT_INDEX"
+      ],
+      "rationale": "Historical scoped evidence and decision register; does not attest target runtime, human approval or release."
     }
   ]
 }

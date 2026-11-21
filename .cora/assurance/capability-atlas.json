@@ -825,7 +825,8 @@
     "assurance_records": [
       ".cora/assurance/capability-atlas.json",
       ".cora/assurance/documentation-proofs.json",
-      ".cora/assurance/operational-universe.json"
+      ".cora/assurance/operational-universe.json",
+      ".cora/assurance/pr91-evidence-convergence.json"
     ]
   },
   "qualification": {

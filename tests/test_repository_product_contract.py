@@ -22,18 +22,17 @@ def git(root, *args):
 class RepositoryContract(unittest.TestCase):
     def test_novice_static_readme_and_links(self):
         self.assertEqual(audit_contract(ROOT), [])
-    def test_programme_badge_whitelist_preserves_header_truth(self):
-        """Visible badge is optional; a substituted badge cannot bypass header."""
+    def test_standalone_product_identity_fails_closed_on_foreign_header(self):
+        """CORA's first heading is sufficient; unverifiable prefixes are rejected."""
         readme = (ROOT / 'README.md').read_text('utf-8')
-        expected = '[![ROA Research Programme](https://img.shields.io/badge/ROA-Research_Programme-1f6feb)](https://github.com/Luke883i/academics)'
-        self.assertIn(expected, readme)
+        title = '# CORA — Continuous Ontological Repository Assurance'
+        self.assertTrue(readme.startswith(title))
         self.assertEqual(audit_contract(ROOT), [])
-        modified = readme.replace(expected, '[![Forged approval](https://example.invalid/badge.svg)](https://example.invalid)', 1)
-        self.assertIn('full-product-name-missing', audit_contract(ROOT, readme_override=modified))
-        repeated = readme.replace(expected, expected + '\\n\\n' + expected, 1)
-        self.assertIn('full-product-name-missing', audit_contract(ROOT, readme_override=repeated))
-        no_header = readme.replace('<!-- programme-header:v2 -->', '<!-- unsigned-banner -->', 1)
-        self.assertIn('full-product-name-missing', audit_contract(ROOT, readme_override=no_header))
+        for prefix in ('[![Fake approval](https://example.invalid/badge.svg)](https://example.invalid)\n\n',
+                       '<!-- programme-header:v2 -->\n',
+                       '> Claimed externally authorized banner\n'):
+            mutant = prefix + readme
+            self.assertIn('full-product-name-missing', audit_contract(ROOT, readme_override=mutant))
 
     def test_single_acronym_expansion_and_nonduplicated_subtitle(self):
         readme = (ROOT / 'README.md').read_text('utf-8')

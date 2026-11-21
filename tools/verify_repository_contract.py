@@ -186,25 +186,10 @@ def audit_contract(root: Path, *, readme_override: str | None = None) -> list[st
         if token not in front:
             errors.append('first-read-missing:' + token)
     title = '# CORA — Continuous Ontological Repository Assurance'
-    marker = '<!-- programme-header:v2 -->'
-    # A single exact, visible programme badge may precede the canonical
-    # metadata block; the banner does not replace the Git-local source claim.
-    programme_badge = (
-        '[![ROA Research Programme]'
-        '(https://img.shields.io/badge/ROA-Research_Programme-1f6feb)]'
-        '(https://github.com/Luke883i/academics)\n\n'
-    )
-    header_source = readme[len(programme_badge):] if readme.startswith(programme_badge) else readme
-    legacy = readme.startswith(title)
-    header, separator, body = header_source.partition('\n\n')
-    # Header position and exact declaration tokens are still fail-closed.
-    v2 = (separator != '' and header.startswith(marker)
-          and header_source.count(marker) == 1
-          and all(token in header for token in (
-              'Luke883i/academics', 'Luke883i/ROA', 'Luke883i/cora',
-              'Repository-local code, evidence, and governance remain authoritative'))
-          and body.startswith(title))
-    if not (legacy or v2):
+    # The standalone product title is the first line.
+    # Programme badges or competing identity prefixes fail closed.
+    proper_header = readme.startswith(title + '\n')
+    if not proper_header:
         errors.append('full-product-name-missing')
     # The H1 is the sole canonical acronym expansion. Requiring a second
     # identical expansion in the subtitle made the reader-facing README worse.
@@ -212,7 +197,7 @@ def audit_contract(root: Path, *, readme_override: str | None = None) -> list[st
         errors.append('first-read-acronym-expansion-missing')
     if '**CORA (Continuous Ontological Repository Assurance)**' in readme:
         errors.append('first-read-duplicated-product-name')
-    if not (legacy or v2):
+    if not proper_header:
         errors.append('missing-title')
     for heading in ('## First five minutes', '## What works', '## Operating boundaries', '## Engineering map'):
         if heading not in readme:

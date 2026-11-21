@@ -60,6 +60,18 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "current release source identity"):
                 ekc.analyze(clone, "HEAD")
 
+    def test_reader_roles_preserve_semantic_boundaries_without_legacy_slogan(self):
+        readme = (ROOT / "README.md").read_text("utf-8")
+        self.assertTrue(ekc.readme_source_boundaries(readme))
+        for old, new in (
+            ("engineering assurance", "unrelated marketing"),
+            ("the `cora` CLI and verifiers", "an autonomous coding agent"),
+            ("Git source, contracts and CI", "unattributed slides"),
+        ):
+            with self.subTest(mutant=old):
+                self.assertFalse(ekc.readme_source_boundaries(readme.replace(old, new, 1)))
+        self.assertFalse(ekc.readme_source_boundaries("\n" * 60 + readme))
+
     def test_report_tampering_and_source_promotions_refused(self):
         report = ekc.analyze(ROOT, self.sha)
         for field, value in (
@@ -698,10 +710,34 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         """
         from types import ModuleType
         base = "57dd5c4fb6317d9a9e951fcbebac9c7aa5560b6f"
-        previous = ModuleType("baseline_original_git_engineering_closure")
         baseline_code = git(ROOT, "show",
                             base + ":tools/verify_engineering_closure.py")
+        # Historical code uses a frozen literal README slogan.  That wording
+        # was intentionally removed from the PR91 reader-first product page,
+        # while the three source roles remain declared and checked.  Record
+        # this incompatibility as a known, reproducible *old* oracle failure.
+        raw_previous = ModuleType("baseline_original_git_engineering_closure")
         exec(compile(baseline_code, "baseline_engineering_closure.py", "exec"),
+             raw_previous.__dict__)
+        with self.assertRaisesRegex(
+                ValueError, "README current product/software/repository boundaries missing"):
+            raw_previous.analyze(ROOT, self.sha)
+        legacy_guard = ('    if not all(token in readme for token in (\n'
+                        '            "**Product:** assurance",\n'
+                        '            "**Software:** `cora-engine` and `cora-release-verification`",\n'
+                        '            "**Repository:** source, tests, CI and **historical ADRs**")):\n'
+                        '        raise ValueError("README current product/software/repository boundaries missing")')
+        replacement_guard = (
+            '    if not readme_source_boundaries(readme):\n'
+            '        raise ValueError("README current product/software/repository boundaries missing")')
+        # This one explicit adapter is the *only* normalized semantic
+        # predicate.  Every other previously reported field is compared on
+        # the same exact Git tree, with historical path-rename normalization.
+        self.assertEqual(baseline_code.count(legacy_guard), 1)
+        adapted = baseline_code.replace(legacy_guard, replacement_guard, 1)
+        previous = ModuleType("pr91_document_semantics_normalized_previous")
+        previous.readme_source_boundaries = ekc.readme_source_boundaries
+        exec(compile(adapted, "baseline_engineering_closure_pr91_adapter.py", "exec"),
              previous.__dict__)
         a = previous.analyze(ROOT, self.sha)
         b = ekc.analyze(ROOT, self.sha)

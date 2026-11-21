@@ -510,6 +510,21 @@ def verify_project_adapter_prompt(guide: str) -> list[str]:
     if not prompt.startswith(
             "CORA LOCAL PROJECT ADAPTER — BETA v2 (METHOD_ONLY BY DEFAULT)"):
         errors.append("project-adapter-identity")
+    # Ported presentation grammar; this is a SOURCE lint, not a ChatGPT host interceptor.
+    shell = re.findall(r"(?m)^(S[0-9]) \| ([^\n]+)$", prompt)
+    expected_shell = (
+        ("S1", "Every CORA Project reply:", "ESITO | A | B | PROVA | EDGE | NEXT"),
+        ("S2", "A=answer/plan", "B=observed host actions or NOT_RUN",
+         "PROVA=source SHA+real tests or NOT_ATTESTED", "EDGE=first open AND leaf",
+         "NEXT=one safe step"),
+        ("S3", "Same structure for Path A/B", "never infer iKant owner voice",
+         "native ChatGPT UI, approval, or execution from a prompt"),
+    )
+    if ("ONE SHELL (presentation only; authority=0)" not in prompt
+            or [k for k, _ in shell] != ["S1", "S2", "S3"]
+            or any(any(token not in value for token in required)
+                   for (_, value), (_, *required) in zip(shell, expected_shell))):
+        errors.append("project-adapter-oneshell-contract")
     rows = re.findall(r"(?m)^(P[0-9]{2}) \| ([^\n]+)$", prompt)
     expected = [row[0] for row in PROJECT_ADAPTER_V2_CLAUSES]
     if [row[0] for row in rows] != expected:
@@ -589,7 +604,11 @@ def verify_project_zip_lifecycle(readme: str, adoption: str,
                "POST → SQLite → GET", "same SHA", "--chat-step",
                "--chat-bundle", "latest copy to this Project chat",
                "iterations/000001/handoff.md")
-    offsets = [path.find(term) for term in ordered]
+    # Bind step 1 to its numbered instruction, not a repeated button label.
+    # The phrase also appears in the same step as GitHub UI copy.
+    offsets = [path.find("1. **New repository**:")] + [
+        path.find(term) for term in ordered[1:]
+    ]
     if not path or any(x < 0 for x in offsets) or offsets != sorted(offsets):
         errors.append("project-readme-beginner-journey-drift")
     figure = readme.split("## First five minutes", 1)[0]
@@ -892,18 +911,9 @@ def check_current_contract(path: str, content: str, *,
     """Finite textual checks. They do not certify clarity, truth or a reader."""
     errors: list[str] = []
     intro = content.split("\n## ", 1)[0][:3000]
-    # The optional, exact ROA badge precedes the original README header.
-    # Do not expand the title window for other files or arbitrary banners:
-    # those still fail as out-of-range or displaced document identity.
-    badge = (
-        "[![ROA Research Programme]"
-        "(https://img.shields.io/badge/ROA-Research_Programme-1f6feb)]"
-        "(https://github.com/Luke883i/academics)\n\n"
-    )
-    heading_source = (content[len(badge):]
-                      if path == "README.md" and content.startswith(badge)
-                      else content)
-    title_match = re.search(r"(?m)^# [^\n]{8,}", heading_source[:550])
+    # No banner may precede the current document identity.
+    title_match = (re.match(r"^# [^\n]{8,}", content[:550]) if path == "README.md"
+                   else re.search(r"(?m)^# [^\n]{8,}", content[:550]))
     if (not title_match or
         (path == "README.md" and title_match.group(0) !=
          "# CORA — Continuous Ontological Repository Assurance")):
