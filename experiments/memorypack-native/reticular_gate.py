@@ -9,8 +9,18 @@ PIN = '239ffa0df2f7ccad63d276457557b49e88acae4b'
 NAMES = ['UInt16PayloadConsumesAllBytes', 'UInt16ValueOverflowIsRejected', 'DirectByteWireMarkerRegressionControl']
 
 def expected(results, statuses):
-    return isinstance(results, dict) and len(results) == len(statuses) and all(
-        results.get(n) == s for n, s in zip(NAMES, statuses))
+    # xUnit TRX testName may be bare or namespace-qualified. Require an exact
+    # one-to-one match; do not accept missing, duplicated or renamed outcomes.
+    if not isinstance(results, dict) or len(results) != len(statuses):
+        return False
+    matched = set()
+    for name, outcome in zip(NAMES, statuses):
+        hits = [key for key, value in results.items()
+                if (key == name or key.endswith('.' + name)) and value == outcome]
+        if len(hits) != 1 or hits[0] in matched:
+            return False
+        matched.add(hits[0])
+    return len(matched) == len(results)
 
 def evaluate(receipt):
     pin = (receipt.get('pin') == PIN and receipt.get('source_original_sha256') ==
