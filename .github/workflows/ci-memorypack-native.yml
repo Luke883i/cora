@@ -1,0 +1,47 @@
+name: CORA | MemoryPack native boundary
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/ci-memorypack-native.yml'
+      - 'experiments/memorypack-native/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  net8-before-after:
+    name: Native C# before-fail / after-pass / full suite
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout CORA experiment (unprivileged)
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: cora
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Checkout immutable public MemoryPack target
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: Cysharp/MemoryPack
+          ref: 239ffa0df2f7ccad63d276457557b49e88acae4b
+          path: target
+          persist-credentials: false
+      - name: Configure .NET 8 (native execution)
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          dotnet-version: '8.0.x'
+      - name: Run target-native falsifier against original and isolated repair
+        run: python3 cora/experiments/memorypack-native/run.py --source target --output artifacts
+      - name: Project native observations through CORA reticular gate
+        if: always()
+        env:
+          PYTHONPATH: cora/src
+        run: python3 cora/experiments/memorypack-native/reticular_gate.py --receipt artifacts/native-receipt.json --out artifacts/cora-reticulum.json
+      - name: Save native evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cora-memorypack-native-f4
+          path: artifacts/
+          if-no-files-found: warn
+          retention-days: 14
