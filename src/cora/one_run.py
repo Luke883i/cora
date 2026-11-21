@@ -21,6 +21,8 @@ import time
 from pathlib import Path
 
 from .evidence import domain_hash
+from . import __version__
+from .process_bounds import run_bounded
 from .git_snapshot import git, snapshot
 from .maturity_atlas import build_atlas, render_html
 from .process_suite import run_suite, verify_suite, IMPLEMENTED, process_catalog
@@ -63,6 +65,110 @@ def _method_files() -> dict[str, str]:
 METHOD_FILES = _method_files()
 # Pinned topology commitment to the canonical Git DoD; no second graph owner.
 ONE_RUN_DOD_GRAPH = "427a0fd1404765be6fe39b62b03584ed0d6955209dc6af6c724f91c987c1cc80"
+
+# A bounded, exact-source allowlist: no target scripts, scanners, model calls,
+# installations or effectful CLI routes are eligible for default execution.
+# Other routes are still represented in the 71-row noncompensatory census.
+_SAFE_CLI = ("version", "process-list", "snapshot")
+_CLI_PROBE_BUDGET = 2 * 1024 * 1024
+_CLI_PROBE_TIMEOUT = 15
+
+
+def _cli_expected_output(command: str, repo: Path, sha: str) -> bytes:
+    """Independent direct owner oracle, not a claim of external runtime proof."""
+    if command == "version":
+        return (__version__ + "\n").encode("ascii")
+    if command == "process-list":
+        value = process_catalog()  # PR94 default must NOT probe upstream tools.
+    elif command == "snapshot":
+        value = snapshot(repo, sha)
+    else:
+        raise ValueError("unsafe or unregistered operational CLI oracle")
+    return (json.dumps(value, sort_keys=True, indent=2, ensure_ascii=True) + "\n").encode("ascii")
+
+
+def run_cli_capabilities(repo: Path, sha: str, capabilities: list[dict]) -> list[dict]:
+    """Record every command, execute only three read-only owner operations.
+
+    All effects are scoped to an already executing local CORA Python runtime.
+    Local process execution/exit cannot authenticate an external host or owner.
+    """
+    if (not isinstance(capabilities, list) or len(capabilities) != 71
+            or len({x.get("command") for x in capabilities if isinstance(x, dict)}) != 71):
+        raise ValueError("CORA CLI census is not exactly 71 unique routes")
+    names = {x["command"] for x in capabilities}
+    if not set(_SAFE_CLI) <= names:
+        raise ValueError("bounded operational owner missing from CLI catalog")
+    src = Path(__file__).resolve().parents[1]
+    # No inherited host tokens, arbitrary PYTHONPATH, caller cwd or shell.
+    env = {"PATH": os.environ.get("PATH", ""), "PYTHONPATH": str(src),
+           "PYTHONNOUSERSITE": "1", "PYTHONDONTWRITEBYTECODE": "1"}
+    records = []
+    for name in sorted(names):
+        row = {"command": name, "commit": sha, "state": "BLOCKED",
+               "reason": "NO_DECLARED_BOUNDED_OPERATIONAL_ADAPTER",
+               "returncode": None, "stdout_sha256": None,
+               "scope": "LOCAL_SOURCE_CLI_EXIT_NOT_INDEPENDENT_RUNTIME",
+               "authority": "NONE"}
+        if name in _SAFE_CLI:
+            args = [name] + ([str(repo), "--revision", sha] if name == "snapshot" else [])
+            try:
+                run = run_bounded([sys.executable, "-m", "cora.cli", *args],
+                                  cwd=src, env=env, timeout=_CLI_PROBE_TIMEOUT,
+                                  max_output=_CLI_PROBE_BUDGET)
+                expected = _cli_expected_output(name, repo, sha)
+                if run.returncode == 0 and run.stdout == expected:
+                    row.update(state="RUN_REPORTED_UNATTESTED", reason="BOUNDED_READ_ONLY_EXIT_ZERO",
+                               returncode=0, stdout_sha256=hashlib.sha256(run.stdout).hexdigest())
+                else:
+                    row.update(state="FAIL", reason="EXIT_OR_OUTPUT_ORACLE_MISMATCH",
+                               returncode=run.returncode)
+            except (OSError, ValueError, subprocess.TimeoutExpired):
+                row["reason"] = "BOUNDED_PROCESS_UNAVAILABLE_OVERFLOW_OR_TIMEOUT"
+        records.append(row)
+    verify_cli_capabilities(repo, sha, capabilities, records)
+    return records
+
+
+def verify_cli_capabilities(repo: Path, sha: str, capabilities: list[dict],
+                            rows: list[dict]) -> bool:
+    if (not isinstance(rows, list) or len(rows) != 71
+            or not isinstance(capabilities, list) or len(capabilities) != 71):
+        raise ValueError("missing or surplus per-command operational rows")
+    names = sorted(x["command"] for x in capabilities)
+    if (len(set(names)) != 71 or set(_SAFE_CLI) - set(names)
+            or [x.get("command") for x in rows if isinstance(x, dict)] != names):
+        raise ValueError("CLI census diverged from canonical catalog")
+    required = {"command", "commit", "state", "reason", "returncode",
+                "stdout_sha256", "scope", "authority"}
+    for row in rows:
+        if (not isinstance(row, dict) or set(row) != required or row["commit"] != sha
+                or row["authority"] != "NONE" or
+                row["scope"] != "LOCAL_SOURCE_CLI_EXIT_NOT_INDEPENDENT_RUNTIME"):
+            raise ValueError("CLI row malformed or source/authority forged")
+        name = row["command"]
+        if name not in _SAFE_CLI:
+            if (row["state"] != "BLOCKED" or
+                    row["reason"] != "NO_DECLARED_BOUNDED_OPERATIONAL_ADAPTER" or
+                    row["returncode"] is not None or row["stdout_sha256"] is not None):
+                raise ValueError("unexecuted CLI or effectful route promoted to PASS")
+        elif row["state"] == "RUN_REPORTED_UNATTESTED":
+            expected = hashlib.sha256(_cli_expected_output(name, repo, sha)).hexdigest()
+            if (row["reason"] != "BOUNDED_READ_ONLY_EXIT_ZERO" or
+                    row["returncode"] != 0 or row["stdout_sha256"] != expected):
+                raise ValueError("bounded operational result differs from source oracle")
+        elif (row["state"] == "FAIL" and
+              row["reason"] == "EXIT_OR_OUTPUT_ORACLE_MISMATCH" and
+              type(row["returncode"]) is int and row["stdout_sha256"] is None):
+            pass  # A failed observation cannot establish operational PASS.
+        elif (row["state"] == "BLOCKED" and
+              row["reason"] == "BOUNDED_PROCESS_UNAVAILABLE_OVERFLOW_OR_TIMEOUT" and
+              row["returncode"] is None and row["stdout_sha256"] is None):
+            pass
+        else:
+            raise ValueError("unknown operational CLI state or forged PASS")
+    return True
+
 
 def _original_dod(repo: Path, sha: str) -> dict:
     data = json.loads(git(repo, "show", sha + ":" + DOD, max_output=128 * 1024))
@@ -333,6 +439,11 @@ def run_one(repo: Path, revision: str = "HEAD", *,
         "authorization": "NONE", "release_authorized": False,
         "replay_scope": "SOURCE_REEXECUTABLE_TIMINGS_AND_RUNTIME_EXITS_NOT_REPLAY_ATTESTED",
     }
+    if catalog is not None:
+        receipt["cli_capability_attempts"] = run_cli_capabilities(repo, commit, catalog["capabilities"])
+        receipt["catalog_commands_executed_individually"] = sum(
+            row["state"] == "RUN_REPORTED_UNATTESTED" for row in receipt["cli_capability_attempts"])
+        receipt["catalog_scope"] = "CORA_PINNED_CATALOG_WITH_BOUNDED_LOCAL_CLI_EXITS_NOT_PRODUCT_ACCEPTANCE"
     receipt["receipt_digest"] = domain_hash("CORA:one-run:1", receipt)
     return receipt
 
@@ -342,7 +453,6 @@ def verify_one(repo: Path, receipt: dict, *, html_page: str | None = None) -> bo
             or receipt.get("authorization") != "NONE"
             or receipt.get("release_authorized") is not False
             or receipt.get("global_status") != "BLOCKED_EXTERNAL"
-            or receipt.get("catalog_commands_executed_individually") != 0
             or receipt.get("replay_scope") !=
             "SOURCE_REEXECUTABLE_TIMINGS_AND_RUNTIME_EXITS_NOT_REPLAY_ATTESTED"):
         raise ValueError("one-run receipt identity/authority violation")
@@ -408,6 +518,15 @@ def verify_one(repo: Path, receipt: dict, *, html_page: str | None = None) -> bo
             raise ValueError("preseeded model benchmark is not reproducible")
     cora = _is_cora(repo, sha)
     expected_catalog = build_atlas(repo, unified_assurance(repo, sha)) if cora else None
+    if cora:
+        observations = receipt.get("cli_capability_attempts")
+        verify_cli_capabilities(repo, sha, expected_catalog["capabilities"], observations)
+        if receipt.get("catalog_commands_executed_individually") != sum(
+                row["state"] == "RUN_REPORTED_UNATTESTED" for row in observations):
+            raise ValueError("CLI execution count does not match actual bounded observations")
+    elif ("cli_capability_attempts" in receipt or
+          receipt.get("catalog_commands_executed_individually") != 0):
+        raise ValueError("target without CORA catalog forged CLI executions")
     expected_dod = _original_dod(repo, sha) if cora else {
         "goal": "BLOCKED_EXTERNAL", "authority": "NONE",
         "source_level": "NO_CORA_PRODUCT_DOD_ON_TARGET", "gates": {}, "checklist": []}
@@ -415,7 +534,7 @@ def verify_one(repo: Path, receipt: dict, *, html_page: str | None = None) -> bo
             receipt.get("catalog_commands_declared") != (
                 len(expected_catalog["capabilities"]) if expected_catalog else 0) or
             receipt.get("catalog_scope") != (
-                "CORA_ORIGINAL_GIT_DECLARATIONS_NOT_71_EXECUTIONS" if cora else
+                "CORA_PINNED_CATALOG_WITH_BOUNDED_LOCAL_CLI_EXITS_NOT_PRODUCT_ACCEPTANCE" if cora else
                 "NOT_APPLICABLE_NONCORA_REPOSITORY") or
             receipt.get("dod") != expected_dod or
             receipt.get("source_status") != (

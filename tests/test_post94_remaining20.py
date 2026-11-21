@@ -322,3 +322,108 @@ class ReticularDoD(unittest.TestCase):
                 x=copy.deepcopy(self.contract)
                 mutate(x)
                 self.assertIsNotNone(self.validate(x),name)
+
+class OneRun71FrontierTests(unittest.TestCase):
+    """71 attributable CLI routes, three bounded operations, 68 blocked."""
+
+    def setUp(self):
+        self._temp = tempfile.TemporaryDirectory(prefix="cora-onerun-71-")
+        self.addCleanup(self._temp.cleanup)
+        self.repo = Path(self._temp.name) / "target"
+        self.repo.mkdir()
+        subprocess.run(["git", "init", "-q", str(self.repo)], check=True)
+        (self.repo / "a.py").write_text("flag = True\n", encoding="utf-8")
+        subprocess.run(["git", "-C", str(self.repo), "add", "."], check=True)
+        subprocess.run(["git", "-C", str(self.repo), "-c", "user.name=CORA Fixture",
+                        "-c", "user.email=fixture@example.invalid",
+                        "commit", "-qm", "fixture"], check=True)
+        self.sha = subprocess.check_output(
+            ["git", "-C", str(self.repo), "rev-parse", "HEAD"], text=True).strip()
+        self.catalog = json.loads(
+            (ROOT / ".cora/assurance/capability-atlas.json").read_text())["commands"]
+
+    def test_real_bounded_subprocess_three_of_seventy_one(self):
+        from cora.one_run import run_cli_capabilities, verify_cli_capabilities
+        rows = run_cli_capabilities(self.repo, self.sha, self.catalog)
+        self.assertEqual(len(rows), 71)
+        self.assertEqual({x["command"] for x in rows
+                          if x["state"] == "RUN_REPORTED_UNATTESTED"},
+                         {"version", "process-list", "snapshot"})
+        self.assertEqual(sum(x["state"] == "BLOCKED" for x in rows), 68)
+        self.assertTrue(verify_cli_capabilities(self.repo, self.sha, self.catalog, rows))
+        self.assertTrue(all(x["authority"] == "NONE" for x in rows))
+
+    def test_forged_counterfeit_success_wrong_head_and_missing_route_fail(self):
+        import copy
+        from cora.one_run import run_cli_capabilities, verify_cli_capabilities
+        rows = run_cli_capabilities(self.repo, self.sha, self.catalog)
+        candidates = [copy.deepcopy(rows) for _ in range(5)]
+        candidates[0][0].update(state="RUN_REPORTED_UNATTESTED",
+             reason="BOUNDED_READ_ONLY_EXIT_ZERO", returncode=0, stdout_sha256="0"*64)
+        candidates[1][0]["authority"] = "APPROVED"
+        candidates[2][0]["commit"] = "0"*40
+        candidates[3] = candidates[3][1:]
+        candidates[4][-1]["stdout_sha256"] = "f"*64
+        for index, candidate in enumerate(candidates):
+            with self.subTest(counterexample=index), self.assertRaises(ValueError):
+                verify_cli_capabilities(self.repo, self.sha, self.catalog, candidate)
+
+    def test_overflow_and_bad_exit_never_count_as_pass(self):
+        from unittest.mock import patch
+        from cora.one_run import run_cli_capabilities, verify_cli_capabilities
+        with patch("cora.one_run.run_bounded", side_effect=ValueError("overflow")):
+            blocked = run_cli_capabilities(self.repo, self.sha, self.catalog)
+        self.assertEqual(sum(x["state"] == "BLOCKED" for x in blocked), 71)
+        self.assertTrue(verify_cli_capabilities(self.repo, self.sha, self.catalog, blocked))
+        with patch("cora.one_run.run_bounded",
+                   return_value=subprocess.CompletedProcess([], 37, b"wrong", None)):
+            failed = run_cli_capabilities(self.repo, self.sha, self.catalog)
+        self.assertEqual(sum(x["state"] == "FAIL" for x in failed), 3)
+        self.assertTrue(verify_cli_capabilities(self.repo, self.sha, self.catalog, failed))
+
+    def test_extra_or_duplicate_route_is_rejected(self):
+        import copy
+        from cora.one_run import run_cli_capabilities
+        with self.assertRaisesRegex(ValueError, "71 unique"):
+            run_cli_capabilities(self.repo, self.sha, self.catalog[:-1])
+        duplicate = copy.deepcopy(self.catalog)
+        duplicate[-1]["command"] = duplicate[0]["command"]
+        with self.assertRaisesRegex(ValueError, "71 unique"):
+            run_cli_capabilities(self.repo, self.sha, duplicate)
+
+    def test_global_intermediate_local_reticulum_remains_blocked(self):
+        d = json.loads((ROOT / ".cora/contracts/dod/post94-cli-behavior-dod.json").read_text())
+        f = d["orchestration_frontier"]
+        self.assertEqual(f["schema"], "cora-one-run-cli-operational-frontier/1")
+        self.assertEqual(f["global_status"], "BLOCKED_EXTERNAL")
+        self.assertEqual(f["authority"], "NONE")
+        self.assertEqual(len(f["canonical_local_node_refs"]), 71)
+        self.assertEqual(len(set(f["canonical_local_node_refs"])), 71)
+        self.assertEqual(set(f["canonical_local_node_refs"]),
+                         {x["id"] for x in d["nodes"] if x.get("kind") == "LOCAL"})
+        self.assertEqual({x["command"] for x in f["operational_adapters"]},
+                         {"version", "process-list", "snapshot"})
+        self.assertEqual(f["nonoperational_policy"]["count"], 68)
+        self.assertEqual({x["state"] for x in f["intermediates"]
+                          if x["id"].startswith("E_")}, {"BLOCKED_EXTERNAL"})
+        self.assertFalse(f["observed_local_expected"]["release_approved"])
+
+    def test_integrated_dossier_attribution_is_bounded_and_non_authorizing(self):
+        from cora.one_run import run_cli_capabilities
+        from cora.integrated_run import _attempts, _metrics
+        rows = run_cli_capabilities(self.repo, self.sha, self.catalog)
+        registry = {"activities": [
+            {"activity_id": "cli:" + x["command"], "kind": "CLI_COMMAND",
+             "effect_class": ("READ_ONLY" if x["command"] in
+                              ("version", "process-list", "snapshot")
+                              else "REQUIRES_EFFECT_REVIEW"), "source_paths": []}
+            for x in self.catalog], "registered_commands": 71}
+        test = {"parsed_cases": [], "log_sha256": None, "state": "NOT_RUN",
+                "reported_tests": None}
+        attempts = _attempts(registry, {"activities": [], "cli_capability_attempts": rows}, test)
+        self.assertEqual(len(attempts), 71)
+        self.assertEqual(sum(x["state"] == "RUN_REPORTED_UNATTESTED"
+                             for x in attempts), 3)
+        self.assertEqual(_metrics(registry, attempts, test)["individually_executed_cli"], 3)
+        self.assertTrue(all(x["authority"] == "NONE" for x in attempts))
+

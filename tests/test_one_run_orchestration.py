@@ -40,7 +40,10 @@ class OneRunAssuranceTests(unittest.TestCase):
         self.assertEqual(d["source_process"]["process"], "full")
         self.assertEqual(len(d["activities"]), 8)
         self.assertEqual(d["catalog_commands_declared"], 71)
-        self.assertEqual(d["catalog_commands_executed_individually"], 0)
+        self.assertEqual(d["catalog_commands_executed_individually"], 3)
+        self.assertEqual(len(d["cli_capability_attempts"]), 71)
+        self.assertEqual(sum(x["state"] == "RUN_REPORTED_UNATTESTED"
+                             for x in d["cli_capability_attempts"]), 3)
         self.assertEqual(d["metrics"]["FAIL"], 0)
         self.assertEqual(d["metrics"]["NOT_RUN"], 2 if any(
             x["state"] == "NOT_RUN" for x in d["activities"]) else 1)
