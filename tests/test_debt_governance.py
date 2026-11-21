@@ -163,8 +163,9 @@ class ModelFalsification(unittest.TestCase):
 class ExternalToolOptimalContract(unittest.TestCase):
     """Contract tests: discovery is not execution or an approval boundary."""
     def test_all_candidates_are_unexecuted_and_owned_upstream(self):
-        c = process_catalog()
+        c = process_catalog(intent='')
         self.assertEqual(len(c['processes']), 7)
+        self.assertNotIn('external_tools', process_catalog())
         self.assertEqual(len(c['external_tools']), 10)
         self.assertEqual(c['authorized_action'], 'NONE')
         self.assertEqual(c['inference'], [])

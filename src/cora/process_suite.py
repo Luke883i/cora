@@ -112,16 +112,20 @@ def _external_tools(intent: str | None, probe_tool: str | None,
 def process_catalog(*, intent: str | None = None, probe_tool: str | None = None,
                     authorize_probe: bool = False) -> dict:
 
-    found, suggestions, probe = _external_tools(intent, probe_tool, authorize_probe)
     catalog = {'schema':'cora-process-catalog/1', 'processes':[
       {'id':p,'methods':list(IMPLEMENTED[p]),'mode':'READ_ONLY_PINNED_GIT'} for p in PROCESSES],
       'excluded_unsafe_methods':['target_test_execution', 'arbitrary_LLM_calls',
          'SARIF_scanner_execution', 'external_network_calls',
          'rename_archive_quarantine_delete_transform', 'release_publication'],
-      'test_process_policy':'verification means source revalidation, not executing target tests',
-      'external_tools':found, 'inference':suggestions,
-      'external_evidence':'UNTRUSTED_UNTIL_SEPARATELY_VERIFIED',
-      'authorized_action':'NONE'}
+      'test_process_policy':'verification means source revalidation, not executing target tests'}
+    # Preserve exact historical process-list bytes and 77-operation behavioral oracle.
+    # External capability discovery is a separately requested expansion.
+    if intent is None and probe_tool is None and not authorize_probe:
+        return catalog
+    found, suggestions, probe = _external_tools(intent, probe_tool, authorize_probe)
+    catalog.update({'external_tools':found, 'inference':suggestions,
+                    'external_evidence':'UNTRUSTED_UNTIL_SEPARATELY_VERIFIED',
+                    'authorized_action':'NONE'})
     if probe is not None:
         catalog['explicit_version_probe'] = probe
     return catalog
