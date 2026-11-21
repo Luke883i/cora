@@ -149,6 +149,37 @@
       "native_mutant": "KILLED",
       "native_restored": "PASS",
       "status": "PASS_LOCAL_DEMONSTRATOR_NOT_MAINTAINED_EXTERNAL_TARGET"
+    },
+    "project_cockpit_pr91_local": {
+      "status": "PASS_SCOPED_LOCAL_SOURCE_NOT_HUMAN_COMPREHENSION",
+      "scope": "source prompt+HTML navigation+negative tests; not an LLM user study",
+      "prompt_length": 4637,
+      "local_native_tests_passed": 23,
+      "local_native_subtests_passed": 29,
+      "lexical_negative_prompt_mutants": 10000,
+      "benign_presentation_controls": 200,
+      "new_source_negative_cases": 4,
+      "local_checkout_parent": "SYNTHETIC_TESTBED_NOT_ORIGINAL_GITHUB",
+      "source_blob_shas": {
+        "docs/AGENT_ADOPTION.md": "c0bdd5bea877d18cac127ffa45a214e72a9698ee",
+        "README.md": "95bf95a246c9cbe8675b45aa83fec5a26d0c5744",
+        "src/cora/chat_bundle.py": "3610b42030ec0d5e308b9506098dcfe8aa6feacc",
+        "tests/test_project_instructions.py": "80d4ac20e652927a869033536b4f77132e446132",
+        "tests/test_chat_continuation_cockpit.py": "53a4a93193f377c7c5483268fd45070607fd7335"
+      },
+      "checks": {
+        "tools/verify_documentation.py": "PASS_SCOPED_STATIC_LOCAL",
+        "tools/verify_repository_contract.py": "PASS_SCOPED_LOCAL",
+        "current_pr_exact_head_CI": "NOT_ATTESTED_BY_LOCAL",
+        "path_a_real_beginner_trial": "BLOCKED_EXTERNAL",
+        "path_b_independent_maintained_target": "BLOCKED_EXTERNAL"
+      },
+      "commands": [
+        "PYTHONPATH=src:. python -m pytest -q tests/test_project_instructions.py tests/test_chat_continuation_cockpit.py",
+        "PYTHONPATH=src:. python tools/verify_documentation.py --repo .",
+        "PYTHONPATH=src:. python tools/verify_repository_contract.py --repo ."
+      ],
+      "note": "Only a scoped source contract pass on a locally recreated testbed; exact PR HEAD CI must be separately observed after ledger commit."
     }
   },
   "decisions": [
@@ -211,6 +242,36 @@
       "id": "D12",
       "choice": "Treat all CI results as revision-specific; re-run on PR final HEAD",
       "falsifier": "baseline failure described as PR check success"
+    },
+    {
+      "id": "D13",
+      "choice": "One canonical compact 4637-character ChatGPT Project prompt governed in docs/AGENT_ADOPTION.md, not another runtime engine",
+      "falsifier": "Second prompt owner, incorrect code linkage, forged tool rights, or context limit overflow",
+      "witness": "tests/test_project_instructions.py; tools/verify_documentation.py"
+    },
+    {
+      "id": "D14",
+      "choice": "Path A in METHOD_ONLY produces proposed A0, retrograde AND-DoD and reversible slice; absent runner means NOT_RUN",
+      "falsifier": "Chat-only method produces ENGINE_VERIFIED, Git commit or target acceptance",
+      "witness": "docs/AGENT_ADOPTION.md; README.md"
+    },
+    {
+      "id": "D15",
+      "choice": "Path B requires authorized agent task packet, Git-bound native oracles, physical negatives, separate CORA CLI and replay of latest verified session",
+      "falsifier": "Uploaded ZIP treated as command execution; source-only report promoted to target runtime",
+      "witness": "src/cora/chat_bundle.py; docs/GETTING_STARTED.md"
+    },
+    {
+      "id": "D16",
+      "choice": "Three cockpit choices are copy-only and now teach A0, read-only evidence, retrograde replanning and proposed next check",
+      "falsifier": "HTML onclick/script/form, forged receipt, external links or auto-executing choice",
+      "witness": "tests/test_chat_continuation_cockpit.py"
+    },
+    {
+      "id": "D17",
+      "choice": "After every actual slice re-falsify roadmap premises, AND dependencies, survivors and recovery; 'vai avanti' preserves only already-authorized reversible scope",
+      "falsifier": "Unobserved step/failed oracle is converted to PASS; stalled roadmap continues unchanged",
+      "witness": "docs/AGENT_ADOPTION.md; P23; src/cora/chat_bundle.py"
     }
   ],
   "dod": {
@@ -226,7 +287,11 @@
     "full_suite_at_pr_head": "NOT_RUN_YET",
     "host_checks_and_review": "BLOCKED_EXTERNAL",
     "release": "BLOCKED_EXTERNAL",
-    "product_go": false
+    "product_go": false,
+    "project_prompt_local": "PASS_SCOPED_LOCAL",
+    "cockpit_beginner_html_local": "PASS_SCOPED_LOCAL",
+    "path_a_user_independent": "BLOCKED_EXTERNAL",
+    "path_b_independent_external_target": "BLOCKED_EXTERNAL"
   },
   "reproduction": {
     "documentation": "python tools/verify_documentation.py && python tools/verify_repository_contract.py && python tools/verify_release_readiness.py",
