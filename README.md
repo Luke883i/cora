@@ -66,6 +66,7 @@ cora verify-process /tmp/cora-run.json --repo . --one-run \
 
 - Open `/tmp/cora-cockpit.html`; navigate **Overview**, **DoD & evidence**, **Blockers**, **Choices**.
 - **EXPLAIN**, **REPLAN**, **PROPOSE_NEXT_CHECK** link to copyable prompts; no execution or automatic replanning.
+- **Start here:** read the [beginner cockpit and Path A/B recipe](docs/AGENT_ADOPTION.md#cockpit-for-beginners--same-path-a-and-path-b-no-third-engine); the buttons only suggest the next decision. After each real slice, re-falsify the roadmap.
 - No runner/verified ZIP? Stay METHOD_ONLY; never invent PASS.
 
 
