@@ -204,3 +204,18 @@ CORA cannot automatically observe every ChatGPT message. No assistant should cla
 ## Optional native Gold receipts
 
 With explicit permission, generate one original target native execution receipt outside the target using cora.native_gold.capture_native. Then pass --portable-native-probe PATH to the existing process-run --one-run --portable-profile PROFILE-v2.json; verify-process uses the same flag for exact Git and retained-byte replay. This is a local subprocess outcome, not authenticated host identity, independent browser/remote proof or release approval. See [Gold assurance](GOLD_ASSURANCE.md).
+
+## Post-PR94 scoped command behavior and reticular DoD
+
+The [canonical 79-node command behavior contract](../.cora/contracts/dod/post94-cli-behavior-dod.json)
+backward-derives a global noncompensatory gate from 71 CLI leaves, including
+20 previously unobserved routes. Native owner fixtures are in
+[the remaining-20 test module](../tests/test_post94_remaining20.py).
+Run `PYTHONPATH=src python -m pytest -q tests/test_post94_remaining20.py` in
+an approved pinned Git runner. Results for source fixtures, AST-only mutants
+and bounded finite models are not independent maintained-target acceptance.
+`gold-pilot` without three pinned checkouts must report `BLOCKED_INCOMPLETE`;
+`runtime-observe` without explicit Docker consent must report `NOT_REQUESTED`.
+The full 71-command acceptance requires source, runtime, independent oracles,
+external owner/reviewer and release leaves. None is silently promoted by green
+help text, a source-only test or an untrusted external tool probe.
