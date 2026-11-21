@@ -562,15 +562,20 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         self.assertEqual(pr84["changed_blobs"], 9)
         changed = sorted(git(ROOT, "diff", "--name-only", base, self.sha,
                              "--", "src/cora").splitlines())
+        # This exact C04 extension introduces one source module. Do not weaken
+        # historical closed-world identity or allow unregistered future additions.
+        added = sorted(r["path"] for r in universe["rows"] if r["difference"] == "ADDED")
+        self.assertEqual(added, ["src/cora/process_bounds.py"])
         self.assertEqual(universe["identical_blobs"], universe["denominator"] - len(changed))
-        self.assertEqual(universe["changed_blobs"], len(changed))
-        self.assertEqual(universe["added_blobs"], 0)
+        self.assertEqual(universe["changed_blobs"], len(changed) - len(added))
+        self.assertEqual(universe["added_blobs"], len(added))
         self.assertEqual(universe["removed_blobs"], 0)
         self.assertEqual(universe["source_oid_identity"], "REFUTED")
         self.assertEqual(universe["source_byte_identity"], "REFUTED")
-        self.assertEqual(universe["content_readback_paths"], universe["denominator"])
+        self.assertEqual(universe["content_readback_paths"], universe["denominator"] - len(added))
         self.assertEqual(universe["content_byte_equal_paths"], universe["denominator"] - len(changed))
-        self.assertEqual(universe["content_byte_different_paths"], changed)
+        self.assertEqual(universe["content_byte_different_paths"],
+                         sorted(set(changed) - set(added)))
         self.assertEqual(universe["exact_content_parity"], "REFUTED_SOURCE_CONTENT_PARITY")
         self.assertEqual(universe["full_runtime_behavior_equivalence"],
                          "NOT_ATTESTED")
@@ -641,13 +646,15 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             self.assertEqual(index["source_oid_identity"], "REFUTED")
             self.assertEqual(index["source_byte_identity"], "REFUTED")
             self.assertEqual(index["changed_blobs"], baseline["changed_blobs"] + 1)
-            self.assertEqual(index["identical_blobs"] + index["changed_blobs"],
-                             index["denominator"])
-            self.assertEqual(index["content_readback_paths"], index["denominator"])
+            self.assertEqual(index["identical_blobs"] + index["changed_blobs"]
+                             + index["added_blobs"], index["denominator"])
+            self.assertEqual(index["content_readback_paths"],
+                             index["denominator"] - index["added_blobs"])
             self.assertEqual(index["content_byte_equal_paths"],
                              index["denominator"] - len(changed_paths) - 1)
             self.assertEqual(index["content_byte_different_paths"],
-                             sorted(changed_paths + ["src/cora/reticulum.py"]))
+                             sorted((set(changed_paths) - {"src/cora/process_bounds.py"})
+                                    | {"src/cora/reticulum.py"}))
             self.assertEqual(index["exact_content_parity"],
                              "REFUTED_SOURCE_CONTENT_PARITY")
             self.assertEqual(index["full_runtime_behavior_equivalence"],
@@ -891,7 +898,11 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             "src/cora/integrated_registry.py",
         })
         current = module_oids(self.sha)
-        self.assertEqual(set(at_p0_base), set(current))
+        # The original source universe is retained, plus exactly one reviewed
+        # C04 module. Treat a second accidental addition as a real regression.
+        added_current = set(current) - set(at_p0_base)
+        self.assertEqual(added_current, {"src/cora/process_bounds.py"})
+        self.assertEqual(set(at_p0_base) - set(current), set())
         p0_merge = module_oids("1fa3570b86c91262b5d196fe5456950240ca7962")
         p0_successor_delta = {p for p in at_p0_base if at_p0_base[p] != p0_merge[p]}
         self.assertEqual(p0_successor_delta, {
@@ -918,7 +929,7 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         after_pr84 = {p for p in pr84 if pr84[p] != current[p]}
         self.assertEqual(after_pr84, set(git(ROOT, "diff", "--name-only",
             "84fd1f4515418afcb2bf8f0638ce6f7baeb99a4b", self.sha,
-            "--", "src/cora").splitlines()))
+            "--", "src/cora").splitlines()) - added_current)
         # The assurance verifier does change; do not call the entire repo equal.
         verifier = "tools/verify_engineering_closure.py"
         self.assertNotEqual(git(ROOT, "rev-parse", base + ":" + verifier),
