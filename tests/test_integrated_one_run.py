@@ -46,7 +46,12 @@ class IntegratedOneRunTests(unittest.TestCase):
         self.assertGreater(registry["class_counts"]["CI_WORKFLOW"], 5)
         self.assertEqual(report["metrics"]["registered_total"], len(registry["activities"]))
         self.assertEqual(report["metrics"]["activity_accounted"], len(report["attempts"]))
-        self.assertEqual(report["metrics"]["individually_executed_cli"], 0)
+        self.assertEqual(report["metrics"]["individually_executed_cli"], 3)
+        bounded_cli = [x for x in report["attempts"]
+                       if x["activity_id"].startswith("cli:") and
+                       x["state"] == "RUN_REPORTED_UNATTESTED"]
+        self.assertEqual({x["activity_id"] for x in bounded_cli},
+                         {"cli:version", "cli:process-list", "cli:snapshot"})
         self.assertEqual(report["source_status"], "DEBT_BLOCKED")
         self.assertEqual(report["product_status"], "BLOCKED_EXTERNAL")
         self.assertEqual(report["authority"], "NONE")
