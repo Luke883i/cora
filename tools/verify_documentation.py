@@ -510,6 +510,21 @@ def verify_project_adapter_prompt(guide: str) -> list[str]:
     if not prompt.startswith(
             "CORA LOCAL PROJECT ADAPTER — BETA v2 (METHOD_ONLY BY DEFAULT)"):
         errors.append("project-adapter-identity")
+    # Ported presentation grammar; this is a SOURCE lint, not a ChatGPT host interceptor.
+    shell = re.findall(r"(?m)^(S[0-9]) \| ([^\n]+)$", prompt)
+    expected_shell = (
+        ("S1", "Every CORA Project reply:", "ESITO | A | B | PROVA | EDGE | NEXT"),
+        ("S2", "A=answer/plan", "B=observed host actions or NOT_RUN",
+         "PROVA=source SHA+real tests or NOT_ATTESTED", "EDGE=first open AND leaf",
+         "NEXT=one safe step"),
+        ("S3", "Same structure for Path A/B", "never infer iKant owner voice",
+         "native ChatGPT UI, approval, or execution from a prompt"),
+    )
+    if ("ONE SHELL (presentation only; authority=0)" not in prompt
+            or [k for k, _ in shell] != ["S1", "S2", "S3"]
+            or any(any(token not in value for token in required)
+                   for (_, value), (_, *required) in zip(shell, expected_shell))):
+        errors.append("project-adapter-oneshell-contract")
     rows = re.findall(r"(?m)^(P[0-9]{2}) \| ([^\n]+)$", prompt)
     expected = [row[0] for row in PROJECT_ADAPTER_V2_CLAUSES]
     if [row[0] for row in rows] != expected:
