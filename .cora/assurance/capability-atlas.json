@@ -770,6 +770,7 @@
       "tests/test_hforge_profile.py",
       "tests/test_hostile_archive_intake.py",
       "tests/test_independent_qualification.py",
+      "tests/test_independent_self_oracles.py",
       "tests/test_integrated_one_run.py",
       "tests/test_integrated_semantic_service.py",
       "tests/test_maturity_atlas.py",

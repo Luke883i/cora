@@ -43,7 +43,7 @@ def validate_ledger(x):
         failures.append('coverage-gap')
     if any(i.get('resolution_status') not in {'PATCH_CANDIDATE_SOURCE_TESTED_NOT_INDEPENDENTLY_ACCEPTED','OPEN_NOT_ACCEPTED'} for i in issues):
         failures.append('unsupported-issue-resolution')
-    if any(i.get('resolution_status') == 'PATCH_CANDIDATE_SOURCE_TESTED_NOT_INDEPENDENTLY_ACCEPTED' and i.get('primary_slice') not in ('C01','C02','C03','C04') for i in issues):
+    if any(i.get('resolution_status') == 'PATCH_CANDIDATE_SOURCE_TESTED_NOT_INDEPENDENTLY_ACCEPTED' and i.get('primary_slice') not in ('C01','C02','C03','C04','C05') for i in issues):
         failures.append('false-patch-status')
     return failures
 

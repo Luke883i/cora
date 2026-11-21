@@ -1005,7 +1005,7 @@
       "priority": "P1",
       "proposed_owner_role": "QA indipendente / Maintainer",
       "qualification": "SOURCE_SUPPORTED_RISK_NOT_RUNTIME_REFUTED",
-      "resolution_status": "OPEN_NOT_ACCEPTED",
+      "resolution_status": "PATCH_CANDIDATE_SOURCE_TESTED_NOT_INDEPENDENTLY_ACCEPTED",
       "rollback": "Delete ephemeral cloned fixture; keep survivor receipt.",
       "title": "Oracle di replay e implementazione possono condividere lo stesso errore"
     },
@@ -1710,12 +1710,12 @@
         {
           "id": "SOURCE",
           "predicate": "exact target BASE/TREE provenance, scoped diff and affected consumers characterized",
-          "status": "NOT_RUN"
+          "status": "PASS_SCOPED_LOCAL"
         },
         {
           "id": "TARGET_RUNTIME",
           "predicate": "positive behavior and separately defined negative expected counterexample tested with exit/status/footprint",
-          "status": "NOT_RUN"
+          "status": "PASS_SCOPED_LOCAL"
         },
         {
           "id": "EXTERNAL",
@@ -1749,7 +1749,7 @@
       ],
       "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
       "slice_id": "C05",
-      "state": "PROPOSED_NOT_RUN"
+      "state": "LOCAL_PATCH_REPLAY_PENDING_AUTHENTIC_GIT_CI"
     },
     {
       "A0_outcome": "Dynamic consumer and callsites classified without unsafe deletion claims",
