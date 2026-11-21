@@ -104,7 +104,10 @@ jobs:
           x=json.load(open('/tmp/cora-pr37/run.json'))
           assert x['registry']['declared_commands'] == 71
           assert x['metrics']['activity_accounted'] == x['metrics']['registered_total']
-          assert x['metrics']['individually_executed_cli'] == 0
+          assert x['metrics']['individually_executed_cli'] == 3
+          cli = [a for a in x['attempts'] if a['activity_id'].startswith('cli:')]
+          assert len(cli) == 71
+          assert sum(a['state'] == 'RUN_REPORTED_UNATTESTED' for a in cli) == 3
           assert x['baseline_pr36']['model_stress']['cases'] == 100000
           assert x['baseline_pr36']['model_stress']['oracle_disagreements'] == 0
           assert x['baseline_pr36']['model_stress']['unauthorized_promotions'] == 0
@@ -306,7 +309,7 @@ jobs:
       - name: PR36 execute original Git one-run methods and render JSON/HTML
         run: |
           cora process-run . --revision HEAD --process full --one-run --output /tmp/cora-one-run.json --atlas-json /tmp/cora-one-run-atlas.json --atlas-html /tmp/cora-one-run.html --model-stress-cases 100000
-          python -c 'import json; a=json.load(open("/tmp/cora-one-run.json")); assert len(a["activities"])==8 and a["catalog_commands_declared"]==71 and a["catalog_commands_executed_individually"]==0 and a["runtime_status"]=="NOT_RUN" and a["model_stress"]["cases"]==100000 and a["model_stress"]["oracle_disagreements"]==0 and a["dod"]["nodes"]==27 and a["global_status"]=="BLOCKED_EXTERNAL" and a["authorization"]=="NONE" and not a["release_authorized"]'
+          python -c 'import json; a=json.load(open("/tmp/cora-one-run.json")); assert len(a["activities"])==8 and a["catalog_commands_declared"]==71 and a["catalog_commands_executed_individually"]==3 and len(a["cli_capability_attempts"])==71 and sum(x["state"]=="RUN_REPORTED_UNATTESTED" for x in a["cli_capability_attempts"])==3 and a["runtime_status"]=="NOT_RUN" and a["model_stress"]["cases"]==100000 and a["model_stress"]["oracle_disagreements"]==0 and a["dod"]["nodes"]==27 and a["global_status"]=="BLOCKED_EXTERNAL" and a["authorization"]=="NONE" and not a["release_authorized"]'
       # The canonical CLI below already calls verify_one -> verify_suite;
       # the direct method oracles and negative mutants remain in test_pr36_one_run.py.
       - name: PR36 assert offline HTML byte-equivalence to verified run
@@ -393,7 +396,9 @@ jobs:
           checks={
             'declared_71':a['registry']['declared_commands']==71,
             'activities_accounted':a['metrics']['activity_accounted']==a['metrics']['registered_total'],
-            'zero_individual_cli':a['metrics']['individually_executed_cli']==0,
+            'three_local_cli_receipts':(a['metrics']['individually_executed_cli']==3
+              and sum(x['state']=='RUN_REPORTED_UNATTESTED' for x in a['attempts']
+                      if x['activity_id'].startswith('cli:'))==3),
             'model_optin_absent':a['baseline_pr36']['model_stress']=={
               'schema':'cora-one-run-model-not-run/1','status':'NOT_RUN',
               'cases':0,'reason':'EXPLICIT_OPT_IN_REQUIRED',
