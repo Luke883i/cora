@@ -742,6 +742,7 @@
       "tests/test_ci_git_reproducibility.py",
       "tests/test_cli_capability_atlas.py",
       "tests/test_comprehensive_history_preflight.py",
+      "tests/test_cora_self_closure_ledger.py",
       "tests/test_counterfactual_blindspots.py",
       "tests/test_cross_repository_portability.py",
       "tests/test_debt_governance.py",
@@ -824,6 +825,7 @@
     ],
     "assurance_records": [
       ".cora/assurance/capability-atlas.json",
+      ".cora/assurance/cora-self-closure-ledger.json",
       ".cora/assurance/documentation-proofs.json",
       ".cora/assurance/operational-universe.json",
       ".cora/assurance/pr91-evidence-convergence.json"
