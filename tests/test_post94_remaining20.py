@@ -269,6 +269,12 @@ class ReticularDoD(unittest.TestCase):
             return 'invalid-reticulum-cardinality'
         if d.get('global_status')!='NOT_ACCEPTED' or d.get('release_authorized') is not False:
             return 'unsupported-approval'
+        if (d.get('goal')!='G_71_CAPABILITY_ACCEPTED' or
+                d.get('slice_goal')!='G_20_SCOPED_CHARACTERIZED'):
+            return 'reticular-goal-forged'
+        if (d.get('original_main')!='dbff5f12ba996cfcdaef35c3016c47c6ec3805d1' or
+                d.get('original_tree')!='7b9f1dfe8e932f5937f6fae81b20b6170f69bbdf'):
+            return 'source-pin-forged'
         if d.get('external_tools') != {'count':10,'state':'CANDIDATE_NOT_EXECUTED_BY_DEFAULT','authority':'NONE'}:
             return 'upstream-execution-promotion'
         for x in nodes:
@@ -305,6 +311,8 @@ class ReticularDoD(unittest.TestCase):
             ('missing-command',lambda x:x['previously_missing_commands'].pop()),
             ('lost-reticular-edge',lambda x:x['nodes'][-1]['depends_on'].pop()),
             ('fake-release',lambda x:x.update(release_authorized=True)),
+            ('goal-forgery',lambda x:x.update(goal='CLAIMED_APPROVED')),
+            ('source-pin-forgery',lambda x:x.update(original_main='0'*40)),
             ('external-tool-execution',lambda x:x['external_tools'].update(state='EXECUTED')),
             ('absent-local-oracle',lambda x:x['nodes'][0].update(positive_oracle='')),
             ('self-approved-node',lambda x:x['nodes'][0].update(acceptance_status='PASS')),
