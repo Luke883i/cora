@@ -25,7 +25,8 @@ from . import __version__
 from .process_bounds import run_bounded
 from .git_snapshot import git, snapshot
 from .maturity_atlas import build_atlas, render_html
-from .process_suite import run_suite, verify_suite, IMPLEMENTED, process_catalog
+from .process_suite import (run_suite, verify_suite, IMPLEMENTED, process_catalog,
+                            universal_capability_plan, verify_universal_capability_plan)
 from .reticulum import assess_cut, ordered_cut, EXTERNAL, MODEL
 from .synergy import unified_assurance
 
@@ -78,6 +79,28 @@ def _cli_frontier_at_revision(repo: Path, sha: str) -> bool:
     """Old Git histories and receipts retain their pre-frontier source semantics."""
     return bool(git(repo, "ls-tree", "--name-only", sha,
                     ".cora/contracts/dod/post94-cli-behavior-dod.json").strip())
+
+
+def _universal_at_revision(repo: Path, sha: str) -> bool:
+    """Historical receipts without the new contract retain original semantics."""
+    try:
+        raw = git(repo, "show", sha + ":.cora/contracts/dod/post94-cli-behavior-dod.json",
+                  max_output=128 * 1024)
+    except subprocess.CalledProcessError:
+        return False
+    doc = json.loads(raw)
+    contract = doc.get("universal_orchestration")
+    if contract is None:
+        return False
+    if (not isinstance(contract, dict) or
+            contract.get("schema") != "cora-universal-capability-orchestrator-dod/1" or
+            contract.get("authority") != "NONE" or
+            contract.get("source_counts") != {
+                "native_cli_declarations": 71,
+                "external_candidates": 10,
+                "addressable_capabilities": 81}):
+        raise ValueError("original Git universal orchestration contract drift")
+    return True
 
 
 def _cli_expected_output(command: str, repo: Path, sha: str) -> bytes:
@@ -392,7 +415,8 @@ def run_one(repo: Path, revision: str = "HEAD", *,
             process: str = "full", max_commits: int = 64,
             focus: str | None = None, execute_self_tests: bool = False,
             test_timeout: int = 240, model_stress_cases: int = 0,
-            change_base: str | None = None) -> dict:
+            change_base: str | None = None,
+            capability_intent: str | None = None) -> dict:
     if (type(execute_self_tests) is not bool or not 30 <= test_timeout <= 900
             or type(model_stress_cases) is not int or model_stress_cases not in (0, 100000)):
         raise ValueError("bounded and explicitly authorized test operation required")
@@ -450,6 +474,12 @@ def run_one(repo: Path, revision: str = "HEAD", *,
         receipt["catalog_commands_executed_individually"] = sum(
             row["state"] == "RUN_REPORTED_UNATTESTED" for row in receipt["cli_capability_attempts"])
         receipt["catalog_scope"] = "CORA_PINNED_CATALOG_WITH_BOUNDED_LOCAL_CLI_EXITS_NOT_PRODUCT_ACCEPTANCE"
+    if catalog is not None and _universal_at_revision(repo, commit):
+        receipt["universal_capability_plan"] = universal_capability_plan(
+            catalog["capabilities"], commit=commit, intent=capability_intent,
+            native_observations=receipt.get("cli_capability_attempts"))
+    elif capability_intent is not None:
+        raise ValueError("universal capability planning requires original Git CORA contract")
     receipt["receipt_digest"] = domain_hash("CORA:one-run:1", receipt)
     return receipt
 
@@ -533,6 +563,13 @@ def verify_one(repo: Path, receipt: dict, *, html_page: str | None = None) -> bo
     elif ("cli_capability_attempts" in receipt or
           receipt.get("catalog_commands_executed_individually") != 0):
         raise ValueError("target without CORA catalog forged CLI executions")
+    if cora and _universal_at_revision(repo, sha):
+        verify_universal_capability_plan(
+            expected_catalog["capabilities"],
+            receipt.get("universal_capability_plan"),
+            native_observations=receipt.get("cli_capability_attempts"))
+    elif "universal_capability_plan" in receipt:
+        raise ValueError("universal planner forged on old or non-CORA Git source")
     expected_dod = _original_dod(repo, sha) if cora else {
         "goal": "BLOCKED_EXTERNAL", "authority": "NONE",
         "source_level": "NO_CORA_PRODUCT_DOD_ON_TARGET", "gates": {}, "checklist": []}
