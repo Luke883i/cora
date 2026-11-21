@@ -722,14 +722,14 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         with self.assertRaisesRegex(
                 ValueError, "README current product/software/repository boundaries missing"):
             raw_previous.analyze(ROOT, self.sha)
-        legacy_guard = (b'    if not all(token in readme for token in (\n'
-                        b'            "**Product:** assurance",\n'
-                        b'            "**Software:** `cora-engine` and `cora-release-verification`",\n'
-                        b'            "**Repository:** source, tests, CI and **historical ADRs**")):\n'
-                        b'        raise ValueError("README current product/software/repository boundaries missing")')
+        legacy_guard = ('    if not all(token in readme for token in (\n'
+                        '            "**Product:** assurance",\n'
+                        '            "**Software:** `cora-engine` and `cora-release-verification`",\n'
+                        '            "**Repository:** source, tests, CI and **historical ADRs**")):\n'
+                        '        raise ValueError("README current product/software/repository boundaries missing")')
         replacement_guard = (
-            b'    if not readme_source_boundaries(readme):\n'
-            b'        raise ValueError("README current product/software/repository boundaries missing")')
+            '    if not readme_source_boundaries(readme):\n'
+            '        raise ValueError("README current product/software/repository boundaries missing")')
         # This one explicit adapter is the *only* normalized semantic
         # predicate.  Every other previously reported field is compared on
         # the same exact Git tree, with historical path-rename normalization.
