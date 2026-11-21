@@ -589,7 +589,11 @@ def verify_project_zip_lifecycle(readme: str, adoption: str,
                "POST → SQLite → GET", "same SHA", "--chat-step",
                "--chat-bundle", "latest copy to this Project chat",
                "iterations/000001/handoff.md")
-    offsets = [path.find(term) for term in ordered]
+    # Bind step 1 to its numbered instruction, not a repeated button label.
+    # The phrase also appears in the same step as GitHub UI copy.
+    offsets = [path.find("1. **New repository**:")] + [
+        path.find(term) for term in ordered[1:]
+    ]
     if not path or any(x < 0 for x in offsets) or offsets != sorted(offsets):
         errors.append("project-readme-beginner-journey-drift")
     figure = readme.split("## First five minutes", 1)[0]
