@@ -435,6 +435,35 @@ class OneRun71FrontierTests(unittest.TestCase):
             ["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True).strip()
         self.assertTrue(_cli_frontier_at_revision(ROOT, current))
 
+    def test_reticular_graph_all_71_AND_leaves_reachable_and_negative(self):
+        import copy
+        from cora.reticulum import ordered_cut, assess_cut, MODEL, EXTERNAL
+        contract = json.loads(
+            (ROOT / ".cora/contracts/dod/post94-cli-behavior-dod.json").read_text())
+        frontier = contract["orchestration_frontier"]
+        leaves = [{"id": n, "scope": "SOURCE", "depends_on": []}
+                  for n in frontier["canonical_local_node_refs"]]
+        middle = [{"id": n["id"], "scope": ("EXTERNAL" if n["id"].startswith("E_")
+                   else "SOURCE"), "depends_on": n["depends_on"]}
+                  for n in frontier["intermediates"]]
+        goal = {"id": frontier["global_goal"], "scope": "EXTERNAL",
+                "depends_on": ["I_CATALOG", "I_BOUNDED_OPERATIONS",
+                               "I_SOURCE_REPLAY", "I_EFFECT_POLICY",
+                               "E_TARGET_ORACLE", "E_HOST_REVIEW"]}
+        graph = leaves + middle + [goal]
+        order = ordered_cut(graph, goal["id"])
+        self.assertEqual(len(order), len(graph))
+        outcome = assess_cut(graph, goal["id"], {n["id"]: MODEL for n in leaves})
+        self.assertEqual(outcome["status"], EXTERNAL)
+        self.assertEqual(outcome["authorization"], "NONE")
+        orphaned = copy.deepcopy(graph)
+        orphaned[-1]["depends_on"].remove("I_EFFECT_POLICY")
+        self.assertLess(len(ordered_cut(orphaned, goal["id"])), len(orphaned))
+        broken = copy.deepcopy(graph)
+        next(n for n in broken if n["id"] == "I_CATALOG")["depends_on"].append("MISSING_SOURCE")
+        with self.assertRaisesRegex(ValueError, "dangling"):
+            ordered_cut(broken, goal["id"])
+
     def test_integrated_dossier_attribution_is_bounded_and_non_authorizing(self):
         from cora.one_run import run_cli_capabilities
         from cora.integrated_run import _attempts, _metrics
