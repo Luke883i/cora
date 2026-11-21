@@ -371,7 +371,6 @@ def main(argv: list[str] | None = None) -> int:
     pr.add_argument('--focus')
     pr.add_argument('--output',type=Path)
     pr.add_argument('--one-run',action='store_true',help='Integrated source execution + measured results atlas; not all 71 commands')
-    pr.add_argument('--capability-intent',help='Select from 71 CORA commands and 10 upstream candidates; no implicit external action')
     pr.add_argument('--atlas-html',type=Path,help='Offline navigable HTML with actual measured run outcomes')
     pr.add_argument('--atlas-json',type=Path,help='Full one-run JSON for human and AI inspection')
     pr.add_argument('--execute-self-tests',action='store_true',help='Explicit opt-in to locally execute CORA unittest suite; not an external oracle')
@@ -793,15 +792,13 @@ def main(argv: list[str] | None = None) -> int:
             if args.chat_bundle and (not args.one_run or args.profile != 'comprehensive'):
                 raise ValueError('chat bundle requires --one-run --profile comprehensive')
             chat_step = load_chat_step(args.chat_step) if args.chat_step else None
-            if args.portable_profile and (args.capability_intent or args.change_base or not args.one_run or args.profile or args.chat_step
+            if args.portable_profile and (args.change_base or not args.one_run or args.profile or args.chat_step
                                           or args.chat_bundle or args.execute_self_tests
                                           or args.model_stress_cases or args.authorization_file
                                           or args.evidence_dir):
                 raise ValueError('portable profile requires unprivileged --one-run only')
             if (args.portable_evidence_dir or args.portable_parse_js or args.portable_upstream or args.portable_native_probe) and not args.portable_profile:
                 raise ValueError('portable evidence requires portable profile')
-            if args.capability_intent is not None and not args.one_run:
-                raise ValueError('capability intent requires --one-run')
             if args.one_run:
                 if args.portable_profile:
                     result = run_portable(args.repo,args.revision,args.portable_profile,
@@ -824,7 +821,7 @@ def main(argv: list[str] | None = None) -> int:
                         evidence_dir=args.evidence_dir,test_timeout=args.test_timeout,
                         model_stress_cases=args.model_stress_cases,
                         change_base=args.change_base,
-                        capability_intent=args.capability_intent)
+                        capability_intent=chat_step['intent'] if chat_step else None)
                     if args.atlas_json:
                         args.atlas_json.write_text(json.dumps(result,sort_keys=True,indent=2)+'\n',encoding='utf-8')
                     if args.atlas_html:
@@ -844,8 +841,7 @@ def main(argv: list[str] | None = None) -> int:
                                      execute_self_tests=args.execute_self_tests,
                                      test_timeout=args.test_timeout,
                                      model_stress_cases=args.model_stress_cases,
-                                     change_base=args.change_base,
-                        capability_intent=args.capability_intent)
+                                     change_base=args.change_base)
                     if args.atlas_json:
                         args.atlas_json.write_text(json.dumps(result,sort_keys=True,indent=2)+'\n',encoding='utf-8')
                     if args.atlas_html:
