@@ -315,11 +315,26 @@ def verify_suite(repo:Path,report:dict)->bool:
 # The canonical 71-command parser and ten upstream owners remain untouched.
 UNIVERSAL_SCHEMA = "cora-universal-capability-plan/1"
 _BASELINE_OWNERS = frozenset(("version", "process-list", "snapshot"))
+# Reuse SOURCE METHODS that One-Run already observed; never label these as
+# individually executed CLI commands or independently validated target tests.
+_SOURCE_FOR_COMMAND = {
+    "graph": "python_candidate_graph",
+    "archaeology": "git_archaeology",
+    "debt-scan": "debt_signals",
+    "artifact-audit": "artifact_roles",
+    "adapter-audit": "manifest_adapters",
+    "holistic-audit": "holistic_archaeology",
+}
+_SOURCE_METHOD_PASS = frozenset(("EXECUTED_SCOPED", "REUSED_SCOPED_FROM_HOLISTIC"))
+_SOURCE_METHOD_STATES = _SOURCE_METHOD_PASS | frozenset((
+    "NOT_RUN_REQUIRES_FOCUS", "NOT_CONFIGURED",
+    "PARTIAL_SCOPED_NOT_CONFIGURED", "DEBT_BLOCKED"))
 
 
 def universal_capability_plan(capabilities: list[dict], *, commit: str,
                               intent: str | None = None,
-                              native_observations: list[dict] | None = None) -> dict:
+                              native_observations: list[dict] | None = None,
+                              source_methods: list[dict] | None = None) -> dict:
     """Select relevant owners; reuse observations, never perform new effects."""
     if (not isinstance(capabilities, list) or len(capabilities) != 71 or
             any(not isinstance(x, dict) or not isinstance(x.get("command"), str)
@@ -353,6 +368,27 @@ def universal_capability_plan(capabilities: list[dict], *, commit: str,
         observations[row["command"]] = row
     if observations and set(observations) != set(native):
         raise ValueError("partial native observation set")
+    # These are existing run_suite() method receipts. Their behavior remains
+    # source-scoped and is subsequently independently rederived by verify_one.
+    source = {}
+    if source_methods is not None:
+        if not isinstance(source_methods, list):
+            raise ValueError("invalid source method ledger")
+        for item in source_methods:
+            if (not isinstance(item, dict) or
+                    item.get("method") not in IMPLEMENTED["full"] or
+                    item.get("method") in source or
+                    item.get("status") not in _SOURCE_METHOD_STATES):
+                raise ValueError("missing, duplicate or forged source method")
+            digest = item.get("source_digest")
+            if item["status"] in _SOURCE_METHOD_PASS:
+                if not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest):
+                    raise ValueError("source method execution lacks exact digest")
+            elif digest is not None:
+                raise ValueError("non-executed source method invented digest")
+            source[item["method"]] = item
+        if set(source) != set(IMPLEMENTED["full"]):
+            raise ValueError("incomplete original source method universe")
     rows = []
     for name, cap in sorted(native.items()):
         selected = name in _BASELINE_OWNERS
@@ -376,9 +412,17 @@ def universal_capability_plan(capabilities: list[dict], *, commit: str,
             state, reason = "RUN_REPORTED_UNATTESTED", "REUSED_EXISTING_BOUNDED_OWNER_RECEIPT"
         else:
             state, reason, digest = "BLOCKED", "BOUNDED_NATIVE_OBSERVATION_UNAVAILABLE", None
+        source_method = _SOURCE_FOR_COMMAND.get(name) if selected else None
+        source_digest = None
+        if (selected and name not in _BASELINE_OWNERS and source_method in source and
+                source[source_method]["status"] in _SOURCE_METHOD_PASS):
+            source_digest = source[source_method]["source_digest"]
+            state, reason = ("REUSED_SOURCE_METHOD_SCOPED",
+                             "SOURCE_METHOD_REUSED_NOT_INDIVIDUAL_CLI_EXECUTION")
         rows.append({"id": "cora:" + name, "kind": "NATIVE_CLI", "owner": "CORA",
                      "selected": selected, "state": state, "reason": reason,
-                     "output_sha256": digest, "authority": "NONE"})
+                     "output_sha256": digest, "source_method": source_method,
+                     "source_digest_sha256": source_digest, "authority": "NONE"})
     ranked = process_catalog(intent=intent or "")
     matches = {x["id"] for x in ranked.get("inference", [])}
     for name, binary, args, terms, process, handoff in sorted(EXTERNAL_TOOLS):
@@ -388,11 +432,13 @@ def universal_capability_plan(capabilities: list[dict], *, commit: str,
                      "state": "BLOCKED" if selected else "NOT_SELECTED",
                      "reason": "EXTERNAL_TOOL_NOT_AUTHORIZED_OR_ATTESTED"
                      if selected else "INTENT_NOT_RELEVANT",
-                     "output_sha256": None, "authority": "NONE"})
+                     "output_sha256": None, "source_method": None,
+                     "source_digest_sha256": None, "authority": "NONE"})
     rows.sort(key=lambda x: x["id"])
     counts = {"native": 71, "external": 10, "total": 81,
               "selected": sum(x["selected"] for x in rows),
               "run_reported": sum(x["state"] == "RUN_REPORTED_UNATTESTED" for x in rows),
+              "source_reused": sum(x["state"] == "REUSED_SOURCE_METHOD_SCOPED" for x in rows),
               "blocked": sum(x["state"] == "BLOCKED" for x in rows),
               "not_selected": sum(x["state"] == "NOT_SELECTED" for x in rows)}
     return {"schema": UNIVERSAL_SCHEMA, "commit": commit, "intent": intent,
@@ -408,13 +454,14 @@ def universal_capability_plan(capabilities: list[dict], *, commit: str,
 
 
 def verify_universal_capability_plan(capabilities: list[dict], report: dict,
-                                     native_observations: list[dict] | None = None) -> bool:
+                                     native_observations: list[dict] | None = None,
+                                     source_methods: list[dict] | None = None) -> bool:
     """Exact source replay: a digest is not independent runtime attestation."""
     if not isinstance(report, dict) or report.get("authority") != "NONE":
         raise ValueError("invalid capability report authority")
     expected = universal_capability_plan(
         capabilities, commit=report.get("commit"), intent=report.get("intent"),
-        native_observations=native_observations)
+        native_observations=native_observations, source_methods=source_methods)
     if report != expected:
         raise ValueError("capability plan, status or native receipt does not replay")
     return True
