@@ -435,6 +435,13 @@ class OneRun71FrontierTests(unittest.TestCase):
             ["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True).strip()
         self.assertTrue(_cli_frontier_at_revision(ROOT, current))
 
+    def test_reader_guide_does_not_promote_all_71_or_release(self):
+        text = (ROOT / "docs/CLI_REFERENCE.md").read_text()
+        self.assertIn("three bounded read-only CLI routes", text)
+        self.assertIn("68 routes as `BLOCKED`", text)
+        self.assertIn("RUN_REPORTED_UNATTESTED", text)
+        self.assertIn("not independent target acceptance", text)
+
     def test_reticular_graph_all_71_AND_leaves_reachable_and_negative(self):
         import copy
         from cora.reticulum import ordered_cut, assess_cut, MODEL, EXTERNAL
