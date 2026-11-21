@@ -205,7 +205,7 @@ CORA cannot automatically observe every ChatGPT message. No assistant should cla
 
 With explicit permission, generate one original target native execution receipt outside the target using cora.native_gold.capture_native. Then pass --portable-native-probe PATH to the existing process-run --one-run --portable-profile PROFILE-v2.json; verify-process uses the same flag for exact Git and retained-byte replay. This is a local subprocess outcome, not authenticated host identity, independent browser/remote proof or release approval. See [Gold assurance](GOLD_ASSURANCE.md).
 
-## Post-PR94 scoped command behavior and reticular DoD
+## Scoped command behavior and reticular DoD
 
 The [canonical 79-node command behavior contract](../.cora/contracts/dod/post94-cli-behavior-dod.json)
 backward-derives a global noncompensatory gate from 71 CLI leaves, including
