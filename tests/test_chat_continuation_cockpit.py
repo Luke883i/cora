@@ -302,6 +302,24 @@ class NavigationTests(unittest.TestCase):
         self.assertIn("pv.add_argument('--chat-cockpit-html',type=Path,help=argparse.SUPPRESS)",
                       source)
 
+    def test_beginner_guide_path_a_and_b_requires_real_execution_and_same_source(self):
+        bundle, receipt = self.make_bundle()
+        page = render_verified_cockpit(bundle, expected_receipt=receipt)
+        parser = Links()
+        parser.feed(page)
+        self.assertIn("start", parser.ids)
+        self.assertIn("#start", parser.refs)
+        for word in ("Start here", "four beginner steps", "Path A:", "Path B:",
+                     "METHOD_ONLY / NOT_RUN", "EXPLAIN", "REPLAN", "PROPOSE_NEXT_CHECK",
+                     "separate agent and runner", "pinned Git SHA", "reversible",
+                     "never executes", "first unresolved", "expected oracle"):
+            self.assertIn(word, page)
+        self.assertIn(receipt["commit"], page)
+        self.assertNotIn("<script", page.lower())
+        self.assertNotIn("onclick=", page.lower())
+        self.assertNotIn("<form", page.lower())
+        self.assertIn("Authorization: NONE", page)
+
     def test_three_choices_have_exact_navigable_targets_and_copy_only_actions(self):
         bundle, receipt = self.make_bundle()
         page = render_verified_cockpit(bundle, expected_receipt=receipt)

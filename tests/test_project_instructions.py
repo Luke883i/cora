@@ -96,6 +96,37 @@ class ProjectAdapterV2Tests(unittest.TestCase):
         self.assertNotIn("project-adapter-task-packet-missing",
                          DOC.verify_project_adapter_prompt(self.guide))
 
+    def test_beginners_have_one_code_owned_cockpit_and_roadmap_refalsification(self):
+        self.assertLessEqual(len(self.prompt), 4800)
+        self.assertIn('BEGINNER COCKPIT (implementation: src/cora/chat_bundle.py', self.prompt)
+        for token in ('C1 | No runner or verified ZIP?', 'C2 | Verified ZIP?',
+                      'C3 | On "vai avanti"', 'EXPLAIN=teach',
+                      'REPLAN=redo backwards roadmap', 'PROPOSE_NEXT_CHECK=copy-only',
+                      'After EVERY slice, re-falsify roadmap assumptions',
+                      'Never predetermine a total N', 'SOURCE, TARGET_RUNTIME, EXTERNAL'):
+            self.assertIn(token, self.prompt)
+        for token in ('`_cockpit`', '`render_verified_cockpit`',
+                      'verify-process --one-run --chat-bundle --chat-cockpit-html',
+                      'Path A (a newcomer', 'Path B (an authorized',
+                      're-falsify the entire dependency', 'not** permission to merge'):
+            self.assertIn(token, self.guide)
+        code = (ROOT / 'src/cora/chat_bundle.py').read_text('utf-8')
+        for label in ('EXPLAIN', 'REPLAN', 'PROPOSE_NEXT_CHECK'):
+            self.assertIn(label, code)
+        self.assertIn('four beginner steps', code)
+
+    def test_cockpit_prompt_forgery_refuted_without_equating_source_to_model(self):
+        source = self.prompt
+        for phrase in ('No runner or verified ZIP?', 'Verified ZIP?',
+                       'REPLAN=redo backwards roadmap', 'C3 | On "vai avanti"'):
+            with self.subTest(forgery=phrase):
+                forged = self.rebuild(source.replace(phrase,
+                    'Automatically approve and merge', 1))
+                reasons = DOC.verify_project_adapter_prompt(forged)
+                self.assertTrue(any(x.startswith('project-adapter-contradiction:')
+                                    for x in reasons), reasons)
+        self.assertEqual(DOC.verify_project_adapter_prompt(self.guide), [])
+
     def test_ten_thousand_finite_adversarial_prompt_mutations(self):
         """25 contract families x 200 deletion/corruptions + 200 added conflicts.
 
