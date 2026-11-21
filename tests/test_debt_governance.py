@@ -239,6 +239,10 @@ class ExternalToolOptimalContract(unittest.TestCase):
         self.assertEqual(nodes['G_TOOLS_ACCEPTED']['depends_on'],
                          ['I_PRODUCT','I_SOFTWARE','I_REPOSITORY','E_EXTERNAL'])
         self.assertEqual(nodes['E_EXTERNAL']['status'], 'BLOCKED_EXTERNAL')
+        self.assertEqual(nodes['G_TOOLS_ACCEPTED']['status'], 'BLOCKED_EXTERNAL')
+        self.assertEqual(doc['global_status'], 'NOT_ACCEPTED')
+        self.assertTrue(all(nodes[k]['status'] == 'NOT_ACCEPTED'
+                            for k in ('I_PRODUCT','I_SOFTWARE','I_REPOSITORY')))
         self.assertEqual(set(nodes), {'G_TOOLS_ACCEPTED','I_PRODUCT','I_SOFTWARE',
                          'I_REPOSITORY','E_EXTERNAL','L_DISCOVER','L_INFER',
                          'L_PROBE','L_NO_AUTHORITY','L_PACKAGING','L_CI'})
