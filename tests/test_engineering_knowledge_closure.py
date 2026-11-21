@@ -477,6 +477,33 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             self.assertEqual(run.returncode, 3, run.stdout + run.stderr)
             self.assertIn("component DoD orphan", run.stdout + run.stderr)
 
+    def test_dynamic_only_consumer_is_not_a_safe_deletion_claim(self):
+        # Counterexample: no lexical import edge, yet a runtime consumer exists.
+        # Model static evidence and execute the independently specified consumer.
+        import os
+        modules = ["src/cora/cli.py", "src/cora/runtime_only.py"]
+        tests = ["tests/test_fixture.py"]
+        atlas = {"commands": [{"command": "version", "family": "git-evidence",
+                 "method_source": modules[0], "test_source": tests[0]}]}
+        contribution = ekc.contribution_index(
+            sorted(modules + tests), modules, [], tests, [], atlas)
+        row = next(x for x in contribution["rows"] if x["path"] == modules[1])
+        self.assertEqual(row["cli_static"], "NOT_OBSERVED_STATIC")
+        self.assertEqual(row["consolidation_review"],
+                         "STATIC_ISOLATION_REVIEW_ONLY_DYNAMIC_UNKNOWN")
+        self.assertEqual(row["consolidation"], "NOT_AUTHORIZED_UNTESTED")
+        self.assertEqual(row["consumer_status"], "STATIC_CANDIDATES_DYNAMIC_UNKNOWN")
+        self.assertEqual(contribution["metrics"]["safe_consolidations_attested"], 0)
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / 'runtime_only.py').write_text('VALUE = 37\n')
+            script = ('import importlib, sys; sys.path.insert(0, sys.argv[1]); '
+                      'print(importlib.import_module("runtime_only").VALUE)')
+            probe = subprocess.run([sys.executable, '-c', script, str(root)],
+                capture_output=True, text=True, timeout=10, check=False)
+            self.assertEqual(probe.returncode, 0, probe.stderr)
+            self.assertEqual(probe.stdout.strip(), '37')
+
     def test_closed_world_source_universe_is_exhaustive_not_behavioral(self):
         a = "a" * 40
         b = "b" * 40
@@ -562,15 +589,20 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         self.assertEqual(pr84["changed_blobs"], 9)
         changed = sorted(git(ROOT, "diff", "--name-only", base, self.sha,
                              "--", "src/cora").splitlines())
+        # This exact C04 extension introduces one source module. Do not weaken
+        # historical closed-world identity or allow unregistered future additions.
+        added = sorted(r["path"] for r in universe["rows"] if r["difference"] == "ADDED")
+        self.assertEqual(added, ["src/cora/process_bounds.py"])
         self.assertEqual(universe["identical_blobs"], universe["denominator"] - len(changed))
-        self.assertEqual(universe["changed_blobs"], len(changed))
-        self.assertEqual(universe["added_blobs"], 0)
+        self.assertEqual(universe["changed_blobs"], len(changed) - len(added))
+        self.assertEqual(universe["added_blobs"], len(added))
         self.assertEqual(universe["removed_blobs"], 0)
         self.assertEqual(universe["source_oid_identity"], "REFUTED")
         self.assertEqual(universe["source_byte_identity"], "REFUTED")
-        self.assertEqual(universe["content_readback_paths"], universe["denominator"])
+        self.assertEqual(universe["content_readback_paths"], universe["denominator"] - len(added))
         self.assertEqual(universe["content_byte_equal_paths"], universe["denominator"] - len(changed))
-        self.assertEqual(universe["content_byte_different_paths"], changed)
+        self.assertEqual(universe["content_byte_different_paths"],
+                         sorted(set(changed) - set(added)))
         self.assertEqual(universe["exact_content_parity"], "REFUTED_SOURCE_CONTENT_PARITY")
         self.assertEqual(universe["full_runtime_behavior_equivalence"],
                          "NOT_ATTESTED")
@@ -625,8 +657,17 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             changed_paths = sorted(git(clone, "diff", "--name-only", base, "HEAD",
                                        "--", "src/cora").splitlines())
             self.assertEqual(baseline["source_byte_identity"], "REFUTED")
-            self.assertEqual(baseline["changed_blobs"], len(changed_paths))
-            self.assertEqual(baseline["content_byte_different_paths"], changed_paths)
+            # The comparison spans the union of base and HEAD paths. A newly
+            # tracked module is ADDED, never CHANGED, and cannot have two
+            # committed byte streams to compare.
+            added_paths = sorted(row["path"] for row in baseline["rows"]
+                                 if row["difference"] == "ADDED")
+            self.assertEqual(added_paths, ["src/cora/process_bounds.py"])
+            self.assertEqual(baseline["removed_blobs"], 0)
+            self.assertEqual(baseline["added_blobs"], len(added_paths))
+            shared_changed_paths = sorted(set(changed_paths) - set(added_paths))
+            self.assertEqual(baseline["changed_blobs"], len(shared_changed_paths))
+            self.assertEqual(baseline["content_byte_different_paths"], shared_changed_paths)
             path = clone / "src/cora/reticulum.py"
             path.write_text(path.read_text("utf-8") +
                             "\n# source universe falsifier\n", "utf-8")
@@ -641,18 +682,63 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             self.assertEqual(index["source_oid_identity"], "REFUTED")
             self.assertEqual(index["source_byte_identity"], "REFUTED")
             self.assertEqual(index["changed_blobs"], baseline["changed_blobs"] + 1)
-            self.assertEqual(index["identical_blobs"] + index["changed_blobs"],
-                             index["denominator"])
-            self.assertEqual(index["content_readback_paths"], index["denominator"])
+            self.assertEqual(index["identical_blobs"] + index["changed_blobs"]
+                             + index["added_blobs"], index["denominator"])
+            self.assertEqual(index["content_readback_paths"],
+                             index["denominator"] - index["added_blobs"])
             self.assertEqual(index["content_byte_equal_paths"],
                              index["denominator"] - len(changed_paths) - 1)
             self.assertEqual(index["content_byte_different_paths"],
-                             sorted(changed_paths + ["src/cora/reticulum.py"]))
+                             sorted((set(changed_paths) - {"src/cora/process_bounds.py"})
+                                    | {"src/cora/reticulum.py"}))
             self.assertEqual(index["exact_content_parity"],
                              "REFUTED_SOURCE_CONTENT_PARITY")
             self.assertEqual(index["full_runtime_behavior_equivalence"],
                              "NOT_ATTESTED")
             self.assertTrue(ekc.verify_report(clone, changed))
+
+    def test_added_module_has_no_before_bytes_and_does_not_mask_mutant(self):
+        # Counterexample to the prior test oracle: a newly tracked module
+        # appears in git diff --name-only, but is not a CHANGED shared blob.
+        with tempfile.TemporaryDirectory(prefix="cora-added-module-") as folder:
+            repo = Path(folder) / "source"
+            repo.mkdir()
+            git(repo, "init", "-q")
+            git(repo, "config", "user.name", "CORA fixture")
+            git(repo, "config", "user.email", "fixture@example.invalid")
+            folder_path = repo / "src" / "cora"
+            folder_path.mkdir(parents=True)
+            (folder_path / "cli.py").write_text("# original\n", "utf-8")
+            (folder_path / "stable.py").write_text("value = 1\n", "utf-8")
+            git(repo, "add", ".")
+            git(repo, "commit", "-qm", "base")
+            base = git(repo, "rev-parse", "HEAD")
+            (folder_path / "stable.py").write_text("value = 2\n", "utf-8")
+            (folder_path / "process_bounds.py").write_text("LIMIT = 1\n", "utf-8")
+            git(repo, "add", ".")
+            git(repo, "commit", "-qm", "reviewed new module")
+            first = ekc.git_engine_source_universe(repo, base, "HEAD")
+            self.assertEqual(first["denominator"], 3)
+            self.assertEqual(first["added_blobs"], 1)
+            self.assertEqual(first["changed_blobs"], 1)
+            self.assertEqual(first["identical_blobs"], 1)
+            self.assertEqual(first["content_readback_paths"], 2)
+            self.assertEqual(first["content_byte_different_paths"],
+                             ["src/cora/stable.py"])
+            self.assertEqual([r["path"] for r in first["rows"]
+                              if r["difference"] == "ADDED"],
+                             ["src/cora/process_bounds.py"])
+            self.assertEqual(first["source_byte_identity"], "REFUTED")
+            # A second unforeseen addition cannot be silently treated as an
+            # ordinary changed file or an authorized new module.
+            (folder_path / "unreviewed.py").write_text("HIDDEN = True\n", "utf-8")
+            git(repo, "add", ".")
+            git(repo, "commit", "-qm", "unreviewed module counterexample")
+            mutant = ekc.git_engine_source_universe(repo, base, "HEAD")
+            self.assertEqual(mutant["added_blobs"], 2)
+            self.assertNotEqual(sorted(r["path"] for r in mutant["rows"]
+                                 if r["difference"] == "ADDED"),
+                                ["src/cora/process_bounds.py"])
 
     def test_nested_engine_source_cannot_escape_finite_universe_denominator(self):
         base = "57dd5c4fb6317d9a9e951fcbebac9c7aa5560b6f"
@@ -689,9 +775,15 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
                              "REFUTED")
             self.assertEqual(document["engine_source_universe"]["exact_content_parity"],
                              "REFUTED_SOURCE_CONTENT_PARITY")
-            self.assertEqual(document["engine_source_universe"]["content_byte_different_paths"],
-                             sorted(git(ROOT, "diff", "--name-only", base, self.sha,
-                                        "--", "src/cora").splitlines()))
+            universe = document["engine_source_universe"]
+            added_paths = sorted(row["path"] for row in universe["rows"]
+                                 if row["difference"] == "ADDED")
+            self.assertEqual(added_paths, ["src/cora/process_bounds.py"])
+            self.assertEqual(universe["removed_blobs"], 0)
+            changed_paths = set(git(ROOT, "diff", "--name-only", base, self.sha,
+                                    "--", "src/cora").splitlines())
+            self.assertEqual(universe["content_byte_different_paths"],
+                             sorted(changed_paths - set(added_paths)))
             replay = subprocess.run(
                 [sys.executable, str(ROOT / "tools/verify_engineering_closure.py"),
                  "--repo", str(ROOT), "--verify-report", str(receipt)],
@@ -891,7 +983,11 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             "src/cora/integrated_registry.py",
         })
         current = module_oids(self.sha)
-        self.assertEqual(set(at_p0_base), set(current))
+        # The original source universe is retained, plus exactly one reviewed
+        # C04 module. Treat a second accidental addition as a real regression.
+        added_current = set(current) - set(at_p0_base)
+        self.assertEqual(added_current, {"src/cora/process_bounds.py"})
+        self.assertEqual(set(at_p0_base) - set(current), set())
         p0_merge = module_oids("1fa3570b86c91262b5d196fe5456950240ca7962")
         p0_successor_delta = {p for p in at_p0_base if at_p0_base[p] != p0_merge[p]}
         self.assertEqual(p0_successor_delta, {
@@ -918,7 +1014,7 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         after_pr84 = {p for p in pr84 if pr84[p] != current[p]}
         self.assertEqual(after_pr84, set(git(ROOT, "diff", "--name-only",
             "84fd1f4515418afcb2bf8f0638ce6f7baeb99a4b", self.sha,
-            "--", "src/cora").splitlines()))
+            "--", "src/cora").splitlines()) - added_current)
         # The assurance verifier does change; do not call the entire repo equal.
         verifier = "tools/verify_engineering_closure.py"
         self.assertNotEqual(git(ROOT, "rev-parse", base + ":" + verifier),

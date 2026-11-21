@@ -769,6 +769,31 @@ def verify_progressive_readme(readme: str) -> list[str]:
     return sorted(set(errors))
 
 
+def contract_path_cardinality_issues(index_text: str, registry: dict) -> list[str]:
+    """Check one explicit CURRENT editorial claim against the canonical path index.
+
+    This finite lexical binding is not a semantic validator for all documentation.
+    """
+    paragraph = index_text.split('**Contract paths:**', 1)
+    if len(paragraph) != 2:
+        return ['contract-index-cardinality-claim-missing']
+    section = paragraph[1].split('\n\n', 1)[0]
+    claim = re.search(
+        r'Find the (\d+) internal DoDs, (\d+) profiles and (\d+) assurance records',
+        section,
+    )
+    if claim is None:
+        return ['contract-index-cardinality-claim-unparseable']
+    if not isinstance(registry, dict) or not isinstance(registry.get('bindings'), list):
+        return ['contract-path-registry-invalid']
+    expected = tuple(sum(
+        isinstance(binding, dict) and binding.get('scope') == scope
+        for binding in registry['bindings']
+    ) for scope in ('INTERNAL_DOD', 'INTERNAL_PROFILE', 'INTERNAL_ASSURANCE'))
+    observed = tuple(int(x) for x in claim.groups())
+    return [] if observed == expected else ['contract-index-cardinality-drift']
+
+
 def verify(root: Path) -> list[str]:
     root = root.resolve()
     errors: list[str] = []
@@ -860,6 +885,12 @@ def verify(root: Path) -> list[str]:
             errors.append("cli-reference-parser-drift")
     except (OSError, SyntaxError):
         errors.append("cli-reference-unreadable")
+    try:
+        contract_paths = json.loads((root / '.cora/contracts/index.json').read_text('utf-8'))
+        errors.extend(contract_path_cardinality_issues(
+            (root / 'docs/INDEX.md').read_text('utf-8'), contract_paths))
+    except (OSError, ValueError, TypeError):
+        errors.append('contract-path-registry-invalid')
     readme = (root / "README.md").read_text("utf-8")
     errors.extend(verify_progressive_readme(readme))
     if not (root / "LICENSE").is_file() or not (root / "LICENSE").read_text("utf-8").startswith("MIT License"):

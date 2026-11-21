@@ -8,15 +8,16 @@ from __future__ import annotations
 import hashlib
 import json
 import os
-import shlex
-import subprocess
+import stat
 import tempfile
 from pathlib import Path
 
 from .evidence import domain_hash, valid_path
 from .git_snapshot import git
+from .process_bounds import run_bounded
 
 MAX_EDIT = 2 * 1024 * 1024
+MAX_VERIFIER_LOG = 2 * 1024 * 1024
 DOC_EXT = ('.md', '.txt', '.rst')
 
 
@@ -135,6 +136,7 @@ def apply_rename_docs(repo: Path, plan: dict, *, approval: str, test_command: li
     if actual != plan:
         raise ValueError('plan differs from current Git+worktree, including if self-digest re-signed')
     before: dict[str,bytes] = {}
+    before_modes: dict[str,int] = {}
     try:
         for entry in actual['edits']:
             item = _file(repo,entry['path'])
@@ -142,6 +144,7 @@ def apply_rename_docs(repo: Path, plan: dict, *, approval: str, test_command: li
             if _hash(raw)!=entry['before_sha256']:
                 raise ValueError('preimage hash mismatch')
             before[entry['path']]=raw
+            before_modes[entry['path']]=stat.S_IMODE(item.stat().st_mode)
         for entry in actual['edits']:
             source = _file(repo,entry['path'])
             target = _file(repo,entry['result_path'])
@@ -155,15 +158,16 @@ def apply_rename_docs(repo: Path, plan: dict, *, approval: str, test_command: li
             with tempfile.NamedTemporaryFile(dir=target.parent,delete=False) as scratch:
                 temp=Path(scratch.name)
                 scratch.write(new_contents)
-            os.chmod(temp, target.stat().st_mode & 0o777)
+            os.chmod(temp, before_modes[entry['path']])
             os.replace(temp,target)
-        check = subprocess.run(test_command, cwd=repo, capture_output=True, timeout=timeout, check=False)
+        check = run_bounded(test_command, cwd=repo, timeout=timeout, max_output=MAX_VERIFIER_LOG)
         if check.returncode != 0:
             raise ValueError('verification command failed with exit '+str(check.returncode))
         # Revalidate all owned postimages *after* the verifier ran.
         for entry in actual['edits']:
             path = _file(repo, entry['result_path'])
-            if not path.is_file() or _hash(path.read_bytes()) != entry['after_sha256']:
+            if (not path.is_file() or _hash(path.read_bytes()) != entry['after_sha256']
+                    or stat.S_IMODE(path.stat().st_mode) != before_modes[entry['path']]):
                 raise ValueError('verifier altered an owned postimage')
         if (repo / actual['old']).exists():
             raise ValueError('old path still exists after rename')
@@ -193,4 +197,5 @@ def apply_rename_docs(repo: Path, plan: dict, *, approval: str, test_command: li
             target=_file(repo,name)
             target.parent.mkdir(parents=True,exist_ok=True)
             target.write_bytes(raw)
+            os.chmod(target, before_modes[name])
         raise

@@ -1486,6 +1486,13 @@
       "rationale": "Noncompensatory reader and release candidate contract; policy cannot grant external authority."
     },
     {
+      "pattern": ".cora/assurance/cora-self-closure-ledger.json",
+      "roles": [
+        "ARTIFACT_INDEX"
+      ],
+      "rationale": "Source-level inventory of 27 known issues and noncompensatory unaccepted closure gates; no runtime/review authority."
+    },
+    {
       "pattern": ".cora/assurance/pr91-evidence-convergence.json",
       "roles": [
         "ARTIFACT_INDEX"

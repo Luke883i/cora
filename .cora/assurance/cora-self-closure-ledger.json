@@ -1,0 +1,2701 @@
+{
+  "acceptance_rule": "AND(SOURCE,TARGET_RUNTIME,EXTERNAL_WHEN_REQUIRED); NOT_RUN or UNKNOWN or BLOCKED_EXTERNAL never counts as PASS",
+  "authority": "SOURCE_PROPOSAL_NO_INDEPENDENT_RUNTIME_OR_REVIEW_AUTHORITY",
+  "baseline": {
+    "commit": "4bae40585573c65aec5e678879e9c35462bae257",
+    "repository": "Luke883i/cora",
+    "tree": "96ee1d7eaf83402f8ff98a2ce54907f3ea0f5927"
+  },
+  "candidate_source_commits": {
+    "C01": "4d1d8763fa4c4c67da7cb4f3b4d5f1183bd534a1",
+    "C02": "d0b5f9483bf053c58fca5918c3c06d2d62f87091",
+    "C03": "a7b2ae26c3c2daea2872abe75befce87e136a75a"
+  },
+  "engine_debt_register": [
+    {
+      "id": "P0_CI_GIT_CLONE",
+      "layer": "REPOSITORY",
+      "mapped_slices": [
+        "C08"
+      ],
+      "state": "REQUIRES_EXACT_HEAD_CI_AND_INDEPENDENT_RCA",
+      "user_scope": "IN_SCOPE",
+      "witness": "tests/test_method_synthesis.py"
+    },
+    {
+      "id": "P0_GITHUB_GOVERNANCE",
+      "layer": "PRODUCT",
+      "mapped_slices": [],
+      "state": "BLOCKED_EXTERNAL_HOST_REQUIRED_CHECKS_AND_REVIEW",
+      "user_scope": "EXCLUDED_TEMPORARILY_BY_USER",
+      "witness": "tools/governance_readback.py"
+    },
+    {
+      "id": "P1_TEMPORAL_DOCUMENTATION",
+      "layer": "REPOSITORY",
+      "mapped_slices": [
+        "C25"
+      ],
+      "state": "SOURCE_CHRONOLOGY_RECONCILED_NOT_REVIEWED",
+      "user_scope": "IN_SCOPE",
+      "witness": "docs/RELEASE.md"
+    },
+    {
+      "id": "P1_DYNAMIC_DEPENDENCIES",
+      "layer": "SOFTWARE",
+      "mapped_slices": [
+        "C06"
+      ],
+      "state": "STATIC_CALLSITES_NOT_EXECUTION_COVERAGE",
+      "user_scope": "IN_SCOPE",
+      "witness": "src/cora/cli.py"
+    },
+    {
+      "id": "P1_HISTORICAL_SCOPE",
+      "layer": "REPOSITORY",
+      "mapped_slices": [
+        "C08",
+        "C25"
+      ],
+      "state": "PR01_37_FROZEN_PR38_39_NEED_SEPARATE_EXTENSION",
+      "user_scope": "IN_SCOPE",
+      "witness": ".cora/assurance/history/pr01-37-commit-diff-audit.json"
+    },
+    {
+      "id": "P1_INDEPENDENT_BEHAVIOR",
+      "layer": "PRODUCT",
+      "mapped_slices": [
+        "C05",
+        "C18"
+      ],
+      "state": "BLOCKED_EXTERNAL_REAL_MAINTAINED_TARGET",
+      "user_scope": "IN_SCOPE",
+      "witness": "tools/independent_git_oracle.py"
+    },
+    {
+      "id": "P2_MODEL_SURVIVOR_SCOPE",
+      "layer": "SOFTWARE",
+      "mapped_slices": [
+        "C16"
+      ],
+      "state": "FINITE_MODEL_IS_NOT_PHYSICAL_GIT_FALSIFICATION",
+      "user_scope": "IN_SCOPE",
+      "witness": "src/cora/gold_saturation.py"
+    },
+    {
+      "id": "P2_HOST_WORKFLOW_COVERAGE",
+      "layer": "REPOSITORY",
+      "mapped_slices": [
+        "C23"
+      ],
+      "state": "GITHUB_CHECKS_NOT_ENFORCEMENT",
+      "user_scope": "IN_SCOPE",
+      "witness": ".github/workflows/ci-semantic-lattice.yml"
+    }
+  ],
+  "global_status": "NOT_ACCEPTED",
+  "heuristic_signals": [
+    {
+      "candidate_slice": "C15",
+      "path": "research/decision-ready-assurance/aosp-r2/tools/replay_100.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "61304c071ec2456ee431eac4db2331aaf5eb6b94be3f3b48fe8fcd7f4dd5d672"
+    },
+    {
+      "candidate_slice": "C15",
+      "path": "research/decision-ready-assurance/aosp-r3/tools/falsify_r3_100.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "d15a9e1d619278133239c81651cfb50e3b9fb332498429474d69d83d6bf6ca2c"
+    },
+    {
+      "candidate_slice": "C15",
+      "path": "research/decision-ready-assurance/public-field-guide/audit_guide.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "eb0eae796c4b1c661908331dea60aaca45c047a41d3eb265fe4eb23bec3b3568"
+    },
+    {
+      "candidate_slice": "C15",
+      "path": "research/decision-ready-assurance/public-field-guide/build_guide.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "983d623264e7ef6b841f486535a3aab9a969a993b7ab6f297ee18a01f452a585"
+    },
+    {
+      "candidate_slice": "C15",
+      "path": "research/decision-ready-assurance/verify_release.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "63adb7465cd1353de4fff5ddaca32a491ac00ab855662621fa98ffbee350d0b6"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/adapter_stress.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "c1ed3c2ce37e1781d541035c5374ac9860a9e7dc732bf8a5c371670bc25f7407"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/adapters.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "ba11eaa463656d4f0345f3c69286598e3eeabf1bb0acbccd119f67c2858ee1ba"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/agent_assurance.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "d85578ef4edca54ad8534d3ec43c13bfcea3832c744fe95bff058c89af27aff7"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/agent_saturation.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "5e280f98bc10463098f33a373811c7cb2ea8e965c22ed676416d1d86f49342dc"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/archaeology.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "39f38c970028c85e2afeac02e154891785e19ef538009dd045d5e19cfc149a97"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/archaeology_stress.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "03a5f6f66c166964dfb6a4591ad19ce3dda207980b3bd8098d8ca47b986098fe"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/archive_intake.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "87e69031c243d4f662bb7b328dd12801ca10d2d037e9193ea421062e63acfb74"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/artifact_roles.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "4138112050a3dd36676718eb575f3c28475141530f0aa996ab05995c3366d362"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/audit.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "8fd598d55117dbe32574e655cdcf3be7b158d718d6c6f879f06fd7dc3bbcd81e"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/chat_bundle.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "0791daa0e6b899ee318043a628cbce2d63278fe3f9c8932b9ba25e303f286f52"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/chat_bundle.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_MODULE_SIZE_HEURISTIC",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "505758478da37f3511ca5fd72017328a593b3bad56e9e90ac8830a2fccd65531"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/ci_repro.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "adb7e9d9b4235e73781ed709474f11a472d49a38dd16f6049c30d2339b09cd77"
+    },
+    {
+      "candidate_slice": "C10",
+      "path": "src/cora/cli.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "6ef19f8d9a8c47b4b4b6fdd5c5c5e3c7ec25d054e285e1060f2e2860f5970115"
+    },
+    {
+      "candidate_slice": "C10",
+      "path": "src/cora/cli.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_MODULE_SIZE_HEURISTIC",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "691673ab4bd4cce0f99c323fc9d70281623af577eb67401d144e014ec2def941"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/closure.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "0c1bfb77e27dffb02650549eb3c1ced39f31749f60763a23957dacfa379d68e0"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/closure_stress.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "f4e336871c57cb484f9acf045e0597e5c502bbc4eb0513251d3f8a9803bdc92b"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/continuous.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "5d98cbbffbcb2a168ff3be3b9c519da5c6074adeb5e1c9ed3de3755f94e5d00f"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/continuous.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_MODULE_SIZE_HEURISTIC",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "29ee784019aab98b09af31c7e7d4331a097e826164c5dc4fd5bac4fe80782c39"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/debt.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "c0c7992d65bbc42dc1d0a6dffc775a617b0a982c3a68fe32f3b8981953456031"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/evidence.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "76e90793f2b94a81480262b8689d76bf194401a16a980c335126d4b3df92bb91"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/file_lab.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "5f523b041eea8659489ca3881c3574871dd7d34bb6369c487d87c6b08a3b5216"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/genealogy.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "033b60c16c2cbd03466ca392b782d38e35ed380fdbc423b92319f8bec52f249f"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/genealogy.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_MODULE_SIZE_HEURISTIC",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "99fdd8c15d875a831d61020fb06827e0b75470b4092d1a144b0f2ef2eb8f1f2e"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/git_snapshot.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "8f84eaaca33fb4af2fcd87d1d69d618a86c79fbb946bcb37c48cce35bd43704a"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/gold_assurance.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "3d2fed98b4041cd3dc259b21efde6d51e58cddda8329f162e8bee1ab492e5c5a"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/gold_bridge.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "4752d64f66d9307ef9c105b9e2c299a197c62b227e9b10ad5568de6f18b422d2"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/gold_mutations.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "e9c82069d1ec62cfd8320502891c18617793747be99879a8845d7151003f8854"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/gold_saturation.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "781f8353f96d00d83b92379a8826f5f60b8860a2aeffeb30048620f5db7046b8"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/graph.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "c91ea5ddc1d2166ba60b4442ce28c799226a27d3479a1c4d7b427277445fdf05"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/graph_stress.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "0b3fae5a94f9591d5492748cbd7f2b2d9163e94e8ae8aa02d79c884744654866"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/guard_runtime.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "f1df79b1acf96192c4c099c3c849d69681cc5a9bad9597df1241192f8fe8149c"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/holistic.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "4a75cfe5e29d8d18f8755aa2ef2ff6236a34c52e355adc585aca537fe358254a"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/host_release.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "f5eee66b6ce5d0cd5346d8b90fbd1c4cf4478e3222b8f12a7478011ca24d5ad4"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/independent_qualification.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "27fbb540b7c02d5b64f6b2919ffb1d0f951e4229ec9d2b7493a2070ae1cac9a7"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/integrated_html.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "54fcc3a9db29b49d4c296fb5a99803e9395fefdaac7dc8e8c976fc378fe69618"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/integrated_registry.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "7895b2547f40a59c72b470e985cddcf0f6a066bc2d477ed9350e5bae7eff058d"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/integrated_run.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "c531e1d49e246fc8784d92b540f2349cb32bf1b8adf3ef8b7ebe84b19e8a3b40"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/integrated_run.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_MODULE_SIZE_HEURISTIC",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "acee485c2a95687a2d1346a89490d66d7b7838202e95b6e9c004b89be1fc8efa"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/integrated_service.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "b894341fe95122c983af9d29433e5bfd59d529ea02d059d215925706776ab8c7"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/maturity_atlas.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "c44bf0002b72b0be709fab0870f6dc3a58d6bc84b3e7f723b5ba28b9b1b96649"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/method_synthesis.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "2b36ececb969f58766fee3a47574529244a5516091d771c3bc63ff9968a230b4"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/mutation_evidence.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "6973fdc329e0c111220636a600ccb1474077b8048d8d1d33e2b98ffd51cbf4f4"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/mutations.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "1196e27c3c2aae8a7bda83d06f3db83785621702ed2f7a5c471c4f32893775d0"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/native_gold.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "1c450e7db6685c7b9e71f2217f2f0af8ffbde40b0e23d7298f868230e44241e9"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/one_run.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "9dc55e5b6e103fab8421e3f675e5fcfd9b59ad1adafc1464eab579d0bd5aba13"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/one_run.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_MODULE_SIZE_HEURISTIC",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "c8d14acf5f59a306c0334ae147577e7a761bf9e8e3ae438a5763788e8396798f"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/one_run_stress.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "22d65b3a9704a3be6d1f72a603e8147950458704cf86c303433c79598b6fbb10"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/ontology.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "4f9dd9f65cc0d83a1a157b56a312997256e7efebd4ab7945a56644302b775110"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/portable_assurance.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "0e5a3d7854cea73e38917d7ac3819fb8b9ffab6382a3046120449fc9bea2f82d"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/practice_contract.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "943b231139aec0975dc579fb7db5aedcade626154c3b418f875dc1be6d393c46"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/process_suite.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "e1bd0af9f9cc5fcd2d5254fdd0cb58f46667780bfec4208293f8832ec2d39996"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/reticulum.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "4e5a48683ebe59eafa22a36783c14db2dfe5ef08c3e0f747fb6559266235d843"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/runtime_observation.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "abe08666cad0dfd610ebf2bba406640f436ff0064499f42e909efc3e1d745b68"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/synergy.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "eb5d5d15b4c28aa846265456431e42b7c4eae5d6f522b1577dd7d80f93ef2506"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/transform.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "e16c07124c51db41389e01cd4b1d34fd472c3b762e30f954100d797f016f5f05"
+    },
+    {
+      "candidate_slice": "C12",
+      "path": "src/cora/workflow_rationalization.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "ce72808b113034715dc284cb525d9c4cd7dcbcd1450c503687fbbae54e8c3a2c"
+    },
+    {
+      "candidate_slice": "C15",
+      "path": "tests/test_chat_continuation_cockpit.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "3d14c0dc62328a984a36c560550a146381185f25695ac95161da97e6886e63f5"
+    },
+    {
+      "candidate_slice": "C15",
+      "path": "tests/test_cli_capability_atlas.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "a68713e47d349590d3badd967d8be0705008b540aad14ba8056c5c158992dca0"
+    },
+    {
+      "candidate_slice": "C15",
+      "path": "tests/test_cross_repository_portability.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "81c7ad578a33b50457f0d87bb5e827c015a2eb7c7b625e6d30be1d854126834c"
+    },
+    {
+      "candidate_slice": "C15",
+      "path": "tests/test_cross_repository_portability.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_MODULE_SIZE_HEURISTIC",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "5b24e08211f64f7f0a482b1e94c0a2dd790020f94c1e81a049ce49194adf5301"
+    },
+    {
+      "candidate_slice": "C15",
+      "path": "tests/test_engineering_knowledge_closure.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "8f971553dd22afd93627efa7a14ab86a7826e28843b84bb6f23095553f10f2d1"
+    },
+    {
+      "candidate_slice": "C15",
+      "path": "tests/test_engineering_knowledge_closure.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_MODULE_SIZE_HEURISTIC",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "89526a9620ea77671683d9d3084a7113e351fc8168cbe55b7ce8e9d2dfd34caf"
+    },
+    {
+      "candidate_slice": "C15",
+      "path": "tests/test_enterprise_documentation.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "d39e80e9eb18fc8c504244ac83ea4582ee37d61d197a9549dcb37c1ede9cf566"
+    },
+    {
+      "candidate_slice": "C15",
+      "path": "tests/test_enterprise_documentation.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_MODULE_SIZE_HEURISTIC",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "a6c7afdd96de31d6234a10c1f13ca8cb14f54e69e04340060ea86500f4a30ed2"
+    },
+    {
+      "candidate_slice": "C15",
+      "path": "tests/test_git_lineage_genealogy.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "dd8e7e3622af400eb8eafc2cdad77d74ae740adb5abf43724b43295a38f50637"
+    },
+    {
+      "candidate_slice": "C15",
+      "path": "tests/test_independent_qualification.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "0bd78aea9eefe4ec61850b1c4ed13b445a6393f9cc25cd89757f8c78baf1689a"
+    },
+    {
+      "candidate_slice": "C15",
+      "path": "tests/test_independent_qualification.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_MODULE_SIZE_HEURISTIC",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "85377ec387d6ab0d1af866307acea75b26d26a460b3373afb76f3481e7358147"
+    },
+    {
+      "candidate_slice": "C15",
+      "path": "tests/test_integrated_one_run.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "b22d1bb66f0ecae61227bbd990d04faa201bce8486eb27422334d26786244d9a"
+    },
+    {
+      "candidate_slice": "C15",
+      "path": "tests/test_method_synthesis.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "69a1c7d08a81e46e511550ee5713e0abf17dba614e44d67b6cd7456339e2f66f"
+    },
+    {
+      "candidate_slice": "C15",
+      "path": "tests/test_project_instructions.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "1fea6718e845b0d4b569b08e3958013751e9f6c696b3c11a16040f33cfa53d10"
+    },
+    {
+      "candidate_slice": "C15",
+      "path": "tests/test_reader_navigation.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "75d3f3b2acfd1672c14fc704d6c56aa8beb51f0e9a40224620f9f1f8161d04ad"
+    },
+    {
+      "candidate_slice": "C15",
+      "path": "tests/test_reader_navigation.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_MODULE_SIZE_HEURISTIC",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "3d7aed6953e129858a6019950b850ed20731a22b8ccec474c3bb7a6d750d46aa"
+    },
+    {
+      "candidate_slice": "C15",
+      "path": "tests/test_release_artifact_integrity.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "3f9d0f499a4d9f2f6d1f90281d93c6c3aa29a4f795170b5b8ff09db3a19cecde"
+    },
+    {
+      "candidate_slice": "C15",
+      "path": "tests/test_release_readiness.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "8e5bfe40abffcef9232d29ebe3a6e3e2b84563345c287775da1f8c3866549146"
+    },
+    {
+      "candidate_slice": "C15",
+      "path": "tests/test_release_readiness.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_MODULE_SIZE_HEURISTIC",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "2b42f91586517ccdab62a278a0103fc44d131e8f91a565a0d60a0af94fb48c61"
+    },
+    {
+      "candidate_slice": "C15",
+      "path": "tests/test_selection.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "a99cc5c6264b9fa64a449ba2252889fa5d2de3887ac3ed70522a6a1903b6ca0a"
+    },
+    {
+      "candidate_slice": "C15",
+      "path": "tests/test_self_governing_contract.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "50d8b81c202f12ea3f0a7c4f60ec246ef2c3d15c456a9e9a204de42c4b70d412"
+    },
+    {
+      "candidate_slice": "C15",
+      "path": "tests/test_workflow_rationalization.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "a4e3991c73d96e217f0a6f784e7c9b60fe4c35d6b76ef6ce411e2ec5f6d69e3d"
+    },
+    {
+      "candidate_slice": "C23",
+      "path": "tools/external_validate.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "d40b68f763733166816af53ce77175e1354f608eeed9eda42da55950128e4003"
+    },
+    {
+      "candidate_slice": "C23",
+      "path": "tools/governance_readback.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "7916bafdd2a11a0ee5ab37f032dc27a334ca1de92cbcd4f3b7ae0ac65e3a4f84"
+    },
+    {
+      "candidate_slice": "C23",
+      "path": "tools/hforge_profile.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "35cf8da2d8f08218541e6e38e436ec35e66c244fca93c3aa335d12b81c1e33a9"
+    },
+    {
+      "candidate_slice": "C23",
+      "path": "tools/independent_git_oracle.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "4fb0cc6942e6e7c84b5119066a74872159a6b302c24bdd4e0de97e287c08888a"
+    },
+    {
+      "candidate_slice": "C23",
+      "path": "tools/release_readiness_scenarios.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "0c0537e343d569af920d748f0a195056612f7da8882b7a07ce3ac80f5468f6b3"
+    },
+    {
+      "candidate_slice": "C23",
+      "path": "tools/release_verify.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "cfe0a65e429899b08cbf16819ed74d8e55d79af06d996fd4e0d619c507b8001f"
+    },
+    {
+      "candidate_slice": "C23",
+      "path": "tools/release_verify.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_MODULE_SIZE_HEURISTIC",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "fe3078b7ff2c192857775eac43dfcced088154292e64a1e9e542b834bfa0ebbe"
+    },
+    {
+      "candidate_slice": "C23",
+      "path": "tools/verify_capability_atlas.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "4cd51caa41c7b66d4af37a2600d3f35b4832bcb5632684794f38e907a403210f"
+    },
+    {
+      "candidate_slice": "C23",
+      "path": "tools/verify_claim_evidence.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "6feff9cc8c2f497744dbf9205a92a42c870c81ce181591867704276932b022ed"
+    },
+    {
+      "candidate_slice": "C23",
+      "path": "tools/verify_crossrepo_convergence.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "02c3339553fdfb43364badb049ad2712ec026ff69473f28440c489cec470d847"
+    },
+    {
+      "candidate_slice": "C23",
+      "path": "tools/verify_documentation.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "0a2d8c6ebf586719e1912e7b18afb5a3cc2211f90fcca09fb5d1cb7ba0eb93bb"
+    },
+    {
+      "candidate_slice": "C23",
+      "path": "tools/verify_documentation.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_MODULE_SIZE_HEURISTIC",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "0a3d2821793f725a96d37be07fe168f865b2dc7f07379ca8ff08bce9139d8a27"
+    },
+    {
+      "candidate_slice": "C23",
+      "path": "tools/verify_engineering_closure.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "9a7221358594e7c4e80d3f2c08df11c45e833182bf0400119b9b4e97ee7c1a41"
+    },
+    {
+      "candidate_slice": "C23",
+      "path": "tools/verify_engineering_closure.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_MODULE_SIZE_HEURISTIC",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "1a6fe5878186f6821d28eb4d4f4ff58364abc7da5b0f8ec1f94677b301facc5a"
+    },
+    {
+      "candidate_slice": "C23",
+      "path": "tools/verify_final_experimental.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "c1cb4268f8145c70d2c101b5bffa3cde4523fac239740b72d96112f3d9449234"
+    },
+    {
+      "candidate_slice": "C23",
+      "path": "tools/verify_final_experimental.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_MODULE_SIZE_HEURISTIC",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "368d7aaf85432791ac251c1eac83aa5fd819721ada895a0d0708ee28f8e17c19"
+    },
+    {
+      "candidate_slice": "C23",
+      "path": "tools/verify_layout_simplification.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "25c943ece1e8665375e6c238c710d49d6ec9110baa0a0b6058c8c74890edd86e"
+    },
+    {
+      "candidate_slice": "C23",
+      "path": "tools/verify_layout_simplification.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_MODULE_SIZE_HEURISTIC",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "78ff8f85260627c420c4e9a1dea18184237cbe96b3c524199954f9998a8ebe70"
+    },
+    {
+      "candidate_slice": "C23",
+      "path": "tools/verify_operational_equivalence.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "25d97ea73e3e3e24d997465f1c111cd07db5a592c700383a7922a36b5a71a161"
+    },
+    {
+      "candidate_slice": "C23",
+      "path": "tools/verify_operational_equivalence.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_MODULE_SIZE_HEURISTIC",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "7a88ea41da281329ae9d95a4f23ffe68e0c1746077708df323896f35035187d8"
+    },
+    {
+      "candidate_slice": "C23",
+      "path": "tools/verify_release_readiness.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "e45d1f03f5ae4e9bd5ec7cda197f3c54f53037e2be180b88992b901b19bca0f7"
+    },
+    {
+      "candidate_slice": "C23",
+      "path": "tools/verify_repository_contract.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "68ec2bf1f4aa8418fd8e8b4da5060850bc4efc1fde773317c9debb9fb8d6b0c5"
+    },
+    {
+      "candidate_slice": "C23",
+      "path": "tools/verify_type_assurance.py",
+      "qualifier": "SOURCE_HEURISTIC_NOT_CONFIRMED_DEFECT",
+      "rule": "PY_AST_STRUCTURAL_COMPLEXITY",
+      "severity": "P2_INVESTIGATE",
+      "signal_id": "12e73d571e1e9b75f69020527edda2d23dc340694a7ee1de1c92b0e3bc388b3f"
+    }
+  ],
+  "issues": [
+    {
+      "area": "HARDENING",
+      "dependencies": "tests/test_change_transform_and_guard.py",
+      "evidence_state": "REPRODUCED_PHYSICAL",
+      "id": "H01",
+      "negative_falsifier": "Fallimento del test dopo rename di .md 100755 produce mode 100644 o status Git residuo.",
+      "no_deletion_claim": true,
+      "positive_oracle": "Su file 100644 e 100755 con verifica fallita, byte, mode Git, nome e status tornano identici al baseline.",
+      "primary_slice": "C01",
+      "priority": "P1",
+      "proposed_owner_role": "Maintainer / QA",
+      "qualification": "CONFIRMED_BEHAVIOR_DEFECT",
+      "resolution_status": "PATCH_CANDIDATE_SOURCE_TESTED_NOT_INDEPENDENTLY_ACCEPTED",
+      "rollback": "Discard disposable branch/worktree; do not change main.",
+      "title": "Rollback di document rename non preserva mode 100755"
+    },
+    {
+      "area": "HARDENING",
+      "dependencies": "tests/test_hostile_archive_intake.py",
+      "evidence_state": "REPRODUCED_PHYSICAL",
+      "id": "H02",
+      "negative_falsifier": "Membro con Unix S_IFDIR e filename file-like viene accettato come file.",
+      "no_deletion_claim": true,
+      "positive_oracle": "Accetta entrata regolare coerente e directory coerente; rigetta entrata con tipo directory e nome/file non directory.",
+      "primary_slice": "C02",
+      "priority": "P1",
+      "proposed_owner_role": "Maintainer / QA",
+      "qualification": "CONFIRMED_BEHAVIOR_DEFECT",
+      "resolution_status": "PATCH_CANDIDATE_SOURCE_TESTED_NOT_INDEPENDENTLY_ACCEPTED",
+      "rollback": "Discard disposable branch/worktree; do not change main.",
+      "title": "ZIP intake accetta metadati incoerenti file/directory"
+    },
+    {
+      "area": "HARDENING",
+      "dependencies": "H01; owner dell’esecutore",
+      "evidence_state": "SOURCE_OBSERVED_RISK",
+      "id": "H03",
+      "negative_falsifier": "Un verifier autorizzato emette output oltre il budget, nessun consumo non limitato o falso PASS.",
+      "no_deletion_claim": true,
+      "positive_oracle": "Un processo verboso rimane entro budget memoria/file e produce stato BLOCKED, senza falsa riuscita.",
+      "primary_slice": "C04",
+      "priority": "P1",
+      "proposed_owner_role": "Maintainer / Runtime security owner",
+      "qualification": "SOURCE_SUPPORTED_RISK_NOT_RUNTIME_REFUTED",
+      "resolution_status": "PATCH_CANDIDATE_SOURCE_TESTED_NOT_INDEPENDENTLY_ACCEPTED",
+      "rollback": "Discard local fixture; no host settings change.",
+      "title": "Output non limitato prima dell’acquisizione per verifier e native probe"
+    },
+    {
+      "area": "HARDENING",
+      "dependencies": "Autorizzazione runner target; preregistrazione oracolo",
+      "evidence_state": "SOURCE_OBSERVED_RISK",
+      "id": "H04",
+      "negative_falsifier": "Un errore comune introdotto nei due rami non ottiene falso PASS incontestato.",
+      "no_deletion_claim": true,
+      "positive_oracle": "Oracle indipendente concorda sui casi corretti, negativi e missing leaves.",
+      "primary_slice": "C05",
+      "priority": "P1",
+      "proposed_owner_role": "QA indipendente / Maintainer",
+      "qualification": "SOURCE_SUPPORTED_RISK_NOT_RUNTIME_REFUTED",
+      "resolution_status": "PATCH_CANDIDATE_SOURCE_TESTED_NOT_INDEPENDENTLY_ACCEPTED",
+      "rollback": "Delete ephemeral cloned fixture; keep survivor receipt.",
+      "title": "Oracle di replay e implementazione possono condividere lo stesso errore"
+    },
+    {
+      "area": "HARDENING",
+      "dependencies": "H04; runner isolato",
+      "evidence_state": "SOURCE_OBSERVED_RISK",
+      "id": "H05",
+      "negative_falsifier": "Un file importato solo dinamicamente non viene suggerito come rimuovibile.",
+      "no_deletion_claim": true,
+      "positive_oracle": "Un consumer dinamico preregistrato compare in una classificazione motivata, con scope dichiarato.",
+      "primary_slice": "C06",
+      "priority": "P1",
+      "proposed_owner_role": "Maintainer / QA",
+      "qualification": "SOURCE_SUPPORTED_RISK_NOT_RUNTIME_REFUTED",
+      "resolution_status": "OPEN_NOT_ACCEPTED",
+      "rollback": "Discard disposable branch/worktree; do not change main.",
+      "title": "Consumatori dinamici e processi figli non coperti dalla reachability AST"
+    },
+    {
+      "area": "HARDENING",
+      "dependencies": "H03; owner runtime",
+      "evidence_state": "SOURCE_OBSERVED_RISK",
+      "id": "H06",
+      "negative_falsifier": "Input malevolo/non autorizzato non provoca esecuzione implicita.",
+      "no_deletion_claim": true,
+      "positive_oracle": "Comando non autorizzato resta NOT_RUN; ambiente autorizzato produce ricevuta con log e perimetro.",
+      "primary_slice": "C07",
+      "priority": "P2",
+      "proposed_owner_role": "Runtime security owner",
+      "qualification": "SOURCE_SUPPORTED_RISK_NOT_RUNTIME_REFUTED",
+      "resolution_status": "OPEN_NOT_ACCEPTED",
+      "rollback": "Restore disposable test checkout; no persistent service.",
+      "title": "Trust boundary dei target-native test non equivale ad isolamento"
+    },
+    {
+      "area": "HARDENING",
+      "dependencies": "Runner reale e storia Git autentica",
+      "evidence_state": "PARTIAL_ENVIRONMENT",
+      "id": "H07",
+      "negative_falsifier": "Wrong ancestor, forged receipt, missing history: fail closed.",
+      "no_deletion_claim": true,
+      "positive_oracle": "Comprehensive e replay concordano sullo SHA originale e missing leaves.",
+      "primary_slice": "C08",
+      "priority": "P1",
+      "proposed_owner_role": "Maintainer / QA",
+      "qualification": "EVIDENCE_ENVIRONMENT_BLOCKER",
+      "resolution_status": "OPEN_NOT_ACCEPTED",
+      "rollback": "Retain logs externally; no repository modification.",
+      "title": "Comprehensive One-Run su genealogia originale non qualificato localmente"
+    },
+    {
+      "area": "HARDENING",
+      "dependencies": "Host osservabile, autorizzazione esterna",
+      "evidence_state": "SOURCE_OBSERVED_RISK",
+      "id": "H08",
+      "negative_falsifier": "Una risposta del provider dichiara PASS/approvazione senza receipt e viene segnalata.",
+      "no_deletion_claim": true,
+      "positive_oracle": "Ogni stato osservato ha corrispondente evento e assenza approvazione implicita.",
+      "primary_slice": "C09",
+      "priority": "P2",
+      "proposed_owner_role": "Maintainer / QA",
+      "qualification": "SOURCE_SUPPORTED_RISK_NOT_RUNTIME_REFUTED",
+      "resolution_status": "OPEN_NOT_ACCEPTED",
+      "rollback": "Discard disposable branch/worktree; do not change main.",
+      "title": "No-promote test principalmente source-model, non provider/model runtime"
+    },
+    {
+      "area": "SOFTWARE_CLOSURE",
+      "dependencies": "H04; S02; original Git runner",
+      "evidence_state": "STATIC_MEASURED",
+      "id": "S01",
+      "negative_falsifier": "Un comando read-only cambia exit/out oppure un effectful cambia footprint.",
+      "no_deletion_claim": true,
+      "positive_oracle": "Stesso elenco 71 comandi e stessa semantica di errori, output, status su casi preregistrati.",
+      "primary_slice": "C10",
+      "priority": "P1",
+      "proposed_owner_role": "Maintainer / QA",
+      "qualification": "ARCHITECTURAL_SIGNAL_NOT_DEFECT",
+      "resolution_status": "OPEN_NOT_ACCEPTED",
+      "rollback": "Discard disposable branch/worktree; do not change main.",
+      "title": "Main CLI concentra 996 linee e 138 branch candidati"
+    },
+    {
+      "area": "SOFTWARE_CLOSURE",
+      "dependencies": "H01; H02; H07",
+      "evidence_state": "SOURCE_OBSERVED_RISK",
+      "id": "S02",
+      "negative_falsifier": "Un comando restituisce help corretto ma effetto reale erroneo.",
+      "no_deletion_claim": true,
+      "positive_oracle": "Tutti i comandi ad effetto hanno oracle effetti/rollback; altri raggruppati per contratto.",
+      "primary_slice": "C11",
+      "priority": "P1",
+      "proposed_owner_role": "Maintainer / QA",
+      "qualification": "SOURCE_SUPPORTED_RISK_NOT_RUNTIME_REFUTED",
+      "resolution_status": "OPEN_NOT_ACCEPTED",
+      "rollback": "Discard disposable branch/worktree; do not change main.",
+      "title": "71 comandi dichiarati vs soli 6 native probes in operational universe"
+    },
+    {
+      "area": "SOFTWARE_CLOSURE",
+      "dependencies": "H04; H05",
+      "evidence_state": "SOURCE_OBSERVED_RISK",
+      "id": "S03",
+      "negative_falsifier": "Almeno un consumer cambia esito senza essere segnalato.",
+      "no_deletion_claim": true,
+      "positive_oracle": "Una modifica resta paritaria su consumer dichiarati e controesempi indipendenti.",
+      "primary_slice": "C12",
+      "priority": "P1",
+      "proposed_owner_role": "Maintainer / QA",
+      "qualification": "SOURCE_SUPPORTED_RISK_NOT_RUNTIME_REFUTED",
+      "resolution_status": "OPEN_NOT_ACCEPTED",
+      "rollback": "Discard disposable branch/worktree; do not change main.",
+      "title": "Dimensione e centralità di evidence/git_snapshot/reticulum"
+    },
+    {
+      "area": "SOFTWARE_CLOSURE",
+      "dependencies": "S02; H04",
+      "evidence_state": "SOURCE_OBSERVED_RISK",
+      "id": "S04",
+      "negative_falsifier": "Link interno mancante o receipt HTML che disallinea SHA o status.",
+      "no_deletion_claim": true,
+      "positive_oracle": "HTML, JSON, offline cockpit e verifica ZIP restano identici su baseline fixtures.",
+      "primary_slice": "C13",
+      "priority": "P2",
+      "proposed_owner_role": "Maintainer / QA",
+      "qualification": "SOURCE_SUPPORTED_RISK_NOT_RUNTIME_REFUTED",
+      "resolution_status": "OPEN_NOT_ACCEPTED",
+      "rollback": "Discard disposable branch/worktree; do not change main.",
+      "title": "Altri hub di orchestrazione e rendering hanno funzioni lunghe"
+    },
+    {
+      "area": "SOFTWARE_CLOSURE",
+      "dependencies": "H07; ambienti Python dichiarati",
+      "evidence_state": "SOURCE_DECLARED_EXTERNAL",
+      "id": "S05",
+      "negative_falsifier": "Un package omette portable_js_imports.mjs o usa metadata/version non coerenti.",
+      "no_deletion_claim": true,
+      "positive_oracle": "Byte di distribuzione destinata a review e installazione corrispondono al source HEAD.",
+      "primary_slice": "C14",
+      "priority": "P1",
+      "proposed_owner_role": "Packaging maintainer",
+      "qualification": "EXTERNAL_EVIDENCE_GAP",
+      "resolution_status": "OPEN_NOT_ACCEPTED",
+      "rollback": "Delete temporary venv and artifacts; do not publish.",
+      "title": "Wheel/sdist replay installato è dichiarato ma non eseguito in questa sessione"
+    },
+    {
+      "area": "SOFTWARE_CLOSURE",
+      "dependencies": "H07; owner del debito",
+      "evidence_state": "SOURCE_STATIC",
+      "id": "S06",
+      "negative_falsifier": "Un segnale di complessità è promosso a bug certo senza review o label.",
+      "no_deletion_claim": true,
+      "positive_oracle": "Precision/recall ed errori con denominatore e scope comunicati.",
+      "primary_slice": "C15",
+      "priority": "P2",
+      "proposed_owner_role": "Maintainer / QA",
+      "qualification": "SOURCE_SIGNAL_NOT_DEFECT",
+      "resolution_status": "OPEN_NOT_ACCEPTED",
+      "rollback": "Discard disposable branch/worktree; do not change main.",
+      "title": "debt-scan produce 106 heuristic findings senza precision/recall"
+    },
+    {
+      "area": "SOFTWARE_CLOSURE",
+      "dependencies": "H07; S02",
+      "evidence_state": "STATIC_MEASURED",
+      "id": "S07",
+      "negative_falsifier": "Un fault-model regressione sfugge a nuovi tier o source mutations.",
+      "no_deletion_claim": true,
+      "positive_oracle": "Stessi fault-model gate e contatori con budget CI documentato.",
+      "primary_slice": "C16",
+      "priority": "P2",
+      "proposed_owner_role": "Maintainer / QA",
+      "qualification": "ARCHITECTURAL_SIGNAL_NOT_DEFECT",
+      "resolution_status": "OPEN_NOT_ACCEPTED",
+      "rollback": "Discard disposable branch/worktree; do not change main.",
+      "title": "Finite stress in CI non misura costo marginale o comportamento target"
+    },
+    {
+      "area": "SOFTWARE_CLOSURE",
+      "dependencies": "S02; owner contract",
+      "evidence_state": "SOURCE_OBSERVED_RISK",
+      "id": "S08",
+      "negative_falsifier": "Riduzione fraudolenta dell’universo viene rigettata; migrazione esplicita riconosciuta.",
+      "no_deletion_claim": true,
+      "positive_oracle": "Nuovo comando o versione schema produce migrazione controllata e test di backward compatibility.",
+      "primary_slice": "C17",
+      "priority": "P1",
+      "proposed_owner_role": "Maintainer / QA",
+      "qualification": "SOURCE_SUPPORTED_RISK_NOT_RUNTIME_REFUTED",
+      "resolution_status": "OPEN_NOT_ACCEPTED",
+      "rollback": "Discard disposable branch/worktree; do not change main.",
+      "title": "Schema/protocol versioning e costante 71 impediscono evoluzione silenziosa"
+    },
+    {
+      "area": "PRODUCT_CLOSURE",
+      "dependencies": "S02; H07; operatori target",
+      "evidence_state": "EXTERNAL_NOT_ATTESTED",
+      "id": "P01",
+      "negative_falsifier": "CORA non trova un falso PASS critico o introduce un falso negativo rilevante e risultato resta visibile.",
+      "no_deletion_claim": true,
+      "positive_oracle": "Almeno 2 run paired con commits, target-native oracle e reviewer indipendente.",
+      "primary_slice": "C18",
+      "priority": "P1",
+      "proposed_owner_role": "Maintainer / QA",
+      "qualification": "EXTERNAL_EVIDENCE_GAP",
+      "resolution_status": "OPEN_NOT_ACCEPTED",
+      "rollback": "Discard disposable branch/worktree; do not change main.",
+      "title": "Valore causale CORA vs checklist+agent non misurato"
+    },
+    {
+      "area": "PRODUCT_CLOSURE",
+      "dependencies": "Prodotto installabile e test protocol, osservatore umano",
+      "evidence_state": "SOURCE_DECLARED_EXTERNAL",
+      "id": "P02",
+      "negative_falsifier": "Utente considera ZIP/upload come esecuzione o confonde PASS_SCOPED e accettazione.",
+      "no_deletion_claim": true,
+      "positive_oracle": ">=80% task completion e zero errori critici di interpretazione dello status, su protocollo preregistrato.",
+      "primary_slice": "C19",
+      "priority": "P1",
+      "proposed_owner_role": "Maintainer / QA",
+      "qualification": "EXTERNAL_EVIDENCE_GAP",
+      "resolution_status": "OPEN_NOT_ACCEPTED",
+      "rollback": "Discard disposable branch/worktree; do not change main.",
+      "title": "Usabilità cockpit e Path A/B non attestata su utenti nuovi"
+    },
+    {
+      "area": "PRODUCT_CLOSURE",
+      "dependencies": "P02; dati onboarding",
+      "evidence_state": "SOURCE_OBSERVED_RISK",
+      "id": "P03",
+      "negative_falsifier": "Utente deve consultare >1 documentazione storica per un task di base.",
+      "no_deletion_claim": true,
+      "positive_oracle": "Nuovo utente completa source snapshot+verify, PR review, report gap in task realistici.",
+      "primary_slice": "C20",
+      "priority": "P1",
+      "proposed_owner_role": "Maintainer / QA",
+      "qualification": "SOURCE_SUPPORTED_RISK_NOT_RUNTIME_REFUTED",
+      "resolution_status": "OPEN_NOT_ACCEPTED",
+      "rollback": "Discard disposable branch/worktree; do not change main.",
+      "title": "71 capability inventory rende difficile identificare percorso minimo"
+    },
+    {
+      "area": "PRODUCT_CLOSURE",
+      "dependencies": "P01; P02",
+      "evidence_state": "SOURCE_DECLARED",
+      "id": "P04",
+      "negative_falsifier": "Copy marketing induce false aspettative di runner autonomo o certificazione.",
+      "no_deletion_claim": true,
+      "positive_oracle": "Promessa corrisponde a scope L1/L2 testato; utenti riconoscono limiti e supporto.",
+      "primary_slice": "C21",
+      "priority": "P2",
+      "proposed_owner_role": "Product owner",
+      "qualification": "INTENTIONAL_PRODUCT_BOUNDARY",
+      "resolution_status": "OPEN_NOT_ACCEPTED",
+      "rollback": "Revert copy in disposable branch; no public release.",
+      "title": "Boundary commerciale e supporto restano sperimentali"
+    },
+    {
+      "area": "REPOSITORY_RATIONALIZATION",
+      "dependencies": "tools/verify_documentation.py / repository contract suite",
+      "evidence_state": "REPRODUCED_CONTRACT_DRIFT",
+      "id": "R01",
+      "negative_falsifier": "Cambio DoD/profile non modifica l’indice e il verificatore continua a dichiarare nav completeness senza warning.",
+      "no_deletion_claim": true,
+      "positive_oracle": "Documentazione CURRENT concorda con bindings e mutation di una entry provoca il gate atteso.",
+      "primary_slice": "C03",
+      "priority": "P1",
+      "proposed_owner_role": "Docs owner",
+      "qualification": "CONFIRMED_EDITORIAL_DRIFT",
+      "resolution_status": "PATCH_CANDIDATE_SOURCE_TESTED_NOT_INDEPENDENTLY_ACCEPTED",
+      "rollback": "Revert documentation-only change; no archive rewriting.",
+      "title": "Indice CURRENT dichiara 19 DoD + 2 profili anziché 22 + 3"
+    },
+    {
+      "area": "REPOSITORY_RATIONALIZATION",
+      "dependencies": "R01; H05",
+      "evidence_state": "STATIC_MEASURED",
+      "id": "R02",
+      "negative_falsifier": "Un DoD apparentemente duplicato è rimosso ma un tool/CI test perde un consumer.",
+      "no_deletion_claim": true,
+      "positive_oracle": "Ogni contract canonico ha owner, punto di esecuzione e known consumers; regressione cross-refs.",
+      "primary_slice": "C22",
+      "priority": "P2",
+      "proposed_owner_role": "Maintainer / QA",
+      "qualification": "ARCHITECTURAL_SIGNAL_NOT_DEFECT",
+      "resolution_status": "OPEN_NOT_ACCEPTED",
+      "rollback": "Discard disposable branch/worktree; do not change main.",
+      "title": "543 nodi dichiarati in 22 DoD richiedono un catalogo di owner e dipendenze"
+    },
+    {
+      "area": "REPOSITORY_RATIONALIZATION",
+      "dependencies": "S02; H07; R02",
+      "evidence_state": "STATIC_MEASURED",
+      "id": "R03",
+      "negative_falsifier": "Dopo refactor job raccoglie zero test, salta gating critico o cambia contesto HEAD.",
+      "no_deletion_claim": true,
+      "positive_oracle": "Before/after esegue stessi casi e stessi fail closed osservati.",
+      "primary_slice": "C23",
+      "priority": "P2",
+      "proposed_owner_role": "Maintainer / QA",
+      "qualification": "ARCHITECTURAL_SIGNAL_NOT_DEFECT",
+      "resolution_status": "OPEN_NOT_ACCEPTED",
+      "rollback": "Discard disposable branch/worktree; do not change main.",
+      "title": "14 CI workflow, 2429 righe, 631 nel maggiore; inline Python ripetuto"
+    },
+    {
+      "area": "REPOSITORY_RATIONALIZATION",
+      "dependencies": "R02; H05",
+      "evidence_state": "SOURCE_DECLARED",
+      "id": "R04",
+      "negative_falsifier": "Un lettore o test storico perde la risorsa dopo rinomina/archiviazione.",
+      "no_deletion_claim": true,
+      "positive_oracle": "Vecchi link, Git OID, retention e snapshot rimangono validi.",
+      "primary_slice": "C24",
+      "priority": "P2",
+      "proposed_owner_role": "Maintainer / QA",
+      "qualification": "INTENTIONAL_PRODUCT_BOUNDARY",
+      "resolution_status": "OPEN_NOT_ACCEPTED",
+      "rollback": "Restore full file, path, mode from Git original.",
+      "title": "Archivi storici immutabili e consumer vanno conservati"
+    },
+    {
+      "area": "REPOSITORY_RATIONALIZATION",
+      "dependencies": "R01",
+      "evidence_state": "SOURCE_OBSERVED_RISK",
+      "id": "R05",
+      "negative_falsifier": "PASS_SCOPED_STATIC viene erroneamente letto come validazione universale del contenuto.",
+      "no_deletion_claim": true,
+      "positive_oracle": "Counter di INDEX ancorato alla contract index e test negative di drift.",
+      "primary_slice": "C03",
+      "priority": "P2",
+      "proposed_owner_role": "Maintainer / QA",
+      "qualification": "BOUNDED_ORACLE_COVERAGE_GAP",
+      "resolution_status": "PATCH_CANDIDATE_SOURCE_TESTED_NOT_INDEPENDENTLY_ACCEPTED",
+      "rollback": "Discard disposable branch/worktree; do not change main.",
+      "title": "Verifiche source dei conteggi possono restare verdi con claim editoriali obsoleti"
+    },
+    {
+      "area": "REPOSITORY_RATIONALIZATION",
+      "dependencies": "R01; P03",
+      "evidence_state": "SOURCE_STATIC",
+      "id": "R06",
+      "negative_falsifier": "Un lettore interpreta final-experimental-dod a4 come versione rilasciata oggi.",
+      "no_deletion_claim": true,
+      "positive_oracle": "Guide di primo livello indicano a5 sperimentale, record a4 sempre storicizzato.",
+      "primary_slice": "C25",
+      "priority": "P2",
+      "proposed_owner_role": "Documentation owner",
+      "qualification": "SOURCE_SIGNAL_NOT_DEFECT",
+      "resolution_status": "OPEN_NOT_ACCEPTED",
+      "rollback": "Revert current-only navigation changes.",
+      "title": "Repo confonde talora baselines storico a4 e candidato a5 per lettori"
+    },
+    {
+      "area": "HARDENING",
+      "dependencies": "H01; tests/test_change_transform_and_guard.py",
+      "evidence_state": "REPRODUCED_PHYSICAL",
+      "id": "H09",
+      "negative_falsifier": "Verifier chmod 0755 su destinazione originaria 0644: non deve restituire SCOPED_APPLIED_TESTS_PASSED.",
+      "no_deletion_claim": true,
+      "positive_oracle": "Verifier non modifica byte/mode; rename consentito mantiene mode 0644/0755.",
+      "primary_slice": "C01",
+      "priority": "P1",
+      "proposed_owner_role": "Maintainer / QA",
+      "qualification": "CONFIRMED_BEHAVIOR_DEFECT",
+      "resolution_status": "PATCH_CANDIDATE_SOURCE_TESTED_NOT_INDEPENDENTLY_ACCEPTED",
+      "rollback": "Discard disposable worktree; reapply original tree.",
+      "title": "Il verifier muta permessi su un postimage owned e apply-rename-doc dichiara test riusciti"
+    }
+  ],
+  "limitations": [
+    "One-Run comprehensive on authentic DAG not run in isolated container",
+    "No native maintained-target oracle or human review executed",
+    "Source scan and finite mutants cannot certify no other defects",
+    "Zero static imports is not deletion proof; no artifact deletion authorized"
+  ],
+  "ontology_invariants": [
+    {
+      "claim": "CORA is an assurance framework, not the target product or self-authorizing coding agent",
+      "id": "O01",
+      "mapped_slices": [
+        "C17",
+        "C20",
+        "C21"
+      ],
+      "operational_oracle": "one CLI and intact target ontology; no authority conflation"
+    },
+    {
+      "claim": "A0 outcome must derive reticular noncompensatory AND DoD",
+      "id": "O02",
+      "mapped_slices": [
+        "C05",
+        "C22"
+      ],
+      "operational_oracle": "missing SOURCE/TARGET_RUNTIME/EXTERNAL stays missing, not meaned into PASS"
+    },
+    {
+      "claim": "Git provenance not fabricated by ZIP or digest",
+      "id": "O03",
+      "mapped_slices": [
+        "C08",
+        "C14"
+      ],
+      "operational_oracle": "original tree parity is not original commit genealogy; verify wrong ancestry rejected"
+    },
+    {
+      "claim": "Every bounded effect is declared and reversible within its exact ownership scope",
+      "id": "O04",
+      "mapped_slices": [
+        "C01",
+        "C11"
+      ],
+      "operational_oracle": "byte+mode+path+status after failed rename; no silent verifier mode changes"
+    },
+    {
+      "claim": "Untrusted ZIP intake fails closed on inconsistent metadata",
+      "id": "O05",
+      "mapped_slices": [
+        "C02"
+      ],
+      "operational_oracle": "strict file type/name handling without execution or path escape"
+    },
+    {
+      "claim": "PASS is not a proof of a broader unexecuted behavior",
+      "id": "O06",
+      "mapped_slices": [
+        "C04",
+        "C07",
+        "C09",
+        "C11",
+        "C18"
+      ],
+      "operational_oracle": "runtime effectful command matrices, external target oracles, no approval promotion"
+    },
+    {
+      "claim": "Evidence needs independent falsification, not two correlated witnesses",
+      "id": "O07",
+      "mapped_slices": [
+        "C05",
+        "C12",
+        "C16"
+      ],
+      "operational_oracle": "third-party frozen oracle and physical source mutant killed"
+    },
+    {
+      "claim": "Current docs and contract inventories must not make demonstrably false concrete claims",
+      "id": "O08",
+      "mapped_slices": [
+        "C03",
+        "C22",
+        "C25"
+      ],
+      "operational_oracle": "INDEX counts exactly match canonical registry; stale changed file rejected"
+    },
+    {
+      "claim": "Source structure and static reachability are not safe deletion proofs",
+      "id": "O09",
+      "mapped_slices": [
+        "C06",
+        "C24"
+      ],
+      "operational_oracle": "no file removed without consumer, target runtime and reversible migration check"
+    },
+    {
+      "claim": "CORA has a discoverable minimal user journey and honest experimental boundaries",
+      "id": "O10",
+      "mapped_slices": [
+        "C19",
+        "C20",
+        "C21"
+      ],
+      "operational_oracle": "onboarding with external user/task evidence and no invented host control"
+    },
+    {
+      "claim": "CORA-METHOD, CORA-ENGINE and finite stress models are separate epistemic layers",
+      "id": "O11",
+      "mapped_slices": [
+        "C09",
+        "C16",
+        "C18"
+      ],
+      "operational_oracle": "signed/attested check impossible from a chat prompt alone; physical mutants not finite masks"
+    },
+    {
+      "claim": "Software refactoring requires observable equivalence, not line-count reduction",
+      "id": "O12",
+      "mapped_slices": [
+        "C10",
+        "C13",
+        "C17",
+        "C23"
+      ],
+      "operational_oracle": "versioned behavior set and exact before/after parity; unchanged quality denominator"
+    }
+  ],
+  "schema": "cora-self-closure-ledger/1",
+  "scope": "CORA-on-CORA, 27 identified issues; no universal exhaustiveness or global closure claimed",
+  "slices": [
+    {
+      "A0_outcome": "Owned document transaction preserves Unix mode in success and rollback",
+      "AND_DoD": [
+        {
+          "id": "SOURCE",
+          "predicate": "exact target BASE/TREE provenance, scoped diff and affected consumers characterized",
+          "status": "PASS_SCOPED_LOCAL"
+        },
+        {
+          "id": "TARGET_RUNTIME",
+          "predicate": "positive behavior and separately defined negative expected counterexample tested with exit/status/footprint",
+          "status": "PASS_SCOPED_LOCAL"
+        },
+        {
+          "id": "EXTERNAL",
+          "predicate": "authentic Git genealogy, target-owned oracle, external consumer/review and effective host authorization where applicable",
+          "status": "NOT_RUN"
+        }
+      ],
+      "acceptance_owner_or_oracle": "tests/test_change_transform_and_guard.py",
+      "acceptance_status": "PASS_SCOPED_LOCAL_CANDIDATE_NOT_GLOBAL",
+      "dependency_or_owner_gaps": [
+        "tests/test_change_transform_and_guard.py",
+        "H01; tests/test_change_transform_and_guard.py"
+      ],
+      "minimal_change": [
+        "Conservare e ripristinare mode originale per ogni preimage; estendere test sulle permission bits.",
+        "Verificare il mode originale anche dopo test riuscito; su difformità fallire e ripristinare file/path/mode."
+      ],
+      "negative_falsifiers": [
+        "Fallimento del test dopo rename di .md 100755 produce mode 100644 o status Git residuo.",
+        "Verifier chmod 0755 su destinazione originaria 0644: non deve restituire SCOPED_APPLIED_TESTS_PASSED."
+      ],
+      "not_to_change": [
+        "CORA product identity",
+        "unrelated CLI entrypoints",
+        "immutable historical Markdown bytes",
+        "target ontology and approvals",
+        "branch main"
+      ],
+      "positive_oracles": [
+        "Su file 100644 e 100755 con verifica fallita, byte, mode Git, nome e status tornano identici al baseline.",
+        "Verifier non modifica byte/mode; rename consentito mantiene mode 0644/0755."
+      ],
+      "problem_ids": [
+        "H01",
+        "H09"
+      ],
+      "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
+      "slice_id": "C01",
+      "state": "LOCAL_PATCH_REPLAY_PENDING_AUTHENTIC_GIT_CI"
+    },
+    {
+      "A0_outcome": "ZIP member type agrees with member name before source acceptance",
+      "AND_DoD": [
+        {
+          "id": "SOURCE",
+          "predicate": "exact target BASE/TREE provenance, scoped diff and affected consumers characterized",
+          "status": "PASS_SCOPED_LOCAL"
+        },
+        {
+          "id": "TARGET_RUNTIME",
+          "predicate": "positive behavior and separately defined negative expected counterexample tested with exit/status/footprint",
+          "status": "PASS_SCOPED_LOCAL"
+        },
+        {
+          "id": "EXTERNAL",
+          "predicate": "authentic Git genealogy, target-owned oracle, external consumer/review and effective host authorization where applicable",
+          "status": "NOT_RUN"
+        }
+      ],
+      "acceptance_owner_or_oracle": "tests/test_hostile_archive_intake.py",
+      "acceptance_status": "PASS_SCOPED_LOCAL_CANDIDATE_NOT_GLOBAL",
+      "dependency_or_owner_gaps": [
+        "tests/test_hostile_archive_intake.py"
+      ],
+      "minimal_change": [
+        "Verificare coerenza fra flag directory, terminazione nome e tipo Unix; conservare supporto ZIP legittimi."
+      ],
+      "negative_falsifiers": [
+        "Membro con Unix S_IFDIR e filename file-like viene accettato come file."
+      ],
+      "not_to_change": [
+        "CORA product identity",
+        "unrelated CLI entrypoints",
+        "immutable historical Markdown bytes",
+        "target ontology and approvals",
+        "branch main"
+      ],
+      "positive_oracles": [
+        "Accetta entrata regolare coerente e directory coerente; rigetta entrata con tipo directory e nome/file non directory."
+      ],
+      "problem_ids": [
+        "H02"
+      ],
+      "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
+      "slice_id": "C02",
+      "state": "LOCAL_PATCH_REPLAY_PENDING_AUTHENTIC_GIT_CI"
+    },
+    {
+      "A0_outcome": "Current document cardinalities reconcile with canonical contract index",
+      "AND_DoD": [
+        {
+          "id": "SOURCE",
+          "predicate": "exact target BASE/TREE provenance, scoped diff and affected consumers characterized",
+          "status": "PASS_SCOPED_LOCAL"
+        },
+        {
+          "id": "TARGET_RUNTIME",
+          "predicate": "positive behavior and separately defined negative expected counterexample tested with exit/status/footprint",
+          "status": "PASS_SCOPED_LOCAL"
+        },
+        {
+          "id": "EXTERNAL",
+          "predicate": "authentic Git genealogy, target-owned oracle, external consumer/review and effective host authorization where applicable",
+          "status": "NOT_RUN"
+        }
+      ],
+      "acceptance_owner_or_oracle": "tests/test_documentation_integrity.py",
+      "acceptance_status": "PASS_SCOPED_LOCAL_CANDIDATE_NOT_GLOBAL",
+      "dependency_or_owner_gaps": [
+        "tools/verify_documentation.py / repository contract suite",
+        "R01"
+      ],
+      "minimal_change": [
+        "Derivare conteggi dall’indice canonico o sostituire numero hardcoded con route; aggiungere crosscheck test.",
+        "Estendere solo ai claim numerici CURRENT con fonte canonica; mantenere prove nonpromozione."
+      ],
+      "negative_falsifiers": [
+        "Cambio DoD/profile non modifica l’indice e il verificatore continua a dichiarare nav completeness senza warning.",
+        "PASS_SCOPED_STATIC viene erroneamente letto come validazione universale del contenuto."
+      ],
+      "not_to_change": [
+        "CORA product identity",
+        "unrelated CLI entrypoints",
+        "immutable historical Markdown bytes",
+        "target ontology and approvals",
+        "branch main"
+      ],
+      "positive_oracles": [
+        "Documentazione CURRENT concorda con bindings e mutation di una entry provoca il gate atteso.",
+        "Counter di INDEX ancorato alla contract index e test negative di drift."
+      ],
+      "problem_ids": [
+        "R01",
+        "R05"
+      ],
+      "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
+      "slice_id": "C03",
+      "state": "LOCAL_PATCH_REPLAY_PENDING_AUTHENTIC_GIT_CI"
+    },
+    {
+      "A0_outcome": "Verifier and native child logs bounded during execution",
+      "AND_DoD": [
+        {
+          "id": "SOURCE",
+          "predicate": "exact target BASE/TREE provenance, scoped diff and affected consumers characterized",
+          "status": "PASS_SCOPED_LOCAL"
+        },
+        {
+          "id": "TARGET_RUNTIME",
+          "predicate": "positive behavior and separately defined negative expected counterexample tested with exit/status/footprint",
+          "status": "PASS_SCOPED_LOCAL"
+        },
+        {
+          "id": "EXTERNAL",
+          "predicate": "authentic Git genealogy, target-owned oracle, external consumer/review and effective host authorization where applicable",
+          "status": "NOT_RUN"
+        }
+      ],
+      "acceptance_owner_or_oracle": "independent resource-exhaustion fixture",
+      "acceptance_status": "NOT_RUN",
+      "dependency_or_owner_gaps": [
+        "H01; owner dell’esecutore"
+      ],
+      "minimal_change": [
+        "Applicare limiti all’output a livello di processo/file descriptor e politica di cancellazione sicura; non basta controllare len dopo capture_output."
+      ],
+      "negative_falsifiers": [
+        "Un verifier autorizzato emette output oltre il budget, nessun consumo non limitato o falso PASS."
+      ],
+      "not_to_change": [
+        "CORA product identity",
+        "unrelated CLI entrypoints",
+        "immutable historical Markdown bytes",
+        "target ontology and approvals",
+        "branch main"
+      ],
+      "positive_oracles": [
+        "Un processo verboso rimane entro budget memoria/file e produce stato BLOCKED, senza falsa riuscita."
+      ],
+      "problem_ids": [
+        "H03"
+      ],
+      "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
+      "slice_id": "C04",
+      "state": "LOCAL_PATCH_REPLAY_PENDING_AUTHENTIC_GIT_CI"
+    },
+    {
+      "A0_outcome": "Reference oracles separate from algorithm under test",
+      "AND_DoD": [
+        {
+          "id": "SOURCE",
+          "predicate": "exact target BASE/TREE provenance, scoped diff and affected consumers characterized",
+          "status": "PASS_SCOPED_LOCAL"
+        },
+        {
+          "id": "TARGET_RUNTIME",
+          "predicate": "positive behavior and separately defined negative expected counterexample tested with exit/status/footprint",
+          "status": "PASS_SCOPED_LOCAL"
+        },
+        {
+          "id": "EXTERNAL",
+          "predicate": "authentic Git genealogy, target-owned oracle, external consumer/review and effective host authorization where applicable",
+          "status": "NOT_RUN"
+        }
+      ],
+      "acceptance_owner_or_oracle": "third-party frozen expected outputs",
+      "acceptance_status": "NOT_RUN",
+      "dependency_or_owner_gaps": [
+        "Autorizzazione runner target; preregistrazione oracolo"
+      ],
+      "minimal_change": [
+        "Congelare proprietà esterne per hashing, Git OIDs, negazione AND, poi mutazioni in copie non condivise."
+      ],
+      "negative_falsifiers": [
+        "Un errore comune introdotto nei due rami non ottiene falso PASS incontestato."
+      ],
+      "not_to_change": [
+        "CORA product identity",
+        "unrelated CLI entrypoints",
+        "immutable historical Markdown bytes",
+        "target ontology and approvals",
+        "branch main"
+      ],
+      "positive_oracles": [
+        "Oracle indipendente concorda sui casi corretti, negativi e missing leaves."
+      ],
+      "problem_ids": [
+        "H04"
+      ],
+      "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
+      "slice_id": "C05",
+      "state": "LOCAL_PATCH_REPLAY_PENDING_AUTHENTIC_GIT_CI"
+    },
+    {
+      "A0_outcome": "Dynamic consumer and callsites classified without unsafe deletion claims",
+      "AND_DoD": [
+        {
+          "id": "SOURCE",
+          "predicate": "exact target BASE/TREE provenance, scoped diff and affected consumers characterized",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "TARGET_RUNTIME",
+          "predicate": "positive behavior and separately defined negative expected counterexample tested with exit/status/footprint",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "EXTERNAL",
+          "predicate": "authentic Git genealogy, target-owned oracle, external consumer/review and effective host authorization where applicable",
+          "status": "NOT_RUN"
+        }
+      ],
+      "acceptance_owner_or_oracle": "dynamic import and process fixture",
+      "acceptance_status": "NOT_RUN",
+      "dependency_or_owner_gaps": [
+        "H04; runner isolato"
+      ],
+      "minimal_change": [
+        "Registrare consumer runtime/effect come unknown o observed; nessuna promozione ad assenza."
+      ],
+      "negative_falsifiers": [
+        "Un file importato solo dinamicamente non viene suggerito come rimuovibile."
+      ],
+      "not_to_change": [
+        "CORA product identity",
+        "unrelated CLI entrypoints",
+        "immutable historical Markdown bytes",
+        "target ontology and approvals",
+        "branch main"
+      ],
+      "positive_oracles": [
+        "Un consumer dinamico preregistrato compare in una classificazione motivata, con scope dichiarato."
+      ],
+      "problem_ids": [
+        "H05"
+      ],
+      "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
+      "slice_id": "C06",
+      "source_counterexample": {
+        "deletion_authority": "NONE",
+        "fixture": "tests/test_engineering_knowledge_closure.py::test_dynamic_only_consumer_is_not_a_safe_deletion_claim",
+        "result": "LOCAL_DYNAMIC_CONSUMER_OBSERVED_WITH_ZERO_STATIC_EDGES",
+        "target_runtime": "NOT_ATTESTED"
+      },
+      "state": "PROPOSED_NOT_RUN"
+    },
+    {
+      "A0_outcome": "Explicit runner authorization vs externally attested containment",
+      "AND_DoD": [
+        {
+          "id": "SOURCE",
+          "predicate": "exact target BASE/TREE provenance, scoped diff and affected consumers characterized",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "TARGET_RUNTIME",
+          "predicate": "positive behavior and separately defined negative expected counterexample tested with exit/status/footprint",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "EXTERNAL",
+          "predicate": "authentic Git genealogy, target-owned oracle, external consumer/review and effective host authorization where applicable",
+          "status": "BLOCKED_EXTERNAL"
+        }
+      ],
+      "acceptance_owner_or_oracle": "approved host and runner operator",
+      "acceptance_status": "BLOCKED_EXTERNAL",
+      "dependency_or_owner_gaps": [
+        "H03; owner runtime"
+      ],
+      "minimal_change": [
+        "Definire capability/host boundary e matrice per quando si possono eseguire test target; non eseguire automaticamente."
+      ],
+      "negative_falsifiers": [
+        "Input malevolo/non autorizzato non provoca esecuzione implicita."
+      ],
+      "not_to_change": [
+        "CORA product identity",
+        "unrelated CLI entrypoints",
+        "immutable historical Markdown bytes",
+        "target ontology and approvals",
+        "branch main"
+      ],
+      "positive_oracles": [
+        "Comando non autorizzato resta NOT_RUN; ambiente autorizzato produce ricevuta con log e perimetro."
+      ],
+      "problem_ids": [
+        "H06"
+      ],
+      "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
+      "slice_id": "C07",
+      "state": "BLOCKED_EXTERNAL"
+    },
+    {
+      "A0_outcome": "One-Run comprehensive on authentic Git DAG and exact HEAD",
+      "AND_DoD": [
+        {
+          "id": "SOURCE",
+          "predicate": "exact target BASE/TREE provenance, scoped diff and affected consumers characterized",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "TARGET_RUNTIME",
+          "predicate": "positive behavior and separately defined negative expected counterexample tested with exit/status/footprint",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "EXTERNAL",
+          "predicate": "authentic Git genealogy, target-owned oracle, external consumer/review and effective host authorization where applicable",
+          "status": "NOT_RUN"
+        }
+      ],
+      "acceptance_owner_or_oracle": "real Git checkout with historic objects",
+      "acceptance_status": "NOT_RUN",
+      "dependency_or_owner_gaps": [
+        "Runner reale e storia Git autentica"
+      ],
+      "minimal_change": [
+        "Eseguire su checkout originale vero Git a HEAD fissato, --change-base reale, poi verify-process e mutant receipt."
+      ],
+      "negative_falsifiers": [
+        "Wrong ancestor, forged receipt, missing history: fail closed."
+      ],
+      "not_to_change": [
+        "CORA product identity",
+        "unrelated CLI entrypoints",
+        "immutable historical Markdown bytes",
+        "target ontology and approvals",
+        "branch main"
+      ],
+      "positive_oracles": [
+        "Comprehensive e replay concordano sullo SHA originale e missing leaves."
+      ],
+      "problem_ids": [
+        "H07"
+      ],
+      "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
+      "slice_id": "C08",
+      "state": "NOT_RUN_AUTHENTIC_DAG"
+    },
+    {
+      "A0_outcome": "Provider/host transcript never promoted from prompt-only claim",
+      "AND_DoD": [
+        {
+          "id": "SOURCE",
+          "predicate": "exact target BASE/TREE provenance, scoped diff and affected consumers characterized",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "TARGET_RUNTIME",
+          "predicate": "positive behavior and separately defined negative expected counterexample tested with exit/status/footprint",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "EXTERNAL",
+          "predicate": "authentic Git genealogy, target-owned oracle, external consumer/review and effective host authorization where applicable",
+          "status": "BLOCKED_EXTERNAL"
+        }
+      ],
+      "acceptance_owner_or_oracle": "consented real session transcript evaluator",
+      "acceptance_status": "BLOCKED_EXTERNAL",
+      "dependency_or_owner_gaps": [
+        "Host osservabile, autorizzazione esterna"
+      ],
+      "minimal_change": [
+        "Provare trascrizioni effettive dell’adapter e host output con oracle terzo, senza interpretare prompt come esecuzione."
+      ],
+      "negative_falsifiers": [
+        "Una risposta del provider dichiara PASS/approvazione senza receipt e viene segnalata."
+      ],
+      "not_to_change": [
+        "CORA product identity",
+        "unrelated CLI entrypoints",
+        "immutable historical Markdown bytes",
+        "target ontology and approvals",
+        "branch main"
+      ],
+      "positive_oracles": [
+        "Ogni stato osservato ha corrispondente evento e assenza approvazione implicita."
+      ],
+      "problem_ids": [
+        "H08"
+      ],
+      "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
+      "slice_id": "C09",
+      "state": "BLOCKED_EXTERNAL"
+    },
+    {
+      "A0_outcome": "CLI characterization before parser/dispatcher extraction",
+      "AND_DoD": [
+        {
+          "id": "SOURCE",
+          "predicate": "exact target BASE/TREE provenance, scoped diff and affected consumers characterized",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "TARGET_RUNTIME",
+          "predicate": "positive behavior and separately defined negative expected counterexample tested with exit/status/footprint",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "EXTERNAL",
+          "predicate": "authentic Git genealogy, target-owned oracle, external consumer/review and effective host authorization where applicable",
+          "status": "NOT_RUN"
+        }
+      ],
+      "acceptance_owner_or_oracle": "71 help plus risk-tiered native behavior cases",
+      "acceptance_status": "NOT_RUN",
+      "dependency_or_owner_gaps": [
+        "H04; S02; original Git runner"
+      ],
+      "minimal_change": [
+        "Prima registrare equivalenza help + I/O + side effects, poi estrarre gruppi parser/dispatch senza nuovo entrypoint."
+      ],
+      "negative_falsifiers": [
+        "Un comando read-only cambia exit/out oppure un effectful cambia footprint."
+      ],
+      "not_to_change": [
+        "CORA product identity",
+        "unrelated CLI entrypoints",
+        "immutable historical Markdown bytes",
+        "target ontology and approvals",
+        "branch main"
+      ],
+      "positive_oracles": [
+        "Stesso elenco 71 comandi e stessa semantica di errori, output, status su casi preregistrati."
+      ],
+      "problem_ids": [
+        "S01"
+      ],
+      "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
+      "slice_id": "C10",
+      "state": "PROPOSED_NOT_RUN"
+    },
+    {
+      "A0_outcome": "Effectful command matrix with source/runtime/side-effect witnesses",
+      "AND_DoD": [
+        {
+          "id": "SOURCE",
+          "predicate": "exact target BASE/TREE provenance, scoped diff and affected consumers characterized",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "TARGET_RUNTIME",
+          "predicate": "positive behavior and separately defined negative expected counterexample tested with exit/status/footprint",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "EXTERNAL",
+          "predicate": "authentic Git genealogy, target-owned oracle, external consumer/review and effective host authorization where applicable",
+          "status": "NOT_RUN"
+        }
+      ],
+      "acceptance_owner_or_oracle": "maintained per-command test oracle",
+      "acceptance_status": "NOT_RUN",
+      "dependency_or_owner_gaps": [
+        "H01; H02; H07"
+      ],
+      "minimal_change": [
+        "Definire risk-weighted behavior matrix con almeno un positivo, negativo, side-effect, consumer per comando high-impact."
+      ],
+      "negative_falsifiers": [
+        "Un comando restituisce help corretto ma effetto reale erroneo."
+      ],
+      "not_to_change": [
+        "CORA product identity",
+        "unrelated CLI entrypoints",
+        "immutable historical Markdown bytes",
+        "target ontology and approvals",
+        "branch main"
+      ],
+      "positive_oracles": [
+        "Tutti i comandi ad effetto hanno oracle effetti/rollback; altri raggruppati per contratto."
+      ],
+      "problem_ids": [
+        "S02"
+      ],
+      "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
+      "slice_id": "C11",
+      "state": "PROPOSED_NOT_RUN"
+    },
+    {
+      "A0_outcome": "Hub-specific consumer regression for evidence/Git/AND semantics",
+      "AND_DoD": [
+        {
+          "id": "SOURCE",
+          "predicate": "exact target BASE/TREE provenance, scoped diff and affected consumers characterized",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "TARGET_RUNTIME",
+          "predicate": "positive behavior and separately defined negative expected counterexample tested with exit/status/footprint",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "EXTERNAL",
+          "predicate": "authentic Git genealogy, target-owned oracle, external consumer/review and effective host authorization where applicable",
+          "status": "NOT_RUN"
+        }
+      ],
+      "acceptance_owner_or_oracle": "independent consumer behavior tests",
+      "acceptance_status": "NOT_RUN",
+      "dependency_or_owner_gaps": [
+        "H04; H05"
+      ],
+      "minimal_change": [
+        "Introdurre tests mirati per consumer distinti e semantica delle primitive prima di modificarle."
+      ],
+      "negative_falsifiers": [
+        "Almeno un consumer cambia esito senza essere segnalato."
+      ],
+      "not_to_change": [
+        "CORA product identity",
+        "unrelated CLI entrypoints",
+        "immutable historical Markdown bytes",
+        "target ontology and approvals",
+        "branch main"
+      ],
+      "positive_oracles": [
+        "Una modifica resta paritaria su consumer dichiarati e controesempi indipendenti."
+      ],
+      "problem_ids": [
+        "S03"
+      ],
+      "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
+      "slice_id": "C12",
+      "state": "PROPOSED_NOT_RUN"
+    },
+    {
+      "A0_outcome": "Renderer/orchestrator decomposition only with golden parity",
+      "AND_DoD": [
+        {
+          "id": "SOURCE",
+          "predicate": "exact target BASE/TREE provenance, scoped diff and affected consumers characterized",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "TARGET_RUNTIME",
+          "predicate": "positive behavior and separately defined negative expected counterexample tested with exit/status/footprint",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "EXTERNAL",
+          "predicate": "authentic Git genealogy, target-owned oracle, external consumer/review and effective host authorization where applicable",
+          "status": "NOT_RUN"
+        }
+      ],
+      "acceptance_owner_or_oracle": "offline HTML and ZIP byte/semantic oracle",
+      "acceptance_status": "NOT_RUN",
+      "dependency_or_owner_gaps": [
+        "S02; H04"
+      ],
+      "minimal_change": [
+        "Prima output golden files e scan HTML, poi estrarre renderer pure preservando byte e link IDs."
+      ],
+      "negative_falsifiers": [
+        "Link interno mancante o receipt HTML che disallinea SHA o status."
+      ],
+      "not_to_change": [
+        "CORA product identity",
+        "unrelated CLI entrypoints",
+        "immutable historical Markdown bytes",
+        "target ontology and approvals",
+        "branch main"
+      ],
+      "positive_oracles": [
+        "HTML, JSON, offline cockpit e verifica ZIP restano identici su baseline fixtures."
+      ],
+      "problem_ids": [
+        "S04"
+      ],
+      "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
+      "slice_id": "C13",
+      "state": "PROPOSED_NOT_RUN"
+    },
+    {
+      "A0_outcome": "Installed wheel/sdist behavior at exact authentic Git HEAD",
+      "AND_DoD": [
+        {
+          "id": "SOURCE",
+          "predicate": "exact target BASE/TREE provenance, scoped diff and affected consumers characterized",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "TARGET_RUNTIME",
+          "predicate": "positive behavior and separately defined negative expected counterexample tested with exit/status/footprint",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "EXTERNAL",
+          "predicate": "authentic Git genealogy, target-owned oracle, external consumer/review and effective host authorization where applicable",
+          "status": "NOT_RUN"
+        }
+      ],
+      "acceptance_owner_or_oracle": "Python 3.11 and 3.13 isolated venv",
+      "acceptance_status": "NOT_RUN",
+      "dependency_or_owner_gaps": [
+        "H07; ambienti Python dichiarati"
+      ],
+      "minimal_change": [
+        "Su original checkout riprodurre build wheel/sdist, import installato Python 3.11/3.13, comando CLI e JSON receipt."
+      ],
+      "negative_falsifiers": [
+        "Un package omette portable_js_imports.mjs o usa metadata/version non coerenti."
+      ],
+      "not_to_change": [
+        "CORA product identity",
+        "unrelated CLI entrypoints",
+        "immutable historical Markdown bytes",
+        "target ontology and approvals",
+        "branch main"
+      ],
+      "positive_oracles": [
+        "Byte di distribuzione destinata a review e installazione corrispondono al source HEAD."
+      ],
+      "problem_ids": [
+        "S05"
+      ],
+      "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
+      "slice_id": "C14",
+      "state": "NOT_RUN_AUTHENTIC_DAG"
+    },
+    {
+      "A0_outcome": "Calibrate debt-scan precision/recall on labeled examples",
+      "AND_DoD": [
+        {
+          "id": "SOURCE",
+          "predicate": "exact target BASE/TREE provenance, scoped diff and affected consumers characterized",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "TARGET_RUNTIME",
+          "predicate": "positive behavior and separately defined negative expected counterexample tested with exit/status/footprint",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "EXTERNAL",
+          "predicate": "authentic Git genealogy, target-owned oracle, external consumer/review and effective host authorization where applicable",
+          "status": "NOT_RUN"
+        }
+      ],
+      "acceptance_owner_or_oracle": "human labeled positives and negatives",
+      "acceptance_status": "NOT_RUN",
+      "dependency_or_owner_gaps": [
+        "H07; owner del debito"
+      ],
+      "minimal_change": [
+        "Confrontare findings con un campione etichettato, variazioni reali Git e costosità di fix."
+      ],
+      "negative_falsifiers": [
+        "Un segnale di complessità è promosso a bug certo senza review o label."
+      ],
+      "not_to_change": [
+        "CORA product identity",
+        "unrelated CLI entrypoints",
+        "immutable historical Markdown bytes",
+        "target ontology and approvals",
+        "branch main"
+      ],
+      "positive_oracles": [
+        "Precision/recall ed errori con denominatore e scope comunicati."
+      ],
+      "problem_ids": [
+        "S06"
+      ],
+      "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
+      "slice_id": "C15",
+      "state": "PROPOSED_NOT_RUN"
+    },
+    {
+      "A0_outcome": "Separate finite-model evaluation cost from physical source evidence",
+      "AND_DoD": [
+        {
+          "id": "SOURCE",
+          "predicate": "exact target BASE/TREE provenance, scoped diff and affected consumers characterized",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "TARGET_RUNTIME",
+          "predicate": "positive behavior and separately defined negative expected counterexample tested with exit/status/footprint",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "EXTERNAL",
+          "predicate": "authentic Git genealogy, target-owned oracle, external consumer/review and effective host authorization where applicable",
+          "status": "NOT_RUN"
+        }
+      ],
+      "acceptance_owner_or_oracle": "bounded stress/physical mutation A/B",
+      "acceptance_status": "NOT_RUN",
+      "dependency_or_owner_gaps": [
+        "H07; S02"
+      ],
+      "minimal_change": [
+        "Misurare tempi per modulo, errori trovati, ripetizioni e valore incrementale; tier PR vs schedule solo dopo parity."
+      ],
+      "negative_falsifiers": [
+        "Un fault-model regressione sfugge a nuovi tier o source mutations."
+      ],
+      "not_to_change": [
+        "CORA product identity",
+        "unrelated CLI entrypoints",
+        "immutable historical Markdown bytes",
+        "target ontology and approvals",
+        "branch main"
+      ],
+      "positive_oracles": [
+        "Stessi fault-model gate e contatori con budget CI documentato."
+      ],
+      "problem_ids": [
+        "S07"
+      ],
+      "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
+      "slice_id": "C16",
+      "state": "PROPOSED_NOT_RUN"
+    },
+    {
+      "A0_outcome": "Versioned CLI and report schema evolution negative control",
+      "AND_DoD": [
+        {
+          "id": "SOURCE",
+          "predicate": "exact target BASE/TREE provenance, scoped diff and affected consumers characterized",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "TARGET_RUNTIME",
+          "predicate": "positive behavior and separately defined negative expected counterexample tested with exit/status/footprint",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "EXTERNAL",
+          "predicate": "authentic Git genealogy, target-owned oracle, external consumer/review and effective host authorization where applicable",
+          "status": "NOT_RUN"
+        }
+      ],
+      "acceptance_owner_or_oracle": "backward schema/CLI compatibility oracle",
+      "acceptance_status": "NOT_RUN",
+      "dependency_or_owner_gaps": [
+        "S02; owner contract"
+      ],
+      "minimal_change": [
+        "Definire procedura esplicita di schema evolution/compat e distinguere contract breaking da modifica accidentale del denominatore."
+      ],
+      "negative_falsifiers": [
+        "Riduzione fraudolenta dell’universo viene rigettata; migrazione esplicita riconosciuta."
+      ],
+      "not_to_change": [
+        "CORA product identity",
+        "unrelated CLI entrypoints",
+        "immutable historical Markdown bytes",
+        "target ontology and approvals",
+        "branch main"
+      ],
+      "positive_oracles": [
+        "Nuovo comando o versione schema produce migrazione controllata e test di backward compatibility."
+      ],
+      "problem_ids": [
+        "S08"
+      ],
+      "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
+      "slice_id": "C17",
+      "state": "PROPOSED_NOT_RUN"
+    },
+    {
+      "A0_outcome": "Paired maintained-target causal comparison vs no CORA",
+      "AND_DoD": [
+        {
+          "id": "SOURCE",
+          "predicate": "exact target BASE/TREE provenance, scoped diff and affected consumers characterized",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "TARGET_RUNTIME",
+          "predicate": "positive behavior and separately defined negative expected counterexample tested with exit/status/footprint",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "EXTERNAL",
+          "predicate": "authentic Git genealogy, target-owned oracle, external consumer/review and effective host authorization where applicable",
+          "status": "BLOCKED_EXTERNAL"
+        }
+      ],
+      "acceptance_owner_or_oracle": "external target owner native test oracle",
+      "acceptance_status": "BLOCKED_EXTERNAL",
+      "dependency_or_owner_gaps": [
+        "S02; H07; operatori target"
+      ],
+      "minimal_change": [
+        "Preregistrare due repository mantenuti, identiche task e baseline senza CORA, misurare issue found, FP, tempo e azione."
+      ],
+      "negative_falsifiers": [
+        "CORA non trova un falso PASS critico o introduce un falso negativo rilevante e risultato resta visibile."
+      ],
+      "not_to_change": [
+        "CORA product identity",
+        "unrelated CLI entrypoints",
+        "immutable historical Markdown bytes",
+        "target ontology and approvals",
+        "branch main"
+      ],
+      "positive_oracles": [
+        "Almeno 2 run paired con commits, target-native oracle e reviewer indipendente."
+      ],
+      "problem_ids": [
+        "P01"
+      ],
+      "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
+      "slice_id": "C18",
+      "state": "BLOCKED_EXTERNAL"
+    },
+    {
+      "A0_outcome": "Beginner cockpit usability across real first-time users",
+      "AND_DoD": [
+        {
+          "id": "SOURCE",
+          "predicate": "exact target BASE/TREE provenance, scoped diff and affected consumers characterized",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "TARGET_RUNTIME",
+          "predicate": "positive behavior and separately defined negative expected counterexample tested with exit/status/footprint",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "EXTERNAL",
+          "predicate": "authentic Git genealogy, target-owned oracle, external consumer/review and effective host authorization where applicable",
+          "status": "BLOCKED_EXTERNAL"
+        }
+      ],
+      "acceptance_owner_or_oracle": "external 8 participant x 3 task study",
+      "acceptance_status": "BLOCKED_EXTERNAL",
+      "dependency_or_owner_gaps": [
+        "Prodotto installabile e test protocol, osservatore umano"
+      ],
+      "minimal_change": [
+        "Eseguire studio 8 persone/3 task secondo soglie già dichiarate; distinguere Method-only e Engine verified."
+      ],
+      "negative_falsifiers": [
+        "Utente considera ZIP/upload come esecuzione o confonde PASS_SCOPED e accettazione."
+      ],
+      "not_to_change": [
+        "CORA product identity",
+        "unrelated CLI entrypoints",
+        "immutable historical Markdown bytes",
+        "target ontology and approvals",
+        "branch main"
+      ],
+      "positive_oracles": [
+        ">=80% task completion e zero errori critici di interpretazione dello status, su protocollo preregistrato."
+      ],
+      "problem_ids": [
+        "P02"
+      ],
+      "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
+      "slice_id": "C19",
+      "state": "BLOCKED_EXTERNAL"
+    },
+    {
+      "A0_outcome": "Three accessible golden product journeys without a second engine",
+      "AND_DoD": [
+        {
+          "id": "SOURCE",
+          "predicate": "exact target BASE/TREE provenance, scoped diff and affected consumers characterized",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "TARGET_RUNTIME",
+          "predicate": "positive behavior and separately defined negative expected counterexample tested with exit/status/footprint",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "EXTERNAL",
+          "predicate": "authentic Git genealogy, target-owned oracle, external consumer/review and effective host authorization where applicable",
+          "status": "NOT_RUN"
+        }
+      ],
+      "acceptance_owner_or_oracle": "product task completion on identical outcome",
+      "acceptance_status": "NOT_RUN",
+      "dependency_or_owner_gaps": [
+        "P02; dati onboarding"
+      ],
+      "minimal_change": [
+        "Definire 3 journeys primari outcome->command->receipt->next, senza rimuovere comandi."
+      ],
+      "negative_falsifiers": [
+        "Utente deve consultare >1 documentazione storica per un task di base."
+      ],
+      "not_to_change": [
+        "CORA product identity",
+        "unrelated CLI entrypoints",
+        "immutable historical Markdown bytes",
+        "target ontology and approvals",
+        "branch main"
+      ],
+      "positive_oracles": [
+        "Nuovo utente completa source snapshot+verify, PR review, report gap in task realistici."
+      ],
+      "problem_ids": [
+        "P03"
+      ],
+      "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
+      "slice_id": "C20",
+      "state": "PROPOSED_NOT_RUN"
+    },
+    {
+      "A0_outcome": "Explicit experimental support and nonrelease boundary",
+      "AND_DoD": [
+        {
+          "id": "SOURCE",
+          "predicate": "exact target BASE/TREE provenance, scoped diff and affected consumers characterized",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "TARGET_RUNTIME",
+          "predicate": "positive behavior and separately defined negative expected counterexample tested with exit/status/footprint",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "EXTERNAL",
+          "predicate": "authentic Git genealogy, target-owned oracle, external consumer/review and effective host authorization where applicable",
+          "status": "BLOCKED_EXTERNAL"
+        }
+      ],
+      "acceptance_owner_or_oracle": "owner signoff on beta support semantics",
+      "acceptance_status": "BLOCKED_EXTERNAL",
+      "dependency_or_owner_gaps": [
+        "P01; P02"
+      ],
+      "minimal_change": [
+        "Cristallizzare alpha/beta proposition, support policy, compatiblity window e asserzioni vietate; no enterprise-ready senza prova."
+      ],
+      "negative_falsifiers": [
+        "Copy marketing induce false aspettative di runner autonomo o certificazione."
+      ],
+      "not_to_change": [
+        "CORA product identity",
+        "unrelated CLI entrypoints",
+        "immutable historical Markdown bytes",
+        "target ontology and approvals",
+        "branch main"
+      ],
+      "positive_oracles": [
+        "Promessa corrisponde a scope L1/L2 testato; utenti riconoscono limiti e supporto."
+      ],
+      "problem_ids": [
+        "P04"
+      ],
+      "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
+      "slice_id": "C21",
+      "state": "BLOCKED_EXTERNAL"
+    },
+    {
+      "A0_outcome": "Owner, consumer and negative-oracle catalog for 543 DoD nodes",
+      "AND_DoD": [
+        {
+          "id": "SOURCE",
+          "predicate": "exact target BASE/TREE provenance, scoped diff and affected consumers characterized",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "TARGET_RUNTIME",
+          "predicate": "positive behavior and separately defined negative expected counterexample tested with exit/status/footprint",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "EXTERNAL",
+          "predicate": "authentic Git genealogy, target-owned oracle, external consumer/review and effective host authorization where applicable",
+          "status": "NOT_RUN"
+        }
+      ],
+      "acceptance_owner_or_oracle": "source-bound AND semantic inventory",
+      "acceptance_status": "NOT_RUN",
+      "dependency_or_owner_gaps": [
+        "R01; H05"
+      ],
+      "minimal_change": [
+        "Costruire matrice ID, proprietario, consumer, oracle e release relevance; NON fare dedup sulla sola somiglianza."
+      ],
+      "negative_falsifiers": [
+        "Un DoD apparentemente duplicato è rimosso ma un tool/CI test perde un consumer."
+      ],
+      "not_to_change": [
+        "CORA product identity",
+        "unrelated CLI entrypoints",
+        "immutable historical Markdown bytes",
+        "target ontology and approvals",
+        "branch main"
+      ],
+      "positive_oracles": [
+        "Ogni contract canonico ha owner, punto di esecuzione e known consumers; regressione cross-refs."
+      ],
+      "problem_ids": [
+        "R02"
+      ],
+      "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
+      "slice_id": "C22",
+      "state": "PROPOSED_NOT_RUN"
+    },
+    {
+      "A0_outcome": "Extract one CI Python block with exact job parity",
+      "AND_DoD": [
+        {
+          "id": "SOURCE",
+          "predicate": "exact target BASE/TREE provenance, scoped diff and affected consumers characterized",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "TARGET_RUNTIME",
+          "predicate": "positive behavior and separately defined negative expected counterexample tested with exit/status/footprint",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "EXTERNAL",
+          "predicate": "authentic Git genealogy, target-owned oracle, external consumer/review and effective host authorization where applicable",
+          "status": "NOT_RUN"
+        }
+      ],
+      "acceptance_owner_or_oracle": "paired workflow job outcome/negative failure oracle",
+      "acceptance_status": "NOT_RUN",
+      "dependency_or_owner_gaps": [
+        "S02; H07; R02"
+      ],
+      "minimal_change": [
+        "Estrarre un solo blocco ripetuto in tool/test source-owned, mantenere trigger, permissions, artifacts e pass/fail."
+      ],
+      "negative_falsifiers": [
+        "Dopo refactor job raccoglie zero test, salta gating critico o cambia contesto HEAD."
+      ],
+      "not_to_change": [
+        "CORA product identity",
+        "unrelated CLI entrypoints",
+        "immutable historical Markdown bytes",
+        "target ontology and approvals",
+        "branch main"
+      ],
+      "positive_oracles": [
+        "Before/after esegue stessi casi e stessi fail closed osservati."
+      ],
+      "problem_ids": [
+        "R03"
+      ],
+      "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
+      "slice_id": "C23",
+      "state": "PROPOSED_NOT_RUN"
+    },
+    {
+      "A0_outcome": "Protect historical records and unproven static-unused consumers",
+      "AND_DoD": [
+        {
+          "id": "SOURCE",
+          "predicate": "exact target BASE/TREE provenance, scoped diff and affected consumers characterized",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "TARGET_RUNTIME",
+          "predicate": "positive behavior and separately defined negative expected counterexample tested with exit/status/footprint",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "EXTERNAL",
+          "predicate": "authentic Git genealogy, target-owned oracle, external consumer/review and effective host authorization where applicable",
+          "status": "NOT_RUN"
+        }
+      ],
+      "acceptance_owner_or_oracle": "original-Git/historical consumer/restore oracle",
+      "acceptance_status": "NOT_RUN",
+      "dependency_or_owner_gaps": [
+        "R02; H05"
+      ],
+      "minimal_change": [
+        "Proporre solo route migration documentate e recuperabili; non eliminare su zero static imports."
+      ],
+      "negative_falsifiers": [
+        "Un lettore o test storico perde la risorsa dopo rinomina/archiviazione."
+      ],
+      "not_to_change": [
+        "CORA product identity",
+        "unrelated CLI entrypoints",
+        "immutable historical Markdown bytes",
+        "target ontology and approvals",
+        "branch main"
+      ],
+      "positive_oracles": [
+        "Vecchi link, Git OID, retention e snapshot rimangono validi."
+      ],
+      "problem_ids": [
+        "R04"
+      ],
+      "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
+      "slice_id": "C24",
+      "state": "CONSERVATION_NO_DELETION"
+    },
+    {
+      "A0_outcome": "Separate historical a4 baselines from current a5 status",
+      "AND_DoD": [
+        {
+          "id": "SOURCE",
+          "predicate": "exact target BASE/TREE provenance, scoped diff and affected consumers characterized",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "TARGET_RUNTIME",
+          "predicate": "positive behavior and separately defined negative expected counterexample tested with exit/status/footprint",
+          "status": "NOT_RUN"
+        },
+        {
+          "id": "EXTERNAL",
+          "predicate": "authentic Git genealogy, target-owned oracle, external consumer/review and effective host authorization where applicable",
+          "status": "NOT_RUN"
+        }
+      ],
+      "acceptance_owner_or_oracle": "editorial current/historical status review",
+      "acceptance_status": "NOT_RUN",
+      "dependency_or_owner_gaps": [
+        "R01; P03"
+      ],
+      "minimal_change": [
+        "Mostrare un mapping esplicito current vs historical, non riscrivere artefatti storici."
+      ],
+      "negative_falsifiers": [
+        "Un lettore interpreta final-experimental-dod a4 come versione rilasciata oggi."
+      ],
+      "not_to_change": [
+        "CORA product identity",
+        "unrelated CLI entrypoints",
+        "immutable historical Markdown bytes",
+        "target ontology and approvals",
+        "branch main"
+      ],
+      "positive_oracles": [
+        "Guide di primo livello indicano a5 sperimentale, record a4 sempre storicizzato."
+      ],
+      "problem_ids": [
+        "R06"
+      ],
+      "rollback": "Discard semantic slice in disposable branch; restore BASE; rerun invalidated witnesses. No merge, release, code deletion or approval granted.",
+      "slice_id": "C25",
+      "state": "PROPOSED_NOT_RUN"
+    }
+  ]
+}

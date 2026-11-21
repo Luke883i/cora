@@ -31,7 +31,7 @@ The [README](../README.md) is the **compressed public front door**: outcome, met
 **Integrated source dossier:** the [One-Run contract](../.cora/contracts/dod/integrated-one-run-dod.json) combines a Git-pinned activity census, typed plans, local evidence and an offline forensic atlas. Product acceptance remains external.
 
 
-**Contract paths:** the only root-facing JSON contracts are `cora.ontology.json` and `cora.artifact-roles.json`. Find the nineteen internal DoDs, two profiles and two assurance records using the [contract-path index](../.cora/contracts/index.json). Git-baselined path rewrites are source-scoped: they do not attest third-party runtime compatibility or conformance.
+**Contract paths:** the only root-facing JSON contracts are `cora.ontology.json` and `cora.artifact-roles.json`. Find the 22 internal DoDs, 3 profiles and 2 assurance records using the [contract-path index](../.cora/contracts/index.json). Git-baselined path rewrites are source-scoped: they do not attest third-party runtime compatibility or conformance.
 
 **Archive invariant:** `docs/archive/` contains immutable historical Git blobs; [the relocation map](../.cora/layout-migration.json) records original-to-current paths and protected exceptions. Historical text is not rewritten, not product authority and not a safe-deletion signal. Read current procedures above before relying on old decisions.
 

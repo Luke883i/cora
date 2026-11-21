@@ -88,6 +88,10 @@ def inspect_zip(archive: Path, *, expected_tree: str | None = None,
             unix_type = (info.external_attr >> 16) & 0o170000
             if unix_type not in (0, stat.S_IFREG, stat.S_IFDIR) or bool(info.flag_bits & 1):
                 raise ValueError('symlink, special file or encrypted ZIP member')
+            # A stated Unix type must agree with the ZIP member-name directory flag.
+            # Unknown (zero) type is legitimate for archives lacking Unix metadata.
+            if unix_type and (unix_type == stat.S_IFDIR) != info.is_dir():
+                raise ValueError('ZIP directory type/name mismatch')
             if info.is_dir():
                 continue
             if (info.file_size > MAX_FILE or
