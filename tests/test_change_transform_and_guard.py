@@ -46,6 +46,33 @@ class RealGitTransformFixtures(unittest.TestCase):
         self.assertEqual(before,{x:(self.repo/x).read_bytes() for x in before})
         self.assertFalse((self.repo/'docs/new.md').exists())
         self.assertEqual(g(self.repo,'status','--porcelain'),'')
+    def test_failure_rollback_preserves_executable_mode(self):
+        original = self.repo/'docs/old.md'
+        original.chmod(0o755)
+        g(self.repo,'add','docs/old.md');g(self.repo,'commit','-qm','exec document fixture')
+        p=self.plan()
+        expected_bytes=original.read_bytes()
+        expected_mode=original.stat().st_mode & 0o777
+        with self.assertRaisesRegex(ValueError,'verification command failed'):
+            apply_rename_docs(self.repo,p,approval=p['plan_digest'],
+                test_command=['python','-c','raise SystemExit(42)'])
+        self.assertEqual(original.read_bytes(),expected_bytes)
+        self.assertEqual(original.stat().st_mode & 0o777,expected_mode)
+        self.assertEqual(g(self.repo,'status','--porcelain'),'')
+        self.assertFalse((self.repo/'docs/new.md').exists())
+
+    def test_verifier_mode_mutation_fails_closed_and_rolls_back(self):
+        p=self.plan()
+        original_bytes=(self.repo/'docs/old.md').read_bytes()
+        with self.assertRaisesRegex(ValueError,'verifier altered an owned postimage'):
+            apply_rename_docs(self.repo,p,approval=p['plan_digest'],
+                test_command=['python','-c',
+                    "import pathlib; pathlib.Path('docs/new.md').chmod(0o755)"])
+        self.assertEqual((self.repo/'docs/old.md').read_bytes(),original_bytes)
+        self.assertEqual((self.repo/'docs/old.md').stat().st_mode & 0o777,0o644)
+        self.assertFalse((self.repo/'docs/new.md').exists())
+        self.assertEqual(g(self.repo,'status','--porcelain'),'')
+
     def test_missing_verification_command_blocks(self):
         p=self.plan()
         with self.assertRaises(ValueError):apply_rename_docs(self.repo,p,approval=p['plan_digest'],test_command=[])
