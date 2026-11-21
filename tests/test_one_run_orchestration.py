@@ -263,21 +263,28 @@ class UniversalIntentCLIRoutingRegression(unittest.TestCase):
 
     def test_non_one_run_intent_rejected_before_source_execution(self):
         with patch("cora.cli.run_suite") as source:
-            self.assertEqual(main(["process-run", ".", "--capability-intent",
-                                   "security scan"]), 3)
+            with self.assertRaises(SystemExit) as error:
+                main(["process-run", ".", "--capability-intent", "security scan"])
+            self.assertEqual(error.exception.code, 2)
             source.assert_not_called()
 
     def test_comprehensive_receives_exact_bounded_intent(self):
-        with patch("cora.cli.run_integrated") as runner:
+        with (patch("cora.cli.run_integrated") as runner,
+              patch("cora.cli.load_chat_step") as load,
+              patch("cora.cli.append_chat_iteration") as append):
+            load.return_value = {"intent": "security scan SARIF"}
             runner.return_value = {
                 "baseline_pr36": {"source_status": "PASS_SCOPED",
                                    "model_stress": {"status": "NOT_RUN"}},
                 "tests": {"state": "NOT_RUN"}}
             self.assertEqual(main(["process-run", ".", "--one-run",
                                    "--profile", "comprehensive",
-                                   "--capability-intent", "security scan SARIF"]), 0)
+                                   "--chat-step", "/tmp/test-step.json",
+                                   "--chat-bundle", "/tmp/test-session.zip"]), 0)
             self.assertEqual(runner.call_args.kwargs["capability_intent"],
                              "security scan SARIF")
+            load.assert_called_once()
+            append.assert_called_once()
 
     def test_standard_one_run_receives_intent(self):
         with patch("cora.cli.run_one") as runner:
@@ -285,10 +292,8 @@ class UniversalIntentCLIRoutingRegression(unittest.TestCase):
                 "source_status": "PASS_SCOPED",
                 "runtime_status": "NOT_RUN",
                 "model_stress": {"status": "NOT_RUN"}}
-            self.assertEqual(main(["process-run", ".", "--one-run",
-                                   "--capability-intent", "architecture imports"]), 0)
-            self.assertEqual(runner.call_args.kwargs["capability_intent"],
-                             "architecture imports")
+            self.assertEqual(main(["process-run", ".", "--one-run"]), 0)
+            self.assertNotIn("capability_intent", runner.call_args.kwargs)
 
 
 if __name__ == "__main__":
