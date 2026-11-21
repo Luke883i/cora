@@ -250,3 +250,102 @@ class ExternalToolOptimalContract(unittest.TestCase):
 
 if __name__=='__main__':unittest.main()
 
+
+
+class Universal81CapabilityTests(unittest.TestCase):
+    """The 81 owners are typed, fail-closed and not 81 launched programs."""
+
+    @staticmethod
+    def native():
+        names = ["version", "process-list", "snapshot"] + [
+            f"fixture-{i:02d}" for i in range(68)]
+        return [{"command": n, "family": "git-evidence"} for n in names]
+
+    def test_exact_census_and_nonpromotion(self):
+        from cora.process_suite import universal_capability_plan, verify_universal_capability_plan
+        names = self.native()
+        result = universal_capability_plan(names, commit="a" * 40)
+        self.assertEqual(result["counts"], {
+            "native": 71, "external": 10, "total": 81,
+            "selected": 3, "run_reported": 0, "blocked": 3,
+            "not_selected": 78})
+        self.assertTrue(verify_universal_capability_plan(names, result))
+        self.assertEqual(result["authority"], "NONE")
+        self.assertEqual(result["product_status"], "BLOCKED_EXTERNAL")
+        self.assertTrue(all(r["state"] == "NOT_SELECTED" for r in result["rows"]
+                            if r["kind"] == "UPSTREAM_CANDIDATE"))
+
+    def test_security_intent_uses_upstream_as_blocked_handoff(self):
+        from cora.process_suite import universal_capability_plan
+        r = universal_capability_plan(self.native(), commit="a" * 40,
+                                      intent="security scan sarif")
+        semgrep = next(x for x in r["rows"] if x["id"] == "external:semgrep")
+        self.assertTrue(semgrep["selected"])
+        self.assertEqual(semgrep["state"], "BLOCKED")
+        self.assertEqual(semgrep["owner"], "UPSTREAM_EXTERNAL")
+        self.assertIsNone(semgrep["output_sha256"])
+        self.assertIn("external:semgrep", r["agent_handoff"]["selected"])
+
+    def test_forged_receipts_and_wrong_source_sha_rejected(self):
+        from cora.process_suite import universal_capability_plan
+        names = self.native()
+        sha = "a" * 40
+        rows = [{"command": x["command"], "commit": sha, "authority": "NONE",
+                 "state": "BLOCKED", "stdout_sha256": None} for x in names]
+        ok = universal_capability_plan(names, commit=sha, native_observations=rows)
+        self.assertEqual(ok["counts"]["total"], 81)
+        for mutate in (
+                lambda rows: rows[0].update(commit="b" * 40),
+                lambda rows: rows[0].update(stdout_sha256="c" * 64),
+                lambda rows: rows[4].update(state="RUN_REPORTED_UNATTESTED"),
+                lambda rows: rows[0].update(authority="AI_AGENT")):
+            bad = [dict(x) for x in rows]
+            mutate(bad)
+            with self.subTest(mutation=mutate):
+                with self.assertRaises(ValueError):
+                    universal_capability_plan(names, commit=sha, native_observations=bad)
+
+    def test_forged_output_replay_rejected(self):
+        import copy
+        from cora.process_suite import universal_capability_plan, verify_universal_capability_plan
+        names = self.native()
+        a = universal_capability_plan(names, commit="a" * 40, intent="history")
+        for mutator in (
+                lambda x: x["counts"].update(total=80),
+                lambda x: x["rows"].pop(),
+                lambda x: x["rows"][0].update(state="RUN_REPORTED_UNATTESTED"),
+                lambda x: x["agent_handoff"].update(human_review_required=False),
+                lambda x: x.update(authority="AI_AGENT")):
+            altered = copy.deepcopy(a)
+            mutator(altered)
+            with self.subTest(mutation=mutator):
+                with self.assertRaises(ValueError):
+                    verify_universal_capability_plan(names, altered)
+
+    def test_backward_reticular_and_contract_not_accepted(self):
+        from cora.process_suite import EXTERNAL_TOOLS
+        root = Path(__file__).resolve().parents[1]
+        data = json.loads((root / ".cora/contracts/dod/post94-cli-behavior-dod.json").read_text())
+        cut = data["universal_orchestration"]
+        nodes = {n["id"]: n for n in cut["nodes"]}
+        self.assertEqual(len(nodes), 19)
+        self.assertEqual(len(cut["nodes"]), len(nodes))
+        self.assertEqual(cut["source_counts"]["addressable_capabilities"], 81)
+        self.assertEqual(cut["source_counts"]["native_cli_declarations"], 71)
+        self.assertEqual(cut["source_counts"]["external_candidates"], len(EXTERNAL_TOOLS))
+        self.assertEqual(cut["global_status"], "BLOCKED_EXTERNAL")
+        self.assertEqual(cut["authority"], "NONE")
+        for node in nodes.values():
+            self.assertTrue(set(node["depends_on"]) <= set(nodes))
+        self.assertTrue(any(n["scope"] == "EXTERNAL" and n["status"] == "BLOCKED_EXTERNAL"
+                            for n in nodes.values()))
+        self.assertIn("NOT_81_EXECUTED", cut["nonclaims"])
+
+    def test_invalid_inputs_and_duplicate_native_rejected(self):
+        from cora.process_suite import universal_capability_plan
+        names = self.native()
+        for malformed in (names[:-1], names + [names[0]], names[:-1] + [names[0]]):
+            with self.assertRaises(ValueError):
+                universal_capability_plan(malformed, commit="a" * 40)
+        with self.assertRaises(ValueError):
+            universal_capability_plan(names, commit="a" * 40, intent="x" * 1025)

@@ -33,6 +33,26 @@ class OneRunAssuranceTests(unittest.TestCase):
         cls.sha = git(ROOT, "rev-parse", "HEAD")
         cls.source = run_one(ROOT, cls.sha)
 
+    def test_universal_81_source_scoped_plan_replay_and_counterexample(self):
+        from cora.process_suite import verify_universal_capability_plan
+        from cora.evidence import domain_hash
+        d = self.source
+        planner = d["universal_capability_plan"]
+        self.assertEqual(planner["counts"]["native"], 71)
+        self.assertEqual(planner["counts"]["external"], 10)
+        self.assertEqual(planner["counts"]["total"], 81)
+        self.assertEqual(planner["counts"]["run_reported"], 3)
+        self.assertTrue(verify_universal_capability_plan(
+            d["catalog"]["capabilities"], planner, d["cli_capability_attempts"]))
+        self.assertTrue(verify_one(ROOT, d))
+        forged = copy.deepcopy(d)
+        forged["universal_capability_plan"]["counts"]["total"] = 80
+        forged["receipt_digest"] = domain_hash("CORA:one-run:1",
+                                                  {k: v for k, v in forged.items()
+                                                   if k != "receipt_digest"})
+        with self.assertRaises(ValueError):
+            verify_one(ROOT, forged)
+
     def test_actual_source_methods_and_noncompensatory_reticulum(self):
         d = self.source
         self.assertEqual(d["commit"], self.sha)
