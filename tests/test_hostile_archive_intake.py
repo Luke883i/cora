@@ -62,6 +62,27 @@ class HostileZip(unittest.TestCase):
                 {k:v for k,v in forged.items() if k!='receipt_digest'})
             with self.assertRaises(ValueError):verify_intake(self.path,forged)
 
+    def test_directory_type_named_as_file_rejected_without_extraction(self):
+        archive(self.path,[('bundle/alpha.txt',b'a',0o100644),
+            ('bundle/wrong.txt',b'not-a-directory',0o40755)])
+        out=self.root/'must_not_exist'
+        with self.assertRaisesRegex(ValueError,'directory type/name mismatch'):
+            inspect_zip(self.path,extract_to=out)
+        self.assertFalse(out.exists())
+
+    def test_regular_type_named_as_directory_rejected(self):
+        archive(self.path,[('bundle/alpha.txt',b'a',0o100644),
+            ('bundle/wrong/',b'',0o100644)])
+        with self.assertRaisesRegex(ValueError,'directory type/name mismatch'):
+            inspect_zip(self.path)
+
+    def test_consistent_explicit_directory_is_accepted(self):
+        archive(self.path,[('bundle/sub/',b'',0o40755),
+            ('bundle/sub/ok.txt',b'ok',0o100644)])
+        receipt=inspect_zip(self.path)
+        self.assertEqual(receipt['tracked_files'],1)
+        self.assertTrue(verify_intake(self.path,receipt))
+
     def test_traversal(self): self.fail_member('bundle/../../outside.py')
     def test_absolute_path(self):self.fail_member('/tmp/payload.py')
     def test_backslash(self):self.fail_member('bundle/..\\other.py')
