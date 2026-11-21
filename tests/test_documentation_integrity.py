@@ -25,6 +25,7 @@ def copy_fixture(dst: Path) -> None:
         (dst / path).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(ROOT / path, dst / path)
     for path in ("docs/documentation-registry.json", ".cora/contracts/dod/documentation-dod.json",
+                 ".cora/contracts/index.json",
                  "src/cora/cli.py"):
         (dst / path).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(ROOT / path, dst / path)
@@ -41,6 +42,21 @@ class DocumentationDoDTests(unittest.TestCase):
         self.assertEqual(sum(bool(x["baseline_blob"]) for x in registry["documents"]), 43)
         self.assertEqual(registry["authority"],
                          "MAINTAINER_DECLARATION_NOT_INDEPENDENT_ATTESTATION")
+
+    def test_contract_path_index_counts_bind_to_registry(self):
+        index=(ROOT/'docs/INDEX.md').read_text('utf-8')
+        registry=json.loads((ROOT/'.cora/contracts/index.json').read_text('utf-8'))
+        self.assertEqual(doc.contract_path_cardinality_issues(index,registry),[])
+
+    def test_contract_path_index_cardinality_mutations_are_rejected(self):
+        index=(ROOT/'docs/INDEX.md').read_text('utf-8')
+        registry=json.loads((ROOT/'.cora/contracts/index.json').read_text('utf-8'))
+        for phrase in ('22 internal DoDs','3 profiles','2 assurance records'):
+            self.assertIn(phrase,index)
+            forged=index.replace(phrase, '100 '+phrase.split(' ',1)[1],1)
+            with self.subTest(phrase=phrase):
+                self.assertIn('contract-index-cardinality-drift',
+                              doc.contract_path_cardinality_issues(forged,registry))
 
     def test_02_reticular_global_has_independent_external_cut(self):
         data = json.loads((ROOT / ".cora/contracts/dod/documentation-dod.json").read_text("utf-8"))
@@ -72,6 +88,9 @@ class DocumentationDoDTests(unittest.TestCase):
              lambda x: x.replace("](../README.md)", "](https://example.invalid)").replace(
                  "](../README.md#use-cora-in-a-chatgpt-project--beginner-walkthrough)",
                  "](https://example.invalid)")), "not-indexed:README.md"),
+            ("stale-contract-index-cardinality", lambda: change("docs/INDEX.md",
+             lambda x: x.replace("22 internal DoDs", "21 internal DoDs", 1)),
+             "contract-index-cardinality-drift"),
             ("missing-doc", lambda: (fixture / "docs/FILE_LAB.md").unlink(), "missing:docs/FILE_LAB.md"),
             ("unregistered-doc", lambda: (fixture / "docs/rogue.md").write_text("# Unregistered", encoding="utf-8"), "unregistered:docs/rogue.md"),
             ("duplicate-registration", lambda: registry_mutate(
