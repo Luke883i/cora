@@ -378,6 +378,31 @@ class Universal81CapabilityTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             universal_capability_plan(names, commit=sha, source_methods=wrong_methods)
 
+    def test_history_profile_exact_methods_and_unrequested_full_methods(self):
+        from cora.process_suite import (
+            IMPLEMENTED, universal_capability_plan, verify_universal_capability_plan)
+        names = self.native()
+        names[3]["command"] = "archaeology"
+        sha = "a" * 40
+        methods = [{"method": "git_archaeology", "status": "EXECUTED_SCOPED",
+                    "source_digest": "d" * 64}]
+        result = universal_capability_plan(
+            names, commit=sha, intent="history commits",
+            source_methods=methods, source_process="history")
+        target = next(x for x in result["rows"] if x["id"] == "cora:archaeology")
+        self.assertEqual(target["state"], "REUSED_SOURCE_METHOD_SCOPED")
+        self.assertEqual(result["counts"]["source_reused"], 1)
+        self.assertTrue(verify_universal_capability_plan(
+            names, result, source_methods=methods, source_process="history"))
+        with self.assertRaises(ValueError):
+            universal_capability_plan(
+                names, commit=sha, intent="history",
+                source_methods=methods, source_process="full")
+        with self.assertRaises(ValueError):
+            universal_capability_plan(
+                names, commit=sha, source_methods=[], source_process="history")
+        self.assertEqual(IMPLEMENTED["history"], ("git_archaeology",))
+
     def test_invalid_inputs_and_duplicate_native_rejected(self):
         from cora.process_suite import universal_capability_plan
         names = self.native()

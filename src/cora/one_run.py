@@ -478,7 +478,7 @@ def run_one(repo: Path, revision: str = "HEAD", *,
         receipt["universal_capability_plan"] = universal_capability_plan(
             catalog["capabilities"], commit=commit, intent=capability_intent,
             native_observations=receipt.get("cli_capability_attempts"),
-            source_methods=proc["results"])
+            source_methods=proc["results"], source_process=proc["process"])
     elif capability_intent is not None:
         raise ValueError("universal capability planning requires original Git CORA contract")
     receipt["receipt_digest"] = domain_hash("CORA:one-run:1", receipt)
@@ -569,7 +569,8 @@ def verify_one(repo: Path, receipt: dict, *, html_page: str | None = None) -> bo
             expected_catalog["capabilities"],
             receipt.get("universal_capability_plan"),
             native_observations=receipt.get("cli_capability_attempts"),
-            source_methods=receipt["source_process"]["results"])
+            source_methods=receipt["source_process"]["results"],
+            source_process=receipt["source_process"]["process"])
     elif "universal_capability_plan" in receipt:
         raise ValueError("universal planner forged on old or non-CORA Git source")
     expected_dod = _original_dod(repo, sha) if cora else {

@@ -334,7 +334,8 @@ _SOURCE_METHOD_STATES = _SOURCE_METHOD_PASS | frozenset((
 def universal_capability_plan(capabilities: list[dict], *, commit: str,
                               intent: str | None = None,
                               native_observations: list[dict] | None = None,
-                              source_methods: list[dict] | None = None) -> dict:
+                              source_methods: list[dict] | None = None,
+                              source_process: str | None = None) -> dict:
     """Select relevant owners; reuse observations, never perform new effects."""
     if (not isinstance(capabilities, list) or len(capabilities) != 71 or
             any(not isinstance(x, dict) or not isinstance(x.get("command"), str)
@@ -372,6 +373,11 @@ def universal_capability_plan(capabilities: list[dict], *, commit: str,
     # source-scoped and is subsequently independently rederived by verify_one.
     source = {}
     if source_methods is not None:
+        # A filtered process is complete against THAT selected group's owner
+        # universe, never against eight full-profile methods not requested.
+        profile = source_process if source_process is not None else "full"
+        if profile not in IMPLEMENTED:
+            raise ValueError("unknown original source method profile")
         if not isinstance(source_methods, list):
             raise ValueError("invalid source method ledger")
         for item in source_methods:
@@ -387,8 +393,8 @@ def universal_capability_plan(capabilities: list[dict], *, commit: str,
             elif digest is not None:
                 raise ValueError("non-executed source method invented digest")
             source[item["method"]] = item
-        if set(source) != set(IMPLEMENTED["full"]):
-            raise ValueError("incomplete original source method universe")
+        if set(source) != set(IMPLEMENTED[profile]):
+            raise ValueError("incomplete selected source method universe")
     rows = []
     for name, cap in sorted(native.items()):
         selected = name in _BASELINE_OWNERS
@@ -455,13 +461,15 @@ def universal_capability_plan(capabilities: list[dict], *, commit: str,
 
 def verify_universal_capability_plan(capabilities: list[dict], report: dict,
                                      native_observations: list[dict] | None = None,
-                                     source_methods: list[dict] | None = None) -> bool:
+                                     source_methods: list[dict] | None = None,
+                                     source_process: str | None = None) -> bool:
     """Exact source replay: a digest is not independent runtime attestation."""
     if not isinstance(report, dict) or report.get("authority") != "NONE":
         raise ValueError("invalid capability report authority")
     expected = universal_capability_plan(
         capabilities, commit=report.get("commit"), intent=report.get("intent"),
-        native_observations=native_observations, source_methods=source_methods)
+        native_observations=native_observations, source_methods=source_methods,
+        source_process=source_process)
     if report != expected:
         raise ValueError("capability plan, status or native receipt does not replay")
     return True
