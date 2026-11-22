@@ -4,7 +4,7 @@
 
 **CORA is an agent-agnostic system for governing software development from intent to evidence.** Across application, service, library and infrastructure repositories, it turns an intended outcome into a backward-derived acceptance graph, a falsifiable and revisable roadmap, bounded changes, counterexamples and Git-bound evidence. Its conversational method coordinates the work; its local Python 3.11+ assurance engine independently checks specified source claims. CORA is not tied to an application domain, programming language or specific coding agent; **the scope of any PASS remains the explicitly executed checks**, not all behavior of the target product.
 
-**CORA is not a coding agent** or automatic runner. Its pre/post-merge reports link a proposed change to source, tests, counterexamples and remaining debt. Execution and release decisions remain external.
+**CORA is not a coding agent** or automatic runner. It can **produce reproducible pre/post-merge review reports** linking **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**. Execution and release decisions remain external.
 
 **Why:** a patch cannot establish target behavior; CORA links intent, tests and unresolved debt.
 
@@ -22,9 +22,9 @@ ChatGPT Project = canonical prompt + authorized attachments, not a runner
 
 **Product** = engineering assurance; **software** = the `cora` CLI and verifiers; **repository** = Git source, contracts and CI. None proves target-product readiness.
 
-**Audience:** CTOs, developers, reviewers and coding agents. **Requirements:** Python 3.11+, Git, permission. **License:** [MIT](LICENSE).
+**Recommended use:** review an authorized Git change. **Audience and conditions:** CTOs, developers, reviewers and coding agents; Python 3.11+, Git and authorized execution tools. **Open source license:** [MIT](LICENSE).
 
-**Status:** `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **Document status:** CURRENT. **Current scope:** Git source. **Operational use:** inspect commits. **Evidence:** Git and scoped tests. **Limits:** `BLOCKED_EXTERNAL`. Verify the exact checked-out Git revision. **Category:** engineering assurance.
+**Current status:** experimental `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **Document status:** CURRENT. **Current scope:** Git source. **Operational use:** inspect commits. **Evidence:** Git and scoped tests. **Limits:** `BLOCKED_EXTERNAL`. Verify the exact checked-out Git revision. **Category:** engineering assurance.
 
 ## First five minutes — choose your path
 
@@ -103,14 +103,13 @@ The [LEVEL / NILO experiment](docs/CONTINUOUS_DEVELOPMENT.md#level-demonstration
 
 **71 declared CLI commands** in [capability atlas](.cora/assurance/capability-atlas.json) are inventory, not 71 independently proven features. [parser-checked CLI reference](docs/CLI_REFERENCE.md) · [complete documentation index](docs/INDEX.md).
 
-**81-owner frontier (71 CLI + 10 external candidates):** selection is not execution. `--portable-link` relates `cora:process-run` to verified target tests; it executes zero additional owners. Extensions require qualified owner/obligation/test bindings, authorized adapters, negative tests and dual Git evidence. Missing evidence remains `BLOCKED`. [Scoped contract](.cora/contracts/dod/pr99-portable-universal-dod.json).
+**81-owner frontier (71 CLI + 10 external candidates):** selection is not execution. `--portable-link` links `cora:process-run` to native tests; executes zero additional owners. Expand via authorized adapters and falsifiers. [Scoped contract](.cora/contracts/dod/pr99-portable-universal-dod.json).
 
-| Outcome plane | Owner and proof |
+| Plane | Proof |
 | --- | --- |
-| **Product** | Target owner defines observable outcome; runtime acceptance stays open. |
-| **Software** | Agent implements; runner executes qualified adapter and native positive/negative tests. |
-| **Repository** | Two Git identities, original receipts, retained logs and exact-HEAD replay; neither CI nor prompt approves release. |
-
+| **Product** | Target owner defines observable outcome. |
+| **Software** | Agent implements. |
+| **Repository** | Two Git identities and replay. |
 
 **CORA is not an eleventh engineering method.** Source and model tests are scoped evidence, not full behavioral proof. [Method crosswalk](docs/CONVERGENT_ASSURANCE.md#method-crosswalk--borrowed-perspectives-not-full-implementations).
 
@@ -148,7 +147,7 @@ The dossier distinguishes `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTER
 
 **Target examples, not universal validation:** [ICTC](https://github.com/Luke883i/ictc) (HTTP/SQLite, source/UX verification), [Teddy](https://github.com/Luke883i/teddy) (Node) and [iKant_EDU](https://github.com/Luke883i/iKant_EDU) (unknown consumers, reversible repository contraction). Source histories and native pilot evidence have distinct owners; CORA did not independently certify these products. [Pilots](docs/GOLD_ASSURANCE.md).
 
-**Terms:** *intent mining* extracts obligations; *reticular DoD* maps prerequisites; *semantic slices* bound changes; *blobbing* writes Git objects; *mutations* challenge claims; *saturation* means no new bounded findings. Finite tests cannot establish universal correctness.
+**Terms:** *intent mining* extracts obligations; *reticular DoD* maps dependencies; *semantic slices* bound changes; *blobbing/materialization* writes Git objects; *semantic mutations* challenge claims; *semantic saturation* is a bounded lack of new findings. No finite test proves universal correctness.
 
 ## Interpret a CORA result
 
@@ -173,7 +172,7 @@ The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) di
 **Product or release owner:** [Governance](GOVERNANCE.md) · [Security](SECURITY.md) · [Release](docs/RELEASE.md).
 **Full documentation, history and contracts:** [Index](docs/INDEX.md) · [Documentation DoD](docs/DOCUMENTATION_DOD.md). [PR #1–#89 trajectory, gaps and release gate](docs/AUDIT_PR01_89_AND_RELEASE_GATE.txt).
 
-**Read in order:** README → guide → contract → evidence. Rights remain external; Git is the source of record.
+**Decision rights are external:** owner and host. **Source of record:** Git, not chat. **Why:** source is not authority. **Runtime:** local CLI. **Read in order:** README → guide → contract → evidence.
 
 <details>
 <summary>Product | Outcome and limits</summary>
