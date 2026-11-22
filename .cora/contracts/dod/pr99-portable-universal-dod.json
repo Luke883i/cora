@@ -1,0 +1,425 @@
+{
+  "a0": {
+    "acceptance_oracle": "Entire AND graph on same authentic real PR98-based Git HEAD, real target-native tests and a separate trusted isolation/review/release gate.",
+    "actors": [
+      "external AI coding agent",
+      "CORA source owner",
+      "target owner",
+      "isolated OS runner",
+      "independent reviewer",
+      "release manager"
+    ],
+    "behavior": "Select and execute only context-relevant qualified owners with measurable replayable evidence; no universal default fan-out; no duplicated CORA engine.",
+    "effects": "Pure source-target bridge at this slice; no new subprocess, network, external scan or write to target.",
+    "exclusions": [
+      "automatic all-81 execution",
+      "self-authorized sandbox",
+      "self-reviewed merge/release",
+      "untrusted executable from ZIP",
+      "unlicensed provider operations"
+    ],
+    "state_data": "Real source Git SHA, real target Git SHA/tree, original capability owner 71+10 inventory, explicit test ID mappings, bounded native logs, replayable digest and external proof.",
+    "ux": "Explain selected, blocked, not-run, next unresolved and accepted scope with provenance. No invisible execution."
+  },
+  "abstract_dod": "CORA, through one existing One-Run, must infer the subset of its 81 documented owners pertinent to a target engineering outcome, reuse existing Git-bound evidence, execute only qualified relevant adapters with explicit authorization in externally attested isolation, link target-native positive and negative oracles, falsify failure modes, and materialize reviewer-verifiable SHA-bound receipts. The full global result is BLOCKED if ANY necessary SOURCE, TARGET_RUNTIME or EXTERNAL leaf is missing.",
+  "authority": "NONE",
+  "checklists": {
+    "design": [
+      "Pin real PR98 base/head/tree (not ZIP SHA)",
+      "Inspect real owners/imports/AGENTS.md/tests and risk",
+      "Derive AND dependency graph and topological order",
+      "Select smallest reversible slice and independent native test oracle",
+      "Declare authority/runner/owner boundaries"
+    ],
+    "development": [
+      "Reuse run_one/verify_one and PR98 foreign_pilot",
+      "Preserve 71 commands / 81 owners, with external owners blocked by default",
+      "Use separate identities for CORA and target Git receipts",
+      "Keep all execution consent explicit and target files immutable",
+      "Add no new broad subprocess or network adapter"
+    ],
+    "release": [
+      "Rebase actual PR98 HEAD in authorized checkout and read back real blobs/trees/commits",
+      "Run full native suite and PR98 comprehensive CI on final SHA",
+      "Run independent reviewer, branch rules and provenance controls",
+      "Use explicit release owner and rollback drill",
+      "Do not merge/tag/publish based on this proposal"
+    ],
+    "security": [
+      "Deny arbitrary untrusted code without independent sandbox attestation",
+      "Prove network/storage/process policy in separate trusted runner",
+      "Treat process-group cleanup as cancellation, never confinement",
+      "No automatic trust from digest, model or ZIP"
+    ],
+    "testing": [
+      "Use original maintained target-native positive and negative test oracles",
+      "Falsify fake missing test ID, source SHA, 80/82 owners, spoofed PASS and tamper",
+      "Run finite physical code mutants and count survivors",
+      "Recompute receipts on EXACT final candidate HEAD",
+      "Check behavior across Python versions and target architectures before acceptance"
+    ]
+  },
+  "current_claim": "G_SCOPED_BRIDGE may pass only after exact-HEAD native tests and physical falsifiers; G_UNIVERSAL_PRODUCT remains BLOCKED_EXTERNAL.",
+  "global_goals": [
+    "G_SCOPED_BRIDGE",
+    "G_UNIVERSAL_PRODUCT"
+  ],
+  "mode": "REAL_GIT_PR99_SOURCE_SCOPED_TARGET_RUNTIME_UNATTESTED",
+  "nodes": [
+    {
+      "depends_on": [
+        "I_DUAL_SHA",
+        "I_OWNER_SCOPE",
+        "I_NATIVE_FALSIFIERS",
+        "I_NONPROMOTION",
+        "I_ONE_ENGINE"
+      ],
+      "id": "G_SCOPED_BRIDGE",
+      "kind": "GLOBAL",
+      "scope": "SOURCE_AND_BOUNDED_TARGET",
+      "status": "NOT_ATTESTED_ON_REAL_PR98_HEAD"
+    },
+    {
+      "depends_on": [
+        "G_SCOPED_BRIDGE",
+        "I_UNIVERSAL_SELECT",
+        "I_TRUSTED_TARGET",
+        "I_RELEASE_GOVERNANCE"
+      ],
+      "id": "G_UNIVERSAL_PRODUCT",
+      "kind": "GLOBAL",
+      "scope": "EXTERNAL",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "depends_on": [
+        "L_SOURCE_PINNED",
+        "L_TARGET_NATIVE_GIT",
+        "L_DUAL_REPLAY_LINK"
+      ],
+      "id": "I_DUAL_SHA",
+      "kind": "INTERMEDIATE",
+      "scope": "SOURCE",
+      "status": "NOT_ATTESTED"
+    },
+    {
+      "depends_on": [
+        "L_ORIGINAL_81_DECLARED",
+        "L_81_DENOMINATOR_REFUTES",
+        "L_OWNER_BINDING",
+        "L_SOURCE_SELECTED"
+      ],
+      "id": "I_OWNER_SCOPE",
+      "kind": "INTERMEDIATE",
+      "scope": "SOURCE",
+      "status": "NOT_ATTESTED"
+    },
+    {
+      "depends_on": [
+        "L_EXPLICIT_TEST_ID",
+        "L_LOG_TAMPER",
+        "L_NOT_SKIP"
+      ],
+      "id": "I_NATIVE_FALSIFIERS",
+      "kind": "INTERMEDIATE",
+      "scope": "SOURCE",
+      "status": "NOT_ATTESTED"
+    },
+    {
+      "depends_on": [
+        "L_DENY_UPSTREAM_FALSE_PASS",
+        "L_DENY_FALSE_COUNTS",
+        "L_DENY_HOST_CLAIM"
+      ],
+      "id": "I_NONPROMOTION",
+      "kind": "INTERMEDIATE",
+      "scope": "SOURCE",
+      "status": "NOT_ATTESTED"
+    },
+    {
+      "depends_on": [
+        "L_NO_SECOND_ENGINE"
+      ],
+      "id": "I_ONE_ENGINE",
+      "kind": "INTERMEDIATE",
+      "scope": "SOURCE",
+      "status": "NOT_ATTESTED"
+    },
+    {
+      "depends_on": [
+        "E_REAL_UNIVERSAL_SOURCE_RECEIPT",
+        "E_INFER_RELEVANT_OWNERS",
+        "E_EXTERNAL_ADAPTERS"
+      ],
+      "id": "I_UNIVERSAL_SELECT",
+      "kind": "INTERMEDIATE",
+      "scope": "EXTERNAL",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "depends_on": [
+        "E_TRUE_UPSTREAM_TREE",
+        "E_ISOLATED_OS_RUNNER"
+      ],
+      "id": "I_TRUSTED_TARGET",
+      "kind": "INTERMEDIATE",
+      "scope": "EXTERNAL",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "depends_on": [
+        "E_GENUINE_PR98_REBASE",
+        "E_INDEPENDENT_REVIEW",
+        "E_HOST_RELEASE"
+      ],
+      "id": "I_RELEASE_GOVERNANCE",
+      "kind": "INTERMEDIATE",
+      "scope": "EXTERNAL",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "depends_on": [],
+      "falsifier": "71+10 and no 81-run promotion",
+      "id": "L_ORIGINAL_81_DECLARED",
+      "kind": "LOCAL",
+      "oracle": "tests/test_pr99_portable_bridge.py::PortableBridgeDoDTests.test_model_81_rows_and_one_native_test_cannot_promote_81_executions",
+      "scope": "SOURCE",
+      "status": "SOURCE_TEST_REQUIRED"
+    },
+    {
+      "depends_on": [],
+      "falsifier": "Missing, duplicate and invented owner rejected",
+      "id": "L_81_DENOMINATOR_REFUTES",
+      "kind": "LOCAL",
+      "oracle": "tests/test_pr99_portable_bridge.py::PortableBridgeDoDTests.test_80_or_82_owner_rows_refuted",
+      "scope": "SOURCE",
+      "status": "SOURCE_TEST_REQUIRED"
+    },
+    {
+      "depends_on": [],
+      "falsifier": "Absent verified source plan is blocker",
+      "id": "L_SOURCE_PINNED",
+      "kind": "LOCAL",
+      "oracle": "tests/test_pr99_portable_bridge.py::PortableBridgeDoDTests.test_missing_real_universal_plan_must_block",
+      "scope": "SOURCE",
+      "status": "SOURCE_TEST_REQUIRED"
+    },
+    {
+      "depends_on": [],
+      "falsifier": "Original Git blob target test actually executes",
+      "id": "L_TARGET_NATIVE_GIT",
+      "kind": "LOCAL",
+      "oracle": "tests/test_pr99_portable_bridge.py::PortableBridgeDoDTests.test_original_native_target_event_and_git_are_not_synthetic",
+      "scope": "TARGET_RUNTIME",
+      "status": "SOURCE_TEST_REQUIRED"
+    },
+    {
+      "depends_on": [],
+      "falsifier": "Both original owner receipts must be replayed",
+      "id": "L_DUAL_REPLAY_LINK",
+      "kind": "LOCAL",
+      "oracle": "tests/test_pr99_portable_bridge.py::PortableBridgeDoDTests.test_genuine_dual_verification_cannot_be_bypassed_by_presented_data",
+      "scope": "SOURCE",
+      "status": "SOURCE_TEST_REQUIRED"
+    },
+    {
+      "depends_on": [],
+      "falsifier": "Altered retained bytes invalidate target observation",
+      "id": "L_LOG_TAMPER",
+      "kind": "LOCAL",
+      "oracle": "tests/test_pr99_portable_bridge.py::PortableBridgeDoDTests.test_real_retained_byte_tampering_is_refuted",
+      "scope": "TARGET_RUNTIME",
+      "status": "SOURCE_TEST_REQUIRED"
+    },
+    {
+      "depends_on": [],
+      "falsifier": "Skipped/missing native test cannot pass",
+      "id": "L_NOT_SKIP",
+      "kind": "LOCAL",
+      "oracle": "tests/test_pr99_portable_bridge.py::PortableBridgeDoDTests.test_tampered_or_skipped_target_test_fails_closed",
+      "scope": "TARGET_RUNTIME",
+      "status": "SOURCE_TEST_REQUIRED"
+    },
+    {
+      "depends_on": [],
+      "falsifier": "Only source One-Run may be linked without inventing other owner executions",
+      "id": "L_OWNER_BINDING",
+      "kind": "LOCAL",
+      "oracle": "tests/test_pr99_portable_bridge.py::PortableBridgeDoDTests.test_foreign_target_cannot_impersonate_executed_cora_command",
+      "scope": "SOURCE",
+      "status": "SOURCE_TEST_REQUIRED"
+    },
+    {
+      "depends_on": [],
+      "falsifier": "Declared exact native test IDs and no duplicate",
+      "id": "L_EXPLICIT_TEST_ID",
+      "kind": "LOCAL",
+      "oracle": "tests/test_pr99_portable_bridge.py::PortableBridgeDoDTests.test_unexpected_test_id_or_duplicate_binding_is_refuted",
+      "scope": "SOURCE",
+      "status": "SOURCE_TEST_REQUIRED"
+    },
+    {
+      "depends_on": [],
+      "falsifier": "No test inherits unselected owner",
+      "id": "L_SOURCE_SELECTED",
+      "kind": "LOCAL",
+      "oracle": "tests/test_pr99_portable_bridge.py::PortableBridgeDoDTests.test_unselected_owner_cannot_inherit_target_result",
+      "scope": "SOURCE",
+      "status": "SOURCE_TEST_REQUIRED"
+    },
+    {
+      "depends_on": [],
+      "falsifier": "No upstream invocation inferred",
+      "id": "L_DENY_UPSTREAM_FALSE_PASS",
+      "kind": "LOCAL",
+      "oracle": "tests/test_pr99_portable_bridge.py::PortableBridgeDoDTests.test_upstream_tool_cannot_be_laundered_into_execution",
+      "scope": "SOURCE",
+      "status": "SOURCE_TEST_REQUIRED"
+    },
+    {
+      "depends_on": [],
+      "falsifier": "No forged catalog counts or approval",
+      "id": "L_DENY_FALSE_COUNTS",
+      "kind": "LOCAL",
+      "oracle": "tests/test_pr99_portable_bridge.py::PortableBridgeDoDTests.test_forged_counts_and_authority_refuted",
+      "scope": "SOURCE",
+      "status": "SOURCE_TEST_REQUIRED"
+    },
+    {
+      "depends_on": [],
+      "falsifier": "No process-bound-to-OS-sandbox promotion",
+      "id": "L_DENY_HOST_CLAIM",
+      "kind": "LOCAL",
+      "oracle": "tests/test_pr99_portable_bridge.py::PortableBridgeDoDTests.test_no_sandbox_or_reviewer_promotion",
+      "scope": "SOURCE",
+      "status": "SOURCE_TEST_REQUIRED"
+    },
+    {
+      "depends_on": [],
+      "falsifier": "Reuses existing One-Run and PR98 pilot with no new executor",
+      "id": "L_NO_SECOND_ENGINE",
+      "kind": "LOCAL",
+      "oracle": "tests/test_pr99_portable_bridge.py::PortableBridgeDoDTests.test_model_81_rows_and_one_native_test_cannot_promote_81_executions",
+      "scope": "SOURCE",
+      "status": "SOURCE_TEST_REQUIRED"
+    },
+    {
+      "depends_on": [],
+      "external_owner": "Independent authorized provider/reviewer",
+      "id": "E_GENUINE_PR98_REBASE",
+      "kind": "LOCAL",
+      "oracle": "Original PR98 Git commit/parents/tree and test suite on its actual SHA",
+      "scope": "EXTERNAL",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "depends_on": [],
+      "external_owner": "Independent authorized provider/reviewer",
+      "id": "E_REAL_UNIVERSAL_SOURCE_RECEIPT",
+      "kind": "LOCAL",
+      "oracle": "Original full 81-row source One-Run receipt, independently replayed on authentic checkout",
+      "scope": "EXTERNAL",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "depends_on": [],
+      "external_owner": "Independent authorized provider/reviewer",
+      "id": "E_TRUE_UPSTREAM_TREE",
+      "kind": "LOCAL",
+      "oracle": "Original full third-party upstream Git history and target-native consumers",
+      "scope": "EXTERNAL",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "depends_on": [],
+      "external_owner": "Independent authorized provider/reviewer",
+      "id": "E_ISOLATED_OS_RUNNER",
+      "kind": "LOCAL",
+      "oracle": "Externally authenticated OS confinement with network/filesystem/privilege policy and escape probes",
+      "scope": "EXTERNAL",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "depends_on": [],
+      "external_owner": "Independent authorized provider/reviewer",
+      "id": "E_INFER_RELEVANT_OWNERS",
+      "kind": "LOCAL",
+      "oracle": "Pertinent 81-owner selection measured across heterogeneous independently judged tasks",
+      "scope": "EXTERNAL",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "depends_on": [],
+      "external_owner": "Independent authorized provider/reviewer",
+      "id": "E_EXTERNAL_ADAPTERS",
+      "kind": "LOCAL",
+      "oracle": "Each newly activated external tool has a licensed authorized bounded adapter and independent consumer oracle",
+      "scope": "EXTERNAL",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "depends_on": [],
+      "external_owner": "Independent authorized provider/reviewer",
+      "id": "E_INDEPENDENT_REVIEW",
+      "kind": "LOCAL",
+      "oracle": "Independent reviewer and target owner approve the tested scope and threat model",
+      "scope": "EXTERNAL",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "depends_on": [],
+      "external_owner": "Independent authorized provider/reviewer",
+      "id": "E_HOST_RELEASE",
+      "kind": "LOCAL",
+      "oracle": "Protected-branch required checks, signed provenance, reproducible build, owner-authorized release and rollback",
+      "scope": "EXTERNAL",
+      "status": "BLOCKED_EXTERNAL"
+    }
+  ],
+  "quality_metrics": {
+    "development": {
+      "cli_commands_exact": 71,
+      "declared_owners_exact": 81,
+      "new_parallel_analysis_engine_max": 0,
+      "new_unreviewed_execution_path_max": 0,
+      "no_unexplained_contract_registry_gap": true,
+      "static_source_diff_check": "git diff --check clean"
+    },
+    "evidence": {
+      "byte_replay_and_SHA_replay_required": true,
+      "dual_git_identities_required": 2,
+      "source_owner_executor_promotions_from_target": 0,
+      "unqualified_isolation_pass_max": 0,
+      "unverified_external_adapter_pass_max": 0
+    },
+    "native_testing": {
+      "finite_physical_mutants_min": 4,
+      "missing_or_skipped_required_tests_max": 0,
+      "mutation_survivors_max": 0,
+      "named_local_oracles": 14,
+      "negative_cases_min": 9,
+      "positive_target_original_git_tests_min": 1
+    },
+    "release": {
+      "exact_pr_head_ci_failures_max": 0,
+      "merge_release_authority": "EXTERNAL_HUMAN_ONLY",
+      "protected_branch_enforced": true,
+      "required_checks_completed": true,
+      "rollback_drill_owner_attested": true,
+      "sbom_wheel_sdist_provenance_required": true,
+      "security_review_signed_by_non_author": true
+    }
+  },
+  "remote_pr98": {
+    "base": "b1b8e8ad3d430096ed8fb6885668074ca36eb6b7",
+    "head": "39dca3b55e33b6b591635ed67a3ce9ed29306475",
+    "head_present_in_local_git": true,
+    "number": 98,
+    "source_blob_oid": "29b18eefa4652ee344af01fd2426631076d81cd2",
+    "source_path": "src/cora/foreign_pilot.py",
+    "merged_main": "744401c53dd62640f93d26f3b7c96b82940d059f"
+  },
+  "rollback": "Reverse only PR99 feature branch commits; never rewrite merged PR98 or protected main. No automatic merge or release.",
+  "schema": "cora-pr99-portable-universal-dod/1",
+  "target": "Luke883i/cora"
+}

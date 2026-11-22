@@ -149,6 +149,11 @@
       "scope": "INTERNAL_DOD"
     },
     {
+      "logical": "cora.pr99-portable-universal-dod.json",
+      "canonical": ".cora/contracts/dod/pr99-portable-universal-dod.json",
+      "scope": "INTERNAL_DOD"
+    },
+    {
       "logical": "cora.reader-cockpit-release-dod.json",
       "canonical": ".cora/contracts/dod/reader-cockpit-release-dod.json",
       "scope": "INTERNAL_DOD"
