@@ -593,6 +593,7 @@
       "src/cora/evidence.py",
       "src/cora/file_lab.py",
       "src/cora/file_lab_stress.py",
+      "src/cora/foreign_pilot.py",
       "src/cora/genealogy.py",
       "src/cora/git_snapshot.py",
       "src/cora/gold_assurance.py",
@@ -656,6 +657,7 @@
       "tools/verify_layout_simplification.py",
       "tools/verify_operational_equivalence.py",
       "tools/verify_pr16_coverage.py",
+      "tools/verify_pr97_hardening.py",
       "tools/verify_release_readiness.py",
       "tools/verify_repository_contract.py",
       "tools/verify_type_assurance.py"
@@ -760,6 +762,7 @@
       "tests/test_filesystem_layout_preservation.py",
       "tests/test_final_experimental_gates.py",
       "tests/test_five_synergy_goals.py",
+      "tests/test_foreign_pilot.py",
       "tests/test_git_lineage_genealogy.py",
       "tests/test_git_object_batching.py",
       "tests/test_gold_assurance.py",
@@ -820,6 +823,7 @@
       ".cora/contracts/dod/post94-cli-behavior-dod.json",
       ".cora/contracts/dod/postmerge-release-dod.json",
       ".cora/contracts/dod/postmerge-repro-dod.json",
+      ".cora/contracts/dod/pr97-foreign-hardening.json",
       ".cora/contracts/dod/reader-cockpit-release-dod.json",
       ".cora/contracts/dod/self-governing-portable-development-v1.json",
       ".cora/contracts/dod/workflow-dod.json"
