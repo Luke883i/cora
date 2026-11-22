@@ -17,21 +17,21 @@
       "unverified upstream clone",
       "review, merge, release"
     ],
-    "state_data": "CORA reference SHA, actual reconstructed third-party test Git SHA and tree, original blob OIDs, consent, measured durations, test IDs, logs; verified merged PR97 remote main SHA and selected Git blob IDs; local commit ancestry remains synthetic and untrusted as main.",
-    "ux": "One-Run existing CLI plus opt-in foreign pilot report, next unresolved, repeatable replay"
+    "state_data": "Authentic CORA PR97 merged-main Git ancestry, exact source tree and original PyPA blob IDs; third-party subset has its own synthetic Git SHA/tree, bounded opt-in, test events and replayable local logs.",
+    "ux": "Original source One-Run CLI with separately opt-in foreign mode, replay, next unresolved; original comprehensive PR97 capability_operation preserved unchanged."
   },
-  "abstract_dod": "From CORA One-Run, demonstrate a bounded evidence reuse and native-test slice for a distinct target repository using structured, measured owner selection, no silent host-isolation claim, two adapters with shared replay and an auditable maintenance budget; keep full PR97 integration, independent host trust, remote ancestry and human acceptance blocked until externally demonstrated.",
+  "abstract_dod": "On a real PR branch descending from merged PR97 main, demonstrate bounded original-source One-Run reuse and two native Python adapters on a distinct repository's original Git blobs with measured ranking, explicit opt-in, fail-closed test linkage, retained replay and finite physical falsifiers. Preserve comprehensive PR97 operation unchanged and keep full 81-owner integration, independent isolation, upstream history and human review blocked until external proof.",
   "authority": "NONE",
   "base_local_zip_sha": "54cb53f428f6539c6ea2d900da0f097d3efa5080",
   "base_main_merge_sha": "b1b8e8ad3d430096ed8fb6885668074ca36eb6b7",
   "base_pr97_sha": "e6b457de145b40e551921001f39f7cc9340d9bcc",
   "checklist": {
     "closure": [
-      "Pin merged main SHA and verify original Git commit/parents on an authorized connected runner before any actual rebase or PR.",
+      "Verify actual PR97 merged-main commit is an ancestor of the candidate, with Git readback on the real feature branch.",
       "Run all named oracles on actual local candidate HEAD",
       "Inject independent falsifiers and retain survivors",
       "Re-evaluate each AND node on the same SHA",
-      "Do not claim original Git ancestry, PR97 full integration, CI green or independent review"
+      "Do not claim full third-party upstream tree, comprehensive 81-owner integration, OS sandbox, independent review or release."
     ],
     "inference": [
       "Use structured obligations instead of lexical text alone",
@@ -80,10 +80,10 @@
       "tests/test_debt_governance.py": "dca623e6cf5ad5196eab3dfc0ff3a28654618b4e"
     },
     "branch": "main",
-    "local_rebase_status": "BLOCKED_NETWORK_NO_GIT_OBJECTS",
+    "local_rebase_status": "AUTHENTIC_MAIN_PARENT_MATERIALIZED",
     "merged_at_utc": "2026-11-22T11:00:22Z",
     "merged_pr": 97,
-    "observation": "GITHUB_CONNECTOR_READBACK_NOT_A_LOCAL_GIT_PARENT",
+    "observation": "GITHUB_API_COMMIT_TREE_PARENT_READBACK; NEW_BRANCH_PARENT_IS_REAL_MAIN_MERGE_SHA",
     "repository": "Luke883i/cora"
   },
   "nodes": [

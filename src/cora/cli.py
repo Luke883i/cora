@@ -801,7 +801,9 @@ def main(argv: list[str] | None = None) -> int:
             if args.foreign_request and (not args.one_run or args.profile or args.portable_profile
                                          or args.capability_request or args.execute_capabilities
                                          or args.chat_step or args.execute_self_tests or args.model_stress_cases
-                                         or args.authorization_file or not args.evidence_dir):
+                                         or args.authorization_file or args.change_base
+                                         or args.revision != 'HEAD' or args.atlas_html
+                                         or not args.evidence_dir):
                 raise ValueError('foreign pilot requires the original source One-Run and outside evidence')
             if (args.capability_request or args.execute_capabilities) and (
                     not args.one_run or args.profile != 'comprehensive' or args.portable_profile):
@@ -905,7 +907,7 @@ def main(argv: list[str] | None = None) -> int:
                     raise ValueError('one-run JSON atlas is not the source receipt')
                 if item.get('schema') == 'cora-foreign-operational-pilot/1':
                     from .foreign_pilot import verify_foreign_pilot
-                    if not args.evidence_dir or args.chat_bundle or args.portable_profile:
+                    if not args.evidence_dir or args.chat_bundle or args.portable_profile or args.atlas_html:
                         raise ValueError('foreign replay requires retained original evidence')
                     verify_foreign_pilot(args.repo, item, args.evidence_dir)
                     result = {'schema':'cora-foreign-pilot-replay/1',

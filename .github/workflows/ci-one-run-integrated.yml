@@ -108,10 +108,8 @@ jobs:
         run: |
           test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
           mkdir -p "$PROOF_DIR/bytes"
-          python tools/verify_pr97_hardening.py --repo . \\
-            --output "$PROOF_DIR/proof.json" --evidence-dir "$PROOF_DIR/bytes"
-          python tools/verify_pr97_hardening.py --repo . \\
-            --output "$PROOF_DIR/proof.json" --evidence-dir "$PROOF_DIR/bytes" --verify
+          python tools/verify_pr97_hardening.py --repo . --output "$PROOF_DIR/proof.json" --evidence-dir "$PROOF_DIR/bytes"
+          python tools/verify_pr97_hardening.py --repo . --output "$PROOF_DIR/proof.json" --evidence-dir "$PROOF_DIR/bytes" --verify
           python - <<'PY'
           import json, os
           from pathlib import Path
