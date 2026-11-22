@@ -28,7 +28,8 @@ with Semgrep is **unchanged**; this foreign-target pilot is **not** its 81-owner
 execution engine or a replacement for the comprehensive capability operation.
 
 This pilot has **no OS sandbox**: a disposable copy, stripped environment, 30s
-time bound, 512KiB output limit and descendant cleanup mitigate but do not
+time bound, 512KiB output limit and process-group cleanup even after parent exit
+mitigate but do not
 confine malicious code. Use only a runner authorized for the target. The
 third-party sample reproduces original Git *blobs*, not the upstream Git tree.
 Its [27-node AND DoD](../.cora/contracts/dod/pr97-foreign-hardening.json)

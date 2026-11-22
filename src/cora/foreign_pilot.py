@@ -182,16 +182,16 @@ def _bounded_target_command(command: list[str], cwd: Path, env: dict, timeout: i
             raise subprocess.TimeoutExpired(command, timeout)
         return p.wait(timeout=left), b''.join(chunks)
     finally:
-        if p.poll() is None:
-            # Cancel the whole new process group rather than leaving descendants
-            # after a timeout or output overflow. This is not kernel confinement.
-            if os.name == 'posix':
-                try:
-                    os.killpg(p.pid, signal.SIGKILL)
-                except ProcessLookupError:
-                    pass
-            else:
-                p.kill()
+        # The parent may already have exited while a descendant still holds
+        # stdout open. Always reap the *process group*, not just a live parent.
+        # This remains process cancellation, NOT an OS sandbox.
+        if os.name == 'posix':
+            try:
+                os.killpg(p.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+        elif p.poll() is None:
+            p.kill()
         p.wait()
         if p.stdout is not None:
             p.stdout.close()

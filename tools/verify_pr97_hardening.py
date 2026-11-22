@@ -29,7 +29,7 @@ MUTATIONS = [
     ('reject_retained_byte_tamper', "if item != {'path': name", "if False and item != {'path': name", 'test_log_tamper_is_refuted'),
     ('reject_external_authority_promotion', "'product_acceptance': 'BLOCKED_EXTERNAL'", "'product_acceptance': 'APPROVED'", 'test_no_host_isolation_authority'),
     ('reject_failed_only_ranking', 'and success is not None and success > 0', 'and success is not None', 'test_failed_history_cannot_be_qualified_by_low_cost'),
-    ('reject_process_group_cleanup', 'os.killpg(p.pid, signal.SIGKILL)', 'os.killpg(p.pid, signal.SIGCONT)', 'test_bounded_runner_cancels_descendant_on_timeout'),
+    ('reject_process_group_cleanup', 'os.killpg(p.pid, signal.SIGKILL)', 'os.killpg(p.pid, signal.SIGCONT)', 'test_bounded_runner_cleans_orphan_after_parent_exit'),
 ]
 PATTERN = re.compile(r'^test_\w+ \(test_foreign_pilot\.ForeignTargetHardeningTests\.([\w]+)\) \.\.\. (ok|FAIL|ERROR|skipped .+)$')
 

@@ -143,6 +143,19 @@ class ForeignTargetHardeningTests(unittest.TestCase):
         time.sleep(2.3)
         self.assertFalse(sentinel.exists(), 'process group child escaped bounded cancellation')
 
+    @unittest.skipUnless(os.name == 'posix', 'process groups available only on POSIX')
+    def test_bounded_runner_cleans_orphan_after_parent_exit(self):
+        from cora.foreign_pilot import _bounded_target_command
+        sentinel = self.home / 'orphan-child.txt'
+        child = "import time; time.sleep(2); open(%r,'w').write('escaped')" % str(sentinel)
+        parent = "import subprocess,sys; subprocess.Popen([sys.executable, '-c', %r]); print('parent-exited',flush=True)" % child
+        with self.assertRaises(subprocess.TimeoutExpired):
+            _bounded_target_command([sys.executable, '-c', parent], self.home,
+                                    {'PATH': os.environ.get('PATH', '')}, timeout=1)
+        import time
+        time.sleep(2.3)
+        self.assertFalse(sentinel.exists(), 'orphaned process escaped bounded group cancellation')
+
     def test_unknown_adapter_stays_blocked(self):
         self.request = self.make_request(('semgrep',))
         result = self.run_pilot()

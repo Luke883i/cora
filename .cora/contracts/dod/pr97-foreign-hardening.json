@@ -271,7 +271,7 @@
       "depends_on": [],
       "id": "L_PROCESS_GROUP_KILL",
       "kind": "LOCAL",
-      "oracle": "test_bounded_runner_cancels_descendant_on_timeout",
+      "oracle": "test_bounded_runner_cleans_orphan_after_parent_exit",
       "scope": "TARGET_RUNTIME"
     },
     {
