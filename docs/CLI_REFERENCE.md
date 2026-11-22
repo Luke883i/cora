@@ -9,7 +9,74 @@
 
 This is the complete inventory of the single `cora` CLI from `src/cora/cli.py`, maintained against its real `argparse` parser. Use `cora COMMAND --help` for exact flags and inputs; this is not evidence of test execution or a guarantee of behavioral correctness. Start with [Getting started](GETTING_STARTED.md) or [Agent adoption](AGENT_ADOPTION.md).
 
-**One-Run 81-capability routing (non-authoritative):** `cora process-list --intent "security scan SARIF"` for discovery, then `cora process-run REPO --one-run --profile comprehensive --chat-step STEP.json --chat-bundle /tmp/session.zip --atlas-json /tmp/cora-81.json` to use the caller-authored `chat-step.intent` within the existing process retains the 71 original CORA CLI declarations and the 10 independent upstream catalog candidates. Each owner is selected, blocked or not selected by a bounded lexical planner; only the existing three bounded read-only native CLI owners execute automatically. When relevant, six other owners can reference already observed, digest-pinned internal source-method outcomes (not individually executed CLI commands or independent target tests). No upstream scanner/agent, target test, network, package installation or approval is invoked. The `universal_capability_plan` contains 81 rows, original-Git commit, output digests for reused native receipts and scoped AI handoff. `verify-process --one-run` replays source identity and refusals; it is **not** an independent runtime attestation. The backward reticular DoD is in [post94-cli-behavior-dod.json](../.cora/contracts/dod/post94-cli-behavior-dod.json).
+**One-Run 81-capability routing (non-authoritative):** `cora process-list --intent "security scan SARIF"` for discovery, then `cora process-run REPO --one-run --profile comprehensive --chat-step STEP.json --chat-bundle /tmp/session.zip --atlas-json /tmp/cora-81.json` to use the caller-authored `chat-step.intent` within the existing process retains the 71 original CORA CLI declarations and the 10 independent upstream catalog candidates. Each owner is selected, blocked or not selected by a bounded lexical planner; only the existing three bounded read-only native CLI owners execute automatically. When relevant, six other owners can reference already observed, digest-pinned internal source-method outcomes (not individually executed CLI commands or independent target tests). Without the explicit operational request described below, no upstream scanner/agent, target test, network, package installation or approval is invoked. The `universal_capability_plan` contains 81 rows, original-Git commit, output digests for reused native receipts and scoped AI handoff. `verify-process --one-run` replays source identity and refusals; it is **not** an independent runtime attestation. The backward reticular DoD is in [post94-cli-behavior-dod.json](../.cora/contracts/dod/post94-cli-behavior-dod.json).
+
+
+### Optional operational capability request
+
+The same comprehensive One-Run accepts `--capability-request /outside/request.json`.
+The agent selects exact catalog IDs and records a reason, obligation and expected
+native test IDs. Its judgment overrides keyword suggestions; it grants no execution
+consent. Without `--execute-capabilities`, the dossier records choices and gaps only.
+The catalog remains 71 CORA commands plus ten upstream candidates.
+
+This first operational slice reuses existing same-SHA analysis receipts. With
+explicit execution opt-in it runs local Python Semgrep pattern rules and selected
+committed Python unittest files in a disposable copy of the exact Git bytes.
+Semgrep must already be installed; CORA does not install it or fetch registry rules.
+The copy and filtered child environment are not an OS sandbox. Use an authorized
+runner for the target's code. Independent target acceptance stays `BLOCKED_EXTERNAL`.
+
+A request has exactly these fields (replace the SHA/tree and selected test with
+values read from the actual target):
+
+```json
+{
+  "schema": "cora-capability-request/1",
+  "commit": "EXACT_HEAD_SHA",
+  "tree": "EXACT_HEAD_TREE",
+  "decisions": [{
+    "id": "cora:archaeology",
+    "reason": "Review source history relevant to the change",
+    "obligation": "HISTORY_AND_REGRESSION",
+    "test_ids": ["test_bounded_process.C04BoundedSubprocess.test_timeout_and_nonzero_do_not_become_success"]
+  }],
+  "tests": [{
+    "path": "tests/test_bounded_process.py",
+    "ids": ["test_bounded_process.C04BoundedSubprocess.test_timeout_and_nonzero_do_not_become_success"]
+  }],
+  "semgrep": null,
+  "timeout": 30
+}
+```
+
+To select Semgrep, add an `external:semgrep` decision linked to expected test IDs
+and replace `semgrep: null` with `{"targets": ["src/example.py"], "rules":
+{"rules": [{"id": "no-eval", "pattern": "eval(...)", "message": "Review eval",
+"languages": ["python"], "severity": "ERROR"}]}}`. Targets must be regular
+files in the exact commit. This slice accepts only bounded local Python pattern
+rules; remote configs, arbitrary commands and unknown capability IDs are rejected.
+
+```sh
+cora process-run . --one-run --profile comprehensive \
+  --capability-request /outside/request.json --execute-capabilities \
+  --evidence-dir /outside/fresh-evidence --output /outside/run.json \
+  --atlas-html /outside/run.html
+cora verify-process /outside/run.json --repo . --one-run \
+  --evidence-dir /outside/fresh-evidence --atlas-html /outside/run.html
+```
+
+Replay reads retained bytes and rederives source links and test events without
+rerunning tools. Local logs can establish consistency, not independent runner
+identity. Findings, scanner errors, missing test IDs, empty/skipped/failed tests or
+unsupported selected adapters keep the scoped runtime goal `DEBT_BLOCKED` and the
+CLI returns 2. Successful scoped observations remain locally reported. The dossier
+includes all 81 owners and `agent_handoff.next_unresolved`; extending the qualified
+adapter set requires a demonstrated obligation and positive/negative target tests.
+The [operational contract](../.cora/contracts/dod/optimal-tool-acquisition.json)
+derives 22 AND-linked DoD nodes with named test oracles. Existing source-only
+commands and receipts retain their original path when no request is supplied.
+
 
 The [complete capability atlas](../.cora/assurance/capability-atlas.json) enumerates all **71 parser commands** with eight method families, implementation and test-source paths, classified side effects and non-CLI repository surfaces. This reference explains command entrypoints; the atlas describes source witnesses. Neither proves 71 independently qualified features, executed tests or real-target behavior. See the [capability DoD](../.cora/contracts/dod/capability-dod.json) for source-versus-external obligations.
 

@@ -252,6 +252,231 @@ if __name__=='__main__':unittest.main()
 
 
 
+class OperationalCapabilityTests(unittest.TestCase):
+    """Actual disposable target Git/tests; mocked scanner envelopes are separate from the real CE pilot."""
+
+    def setUp(self):
+        import tempfile
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.home = Path(self.temp.name)
+        self.repo = self.home / "target"
+        self.repo.mkdir()
+        self.git("init", "-q")
+        self.git("config", "user.name", "Fixture")
+        self.git("config", "user.email", "fixture@example.invalid")
+        (self.repo / "tests").mkdir()
+        (self.repo / "calc.py").write_text("def double(x):\n    return x * 2\ndef parse(s):\n    return eval(s)\n")
+        (self.repo / "tests/test_calc.py").write_text(
+            "import unittest\nfrom calc import double\nclass CalcTests(unittest.TestCase):\n"
+            "    def test_double(self):\n        self.assertEqual(double(3), 6)\n")
+        self.commit()
+
+    def git(self, *args):
+        import subprocess
+        return subprocess.check_output(["git", "-C", str(self.repo), *args], stderr=subprocess.PIPE).decode().strip()
+
+    def commit(self):
+        from cora.process_suite import run_suite, universal_capability_plan
+        self.git("add", "-A")
+        self.git("commit", "-qm", "fixture source")
+        sha = self.git("rev-parse", "HEAD")
+        native = json.loads((Path(__file__).resolve().parents[1] / ".cora/assurance/capability-atlas.json").read_text())["commands"]
+        process = run_suite(self.repo, sha, process="history")
+        self.base = {"commit": sha, "source_process": process,
+                     "universal_capability_plan": universal_capability_plan(
+                         native, commit=sha, source_methods=process["results"], source_process="history")}
+        self.request = {"schema": "cora-capability-request/1", "commit": sha,
+                        "tree": self.git("rev-parse", "HEAD^{tree}"),
+                        "decisions": [{"id": "cora:archaeology", "reason": "Check real source history",
+                                       "obligation": "HISTORY", "test_ids": ["test_calc.CalcTests.test_double"]}],
+                        "tests": [{"path": "tests/test_calc.py", "ids": ["test_calc.CalcTests.test_double"]}],
+                        "semgrep": None, "timeout": 30}
+
+    def scan_request(self):
+        self.request["decisions"].append({"id": "external:semgrep", "reason": "Detect eval in committed input",
+                                         "obligation": "NO_EVAL", "test_ids": ["test_calc.CalcTests.test_double"]})
+        self.request["semgrep"] = {"rules": {"rules": [{"id": "no-eval", "pattern": "eval(...)",
+            "message": "Do not evaluate input", "languages": ["python"], "severity": "ERROR"}]}, "targets": ["calc.py"]}
+
+    def run_operation(self, name="evidence", execute=True):
+        from cora.integrated_run import run_capability_operation
+        return run_capability_operation(self.repo, self.base, self.request,
+                                        execute=execute, evidence_dir=self.home / name)
+
+    def test_existing_analysis_is_reused(self):
+        from unittest.mock import patch
+        from cora.integrated_run import verify_capability_operation
+        with patch("cora.process_suite.run_suite", side_effect=AssertionError("duplicate analysis")):
+            report = self.run_operation()
+        row = next(r for r in report["rows"] if r["id"] == "cora:archaeology")
+        self.assertEqual(row["state"], "REUSED_SOURCE_METHOD_SCOPED")
+        self.assertEqual(row["source_digest"], self.base["source_process"]["results"][0]["source_digest"])
+        self.assertEqual(report["duplicate_source_executions"], 0)
+        self.assertEqual(report["scoped_runtime_goal"], "PASS_SCOPED_LOCAL_UNATTESTED")
+        self.assertEqual(report["product_status"], "BLOCKED_EXTERNAL")
+        with patch("cora.integrated_run.run_bounded", side_effect=AssertionError("replay executed code")):
+            self.assertTrue(verify_capability_operation(self.repo, self.base, report, self.home / "evidence"))
+
+    def test_agent_decisions_override_lexical_ranking(self):
+        from cora.process_suite import operational_selection
+        row = next(r for r in operational_selection(self.base, self.request) if r["id"] == "cora:archaeology")
+        self.assertTrue(row["selected"])
+        self.assertFalse(next(r for r in self.base["universal_capability_plan"]["rows"] if r["id"] == "cora:archaeology")["selected"])
+        self.assertEqual(len(operational_selection(self.base, self.request)), 81)
+        for changed in ("external:invented", "cora:archaeology; rm -rf /"):
+            self.request["decisions"][0]["id"] = changed
+            with self.assertRaises(ValueError):
+                self.run_operation(execute=False)
+
+    def test_unsupported_selected_capability_stays_blocked(self):
+        self.request["decisions"][0]["id"] = "external:openhands"
+        report = self.run_operation()
+        self.assertEqual(report["scoped_runtime_goal"], "DEBT_BLOCKED")
+        self.assertEqual(report["agent_handoff"]["next_unresolved"]["id"], "external:openhands")
+        self.assertEqual(report["agent_handoff"]["next_unresolved"]["reason"], "BLOCKED_NO_QUALIFIED_ADAPTER")
+
+    def test_real_target_tests_and_mutation(self):
+        self.assertEqual(self.run_operation()["scoped_runtime_goal"], "PASS_SCOPED_LOCAL_UNATTESTED")
+        (self.repo / "calc.py").write_text("def double(x):\n    return x * 3\n")
+        self.commit()
+        bad = self.run_operation("mutant-evidence")
+        self.assertEqual(bad["scoped_runtime_goal"], "DEBT_BLOCKED")
+        self.assertNotEqual(bad["observations"][0]["returncode"], 0)
+        self.assertFalse(bad["tests"]["test_calc.CalcTests.test_double"]["successful_run"])
+
+    def test_zero_skipped_and_failed_tests_are_not_pass(self):
+        sources = ["import unittest\n", "import unittest\nclass CalcTests(unittest.TestCase):\n    @unittest.skip('not observed')\n    def test_double(self): pass\n",
+                   "import unittest\nclass CalcTests(unittest.TestCase):\n    def test_double(self): self.fail('known failure')\n"]
+        for i, source in enumerate(sources):
+            with self.subTest(source=i):
+                (self.repo / "tests/test_calc.py").write_text(source)
+                self.commit()
+                self.assertEqual(self.run_operation("bad-" + str(i))["scoped_runtime_goal"], "DEBT_BLOCKED")
+
+    def test_denial_bounds_and_stale_source(self):
+        from unittest.mock import patch
+        from cora.integrated_run import run_capability_operation
+        import subprocess
+        with patch("cora.integrated_run.run_bounded", side_effect=AssertionError("unconsented effect")):
+            report = self.run_operation(execute=False)
+            self.assertEqual(report["observations"], [])
+            self.assertEqual(report["scoped_runtime_goal"], "DEBT_BLOCKED")
+            self.request["commit"] = "a" * 40
+            with self.assertRaises(ValueError):
+                self.run_operation()
+        self.request["commit"] = self.base["commit"]
+        for i, error in enumerate((ValueError("output bound"), subprocess.TimeoutExpired(["fixture"], 1), OSError("missing"))):
+            with patch("cora.integrated_run.run_bounded", side_effect=error):
+                self.assertEqual(self.run_operation("bounded-" + str(i))["scoped_runtime_goal"], "DEBT_BLOCKED")
+        with self.assertRaises(ValueError):
+            run_capability_operation(self.repo, self.base, self.request, execute=True, evidence_dir=None)
+        self.request["tests"][0]["path"] = "../escape.py"
+        with self.assertRaises(ValueError):
+            self.run_operation(execute=False)
+
+    def test_retained_artifact_tamper_and_test_lineage(self):
+        import copy
+        from cora.integrated_run import verify_capability_operation
+        report = self.run_operation()
+        for mutate in (lambda x: x.update(authority="APPROVED"),
+                       lambda x: x["tests"].clear(),
+                       lambda x: x["rows"].pop(),
+                       lambda x: x["request"]["decisions"][0].update(test_ids=["test_calc.CalcTests.nonexistent"])):
+            bad = copy.deepcopy(report)
+            mutate(bad)
+            with self.assertRaises(ValueError):
+                verify_capability_operation(self.repo, self.base, bad, self.home / "evidence")
+        log = self.home / "evidence" / report["artifacts"][0]["path"]
+        log.write_bytes(log.read_bytes() + b"altered\n")
+        with self.assertRaises(ValueError):
+            verify_capability_operation(self.repo, self.base, report, self.home / "evidence")
+
+    def test_findings_and_errors_block_runtime_goal(self):
+        from cora.integrated_run import _operation_projection
+        self.scan_request()
+        sarif = {"version": "2.1.0", "runs": [{"tool": {"driver": {"name": "Semgrep"}}, "results": [
+            {"ruleId": "no-eval", "message": {"text": "eval"}, "locations": [{"physicalLocation": {
+                "artifactLocation": {"uri": "calc.py"}, "region": {"startLine": 4}}}]}]}]}
+        # Unit envelope tests do not stand in for the separately required real scanner.
+        artifacts = {"capability-00.log": b"1.186.0\n", "capability-01.log": b"",
+                     "capability-01.sarif": json.dumps(sarif).encode(), "capability-02.log": b"",
+                     "capability-01.json": json.dumps({"errors": [], "paths": {"scanned": ["calc.py"]},
+                         "results": [{"path": "calc.py", "start": {"line": 4}}]}).encode()}
+        obs = [{"id": key, "returncode": 0, "reason": "EXIT_REPORTED", "duration_ms": 1,
+                "log": "capability-%02d.log" % i, "sarif": "capability-01.sarif" if i == 1 else None,
+                "json": "capability-01.json" if i == 1 else None}
+               for i, key in enumerate(("semgrep-version", "external:semgrep", "test:tests/test_calc.py"))]
+        p = _operation_projection(self.base, self.request, obs, artifacts)
+        self.assertEqual(next(r for r in p["rows"] if r["id"] == "external:semgrep")["state"], "FINDINGS")
+        artifacts["capability-01.json"] = b'{"errors": [], "paths": {"scanned": []}, "results": []}'
+        p = _operation_projection(self.base, self.request, obs, artifacts)
+        self.assertEqual(next(r for r in p["rows"] if r["id"] == "external:semgrep")["state"], "FAIL")
+        artifacts["capability-01.sarif"] = b"invalid"
+        p = _operation_projection(self.base, self.request, obs, artifacts)
+        self.assertEqual(next(r for r in p["rows"] if r["id"] == "external:semgrep")["state"], "FAIL")
+
+    def test_real_semgrep_and_physical_counterexample(self):
+        import os, shutil
+        from cora.integrated_run import verify_capability_operation
+        if not shutil.which("semgrep"):
+            if os.environ.get("CORA_REQUIRE_SEMGREP") == "1":
+                self.fail("real Semgrep is mandatory in the hosted operational pilot")
+            self.skipTest("real Semgrep not installed; native tests run separately")
+        self.scan_request()
+        vulnerable = self.run_operation("scanner-vulnerable")
+        row = next(r for r in vulnerable["rows"] if r["id"] == "external:semgrep")
+        self.assertEqual(row["state"], "FINDINGS", vulnerable["observations"])
+        self.assertEqual(vulnerable["scoped_runtime_goal"], "DEBT_BLOCKED")
+        self.assertTrue(verify_capability_operation(self.repo, self.base, vulnerable, self.home / "scanner-vulnerable"))
+        self.retain_pilot("vulnerable", vulnerable, self.home / "scanner-vulnerable")
+        (self.repo / "calc.py").write_text("def double(x):\n    return x * 2\ndef parse(s):\n    return int(s)\n")
+        self.commit()
+        self.scan_request()
+        repaired = self.run_operation("scanner-repaired")
+        self.assertEqual(repaired["scoped_runtime_goal"], "PASS_SCOPED_LOCAL_UNATTESTED", repaired["observations"])
+        self.assertTrue(verify_capability_operation(self.repo, self.base, repaired, self.home / "scanner-repaired"))
+        self.retain_pilot("repaired", repaired, self.home / "scanner-repaired")
+
+    def retain_pilot(self, label, report, evidence):
+        import os, shutil, subprocess
+        destination = os.environ.get("CORA_OPERATIONAL_EVIDENCE_DIR")
+        if not destination:
+            return
+        out = Path(destination) / label
+        out.mkdir(parents=True, exist_ok=True)
+        shutil.copytree(evidence, out / "evidence", dirs_exist_ok=True)
+        subprocess.run(["git", "-C", str(self.repo), "bundle", "create", str(out / "target.bundle"), "--all"], check=True)
+        (out / "operation.json").write_text(json.dumps(report, sort_keys=True, indent=2) + "\n")
+        root = Path(__file__).resolve().parents[1]
+        engine = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"]).decode().strip()
+        (out / "engine-head.txt").write_text(engine + "\n")
+
+    def test_no_request_preserves_original_dossier(self):
+        from unittest.mock import patch
+        from cora.cli import main
+        with patch("cora.cli.run_integrated") as run:
+            run.return_value = {"baseline_pr36": {"source_status": "PASS_SCOPED", "model_stress": {"status": "NOT_RUN"}}, "tests": {"state": "NOT_RUN"}}
+            self.assertEqual(main(["process-run", ".", "--one-run", "--profile", "comprehensive"]), 0)
+            self.assertNotIn("capability_request", run.call_args.kwargs)
+        with patch("cora.cli.run_integrated") as run:
+            self.assertEqual(main(["process-run", ".", "--execute-capabilities"]), 3)
+            run.assert_not_called()
+
+    def test_declared_dod_has_real_oracles_and_and_dependencies(self):
+        from cora.reticulum import ordered_cut
+        path = Path(__file__).resolve().parents[1] / ".cora/contracts/dod/optimal-tool-acquisition.json"
+        contract = json.loads(path.read_text())["operational_contract"]
+        order = ordered_cut(contract["nodes"], contract["goals"]["complete"])
+        self.assertEqual(len(order), 22)
+        self.assertEqual(set(order), {n["id"] for n in contract["nodes"]})
+        for node in contract["nodes"]:
+            if node["kind"] == "LOCAL" and node["scope"] != "EXTERNAL":
+                self.assertTrue(callable(getattr(self, node["oracle"].split(".")[-1])))
+            if node["scope"] == "EXTERNAL" and node["kind"] == "LOCAL":
+                self.assertEqual(node["status"], "BLOCKED_EXTERNAL")
+
+
 class Universal81CapabilityTests(unittest.TestCase):
     """The 81 owners are typed, fail-closed and not 81 launched programs."""
 
