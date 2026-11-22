@@ -558,6 +558,12 @@ def verify_project_adapter_prompt(guide: str) -> list[str]:
             or any(any(token not in value for token in required)
                    for (_, value), (_, *required) in zip(shell, expected_shell))):
         errors.append("project-adapter-oneshell-contract")
+    if not all(token in prompt for token in (
+        "Separate PRODUCT/SOFTWARE/REPOSITORY oracles.",
+        "81-owner catalog is not 81 executions.",
+        "Render real host layout only when available; otherwise text.",
+    )):
+        errors.append("project-adapter-frontier-or-rendering-boundary")
     rows = re.findall(r"(?m)^(P[0-9]{2}) \| ([^\n]+)$", prompt)
     expected = [row[0] for row in PROJECT_ADAPTER_V2_CLAUSES]
     if [row[0] for row in rows] != expected:
