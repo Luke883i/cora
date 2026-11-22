@@ -352,3 +352,178 @@ def prioritize_obligations(obligations: list[dict], verified_runs: list[dict], *
                               'authority': 'NONE'})
     return sorted(decisions, key=lambda r: (r['decision_score'] is None,
                          -(r['decision_score'] or 0), r['obligation'], r['adapter']))
+
+# Portable capability correlation: this is a view over two *already verified*
+# source owners (CORA's original run_one and this module's foreign pilot).
+# It neither selects arbitrary host commands nor duplicates One-Run execution.
+PORTABLE_SCHEMA = 'cora-foreign-capability-bridge/1'
+_ALLOWED_OWNER_STATES = frozenset({
+    'NOT_SELECTED', 'BLOCKED', 'RUN_REPORTED_UNATTESTED',
+    'REUSED_SOURCE_METHOD_SCOPED',
+})
+
+
+def _project_portable_receipts(cora_receipt: dict, target_receipt: dict,
+                               bindings: list[dict]) -> dict:
+    """Internal projection: callers MUST first verify BOTH owner receipts.
+
+    A static 81-row source catalogue is *not* evidence of 81 executions. A
+    successful target test is an exact native-test observation, not independent
+    proof of the related source owner's execution or of product acceptance.
+    """
+    if not isinstance(cora_receipt, dict) or not isinstance(target_receipt, dict):
+        raise ValueError('two exact-Git original owner receipts required')
+    plan = cora_receipt.get('universal_capability_plan')
+    if (not isinstance(plan, dict) or plan.get('schema') != 'cora-universal-capability-plan/1'
+            or plan.get('commit') != cora_receipt.get('commit')
+            or plan.get('authority') != 'NONE'
+            or plan.get('product_status') != 'BLOCKED_EXTERNAL'):
+        raise ValueError('verified original One-Run 81-owner plan required')
+    rows = plan.get('rows')
+    if not isinstance(rows, list) or len(rows) != 81:
+        raise ValueError('all 81 original owner rows must be present')
+    owner_rows = {}
+    for row in rows:
+        if (not isinstance(row, dict) or not isinstance(row.get('id'), str)
+                or row['id'] in owner_rows or row.get('authority') != 'NONE'
+                or type(row.get('selected')) is not bool
+                or row.get('state') not in _ALLOWED_OWNER_STATES
+                or row.get('kind') not in ('NATIVE_CLI', 'UPSTREAM_CANDIDATE')):
+            raise ValueError('duplicate or malformed original capability owner')
+        if (row['kind'] == 'NATIVE_CLI') != row['id'].startswith('cora:'):
+            raise ValueError('capability identity and kind disagree')
+        if (row['kind'] == 'UPSTREAM_CANDIDATE') != row['id'].startswith('external:'):
+            raise ValueError('upstream identity and kind disagree')
+        if (row['state'] != 'NOT_SELECTED' and not row['selected']
+                or row['state'] == 'NOT_SELECTED' and row['selected']):
+            raise ValueError('capability selection is inconsistent')
+        if (row['kind'] == 'UPSTREAM_CANDIDATE' and row['state'] not in
+                ('BLOCKED', 'NOT_SELECTED')):
+            raise ValueError('external tool execution was laundered into source plan')
+        owner_rows[row['id']] = row
+    natives = sum(x['kind'] == 'NATIVE_CLI' for x in rows)
+    externals = sum(x['kind'] == 'UPSTREAM_CANDIDATE' for x in rows)
+    if (natives, externals) != (71, 10) or 'cora:process-run' not in owner_rows:
+        raise ValueError('original 71+10 owner universe incomplete')
+    counts = plan.get('counts')
+    if (not isinstance(counts, dict) or counts.get('total') != 81
+            or counts.get('native') != 71 or counts.get('external') != 10
+            or counts.get('selected') != sum(r['selected'] for r in rows)
+            or counts.get('blocked') != sum(r['state'] == 'BLOCKED' for r in rows)
+            or counts.get('not_selected') != sum(r['state'] == 'NOT_SELECTED' for r in rows)
+            or counts.get('run_reported') != sum(
+                r['state'] == 'RUN_REPORTED_UNATTESTED' for r in rows)
+            or counts.get('source_reused') != sum(
+                r['state'] == 'REUSED_SOURCE_METHOD_SCOPED' for r in rows)):
+        raise ValueError('81-owner plan metric denominator was altered')
+    if (target_receipt.get('authority') != 'NONE'
+            or target_receipt.get('product_acceptance') != 'BLOCKED_EXTERNAL'
+            or target_receipt.get('isolation') != 'PROCESS_BOUNDS_ONLY_NOT_OS_SANDBOX'
+            or target_receipt.get('source_one_run', {}).get('commit') != target_receipt.get('commit')):
+        raise ValueError('native target provenance or untrusted runner limit altered')
+    links = target_receipt.get('test_linkage')
+    if not isinstance(links, list) or len(links) > 4:
+        raise ValueError('original native test ledger unavailable')
+    by_key = {}
+    for item in links:
+        if not isinstance(item, dict):
+            raise ValueError('invalid native test linkage')
+        key = (item.get('obligation'), item.get('adapter'), item.get('path'))
+        if (key in by_key or not isinstance(item.get('expected'), list)
+                or not isinstance(item.get('observed'), list)
+                or item.get('state') not in ('PASS_SCOPED_LOCAL_UNATTESTED',
+                                           'NOT_RUN', 'DEBT_BLOCKED')):
+            raise ValueError('ambiguous or forged native test evidence')
+        by_key[key] = item
+    if (not isinstance(bindings, list) or not 1 <= len(bindings) <= 12):
+        raise ValueError('1-12 explicit source-to-test bindings required')
+    observed_bindings, unique = [], set()
+    for bind in bindings:
+        if (not isinstance(bind, dict) or set(bind) !=
+                {'owner_id', 'obligation', 'adapter', 'path', 'test_id'}):
+            raise ValueError('structured, nonlexical binding required')
+        values = (bind['owner_id'], bind['obligation'], bind['adapter'],
+                  bind['path'], bind['test_id'])
+        if any(not isinstance(x, str) for x in values) or values in unique:
+            raise ValueError('invalid or duplicated source-to-test mapping')
+        unique.add(values)
+        # Only the already existing One-Run owner may hold this correlation.
+        # It remains SOURCE-scoped even when linked to an executed target test.
+        if bind['owner_id'] != 'cora:process-run':
+            raise ValueError('unqualified capability owner cannot inherit native results')
+        row = owner_rows[bind['owner_id']]
+        if not row['selected']:
+            raise ValueError('target evidence cannot authorize an unselected source owner')
+        test = by_key.get((bind['obligation'], bind['adapter'], bind['path']))
+        if test is None or bind['test_id'] not in test['expected']:
+            raise ValueError('test ID must be declared by the target owner')
+        passes = (test['state'] == 'PASS_SCOPED_LOCAL_UNATTESTED'
+                  and bind['test_id'] in test['observed'])
+        observed_bindings.append({**bind,
+            'native_test_status': ('PASS_SCOPED_LOCAL_UNATTESTED' if passes
+                                   else 'DEBT_BLOCKED'),
+            'cora_owner_execution': 'NOT_ATTESTED_BY_TARGET_TEST'})
+    passed = sum(x['native_test_status'] == 'PASS_SCOPED_LOCAL_UNATTESTED'
+                 for x in observed_bindings)
+    return {
+        'schema': PORTABLE_SCHEMA,
+        'cora_commit': cora_receipt['commit'],
+        'target_commit': target_receipt['commit'],
+        'target_tree': target_receipt['tree'],
+        'cora_plan_digest': domain_hash('CORA:portable-owner-plan:1', plan),
+        'target_pilot_digest': target_receipt.get('receipt_digest'),
+        'catalog_metrics': {'total': 81, 'native': 71, 'external': 10,
+                            'source_owners_executed_by_bridge': 0,
+                            'selected': counts['selected']},
+        'native_test_metrics': {'bound_test_ids': len(observed_bindings),
+                                'passing_test_ids': passed,
+                                'blocked_test_ids': len(observed_bindings) - passed},
+        'bindings': observed_bindings,
+        'scope_status': ('PASS_SCOPED_LOCAL_UNATTESTED' if passed == len(bindings)
+                         else 'DEBT_BLOCKED'),
+        'next_unresolved': next((x for x in observed_bindings
+                                if x['native_test_status'] != 'PASS_SCOPED_LOCAL_UNATTESTED'),
+                               {'id': 'E_INDEPENDENT_HOST_SANDBOX_AND_HUMAN_REVIEW',
+                                'status': 'BLOCKED_EXTERNAL'}),
+        'universal_81_execution': 'BLOCKED_EXTERNAL',
+        'host_isolation': 'NOT_ATTESTED',
+        'independent_acceptance': 'BLOCKED_EXTERNAL',
+        'authority': 'NONE',
+    }
+
+
+def reconcile_portable_capabilities(cora_repo: Path, cora_receipt: dict,
+                                    target_repo: Path, target_receipt: dict,
+                                    evidence_dir: Path, *, bindings: list[dict]) -> dict:
+    """Verify existing CORA and target receipts; correlate, never execute.
+
+    This runs no scanner, native target test, remote fetch, or shell.  The
+    independent host sandbox and authenticated owner remain external gates.
+    """
+    cora_repo = Path(cora_repo).resolve(strict=True)
+    target_repo = Path(target_repo).resolve(strict=True)
+    if cora_repo == target_repo:
+        raise ValueError('independent CORA and target repositories required')
+    if not verify_one(cora_repo, cora_receipt):
+        raise ValueError('CORA original source One-Run receipt cannot be replayed')
+    if not verify_foreign_pilot(target_repo, target_receipt, evidence_dir):
+        raise ValueError('original native target receipt cannot be replayed')
+    outcome = _project_portable_receipts(cora_receipt, target_receipt, bindings)
+    outcome['receipt_digest'] = domain_hash('CORA:portable-capability-bridge:1', outcome)
+    return outcome
+
+
+def verify_portable_capabilities(cora_repo: Path, cora_receipt: dict,
+                                 target_repo: Path, target_receipt: dict,
+                                 evidence_dir: Path, result: dict) -> bool:
+    """Recompute exactly, including dual-Git verification and retained bytes."""
+    if not isinstance(result, dict) or not isinstance(result.get('bindings'), list):
+        raise ValueError('missing structured portable evidence')
+    bindings = [{k: row[k] for k in ('owner_id', 'obligation', 'adapter',
+                                    'path', 'test_id')} for row in result['bindings']]
+    expected = reconcile_portable_capabilities(
+        cora_repo, cora_receipt, target_repo, target_receipt, evidence_dir,
+        bindings=bindings)
+    if result != expected:
+        raise ValueError('portable source-target reconciliation altered')
+    return True
