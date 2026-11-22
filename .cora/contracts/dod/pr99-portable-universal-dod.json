@@ -421,5 +421,415 @@
   },
   "rollback": "Reverse only PR99 feature branch commits; never rewrite merged PR98 or protected main. No automatic merge or release.",
   "schema": "cora-pr99-portable-universal-dod/1",
-  "target": "Luke883i/cora"
+  "target": "Luke883i/cora",
+  "candidate_follow_on": {
+    "schema": "cora-universal-frontier-candidate/1",
+    "status": "SOURCE_CANDIDATE_NOT_ACCEPTED",
+    "authority": "NONE",
+    "source_lock": {
+      "repository": "Luke883i/cora",
+      "as_is_pr99_head": "418fc615c5a1a6cbaaa5b20906cc34b454b70df9",
+      "as_is_pr99_contract_blob": "62eed37bcadd812ecbf5d5da42fa16e1ac48dba0",
+      "as_is_readme_blob": "e55d6e6d2767cd233d2e1ba387f02b3309914de1",
+      "as_is_project_guide_blob": "a0e46f18aecb6b6fc4da53795a99ac26cc79951c",
+      "ikant_reference": "Luke883i/iKant_EDU@c56b73392395e4512d078e8b41eba98ad2274881",
+      "reuse": "PATTERN_ONLY_NO_OWNER_OR_CONSENT_TRANSFER",
+      "as_is_pr99_early_head": "ede6479b7740e5f33da32599912f36900c61432d",
+      "as_is_pr99_merge_commit": "b518b621878dc6f6dcb1fb353034053926a64049"
+    },
+    "a0": {
+      "intent": "Move beyond the single process-run receipt correlation to qualified, per-selected-owner target-native obligations without a second engine.",
+      "actors": [
+        "Target product owner",
+        "External coding agent",
+        "CORA Host authority=0",
+        "CORA-ENGINE",
+        "Approved target runner",
+        "Independent reviewer",
+        "Release owner"
+      ],
+      "state": "Separate CORA/target SHA, target tree, original receipts, adapter permissions and native test-ID outcomes.",
+      "ux": "Six-slot OneShell, genuine layout only if actually renderable; otherwise text.",
+      "effects": "No new execution in this documentation slice; future adapter effects require opt-in.",
+      "exclusions": [
+        "no 81-owner fanout",
+        "no iKant admission or original voice",
+        "no self-reviewed release"
+      ],
+      "acceptance_oracle": "G_UNIVERSAL_ACCEPTED is an AND of all source, target-native and external leaves."
+    },
+    "goals": [
+      "G_NEXT_SCOPED",
+      "G_UNIVERSAL_ACCEPTED"
+    ],
+    "nodes": [
+      {
+        "id": "G_NEXT_SCOPED",
+        "kind": "GLOBAL",
+        "scope": "SOURCE_AND_TARGET",
+        "depends_on": [
+          "I_OWNER",
+          "I_NATIVE",
+          "I_DOC",
+          "I_HOST",
+          "I_FREEZE"
+        ],
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "G_UNIVERSAL_ACCEPTED",
+        "kind": "GLOBAL",
+        "scope": "EXTERNAL",
+        "depends_on": [
+          "G_NEXT_SCOPED",
+          "E_INDEPENDENT_SELECTION",
+          "E_ISOLATED_RUNNER",
+          "E_HUMAN_RELEASE"
+        ],
+        "status": "BLOCKED_EXTERNAL"
+      },
+      {
+        "id": "I_OWNER",
+        "kind": "INTERMEDIATE",
+        "scope": "SOURCE",
+        "depends_on": [
+          "L_OWNER_ID",
+          "L_SELECTION_REASON",
+          "L_ADAPTER_QUAL",
+          "L_NO_PROMOTION"
+        ],
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "I_NATIVE",
+        "kind": "INTERMEDIATE",
+        "scope": "TARGET_RUNTIME",
+        "depends_on": [
+          "L_DUAL_RECEIPT",
+          "L_CAUSAL_NEGATIVE",
+          "L_NATIVE_TEST"
+        ],
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "I_DOC",
+        "kind": "INTERMEDIATE",
+        "scope": "SOURCE",
+        "depends_on": [
+          "L_README_PLANES",
+          "L_README_FALSIFIERS"
+        ],
+        "status": "SOURCE_CANDIDATE"
+      },
+      {
+        "id": "I_HOST",
+        "kind": "INTERMEDIATE",
+        "scope": "SOURCE",
+        "depends_on": [
+          "L_HOST_SEPARATION",
+          "L_SIX_SLOT",
+          "L_UI_FALLBACK"
+        ],
+        "status": "SOURCE_CANDIDATE"
+      },
+      {
+        "id": "I_FREEZE",
+        "kind": "INTERMEDIATE",
+        "scope": "SOURCE",
+        "depends_on": [
+          "L_GIT_FREEZE",
+          "L_PROMPT_FREEZE",
+          "L_ROLLBACK"
+        ],
+        "status": "SOURCE_CANDIDATE"
+      },
+      {
+        "id": "L_OWNER_ID",
+        "kind": "LOCAL",
+        "scope": "SOURCE",
+        "depends_on": [],
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "L_SELECTION_REASON",
+        "kind": "LOCAL",
+        "scope": "SOURCE",
+        "depends_on": [],
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "L_ADAPTER_QUAL",
+        "kind": "LOCAL",
+        "scope": "SOURCE",
+        "depends_on": [],
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "L_NO_PROMOTION",
+        "kind": "LOCAL",
+        "scope": "SOURCE",
+        "depends_on": [],
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "L_DUAL_RECEIPT",
+        "kind": "LOCAL",
+        "scope": "TARGET_RUNTIME",
+        "depends_on": [],
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "L_CAUSAL_NEGATIVE",
+        "kind": "LOCAL",
+        "scope": "TARGET_RUNTIME",
+        "depends_on": [],
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "L_NATIVE_TEST",
+        "kind": "LOCAL",
+        "scope": "TARGET_RUNTIME",
+        "depends_on": [],
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "L_README_PLANES",
+        "kind": "LOCAL",
+        "scope": "SOURCE",
+        "depends_on": [],
+        "status": "SOURCE_CANDIDATE"
+      },
+      {
+        "id": "L_README_FALSIFIERS",
+        "kind": "LOCAL",
+        "scope": "SOURCE",
+        "depends_on": [],
+        "status": "SOURCE_CANDIDATE"
+      },
+      {
+        "id": "L_HOST_SEPARATION",
+        "kind": "LOCAL",
+        "scope": "SOURCE",
+        "depends_on": [],
+        "status": "SOURCE_CANDIDATE"
+      },
+      {
+        "id": "L_SIX_SLOT",
+        "kind": "LOCAL",
+        "scope": "SOURCE",
+        "depends_on": [],
+        "status": "SOURCE_CANDIDATE"
+      },
+      {
+        "id": "L_UI_FALLBACK",
+        "kind": "LOCAL",
+        "scope": "SOURCE",
+        "depends_on": [],
+        "status": "SOURCE_CANDIDATE"
+      },
+      {
+        "id": "L_GIT_FREEZE",
+        "kind": "LOCAL",
+        "scope": "SOURCE",
+        "depends_on": [],
+        "status": "SOURCE_CANDIDATE"
+      },
+      {
+        "id": "L_PROMPT_FREEZE",
+        "kind": "LOCAL",
+        "scope": "SOURCE",
+        "depends_on": [],
+        "status": "SOURCE_CANDIDATE"
+      },
+      {
+        "id": "L_ROLLBACK",
+        "kind": "LOCAL",
+        "scope": "SOURCE",
+        "depends_on": [],
+        "status": "SOURCE_CANDIDATE"
+      },
+      {
+        "id": "E_INDEPENDENT_SELECTION",
+        "kind": "LOCAL",
+        "scope": "EXTERNAL",
+        "depends_on": [],
+        "status": "BLOCKED_EXTERNAL"
+      },
+      {
+        "id": "E_ISOLATED_RUNNER",
+        "kind": "LOCAL",
+        "scope": "EXTERNAL",
+        "depends_on": [],
+        "status": "BLOCKED_EXTERNAL"
+      },
+      {
+        "id": "E_HUMAN_RELEASE",
+        "kind": "LOCAL",
+        "scope": "EXTERNAL",
+        "depends_on": [],
+        "status": "BLOCKED_EXTERNAL"
+      }
+    ],
+    "falsifiers": [
+      {
+        "id": "80-or-82-owner-catalog",
+        "expected": "BLOCKED"
+      },
+      {
+        "id": "unselected-or-unqualified-owner-claims-target-test",
+        "expected": "BLOCKED"
+      },
+      {
+        "id": "skipped-or-missing-native-test-with-spoofed-pass",
+        "expected": "BLOCKED"
+      },
+      {
+        "id": "unrelated-native-test-cannot-prove-causal-obligation",
+        "expected": "NOT_ATTESTED"
+      },
+      {
+        "id": "source-or-target-sha-and-retained-bytes-drift",
+        "expected": "REFUTED"
+      },
+      {
+        "id": "one-target-test-implies-81-owner-executions",
+        "expected": "REFUTED"
+      },
+      {
+        "id": "external-adapter-without-consent-and-host-isolation",
+        "expected": "BLOCKED"
+      },
+      {
+        "id": "image-or-prompt-claimed-as-native-OneShell-render",
+        "expected": "REFUTED"
+      },
+      {
+        "id": "iKant-C72-or-C135-owner-voice-transfer",
+        "expected": "REFUTED"
+      },
+      {
+        "id": "delete-product-software-repository-readme-planes",
+        "expected": "REFUTED"
+      },
+      {
+        "id": "forged-independent-review-host-or-release",
+        "expected": "BLOCKED_EXTERNAL"
+      },
+      {
+        "id": "overwrite-active-beta-v2-project-prompt",
+        "expected": "REFUTED"
+      }
+    ],
+    "metrics": {
+      "source": {
+        "cli_inventory_exact": 71,
+        "external_inventory_exact": 10,
+        "owner_catalog_exact": 81,
+        "readme_whitespace_word_limit": 2100,
+        "canonical_project_prompt_modifications_max": 0,
+        "new_engine_count_max": 0
+      },
+      "runtime": {
+        "qualified_owner_link_coverage": "QUALIFIED_SELECTED_OWNER_LINKS/ELIGIBLE_SELECTED_OWNERS",
+        "native_positive_and_negative_required": true,
+        "independent_causal_oracle_required": true,
+        "false_owner_execution_promotions_max": 0,
+        "mutation_survivors_max": 0,
+        "missing_or_skipped_test_pass_max": 0,
+        "unauthorized_executions_max": 0
+      },
+      "ux": {
+        "six_regions": 6,
+        "unobserved_graphical_claims_max": 0,
+        "novice_completion": "FIELD_BASELINE_FIRST",
+        "answer_latency_p95": "MEASURE_WARM_AND_COLD_BEFORE_TARGET"
+      },
+      "release": {
+        "required_checks_exact_final_head": true,
+        "reviewer_non_author": true,
+        "host_controls_authenticated": true,
+        "isolated_host_for_untrusted_code": true,
+        "rollback_drill_observed": true,
+        "external_owner_decision_required": true
+      }
+    },
+    "checklists": {
+      "design": [
+        "Pin original PR99 HEAD/tree and both source/target Git identities",
+        "Inspect owners, imports, tests, consumers, AGENTS.md and unknowns",
+        "Derive a causal native positive and negative oracle for every activated owner",
+        "Choose one next unresolved AND leaf, no fixed total N"
+      ],
+      "development": [
+        "Retain original run_one/verify_one, integrated_run and foreign_pilot",
+        "Replace process-run-only association only through a typed, verified per-owner adapter mapping",
+        "Preserve all 81 distinct owner identities and blocked nonselected ones",
+        "Never treat a target PASS as source-owner execution or permission",
+        "Use bounded and authorized effects only"
+      ],
+      "readme": [
+        "Preserve product/software/repository global and local examples",
+        "Keep original CLI commands, links, 48 Markdown inventory and source-era proofs",
+        "Freeze canonical beta-v2 prompt; propose successor separately",
+        "Maintain first-use contract and negative claims guard",
+        "Human comprehension trial remains external"
+      ],
+      "host": [
+        "Host authority=0, target owner retains product truth",
+        "Task packet delivered/read back to separate coding agent",
+        "OneShell exactly ESITO A B PROVA EDGE NEXT",
+        "Use actual rendered UI if supported and witnessed; otherwise six text slots",
+        "No iKant C72 consent, C135/C125 voice or C87 single-writer transplanted"
+      ],
+      "testing": [
+        "Exact final SHA on authentic Git and Python 3.11/3.13",
+        "One qualified non-process-run owner with target-native positive and negative test",
+        "Physical original-target counterexample and zero survivors",
+        "Verify original receipt digests, preserved bytes and both Git revisions",
+        "Falsify forged universal PASS, UI, consent, catalog and human authority"
+      ],
+      "release": [
+        "No approval from docs/source checker/finite masks",
+        "Observe all required checks terminal green on exact candidate SHA",
+        "Independent reviewer and target owner sign acceptance",
+        "Trusted isolated runner for hostile code with network/filesystem policy",
+        "Exercise rollback and preserve protected main",
+        "No auto-merge, tag, publish or prompt installation"
+      ]
+    },
+    "roadmap": [
+      {
+        "slice": "R0",
+        "goal": "Repair stale PR99 test path and rerun original oracle",
+        "status": "SOURCE_CANDIDATE"
+      },
+      {
+        "slice": "R1",
+        "goal": "README/product-repo-software, Host OneShell and negative documentation guards",
+        "status": "SOURCE_CANDIDATE"
+      },
+      {
+        "slice": "R2",
+        "goal": "Generalize verified selected-owner binding with second real native adapter and causal negative test",
+        "status": "NOT_RUN"
+      },
+      {
+        "slice": "R3",
+        "goal": "Need-driven external adapters and heterogeneous task relevance evaluation",
+        "status": "BLOCKED_EXTERNAL"
+      },
+      {
+        "slice": "R4",
+        "goal": "Trusted OS runner, original upstream, actual ChatGPT native UI/readback and independent review",
+        "status": "BLOCKED_EXTERNAL"
+      }
+    ],
+    "release_rule": {
+      "source": "CANDIDATE_ONLY",
+      "global": "BLOCKED_EXTERNAL",
+      "permission": "EXTERNAL_HUMAN_ONLY",
+      "no_average": true
+    },
+    "rollback": "Revert this follow-on candidate branch only, never PR98 merged main or PR99 original branch."
+  }
 }

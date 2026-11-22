@@ -180,6 +180,73 @@ class PortableBridgeDoDTests(unittest.TestCase):
         for node in named:
             self.assertIn(node['oracle'].split('.')[-1], methods)
 
+    def test_pr100_candidate_25_node_follow_on_no_global_promotion(self):
+        contract = json.loads((ROOT / '.cora/contracts/dod/pr99-portable-universal-dod.json').read_text())
+        candidate = contract['candidate_follow_on']
+        self.assertEqual(candidate['schema'], 'cora-universal-frontier-candidate/1')
+        self.assertEqual(candidate['authority'], 'NONE')
+        self.assertEqual(candidate['status'], 'SOURCE_CANDIDATE_NOT_ACCEPTED')
+        self.assertEqual(candidate['source_lock']['as_is_pr99_head'],
+                         '418fc615c5a1a6cbaaa5b20906cc34b454b70df9')
+        self.assertEqual(candidate['source_lock']['as_is_pr99_early_head'],
+                         'ede6479b7740e5f33da32599912f36900c61432d')
+        self.assertEqual(candidate['source_lock']['as_is_pr99_merge_commit'],
+                         'b518b621878dc6f6dcb1fb353034053926a64049')
+        parents = git(ROOT, 'rev-list', '--parents', '-n', '1',
+                      candidate['source_lock']['as_is_pr99_merge_commit']).split()
+        self.assertEqual(parents, [
+            'b518b621878dc6f6dcb1fb353034053926a64049',
+            '744401c53dd62640f93d26f3b7c96b82940d059f',
+            candidate['source_lock']['as_is_pr99_head'],
+        ])
+        self.assertEqual(git(ROOT, 'merge-base', '--is-ancestor',
+                             candidate['source_lock']['as_is_pr99_merge_commit'],
+                             'HEAD'), '')
+        self.assertEqual(candidate['source_lock']['as_is_pr99_contract_blob'],
+                         '62eed37bcadd812ecbf5d5da42fa16e1ac48dba0')
+        self.assertEqual(candidate['metrics']['source']['owner_catalog_exact'], 81)
+        self.assertEqual(candidate['metrics']['source']['canonical_project_prompt_modifications_max'], 0)
+        self.assertEqual(candidate['release_rule']['global'], 'BLOCKED_EXTERNAL')
+        self.assertEqual(len(candidate['falsifiers']), 12)
+
+        def validate(data):
+            graph = {x['id']: x for x in data['nodes']}
+            if len(graph) != len(data['nodes']) or len(graph) != 25:
+                raise ValueError('duplicate or missing DoD nodes')
+            entered, seen = set(), set()
+            def visit(node):
+                if node in entered or node not in graph:
+                    raise ValueError('cycle or missing DoD leaf')
+                if node in seen:
+                    return
+                entered.add(node)
+                for leaf in graph[node]['depends_on']:
+                    visit(leaf)
+                entered.remove(node)
+                seen.add(node)
+            visit('G_UNIVERSAL_ACCEPTED')
+            if len(seen) != len(graph) or data['release_rule']['global'] != 'BLOCKED_EXTERNAL':
+                raise ValueError('unreachable or promoted global')
+            if any(x['status'] != 'BLOCKED_EXTERNAL' for x in data['nodes']
+                   if x['scope'] == 'EXTERNAL'):
+                raise ValueError('external authority forged')
+            return True
+
+        self.assertTrue(validate(candidate))
+        for fault in ('drop-leaf', 'duplicate', 'fake-release', 'fake-review'):
+            with self.subTest(fault=fault):
+                altered = copy.deepcopy(candidate)
+                if fault == 'drop-leaf':
+                    altered['nodes'] = altered['nodes'][:-1]
+                elif fault == 'duplicate':
+                    altered['nodes'].append(copy.deepcopy(altered['nodes'][-1]))
+                elif fault == 'fake-release':
+                    altered['release_rule']['global'] = 'PASS'
+                else:
+                    next(x for x in altered['nodes'] if x['scope'] == 'EXTERNAL')['status'] = 'PASS'
+                with self.assertRaises(ValueError):
+                    validate(altered)
+
     def test_release_and_security_metrics_never_self_authorize(self):
         doc = json.loads((ROOT / '.cora/contracts/dod/pr99-portable-universal-dod.json').read_text())
         qm = doc['quality_metrics']

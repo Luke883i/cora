@@ -6,7 +6,7 @@
 
 **CORA is not a coding agent** or automatic runner. It can **produce reproducible pre/post-merge review reports** linking **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**. Execution and release decisions remain external.
 
-**Why it matters:** a patch alone cannot establish target behavior; CORA connects intent, tests, change, evidence, unresolved risks and next action.
+**Why it matters:** patches cannot prove behavior; CORA links intent, tests and unresolved risks.
 
 ```text
 TARGET Git repository = application source of truth
@@ -103,6 +103,14 @@ The [LEVEL / NILO experiment](docs/CONTINUOUS_DEVELOPMENT.md#level-demonstration
 
 **71 declared CLI commands** in [capability atlas](.cora/assurance/capability-atlas.json) are inventory, not 71 independently proven features. [parser-checked CLI reference](docs/CLI_REFERENCE.md) · [complete documentation index](docs/INDEX.md).
 
+**81-owner frontier (71 CLI + 10 external candidates):** selection is not execution. `--portable-link` links `cora:process-run` to native tests; executes zero additional owners. [Portable-link details](docs/CLI_REFERENCE.md).
+
+| Plane | Proof |
+| --- | --- |
+| **Product** | Target owner defines observable outcome. |
+| **Software** | Agent implements. |
+| **Repository** | Two Git identities and replay. |
+
 **CORA is not an eleventh engineering method.** Source and model tests are scoped evidence, not full behavioral proof. [Method crosswalk](docs/CONVERGENT_ASSURANCE.md#method-crosswalk--borrowed-perspectives-not-full-implementations).
 
 ## One-Run — one command, one evidence dossier
@@ -115,13 +123,13 @@ cora verify-process /tmp/cora-run.json --repo . --one-run --atlas-html /tmp/cora
 
 The dossier distinguishes `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTERNAL`. **The default does not execute arbitrary target tests**. Keep native test receipts separate. [Chat handoff](docs/AGENT_ADOPTION.md#portable-chatgpt-handoff-opt-in) uses `--chat-step` / `--chat-bundle`: a temporary, operator-produced ZIP of numbered steps, evidence gaps and handoffs, **not** automatic chat memory, a signature or approval.
 
-**Change range:** `--change-base BASE_SHA` selects BASE→HEAD; default is one commit. PR metadata is not authenticated.
+**Change range:** `--change-base BASE_SHA` selects BASE→HEAD; default is one commit. PR metadata remains unverified.
 
-**Native Gold pilots:** bounded Teddy Node and ICTC HTTP/SQLite tests; LUMEN browser and NILO remote unobserved. Source PASS does not attest runner identity. [Pilot evidence](docs/GOLD_ASSURANCE.md).
+**Gold pilots:** Teddy Node and ICTC HTTP/SQLite bounded; LUMEN and NILO unobserved. [Evidence](docs/GOLD_ASSURANCE.md).
 
-**Other repos:** `--portable-profile` inspects source; `--portable-parse-js` parses ESM without execution. [Limits](docs/CONTINUOUS_DEVELOPMENT.md).
+**Other repos:** `--portable-profile` inspects source; `--portable-parse-js` parses ESM. [Limits](docs/CONTINUOUS_DEVELOPMENT.md).
 
-**H-FORGE:** [source stage](docs/HOLISTIC_FORENSICS.md#h-forge-optional-experimental-profile); 77 cases, dynamic consumers and P5 acceptance unverified.
+**H-FORGE:** [source stage](docs/HOLISTIC_FORENSICS.md#h-forge-optional-experimental-profile); 77 bounded cases; consumers and acceptance unverified.
 
 ## How CORA works
 
@@ -150,7 +158,7 @@ The dossier distinguishes `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTER
 | `PASS_SCOPED` on exact SHA | Named source check | Target acceptance |
 | `BLOCKED_EXTERNAL` | Human/host witness outstanding | Merge authority |
 
-**A source digest does not authenticate a human reviewer** or runtime. `NOT_RUN` and `BLOCKED_EXTERNAL` are not PASS. See [evidence boundaries](docs/CONVERGENT_ASSURANCE.md).
+**A source digest does not authenticate a human reviewer** or runtime. See [evidence boundaries](docs/CONVERGENT_ASSURANCE.md).
 
 ## Final Experimental Baseline — bounded evidence
 

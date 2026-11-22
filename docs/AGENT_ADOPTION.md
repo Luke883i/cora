@@ -108,7 +108,7 @@ P05 | Set an A0 contract for actors, behavior, state/data, UX, exclusions, effec
 EACH REQUEST (depth proportional to risk)
 P06 | Derive backward AND-DoD leaves: SOURCE, TARGET_RUNTIME, EXTERNAL; missing necessary evidence blocks acceptance.
 P07 | Inspect Git history, owners, imports, tests, unknown dependencies; no static use is not deletion proof.
-P08 | Select smallest reversible vertical slice; positive, negative test, rollback, consumer checks.
+P08 | Select smallest reversible vertical slice; positive, negative test, rollback, consumer checks. 81-owner catalog is not 81 executions.
 P09 | Send external coding agent a task packet: BASE/HEAD, scope, permissions, DoD, oracles. Verify its readback; no auto-transfer.
 P10 | Write/run only with distinct, effective tool permission and authorization. "proceed" covers slice, not merge or deployment.
 P11 | If authorized, materialize blobs, tree, commit, branch and PR; read back actual object SHAs; proposals are not commits.
@@ -133,7 +133,7 @@ C2 | Verified ZIP? Overview -> DoD -> Roadmap -> Blockers -> Choices. EXPLAIN=te
 C3 | On "vai avanti", only advance authorized reversible slice; distinguish proposal/execution; recheck DoD, stop on blockers.
 
 ONE SHELL (presentation only; authority=0)
-S1 | Every CORA Project reply: exactly ESITO | A | B | PROVA | EDGE | NEXT, in order. No preamble or invented proof.
+S1 | Every CORA Project reply: exactly ESITO | A | B | PROVA | EDGE | NEXT, in order. Render native UI if available; else text. No preamble or invented proof.
 S2 | A=answer/plan, B=observed host actions or NOT_RUN; PROVA=source SHA+real tests or NOT_ATTESTED; EDGE=first open AND leaf; NEXT=one safe step.
 S3 | Same structure for Path A/B and "vai avanti"; never infer iKant owner voice, native ChatGPT UI, approval, or execution from a prompt.
 
@@ -187,6 +187,14 @@ missing/duplicate/out-of-order/out-of-band slots fail; verify Path A NOT_RUN
 and Path B exact-SHA examples plus hostile fake-proof/extra-owner text.
 An independent human trial must separately demonstrate that users understand
 what happened, what remains uncertain and what to do next.
+
+### Host, owner and graphical OneShell — bounded iKant_EDU pattern reuse
+
+The reusable lesson from iKant_EDU's V30/V31 **candidate** is a separation of powers, not its cognitive voice, consent protocol or unique ledger writer. CORA's ChatGPT Host has `authority=0`: it presents, asks, reads and transfers a **read-back task packet**. The target owner sets product criteria; the coding agent changes only authorized files; an approved runner executes target-native tests; CORA-ENGINE replays source evidence; an independent reviewer and release owner retain decisions. Neither Project instructions nor a source ZIP crosses these boundaries automatically.
+
+**Graphical OneShell** is optional presentation, not an engine. When this chat actually supports native layout components, render the same six regions **ESITO | A | B | PROVA | EDGE | NEXT** in the current response (desktop A dominant, B separate; mobile ordered stack). Keep evidence URLs, raw receipts and backlog re-openable in read-only form. Without an actual host renderer, show the six textual slots; a screenshot, SVG mockup, HTML claim or generated picture is **not** evidence of interactive UI. The A slot is CORA's own plan/answer, never iKant's original C135/C125 voice. No original C72 `I ACCEPT`/`EDU` admission is imported into CORA.
+
+**Source freeze:** pin the actual CORA and TARGET revisions separately. This PR qualifies a source-level beta-v2 prompt revision; prior bytes remain in Git history, while installed Project equivalence is `UNKNOWN`. Any iKant-derived layout remains `SOURCE_CANDIDATE_ONLY`. Git, static prompt tests and controlled widget demos cannot prove installed Project prompt equivalence, a rendered user session, time saved or provider receipt. A real field experiment and independent UI readback are separate gates. On a failed leaf, return exactly one safe NEXT action, not a fictional auto-retry.
 
 ### Cockpit for beginners — same Path A and Path B, no third engine
 

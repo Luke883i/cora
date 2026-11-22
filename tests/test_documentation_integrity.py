@@ -157,6 +157,50 @@ class DocumentationDoDTests(unittest.TestCase):
             (fixture / "README.md").write_text(forged, encoding="utf-8")
             self.assertIn("release-claim-regression", doc.verify(fixture))
 
+    def test_pr100_frontier_readme_and_finite_falsifiers(self):
+        readme = (ROOT / "README.md").read_text("utf-8")
+        self.assertEqual(doc.verify_readme_frontier_contract(readme), [])
+        faults = (
+            ("scope-omission", lambda x: x.replace("selection is not execution", "selection is execution", 1),
+             "readme-frontier-missing:"),
+            ("broken-frontier-route", lambda x: x.replace("[Portable-link details](docs/CLI_REFERENCE.md)", "[Portable-link details](docs/missing.md)", 1),
+             "readme-frontier-missing:"),
+            ("invent-81", lambda x: x + "\nall 81 capabilities are executed\n",
+             "readme-frontier-false-promotion:"),
+            ("invent-test-certification", lambda x: x + "\npassing target test proves all 81\n",
+             "readme-frontier-false-promotion:"),
+            ("invent-graphic", lambda x: x + "\nGraphical OneShell is verified by CI\n",
+             "readme-frontier-false-promotion:"),
+            ("import-ikant-consent", lambda x: x + "\niKant's C72 consent is valid for CORA\n",
+             "readme-frontier-false-promotion:"),
+            ("forge-release", lambda x: x + "\ngreen CI counts as independent release approval\n",
+             "readme-frontier-false-promotion:"),
+        )
+        for name, mutate, signal in faults:
+            with self.subTest(name=name):
+                mutated = mutate(readme)
+                self.assertNotEqual(mutated, readme)
+                self.assertTrue(any(x.startswith(signal) for x in
+                                    doc.verify_readme_frontier_contract(mutated)))
+
+    def test_pr100_host_presentation_does_not_duplicate_canonical_prompt(self):
+        guide = (ROOT / "docs/AGENT_ADOPTION.md").read_text("utf-8")
+        self.assertEqual(doc.verify_project_adapter_prompt(guide), [])
+        self.assertEqual(guide.count("CORA LOCAL PROJECT ADAPTER — BETA v2"), 1)
+        heading = "### Paste into Project instructions — CORA local adapter beta v2\n"
+        prompt = guide.split(heading, 1)[1].split("\n### Practical engineering vocabulary", 1)[0]
+        for phrase in ("81-owner catalog is not 81 executions.",
+                       "Render native UI if available; else text."):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, prompt)
+                self.assertIn("project-adapter-frontier-or-rendering-boundary",
+                              doc.verify_project_adapter_prompt(guide.replace(phrase, "", 1)))
+        for essential in ("authority=0", "read-back task packet",
+                          "Graphical OneShell", "same six regions",
+                          "No original C72", "SOURCE_CANDIDATE_ONLY",
+                          "Without an actual host renderer"):
+            self.assertIn(essential, guide)
+
     def test_04_parser_commands_are_exact_not_legacy_catalog(self):
         import ast
         code = ast.parse((ROOT / "src/cora/cli.py").read_text("utf-8"))
