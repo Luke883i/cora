@@ -91,6 +91,42 @@ class PortableBridgeDoDTests(unittest.TestCase):
             target if target is not None else self.target_receipt,
             bindings if bindings is not None else self.bindings)
 
+    def test_original_git_eighty_one_owner_plan_and_native_link(self):
+        """Use the REAL 81-owner One-Run output; never promote its blocked rows."""
+        from cora.one_run import run_one, verify_one
+        from cora.foreign_pilot import reconcile_portable_capabilities
+        from cora.integrated_run import _portable_source_target_link
+        receipt = run_one(ROOT, 'HEAD', process='history',
+                          capability_intent='process-run')
+        self.assertTrue(verify_one(ROOT, receipt))
+        plan = receipt['universal_capability_plan']
+        self.assertEqual(plan['counts']['total'], 81)
+        process_owner = next(x for x in plan['rows'] if x['id'] == 'cora:process-run')
+        self.assertTrue(process_owner['selected'])
+        self.assertEqual(process_owner['state'], 'BLOCKED')
+        evidence = reconcile_portable_capabilities(
+            ROOT, receipt, self.target, self.target_receipt,
+            self.evidence, bindings=self.bindings)
+        self.assertEqual(evidence['scope_status'], 'PASS_SCOPED_LOCAL_UNATTESTED')
+        self.assertEqual(evidence['catalog_metrics']['source_owners_executed_by_bridge'], 0)
+        self.assertEqual(evidence['native_test_metrics']['passing_test_ids'], 1)
+        self.assertEqual(evidence['universal_81_execution'], 'BLOCKED_EXTERNAL')
+        manifest = self.dir / 'integrated-link.json'
+        request = {'schema': 'cora-portable-link-request/1',
+                   'target_repo': str(self.target.resolve()),
+                   'target_receipt': self.target_receipt,
+                   'target_evidence_dir': str(self.evidence.resolve()),
+                   'bindings': self.bindings}
+        manifest.write_text(json.dumps(request), encoding='utf-8')
+        linked = _portable_source_target_link(ROOT, receipt, manifest)
+        self.assertEqual(linked['reconciliation'], evidence)
+        self.assertEqual(linked['authority'], 'NONE')
+        self.assertEqual(linked['product_status'], 'BLOCKED_EXTERNAL')
+        request['bindings'][0] = dict(request['bindings'][0], test_id='forged.Test.fake')
+        manifest.write_text(json.dumps(request), encoding='utf-8')
+        with self.assertRaises(ValueError):
+            _portable_source_target_link(ROOT, receipt, manifest)
+
     def test_reticular_32_node_backward_and_dod_is_closed(self):
         contract = json.loads((ROOT / '.cora/contracts/dod/pr99-portable-universal-dod.json').read_text())
         self.assertEqual(contract['schema'], 'cora-pr99-portable-universal-dod/1')
