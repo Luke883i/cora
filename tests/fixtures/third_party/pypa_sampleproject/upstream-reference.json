@@ -1,0 +1,13 @@
+{
+  "origin": "https://github.com/pypa/sampleproject",
+  "upstream_commit": "621e4974ca25ce531773def586ba3ed8e736b3fc",
+  "scope": "EXACT_BLOB_RECONSTRUCTION_NOT_FULL_UPSTREAM_TREE",
+  "files": {
+    "src/sample/simple.py": "c929f885b60a11bfc703f7b358bb2b1dc7d10253",
+    "src/sample/__init__.py": "c8f10649946fda329ad70975b0c82629bfcb5859",
+    "tests/test_simple.py": "b7a0ee3a65de8d46c15df764b83505d2f9b6ff4e",
+    "tests/__init__.py": "4eef093a5f541b72cba0f895f6872d9f52be98e8",
+    "LICENSE.txt": "c74aceda037b84c08858a7d653a956e65355fa6a"
+  },
+  "limits": ["Original remote tree and history NOT cloned", "Local fixture Git commits are not upstream commits", "No third-party CI results inferred"]
+}

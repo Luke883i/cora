@@ -589,10 +589,10 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
         self.assertEqual(pr84["changed_blobs"], 9)
         changed = sorted(git(ROOT, "diff", "--name-only", base, self.sha,
                              "--", "src/cora").splitlines())
-        # This exact C04 extension introduces one source module. Do not weaken
-        # historical closed-world identity or allow unregistered future additions.
+        # Review exactly two intentional source additions against the immutable
+        # historical baseline; no unregistered future module may pass.
         added = sorted(r["path"] for r in universe["rows"] if r["difference"] == "ADDED")
-        self.assertEqual(added, ["src/cora/process_bounds.py"])
+        self.assertEqual(added, ["src/cora/foreign_pilot.py", "src/cora/process_bounds.py"])
         self.assertEqual(universe["identical_blobs"], universe["denominator"] - len(changed))
         self.assertEqual(universe["changed_blobs"], len(changed) - len(added))
         self.assertEqual(universe["added_blobs"], len(added))
@@ -662,7 +662,7 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             # committed byte streams to compare.
             added_paths = sorted(row["path"] for row in baseline["rows"]
                                  if row["difference"] == "ADDED")
-            self.assertEqual(added_paths, ["src/cora/process_bounds.py"])
+            self.assertEqual(added_paths, ["src/cora/foreign_pilot.py", "src/cora/process_bounds.py"])
             self.assertEqual(baseline["removed_blobs"], 0)
             self.assertEqual(baseline["added_blobs"], len(added_paths))
             shared_changed_paths = sorted(set(changed_paths) - set(added_paths))
@@ -689,7 +689,7 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             self.assertEqual(index["content_byte_equal_paths"],
                              index["denominator"] - len(changed_paths) - 1)
             self.assertEqual(index["content_byte_different_paths"],
-                             sorted((set(changed_paths) - {"src/cora/process_bounds.py"})
+                             sorted((set(changed_paths) - {"src/cora/foreign_pilot.py", "src/cora/process_bounds.py"})
                                     | {"src/cora/reticulum.py"}))
             self.assertEqual(index["exact_content_parity"],
                              "REFUTED_SOURCE_CONTENT_PARITY")
@@ -778,7 +778,7 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             universe = document["engine_source_universe"]
             added_paths = sorted(row["path"] for row in universe["rows"]
                                  if row["difference"] == "ADDED")
-            self.assertEqual(added_paths, ["src/cora/process_bounds.py"])
+            self.assertEqual(added_paths, ["src/cora/foreign_pilot.py", "src/cora/process_bounds.py"])
             self.assertEqual(universe["removed_blobs"], 0)
             changed_paths = set(git(ROOT, "diff", "--name-only", base, self.sha,
                                     "--", "src/cora").splitlines())
@@ -983,10 +983,11 @@ class EngineeringKnowledgeClosureTests(unittest.TestCase):
             "src/cora/integrated_registry.py",
         })
         current = module_oids(self.sha)
-        # The original source universe is retained, plus exactly one reviewed
-        # C04 module. Treat a second accidental addition as a real regression.
+        # The original source universe and historical C04 process_bounds owner
+        # remain retained, plus the independently reviewed foreign_pilot adapter.
+        # Unexpected additional modules remain a genuine regression.
         added_current = set(current) - set(at_p0_base)
-        self.assertEqual(added_current, {"src/cora/process_bounds.py"})
+        self.assertEqual(added_current, {"src/cora/foreign_pilot.py", "src/cora/process_bounds.py"})
         self.assertEqual(set(at_p0_base) - set(current), set())
         p0_merge = module_oids("1fa3570b86c91262b5d196fe5456950240ca7962")
         p0_successor_delta = {p for p in at_p0_base if at_p0_base[p] != p0_merge[p]}

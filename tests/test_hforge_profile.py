@@ -245,13 +245,16 @@ class GitFixture(unittest.TestCase):
         root = Path(__file__).resolve().parents[1]
         report = check(root, "HEAD")
         self.assertEqual(report["source_status"], "PASS_SCOPED_SOURCE")
-        self.assertEqual(report["surfaces"]["modules"], 64)
-        # C04 adds precisely one reviewed source module. Retain an exact
-        # closed-world count and bind it to the committed capability index.
+        self.assertEqual(report["surfaces"]["modules"], 65)
+        # Preserve the historical C04 process_bounds module and register
+        # exactly one new reviewed foreign pilot; arbitrary additions remain
+        # disallowed by the exact Git-bound source atlas verifier.
         catalog = json.loads((root / ".cora/assurance/capability-atlas.json").read_text())
         modules = catalog["repository_surfaces"]["modules"]
-        self.assertEqual(len(modules), 64)
+        self.assertEqual(len(modules), 65)
+        self.assertEqual(len(modules), len(set(modules)))
         self.assertEqual(modules.count("src/cora/process_bounds.py"), 1)
+        self.assertEqual(modules.count("src/cora/foreign_pilot.py"), 1)
         self.assertGreaterEqual(report["surfaces"]["operational_tools"], 22)
         self.assertGreaterEqual(report["surfaces"]["test_modules"], 59)
         self.assertGreaterEqual(report["surfaces"]["internal_dod"], 20)

@@ -388,6 +388,8 @@ def main(argv: list[str] | None = None) -> int:
     pr.add_argument('--chat-bundle',type=Path,help='Outside-repo portable logically append-only session ZIP')
     pr.add_argument('--capability-request',type=Path,help=argparse.SUPPRESS)
     pr.add_argument('--execute-capabilities',action='store_true',help=argparse.SUPPRESS)
+    pr.add_argument('--foreign-request',type=Path,help=argparse.SUPPRESS)
+    pr.add_argument('--execute-foreign',action='store_true',help=argparse.SUPPRESS)
     pv = sub.add_parser('verify-process',help='Source revalidation of process receipt')
     pv.add_argument('report',type=Path)
     pv.add_argument('--repo',required=True,type=Path)
@@ -794,6 +796,15 @@ def main(argv: list[str] | None = None) -> int:
                                      authorize_probe=args.authorize_probe)
             code = 0
         elif args.cmd == 'process-run':
+            if args.execute_foreign and not args.foreign_request:
+                raise ValueError('foreign execution requires a pinned request')
+            if args.foreign_request and (not args.one_run or args.profile or args.portable_profile
+                                         or args.capability_request or args.execute_capabilities
+                                         or args.chat_step or args.execute_self_tests or args.model_stress_cases
+                                         or args.authorization_file or args.change_base
+                                         or args.revision != 'HEAD' or args.atlas_html
+                                         or not args.evidence_dir):
+                raise ValueError('foreign pilot requires the original source One-Run and outside evidence')
             if (args.capability_request or args.execute_capabilities) and (
                     not args.one_run or args.profile != 'comprehensive' or args.portable_profile):
                 raise ValueError('capability requests require the original comprehensive One-Run')
@@ -812,7 +823,17 @@ def main(argv: list[str] | None = None) -> int:
             if (args.portable_evidence_dir or args.portable_parse_js or args.portable_upstream or args.portable_native_probe) and not args.portable_profile:
                 raise ValueError('portable evidence requires portable profile')
             if args.one_run:
-                if args.portable_profile:
+                if args.foreign_request:
+                    from .foreign_pilot import run_foreign_pilot
+                    if args.foreign_request.stat().st_size > 128 * 1024:
+                        raise ValueError('oversized foreign request')
+                    request = json.loads(args.foreign_request.read_text('utf-8'))
+                    result = run_foreign_pilot(args.repo, request,
+                        execute=args.execute_foreign, evidence_dir=args.evidence_dir)
+                    if args.atlas_json:
+                        args.atlas_json.write_text(json.dumps(result,sort_keys=True,indent=2)+'\n',encoding='utf-8')
+                    code = 2 if result['selected_outcome'] != 'PASS_SCOPED_LOCAL_UNATTESTED' else 0
+                elif args.portable_profile:
                     result = run_portable(args.repo,args.revision,args.portable_profile,
                                           evidence_dir=args.portable_evidence_dir,
                                           parse_js=args.portable_parse_js,
@@ -884,7 +905,16 @@ def main(argv: list[str] | None = None) -> int:
                     raise ValueError('portable evidence requires original profile')
                 if args.atlas_json and json.loads(args.atlas_json.read_text('utf-8')) != item:
                     raise ValueError('one-run JSON atlas is not the source receipt')
-                if item.get('schema') == 'cora-portable-one-run/1':
+                if item.get('schema') == 'cora-foreign-operational-pilot/1':
+                    from .foreign_pilot import verify_foreign_pilot
+                    if not args.evidence_dir or args.chat_bundle or args.portable_profile or args.atlas_html:
+                        raise ValueError('foreign replay requires retained original evidence')
+                    verify_foreign_pilot(args.repo, item, args.evidence_dir)
+                    result = {'schema':'cora-foreign-pilot-replay/1',
+                              'status':'GIT_SOURCE_AND_RETAINED_BYTES_REPLAYED_LOCAL_UNATTESTED',
+                              'commit':item['commit'], 'product_status':'BLOCKED_EXTERNAL',
+                              'authority':'NONE'}
+                elif item.get('schema') == 'cora-portable-one-run/1':
                     if not args.portable_profile or args.evidence_dir or args.chat_bundle:
                         raise ValueError('portable replay requires original profile and no integrated effects')
                     verify_portable(args.repo,item,args.portable_profile,

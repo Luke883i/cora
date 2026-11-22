@@ -1,0 +1,318 @@
+{
+  "a0": {
+    "acceptance_oracle": "positive and negative third-party tests on verbatim Git blob files, exact-SHA and byte replay controls, deterministic obligation ranking and a second optional adapter; independent sandbox and PR97 exact-HEAD integrated history remain external",
+    "actors": [
+      "external coding agent",
+      "target repository owner",
+      "isolated authorized runner",
+      "independent reviewer"
+    ],
+    "behavior": "reuse original one-run source analysis; link evidence to third-party Git; select from measured obligation outcomes; run qualified adapters only on explicit consent; replay retained bytes; keep isolation/review external",
+    "effects": "read-only source analysis without opt-in; optional unittest/pytest test subprocesses inside disposable outside-repo Git file copy",
+    "exclusions": [
+      "unrestricted subprocess",
+      "unattested OS sandbox",
+      "automatic installation",
+      "remote tool fetch",
+      "unverified upstream clone",
+      "review, merge, release"
+    ],
+    "state_data": "Authentic CORA PR97 merged-main Git ancestry, exact source tree and original PyPA blob IDs; third-party subset has its own synthetic Git SHA/tree, bounded opt-in, test events and replayable local logs.",
+    "ux": "Original source One-Run CLI with separately opt-in foreign mode, replay, next unresolved; original comprehensive PR97 capability_operation preserved unchanged."
+  },
+  "abstract_dod": "On a real PR branch descending from merged PR97 main, demonstrate bounded original-source One-Run reuse and two native Python adapters on a distinct repository's original Git blobs with measured ranking, explicit opt-in, fail-closed test linkage, retained replay and finite physical falsifiers. Preserve comprehensive PR97 operation unchanged and keep full 81-owner integration, independent isolation, upstream history and human review blocked until external proof.",
+  "authority": "NONE",
+  "base_local_zip_sha": "54cb53f428f6539c6ea2d900da0f097d3efa5080",
+  "base_main_merge_sha": "b1b8e8ad3d430096ed8fb6885668074ca36eb6b7",
+  "base_pr97_sha": "e6b457de145b40e551921001f39f7cc9340d9bcc",
+  "checklist": {
+    "closure": [
+      "Verify actual PR97 merged-main commit is an ancestor of the candidate, with Git readback on the real feature branch.",
+      "Run all named oracles on actual local candidate HEAD",
+      "Inject independent falsifiers and retain survivors",
+      "Re-evaluate each AND node on the same SHA",
+      "Do not claim full third-party upstream tree, comprehensive 81-owner integration, OS sandbox, independent review or release."
+    ],
+    "inference": [
+      "Use structured obligations instead of lexical text alone",
+      "Use only measured duration and outcomes for ranking",
+      "Keep unknown adapters explicitly blocked",
+      "Compare to baseline effort and avoid claiming unmeasured ROI",
+      "Reject fast but consistently failed adapters as qualified candidates."
+    ],
+    "isolation": [
+      "Require exact-SHA consent and disallow implicit execution",
+      "No shell, bounded timeout/output, allowlisted source paths and scrubbed env",
+      "Do not claim temporary folder equals OS isolation",
+      "Use independent isolated runner and deny-by-default before hostile targets",
+      "Terminate descendant process groups on output overflow/timeout; process-group control is not OS confinement."
+    ],
+    "maintenance": [
+      "Use original run_one and verify_one, no duplicate CORA engine",
+      "Qualify second optional adapter using same bounded runner and artifact format",
+      "Track code size, duplicated owners and costs",
+      "Make flags and limitations discoverable in task documentation"
+    ],
+    "third_party": [
+      "Choose public Python repository with unittest, pin upstream SHA and original blob OIDs",
+      "Create local Git subset without asserting full upstream HEAD",
+      "Run original case, commit separate physical mutation and require negative",
+      "Replay same local SHA evidence"
+    ]
+  },
+  "global_goals": [
+    "G_SCOPED_PORTABLE_PILOT",
+    "G_COMPLETE_PRODUCT_ACCEPTANCE"
+  ],
+  "main_source_readback": {
+    "base_commit": "b1b8e8ad3d430096ed8fb6885668074ca36eb6b7",
+    "blobs": {
+      ".cora/assurance/capability-atlas.json": "6ceb63bc4f92bcba55f775a92c26d5e0f833444b",
+      ".cora/contracts/dod/optimal-tool-acquisition.json": "dfe51b29c09678ff9147897de63456052def97ed",
+      ".github/workflows/ci-one-run-integrated.yml": "12234d0f4bfa5a6e508f3e2acee8f27308086a7f",
+      "AGENTS.md": "21032ba8f5118c9802cae10fc165b4e935d14bdc",
+      "README.md": "e55d6e6d2767cd233d2e1ba387f02b3309914de1",
+      "docs/CLI_REFERENCE.md": "6e69fb8d9ca36029883d35fe0049bc52c778406d",
+      "src/cora/cli.py": "e079616267057d026a1415d2c894752d398dad7e",
+      "src/cora/integrated_html.py": "0d4d5c627590fa8fced87df445438bd2a8a49d25",
+      "src/cora/integrated_run.py": "137e0dfa181e8765439210ea1a2665bfdc9327e2",
+      "src/cora/process_suite.py": "386315f6ecc6c004084c95137b0ee0186facb07b",
+      "tests/test_debt_governance.py": "dca623e6cf5ad5196eab3dfc0ff3a28654618b4e"
+    },
+    "branch": "main",
+    "local_rebase_status": "AUTHENTIC_MAIN_PARENT_MATERIALIZED",
+    "merged_at_utc": "2026-11-22T11:00:22Z",
+    "merged_pr": 97,
+    "observation": "GITHUB_API_COMMIT_TREE_PARENT_READBACK; NEW_BRANCH_PARENT_IS_REAL_MAIN_MERGE_SHA",
+    "repository": "Luke883i/cora"
+  },
+  "nodes": [
+    {
+      "depends_on": [
+        "I_THIRD_PARTY",
+        "I_INFERENCE",
+        "I_RUNNER",
+        "I_MAINTAINABILITY",
+        "I_PROVENANCE"
+      ],
+      "id": "G_SCOPED_PORTABLE_PILOT",
+      "kind": "GLOBAL",
+      "scope": "TARGET_RUNTIME"
+    },
+    {
+      "depends_on": [
+        "G_SCOPED_PORTABLE_PILOT",
+        "E_UPSTREAM_HISTORY",
+        "E_PR97_INTEGRATION",
+        "E_HOST_SANDBOX",
+        "E_REVIEW"
+      ],
+      "id": "G_COMPLETE_PRODUCT_ACCEPTANCE",
+      "kind": "GLOBAL",
+      "scope": "EXTERNAL"
+    },
+    {
+      "depends_on": [
+        "L_THIRD_PARTY_BLOBS",
+        "L_NATIVE_POSITIVE",
+        "L_PHYSICAL_MUTANT"
+      ],
+      "id": "I_THIRD_PARTY",
+      "kind": "INTERMEDIATE",
+      "scope": "TARGET_RUNTIME"
+    },
+    {
+      "depends_on": [
+        "L_STRUCTURED_OBLIGATION",
+        "L_MEASURED_SELECTION",
+        "L_UNSUPPORTED_BLOCKED",
+        "L_NO_FALSE_COST_SCORE"
+      ],
+      "id": "I_INFERENCE",
+      "kind": "INTERMEDIATE",
+      "scope": "SOURCE"
+    },
+    {
+      "depends_on": [
+        "L_EXPLICIT_OPTIN",
+        "L_PROCESS_BOUNDS",
+        "L_NO_SANDBOX_LAUNDER",
+        "L_PROCESS_GROUP_KILL"
+      ],
+      "id": "I_RUNNER",
+      "kind": "INTERMEDIATE",
+      "scope": "TARGET_RUNTIME"
+    },
+    {
+      "depends_on": [
+        "L_SHARED_TWO_ADAPTERS",
+        "L_ORIGINAL_ENGINE_REUSED"
+      ],
+      "id": "I_MAINTAINABILITY",
+      "kind": "INTERMEDIATE",
+      "scope": "SOURCE"
+    },
+    {
+      "depends_on": [
+        "L_EXACT_SHA",
+        "L_BYTE_REPLAY",
+        "L_NO_PASS_ON_SKIP"
+      ],
+      "id": "I_PROVENANCE",
+      "kind": "INTERMEDIATE",
+      "scope": "SOURCE"
+    },
+    {
+      "depends_on": [],
+      "id": "L_THIRD_PARTY_BLOBS",
+      "kind": "LOCAL",
+      "oracle": "test_upstream_blob_identity",
+      "scope": "SOURCE"
+    },
+    {
+      "depends_on": [],
+      "id": "L_NATIVE_POSITIVE",
+      "kind": "LOCAL",
+      "oracle": "test_one_run_original_target_unittest",
+      "scope": "TARGET_RUNTIME"
+    },
+    {
+      "depends_on": [],
+      "id": "L_PHYSICAL_MUTANT",
+      "kind": "LOCAL",
+      "oracle": "test_physical_target_mutant_is_refuted",
+      "scope": "TARGET_RUNTIME"
+    },
+    {
+      "depends_on": [],
+      "id": "L_STRUCTURED_OBLIGATION",
+      "kind": "LOCAL",
+      "oracle": "test_ranking_requires_structured_obligations",
+      "scope": "SOURCE"
+    },
+    {
+      "depends_on": [],
+      "id": "L_MEASURED_SELECTION",
+      "kind": "LOCAL",
+      "oracle": "test_measured_two_adapter_selection",
+      "scope": "TARGET_RUNTIME"
+    },
+    {
+      "depends_on": [],
+      "id": "L_UNSUPPORTED_BLOCKED",
+      "kind": "LOCAL",
+      "oracle": "test_unknown_adapter_stays_blocked",
+      "scope": "SOURCE"
+    },
+    {
+      "depends_on": [],
+      "id": "L_EXPLICIT_OPTIN",
+      "kind": "LOCAL",
+      "oracle": "test_explicit_optin_and_stale_sha",
+      "scope": "TARGET_RUNTIME"
+    },
+    {
+      "depends_on": [],
+      "id": "L_PROCESS_BOUNDS",
+      "kind": "LOCAL",
+      "oracle": "test_runtime_timeout_and_output_limit",
+      "scope": "TARGET_RUNTIME"
+    },
+    {
+      "depends_on": [],
+      "id": "L_NO_SANDBOX_LAUNDER",
+      "kind": "LOCAL",
+      "oracle": "test_no_host_isolation_authority",
+      "scope": "SOURCE"
+    },
+    {
+      "depends_on": [],
+      "id": "L_SHARED_TWO_ADAPTERS",
+      "kind": "LOCAL",
+      "oracle": "test_two_adapter_real_runners",
+      "scope": "TARGET_RUNTIME"
+    },
+    {
+      "depends_on": [],
+      "id": "L_ORIGINAL_ENGINE_REUSED",
+      "kind": "LOCAL",
+      "oracle": "test_source_receipt_original_one_run_replay",
+      "scope": "SOURCE"
+    },
+    {
+      "depends_on": [],
+      "id": "L_EXACT_SHA",
+      "kind": "LOCAL",
+      "oracle": "test_explicit_optin_and_stale_sha",
+      "scope": "SOURCE"
+    },
+    {
+      "depends_on": [],
+      "id": "L_BYTE_REPLAY",
+      "kind": "LOCAL",
+      "oracle": "test_log_tamper_is_refuted",
+      "scope": "TARGET_RUNTIME"
+    },
+    {
+      "depends_on": [],
+      "id": "L_NO_PASS_ON_SKIP",
+      "kind": "LOCAL",
+      "oracle": "test_skipped_and_empty_cannot_pass",
+      "scope": "TARGET_RUNTIME"
+    },
+    {
+      "depends_on": [],
+      "id": "L_NO_FALSE_COST_SCORE",
+      "kind": "LOCAL",
+      "oracle": "test_failed_history_cannot_be_qualified_by_low_cost",
+      "scope": "TARGET_RUNTIME"
+    },
+    {
+      "depends_on": [],
+      "id": "L_PROCESS_GROUP_KILL",
+      "kind": "LOCAL",
+      "oracle": "test_bounded_runner_cleans_orphan_after_parent_exit",
+      "scope": "TARGET_RUNTIME"
+    },
+    {
+      "depends_on": [],
+      "id": "E_UPSTREAM_HISTORY",
+      "kind": "LOCAL",
+      "oracle": null,
+      "scope": "EXTERNAL",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "depends_on": [],
+      "id": "E_PR97_INTEGRATION",
+      "kind": "LOCAL",
+      "oracle": null,
+      "scope": "EXTERNAL",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "depends_on": [],
+      "id": "E_HOST_SANDBOX",
+      "kind": "LOCAL",
+      "oracle": null,
+      "scope": "EXTERNAL",
+      "status": "BLOCKED_EXTERNAL"
+    },
+    {
+      "depends_on": [],
+      "id": "E_REVIEW",
+      "kind": "LOCAL",
+      "oracle": null,
+      "scope": "EXTERNAL",
+      "status": "BLOCKED_EXTERNAL"
+    }
+  ],
+  "optimization": {
+    "prepr_scope": "SOURCE+LOCAL_TEST_NOT_RELEASE",
+    "target": "max observed decision-useful evidence per qualified adapter under measured runtime budget",
+    "unmeasured_roi": "UNKNOWN",
+    "untrusted_host_isolation": "BLOCKED_EXTERNAL"
+  },
+  "rollback": "Revert the local semantic commits, or remove the foreign pilot flags, module, contract and tests. Original source-only One-Run path stays unchanged.",
+  "schema": "cora-pr97-prepr-reticular-dod/1"
+}
