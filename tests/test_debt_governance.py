@@ -464,12 +464,22 @@ class OperationalCapabilityTests(unittest.TestCase):
             run.assert_not_called()
 
     def test_declared_dod_has_real_oracles_and_and_dependencies(self):
+        from unittest.mock import patch
         from cora.reticulum import ordered_cut
+        from cora.process_suite import operational_requirement_plan
         path = Path(__file__).resolve().parents[1] / ".cora/contracts/dod/optimal-tool-acquisition.json"
         contract = json.loads(path.read_text())["operational_contract"]
         order = ordered_cut(contract["nodes"], contract["goals"]["complete"])
         self.assertEqual(len(order), 22)
         self.assertEqual(set(order), {n["id"] for n in contract["nodes"]})
+        plan = operational_requirement_plan(Path(__file__).resolve().parents[1])
+        self.assertEqual(plan["prerequisites"], order)
+        self.assertEqual(plan["status"], "REQUIREMENTS_DERIVED_NOT_EXECUTED")
+        bad = json.loads(path.read_text())
+        bad["operational_contract"]["nodes"][0]["depends_on"].pop()
+        with patch("cora.process_suite.git", return_value=json.dumps(bad).encode()):
+            with self.assertRaises(ValueError):
+                operational_requirement_plan(self.repo)
         for node in contract["nodes"]:
             if node["kind"] == "LOCAL" and node["scope"] != "EXTERNAL":
                 self.assertTrue(callable(getattr(self, node["oracle"].split(".")[-1])))

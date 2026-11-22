@@ -19,10 +19,9 @@ from .integrated_registry import build_registry, verify_contract, SCHEMA as REGI
 from .one_run import run_one, verify_one
 from .genealogy import build_genealogy, corpus_available, BASE as HISTORIC_GIT_ANCHOR
 from .independent_qualification import build_qualification, verify_qualification, CONTRACT as QUALIFICATION_CONTRACT
-from .process_suite import operational_selection
+from .process_suite import operational_selection, operational_requirement_plan
 from .process_bounds import run_bounded
 from .debt import parse_sarif, MAX_SARIF
-from .reticulum import ordered_cut
 
 SCHEMA = "cora-integrated-one-run/2"
 ATTEMPT_STATES = {"EXECUTED_SCOPED", "REUSED_SCOPED", "BLOCKED", "FAIL",
@@ -209,6 +208,7 @@ def run_capability_operation(repo: Path, baseline: dict, request: dict, *,
                 dst = work / path
                 dst.parent.mkdir(parents=True, exist_ok=True)
                 dst.write_bytes(git(repo, "cat-file", "blob", record["git_oid"], max_output=8 * 1024 * 1024))
+                dst.chmod(0o755 if record["mode"] == "100755" else 0o644)
             # A disposable Git-byte copy is not an OS sandbox. Never forward credentials.
             env = {k: os.environ[k] for k in ("PATH", "SYSTEMROOT", "LANG") if k in os.environ}
             env.update(PYTHONDONTWRITEBYTECODE="1", PYTHONPATH=str(work / "src") + os.pathsep + str(work),
@@ -791,14 +791,7 @@ def run_integrated(repo: Path, revision: str = "HEAD", *, process: str = "full",
     if capability_request is not None:
         if capability_request.stat().st_size > 128 * 1024:
             raise ValueError("capability request exceeds 128KiB")
-        contract = json.loads(git(repo, "show", sha + ":.cora/contracts/dod/optimal-tool-acquisition.json"))["operational_contract"]
-        if contract["schema"] != "cora-operational-capabilities-dod/1" or contract["authority"] != "NONE":
-            raise ValueError("original operational contract missing or promoted")
-        order = ordered_cut(contract["nodes"], contract["goals"]["complete"])
-        if set(order) != {n["id"] for n in contract["nodes"]}:
-            raise ValueError("operational DoD has unreachable obligations")
-        bundle["capability_contract"] = {"digest": domain_hash("CORA:operational-dod:1", contract),
-                                         "prerequisites": order, "status": "REQUIREMENTS_DERIVED_NOT_EXECUTED"}
+        bundle["capability_contract"] = operational_requirement_plan(repo, sha)
         request = json.loads(capability_request.read_text("utf-8"))
         bundle["capability_operation"] = run_capability_operation(
             repo, base, request, execute=execute_capabilities, evidence_dir=out)
@@ -898,10 +891,7 @@ def verify_integrated(repo: Path, receipt: dict, *, html_page: str | None = None
     if receipt["metrics"] != _metrics(expected, receipt["attempts"], test):
         raise ValueError("activity count or proof-level promotion")
     if "capability_operation" in receipt:
-        contract = json.loads(git(repo, "show", sha + ":.cora/contracts/dod/optimal-tool-acquisition.json"))["operational_contract"]
-        required = {"digest": domain_hash("CORA:operational-dod:1", contract),
-                    "prerequisites": ordered_cut(contract["nodes"], contract["goals"]["complete"]),
-                    "status": "REQUIREMENTS_DERIVED_NOT_EXECUTED"}
+        required = operational_requirement_plan(repo, sha)
         if receipt.get("capability_contract") != required:
             raise ValueError("operational contract or AND cut altered")
         verify_capability_operation(repo, receipt["baseline_pr36"], receipt["capability_operation"], evidence_dir)

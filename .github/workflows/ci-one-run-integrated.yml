@@ -36,6 +36,46 @@ jobs:
         run: |
           test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
           python -m unittest discover -s tests -p test_debt_governance.py -k OperationalCapabilityTests -v
+      - name: Original One-Run CLI, native test linkage and retained replay
+        env:
+          CORA_OPERATIONAL_EVIDENCE_DIR: ${{ runner.temp }}/cora-operations
+        run: |
+          python - <<'PY'
+          import json, os, subprocess
+          from pathlib import Path
+          out = Path(os.environ['CORA_OPERATIONAL_EVIDENCE_DIR']) / 'one-run'
+          out.mkdir(parents=True, exist_ok=True)
+          sha = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode().strip()
+          tree = subprocess.check_output(['git', 'rev-parse', 'HEAD^{tree}']).decode().strip()
+          case = 'test_bounded_process.C04BoundedSubprocess.test_timeout_and_nonzero_do_not_become_success'
+          request = {'schema': 'cora-capability-request/1', 'commit': sha, 'tree': tree,
+            'decisions': [{'id': key, 'reason': 'Candidate operational regression pilot',
+                           'obligation': 'BOUNDED_SUBPROCESS', 'test_ids': [case]}
+                          for key in ('cora:archaeology', 'external:semgrep')],
+            'tests': [{'path': 'tests/test_bounded_process.py', 'ids': [case]}],
+            'semgrep': {'targets': ['src/cora/process_bounds.py'], 'rules': {'rules': [
+                {'id': 'no-eval', 'pattern': 'eval(...)', 'message': 'Review eval',
+                 'languages': ['python'], 'severity': 'ERROR'}]}}, 'timeout': 30}
+          (out / 'request.json').write_text(json.dumps(request))
+          PY
+          out="$CORA_OPERATIONAL_EVIDENCE_DIR/one-run"
+          cora process-run . --one-run --profile comprehensive \
+            --capability-request "$out/request.json" --execute-capabilities \
+            --evidence-dir "$out/evidence" --output "$out/run.json" --atlas-html "$out/index.html"
+          cora verify-process "$out/run.json" --repo . --one-run \
+            --evidence-dir "$out/evidence" --atlas-html "$out/index.html"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          run = json.loads((Path(os.environ['CORA_OPERATIONAL_EVIDENCE_DIR']) / 'one-run/run.json').read_text())
+          op = run['capability_operation']
+          assert op['commit'] == run['commit']
+          assert op['scoped_runtime_goal'] == 'PASS_SCOPED_LOCAL_UNATTESTED'
+          assert op['product_status'] == 'BLOCKED_EXTERNAL'
+          assert len(op['rows']) == 81
+          assert op['duplicate_source_executions'] == 0
+          assert run['registry']['declared_commands'] == 71
+          PY
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:

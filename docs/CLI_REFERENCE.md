@@ -14,11 +14,19 @@ This is the complete inventory of the single `cora` CLI from `src/cora/cli.py`, 
 
 ### Optional operational capability request
 
+Derive the committed requirement cut with the existing command:
+
+```sh
+cora convergence-plan --contract .cora/contracts/dod/optimal-tool-acquisition.json
+```
+
 The same comprehensive One-Run accepts `--capability-request /outside/request.json`.
 The agent selects exact catalog IDs and records a reason, obligation and expected
 native test IDs. Its judgment overrides keyword suggestions; it grants no execution
 consent. Without `--execute-capabilities`, the dossier records choices and gaps only.
 The catalog remains 71 CORA commands plus ten upstream candidates.
+The integrated profile requires CORA's committed catalog; this slice does not
+extend the separate portable profile to arbitrary foreign-target execution.
 
 This first operational slice reuses existing same-SHA analysis receipts. With
 explicit execution opt-in it runs local Python Semgrep pattern rules and selected

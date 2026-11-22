@@ -523,7 +523,12 @@ def main(argv: list[str] | None = None) -> int:
             code=2 if result['status']=='REFUTED' or (args.require_full and
                 result['status']!='PASS_SCOPED_FINITE_MODEL') else 0
         elif args.cmd == 'convergence-plan':
-            if args.contract == Path(SELF_P0):
+            if args.contract.resolve() == (Path.cwd() / '.cora/contracts/dod/optimal-tool-acquisition.json').resolve():
+                from .process_suite import operational_requirement_plan
+                if args.goal != 'G_R1_R4_COMPLETE':
+                    raise ValueError('operational profile has its own non-promoting AND roots')
+                result = operational_requirement_plan(Path.cwd(), 'HEAD')
+            elif args.contract == Path(SELF_P0):
                 if args.goal != 'G_R1_R4_COMPLETE':
                     raise ValueError('self-P0 has its own canonical non-promoting A0/G0')
                 result=self_development_plan(Path.cwd(), 'HEAD')

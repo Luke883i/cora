@@ -520,3 +520,23 @@ def operational_selection(baseline: dict, request: dict) -> list[dict]:
         rows.append({"id": owner, "selected": owner in selected, "state": state,
                      "source_digest": digest, "decision": selected.get(owner), "authority": "NONE"})
     return rows
+
+
+def operational_requirement_plan(repo: Path, revision: str = "HEAD") -> dict:
+    """Derive the committed operational DoD with the canonical AND kernel."""
+    import json
+    from .reticulum import ordered_cut
+    contract = json.loads(git(repo, "show", revision + ":.cora/contracts/dod/optimal-tool-acquisition.json"))["operational_contract"]
+    if (contract.get("schema") != "cora-operational-capabilities-dod/1"
+            or contract.get("authority") != "NONE"
+            or contract.get("goals") != {"scoped": "G_OPERATIONAL_SLICE", "complete": "G_PRODUCT_ACCEPTANCE"}):
+        raise ValueError("original operational contract missing or promoted")
+    order = ordered_cut(contract["nodes"], contract["goals"]["complete"])
+    if len(order) != 22 or set(order) != {n["id"] for n in contract["nodes"]}:
+        raise ValueError("operational DoD has missing or unreachable obligations")
+    external = {n["id"] for n in contract["nodes"] if n["kind"] == "LOCAL" and n["scope"] == "EXTERNAL"}
+    if external != {"E_INDEPENDENT_RUNTIME", "E_REVIEW"} or any(
+            n["status"] != "BLOCKED_EXTERNAL" for n in contract["nodes"] if n["id"] in external):
+        raise ValueError("independent operational acceptance cannot be promoted")
+    return {"digest": domain_hash("CORA:operational-dod:1", contract),
+            "prerequisites": order, "status": "REQUIREMENTS_DERIVED_NOT_EXECUTED"}
