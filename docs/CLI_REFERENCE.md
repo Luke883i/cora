@@ -12,6 +12,30 @@ This is the complete inventory of the single `cora` CLI from `src/cora/cli.py`, 
 **One-Run 81-capability routing (non-authoritative):** `cora process-list --intent "security scan SARIF"` for discovery, then `cora process-run REPO --one-run --profile comprehensive --chat-step STEP.json --chat-bundle /tmp/session.zip --atlas-json /tmp/cora-81.json` to use the caller-authored `chat-step.intent` within the existing process retains the 71 original CORA CLI declarations and the 10 independent upstream catalog candidates. Each owner is selected, blocked or not selected by a bounded lexical planner; only the existing three bounded read-only native CLI owners execute automatically. When relevant, six other owners can reference already observed, digest-pinned internal source-method outcomes (not individually executed CLI commands or independent target tests). Without the explicit operational request described below, no upstream scanner/agent, target test, network, package installation or approval is invoked. The `universal_capability_plan` contains 81 rows, original-Git commit, output digests for reused native receipts and scoped AI handoff. `verify-process --one-run` replays source identity and refusals; it is **not** an independent runtime attestation. The backward reticular DoD is in [post94-cli-behavior-dod.json](../.cora/contracts/dod/post94-cli-behavior-dod.json).
 
 
+### Third-party native Python pilot (scoped, opt-in)
+
+The **separate foreign-target source mode** of the original `process-run --one-run`
+uses `--foreign-request /outside/request.json --execute-foreign --evidence-dir /outside/logs`.
+The target must be a real local Git checkout; the request pins its exact HEAD
+and tree, identifies 1-4 committed `tests/test_*.py` files, expected dotted case IDs,
+owner obligations, and `trusted_local_execution=true`. Without the flag, code is
+not executed. Run `verify-process REPORT --repo TARGET --one-run --evidence-dir DIR`
+to reconcile the original One-Run source receipt and retained test logs without
+rerunning them. The qualified adapters are Python `unittest` and optional
+`pytest`; both use the same bounded execution/evidence path. Unknown adapters
+remain blocked. Existing PR97 `--profile comprehensive --capability-request`
+with Semgrep is **unchanged**; this foreign-target pilot is **not** its 81-owner
+execution engine or a replacement for the comprehensive capability operation.
+
+This pilot has **no OS sandbox**: a disposable copy, stripped environment, 30s
+time bound, 512KiB output limit and descendant cleanup mitigate but do not
+confine malicious code. Use only a runner authorized for the target. The
+third-party sample reproduces original Git *blobs*, not the upstream Git tree.
+Its [27-node AND DoD](../.cora/contracts/dod/pr97-foreign-hardening.json)
+keeps full PR97 operational integration, an original full upstream clone,
+independent sandbox and reviewer acceptance blocked. No second CORA analysis
+engine, new CLI command, automatic installer, merge or release authority is added.
+
 ### Optional operational capability request
 
 Derive the committed requirement cut with the existing command:
