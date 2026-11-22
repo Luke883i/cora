@@ -386,6 +386,8 @@ def main(argv: list[str] | None = None) -> int:
     pr.add_argument('--authorization-file',type=Path,help='Explicit exact-SHA local consent for optional untrusted self-tests, not sandbox attestation')
     pr.add_argument('--chat-step',type=Path,help='Caller-authored, non-authoritative per-round JSON plan and gaps')
     pr.add_argument('--chat-bundle',type=Path,help='Outside-repo portable logically append-only session ZIP')
+    pr.add_argument('--capability-request',type=Path,help=argparse.SUPPRESS)
+    pr.add_argument('--execute-capabilities',action='store_true',help=argparse.SUPPRESS)
     pv = sub.add_parser('verify-process',help='Source revalidation of process receipt')
     pv.add_argument('report',type=Path)
     pv.add_argument('--repo',required=True,type=Path)
@@ -521,7 +523,12 @@ def main(argv: list[str] | None = None) -> int:
             code=2 if result['status']=='REFUTED' or (args.require_full and
                 result['status']!='PASS_SCOPED_FINITE_MODEL') else 0
         elif args.cmd == 'convergence-plan':
-            if args.contract == Path(SELF_P0):
+            if args.contract.resolve() == (Path.cwd() / '.cora/contracts/dod/optimal-tool-acquisition.json').resolve():
+                from .process_suite import operational_requirement_plan
+                if args.goal != 'G_R1_R4_COMPLETE':
+                    raise ValueError('operational profile has its own non-promoting AND roots')
+                result = operational_requirement_plan(Path.cwd(), 'HEAD')
+            elif args.contract == Path(SELF_P0):
                 if args.goal != 'G_R1_R4_COMPLETE':
                     raise ValueError('self-P0 has its own canonical non-promoting A0/G0')
                 result=self_development_plan(Path.cwd(), 'HEAD')
@@ -787,6 +794,11 @@ def main(argv: list[str] | None = None) -> int:
                                      authorize_probe=args.authorize_probe)
             code = 0
         elif args.cmd == 'process-run':
+            if (args.capability_request or args.execute_capabilities) and (
+                    not args.one_run or args.profile != 'comprehensive' or args.portable_profile):
+                raise ValueError('capability requests require the original comprehensive One-Run')
+            if args.execute_capabilities and (not args.capability_request or not args.evidence_dir):
+                raise ValueError('capability execution requires a request and retained evidence')
             if bool(args.chat_step) != bool(args.chat_bundle):
                 raise ValueError('chat steps require both --chat-step and --chat-bundle')
             if args.chat_bundle and (not args.one_run or args.profile != 'comprehensive'):
@@ -814,6 +826,9 @@ def main(argv: list[str] | None = None) -> int:
                                  result.get('native_gold',{}).get('report_status') ==
                                  'LOCAL_RUNNER_FAIL_REPORTED') else 0
                 elif args.profile == 'comprehensive':
+                    operation_args = ({'capability_request': args.capability_request,
+                                       'execute_capabilities': args.execute_capabilities}
+                                      if args.capability_request else {})
                     result = run_integrated(args.repo,args.revision,process=args.process,
                         max_commits=args.max_commits,focus=args.focus,
                         execute_self_tests=args.execute_self_tests,
@@ -821,7 +836,8 @@ def main(argv: list[str] | None = None) -> int:
                         evidence_dir=args.evidence_dir,test_timeout=args.test_timeout,
                         model_stress_cases=args.model_stress_cases,
                         change_base=args.change_base,
-                        capability_intent=chat_step['intent'] if chat_step else None)
+                        capability_intent=chat_step['intent'] if chat_step else None,
+                        **operation_args)
                     if args.atlas_json:
                         args.atlas_json.write_text(json.dumps(result,sort_keys=True,indent=2)+'\n',encoding='utf-8')
                     if args.atlas_html:
@@ -832,7 +848,8 @@ def main(argv: list[str] | None = None) -> int:
                     base = result['baseline_pr36']
                     code = 2 if (base['source_status']=='DEBT_BLOCKED'
                                  or base['model_stress']['status']=='REFUTED'
-                                 or result['tests']['state']=='FAIL') else 0
+                                 or result['tests']['state']=='FAIL'
+                                 or result.get('capability_operation',{}).get('scoped_runtime_goal') == 'DEBT_BLOCKED') else 0
                 else:
                     if args.evidence_dir or args.authorization_file:
                         raise ValueError('integrated evidence/authorization flags require --profile comprehensive')

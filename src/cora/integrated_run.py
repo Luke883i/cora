@@ -9,14 +9,19 @@ import re
 import subprocess
 import sys
 import time
+import tempfile
+import shutil
 from pathlib import Path
 
-from .evidence import domain_hash
+from .evidence import domain_hash, valid_path
 from .git_snapshot import git, snapshot
 from .integrated_registry import build_registry, verify_contract, SCHEMA as REGISTRY_SCHEMA
 from .one_run import run_one, verify_one
 from .genealogy import build_genealogy, corpus_available, BASE as HISTORIC_GIT_ANCHOR
 from .independent_qualification import build_qualification, verify_qualification, CONTRACT as QUALIFICATION_CONTRACT
+from .process_suite import operational_selection, operational_requirement_plan
+from .process_bounds import run_bounded
+from .debt import parse_sarif, MAX_SARIF
 
 SCHEMA = "cora-integrated-one-run/2"
 ATTEMPT_STATES = {"EXECUTED_SCOPED", "REUSED_SCOPED", "BLOCKED", "FAIL",
@@ -32,6 +37,268 @@ LOCAL_SOURCE_CONTROLS = frozenset((
 ).split())
 CONTROL_PLANE = "cli:process-run"
 AUTH_SCHEMA = "cora-explicit-execution-consent/1"
+OPERATION_SCHEMA = "cora-capability-operation/1"
+
+
+def _capability_request(repo: Path, baseline: dict, request: dict) -> tuple[list[dict], dict]:
+    """Validate every choice and input before any optional subprocess."""
+    if (not isinstance(request, dict) or set(request) != {
+            "schema", "commit", "tree", "decisions", "tests", "semgrep", "timeout"}
+            or request["schema"] != "cora-capability-request/1"
+            or request["commit"] != baseline["commit"]
+            or request["tree"] != git(repo, "rev-parse", baseline["commit"] + "^{tree}").decode().strip()
+            or type(request["timeout"]) is not int or not 1 <= request["timeout"] <= 60):
+        raise ValueError("exact-SHA bounded capability request required")
+    rows = operational_selection(baseline, request)
+    ledger = snapshot(repo, baseline["commit"])
+    records = {r["path"]: r for r in ledger["records"]}
+    def regular(path: str) -> None:
+        if (not isinstance(path, str) or not valid_path(path) or path.startswith("-")
+                or path not in records or records[path]["status"] != "observed_git_blob"):
+            raise ValueError("capability input must be a regular original Git file")
+    tests, expected = request["tests"], set()
+    if not isinstance(tests, list) or len(tests) > 8:
+        raise ValueError("bounded native test selection required")
+    paths = set()
+    for item in tests:
+        if (not isinstance(item, dict) or set(item) != {"path", "ids"}
+                or not isinstance(item["path"], str)
+                or not re.fullmatch(r"tests/test_[A-Za-z0-9_]+\.py", item["path"])
+                or item["path"] in paths or not isinstance(item["ids"], list)
+                or not 1 <= len(item["ids"]) <= 64):
+            raise ValueError("native adapter requires unique unittest paths and expected IDs")
+        regular(item["path"])
+        module = Path(item["path"]).stem + "."
+        for case in item["ids"]:
+            if (not isinstance(case, str) or not re.fullmatch(r"[A-Za-z_][\w.]{1,250}", case)
+                    or not case.startswith(module) or case in expected):
+                raise ValueError("unbound or duplicate expected native test ID")
+            expected.add(case)
+        paths.add(item["path"])
+    referred = {case for d in request["decisions"] for case in d["test_ids"]}
+    if referred != expected:
+        raise ValueError("every expected native test must link to a selected obligation")
+    semgrep = request["semgrep"]
+    selected = {r["id"] for r in rows if r["selected"]}
+    if ("external:semgrep" in selected) != (semgrep is not None):
+        raise ValueError("Semgrep configuration must match its explicit selection")
+    if semgrep is not None:
+        if (not isinstance(semgrep, dict) or set(semgrep) != {"rules", "targets"}
+                or not isinstance(semgrep["targets"], list) or not 1 <= len(semgrep["targets"]) <= 32
+                or len(set(semgrep["targets"])) != len(semgrep["targets"])
+                or not isinstance(semgrep["rules"], dict) or set(semgrep["rules"]) != {"rules"}
+                or not isinstance(semgrep["rules"]["rules"], list)
+                or not 1 <= len(semgrep["rules"]["rules"]) <= 16):
+            raise ValueError("bounded local Semgrep configuration required")
+        for path in semgrep["targets"]:
+            regular(path)
+        rule_ids = set()
+        for rule in semgrep["rules"]["rules"]:
+            if (not isinstance(rule, dict) or set(rule) != {"id", "pattern", "message", "languages", "severity"}
+                    or not isinstance(rule["id"], str) or not re.fullmatch(r"[A-Za-z0-9_.-]{1,120}", rule["id"])
+                    or rule["id"] in rule_ids or rule["languages"] != ["python"]
+                    or rule["severity"] not in ("INFO", "WARNING", "ERROR")
+                    or any(not isinstance(rule[k], str) or not 1 <= len(rule[k]) <= 1024
+                           for k in ("pattern", "message"))):
+                raise ValueError("only local Python pattern rules are qualified in this slice")
+            rule_ids.add(rule["id"])
+    return rows, records
+
+
+def _operation_projection(baseline: dict, request: dict, observations: list[dict],
+                          artifacts: dict[str, bytes]) -> dict:
+    """Reconcile raw retained bytes; never infer behavior from an exit alone."""
+    rows = operational_selection(baseline, request)
+    expected_ops = {"test:" + x["path"] for x in request["tests"]}
+    if request["semgrep"] is not None:
+        expected_ops |= {"semgrep-version", "external:semgrep"}
+    seen, test_events, test_ok, scanner = set(), {}, {}, None
+    for obs in observations:
+        if (not isinstance(obs, dict) or set(obs) != {"id", "returncode", "reason", "duration_ms", "log", "sarif", "json"}
+                or obs["id"] not in expected_ops or obs["id"] in seen
+                or type(obs["duration_ms"]) is not int or obs["duration_ms"] < 0
+                or (obs["returncode"] is not None and type(obs["returncode"]) is not int)
+                or obs["reason"] not in ("EXIT_REPORTED", "TIMEOUT", "OUTPUT_LIMIT", "OS_ERROR", "NOT_INSTALLED")
+                or obs["log"] not in artifacts):
+            raise ValueError("invalid local capability observation")
+        seen.add(obs["id"])
+        raw = artifacts[obs["log"]]
+        if obs["id"].startswith("test:"):
+            cases, count, warnings = _parse_unittest_log(raw)
+            ids = {r["activity_id"].split(":", 2)[-1] for r in cases}
+            # The legacy parser uses a path prefix; recover the original dotted IDs.
+            module = Path(obs["id"].removeprefix("test:")).stem
+            ids = {module + "." + name for name in ids}
+            expected = next(x["ids"] for x in request["tests"] if "test:" + x["path"] == obs["id"])
+            good = (obs["reason"] == "EXIT_REPORTED" and obs["returncode"] == 0
+                    and count is not None and count > 0 and not warnings
+                    and all(x["state"] == "RUN_REPORTED_UNATTESTED" and x["outcome"] == "ok" for x in cases)
+                    and set(expected) <= ids)
+            for name in ids:
+                if name in test_events:
+                    raise ValueError("duplicate native event across test runs")
+                test_events[name] = {"observation": obs["id"], "log": obs["log"], "successful_run": good}
+            test_ok[obs["id"]] = good
+        elif obs["id"] == "external:semgrep":
+            scanner = "FAIL"
+            if obs["sarif"] is not None and obs["sarif"] in artifacts and obs["reason"] == "EXIT_REPORTED":
+                try:
+                    payload = artifacts[obs["sarif"]]
+                    parsed = parse_sarif(payload, set(request["semgrep"]["targets"]))
+                    doc = json.loads(payload)
+                    scan = json.loads(artifacts[obs["json"]])
+                    valid = (len(doc["runs"]) == 1 and
+                             "semgrep" in doc["runs"][0]["tool"]["driver"]["name"].casefold() and
+                             not parsed["unknown"] and
+                             scan["errors"] == [] and
+                             set(scan["paths"]["scanned"]) == set(request["semgrep"]["targets"]) and
+                             sorted((x["path"], x["start"]["line"]) for x in scan["results"]) ==
+                             sorted((x["path"], x["line"]) for x in parsed["rows"]) and
+                             all(i.get("executionSuccessful", True) is True and
+                                 all(n.get("level") != "error" for n in i.get("toolExecutionNotifications", []))
+                                 for i in doc["runs"][0].get("invocations", [])))
+                    if valid and obs["returncode"] in (0, 1):
+                        scanner = "FINDINGS" if parsed["rows"] else "SCOPED_NO_FINDINGS" if obs["returncode"] == 0 else "FAIL"
+                except (ValueError, KeyError, TypeError, AttributeError):
+                    scanner = "FAIL"
+    if observations and seen != expected_ops:
+        raise ValueError("partial capability execution ledger")
+    allowed_files = {o["log"] for o in observations} | {
+        o[k] for o in observations for k in ("sarif", "json") if o[k] is not None}
+    if set(artifacts) != allowed_files:
+        raise ValueError("unaccounted capability artifacts")
+    version_ok = any(o["id"] == "semgrep-version" and o["returncode"] == 0 and
+                     o["reason"] == "EXIT_REPORTED" and
+                     re.fullmatch(rb"[0-9]+\.[0-9]+\.[0-9]+\s*", artifacts[o["log"]]) for o in observations)
+    for row in rows:
+        if not row["selected"]:
+            continue
+        row["test_evidence"] = [{"id": name, **test_events[name]} for name in row["decision"]["test_ids"] if name in test_events]
+        row["tests_satisfied"] = bool(row["decision"]["test_ids"]) and all(
+            test_events.get(name, {}).get("successful_run") is True for name in row["decision"]["test_ids"])
+        if row["id"] == "external:semgrep":
+            row["state"] = scanner if scanner is not None else "BLOCKED_EXECUTION_OPT_IN_REQUIRED"
+            if scanner == "SCOPED_NO_FINDINGS" and not version_ok:
+                row["state"] = "FAIL"
+    successful = {"REUSED_SOURCE_METHOD_SCOPED", "REUSED_NATIVE_OBSERVATION_UNATTESTED", "SCOPED_NO_FINDINGS"}
+    pending = [{"id": r["id"], "reason": r["state"] if r["state"] not in successful else "NATIVE_TEST_EVIDENCE_MISSING_OR_FAILED",
+                "obligation": r["decision"]["obligation"]}
+               for r in rows if r["selected"] and (r["state"] not in successful or not r["tests_satisfied"])]
+    return {"rows": rows, "tests": test_events, "test_runs": test_ok,
+            "scoped_runtime_goal": "PASS_SCOPED_LOCAL_UNATTESTED" if not pending else "DEBT_BLOCKED",
+            "agent_handoff": {"gaps": pending, "next_unresolved": pending[0] if pending else None,
+                              "extension": "AGENT_JUDGMENT_REQUIRES_QUALIFIED_ADAPTER_NOT_AUTOMATIC_CODEGEN"},
+            "duplicate_source_executions": 0, "product_status": "BLOCKED_EXTERNAL", "authority": "NONE"}
+
+
+def run_capability_operation(repo: Path, baseline: dict, request: dict, *,
+                             execute: bool, evidence_dir: Path | None) -> dict:
+    rows, records = _capability_request(repo, baseline, request)
+    if type(execute) is not bool or execute and evidence_dir is None:
+        raise ValueError("capability execution needs explicit opt-in and retained evidence")
+    out = _outside_repo(repo, evidence_dir) if evidence_dir is not None else None
+    observations, artifacts = [], {}
+    if execute:
+        if (any(r["status"] != "observed_git_blob" for r in records.values()) or
+                sum(r["size"] for r in records.values()) > 32 * 1024 * 1024):
+            raise ValueError("execution snapshot contains unresolved objects or exceeds 32MiB")
+        out.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(prefix="cora-capabilities-", dir=out) as temp:
+            work = Path(temp)
+            for path, record in records.items():
+                dst = work / path
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                dst.write_bytes(git(repo, "cat-file", "blob", record["git_oid"], max_output=8 * 1024 * 1024))
+                dst.chmod(0o755 if record["mode"] == "100755" else 0o644)
+            # A disposable Git-byte copy is not an OS sandbox. Never forward credentials.
+            env = {k: os.environ[k] for k in ("PATH", "SYSTEMROOT", "LANG") if k in os.environ}
+            env.update(PYTHONDONTWRITEBYTECODE="1", PYTHONPATH=str(work / "src") + os.pathsep + str(work),
+                       SEMGREP_SEND_METRICS="off", SEMGREP_ENABLE_VERSION_CHECK="0",
+                       SEMGREP_SETTINGS_FILE=str(work / ".cora-semgrep-settings.yml"))
+            def observe(key: str, argv: list[str] | None, sarif: Path | None = None,
+                        scan_json: Path | None = None) -> None:
+                start = time.monotonic()
+                code, reason, raw = None, "NOT_INSTALLED", b"tool not installed\n"
+                if argv is not None:
+                    try:
+                        done = run_bounded(argv, cwd=work, timeout=request["timeout"], max_output=MAX_SARIF, env=env)
+                        code, reason, raw = done.returncode, "EXIT_REPORTED", done.stdout
+                    except subprocess.TimeoutExpired:
+                        reason, raw = "TIMEOUT", b"bounded subprocess timeout\n"
+                    except ValueError:
+                        reason, raw = "OUTPUT_LIMIT", b"bounded subprocess output refused\n"
+                    except OSError:
+                        reason, raw = "OS_ERROR", b"bounded subprocess OS error\n"
+                number = len(observations)
+                log_name = "capability-%02d.log" % number
+                artifacts[log_name] = raw
+                outputs = {"sarif": None, "json": None}
+                for kind, path in (("sarif", sarif), ("json", scan_json)):
+                    if path is not None and path.is_file() and not path.is_symlink():
+                        if path.stat().st_size <= MAX_SARIF:
+                            outputs[kind] = "capability-%02d.%s" % (number, kind)
+                            artifacts[outputs[kind]] = path.read_bytes()
+                        else:
+                            code, reason = None, "OUTPUT_LIMIT"
+                observations.append({"id": key, "returncode": code, "reason": reason,
+                                     "duration_ms": max(0, int((time.monotonic() - start) * 1000)),
+                                     "log": log_name, **outputs})
+            if request["semgrep"] is not None:
+                config = work / ".cora-semgrep-rules.json"
+                sarif = work / ".cora-semgrep-output.sarif"
+                scan_json = work / ".cora-semgrep-output.json"
+                if any(p.exists() for p in (config, sarif, scan_json, work / ".cora-semgrep-settings.yml")):
+                    raise ValueError("reserved capability scratch path collision")
+                config.write_bytes(_serialize(request["semgrep"]["rules"]))
+                binary = shutil.which("semgrep")
+                observe("semgrep-version", [binary, "--version"] if binary else None)
+                argv = ([binary, "scan", "--oss-only", "--config", str(config), "--metrics=off",
+                         "--disable-version-check", "--no-git-ignore", "--strict", "--error",
+                         "--sarif-output", str(sarif), "--json-output", str(scan_json),
+                         "--", *request["semgrep"]["targets"]] if binary else None)
+                observe("external:semgrep", argv, sarif, scan_json)
+            for test in request["tests"]:
+                observe("test:" + test["path"], [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-p", Path(test["path"]).name, "-v"])
+    projection = _operation_projection(baseline, request, observations, artifacts)
+    report = {"schema": OPERATION_SCHEMA, "commit": baseline["commit"], "tree": request["tree"],
+              "request": request, "execution_opt_in": execute, "observations": observations,
+              "artifacts": [{"path": k, "sha256": hashlib.sha256(v).hexdigest(), "bytes": len(v), "trust": "LOCAL_UNATTESTED"}
+                            for k, v in sorted(artifacts.items())], **projection}
+    if out is not None and artifacts:
+        out.mkdir(parents=True, exist_ok=True)
+        for name, raw in artifacts.items():
+            dest = out / name
+            if dest.is_symlink() or dest.exists():
+                raise ValueError("capability evidence may not overwrite existing files")
+            dest.write_bytes(raw)
+    return report
+
+
+def verify_capability_operation(repo: Path, baseline: dict, report: dict,
+                                evidence_dir: Path | None) -> bool:
+    from .native_gold import _read_bounded
+    _capability_request(repo, baseline, report["request"])
+    raw = {}
+    if report["artifacts"] and evidence_dir is None:
+        raise ValueError("capability replay requires retained observation bytes")
+    if len({a["path"] for a in report["artifacts"]}) != len(report["artifacts"]):
+        raise ValueError("duplicate capability artifact")
+    for item in report["artifacts"]:
+        if not re.fullmatch(r"capability-[0-9]{2}\.(log|sarif|json)", item["path"]):
+            raise ValueError("unsafe capability evidence path")
+        payload = _read_bounded(_outside_repo(repo, evidence_dir), item["path"], MAX_SARIF)
+        if item != {"path": item["path"], "sha256": hashlib.sha256(payload).hexdigest(), "bytes": len(payload), "trust": "LOCAL_UNATTESTED"}:
+            raise ValueError("capability evidence differs from retained bytes")
+        raw[item["path"]] = payload
+    expected = {"schema": OPERATION_SCHEMA, "commit": baseline["commit"], "tree": report["request"]["tree"],
+                "request": report["request"], "execution_opt_in": report["execution_opt_in"],
+                "observations": report["observations"], "artifacts": report["artifacts"],
+                **_operation_projection(baseline, report["request"], report["observations"], raw)}
+    if type(report["execution_opt_in"]) is not bool or (not report["execution_opt_in"] and report["observations"]):
+        raise ValueError("execution outside declared opt-in")
+    if expected != report:
+        raise ValueError("capability claims do not replay from source and retained evidence")
+    return True
 
 
 def _serialize(data: object) -> bytes:
@@ -314,6 +581,8 @@ def _artifact_payloads(bundle: dict, log: bytes | None) -> dict[str, bytes]:
         files["genealogy.json"] = _serialize(bundle["genealogy"])
     if "qualification" in bundle:
         files["qualification.json"] = _serialize(bundle["qualification"])
+    if "capability_operation" in bundle:
+        files["capability-operation.json"] = _serialize(bundle["capability_operation"])
     if log is not None:
         files["unittest-verbose.log"] = log
     return files
@@ -325,7 +594,8 @@ def _manifest(bundle: dict, log: bytes | None, materialized: bool) -> dict:
                      else "IN_REPORT_NOT_ON_DISK",
             "files": [{"path": k, "sha256": hashlib.sha256(v).hexdigest(),
                        "bytes": len(v), "trust": "LOCAL_UNATTESTED"}
-                      for k, v in sorted(_artifact_payloads(bundle, log).items())],
+                      for k, v in sorted(_artifact_payloads(bundle, log).items())]
+                     + bundle.get("capability_operation", {}).get("artifacts", []),
             "authority": "NONE"}
 
 
@@ -456,13 +726,17 @@ def run_integrated(repo: Path, revision: str = "HEAD", *, process: str = "full",
                    evidence_dir: Path | None = None,
                    test_timeout: int = 240, model_stress_cases: int = 0,
                    change_base: str | None = None,
-                   capability_intent: str | None = None) -> dict:
+                   capability_intent: str | None = None,
+                   capability_request: Path | None = None,
+                   execute_capabilities: bool = False) -> dict:
     repo = Path(repo).resolve(strict=True)
     preflight_comprehensive_history(repo, revision)
     sha = snapshot(repo, revision)["commit"]
     tree = git(repo, "rev-parse", sha + "^{tree}").decode("ascii").strip()
     if execute_self_tests != (authorization_file is not None):
         raise ValueError("comprehensive self-tests require both opt-in and an exact-SHA consent file")
+    if execute_capabilities and (capability_request is None or execute_self_tests):
+        raise ValueError("capability execution requires a request and cannot duplicate the full self-test run")
     out = _outside_repo(repo, evidence_dir) if evidence_dir is not None else None
     if execute_self_tests and (not (repo / ".git").exists() or
                                 git(repo, "rev-parse", "HEAD").decode().strip() != sha):
@@ -515,6 +789,13 @@ def run_integrated(repo: Path, revision: str = "HEAD", *, process: str = "full",
            git(repo, "ls-tree", "-r", "-z", "--name-only", sha,
                max_output=16_000_000).split(b"\0") if x}):
         bundle["qualification"] = build_qualification(repo, sha)
+    if capability_request is not None:
+        if capability_request.stat().st_size > 128 * 1024:
+            raise ValueError("capability request exceeds 128KiB")
+        bundle["capability_contract"] = operational_requirement_plan(repo, sha)
+        request = json.loads(capability_request.read_text("utf-8"))
+        bundle["capability_operation"] = run_capability_operation(
+            repo, base, request, execute=execute_capabilities, evidence_dir=out)
     bundle["evidence_manifest"] = _manifest(bundle, log, out is not None)
     bundle["receipt_digest"] = domain_hash("CORA:integrated-one-run:2", bundle)
     if out is not None:
@@ -610,6 +891,13 @@ def verify_integrated(repo: Path, receipt: dict, *, html_page: str | None = None
         raise ValueError("DoD state promotion or missing obligation")
     if receipt["metrics"] != _metrics(expected, receipt["attempts"], test):
         raise ValueError("activity count or proof-level promotion")
+    if "capability_operation" in receipt:
+        required = operational_requirement_plan(repo, sha)
+        if receipt.get("capability_contract") != required:
+            raise ValueError("operational contract or AND cut altered")
+        verify_capability_operation(repo, receipt["baseline_pr36"], receipt["capability_operation"], evidence_dir)
+    elif "capability_contract" in receipt:
+        raise ValueError("operational DoD without capability evidence")
     m = receipt["execution_manifest"]
     if (m.get("commit") != sha or m.get("tree") != receipt["tree"]
             or m.get("source_receipt_digest") != receipt["baseline_pr36"]["receipt_digest"]
@@ -633,8 +921,12 @@ def verify_integrated(repo: Path, receipt: dict, *, html_page: str | None = None
     required_files = set(payloads)
     if test["state"] != "NOT_RUN":
         required_files.add("unittest-verbose.log")
+    capability_files = receipt.get("capability_operation", {}).get("artifacts", [])
+    required_files.update(f["path"] for f in capability_files)
     if set(evidence_files) != required_files:
         raise ValueError("evidence artifact omitted")
+    if any(evidence_files[f["path"]] != f for f in capability_files):
+        raise ValueError("capability manifest differs from observation artifacts")
     for path, payload in payloads.items():
         x = evidence_files[path]
         if (x["sha256"] != hashlib.sha256(payload).hexdigest()

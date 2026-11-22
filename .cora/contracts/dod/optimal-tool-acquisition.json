@@ -185,5 +185,284 @@
       "All GitHub CI conclusions for exact HEAD",
       "External acceptance independently blocked"
     ]
+  },
+  "operational_contract": {
+    "schema": "cora-operational-capabilities-dod/1",
+    "authority": "NONE",
+    "base_commit": "4ff2806287292849f500f7b2113a26a27a3a3ddc",
+    "abstract_dod": "The existing One-Run uses explicit agent judgment to select useful capabilities, reuses exact-SHA native observations, optionally executes a bounded local Semgrep adapter and committed Python tests, and returns replayable findings, test lineage and unresolved obligations. Extend only on demonstrated need; never equate inventory, scanner exit or source replay with independent product acceptance.",
+    "a0": {
+      "actors": [
+        "coding agent",
+        "authorized runner",
+        "independent reviewer"
+      ],
+      "behavior": "Select -> reuse -> authorized bounded execution -> reconcile -> retain -> replay -> next unresolved.",
+      "state_data": "Exact Git SHA/tree; caller-authored decision/request; retained stdout/SARIF and per-test events.",
+      "ux": "One process-run/verify-process JSON/HTML dossier and agent handoff.",
+      "effects": "Optional subprocesses only after explicit execution opt-in; disposable exact-Git copy; no installer, arbitrary command, remote rule fetch, merge or release.",
+      "exclusions": [
+        "All 81 launched per session",
+        "Automatic new adapter code generation",
+        "Independent host or human authentication",
+        "Non-Python native test frameworks in this slice"
+      ],
+      "acceptance_oracle": "Native tests, physical committed counterexamples, real Semgrep in pinned hosted CI and byte-replay rejection at the exact candidate SHA."
+    },
+    "goals": {
+      "scoped": "G_OPERATIONAL_SLICE",
+      "complete": "G_PRODUCT_ACCEPTANCE"
+    },
+    "nodes": [
+      {
+        "id": "G_OPERATIONAL_SLICE",
+        "kind": "GLOBAL",
+        "scope": "SOURCE",
+        "depends_on": [
+          "I_REUSE",
+          "I_EXTERNAL",
+          "I_TEST_LINK",
+          "I_EXTENSION",
+          "I_PROVENANCE"
+        ],
+        "falsifier": "Any missing AND prerequisite blocks this goal."
+      },
+      {
+        "id": "G_PRODUCT_ACCEPTANCE",
+        "kind": "GLOBAL",
+        "scope": "EXTERNAL",
+        "depends_on": [
+          "G_OPERATIONAL_SLICE",
+          "E_INDEPENDENT_RUNTIME",
+          "E_REVIEW"
+        ],
+        "falsifier": "Any missing AND prerequisite blocks this goal."
+      },
+      {
+        "id": "I_REUSE",
+        "kind": "INTERMEDIATE",
+        "scope": "SOURCE",
+        "depends_on": [
+          "L_SAME_SHA_REUSE",
+          "L_NO_DUPLICATE_EXECUTION"
+        ],
+        "falsifier": "Any missing AND prerequisite blocks this goal."
+      },
+      {
+        "id": "I_EXTERNAL",
+        "kind": "INTERMEDIATE",
+        "scope": "SOURCE",
+        "depends_on": [
+          "L_SEMGREP_LOCAL",
+          "L_BOUNDED_EFFECTS",
+          "L_FINDINGS_FAIL_CLOSED"
+        ],
+        "falsifier": "Any missing AND prerequisite blocks this goal."
+      },
+      {
+        "id": "I_TEST_LINK",
+        "kind": "INTERMEDIATE",
+        "scope": "SOURCE",
+        "depends_on": [
+          "L_REAL_NATIVE_TESTS",
+          "L_TEST_ID_LINEAGE",
+          "L_ZERO_SKIP_FAIL"
+        ],
+        "falsifier": "Any missing AND prerequisite blocks this goal."
+      },
+      {
+        "id": "I_EXTENSION",
+        "kind": "INTERMEDIATE",
+        "scope": "SOURCE",
+        "depends_on": [
+          "L_AGENT_JUDGMENT",
+          "L_UNKNOWN_ADAPTER_BLOCKED"
+        ],
+        "falsifier": "Any missing AND prerequisite blocks this goal."
+      },
+      {
+        "id": "I_PROVENANCE",
+        "kind": "INTERMEDIATE",
+        "scope": "SOURCE",
+        "depends_on": [
+          "L_EXACT_GIT",
+          "L_RETAINED_REPLAY",
+          "L_HISTORICAL_COMPATIBILITY"
+        ],
+        "falsifier": "Any missing AND prerequisite blocks this goal."
+      },
+      {
+        "id": "L_SAME_SHA_REUSE",
+        "kind": "LOCAL",
+        "scope": "SOURCE",
+        "depends_on": [],
+        "oracle": "tests/test_debt_governance.py:OperationalCapabilityTests.test_existing_analysis_is_reused",
+        "falsifier": "Cross-SHA or missing source digest is rejected.",
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "L_NO_DUPLICATE_EXECUTION",
+        "kind": "LOCAL",
+        "scope": "SOURCE",
+        "depends_on": [],
+        "oracle": "tests/test_debt_governance.py:OperationalCapabilityTests.test_existing_analysis_is_reused",
+        "falsifier": "Reuse invokes no second source analysis or CLI.",
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "L_SEMGREP_LOCAL",
+        "kind": "LOCAL",
+        "scope": "TARGET_RUNTIME",
+        "depends_on": [],
+        "oracle": "tests/test_debt_governance.py:OperationalCapabilityTests.test_real_semgrep_and_physical_counterexample",
+        "falsifier": "A known eval finding and its repaired source must yield different real Semgrep results.",
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "L_BOUNDED_EFFECTS",
+        "kind": "LOCAL",
+        "scope": "TARGET_RUNTIME",
+        "depends_on": [],
+        "oracle": "tests/test_debt_governance.py:OperationalCapabilityTests.test_denial_bounds_and_stale_source",
+        "falsifier": "No opt-in, stale SHA, timeout or output overflow cannot become a successful observation.",
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "L_FINDINGS_FAIL_CLOSED",
+        "kind": "LOCAL",
+        "scope": "TARGET_RUNTIME",
+        "depends_on": [],
+        "oracle": "tests/test_debt_governance.py:OperationalCapabilityTests.test_findings_and_errors_block_runtime_goal",
+        "falsifier": "Findings, malformed SARIF or scanner errors prevent scoped runtime closure.",
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "L_REAL_NATIVE_TESTS",
+        "kind": "LOCAL",
+        "scope": "TARGET_RUNTIME",
+        "depends_on": [],
+        "oracle": "tests/test_debt_governance.py:OperationalCapabilityTests.test_real_target_tests_and_mutation",
+        "falsifier": "Run actual committed Python unittest files and detect a physical failing source variant.",
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "L_TEST_ID_LINEAGE",
+        "kind": "LOCAL",
+        "scope": "TARGET_RUNTIME",
+        "depends_on": [],
+        "oracle": "tests/test_debt_governance.py:OperationalCapabilityTests.test_retained_artifact_tamper_and_test_lineage",
+        "falsifier": "Claimed tests must reconcile with retained verbose events and expected test IDs.",
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "L_ZERO_SKIP_FAIL",
+        "kind": "LOCAL",
+        "scope": "TARGET_RUNTIME",
+        "depends_on": [],
+        "oracle": "tests/test_debt_governance.py:OperationalCapabilityTests.test_zero_skipped_and_failed_tests_are_not_pass",
+        "falsifier": "Empty, skipped, failed or unaccounted test runs cannot satisfy an obligation.",
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "L_AGENT_JUDGMENT",
+        "kind": "LOCAL",
+        "scope": "SOURCE",
+        "depends_on": [],
+        "oracle": "tests/test_debt_governance.py:OperationalCapabilityTests.test_agent_decisions_override_lexical_ranking",
+        "falsifier": "Bounded exact capability IDs, rationale, obligation and test IDs express agent judgment without granting consent.",
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "L_UNKNOWN_ADAPTER_BLOCKED",
+        "kind": "LOCAL",
+        "scope": "SOURCE",
+        "depends_on": [],
+        "oracle": "tests/test_debt_governance.py:OperationalCapabilityTests.test_unsupported_selected_capability_stays_blocked",
+        "falsifier": "A selected unsupported capability remains blocked and produces the next unresolved requirement.",
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "L_EXACT_GIT",
+        "kind": "LOCAL",
+        "scope": "SOURCE",
+        "depends_on": [],
+        "oracle": "tests/test_debt_governance.py:OperationalCapabilityTests.test_denial_bounds_and_stale_source",
+        "falsifier": "Request commit/tree, regular files and source receipts must match original Git.",
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "L_RETAINED_REPLAY",
+        "kind": "LOCAL",
+        "scope": "SOURCE",
+        "depends_on": [],
+        "oracle": "tests/test_debt_governance.py:OperationalCapabilityTests.test_retained_artifact_tamper_and_test_lineage",
+        "falsifier": "Replay reads retained bytes without rerunning tools; changed request, outputs or authority is rejected.",
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "L_HISTORICAL_COMPATIBILITY",
+        "kind": "LOCAL",
+        "scope": "SOURCE",
+        "depends_on": [],
+        "oracle": "tests/test_debt_governance.py:OperationalCapabilityTests.test_no_request_preserves_original_dossier",
+        "falsifier": "Without opt-in, preserve historical receipt, CLI census and behavior.",
+        "status": "NOT_RUN"
+      },
+      {
+        "id": "E_INDEPENDENT_RUNTIME",
+        "kind": "LOCAL",
+        "scope": "EXTERNAL",
+        "depends_on": [],
+        "oracle": null,
+        "falsifier": "Local observations and CI cannot authenticate an independent target owner.",
+        "status": "BLOCKED_EXTERNAL"
+      },
+      {
+        "id": "E_REVIEW",
+        "kind": "LOCAL",
+        "scope": "EXTERNAL",
+        "depends_on": [],
+        "oracle": null,
+        "falsifier": "No source contract or digest grants review, merge or release authority.",
+        "status": "BLOCKED_EXTERNAL"
+      }
+    ],
+    "optimization": {
+      "objective": "Maximize new decision-useful evidence per execution and maintained adapter.",
+      "reuse_first": true,
+      "agent_selects": "Exact IDs with rationale, obligation and expected test IDs; keyword inference remains advisory.",
+      "extension_rule": "Select unsupported owners honestly as BLOCKED; implement another bounded adapter only after a real unmet obligation, independent oracle, tests and cost review.",
+      "no_predetermined_total": true
+    },
+    "metrics": {
+      "native_cli_commands": 71,
+      "addressable_catalog": 81,
+      "duplicate_source_execution_target": 0,
+      "unconsented_effects_target": 0,
+      "false_pass_target": 0,
+      "missing_test_ids_target": 0,
+      "runtime_cost": "Observed bounded subprocess duration and byte counts; no measured human ROI claim."
+    },
+    "checklist": {
+      "development": [
+        "Reuse canonical process_suite, integrated_run, debt SARIF parser and process_bounds.",
+        "Keep all 81 owners accountable and 71 CLI commands."
+      ],
+      "test": [
+        "Positive native run and actual failing committed source.",
+        "Real pinned Semgrep positive/negative source controls.",
+        "Unknown adapter, no consent, stale SHA, symlink, malformed output, empty/skip/failure and tamper."
+      ],
+      "cleanup": [
+        "No vendored tool, mandatory dependency or second engine.",
+        "Update task-owner CLI guide only; preserve historical documents."
+      ],
+      "closure": [
+        "Read back every blob/tree/commit on semantic feature branch.",
+        "Run exact-HEAD hosted CI and retain artifacts.",
+        "Global product acceptance and independent review remain external."
+      ]
+    },
+    "rollback": "Revert the semantic slice commits; absence of --capability-request preserves the PR96 execution and receipt path."
   }
 }

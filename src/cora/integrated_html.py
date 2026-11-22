@@ -418,6 +418,12 @@ def render_integrated_html(receipt: dict) -> str:
                     'operated behavioral tests, observed usability sessions, '
                     'host isolation attestation and host-authorized review. '
                     'Nothing in this Atlas grants permission to release.</p></section>')
+    if "capability_operation" in receipt:
+        operation = receipt["capability_operation"]
+        head.append('<section class="panel" id="capability-operation"><h2>Selected capability operations</h2>'
+                    '<p>Explicit agent choices, reused source results and optional local observations. '
+                    'Runtime observations remain locally reported; independent acceptance is BLOCKED_EXTERNAL.</p><pre>' +
+                    _h(json.dumps(operation, ensure_ascii=True, sort_keys=True, indent=2)) + '</pre></section>')
     head.append('<section class="panel" id="provenance"><h2>Source and execution provenance</h2><pre>' +
                 _h(json.dumps(receipt["execution_manifest"], ensure_ascii=True, sort_keys=True, indent=2)) +
                 '</pre><p>Original PR36 receipt: <code>' +

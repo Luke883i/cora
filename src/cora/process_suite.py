@@ -473,3 +473,70 @@ def verify_universal_capability_plan(capabilities: list[dict], report: dict,
     if report != expected:
         raise ValueError("capability plan, status or native receipt does not replay")
     return True
+
+
+def operational_selection(baseline: dict, request: dict) -> list[dict]:
+    """Agent judgment is an explicit, bounded claim, never execution consent.
+
+    Reuse the original process receipts even when lexical inference did not
+    select that owner. Unsupported choices retain their owner and blocker.
+    """
+    catalog = baseline.get("universal_capability_plan", {}).get("rows", [])
+    if len(catalog) != 81 or len({r["id"] for r in catalog}) != 81:
+        raise ValueError("operational selection requires the original 81-owner catalog")
+    decisions = request.get("decisions")
+    if not isinstance(decisions, list) or not 1 <= len(decisions) <= 81:
+        raise ValueError("bounded explicit agent decisions required")
+    ids = {r["id"] for r in catalog}
+    selected = {}
+    for item in decisions:
+        if (not isinstance(item, dict) or set(item) != {"id", "reason", "obligation", "test_ids"}
+                or item["id"] not in ids or item["id"] in selected
+                or any(not isinstance(item[k], str) or not 1 <= len(item[k]) <= 1024
+                       for k in ("reason", "obligation"))
+                or not isinstance(item["test_ids"], list)
+                or len(item["test_ids"]) > 64
+                or any(not isinstance(t, str) or not re.fullmatch(r"[A-Za-z_][\w.]{1,250}", t)
+                       for t in item["test_ids"])
+                or len(set(item["test_ids"])) != len(item["test_ids"])):
+            raise ValueError("invalid, unknown or duplicate capability decision")
+        selected[item["id"]] = item
+    methods = {r["method"]: r for r in baseline["source_process"]["results"]}
+    native = {"cora:" + r["command"]: r for r in baseline.get("cli_capability_attempts", [])}
+    rows = []
+    for owner in sorted(ids):
+        state, digest = "NOT_SELECTED", None
+        if owner in selected:
+            state = "BLOCKED_NO_QUALIFIED_ADAPTER"
+            witness = methods.get(_SOURCE_FOR_COMMAND.get(owner.removeprefix("cora:")))
+            if witness and witness["status"] in _SOURCE_METHOD_PASS:
+                digest = witness["source_digest"]
+                state = "REUSED_SOURCE_METHOD_SCOPED"
+            elif native.get(owner, {}).get("state") == "RUN_REPORTED_UNATTESTED":
+                digest = native[owner]["stdout_sha256"]
+                state = "REUSED_NATIVE_OBSERVATION_UNATTESTED"
+        if digest is not None and (not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest)):
+            raise ValueError("reused observation lacks content digest")
+        rows.append({"id": owner, "selected": owner in selected, "state": state,
+                     "source_digest": digest, "decision": selected.get(owner), "authority": "NONE"})
+    return rows
+
+
+def operational_requirement_plan(repo: Path, revision: str = "HEAD") -> dict:
+    """Derive the committed operational DoD with the canonical AND kernel."""
+    import json
+    from .reticulum import ordered_cut
+    contract = json.loads(git(repo, "show", revision + ":.cora/contracts/dod/optimal-tool-acquisition.json"))["operational_contract"]
+    if (contract.get("schema") != "cora-operational-capabilities-dod/1"
+            or contract.get("authority") != "NONE"
+            or contract.get("goals") != {"scoped": "G_OPERATIONAL_SLICE", "complete": "G_PRODUCT_ACCEPTANCE"}):
+        raise ValueError("original operational contract missing or promoted")
+    order = ordered_cut(contract["nodes"], contract["goals"]["complete"])
+    if len(order) != 22 or set(order) != {n["id"] for n in contract["nodes"]}:
+        raise ValueError("operational DoD has missing or unreachable obligations")
+    external = {n["id"] for n in contract["nodes"] if n["kind"] == "LOCAL" and n["scope"] == "EXTERNAL"}
+    if external != {"E_INDEPENDENT_RUNTIME", "E_REVIEW"} or any(
+            n["status"] != "BLOCKED_EXTERNAL" for n in contract["nodes"] if n["id"] in external):
+        raise ValueError("independent operational acceptance cannot be promoted")
+    return {"digest": domain_hash("CORA:operational-dod:1", contract),
+            "prerequisites": order, "status": "REQUIREMENTS_DERIVED_NOT_EXECUTED"}
