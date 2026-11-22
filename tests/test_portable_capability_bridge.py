@@ -116,7 +116,7 @@ class PortableBridgeDoDTests(unittest.TestCase):
                    'target_repo': str(self.target.resolve()),
                    'target_receipt': self.target_receipt,
                    'target_evidence_dir': str(self.evidence.resolve()),
-                   'bindings': self.bindings}
+                   'bindings': copy.deepcopy(self.bindings)}
         manifest.write_text(json.dumps(request), encoding='utf-8')
         linked = _portable_source_target_link(ROOT, receipt, manifest)
         self.assertEqual(linked['reconciliation'], evidence)
@@ -135,6 +135,7 @@ class PortableBridgeDoDTests(unittest.TestCase):
         self.assertTrue(verify_integrated(ROOT, full, evidence_dir=folder,
                                           portable_link=manifest))
         request['bindings'][0] = dict(request['bindings'][0], test_id='forged.Test.fake')
+        self.assertEqual(self.bindings[0]['test_id'], 'test_simple.TestSimple.test_add_one')
         manifest.write_text(json.dumps(request), encoding='utf-8')
         with self.assertRaises(ValueError):
             _portable_source_target_link(ROOT, receipt, manifest)
