@@ -788,10 +788,14 @@ def run_integrated(repo: Path, revision: str = "HEAD", *, process: str = "full",
                                 git(repo, "rev-parse", "HEAD").decode().strip() != sha):
         raise ValueError("only the explicitly authorized CORA HEAD checkout may run self-tests")
     registry = build_registry(repo, sha)
+    # Explicit portable linkage selects the original process-run owner.
+    # It is still BLOCKED in the 81-owner plan, never executed by this link.
+    effective_intent = ((capability_intent + " process-run").strip()
+                        if capability_intent else "process-run") if portable_link is not None else capability_intent
     base = run_one(repo, sha, process=process, max_commits=max_commits,
                    focus=focus, execute_self_tests=False,
                    model_stress_cases=model_stress_cases,change_base=change_base,
-                   capability_intent=capability_intent)
+                   capability_intent=effective_intent)
     hforge = _hforge_source(repo, sha, base)
     test, log = _test_observation(repo, sha, tree,
                                   authorized=authorization_file if execute_self_tests else None,
