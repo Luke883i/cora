@@ -23,7 +23,7 @@ not executed. Run `verify-process REPORT --repo TARGET --one-run --evidence-dir 
 to reconcile the original One-Run source receipt and retained test logs without
 rerunning them. The qualified adapters are Python `unittest` and optional
 `pytest`; both use the same bounded execution/evidence path. Unknown adapters
-remain blocked. Existing PR97 `--profile comprehensive --capability-request`
+remain blocked. The established `--profile comprehensive --capability-request`
 with Semgrep is **unchanged**; this foreign-target pilot is **not** its 81-owner
 execution engine or a replacement for the comprehensive capability operation.
 
@@ -33,7 +33,7 @@ mitigate but do not
 confine malicious code. Use only a runner authorized for the target. The
 third-party sample reproduces original Git *blobs*, not the upstream Git tree.
 Its [27-node AND DoD](../.cora/contracts/dod/pr97-foreign-hardening.json)
-keeps full PR97 operational integration, an original full upstream clone,
+keeps the comprehensive operational integration, an original full upstream clone,
 independent sandbox and reviewer acceptance blocked. No second CORA analysis
 engine, new CLI command, automatic installer, merge or release authority is added.
 
