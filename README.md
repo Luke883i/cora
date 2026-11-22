@@ -6,7 +6,7 @@
 
 **CORA is not a coding agent** or automatic runner. It can **produce reproducible pre/post-merge review reports** linking **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**. Execution and release decisions remain external.
 
-**Why it matters:** a patch cannot prove behavior; CORA links intent, tests and debt.
+**Why it matters:** patches cannot prove behavior; CORA links intent, tests and unresolved risks.
 
 ```text
 TARGET Git repository = application source of truth
@@ -103,7 +103,7 @@ The [LEVEL / NILO experiment](docs/CONTINUOUS_DEVELOPMENT.md#level-demonstration
 
 **71 declared CLI commands** in [capability atlas](.cora/assurance/capability-atlas.json) are inventory, not 71 independently proven features. [parser-checked CLI reference](docs/CLI_REFERENCE.md) · [complete documentation index](docs/INDEX.md).
 
-**81-owner frontier (71 CLI + 10 external candidates):** selection is not execution. `--portable-link` links `cora:process-run` to native tests; executes zero additional owners. Expand via authorized adapters and falsifiers. [Portable-link details](docs/CLI_REFERENCE.md).
+**81-owner frontier (71 CLI + 10 external candidates):** selection is not execution. `--portable-link` links `cora:process-run` to native tests; executes zero additional owners. [Portable-link details](docs/CLI_REFERENCE.md).
 
 | Plane | Proof |
 | --- | --- |
@@ -127,7 +127,7 @@ The dossier distinguishes `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTER
 
 **Gold pilots:** Teddy Node and ICTC HTTP/SQLite bounded; LUMEN and NILO unobserved. [Evidence](docs/GOLD_ASSURANCE.md).
 
-**Other repos:** `--portable-profile` inspects source; `--portable-parse-js` parses ESM only. [Limits](docs/CONTINUOUS_DEVELOPMENT.md).
+**Other repos:** `--portable-profile` inspects source; `--portable-parse-js` parses ESM. [Limits](docs/CONTINUOUS_DEVELOPMENT.md).
 
 **H-FORGE:** [source stage](docs/HOLISTIC_FORENSICS.md#h-forge-optional-experimental-profile); 77 bounded cases; consumers and acceptance unverified.
 
