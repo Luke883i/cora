@@ -39,6 +39,47 @@ CONTROL_PLANE = "cli:process-run"
 AUTH_SCHEMA = "cora-explicit-execution-consent/1"
 OPERATION_SCHEMA = "cora-capability-operation/1"
 
+PORTABLE_LINK_SCHEMA = "cora-integrated-portable-link/1"
+PORTABLE_LINK_REQUEST = "cora-portable-link-request/1"
+
+
+def _portable_source_target_link(repo: Path, source: dict, manifest: Path) -> dict:
+    """Correlate two original verified receipts, without new execution effects."""
+    from .foreign_pilot import reconcile_portable_capabilities
+    path = Path(manifest)
+    if not path.is_file() or path.is_symlink() or path.stat().st_size > 2 * 1024 * 1024:
+        raise ValueError("bounded regular portable request file required")
+    raw = path.read_bytes()
+    try:
+        request = json.loads(raw)
+    except (UnicodeError, ValueError) as exc:
+        raise ValueError("invalid portable request JSON") from exc
+    if (not isinstance(request, dict) or set(request) != {
+            "schema", "target_repo", "target_receipt", "target_evidence_dir", "bindings"}
+            or request["schema"] != PORTABLE_LINK_REQUEST
+            or not isinstance(request["target_repo"], str)
+            or not isinstance(request["target_evidence_dir"], str)
+            or not Path(request["target_repo"]).is_absolute()
+            or not Path(request["target_evidence_dir"]).is_absolute()
+            or not isinstance(request["target_receipt"], dict)
+            or not isinstance(request["bindings"], list)):
+        raise ValueError("explicit independent target and test binding request required")
+    target = Path(request["target_repo"]).resolve(strict=True)
+    if target == Path(repo).resolve(strict=True):
+        raise ValueError("CORA and target must be distinct repositories")
+    result = reconcile_portable_capabilities(repo, source, target,
+        request["target_receipt"], Path(request["target_evidence_dir"]),
+        bindings=request["bindings"])
+    return {"schema": PORTABLE_LINK_SCHEMA,
+            "manifest_sha256": hashlib.sha256(raw).hexdigest(),
+            "source_commit": source["commit"],
+            "target_commit": result["target_commit"],
+            "target_tree": result["target_tree"],
+            "reconciliation": result, "scope_status": result["scope_status"],
+            "product_status": "BLOCKED_EXTERNAL", "authority": "NONE"}
+
+
+
 
 def _capability_request(repo: Path, baseline: dict, request: dict) -> tuple[list[dict], dict]:
     """Validate every choice and input before any optional subprocess."""
@@ -583,6 +624,8 @@ def _artifact_payloads(bundle: dict, log: bytes | None) -> dict[str, bytes]:
         files["qualification.json"] = _serialize(bundle["qualification"])
     if "capability_operation" in bundle:
         files["capability-operation.json"] = _serialize(bundle["capability_operation"])
+    if "portable_link" in bundle:
+        files["portable-link.json"] = _serialize(bundle["portable_link"])
     if log is not None:
         files["unittest-verbose.log"] = log
     return files
@@ -728,7 +771,8 @@ def run_integrated(repo: Path, revision: str = "HEAD", *, process: str = "full",
                    change_base: str | None = None,
                    capability_intent: str | None = None,
                    capability_request: Path | None = None,
-                   execute_capabilities: bool = False) -> dict:
+                   execute_capabilities: bool = False,
+                   portable_link: Path | None = None) -> dict:
     repo = Path(repo).resolve(strict=True)
     preflight_comprehensive_history(repo, revision)
     sha = snapshot(repo, revision)["commit"]
@@ -737,6 +781,8 @@ def run_integrated(repo: Path, revision: str = "HEAD", *, process: str = "full",
         raise ValueError("comprehensive self-tests require both opt-in and an exact-SHA consent file")
     if execute_capabilities and (capability_request is None or execute_self_tests):
         raise ValueError("capability execution requires a request and cannot duplicate the full self-test run")
+    if portable_link is not None and (evidence_dir is None or execute_self_tests):
+        raise ValueError("portable target linkage needs retained evidence and no CORA self-test execution")
     out = _outside_repo(repo, evidence_dir) if evidence_dir is not None else None
     if execute_self_tests and (not (repo / ".git").exists() or
                                 git(repo, "rev-parse", "HEAD").decode().strip() != sha):
@@ -796,6 +842,8 @@ def run_integrated(repo: Path, revision: str = "HEAD", *, process: str = "full",
         request = json.loads(capability_request.read_text("utf-8"))
         bundle["capability_operation"] = run_capability_operation(
             repo, base, request, execute=execute_capabilities, evidence_dir=out)
+    if portable_link is not None:
+        bundle["portable_link"] = _portable_source_target_link(repo, base, portable_link)
     bundle["evidence_manifest"] = _manifest(bundle, log, out is not None)
     bundle["receipt_digest"] = domain_hash("CORA:integrated-one-run:2", bundle)
     if out is not None:
@@ -809,7 +857,8 @@ def run_integrated(repo: Path, revision: str = "HEAD", *, process: str = "full",
 
 
 def verify_integrated(repo: Path, receipt: dict, *, html_page: str | None = None,
-                      evidence_dir: Path | None = None) -> bool:
+                      evidence_dir: Path | None = None,
+                      portable_link: Path | None = None) -> bool:
     if (not isinstance(receipt, dict) or receipt.get("schema") != SCHEMA
             or receipt.get("authority") != "NONE"
             or receipt.get("authorization") != "NONE"
@@ -898,6 +947,14 @@ def verify_integrated(repo: Path, receipt: dict, *, html_page: str | None = None
         verify_capability_operation(repo, receipt["baseline_pr36"], receipt["capability_operation"], evidence_dir)
     elif "capability_contract" in receipt:
         raise ValueError("operational DoD without capability evidence")
+    if "portable_link" in receipt:
+        if portable_link is None or evidence_dir is None:
+            raise ValueError("portable link replay requires original request and retained evidence")
+        expected_link = _portable_source_target_link(repo, receipt["baseline_pr36"], portable_link)
+        if receipt["portable_link"] != expected_link:
+            raise ValueError("portable 81-owner to native test correlation altered")
+    elif portable_link is not None:
+        raise ValueError("unexpected external target link for unlinked receipt")
     m = receipt["execution_manifest"]
     if (m.get("commit") != sha or m.get("tree") != receipt["tree"]
             or m.get("source_receipt_digest") != receipt["baseline_pr36"]["receipt_digest"]
