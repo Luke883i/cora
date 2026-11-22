@@ -1562,7 +1562,7 @@
       "rationale": "27-node retrograde DoD for local foreign-target pilot; independent runtime and review remain blocked."
     },
     {
-      "pattern": "tests/test_pr99_portable_bridge.py",
+      "pattern": "tests/test_portable_capability_bridge.py",
       "roles": [
         "CONTRACT_VERIFIER",
         "FIXTURE",
