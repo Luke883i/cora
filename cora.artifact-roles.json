@@ -1512,6 +1512,54 @@
         "POLICY"
       ],
       "rationale": "Reticular, source-scoped 71 CLI inventory and 20 owner-fixture behavioral leaves; no independent target acceptance or release authority."
+    },
+    {
+      "pattern": "src/cora/foreign_pilot.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "SOFTWARE_SOURCE"
+      ],
+      "rationale": "Bounded original-One-Run foreign target native adapters and local retained-byte replay; not host attestation."
+    },
+    {
+      "pattern": "tools/verify_pr97_hardening.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "RELEASE_TOOL"
+      ],
+      "rationale": "Finite physical source fault oracles and Git-ancestry/DoD replay; no release authority."
+    },
+    {
+      "pattern": "tests/test_foreign_pilot.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "PyPA Git blob fixture, physical target mutant and non-promotion test oracles."
+    },
+    {
+      "pattern": "tests/fixtures/third_party/pypa_sampleproject/*",
+      "roles": [
+        "FIXTURE"
+      ],
+      "rationale": "Original selected PyPA file blobs and provenance manifest; synthetic Git subset, not full upstream checkout."
+    },
+    {
+      "pattern": "tests/fixtures/third_party/pypa_sampleproject/LICENSE.txt",
+      "roles": [
+        "FIXTURE",
+        "LICENSE"
+      ],
+      "rationale": "Verbatim third-party example license retained alongside original source fixture."
+    },
+    {
+      "pattern": ".cora/contracts/dod/pr97-foreign-hardening.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "27-node retrograde DoD for local foreign-target pilot; independent runtime and review remain blocked."
     }
   ]
 }
