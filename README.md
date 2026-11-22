@@ -4,9 +4,9 @@
 
 **CORA is an agent-agnostic system for governing software development from intent to evidence.** Across application, service, library and infrastructure repositories, it turns an intended outcome into a backward-derived acceptance graph, a falsifiable and revisable roadmap, bounded changes, counterexamples and Git-bound evidence. Its conversational method coordinates the work; its local Python 3.11+ assurance engine independently checks specified source claims. CORA is not tied to an application domain, programming language or specific coding agent; **the scope of any PASS remains the explicitly executed checks**, not all behavior of the target product.
 
-**CORA is not a coding agent** or automatic runner. It can **produce reproducible pre/post-merge review reports** linking **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**. Execution and release decisions remain external.
+**CORA is not a coding agent** or automatic runner. Its pre/post-merge reports link a proposed change to source, tests, counterexamples and remaining debt. Execution and release decisions remain external.
 
-**Why it matters:** a patch alone cannot establish target behavior; CORA connects intent, tests, change, evidence, unresolved risks and next action.
+**Why:** a patch cannot establish target behavior; CORA links intent, tests and unresolved debt.
 
 ```text
 TARGET Git repository = application source of truth
@@ -22,9 +22,9 @@ ChatGPT Project = canonical prompt + authorized attachments, not a runner
 
 **Product** = engineering assurance; **software** = the `cora` CLI and verifiers; **repository** = Git source, contracts and CI. None proves target-product readiness.
 
-**Recommended use:** review an authorized Git change. **Audience and conditions:** CTOs, developers, reviewers and coding agents; Python 3.11+, Git and authorized execution tools. **Open source license:** [MIT](LICENSE).
+**Audience:** CTOs, developers, reviewers and coding agents. **Requirements:** Python 3.11+, Git, permission. **License:** [MIT](LICENSE).
 
-**Current status:** experimental `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **Document status:** CURRENT. **Current scope:** Git source. **Operational use:** inspect commits. **Evidence:** Git and scoped tests. **Limits:** `BLOCKED_EXTERNAL`. Verify the exact checked-out Git revision. **Category:** engineering assurance.
+**Status:** `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **Document status:** CURRENT. **Current scope:** Git source. **Operational use:** inspect commits. **Evidence:** Git and scoped tests. **Limits:** `BLOCKED_EXTERNAL`. Verify the exact checked-out Git revision. **Category:** engineering assurance.
 
 ## First five minutes — choose your path
 
@@ -99,9 +99,18 @@ The [LEVEL / NILO experiment](docs/CONTINUOUS_DEVELOPMENT.md#level-demonstration
 | **Supply chain** | **SBOM (CycloneDX 1.6): GENERATION_IN_CANDIDATE_CI**; **SCA/CVE: SCAN_CI_BUILD_TOOLS_ONLY**; **artifact signing / SLSA provenance: NOT_ATTESTED**. |
 | **Governance** | Execution needs authorization. **Independent reviewer, enforced branch rules, release: BLOCKED_EXTERNAL**; no production security SLA. [Security](SECURITY.md) · [Release](docs/RELEASE.md). |
 
-**Assurance levels:** **L1** = Git/source checks; **L2** = bounded product experiments; **L3** = optional external assurance. L1/L2 may be useful without L3; CI cannot approve a release.
+**Assurance:** **L1** Git/source; **L2** bounded experiments; **L3** external witnesses. CI cannot approve release.
 
 **71 declared CLI commands** in [capability atlas](.cora/assurance/capability-atlas.json) are inventory, not 71 independently proven features. [parser-checked CLI reference](docs/CLI_REFERENCE.md) · [complete documentation index](docs/INDEX.md).
+
+**81-owner frontier (71 CLI + 10 external candidates):** selection is not execution. PR99's `--portable-link` relates one selected `cora:process-run` owner to verified native target test IDs; it executes zero additional owners. To extend it, qualify each owner-to-obligation-to-test binding, authorized adapter, negative counterexample, dual Git SHA and consumer. Missing evidence remains `BLOCKED`, not a universal PASS. [Scoped contract](.cora/contracts/dod/pr99-portable-universal-dod.json).
+
+| Outcome plane | Owner and proof |
+| --- | --- |
+| **Product** | Target owner defines observable outcome; runtime acceptance stays open. |
+| **Software** | Agent implements; runner executes qualified adapter and native positive/negative tests. |
+| **Repository** | Two Git identities, original receipts, retained logs and exact-HEAD replay; neither CI nor prompt approves release. |
+
 
 **CORA is not an eleventh engineering method.** Source and model tests are scoped evidence, not full behavioral proof. [Method crosswalk](docs/CONVERGENT_ASSURANCE.md#method-crosswalk--borrowed-perspectives-not-full-implementations).
 
@@ -115,13 +124,13 @@ cora verify-process /tmp/cora-run.json --repo . --one-run --atlas-html /tmp/cora
 
 The dossier distinguishes `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTERNAL`. **The default does not execute arbitrary target tests**. Keep native test receipts separate. [Chat handoff](docs/AGENT_ADOPTION.md#portable-chatgpt-handoff-opt-in) uses `--chat-step` / `--chat-bundle`: a temporary, operator-produced ZIP of numbered steps, evidence gaps and handoffs, **not** automatic chat memory, a signature or approval.
 
-**Change range:** `--change-base BASE_SHA` selects BASE→HEAD; default is one commit. PR metadata is not authenticated.
+**Change range:** `--change-base BASE_SHA` selects BASE→HEAD; default is one commit. PR metadata remains unverified.
 
-**Native Gold pilots:** bounded Teddy Node and ICTC HTTP/SQLite tests; LUMEN browser and NILO remote unobserved. Source PASS does not attest runner identity. [Pilot evidence](docs/GOLD_ASSURANCE.md).
+**Gold pilots:** Teddy Node and ICTC HTTP/SQLite bounded; LUMEN and NILO unobserved. [Evidence](docs/GOLD_ASSURANCE.md).
 
-**Other repos:** `--portable-profile` inspects source; `--portable-parse-js` parses ESM without execution. [Limits](docs/CONTINUOUS_DEVELOPMENT.md).
+**Other repos:** `--portable-profile` inspects source; `--portable-parse-js` parses ESM only. [Limits](docs/CONTINUOUS_DEVELOPMENT.md).
 
-**H-FORGE:** [source stage](docs/HOLISTIC_FORENSICS.md#h-forge-optional-experimental-profile); 77 cases, dynamic consumers and P5 acceptance unverified.
+**H-FORGE:** [source stage](docs/HOLISTIC_FORENSICS.md#h-forge-optional-experimental-profile); 77 bounded cases; consumers and acceptance unverified.
 
 ## How CORA works
 
@@ -139,7 +148,7 @@ The dossier distinguishes `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTER
 
 **Target examples, not universal validation:** [ICTC](https://github.com/Luke883i/ictc) (HTTP/SQLite, source/UX verification), [Teddy](https://github.com/Luke883i/teddy) (Node) and [iKant_EDU](https://github.com/Luke883i/iKant_EDU) (unknown consumers, reversible repository contraction). Source histories and native pilot evidence have distinct owners; CORA did not independently certify these products. [Pilots](docs/GOLD_ASSURANCE.md).
 
-**Terms:** *intent mining* extracts obligations; *reticular DoD* maps dependencies; *semantic slices* bound changes; *blobbing/materialization* writes Git objects; *semantic mutations* challenge claims; *semantic saturation* is a bounded lack of new findings. No finite test proves universal correctness.
+**Terms:** *intent mining* extracts obligations; *reticular DoD* maps prerequisites; *semantic slices* bound changes; *blobbing* writes Git objects; *mutations* challenge claims; *saturation* means no new bounded findings. Finite tests cannot establish universal correctness.
 
 ## Interpret a CORA result
 
@@ -150,7 +159,7 @@ The dossier distinguishes `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTER
 | `PASS_SCOPED` on exact SHA | Named source check | Target acceptance |
 | `BLOCKED_EXTERNAL` | Human/host witness outstanding | Merge authority |
 
-**A source digest does not authenticate a human reviewer** or runtime. `NOT_RUN` and `BLOCKED_EXTERNAL` are not PASS. See [evidence boundaries](docs/CONVERGENT_ASSURANCE.md).
+**A source digest does not authenticate a human reviewer** or runtime. See [evidence boundaries](docs/CONVERGENT_ASSURANCE.md).
 
 ## Final Experimental Baseline — bounded evidence
 
@@ -164,7 +173,7 @@ The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) di
 **Product or release owner:** [Governance](GOVERNANCE.md) · [Security](SECURITY.md) · [Release](docs/RELEASE.md).
 **Full documentation, history and contracts:** [Index](docs/INDEX.md) · [Documentation DoD](docs/DOCUMENTATION_DOD.md). [PR #1–#89 trajectory, gaps and release gate](docs/AUDIT_PR01_89_AND_RELEASE_GATE.txt).
 
-**Decision rights are external:** owner and host. **Source of record:** Git, not chat. **Why:** source is not authority. **Runtime:** local CLI. **Read in order:** README → guide → contract → evidence.
+**Read in order:** README → guide → contract → evidence. Rights remain external; Git is the source of record.
 
 <details>
 <summary>Product | Outcome and limits</summary>

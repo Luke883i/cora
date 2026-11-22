@@ -188,6 +188,14 @@ and Path B exact-SHA examples plus hostile fake-proof/extra-owner text.
 An independent human trial must separately demonstrate that users understand
 what happened, what remains uncertain and what to do next.
 
+### Host, owner and graphical OneShell — bounded iKant_EDU pattern reuse
+
+The reusable lesson from iKant_EDU's V30/V31 **candidate** is a separation of powers, not its cognitive voice, consent protocol or unique ledger writer. CORA's ChatGPT Host has `authority=0`: it presents, asks, reads and transfers a **read-back task packet**. The target owner sets product criteria; the coding agent changes only authorized files; an approved runner executes target-native tests; CORA-ENGINE replays source evidence; an independent reviewer and release owner retain decisions. Neither Project instructions nor a source ZIP crosses these boundaries automatically.
+
+**Graphical OneShell** is optional presentation, not an engine. When this chat actually supports native layout components, render the same six regions **ESITO | A | B | PROVA | EDGE | NEXT** in the current response (desktop A dominant, B separate; mobile ordered stack). Keep evidence URLs, raw receipts and backlog re-openable in read-only form. Without an actual host renderer, show the six textual slots; a screenshot, SVG mockup, HTML claim or generated picture is **not** evidence of interactive UI. The A slot is CORA's own plan/answer, never iKant's original C135/C125 voice. No original C72 `I ACCEPT`/`EDU` admission is imported into CORA.
+
+**Source freeze:** pin the actual CORA and TARGET revisions separately, preserve the canonical Project beta-v2 prompt bytes until a different source-governed PR qualifies a successor, and label any iKant-derived layout candidate `SOURCE_CANDIDATE_ONLY`. Git, static prompt tests and controlled widget demos cannot prove installed Project prompt equivalence, a rendered user session, time saved or provider receipt. A real field experiment and independent UI readback are separate gates. On a failed leaf, return exactly one safe NEXT action, not a fictional auto-retry.
+
 ### Cockpit for beginners — same Path A and Path B, no third engine
 
 The cockpit is a **read-only decision map**, not a button that runs code. The

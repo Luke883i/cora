@@ -220,6 +220,38 @@ README_FALSE_PROMOTIONS = (
 
 # PR88: finite three-plane / three-scale reading contract. This is a lexical
 # guard on publicly observable claims, NOT semantic completeness or user trials.
+# Candidate frontier disclosure: static README assertions, never a runtime oracle.
+README_FRONTIER_REQUIRED = (
+    "**81-owner frontier (71 CLI + 10 external candidates):**",
+    "selection is not execution",
+    "`--portable-link`",
+    "`cora:process-run`",
+    "executes zero additional owners",
+    "| **Product** | Target owner defines observable outcome",
+    "| **Software** | Agent implements",
+    "| **Repository** | Two Git identities",
+    "[Scoped contract](.cora/contracts/dod/pr99-portable-universal-dod.json)",
+)
+README_FRONTIER_FORGERIES = (
+    r"\ball 81 (?:capabilities|owners) (?:are|were|have been) (?:executed|verified|operational)\b",
+    r"\bpassing target test proves all 81\b",
+    r"\bGraphical OneShell (?:is|was) verified by (?:source|CI|prompt)\b",
+    r"\biKant's C72 consent is valid for CORA\b",
+    r"\bgreen CI counts as independent release approval\b",
+)
+
+
+def verify_readme_frontier_contract(readme: str) -> list[str]:
+    errors = []
+    for item in README_FRONTIER_REQUIRED:
+        if item not in readme:
+            errors.append("readme-frontier-missing:" + item[:60])
+    for pattern in README_FRONTIER_FORGERIES:
+        if re.search(pattern, readme, flags=re.I):
+            errors.append("readme-frontier-false-promotion:" + pattern[:60])
+    return sorted(errors)
+
+
 README_MULTISCALE_REQUIRED = {
     "GLOBAL_PRODUCT": ("**Product** = engineering assurance", "None proves target-product readiness"),
     "GLOBAL_SOFTWARE": ("**software** = the `cora` CLI", "CORA is not a coding agent"),
@@ -279,6 +311,7 @@ def verify_readme_semantics(readme: str, *, root: Path | None = None) -> list[st
     if len(positions) != len(README_SECTION_ORDER) or positions != sorted(positions):
         errors.append("readme-semantic-progression")
     errors.extend(verify_readme_multiscale_contract(readme))
+    errors.extend(verify_readme_frontier_contract(readme))
     if "**CORA (Continuous Ontological Repository Assurance)**" in readme:
         errors.append("readme-semantic-duplicated-product-name")
     if "**Standard engineering contract:**" not in readme or "**Additional analytical lenses (research, not standards):**" not in readme:
