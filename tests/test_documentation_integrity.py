@@ -163,6 +163,8 @@ class DocumentationDoDTests(unittest.TestCase):
         faults = (
             ("scope-omission", lambda x: x.replace("selection is not execution", "selection is execution", 1),
              "readme-frontier-missing:"),
+            ("broken-frontier-route", lambda x: x.replace("[Portable-link details](docs/CLI_REFERENCE.md)", "[Portable-link details](docs/missing.md)", 1),
+             "readme-frontier-missing:"),
             ("invent-81", lambda x: x + "\nall 81 capabilities are executed\n",
              "readme-frontier-false-promotion:"),
             ("invent-test-certification", lambda x: x + "\npassing target test proves all 81\n",

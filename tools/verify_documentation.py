@@ -230,7 +230,7 @@ README_FRONTIER_REQUIRED = (
     "| **Product** | Target owner defines observable outcome",
     "| **Software** | Agent implements",
     "| **Repository** | Two Git identities",
-    "[Scoped contract](.cora/contracts/dod/pr99-portable-universal-dod.json)",
+    "[Portable-link details](docs/CLI_REFERENCE.md)",
 )
 README_FRONTIER_FORGERIES = (
     r"\ball 81 (?:capabilities|owners) (?:are|were|have been) (?:executed|verified|operational)\b",

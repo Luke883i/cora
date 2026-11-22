@@ -103,7 +103,7 @@ The [LEVEL / NILO experiment](docs/CONTINUOUS_DEVELOPMENT.md#level-demonstration
 
 **71 declared CLI commands** in [capability atlas](.cora/assurance/capability-atlas.json) are inventory, not 71 independently proven features. [parser-checked CLI reference](docs/CLI_REFERENCE.md) · [complete documentation index](docs/INDEX.md).
 
-**81-owner frontier (71 CLI + 10 external candidates):** selection is not execution. `--portable-link` links `cora:process-run` to native tests; executes zero additional owners. Expand via authorized adapters and falsifiers. [Scoped contract](.cora/contracts/dod/pr99-portable-universal-dod.json).
+**81-owner frontier (71 CLI + 10 external candidates):** selection is not execution. `--portable-link` links `cora:process-run` to native tests; executes zero additional owners. Expand via authorized adapters and falsifiers. [Portable-link details](docs/CLI_REFERENCE.md).
 
 | Plane | Proof |
 | --- | --- |
