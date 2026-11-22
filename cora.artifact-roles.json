@@ -1560,6 +1560,23 @@
         "PRODUCT_CONTRACT"
       ],
       "rationale": "27-node retrograde DoD for local foreign-target pilot; independent runtime and review remain blocked."
+    },
+    {
+      "pattern": "tests/test_portable_capability_bridge.py",
+      "roles": [
+        "CONTRACT_VERIFIER",
+        "FIXTURE",
+        "TEST"
+      ],
+      "rationale": "CORA source-target link and adversarial native test evidence; a modeled owner universe never proves 81 target executions."
+    },
+    {
+      "pattern": ".cora/contracts/dod/pr99-portable-universal-dod.json",
+      "roles": [
+        "POLICY",
+        "PRODUCT_CONTRACT"
+      ],
+      "rationale": "Backward AND-DoD for PR99 exact source-target integration; independent runtime and release remain external."
     }
   ]
 }

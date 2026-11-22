@@ -37,6 +37,38 @@ keeps the comprehensive operational integration, an original full upstream clone
 independent sandbox and reviewer acceptance blocked. No second CORA analysis
 engine, new CLI command, automatic installer, merge or release authority is added.
 
+### Correlate verified external tests with the comprehensive 81-owner plan
+
+A separately authorized source-native test pilot can provide retained Git-bound
+test evidence to the **same original** comprehensive One-Run. First execute and
+replay the target-owned `process-run TARGET --one-run --foreign-request
+REQUEST.json --execute-foreign --evidence-dir /outside/target-logs`. Keep the
+original target source HEAD/tree, receipt JSON and logs unchanged.
+
+Prepare an operator-authored JSON `cora-portable-link-request/1` with exactly
+`schema`, absolute `target_repo`, the complete original `target_receipt`,
+absolute `target_evidence_dir`, and 1–12 `bindings`. Each binding has exactly
+`owner_id` (`cora:process-run`), `obligation`, `adapter`, `path` and
+`test_id` from the target's already observed native test report. Run
+`cora process-run CORA_CHECKOUT --one-run --profile comprehensive
+--portable-link /outside/link-request.json --evidence-dir /outside/cora-proof
+--atlas-json /outside/comprehensive.json`, then use
+`cora verify-process /outside/comprehensive.json --repo CORA_CHECKOUT
+--one-run --portable-link /outside/link-request.json --evidence-dir
+/outside/cora-proof` to independently recompute the source-to-target projection
+from the **original** local Git objects and retained target bytes, without
+rerunning the target's test code.
+
+The added `portable_link` section retains the original 81-row plan's
+`selected`, `BLOCKED`, `NOT_SELECTED` and existing source-reuse states. It
+adds scoped native test-ID observations and explicit provenance, **not** 81
+new executions or generalized autonomous selection. Only the existing
+`process-run` owner may correlate this pilot's target tests. Any missing,
+altered, skipped, stale or unauthorized witness is blocked. Process bounds
+do not establish OS sandboxing, and no generated receipt grants review,
+merge or release authority. The original comprehensive and operational
+capability paths are unchanged when `--portable-link` is absent.
+
 ### Optional operational capability request
 
 Derive the committed requirement cut with the existing command:

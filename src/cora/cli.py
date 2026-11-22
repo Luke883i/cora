@@ -390,6 +390,7 @@ def main(argv: list[str] | None = None) -> int:
     pr.add_argument('--execute-capabilities',action='store_true',help=argparse.SUPPRESS)
     pr.add_argument('--foreign-request',type=Path,help=argparse.SUPPRESS)
     pr.add_argument('--execute-foreign',action='store_true',help=argparse.SUPPRESS)
+    pr.add_argument('--portable-link',type=Path,help=argparse.SUPPRESS)
     pv = sub.add_parser('verify-process',help='Source revalidation of process receipt')
     pv.add_argument('report',type=Path)
     pv.add_argument('--repo',required=True,type=Path)
@@ -398,6 +399,7 @@ def main(argv: list[str] | None = None) -> int:
     pv.add_argument('--atlas-json',type=Path)
     pv.add_argument('--atlas-html',type=Path)
     pv.add_argument('--portable-profile',type=Path,help='Original caller profile for exact-source replay')
+    pv.add_argument('--portable-link',type=Path,help=argparse.SUPPRESS)
     pv.add_argument('--portable-evidence-dir',type=Path,help='Original immutable observed artifact bytes')
     pv.add_argument('--portable-native-probe',type=Path,help='Replay original retained local subprocess receipt without execution')
     pv.add_argument('--portable-parse-js',action='store_true',help='Recompute exact-Git Node VM source parse')
@@ -796,6 +798,9 @@ def main(argv: list[str] | None = None) -> int:
                                      authorize_probe=args.authorize_probe)
             code = 0
         elif args.cmd == 'process-run':
+            if args.portable_link and (not args.one_run or args.profile != 'comprehensive' or not args.evidence_dir
+                                        or args.portable_profile or args.foreign_request):
+                raise ValueError('portable linkage requires comprehensive One-Run and retained evidence')
             if args.execute_foreign and not args.foreign_request:
                 raise ValueError('foreign execution requires a pinned request')
             if args.foreign_request and (not args.one_run or args.profile or args.portable_profile
@@ -858,6 +863,7 @@ def main(argv: list[str] | None = None) -> int:
                         model_stress_cases=args.model_stress_cases,
                         change_base=args.change_base,
                         capability_intent=chat_step['intent'] if chat_step else None,
+                        portable_link=args.portable_link,
                         **operation_args)
                     if args.atlas_json:
                         args.atlas_json.write_text(json.dumps(result,sort_keys=True,indent=2)+'\n',encoding='utf-8')
@@ -870,7 +876,8 @@ def main(argv: list[str] | None = None) -> int:
                     code = 2 if (base['source_status']=='DEBT_BLOCKED'
                                  or base['model_stress']['status']=='REFUTED'
                                  or result['tests']['state']=='FAIL'
-                                 or result.get('capability_operation',{}).get('scoped_runtime_goal') == 'DEBT_BLOCKED') else 0
+                                 or result.get('capability_operation',{}).get('scoped_runtime_goal') == 'DEBT_BLOCKED'
+                                 or result.get('portable_link',{}).get('scope_status') == 'DEBT_BLOCKED') else 0
                 else:
                     if args.evidence_dir or args.authorization_file:
                         raise ValueError('integrated evidence/authorization flags require --profile comprehensive')
@@ -900,6 +907,8 @@ def main(argv: list[str] | None = None) -> int:
             if args.chat_cockpit_html and (not args.one_run or not args.chat_bundle):
                 raise ValueError('cockpit HTML requires --one-run --chat-bundle with integrated source receipt')
             item = json.loads(args.report.read_text(encoding='utf-8'))
+            if args.portable_link and (not args.one_run or item.get('schema') != 'cora-integrated-one-run/2'):
+                raise ValueError('portable link replay requires a comprehensive receipt')
             if args.one_run:
                 if (args.portable_evidence_dir or args.portable_parse_js or args.portable_upstream or args.portable_native_probe) and not args.portable_profile:
                     raise ValueError('portable evidence requires original profile')
@@ -930,7 +939,8 @@ def main(argv: list[str] | None = None) -> int:
                 elif item.get('schema') == 'cora-integrated-one-run/2':
                     verify_integrated_one_run(args.repo,item,
                         html_page=args.atlas_html.read_text('utf-8') if args.atlas_html else None,
-                        evidence_dir=args.evidence_dir)
+                        evidence_dir=args.evidence_dir,
+                        portable_link=args.portable_link)
                     result = {'schema':'cora-integrated-one-run-replay/2',
                               'status':'GIT_SOURCE_REPLAYED_LOCAL_TESTS_NOT_INDEPENDENTLY_ATTESTED',
                               'receipt_digest':item['receipt_digest'],'commit':item['commit'],

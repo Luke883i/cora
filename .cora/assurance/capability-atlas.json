@@ -781,6 +781,7 @@
       "tests/test_native_gold_target_execution.py",
       "tests/test_one_run_orchestration.py",
       "tests/test_performance_benchmark_contract.py",
+      "tests/test_portable_capability_bridge.py",
       "tests/test_post94_remaining20.py",
       "tests/test_practice_contract.py",
       "tests/test_project_instructions.py",
@@ -824,6 +825,7 @@
       ".cora/contracts/dod/postmerge-release-dod.json",
       ".cora/contracts/dod/postmerge-repro-dod.json",
       ".cora/contracts/dod/pr97-foreign-hardening.json",
+      ".cora/contracts/dod/pr99-portable-universal-dod.json",
       ".cora/contracts/dod/reader-cockpit-release-dod.json",
       ".cora/contracts/dod/self-governing-portable-development-v1.json",
       ".cora/contracts/dod/workflow-dod.json"
