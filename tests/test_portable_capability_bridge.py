@@ -187,7 +187,21 @@ class PortableBridgeDoDTests(unittest.TestCase):
         self.assertEqual(candidate['authority'], 'NONE')
         self.assertEqual(candidate['status'], 'SOURCE_CANDIDATE_NOT_ACCEPTED')
         self.assertEqual(candidate['source_lock']['as_is_pr99_head'],
+                         '418fc615c5a1a6cbaaa5b20906cc34b454b70df9')
+        self.assertEqual(candidate['source_lock']['as_is_pr99_early_head'],
                          'ede6479b7740e5f33da32599912f36900c61432d')
+        self.assertEqual(candidate['source_lock']['as_is_pr99_merge_commit'],
+                         'b518b621878dc6f6dcb1fb353034053926a64049')
+        parents = git(ROOT, 'rev-list', '--parents', '-n', '1',
+                      candidate['source_lock']['as_is_pr99_merge_commit']).split()
+        self.assertEqual(parents, [
+            'b518b621878dc6f6dcb1fb353034053926a64049',
+            '744401c53dd62640f93d26f3b7c96b82940d059f',
+            candidate['source_lock']['as_is_pr99_head'],
+        ])
+        self.assertEqual(git(ROOT, 'merge-base', '--is-ancestor',
+                             candidate['source_lock']['as_is_pr99_merge_commit'],
+                             'HEAD'), '')
         self.assertEqual(candidate['source_lock']['as_is_pr99_contract_blob'],
                          '62eed37bcadd812ecbf5d5da42fa16e1ac48dba0')
         self.assertEqual(candidate['metrics']['source']['owner_catalog_exact'], 81)

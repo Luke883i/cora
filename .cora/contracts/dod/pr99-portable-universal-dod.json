@@ -428,12 +428,14 @@
     "authority": "NONE",
     "source_lock": {
       "repository": "Luke883i/cora",
-      "as_is_pr99_head": "ede6479b7740e5f33da32599912f36900c61432d",
+      "as_is_pr99_head": "418fc615c5a1a6cbaaa5b20906cc34b454b70df9",
       "as_is_pr99_contract_blob": "62eed37bcadd812ecbf5d5da42fa16e1ac48dba0",
       "as_is_readme_blob": "e55d6e6d2767cd233d2e1ba387f02b3309914de1",
       "as_is_project_guide_blob": "a0e46f18aecb6b6fc4da53795a99ac26cc79951c",
       "ikant_reference": "Luke883i/iKant_EDU@c56b73392395e4512d078e8b41eba98ad2274881",
-      "reuse": "PATTERN_ONLY_NO_OWNER_OR_CONSENT_TRANSFER"
+      "reuse": "PATTERN_ONLY_NO_OWNER_OR_CONSENT_TRANSFER",
+      "as_is_pr99_early_head": "ede6479b7740e5f33da32599912f36900c61432d",
+      "as_is_pr99_merge_commit": "b518b621878dc6f6dcb1fb353034053926a64049"
     },
     "a0": {
       "intent": "Move beyond the single process-run receipt correlation to qualified, per-selected-owner target-native obligations without a second engine.",
