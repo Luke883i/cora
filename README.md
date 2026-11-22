@@ -99,11 +99,11 @@ The [LEVEL / NILO experiment](docs/CONTINUOUS_DEVELOPMENT.md#level-demonstration
 | **Supply chain** | **SBOM (CycloneDX 1.6): GENERATION_IN_CANDIDATE_CI**; **SCA/CVE: SCAN_CI_BUILD_TOOLS_ONLY**; **artifact signing / SLSA provenance: NOT_ATTESTED**. |
 | **Governance** | Execution needs authorization. **Independent reviewer, enforced branch rules, release: BLOCKED_EXTERNAL**; no production security SLA. [Security](SECURITY.md) · [Release](docs/RELEASE.md). |
 
-**Assurance:** **L1** Git/source; **L2** bounded experiments; **L3** external witnesses. CI cannot approve release.
+**Assurance levels:** **L1** = Git/source checks; **L2** = bounded product experiments; **L3** = optional external assurance. L1/L2 may be useful without L3; CI cannot approve a release.
 
 **71 declared CLI commands** in [capability atlas](.cora/assurance/capability-atlas.json) are inventory, not 71 independently proven features. [parser-checked CLI reference](docs/CLI_REFERENCE.md) · [complete documentation index](docs/INDEX.md).
 
-**81-owner frontier (71 CLI + 10 external candidates):** selection is not execution. PR99's `--portable-link` relates one selected `cora:process-run` owner to verified native target test IDs; it executes zero additional owners. To extend it, qualify each owner-to-obligation-to-test binding, authorized adapter, negative counterexample, dual Git SHA and consumer. Missing evidence remains `BLOCKED`, not a universal PASS. [Scoped contract](.cora/contracts/dod/pr99-portable-universal-dod.json).
+**81-owner frontier (71 CLI + 10 external candidates):** selection is not execution. `--portable-link` relates `cora:process-run` to verified target tests; it executes zero additional owners. Extensions require qualified owner/obligation/test bindings, authorized adapters, negative tests and dual Git evidence. Missing evidence remains `BLOCKED`. [Scoped contract](.cora/contracts/dod/pr99-portable-universal-dod.json).
 
 | Outcome plane | Owner and proof |
 | --- | --- |
