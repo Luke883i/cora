@@ -180,7 +180,7 @@ class PortableBridgeDoDTests(unittest.TestCase):
             self.assertIn(node['oracle'].split('.')[-1], methods)
 
     def test_release_and_security_metrics_never_self_authorize(self):
-        doc = json.loads((ROOT / 'docs/verification/pr99-portable-universal-dod.json').read_text())
+        doc = json.loads((ROOT / '.cora/contracts/dod/pr99-portable-universal-dod.json').read_text())
         qm = doc['quality_metrics']
         self.assertEqual(qm['development']['cli_commands_exact'], 71)
         self.assertEqual(qm['development']['declared_owners_exact'], 81)
