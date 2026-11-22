@@ -144,6 +144,11 @@
       "scope": "INTERNAL_DOD"
     },
     {
+      "logical": "cora.pr97-foreign-hardening.json",
+      "canonical": ".cora/contracts/dod/pr97-foreign-hardening.json",
+      "scope": "INTERNAL_DOD"
+    },
+    {
       "logical": "cora.reader-cockpit-release-dod.json",
       "canonical": ".cora/contracts/dod/reader-cockpit-release-dod.json",
       "scope": "INTERNAL_DOD"
