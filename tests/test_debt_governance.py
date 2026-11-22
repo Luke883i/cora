@@ -307,7 +307,13 @@ class OperationalCapabilityTests(unittest.TestCase):
     def test_existing_analysis_is_reused(self):
         from unittest.mock import patch
         from cora.integrated_run import verify_capability_operation
-        with patch("cora.process_suite.run_suite", side_effect=AssertionError("duplicate analysis")):
+        from cora.process_bounds import run_bounded
+        def outside_target(*args, **kwargs):
+            self.assertNotEqual(kwargs["cwd"], self.repo)
+            self.assertNotIn(self.repo, kwargs["cwd"].parents)
+            return run_bounded(*args, **kwargs)
+        with (patch("cora.process_suite.run_suite", side_effect=AssertionError("duplicate analysis")),
+              patch("cora.integrated_run.run_bounded", side_effect=outside_target)):
             report = self.run_operation()
         row = next(r for r in report["rows"] if r["id"] == "cora:archaeology")
         self.assertEqual(row["state"], "REUSED_SOURCE_METHOD_SCOPED")

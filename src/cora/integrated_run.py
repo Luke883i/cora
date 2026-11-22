@@ -202,7 +202,8 @@ def run_capability_operation(repo: Path, baseline: dict, request: dict, *,
         if (any(r["status"] != "observed_git_blob" for r in records.values()) or
                 sum(r["size"] for r in records.values()) > 32 * 1024 * 1024):
             raise ValueError("execution snapshot contains unresolved objects or exceeds 32MiB")
-        with tempfile.TemporaryDirectory(prefix="cora-capabilities-") as temp:
+        out.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(prefix="cora-capabilities-", dir=out) as temp:
             work = Path(temp)
             for path, record in records.items():
                 dst = work / path
