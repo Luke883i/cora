@@ -122,6 +122,18 @@ class PortableBridgeDoDTests(unittest.TestCase):
         self.assertEqual(linked['reconciliation'], evidence)
         self.assertEqual(linked['authority'], 'NONE')
         self.assertEqual(linked['product_status'], 'BLOCKED_EXTERNAL')
+        # Full original comprehensive source execution: the 81-row plan and
+        # the existing target receipt must survive materialization and replay.
+        from cora.integrated_run import run_integrated, verify_integrated
+        folder = self.dir / 'comprehensive-link-evidence'
+        full = run_integrated(ROOT, 'HEAD', process='history',
+                              portable_link=manifest, evidence_dir=folder)
+        self.assertEqual(full['baseline_pr36']['universal_capability_plan']['counts']['total'], 81)
+        self.assertEqual(full['portable_link']['reconciliation'], evidence)
+        self.assertEqual(full['portable_link']['scope_status'], 'PASS_SCOPED_LOCAL_UNATTESTED')
+        self.assertEqual(full['product_status'], 'BLOCKED_EXTERNAL')
+        self.assertTrue(verify_integrated(ROOT, full, evidence_dir=folder,
+                                          portable_link=manifest))
         request['bindings'][0] = dict(request['bindings'][0], test_id='forged.Test.fake')
         manifest.write_text(json.dumps(request), encoding='utf-8')
         with self.assertRaises(ValueError):
