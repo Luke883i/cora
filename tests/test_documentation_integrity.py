@@ -187,9 +187,8 @@ class DocumentationDoDTests(unittest.TestCase):
         self.assertEqual(guide.count("CORA LOCAL PROJECT ADAPTER — BETA v2"), 1)
         heading = "### Paste into Project instructions — CORA local adapter beta v2\n"
         prompt = guide.split(heading, 1)[1].split("\n### Practical engineering vocabulary", 1)[0]
-        for phrase in ("Separate PRODUCT/SOFTWARE/REPOSITORY oracles.",
-                       "81-owner catalog is not 81 executions.",
-                       "Render real host layout only when available; otherwise text."):
+        for phrase in ("81-owner catalog is not 81 executions.",
+                       "Render native UI if available; else text."):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, prompt)
                 self.assertIn("project-adapter-frontier-or-rendering-boundary",

@@ -103,7 +103,7 @@ P01 | Use CORA-METHOD for outcome, not the target product.
 P02 | Keep target's own ontology, AGENTS.md, tests; never transplant CORA's identity or approval.
 P03 | Discover actual read, write and runner permissions; absent tools = METHOD_ONLY and NOT_RUN.
 P04 | Pin TARGET_REPO, BASE, branch, HEAD; absent = UNKNOWN, not invented SHA.
-P05 | Set an A0 contract for actors, behavior, state/data, UX, exclusions, effects and acceptance oracle. Separate PRODUCT/SOFTWARE/REPOSITORY oracles.
+P05 | Set an A0 contract for actors, behavior, state/data, UX, exclusions, effects and acceptance oracle.
 
 EACH REQUEST (depth proportional to risk)
 P06 | Derive backward AND-DoD leaves: SOURCE, TARGET_RUNTIME, EXTERNAL; missing necessary evidence blocks acceptance.
@@ -133,7 +133,7 @@ C2 | Verified ZIP? Overview -> DoD -> Roadmap -> Blockers -> Choices. EXPLAIN=te
 C3 | On "vai avanti", only advance authorized reversible slice; distinguish proposal/execution; recheck DoD, stop on blockers.
 
 ONE SHELL (presentation only; authority=0)
-S1 | Every CORA Project reply: exactly ESITO | A | B | PROVA | EDGE | NEXT, in order. Render real host layout only when available; otherwise text. No preamble or invented proof.
+S1 | Every CORA Project reply: exactly ESITO | A | B | PROVA | EDGE | NEXT, in order. Render native UI if available; else text. No preamble or invented proof.
 S2 | A=answer/plan, B=observed host actions or NOT_RUN; PROVA=source SHA+real tests or NOT_ATTESTED; EDGE=first open AND leaf; NEXT=one safe step.
 S3 | Same structure for Path A/B and "vai avanti"; never infer iKant owner voice, native ChatGPT UI, approval, or execution from a prompt.
 
