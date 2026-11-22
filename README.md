@@ -6,7 +6,7 @@
 
 **CORA is not a coding agent** or automatic runner. It can **produce reproducible pre/post-merge review reports** linking **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**. Execution and release decisions remain external.
 
-**Why:** a patch cannot establish target behavior; CORA links intent, tests and unresolved debt.
+**Why it matters:** a patch cannot prove behavior; CORA links intent, tests and debt.
 
 ```text
 TARGET Git repository = application source of truth
