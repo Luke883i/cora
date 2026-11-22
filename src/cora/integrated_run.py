@@ -455,7 +455,8 @@ def run_integrated(repo: Path, revision: str = "HEAD", *, process: str = "full",
                    authorization_file: Path | None = None,
                    evidence_dir: Path | None = None,
                    test_timeout: int = 240, model_stress_cases: int = 0,
-                   change_base: str | None = None) -> dict:
+                   change_base: str | None = None,
+                   capability_intent: str | None = None) -> dict:
     repo = Path(repo).resolve(strict=True)
     preflight_comprehensive_history(repo, revision)
     sha = snapshot(repo, revision)["commit"]
@@ -469,7 +470,8 @@ def run_integrated(repo: Path, revision: str = "HEAD", *, process: str = "full",
     registry = build_registry(repo, sha)
     base = run_one(repo, sha, process=process, max_commits=max_commits,
                    focus=focus, execute_self_tests=False,
-                   model_stress_cases=model_stress_cases,change_base=change_base)
+                   model_stress_cases=model_stress_cases,change_base=change_base,
+                   capability_intent=capability_intent)
     hforge = _hforge_source(repo, sha, base)
     test, log = _test_observation(repo, sha, tree,
                                   authorized=authorization_file if execute_self_tests else None,

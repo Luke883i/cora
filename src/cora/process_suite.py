@@ -309,3 +309,167 @@ def verify_suite(repo:Path,report:dict)->bool:
     if expected != report:
         raise ValueError('process report differs from immutable Git evidence')
     return True
+
+
+# Eighty-one addressable CAPABILITIES, not 81 independently executable CLI commands.
+# The canonical 71-command parser and ten upstream owners remain untouched.
+UNIVERSAL_SCHEMA = "cora-universal-capability-plan/1"
+_BASELINE_OWNERS = frozenset(("version", "process-list", "snapshot"))
+# Reuse SOURCE METHODS that One-Run already observed; never label these as
+# individually executed CLI commands or independently validated target tests.
+_SOURCE_FOR_COMMAND = {
+    "graph": "python_candidate_graph",
+    "archaeology": "git_archaeology",
+    "debt-scan": "debt_signals",
+    "artifact-audit": "artifact_roles",
+    "adapter-audit": "manifest_adapters",
+    "holistic-audit": "holistic_archaeology",
+}
+_SOURCE_METHOD_PASS = frozenset(("EXECUTED_SCOPED", "REUSED_SCOPED_FROM_HOLISTIC"))
+_SOURCE_METHOD_STATES = _SOURCE_METHOD_PASS | frozenset((
+    "NOT_RUN_REQUIRES_FOCUS", "NOT_CONFIGURED",
+    "PARTIAL_SCOPED_NOT_CONFIGURED", "DEBT_BLOCKED"))
+
+
+def universal_capability_plan(capabilities: list[dict], *, commit: str,
+                              intent: str | None = None,
+                              native_observations: list[dict] | None = None,
+                              source_methods: list[dict] | None = None,
+                              source_process: str | None = None) -> dict:
+    """Select relevant owners; reuse observations, never perform new effects."""
+    if (not isinstance(capabilities, list) or len(capabilities) != 71 or
+            any(not isinstance(x, dict) or not isinstance(x.get("command"), str)
+                or not isinstance(x.get("family"), str) for x in capabilities)):
+        raise ValueError("canonical native capability census must have 71 typed rows")
+    native = {x["command"]: x for x in capabilities}
+    if len(native) != 71 or not _BASELINE_OWNERS.issubset(native):
+        raise ValueError("duplicate, missing or forged native capability")
+    if len(EXTERNAL_TOOLS) != 10 or len({x[0] for x in EXTERNAL_TOOLS}) != 10:
+        raise ValueError("upstream owner census must contain exactly ten entries")
+    if not isinstance(commit, str) or not re.fullmatch(r"[0-9a-f]{40}|[0-9a-f]{64}", commit):
+        raise ValueError("unverifiable Git commit identifier")
+    if intent is not None and (not isinstance(intent, str) or len(intent) > 1024):
+        raise ValueError("bounded intent required")
+    normalized = re.sub(r"[^a-z0-9]+", " ", (intent or "").casefold()).strip()
+    tokens = {word for word in normalized.split() if len(word) >= 3}
+    incoming = native_observations if native_observations is not None else []
+    if not isinstance(incoming, list) or len(incoming) not in (0, 71):
+        raise ValueError("only an exact complete One-Run native receipt may be reused")
+    observations = {}
+    for row in incoming:
+        if (not isinstance(row, dict) or row.get("command") not in native or
+                row.get("command") in observations or row.get("commit") != commit or
+                row.get("authority") != "NONE" or
+                row.get("state") not in ("RUN_REPORTED_UNATTESTED", "BLOCKED", "FAIL") or
+                (row["state"] == "RUN_REPORTED_UNATTESTED" and
+                 row["command"] not in _BASELINE_OWNERS) or
+                (row["state"] != "RUN_REPORTED_UNATTESTED" and
+                 row.get("stdout_sha256") is not None)):
+            raise ValueError("non-canonical native execution receipt")
+        observations[row["command"]] = row
+    if observations and set(observations) != set(native):
+        raise ValueError("partial native observation set")
+    # These are existing run_suite() method receipts. Their behavior remains
+    # source-scoped and is subsequently independently rederived by verify_one.
+    source = {}
+    if source_methods is not None:
+        # A filtered process is complete against THAT selected group's owner
+        # universe, never against eight full-profile methods not requested.
+        profile = source_process if source_process is not None else "full"
+        if profile not in IMPLEMENTED:
+            raise ValueError("unknown original source method profile")
+        if not isinstance(source_methods, list):
+            raise ValueError("invalid source method ledger")
+        for item in source_methods:
+            if (not isinstance(item, dict) or
+                    item.get("method") not in IMPLEMENTED["full"] or
+                    item.get("method") in source or
+                    item.get("status") not in _SOURCE_METHOD_STATES):
+                raise ValueError("missing, duplicate or forged source method")
+            digest = item.get("source_digest")
+            if item["status"] in _SOURCE_METHOD_PASS:
+                if not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest):
+                    raise ValueError("source method execution lacks exact digest")
+            elif digest is not None:
+                raise ValueError("non-executed source method invented digest")
+            source[item["method"]] = item
+        if set(source) != set(IMPLEMENTED[profile]):
+            raise ValueError("incomplete selected source method universe")
+    rows = []
+    for name, cap in sorted(native.items()):
+        selected = name in _BASELINE_OWNERS
+        if tokens:
+            words = set(re.sub(r"[^a-z0-9]+", " ",
+                               name + " " + cap["family"].lower()).split())
+            selected = selected or bool(words & tokens)
+            selected = selected or (
+                name == "debt-scan" and bool(tokens & {"security", "sarif"}) or
+                name == "graph" and bool(tokens & {"architecture", "imports"}) or
+                name == "archaeology" and bool(tokens & {"history", "commits"}))
+        witness = observations.get(name)
+        if not selected:
+            state, reason, digest = "NOT_SELECTED", "INTENT_NOT_RELEVANT", None
+        elif name not in _BASELINE_OWNERS:
+            state, reason, digest = "BLOCKED", "MISSING_QUALIFIED_OPERATIONAL_ADAPTER", None
+        elif witness and witness["state"] == "RUN_REPORTED_UNATTESTED":
+            digest = witness.get("stdout_sha256")
+            if not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest):
+                raise ValueError("native execution without output digest")
+            state, reason = "RUN_REPORTED_UNATTESTED", "REUSED_EXISTING_BOUNDED_OWNER_RECEIPT"
+        else:
+            state, reason, digest = "BLOCKED", "BOUNDED_NATIVE_OBSERVATION_UNAVAILABLE", None
+        source_method = _SOURCE_FOR_COMMAND.get(name) if selected else None
+        source_digest = None
+        if (selected and name not in _BASELINE_OWNERS and source_method in source and
+                source[source_method]["status"] in _SOURCE_METHOD_PASS):
+            source_digest = source[source_method]["source_digest"]
+            state, reason = ("REUSED_SOURCE_METHOD_SCOPED",
+                             "SOURCE_METHOD_REUSED_NOT_INDIVIDUAL_CLI_EXECUTION")
+        rows.append({"id": "cora:" + name, "kind": "NATIVE_CLI", "owner": "CORA",
+                     "selected": selected, "state": state, "reason": reason,
+                     "output_sha256": digest, "source_method": source_method,
+                     "source_digest_sha256": source_digest, "authority": "NONE"})
+    ranked = process_catalog(intent=intent or "")
+    matches = {x["id"] for x in ranked.get("inference", [])}
+    for name, binary, args, terms, process, handoff in sorted(EXTERNAL_TOOLS):
+        selected = name in matches or bool(normalized and name.replace("-", " ") in normalized)
+        rows.append({"id": "external:" + name, "kind": "UPSTREAM_CANDIDATE",
+                     "owner": "UPSTREAM_EXTERNAL", "selected": selected,
+                     "state": "BLOCKED" if selected else "NOT_SELECTED",
+                     "reason": "EXTERNAL_TOOL_NOT_AUTHORIZED_OR_ATTESTED"
+                     if selected else "INTENT_NOT_RELEVANT",
+                     "output_sha256": None, "source_method": None,
+                     "source_digest_sha256": None, "authority": "NONE"})
+    rows.sort(key=lambda x: x["id"])
+    counts = {"native": 71, "external": 10, "total": 81,
+              "selected": sum(x["selected"] for x in rows),
+              "run_reported": sum(x["state"] == "RUN_REPORTED_UNATTESTED" for x in rows),
+              "source_reused": sum(x["state"] == "REUSED_SOURCE_METHOD_SCOPED" for x in rows),
+              "blocked": sum(x["state"] == "BLOCKED" for x in rows),
+              "not_selected": sum(x["state"] == "NOT_SELECTED" for x in rows)}
+    return {"schema": UNIVERSAL_SCHEMA, "commit": commit, "intent": intent,
+            "catalog": "71_CANONICAL_CLI_PLUS_10_UPSTREAM_CANDIDATES",
+            "rows": rows, "counts": counts, "authority": "NONE",
+            "product_status": "BLOCKED_EXTERNAL",
+            "agent_handoff": {
+                "selected": [r["id"] for r in rows if r["selected"]],
+                "gaps": [{"id": r["id"], "reason": r["reason"]}
+                         for r in rows if r["state"] == "BLOCKED"],
+                "inference_scope": "DETERMINISTIC_LEXICAL_SELECTION_NOT_AI_REASONING",
+                "human_review_required": True}}
+
+
+def verify_universal_capability_plan(capabilities: list[dict], report: dict,
+                                     native_observations: list[dict] | None = None,
+                                     source_methods: list[dict] | None = None,
+                                     source_process: str | None = None) -> bool:
+    """Exact source replay: a digest is not independent runtime attestation."""
+    if not isinstance(report, dict) or report.get("authority") != "NONE":
+        raise ValueError("invalid capability report authority")
+    expected = universal_capability_plan(
+        capabilities, commit=report.get("commit"), intent=report.get("intent"),
+        native_observations=native_observations, source_methods=source_methods,
+        source_process=source_process)
+    if report != expected:
+        raise ValueError("capability plan, status or native receipt does not replay")
+    return True

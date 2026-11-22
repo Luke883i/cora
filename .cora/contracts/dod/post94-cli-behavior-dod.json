@@ -1504,5 +1504,185 @@
       "runtime_claim": "NOT_ATTESTED",
       "owner": "TARGET_OR_APPROVED_RUNNER"
     }
+  },
+  "universal_orchestration": {
+    "schema": "cora-universal-capability-orchestrator-dod/1",
+    "abstract": "One existing One-Run selects context-relevant capability owners from 71 CORA CLI declarations and 10 third-party candidates, runs only a permitted bounded adapter, and emits verifiable origin, outcomes, blocked reasons and AI handoff without inventing target approval.",
+    "global_goal": "G_UNIVERSAL_CAPABILITY_OPERATIONAL",
+    "global_status": "BLOCKED_EXTERNAL",
+    "authority": "NONE",
+    "source_counts": {
+      "native_cli_declarations": 71,
+      "external_candidates": 10,
+      "addressable_capabilities": 81
+    },
+    "nodes": [
+      {
+        "id": "G_UNIVERSAL_CAPABILITY_OPERATIONAL",
+        "scope": "GLOBAL",
+        "depends_on": [
+          "I_CATALOG_IDENTITY",
+          "I_CONTEXT_SELECTION",
+          "I_EFFECT_GOVERNANCE",
+          "I_SOURCE_REPLAY",
+          "I_RELEVANT_BEHAVIOR",
+          "E_INDEPENDENT_RUNTIME",
+          "E_RELEASE_OWNER"
+        ],
+        "status": "BLOCKED_EXTERNAL",
+        "falsifier": "Any missing dependency, missing exact-SHA evidence, forged PASS, unconsented external action or untested target behavior blocks acceptance."
+      },
+      {
+        "id": "I_CATALOG_IDENTITY",
+        "scope": "INTERMEDIATE",
+        "depends_on": [
+          "L_NATIVE_71",
+          "L_UPSTREAM_10"
+        ],
+        "status": "SOURCE_CANDIDATE",
+        "falsifier": "Any missing dependency, missing exact-SHA evidence, forged PASS, unconsented external action or untested target behavior blocks acceptance."
+      },
+      {
+        "id": "I_CONTEXT_SELECTION",
+        "scope": "INTERMEDIATE",
+        "depends_on": [
+          "L_BOUNDED_INTENT",
+          "L_EXCLUDED_NOT_RUN"
+        ],
+        "status": "SOURCE_CANDIDATE",
+        "falsifier": "Any missing dependency, missing exact-SHA evidence, forged PASS, unconsented external action or untested target behavior blocks acceptance."
+      },
+      {
+        "id": "I_EFFECT_GOVERNANCE",
+        "scope": "INTERMEDIATE",
+        "depends_on": [
+          "L_REUSE_PR95_OWNER",
+          "L_EXTERNAL_DENIAL",
+          "L_NONPROMOTION"
+        ],
+        "status": "SOURCE_CANDIDATE",
+        "falsifier": "Any missing dependency, missing exact-SHA evidence, forged PASS, unconsented external action or untested target behavior blocks acceptance."
+      },
+      {
+        "id": "I_SOURCE_REPLAY",
+        "scope": "INTERMEDIATE",
+        "depends_on": [
+          "L_EXACT_SHA",
+          "L_NEGATIVE_MUTANTS"
+        ],
+        "status": "SOURCE_CANDIDATE",
+        "falsifier": "Any missing dependency, missing exact-SHA evidence, forged PASS, unconsented external action or untested target behavior blocks acceptance."
+      },
+      {
+        "id": "I_RELEVANT_BEHAVIOR",
+        "scope": "INTERMEDIATE",
+        "depends_on": [
+          "L_RELEVANT_NATIVE_ADAPTERS",
+          "L_RELEVANT_UPSTREAM_ADAPTERS"
+        ],
+        "status": "NOT_ACCEPTED",
+        "falsifier": "Any missing dependency, missing exact-SHA evidence, forged PASS, unconsented external action or untested target behavior blocks acceptance."
+      },
+      {
+        "id": "L_NATIVE_71",
+        "scope": "LOCAL",
+        "depends_on": [],
+        "status": "SOURCE_CANDIDATE",
+        "falsifier": "Any missing dependency, missing exact-SHA evidence, forged PASS, unconsented external action or untested target behavior blocks acceptance."
+      },
+      {
+        "id": "L_UPSTREAM_10",
+        "scope": "LOCAL",
+        "depends_on": [],
+        "status": "SOURCE_CANDIDATE",
+        "falsifier": "Any missing dependency, missing exact-SHA evidence, forged PASS, unconsented external action or untested target behavior blocks acceptance."
+      },
+      {
+        "id": "L_BOUNDED_INTENT",
+        "scope": "LOCAL",
+        "depends_on": [],
+        "status": "SOURCE_CANDIDATE",
+        "falsifier": "Any missing dependency, missing exact-SHA evidence, forged PASS, unconsented external action or untested target behavior blocks acceptance."
+      },
+      {
+        "id": "L_EXCLUDED_NOT_RUN",
+        "scope": "LOCAL",
+        "depends_on": [],
+        "status": "SOURCE_CANDIDATE",
+        "falsifier": "Any missing dependency, missing exact-SHA evidence, forged PASS, unconsented external action or untested target behavior blocks acceptance."
+      },
+      {
+        "id": "L_REUSE_PR95_OWNER",
+        "scope": "LOCAL",
+        "depends_on": [],
+        "status": "SOURCE_CANDIDATE",
+        "falsifier": "Any missing dependency, missing exact-SHA evidence, forged PASS, unconsented external action or untested target behavior blocks acceptance."
+      },
+      {
+        "id": "L_EXTERNAL_DENIAL",
+        "scope": "LOCAL",
+        "depends_on": [],
+        "status": "SOURCE_CANDIDATE",
+        "falsifier": "Any missing dependency, missing exact-SHA evidence, forged PASS, unconsented external action or untested target behavior blocks acceptance."
+      },
+      {
+        "id": "L_NONPROMOTION",
+        "scope": "LOCAL",
+        "depends_on": [],
+        "status": "SOURCE_CANDIDATE",
+        "falsifier": "Any missing dependency, missing exact-SHA evidence, forged PASS, unconsented external action or untested target behavior blocks acceptance."
+      },
+      {
+        "id": "L_EXACT_SHA",
+        "scope": "LOCAL",
+        "depends_on": [],
+        "status": "SOURCE_CANDIDATE",
+        "falsifier": "Any missing dependency, missing exact-SHA evidence, forged PASS, unconsented external action or untested target behavior blocks acceptance."
+      },
+      {
+        "id": "L_NEGATIVE_MUTANTS",
+        "scope": "LOCAL",
+        "depends_on": [],
+        "status": "SOURCE_CANDIDATE",
+        "falsifier": "Any missing dependency, missing exact-SHA evidence, forged PASS, unconsented external action or untested target behavior blocks acceptance."
+      },
+      {
+        "id": "L_RELEVANT_NATIVE_ADAPTERS",
+        "scope": "LOCAL",
+        "depends_on": [],
+        "status": "NOT_ACCEPTED",
+        "falsifier": "Any missing dependency, missing exact-SHA evidence, forged PASS, unconsented external action or untested target behavior blocks acceptance."
+      },
+      {
+        "id": "L_RELEVANT_UPSTREAM_ADAPTERS",
+        "scope": "LOCAL",
+        "depends_on": [],
+        "status": "BLOCKED_EXTERNAL",
+        "falsifier": "Any missing dependency, missing exact-SHA evidence, forged PASS, unconsented external action or untested target behavior blocks acceptance."
+      },
+      {
+        "id": "E_INDEPENDENT_RUNTIME",
+        "scope": "EXTERNAL",
+        "depends_on": [],
+        "status": "BLOCKED_EXTERNAL",
+        "falsifier": "Any missing dependency, missing exact-SHA evidence, forged PASS, unconsented external action or untested target behavior blocks acceptance."
+      },
+      {
+        "id": "E_RELEASE_OWNER",
+        "scope": "EXTERNAL",
+        "depends_on": [],
+        "status": "BLOCKED_EXTERNAL",
+        "falsifier": "Any missing dependency, missing exact-SHA evidence, forged PASS, unconsented external action or untested target behavior blocks acceptance."
+      }
+    ],
+    "implementation_status": "SOURCE_CANDIDATE_TARGET_RUNTIME_UNATTESTED",
+    "nonclaims": [
+      "NOT_81_EXECUTED",
+      "NOT_81_SHELL_COMMANDS",
+      "NOT_UPSTREAM_CODE_OWNED",
+      "NOT_AI_CAUSAL_PROOF",
+      "NOT_RELEASE_AUTHORIZED"
+    ],
+    "rollback": "Revert strictly scoped commits and restore original PR95 source/blob tree; verify CLI historical behavior and receipts."
   }
 }

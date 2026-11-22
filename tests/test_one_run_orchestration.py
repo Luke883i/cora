@@ -33,6 +33,26 @@ class OneRunAssuranceTests(unittest.TestCase):
         cls.sha = git(ROOT, "rev-parse", "HEAD")
         cls.source = run_one(ROOT, cls.sha)
 
+    def test_universal_81_source_scoped_plan_replay_and_counterexample(self):
+        from cora.process_suite import verify_universal_capability_plan
+        from cora.evidence import domain_hash
+        d = self.source
+        planner = d["universal_capability_plan"]
+        self.assertEqual(planner["counts"]["native"], 71)
+        self.assertEqual(planner["counts"]["external"], 10)
+        self.assertEqual(planner["counts"]["total"], 81)
+        self.assertEqual(planner["counts"]["run_reported"], 3)
+        self.assertTrue(verify_universal_capability_plan(
+            d["catalog"]["capabilities"], planner, d["cli_capability_attempts"]))
+        self.assertTrue(verify_one(ROOT, d))
+        forged = copy.deepcopy(d)
+        forged["universal_capability_plan"]["counts"]["total"] = 80
+        forged["receipt_digest"] = domain_hash("CORA:one-run:1",
+                                                  {k: v for k, v in forged.items()
+                                                   if k != "receipt_digest"})
+        with self.assertRaises(ValueError):
+            verify_one(ROOT, forged)
+
     def test_actual_source_methods_and_noncompensatory_reticulum(self):
         d = self.source
         self.assertEqual(d["commit"], self.sha)
@@ -229,6 +249,51 @@ class OneRunAssuranceTests(unittest.TestCase):
         self.assertEqual(a["oracle_disagreements"], 0)
         self.assertEqual(a["unauthorized_promotions"], 0)
         self.assertEqual(a["external"], "BLOCKED_EXTERNAL")
+
+
+
+class UniversalIntentCLIRoutingRegression(unittest.TestCase):
+    """No new CLI owner: preserve ordinary source mode and route only One-Run."""
+
+    def test_plain_process_run_never_passes_unrecognized_intent_kwarg(self):
+        with patch("cora.cli.run_suite") as source:
+            source.return_value = {"status": "PASS_SCOPED"}
+            self.assertEqual(main(["process-run", "."]), 0)
+            self.assertNotIn("capability_intent", source.call_args.kwargs)
+
+    def test_non_one_run_intent_rejected_before_source_execution(self):
+        with patch("cora.cli.run_suite") as source:
+            with self.assertRaises(SystemExit) as error:
+                main(["process-run", ".", "--capability-intent", "security scan"])
+            self.assertEqual(error.exception.code, 2)
+            source.assert_not_called()
+
+    def test_comprehensive_receives_exact_bounded_intent(self):
+        with (patch("cora.cli.run_integrated") as runner,
+              patch("cora.cli.load_chat_step") as load,
+              patch("cora.cli.append_chat_iteration") as append):
+            load.return_value = {"intent": "security scan SARIF"}
+            runner.return_value = {
+                "baseline_pr36": {"source_status": "PASS_SCOPED",
+                                   "model_stress": {"status": "NOT_RUN"}},
+                "tests": {"state": "NOT_RUN"}}
+            self.assertEqual(main(["process-run", ".", "--one-run",
+                                   "--profile", "comprehensive",
+                                   "--chat-step", "/tmp/test-step.json",
+                                   "--chat-bundle", "/tmp/test-session.zip"]), 0)
+            self.assertEqual(runner.call_args.kwargs["capability_intent"],
+                             "security scan SARIF")
+            load.assert_called_once()
+            append.assert_called_once()
+
+    def test_standard_one_run_receives_intent(self):
+        with patch("cora.cli.run_one") as runner:
+            runner.return_value = {
+                "source_status": "PASS_SCOPED",
+                "runtime_status": "NOT_RUN",
+                "model_stress": {"status": "NOT_RUN"}}
+            self.assertEqual(main(["process-run", ".", "--one-run"]), 0)
+            self.assertNotIn("capability_intent", runner.call_args.kwargs)
 
 
 if __name__ == "__main__":

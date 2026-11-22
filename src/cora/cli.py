@@ -820,7 +820,8 @@ def main(argv: list[str] | None = None) -> int:
                         authorization_file=args.authorization_file,
                         evidence_dir=args.evidence_dir,test_timeout=args.test_timeout,
                         model_stress_cases=args.model_stress_cases,
-                        change_base=args.change_base)
+                        change_base=args.change_base,
+                        capability_intent=chat_step['intent'] if chat_step else None)
                     if args.atlas_json:
                         args.atlas_json.write_text(json.dumps(result,sort_keys=True,indent=2)+'\n',encoding='utf-8')
                     if args.atlas_html:
