@@ -120,6 +120,75 @@ class ChatBundleTests(unittest.TestCase):
             step=self.step();transform(step)
             with self.subTest(step=step),self.assertRaises(ValueError): validate_step(step)
 
+    def test_writer_lock_cleanup_preserves_recovery(self):
+        lock = self.bundle.with_name(self.bundle.name + '.lock')
+        append_chat_iteration(self.bundle, repo=self.repo,
+                              step=self.step(), receipt=self.receipt())
+        self.assertFalse(lock.exists(), 'writer lock leaked after successful append')
+        original = self.bundle.read_bytes()
+        with self.assertRaisesRegex(ValueError, 'sequence violation'):
+            append_chat_iteration(self.bundle, repo=self.repo,
+                                  step=self.step(3), receipt=self.receipt())
+        self.assertFalse(lock.exists(), 'writer lock leaked after rejected append')
+        self.assertEqual(self.bundle.read_bytes(), original)
+        append_chat_iteration(self.bundle, repo=self.repo,
+                              step=self.step(2), receipt=self.receipt())
+        self.assertFalse(lock.exists(), 'writer lock leaked after recovery')
+
+    def test_session_id_input_constraints_and_atomic_append(self):
+        # The previously surviving physical mutant removed this exact source guard.
+        valid_ids = ('abc', 'a_3', 'a' + 'z' * 39)
+        for sid in valid_ids:
+            with self.subTest(valid=sid):
+                candidate = self.step()
+                candidate['session_id'] = sid
+                self.assertIs(validate_step(candidate), candidate)
+        bad_ids = (None, 8, False, '', 'a', 'ab', 'ABC', 'Abc',
+                   'abc/def', '../escape', 'a space', 'a\nline',
+                   'a' * 41, 'a\x00b', 'ébc')
+        for sid in bad_ids:
+            with self.subTest(invalid=sid):
+                candidate = self.step()
+                candidate['session_id'] = sid
+                with self.assertRaisesRegex(ValueError, 'invalid chat session id'):
+                    validate_step(candidate)
+                with self.assertRaises(ValueError):
+                    append_chat_iteration(self.bundle, repo=self.repo,
+                                          step=candidate, receipt=self.receipt())
+                self.assertFalse(self.bundle.exists())
+        append_chat_iteration(self.bundle, repo=self.repo,
+                              step=self.step(), receipt=self.receipt())
+        original = self.bundle.read_bytes()
+        for sid in bad_ids:
+            with self.subTest(continuation=sid):
+                candidate = self.step(2)
+                candidate['session_id'] = sid
+                with self.assertRaises(ValueError):
+                    append_chat_iteration(self.bundle, repo=self.repo,
+                                          step=candidate, receipt=self.receipt())
+                self.assertEqual(self.bundle.read_bytes(), original)
+
+    def test_aggregate_dod_claim_cannot_self_approve(self):
+        candidate = self.step()
+        candidate['dod']['nodes'][-1]['observation'] = 'REPORTED_OBSERVED'
+        with self.assertRaisesRegex(ValueError, 'aggregate DoD nodes'):
+            validate_step(candidate)
+        with self.assertRaises(ValueError):
+            append_chat_iteration(self.bundle, repo=self.repo,
+                                  step=candidate, receipt=self.receipt())
+        self.assertFalse(self.bundle.exists())
+
+    def test_derived_dod_requires_external_witness(self):
+        # No reported source evidence promotes an EXTERNAL AND leaf to accepted.
+        from cora.chat_bundle import _derived
+        trace = _derived(validate_step(self.step()))
+        self.assertEqual(trace['states']['D1'], 'MODEL_ELIGIBLE_UNATTESTED')
+        self.assertEqual(trace['states']['D2'], 'BLOCKED_EXTERNAL')
+        self.assertEqual(trace['states']['G'], 'BLOCKED_UNOBSERVED')
+        self.assertEqual(trace['next_unresolved'], 'D2')
+        self.assertEqual(trace['authorization'], 'NONE')
+        self.assertEqual(trace['product_status'], 'BLOCKED_EXTERNAL')
+
     def test_path_traversal_duplicate_and_modified_receipt_rejected(self):
         append_chat_iteration(self.bundle,repo=self.repo,step=self.step(),receipt=self.receipt())
         with zipfile.ZipFile(self.bundle,'a') as z:

@@ -9,9 +9,9 @@ on:
 permissions:
   contents: read
 jobs:
-  verify:
+  native_suite:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
@@ -49,6 +49,34 @@ jobs:
           echo "status=$status" >> "$GITHUB_OUTPUT"
       - name: "Enforce original unit suite - ${{ steps.full_native_suite.outputs.failures }}"
         run: test "${{ steps.full_native_suite.outputs.status }}" -eq 0
+      - name: Falsify self-assurance guards with six disposable source mutants
+        run: |
+          python tests/cora_self_mutations.py --repo . --output /tmp/cora-self-mutations.json
+          python - <<'PY'
+          import json
+          report=json.load(open('/tmp/cora-self-mutations.json', encoding='utf-8'))
+          assert report['result']=='PASS_SCOPED' and report['killed']==report['total']==6
+          assert report['commit']==__import__('subprocess').check_output(
+              ['git','rev-parse','HEAD'],text=True).strip()
+          PY
+  source_stress:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify pinned historical documentation baselines exist
+        run: |
+          git cat-file -e 'd8b75df872c1603597550bebfb8c331c565aa7f9^{commit}'
+          git cat-file -e 'ee6da7625dae1e4101e06eb979a348610f39093b^{commit}'
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.11'
+      - name: Install independently built CORA package (not editable)
+        run: python -m pip install .
       - name: Verify installed CLI version
         run: cora version
       - name: Verify immutable Git snapshot and ledger
@@ -100,3 +128,17 @@ jobs:
           cora verify-file-lab /tmp/cora-role-lab.json --repo .
           cora stress-artifact-semantics --seed 883 --minimum-cases 1000000 --no-novelty 10000000 --output /tmp/cora-saturation.json
           python -c 'import json; a=json.load(open("/tmp/cora-saturation.json")); assert a["total_cases"]==11000000 and a["semantic_classes_observed"]==12288 and a["new_classes_after_M"]==0 and a["mismatches"]==0 and a["stream_sha256"]=="523cdad1ebd659071a645aedc567de1ceeb65ee5fd0d356c8f17c0c4f5e9844f"'
+  verify:
+    needs: [native_suite, source_stress]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Enforce native Git and deterministic stress AND-gate
+        env:
+          NATIVE_RESULT: ${{ needs.native_suite.result }}
+          STRESS_RESULT: ${{ needs.source_stress.result }}
+        run: |
+          printf 'native_suite=%s source_stress=%s\n' "$NATIVE_RESULT" "$STRESS_RESULT"
+          test "$NATIVE_RESULT" = success
+          test "$STRESS_RESULT" = success

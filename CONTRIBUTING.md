@@ -16,6 +16,30 @@ For each PR, state: claim and affected objects (product/software/repo), source c
 PR review is not a substitute for independently required GitHub checks or protections. Any mutation of `.cora/`, `.github/workflows/`, verification scripts or publication controls requires human security review. See [SECURITY.md](SECURITY.md) for reporting.
 
 
+## Self-assurance regression: bounded CORA -> CORA
+
+For source changes to chat continuity, authorization, reticular DoD or selection,
+run the *native* Git-bound suite with `python -m unittest discover -s tests -v`.
+The optional `python -m pytest -q` collection excludes the third-party fixture
+under `tests/fixtures/third_party`; it does not replace the original Git-native
+suite. Work on an authentic checkout, not a Git-less ZIP or synthesized commit.
+
+Run `python tests/cora_self_mutations.py --repo . --output /tmp/cora-self-mutations.json`.
+The six **physical, disposable** mutations are expected to be KILLED by named
+native assertions: chat-session identity, receipt authority, aggregate DoD
+self-report, external AND leaf, writer-lock cleanup/rollback and no-delete
+selection. Missing anchors, timeouts, import errors or unrelated failures
+must not count as kills. Keep the JSON outside the checkout; review survivors,
+source SHA and exact CI on the final branch HEAD. This test-only harness uses
+existing CORA modules and native tests, not another assurance engine.
+
+**DoD:** M1 identity mutant KILLED; M2 canonical full unit suite on original
+Git ancestry plus clean pytest collection; M3 six bounded semantic guards
+KILLED with negative control and no write to source; M4 final-HEAD CI and
+independent review. A green source CI is not evidence of protected-host checks,
+independent behavior, release or approval. Revert the two semantic commits for
+rollback; do not merge automatically.
+
 ## Forensic and AI contributions
 
 Any new dependency relation or runtime adapter must define a bounded claim schema, provenance, explicit unknowns, independent Git-fixture oracles and privacy/threat tests. AI text must remain a hypothesis, not an authenticated fact. High-risk changes require the human roles in [GOVERNANCE.md](GOVERNANCE.md) and independently protected review; source-controlled CODEOWNERS alone does not enforce separation of duties.
