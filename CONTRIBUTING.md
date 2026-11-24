@@ -24,7 +24,7 @@ The optional `python -m pytest -q` collection excludes the third-party fixture
 under `tests/fixtures/third_party`; it does not replace the original Git-native
 suite. Work on an authentic checkout, not a Git-less ZIP or synthesized commit.
 
-Run `python tools/verify_cora_self_mutations.py --repo . --output /tmp/cora-self-mutations.json`.
+Run `python tests/cora_self_mutations.py --repo . --output /tmp/cora-self-mutations.json`.
 The six **physical, disposable** mutations are expected to be KILLED by named
 native assertions: chat-session identity, receipt authority, aggregate DoD
 self-report, external AND leaf, writer-lock cleanup/rollback and no-delete

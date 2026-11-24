@@ -51,7 +51,7 @@ jobs:
         run: test "${{ steps.full_native_suite.outputs.status }}" -eq 0
       - name: Falsify self-assurance guards with six disposable source mutants
         run: |
-          python tools/verify_cora_self_mutations.py --repo . --output /tmp/cora-self-mutations.json
+          python tests/cora_self_mutations.py --repo . --output /tmp/cora-self-mutations.json
           python - <<'PY'
           import json
           report=json.load(open('/tmp/cora-self-mutations.json', encoding='utf-8'))
