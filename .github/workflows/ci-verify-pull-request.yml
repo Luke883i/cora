@@ -49,6 +49,16 @@ jobs:
           echo "status=$status" >> "$GITHUB_OUTPUT"
       - name: "Enforce original unit suite - ${{ steps.full_native_suite.outputs.failures }}"
         run: test "${{ steps.full_native_suite.outputs.status }}" -eq 0
+      - name: Falsify self-assurance guards with six disposable source mutants
+        run: |
+          python tools/verify_cora_self_mutations.py --repo . --output /tmp/cora-self-mutations.json
+          python - <<'PY'
+          import json
+          report=json.load(open('/tmp/cora-self-mutations.json', encoding='utf-8'))
+          assert report['result']=='PASS_SCOPED' and report['killed']==report['total']==6
+          assert report['commit']==__import__('subprocess').check_output(
+              ['git','rev-parse','HEAD'],text=True).strip()
+          PY
       - name: Verify installed CLI version
         run: cora version
       - name: Verify immutable Git snapshot and ledger
