@@ -409,5 +409,73 @@ class PortableBridgeDoDTests(unittest.TestCase):
             file.write_bytes(original)
 
 
+class AgentUseContractDoDTests(unittest.TestCase):
+    """Source-only regression; never an execution or release attestation."""
+
+    def load(self):
+        return json.loads((ROOT / '.cora/contracts/dod/pr99-portable-universal-dod.json')
+                          .read_text('utf-8'))['candidate_follow_on']['agent_use_contract_v1']
+
+    @staticmethod
+    def verify(c):
+        from cora.reticulum import ordered_cut, assess_cut, MODEL
+        if c.get('schema')!='cora-agent-use-contract/1' or c.get('authority')!='NONE' or c.get('maturity')!='SOURCE_CONTRACT_CANDIDATE_NOT_RUNTIME_QUALIFICATION':
+            raise ValueError('authority or schema drift')
+        nodes=c['nodes']; by={r['id']:r for r in nodes}
+        if len(nodes)!=len(by) or set(ordered_cut(nodes,c['roots']['complete']))!=set(by):
+            raise ValueError('unreachable or duplicate dependency')
+        ext={r['id'] for r in nodes if r['scope']=='EXTERNAL' and not r['depends_on']}
+        if ext!={'E_OWNER','E_HOST','E_RELEASE'} or any(by[id]['status']!='BLOCKED_EXTERNAL' for id in ext):
+            raise ValueError('forged external approval')
+        obs={r['id']:MODEL for r in nodes if not r['depends_on'] and r['scope']!='EXTERNAL'}
+        if assess_cut(nodes,c['roots']['complete'],obs)['status']!='BLOCKED_EXTERNAL':
+            raise ValueError('self promotion')
+        sources=c['existing_authoritative_sources']
+        if (sources['and_kernel']!='src/cora/reticulum.py' or
+                sources['catalog_counts']!={'native_cli_declared':71,'external_candidates':10}):
+            raise ValueError('owner inventory drift')
+        for value in sources.values():
+            if isinstance(value,list) and (len(value)!=len(set(value)) or any(not (ROOT / p).is_file() for p in value)):
+                raise ValueError('missing/duplicate original owner')
+        if not (ROOT / sources['and_kernel']).is_file():
+            raise ValueError('missing kernel')
+        if (c['reuse_first_decision']['default']!='REUSE_OWNER_OR_BLOCK' or
+                any(c['metrics'][k]!=0 for k in ('unjustified_new_writers_max','parallel_engines_max','unauthorized_effects_max','runtime_claims_without_original_target_test_max'))):
+            raise ValueError('weakened reuse or authorization')
+        if not ('negative_falsifier' in c['capability_activation']['required_per_action'] and
+                'runner_permission' in c['capability_activation']['required_per_action'] and
+                'rollback' in c['iteration_update']['required'] and
+                'stop' in c['iteration_update']['no_progress'] and
+                'BLOCKED_EXTERNAL' in c['acceptance']):
+            raise ValueError('no fail closed iteration')
+        return True
+
+    def test_source_contract_is_closed_and_bounded(self):
+        self.assertTrue(self.verify(self.load()))
+
+    def test_ten_real_json_mutants_are_rejected(self):
+        for fault in ('engine','writer','host','release','missing-owner','duplicate-owner',
+                      'orphan','cycle','native-negative','roadmap'):
+            c=copy.deepcopy(self.load())
+            if fault=='engine': c['metrics']['parallel_engines_max']=1
+            elif fault=='writer': c['reuse_first_decision']['default']='DUPLICATE_ALLOWED'
+            elif fault=='host': next(x for x in c['nodes'] if x['id']=='E_HOST')['status']='PASS'
+            elif fault=='release': c['acceptance']='PASS_SCOPED'
+            elif fault=='missing-owner': c['existing_authoritative_sources']['and_kernel']='src/cora/forged.py'
+            elif fault=='duplicate-owner': c['existing_authoritative_sources']['execution'].append('src/cora/one_run.py')
+            elif fault=='orphan': c['nodes'].append({'id':'ORPHAN','depends_on':[],'scope':'SOURCE'})
+            elif fault=='cycle': next(x for x in c['nodes'] if x['id']=='I_CYCLE')['depends_on'].append('G_AGENT_PRODUCT')
+            elif fault=='native-negative': c['capability_activation']['required_per_action'].remove('negative_falsifier')
+            elif fault=='roadmap': c['iteration_update']['no_progress']='repeat forever'
+            with self.subTest(fault=fault), self.assertRaises(ValueError):
+                self.verify(c)
+
+    def test_71_plus_10_are_not_81_executions(self):
+        from cora.process_suite import EXTERNAL_TOOLS
+        self.assertEqual(len(json.loads((ROOT / '.cora/assurance/capability-atlas.json').read_text())['commands']),71)
+        self.assertEqual(len(EXTERNAL_TOOLS),10)
+        self.assertEqual(self.load()['authority'],'NONE')
+
+
 if __name__ == '__main__':
     unittest.main()

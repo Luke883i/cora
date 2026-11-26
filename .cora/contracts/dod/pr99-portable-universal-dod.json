@@ -830,6 +830,560 @@
       "permission": "EXTERNAL_HUMAN_ONLY",
       "no_average": true
     },
-    "rollback": "Revert this follow-on candidate branch only, never PR98 merged main or PR99 original branch."
+    "rollback": "Revert this follow-on candidate branch only, never PR98 merged main or PR99 original branch.",
+    "agent_use_contract_v1": {
+      "schema": "cora-agent-use-contract/1",
+      "maturity": "SOURCE_CONTRACT_CANDIDATE_NOT_RUNTIME_QUALIFICATION",
+      "authority": "NONE",
+      "abstract_dod": "A nontechnical human can direct an authorized AI coding agent with CORA CLI or ChatGPT: every intent becomes backward noncompensatory DoDs, least-change reuse, bounded effects, falsified evidence, updated roadmap and a comprehensible next action.",
+      "a0": {
+        "actors": [
+          "human_nontechnical",
+          "coding_agent",
+          "target_owner",
+          "authorized_runner",
+          "CORA_METHOD_host_authority_NONE",
+          "CORA_ENGINE",
+          "external_reviewer"
+        ],
+        "behavior": "Outcome -> A0 -> backward AND-DoDs -> reuse-first owner selection -> reversible slice -> positive+negative native tests -> receipt replay -> roadmap re-falsification.",
+        "state_data": [
+          "target_BASE_HEAD",
+          "cora_HEAD",
+          "owner_decisions",
+          "oracles",
+          "test_IDs",
+          "survivors",
+          "roadmap",
+          "receipts"
+        ],
+        "ux": "Six-slot OneShell; openable detailed evidence; not execution authority.",
+        "exclusions": [
+          "second_engine",
+          "second_owner_registry",
+          "unjustified_writer",
+          "automatic_81_fanout",
+          "chat_impersonating_runtime",
+          "self_approved_release"
+        ],
+        "effects": "Read only by default; separately authorized bounded runner required for effects.",
+        "oracle": "Two actual target iterations with exact-SHA target-owned positive/negative tests, qualified owner adapters, CORA replay, revised roadmap, no unapproved effects; external review remains separate."
+      },
+      "roots": {
+        "source": "G_AGENT_SOURCE",
+        "complete": "G_AGENT_PRODUCT"
+      },
+      "existing_authoritative_sources": {
+        "registry": [
+          "cora.ontology.json",
+          "cora.artifact-roles.json",
+          ".cora/assurance/capability-atlas.json",
+          ".cora/contracts/index.json"
+        ],
+        "and_kernel": "src/cora/reticulum.py",
+        "intent_and_selection": [
+          "src/cora/agent_assurance.py",
+          "src/cora/process_suite.py"
+        ],
+        "execution": [
+          "src/cora/one_run.py",
+          "src/cora/integrated_run.py",
+          "src/cora/foreign_pilot.py"
+        ],
+        "replay": [
+          "src/cora/evidence.py",
+          "src/cora/git_snapshot.py",
+          "src/cora/observation_fusion.py"
+        ],
+        "continuation": [
+          "src/cora/chat_bundle.py",
+          "docs/AGENT_ADOPTION.md"
+        ],
+        "writers": [
+          "src/cora/transform.py",
+          "src/cora/guard.py",
+          "src/cora/chat_bundle.py"
+        ],
+        "catalog_counts": {
+          "native_cli_declared": 71,
+          "external_candidates": 10
+        },
+        "rules": "References, not second owner registry. Static non-use does not prove no consumer."
+      },
+      "reuse_first_decision": {
+        "default": "REUSE_OWNER_OR_BLOCK",
+        "steps": [
+          "identify_existing_owner_and_consumers",
+          "reuse_same_SHA_evidence",
+          "reuse_config_or_composition_before_code",
+          "record_native_test_ID_and_negative_oracle",
+          "justify_remaining_gap"
+        ],
+        "new_writer_exception": [
+          "existing_owner_inadequacy_witness",
+          "no_overlapping_writer",
+          "explicit_write_permission",
+          "native_positive_and_negative",
+          "rollback",
+          "separate_owner_review"
+        ],
+        "rejected": [
+          "second_engine",
+          "second_registry",
+          "unowned_writer",
+          "CLI_catalog_as_execution"
+        ]
+      },
+      "capability_activation": {
+        "planner": "src/cora/process_suite.py:operational_selection",
+        "runner": "original_one_run_and_integrated_run_only",
+        "allowed_states": [
+          "NOT_SELECTED",
+          "BLOCKED_NO_QUALIFIED_ADAPTER",
+          "REUSED_SOURCE_METHOD_SCOPED",
+          "REUSED_NATIVE_OBSERVATION_UNATTESTED",
+          "RUN_REPORTED_UNATTESTED",
+          "TARGET_NATIVE_VERIFIED_BY_OWNER"
+        ],
+        "required_per_action": [
+          "owner_id",
+          "selection_reason",
+          "obligation",
+          "cora_SHA",
+          "target_BASE_HEAD",
+          "runner_permission",
+          "write_permission",
+          "adapter",
+          "test_ids",
+          "negative_falsifier",
+          "input_output_digests",
+          "result",
+          "survivors",
+          "rollback"
+        ],
+        "nonpromotion": "TARGET_NATIVE_VERIFIED_BY_OWNER is a required future target observation, never self-issued by CORA."
+      },
+      "iteration_update": {
+        "required": [
+          "session_id",
+          "iteration_id",
+          "intent",
+          "source_SHA",
+          "target_BASE_HEAD",
+          "previous_roadmap",
+          "observed_counterexamples",
+          "survivors",
+          "invalidated_assumptions",
+          "new_dependencies",
+          "recomputed_AND",
+          "next_unresolved",
+          "one_safe_NEXT",
+          "rollback"
+        ],
+        "no_progress": "If no necessary leaf advances, stop repetition, challenge the oracle and replan.",
+        "handoff": "Existing chat_bundle ZIP requires actual runner and same-SHA replay; no automatic chat capture."
+      },
+      "metrics": {
+        "selected_owners_mapped_pct": 100,
+        "unjustified_new_writers_max": 0,
+        "parallel_engines_max": 0,
+        "unauthorized_effects_max": 0,
+        "catalog_only_promotions_max": 0,
+        "native_positive_and_negative_per_slice_min": 1,
+        "runtime_claims_without_original_target_test_max": 0,
+        "refalsified_reachable_leaves_pct": 100,
+        "oneshell_regions": 6,
+        "operator_effort": "MEASURE_IN_REAL_USER_TRIAL"
+      },
+      "checklists": {
+        "pre": [
+          "pin_two_repos_BASE_HEAD",
+          "read_AGENTS_ontology_tests_consumers",
+          "A0_backward_AND",
+          "reuse_owner_first",
+          "positive_and_negative_oracles",
+          "slice_rollback"
+        ],
+        "run": [
+          "task_packet_and_readback",
+          "verify_actual_permissions",
+          "execute_only_qualified_selected",
+          "retain_target_native_test_IDs_and_evidence"
+        ],
+        "iterate": [
+          "record_survivors_and_invalidations",
+          "recompute_roadmap",
+          "same_SHA_replay",
+          "one_safe_NEXT",
+          "no_self_approval"
+        ]
+      },
+      "nodes": [
+        {
+          "id": "G_AGENT_SOURCE",
+          "kind": "GLOBAL",
+          "scope": "SOURCE",
+          "depends_on": [
+            "I_INTENT",
+            "I_REUSE",
+            "I_ACTIVATION",
+            "I_CYCLE",
+            "I_PRESENTATION"
+          ],
+          "status": "NOT_ATTESTED",
+          "oracle": "SOURCE_CONTRACT_ONLY"
+        },
+        {
+          "id": "G_AGENT_PRODUCT",
+          "kind": "GLOBAL",
+          "scope": "EXTERNAL",
+          "depends_on": [
+            "G_AGENT_SOURCE",
+            "I_TARGET_NATIVE",
+            "I_REAL_HANDOFF",
+            "I_AUTHORITY"
+          ],
+          "status": "BLOCKED_EXTERNAL",
+          "oracle": "NOT_RUN"
+        },
+        {
+          "id": "I_INTENT",
+          "kind": "INTERMEDIATE",
+          "scope": "SOURCE",
+          "depends_on": [
+            "L_A0",
+            "L_RETROGRADE",
+            "L_CHECKLIST"
+          ],
+          "status": "NOT_ATTESTED",
+          "oracle": "SOURCE_CONTRACT_ONLY"
+        },
+        {
+          "id": "I_REUSE",
+          "kind": "INTERMEDIATE",
+          "scope": "SOURCE",
+          "depends_on": [
+            "L_ORIGINAL_OWNERS",
+            "L_REUSE_JUSTIFICATION",
+            "L_NO_DUPLICATE_WRITER"
+          ],
+          "status": "NOT_ATTESTED",
+          "oracle": "SOURCE_CONTRACT_ONLY"
+        },
+        {
+          "id": "I_ACTIVATION",
+          "kind": "INTERMEDIATE",
+          "scope": "SOURCE",
+          "depends_on": [
+            "L_SELECTION",
+            "L_PERMISSION",
+            "L_OPERATION_RECEIPT"
+          ],
+          "status": "NOT_ATTESTED",
+          "oracle": "SOURCE_CONTRACT_ONLY"
+        },
+        {
+          "id": "I_CYCLE",
+          "kind": "INTERMEDIATE",
+          "scope": "SOURCE",
+          "depends_on": [
+            "L_REFALSIFY",
+            "L_REPLAN",
+            "L_STOP_ROLLBACK"
+          ],
+          "status": "NOT_ATTESTED",
+          "oracle": "SOURCE_CONTRACT_ONLY"
+        },
+        {
+          "id": "I_PRESENTATION",
+          "kind": "INTERMEDIATE",
+          "scope": "SOURCE",
+          "depends_on": [
+            "L_ONE_SHELL",
+            "L_DUAL_MODE"
+          ],
+          "status": "NOT_ATTESTED",
+          "oracle": "SOURCE_CONTRACT_ONLY"
+        },
+        {
+          "id": "I_TARGET_NATIVE",
+          "kind": "INTERMEDIATE",
+          "scope": "TARGET_RUNTIME",
+          "depends_on": [
+            "L_NATIVE_POSITIVE",
+            "L_NATIVE_NEGATIVE",
+            "L_SAME_SHA_REPLAY"
+          ],
+          "status": "NOT_ATTESTED",
+          "oracle": "NOT_RUN"
+        },
+        {
+          "id": "I_REAL_HANDOFF",
+          "kind": "INTERMEDIATE",
+          "scope": "TARGET_RUNTIME",
+          "depends_on": [
+            "L_AGENT_READBACK",
+            "L_RUNNER_AVAILABLE",
+            "L_BUNDLE_REPLAY"
+          ],
+          "status": "NOT_ATTESTED",
+          "oracle": "NOT_RUN"
+        },
+        {
+          "id": "I_AUTHORITY",
+          "kind": "INTERMEDIATE",
+          "scope": "EXTERNAL",
+          "depends_on": [
+            "E_OWNER",
+            "E_HOST",
+            "E_RELEASE"
+          ],
+          "status": "BLOCKED_EXTERNAL",
+          "oracle": "NOT_RUN"
+        },
+        {
+          "id": "L_A0",
+          "kind": "LOCAL",
+          "scope": "SOURCE",
+          "depends_on": [],
+          "status": "NOT_ATTESTED",
+          "oracle": "SOURCE_CONTRACT_ONLY"
+        },
+        {
+          "id": "L_RETROGRADE",
+          "kind": "LOCAL",
+          "scope": "SOURCE",
+          "depends_on": [],
+          "status": "NOT_ATTESTED",
+          "oracle": "SOURCE_CONTRACT_ONLY"
+        },
+        {
+          "id": "L_CHECKLIST",
+          "kind": "LOCAL",
+          "scope": "SOURCE",
+          "depends_on": [],
+          "status": "NOT_ATTESTED",
+          "oracle": "SOURCE_CONTRACT_ONLY"
+        },
+        {
+          "id": "L_ORIGINAL_OWNERS",
+          "kind": "LOCAL",
+          "scope": "SOURCE",
+          "depends_on": [],
+          "status": "NOT_ATTESTED",
+          "oracle": "SOURCE_CONTRACT_ONLY"
+        },
+        {
+          "id": "L_REUSE_JUSTIFICATION",
+          "kind": "LOCAL",
+          "scope": "SOURCE",
+          "depends_on": [],
+          "status": "NOT_ATTESTED",
+          "oracle": "SOURCE_CONTRACT_ONLY"
+        },
+        {
+          "id": "L_NO_DUPLICATE_WRITER",
+          "kind": "LOCAL",
+          "scope": "SOURCE",
+          "depends_on": [],
+          "status": "NOT_ATTESTED",
+          "oracle": "SOURCE_CONTRACT_ONLY"
+        },
+        {
+          "id": "L_SELECTION",
+          "kind": "LOCAL",
+          "scope": "SOURCE",
+          "depends_on": [],
+          "status": "NOT_ATTESTED",
+          "oracle": "SOURCE_CONTRACT_ONLY"
+        },
+        {
+          "id": "L_PERMISSION",
+          "kind": "LOCAL",
+          "scope": "SOURCE",
+          "depends_on": [],
+          "status": "NOT_ATTESTED",
+          "oracle": "SOURCE_CONTRACT_ONLY"
+        },
+        {
+          "id": "L_OPERATION_RECEIPT",
+          "kind": "LOCAL",
+          "scope": "SOURCE",
+          "depends_on": [],
+          "status": "NOT_ATTESTED",
+          "oracle": "SOURCE_CONTRACT_ONLY"
+        },
+        {
+          "id": "L_REFALSIFY",
+          "kind": "LOCAL",
+          "scope": "SOURCE",
+          "depends_on": [],
+          "status": "NOT_ATTESTED",
+          "oracle": "SOURCE_CONTRACT_ONLY"
+        },
+        {
+          "id": "L_REPLAN",
+          "kind": "LOCAL",
+          "scope": "SOURCE",
+          "depends_on": [],
+          "status": "NOT_ATTESTED",
+          "oracle": "SOURCE_CONTRACT_ONLY"
+        },
+        {
+          "id": "L_STOP_ROLLBACK",
+          "kind": "LOCAL",
+          "scope": "SOURCE",
+          "depends_on": [],
+          "status": "NOT_ATTESTED",
+          "oracle": "SOURCE_CONTRACT_ONLY"
+        },
+        {
+          "id": "L_ONE_SHELL",
+          "kind": "LOCAL",
+          "scope": "SOURCE",
+          "depends_on": [],
+          "status": "NOT_ATTESTED",
+          "oracle": "SOURCE_CONTRACT_ONLY"
+        },
+        {
+          "id": "L_DUAL_MODE",
+          "kind": "LOCAL",
+          "scope": "SOURCE",
+          "depends_on": [],
+          "status": "NOT_ATTESTED",
+          "oracle": "SOURCE_CONTRACT_ONLY"
+        },
+        {
+          "id": "L_NATIVE_POSITIVE",
+          "kind": "LOCAL",
+          "scope": "TARGET_RUNTIME",
+          "depends_on": [],
+          "status": "NOT_ATTESTED",
+          "oracle": "NOT_RUN"
+        },
+        {
+          "id": "L_NATIVE_NEGATIVE",
+          "kind": "LOCAL",
+          "scope": "TARGET_RUNTIME",
+          "depends_on": [],
+          "status": "NOT_ATTESTED",
+          "oracle": "NOT_RUN"
+        },
+        {
+          "id": "L_SAME_SHA_REPLAY",
+          "kind": "LOCAL",
+          "scope": "TARGET_RUNTIME",
+          "depends_on": [],
+          "status": "NOT_ATTESTED",
+          "oracle": "NOT_RUN"
+        },
+        {
+          "id": "L_AGENT_READBACK",
+          "kind": "LOCAL",
+          "scope": "TARGET_RUNTIME",
+          "depends_on": [],
+          "status": "NOT_ATTESTED",
+          "oracle": "NOT_RUN"
+        },
+        {
+          "id": "L_RUNNER_AVAILABLE",
+          "kind": "LOCAL",
+          "scope": "TARGET_RUNTIME",
+          "depends_on": [],
+          "status": "NOT_ATTESTED",
+          "oracle": "NOT_RUN"
+        },
+        {
+          "id": "L_BUNDLE_REPLAY",
+          "kind": "LOCAL",
+          "scope": "TARGET_RUNTIME",
+          "depends_on": [],
+          "status": "NOT_ATTESTED",
+          "oracle": "NOT_RUN"
+        },
+        {
+          "id": "E_OWNER",
+          "kind": "LOCAL",
+          "scope": "EXTERNAL",
+          "depends_on": [],
+          "status": "BLOCKED_EXTERNAL",
+          "oracle": "NOT_RUN"
+        },
+        {
+          "id": "E_HOST",
+          "kind": "LOCAL",
+          "scope": "EXTERNAL",
+          "depends_on": [],
+          "status": "BLOCKED_EXTERNAL",
+          "oracle": "NOT_RUN"
+        },
+        {
+          "id": "E_RELEASE",
+          "kind": "LOCAL",
+          "scope": "EXTERNAL",
+          "depends_on": [],
+          "status": "BLOCKED_EXTERNAL",
+          "oracle": "NOT_RUN"
+        }
+      ],
+      "falsifiers": [
+        {
+          "id": "duplicate_or_unjustified_writer",
+          "expected": "REFUTED"
+        },
+        {
+          "id": "catalog_as_execution",
+          "expected": "REFUTED"
+        },
+        {
+          "id": "dangling_or_cyclic_AND",
+          "expected": "REFUTED"
+        },
+        {
+          "id": "unauthorized_runner",
+          "expected": "BLOCKED"
+        },
+        {
+          "id": "missing_native_negative",
+          "expected": "BLOCKED"
+        },
+        {
+          "id": "changed_SHA_or_tampered_receipt",
+          "expected": "REFUTED"
+        },
+        {
+          "id": "unchallenged_roadmap",
+          "expected": "BLOCKED"
+        },
+        {
+          "id": "chat_claims_external_approval",
+          "expected": "BLOCKED_EXTERNAL"
+        }
+      ],
+      "roadmap": [
+        {
+          "id": "S0",
+          "scope": "SOURCE",
+          "deliverable": "reuse-first source contract, graph and negative tests"
+        },
+        {
+          "id": "S1",
+          "scope": "TARGET_RUNTIME",
+          "deliverable": "one qualified nonbaseline owner, real native positive/negative and replay"
+        },
+        {
+          "id": "S2",
+          "scope": "TARGET_RUNTIME",
+          "deliverable": "two actual authorized AI iterations with revised roadmap"
+        },
+        {
+          "id": "S3",
+          "scope": "EXTERNAL",
+          "deliverable": "independent human acceptance and host permissions"
+        }
+      ],
+      "rollback": "Revert contract/documentation/test on feature branch; never mutate protected main.",
+      "acceptance": "G_AGENT_SOURCE scoped candidate only; G_AGENT_PRODUCT remains BLOCKED_EXTERNAL."
+    }
   }
 }

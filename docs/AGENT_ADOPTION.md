@@ -51,6 +51,27 @@ Run the target project's real unit/integration tests and, only when authorized, 
 
 Open the PR with the reports and unresolved blockers. Hosting administrators must independently enforce required checks and non-author approval. CORA does not configure those permissions.
 
+## Operational reuse-first contract for nontechnical AI operators (source candidate)
+
+The active backwards-DoD candidate is kept **inside the existing**
+[existing portable-capability contract](../.cora/contracts/dod/pr99-portable-universal-dod.json)
+as `candidate_follow_on.agent_use_contract_v1`, rather than inventing a second owner
+registry, engine or chat writer. Start with the target's observable A0, derive a
+noncompensatory source/runtime/external dependency cut, and select the smallest
+reversible change. Check existing `reticulum`, `process_suite`, `one_run`,
+`integrated_run`, `foreign_pilot`, `chat_bundle`, ontology and artifact roles
+before suggesting new owner code. Record every selected capability's real adapter,
+permissions, native test IDs, result, negative falsifier and rollback; unsupported
+choices remain blocked. After **each authorized slice**, re-falsify the roadmap
+and explicitly name survivors and the first unresolved leaf.
+
+The contract is **SOURCE_CANDIDATE**, not a claimed ChatGPT automation or new
+execution interface. The canonical 71 CLI routes plus ten upstream candidates
+are an inventory, not 81 executions. A Project ZIP or six-slot answer does not
+transfer source, execution, permission, or reviewer authority. CLI execution and
+ChatGPT+agent handoff share the same evidence obligations only when a separate
+authorized runner actually performs the work and readback.
+
 ## 5. Observe the actual merged revision
 
 After a separately authorized merge, run `cora dev-postmerge TARGET --previous REAL_PREMERGE_MAIN --head ACTUAL_MERGED_MAIN --contextual --intent SAME_INTENT --convergence-contract PATH` and replay its receipt with `verify-contextual-gate`. A former PR-head green result is not a postmerge witness.
