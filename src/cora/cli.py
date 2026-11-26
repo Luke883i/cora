@@ -368,7 +368,7 @@ def main(argv: list[str] | None = None) -> int:
     pr.add_argument('--change-base',help='Explicit ancestor BASE SHA for complete source change range; no host PR attestation')
     pr.add_argument('--process',choices=PROCESSES,default='full')
     pr.add_argument('--source-mode',choices=('strict','target_neutral'),default='strict',
-                    help='Read-only foreign Git without CORA ontology/roles; missing manifests remain NOT_CONFIGURED')
+                    help=argparse.SUPPRESS)
     pr.add_argument('--max-commits',type=int,default=64)
     pr.add_argument('--focus')
     pr.add_argument('--output',type=Path)
