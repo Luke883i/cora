@@ -72,6 +72,67 @@ transfer source, execution, permission, or reviewer authority. CLI execution and
 ChatGPT+agent handoff share the same evidence obligations only when a separate
 authorized runner actually performs the work and readback.
 
+### Operational path: beginner or CLI (source contract, not a runtime promise)
+
+The existing owners, evidence and external gates form a noncompensatory AND
+graph. CORA-METHOD is a Project instruction; CORA-ENGINE is a Python CLI.
+An attached source ZIP does not install or invoke a runner or coding agent.
+
+```mermaid
+flowchart TD
+    U[Human states observable goal] --> Q{Host read and runner permissions?}
+    Q -- No --> M[CORA-METHOD: A0 and backward AND DoD; METHOD_ONLY]
+    Q -- Authorized runner --> I[Pin CORA ZIP or Git tree and target HEAD]
+    I --> O[Discover target owners, AGENTS and native oracles]
+    O --> S[Reuse process_suite selection and original owner adapters]
+    S --> A{Permission and qualified adapter for selected capability?}
+    A -- No --> M
+    A -- Yes --> W[Authorized coding agent: reversible vertical slice]
+    W --> T[Target-native positive and negative tests; physical falsifiers]
+    T --> R[Existing One-Run and verify-process; Git-bound receipts]
+    R --> H[chat_bundle continuation when runner explicitly opts in]
+    H --> C[OneShell: ESITO A B PROVA EDGE NEXT]
+    M --> C
+    C --> D{AND: SOURCE + TARGET_RUNTIME + EXTERNAL}
+    D -- Open --> F[Refalsify reachable leaves; replan; one safe NEXT]
+    F --> O
+    D -- External approval observed --> E[Human reviewer controls merge and release]
+```
+
+| Necessary obligation | Reused owner | Observable result | Missing proof remains |
+| --- | --- | --- | --- |
+| A0 and backward AND-DoD | `agent_assurance`, `reticulum` | acceptance graph and oracles | `NOT_ATTESTED` |
+| Source owner selection | `process_suite`, `integrated_registry` | candidate with evidence, not runtime | `NOT_RUN` |
+| Foreign source preflight | `process_suite.run_suite` | Git receipt; absent CORA manifests `NOT_CONFIGURED` | `SOURCE_PARTIAL_NOT_CONFIGURED` |
+| Authorized target edit | external agent and target owners | explicit permission, reversibility | `NOT_RUN` |
+| Native positive/negative | target test runner and `foreign_pilot` | SHA, command, exit, falsifier | `NOT_ATTESTED` |
+| Replay/continuation | `one_run`, `integrated_run`, `evidence`, `chat_bundle` | verified receipt and optional ZIP | `BLOCKED_EXTERNAL` for host |
+| Readable cockpit | host + `chat_bundle` | ESITO A B PROVA EDGE NEXT | `PROPOSED` without runner |
+
+On a separately authorized Git checkout, a minimal read-only foreign source
+check (no target-owned ontology replacement, no implicit tests) is:
+
+```sh
+cora process-run /path/to/target --process source --source-mode target_neutral --output /tmp/foreign-source.json
+cora verify-process /tmp/foreign-source.json --repo /path/to/target
+```
+
+The `target_neutral` source mode reuses the original `process_suite` and
+reports absent manifests as `NOT_CONFIGURED` rather than forging evidence.
+Default `strict` remains unchanged; `--one-run` refuses `target_neutral`.
+A real source method failure still returns `DEBT_BLOCKED`; successful replay
+does not prove target runtime, installation, host permissions or approval.
+
+**Beginner first message:** "I want [observable outcome] in [target repo].
+Tell me what you can really read, run and write; derive the AND-DoDs,
+and give me one safe NEXT without claiming unexecuted tests." Source ZIP alone
+is not a live Git checkout. Pin the prompt and ZIP to the same candidate HEAD
+when working on an open branch, rather than attaching a stale main ZIP.
+Without runner, provide only METHOD_ONLY planning and a copyable task packet.
+After every authorized slice, challenge assumptions, recompute dependent DoDs
+and report the next unresolved leaf. This is a source-level contract and
+operational guide, **not** a demonstration of real-user or ChatGPT autonomy.
+
 ## 5. Observe the actual merged revision
 
 After a separately authorized merge, run `cora dev-postmerge TARGET --previous REAL_PREMERGE_MAIN --head ACTUAL_MERGED_MAIN --contextual --intent SAME_INTENT --convergence-contract PATH` and replay its receipt with `verify-contextual-gate`. A former PR-head green result is not a postmerge witness.

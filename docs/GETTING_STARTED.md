@@ -31,6 +31,8 @@ secrets, personal records and API keys out of public repositories. This
 repository will contain **your product**, not CORA's source code. Record the
 initial commit SHA; future changes must be reproducible from real Git history.
 
+**Version coherence:** when reviewing a proposed CORA branch, use the prompt and source ZIP from that exact HEAD, not an older default-branch ZIP. See [the operational beginner/CLI diagram](AGENT_ADOPTION.md#operational-path-beginner-or-cli-source-contract-not-a-runtime-promise). A ZIP has no live runner, Git history or automatic permission transfer.
+
 **2. Obtain CORA's instructions.** Open [the CORA repository](https://github.com/Luke883i/cora).
 Read the [single canonical ChatGPT Project prompt](AGENT_ADOPTION.md#chatgpt-project-beta-adapter).
 You may download a **source ZIP of main** as a reference and attach it to

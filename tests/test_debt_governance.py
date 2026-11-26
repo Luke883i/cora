@@ -666,8 +666,8 @@ class TargetNeutralCLISourceTests(unittest.TestCase):
         g(self.repo, 'config', 'user.email', 'fixture@invalid.example')
         g(self.repo, 'config', 'user.name', 'Fixture')
         (self.repo / 'src').mkdir()
-        (self.repo / 'src' / 'app.py').write_text('def answer(): return 42\\n')
-        (self.repo / 'README.md').write_text('Foreign Git without CORA manifests.\\n')
+        (self.repo / 'src' / 'app.py').write_text('def answer(): return 42\n')
+        (self.repo / 'README.md').write_text('Foreign Git without CORA manifests.\n')
         g(self.repo, 'add', '.')
         g(self.repo, 'commit', '-qm', 'fixture: initial Git source')
 
