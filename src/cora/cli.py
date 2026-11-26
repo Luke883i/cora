@@ -367,6 +367,8 @@ def main(argv: list[str] | None = None) -> int:
     pr.add_argument('--revision',default='HEAD')
     pr.add_argument('--change-base',help='Explicit ancestor BASE SHA for complete source change range; no host PR attestation')
     pr.add_argument('--process',choices=PROCESSES,default='full')
+    pr.add_argument('--source-mode',choices=('strict','target_neutral'),default='strict',
+                    help='Read-only foreign Git without CORA ontology/roles; missing manifests remain NOT_CONFIGURED')
     pr.add_argument('--max-commits',type=int,default=64)
     pr.add_argument('--focus')
     pr.add_argument('--output',type=Path)
@@ -798,6 +800,8 @@ def main(argv: list[str] | None = None) -> int:
                                      authorize_probe=args.authorize_probe)
             code = 0
         elif args.cmd == 'process-run':
+            if args.source_mode != 'strict' and args.one_run:
+                raise ValueError('target-neutral is read-only process-run only, not One-Run or target execution')
             if args.portable_link and (not args.one_run or args.profile != 'comprehensive' or not args.evidence_dir
                                         or args.portable_profile or args.foreign_request):
                 raise ValueError('portable linkage requires comprehensive One-Run and retained evidence')
@@ -901,7 +905,7 @@ def main(argv: list[str] | None = None) -> int:
                     raise ValueError('integrated/HTML/JSON/optional execution flags require --one-run')
                 result = run_suite(args.repo,args.revision,process=args.process,
                                    max_commits=args.max_commits,focus=args.focus,
-                                   change_base=args.change_base)
+                                   change_base=args.change_base,source_mode=args.source_mode)
                 code = 0 if result['status']!='DEBT_BLOCKED' else 2
         elif args.cmd == 'verify-process':
             if args.chat_cockpit_html and (not args.one_run or not args.chat_bundle):
