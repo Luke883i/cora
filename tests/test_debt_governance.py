@@ -652,3 +652,55 @@ class Universal81CapabilityTests(unittest.TestCase):
                 universal_capability_plan(malformed, commit="a" * 40)
         with self.assertRaises(ValueError):
             universal_capability_plan(names, commit="a" * 40, intent="x" * 1025)
+
+
+class TargetNeutralCLISourceTests(unittest.TestCase):
+    """A foreign repository is observable without inheriting CORA ontology.
+
+    Fixture is disposable Git source; not a third-party target runtime proof.
+    """
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.repo = Path(self.tmp.name)
+        g(self.repo, 'init', '-q')
+        g(self.repo, 'config', 'user.email', 'fixture@invalid.example')
+        g(self.repo, 'config', 'user.name', 'Fixture')
+        (self.repo / 'src').mkdir()
+        (self.repo / 'src' / 'app.py').write_text('def answer(): return 42\n')
+        (self.repo / 'README.md').write_text('Foreign Git without CORA manifests.\n')
+        g(self.repo, 'add', '.')
+        g(self.repo, 'commit', '-qm', 'fixture: initial Git source')
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def test_foreign_without_manifest_is_source_scoped_and_replays(self):
+        report = self.repo / 'neutral.json'
+        code = main(['process-run', str(self.repo), '--process', 'source',
+                     '--source-mode', 'target_neutral', '--output', str(report)])
+        self.assertEqual(code, 0)
+        data = json.loads(report.read_text())
+        self.assertEqual(data['source_mode'], 'target_neutral')
+        self.assertEqual(data['status'], 'SOURCE_PARTIAL_NOT_CONFIGURED')
+        self.assertEqual(data['authorized_action'], 'NONE')
+        self.assertEqual(data['unconfigured_manifests'],
+                         {'artifact_roles': 'cora.artifact-roles.json'})
+        self.assertEqual(main(['verify-process', str(report), '--repo', str(self.repo)]), 0)
+        forged = json.loads(report.read_text())
+        forged['unconfigured_manifests'] = {}
+        report.write_text(json.dumps(forged))
+        self.assertEqual(main(['verify-process', str(report), '--repo', str(self.repo)]), 3)
+
+    def test_target_neutral_cannot_implicitly_run_target_code(self):
+        from unittest.mock import patch
+        with patch('cora.cli.run_one', side_effect=AssertionError('must not run')) as runner:
+            code = main(['process-run', str(self.repo), '--source-mode',
+                         'target_neutral', '--one-run'])
+        self.assertEqual(code, 3)
+        runner.assert_not_called()
+
+    def test_original_strict_mode_is_unchanged(self):
+        from unittest.mock import patch
+        with patch('cora.cli.run_suite', return_value={'status': 'PASS_SCOPED'}) as source:
+            self.assertEqual(main(['process-run', str(self.repo)]), 0)
+            self.assertEqual(source.call_args.kwargs.get('source_mode'), 'strict')

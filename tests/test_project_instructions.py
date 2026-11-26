@@ -115,6 +115,19 @@ class ProjectAdapterV2Tests(unittest.TestCase):
             self.assertIn(label, code)
         self.assertIn('four beginner steps', code)
 
+    def test_beginner_path_reuses_owner_and_preserves_runtime_boundary(self):
+        self.assertIn('### Operational path: beginner or CLI', self.guide)
+        self.assertIn('```mermaid', self.guide)
+        for owner in ('process_suite', 'reticulum', 'one_run',
+                      'integrated_run', 'foreign_pilot', 'chat_bundle'):
+            self.assertIn(owner, self.guide)
+        for scope in ('METHOD_ONLY', 'NOT_CONFIGURED', 'NOT_RUN',
+                      'SOURCE_PARTIAL_NOT_CONFIGURED', 'BLOCKED_EXTERNAL'):
+            self.assertIn(scope, self.guide)
+        self.assertIn('--source-mode target_neutral', self.guide)
+        self.assertIn('is not a live Git checkout', self.guide)
+        self.assertNotIn('automatically installs CORA-ENGINE', self.guide)
+
     def test_cockpit_prompt_forgery_refuted_without_equating_source_to_model(self):
         source = self.prompt
         for phrase in ('No runner or verified ZIP?', 'Verified ZIP?',
