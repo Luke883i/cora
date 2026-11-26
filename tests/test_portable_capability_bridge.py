@@ -448,7 +448,74 @@ class AgentUseContractDoDTests(unittest.TestCase):
                 'stop' in c['iteration_update']['no_progress'] and
                 'BLOCKED_EXTERNAL' in c['acceptance']):
             raise ValueError('no fail closed iteration')
+        # Seven previously surviving source-contract mutants: protect the
+        # operative leaves, not only the graph structure and one negative test.
+        required_reuse={'identify_existing_owner_and_consumers',
+                        'reuse_same_SHA_evidence',
+                        'reuse_config_or_composition_before_code',
+                        'record_native_test_ID_and_negative_oracle',
+                        'justify_remaining_gap'}
+        required_writer={'existing_owner_inadequacy_witness',
+                         'no_overlapping_writer','explicit_write_permission',
+                         'native_positive_and_negative','rollback',
+                         'separate_owner_review'}
+        reuse=c['reuse_first_decision']
+        if (set(reuse.get('steps',[]))!=required_reuse or
+                set(reuse.get('new_writer_exception',[]))!=required_writer):
+            raise ValueError('reuse-first or new-writer exception weakened')
+        required_action={'owner_id','selection_reason','obligation',
+                         'cora_SHA','target_BASE_HEAD','runner_permission',
+                         'write_permission','adapter','test_ids',
+                         'negative_falsifier','input_output_digests',
+                         'result','survivors','rollback'}
+        if set(c['capability_activation'].get('required_per_action',[]))!=required_action:
+            raise ValueError('adapter or target-native witness missing')
+        required_iteration={'session_id','iteration_id','intent','source_SHA',
+                            'target_BASE_HEAD','previous_roadmap',
+                            'observed_counterexamples','survivors',
+                            'invalidated_assumptions','new_dependencies',
+                            'recomputed_AND','next_unresolved',
+                            'one_safe_NEXT','rollback'}
+        if (set(c['iteration_update'].get('required',[]))!=required_iteration or
+                c['metrics'].get('refalsified_reachable_leaves_pct')!=100):
+            raise ValueError('iteration re-falsification weakened')
+        required_falsifiers={'duplicate_or_unjustified_writer',
+                             'catalog_as_execution','dangling_or_cyclic_AND',
+                             'unauthorized_runner','missing_native_negative',
+                             'changed_SHA_or_tampered_receipt',
+                             'unchallenged_roadmap',
+                             'chat_claims_external_approval'}
+        falsifiers=c.get('falsifiers',[])
+        if (not isinstance(falsifiers,list) or
+                len(falsifiers)!=len(required_falsifiers) or
+                {f.get('id') for f in falsifiers if isinstance(f,dict)}!=required_falsifiers or
+                any(f.get('expected') not in ('REFUTED','BLOCKED','BLOCKED_EXTERNAL')
+                    for f in falsifiers if isinstance(f,dict))):
+            raise ValueError('required negative counterexamples weakened')
         return True
+
+    def test_seven_frontier_contract_mutants_are_rejected(self):
+        baseline=self.load()
+        for fault in ('drop-writer-exception','drop-adapter','drop-test-ids',
+                      'zero-refalsification','drop-invalidated-assumptions',
+                      'drop-reuse-steps','drop-falsifiers'):
+            candidate=copy.deepcopy(baseline)
+            if fault=='drop-writer-exception':
+                candidate['reuse_first_decision'].pop('new_writer_exception')
+            elif fault=='drop-adapter':
+                candidate['capability_activation']['required_per_action'].remove('adapter')
+            elif fault=='drop-test-ids':
+                candidate['capability_activation']['required_per_action'].remove('test_ids')
+            elif fault=='zero-refalsification':
+                candidate['metrics']['refalsified_reachable_leaves_pct']=0
+            elif fault=='drop-invalidated-assumptions':
+                candidate['iteration_update']['required'].remove('invalidated_assumptions')
+            elif fault=='drop-reuse-steps':
+                candidate['reuse_first_decision']['steps']=[]
+            elif fault=='drop-falsifiers':
+                candidate['falsifiers']=[]
+            with self.subTest(fault=fault),self.assertRaises(ValueError):
+                self.verify(candidate)
 
     def test_source_contract_is_closed_and_bounded(self):
         self.assertTrue(self.verify(self.load()))
