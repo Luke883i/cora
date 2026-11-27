@@ -295,6 +295,14 @@ class ProgressiveDocumentationTests(unittest.TestCase):
             with self.subTest(boundary=boundary):
                 errors = verify_readme_multiscale_contract(doc + "\n" + false_claim)
                 self.assertIn("readme-multiscale-false-promotion:" + boundary, errors)
+        from tools.verify_documentation import verify_multichannel_intro
+        for name, marker in (("product", "| **Product** |"),
+                             ("software", "| **Software** |"),
+                             ("repository", "| **Repository** |")):
+            with self.subTest(general_definition=name):
+                mutant = doc.replace(marker, "| **Unspecified** |", 1)
+                self.assertIn("cto-intro-general-definition-missing:" + name,
+                              verify_multichannel_intro(mutant))
         benign = doc.replace("| --- | --- |", "| :--- | :--- |", 1)
         self.assertEqual(verify_readme_multiscale_contract(benign), [])
 

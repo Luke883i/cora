@@ -453,6 +453,11 @@ def verify_multichannel_intro(readme: str) -> list[str]:
     for label, terms in groups.items():
         if any(x not in intro for x in terms):
             errors.append("cto-intro-missing:" + label)
+    for name, marker in (("product", "| **Product** |"),
+                         ("software", "| **Software** |"),
+                         ("repository", "| **Repository** |")):
+        if marker not in intro:
+            errors.append("cto-intro-general-definition-missing:" + name)
     fence = chr(96) * 3
     if intro.count(fence + "text\n") != 1 or intro.count(fence + "\n") != 1:
         errors.append("cto-diagram-structure")
