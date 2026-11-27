@@ -2,11 +2,21 @@
 
 **Engineering evidence for AI-assisted software changes.**
 
-**CORA is an agent-agnostic system for governing software development from intent to evidence.** Across application, service, library and infrastructure repositories, it turns an intended outcome into a backward-derived acceptance graph, a falsifiable and revisable roadmap, bounded changes, counterexamples and Git-bound evidence. Its conversational method coordinates the work; its local Python 3.11+ assurance engine independently checks specified source claims. CORA is not tied to an application domain, programming language or specific coding agent; **the scope of any PASS remains the explicitly executed checks**, not all behavior of the target product.
+**CORA is an agent-agnostic system for governing software development from intent to evidence.** CORA-METHOD guides authorized agents through testable, reversible changes; the local Python 3.11+ engine checks source claims. **The scope of any PASS remains the explicitly executed checks**, not unobserved product behavior.
 
-**CORA is not a coding agent** or automatic runner. It can **produce reproducible pre/post-merge review reports** linking **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**. Execution and release decisions remain external.
+**CORA is not a coding agent** or runner. It can **produce reproducible pre/post-merge review reports** linking **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**. Execution, review and release remain external.
 
-**Why it matters:** patches cannot prove behavior; CORA links intent, tests and unresolved risks.
+**Why it matters:** patches cannot prove outcomes; unresolved risks remain.
+
+### Product, software and repository
+
+| Term | General engineering meaning |
+| --- | --- |
+| **Product** | An offering or service defined by stakeholder outcomes, context and acceptance; it may combine software, physical assets and human operations. |
+| **Software** | Executable code, interfaces, configuration and data behavior in an environment; source inspection cannot prove running behavior. |
+| **Repository** | Version-controlled code, tests, documents and history describing candidate implementations, not deployments; it may serve several products. |
+
+**Relationship:** requirements shape software; repositories version implementations and tests. Execution and acceptance need separate evidence.
 
 ```text
 TARGET Git repository = application source of truth
@@ -20,11 +30,11 @@ ChatGPT Project = canonical prompt + authorized attachments, not a runner
        -> opt-in verified temporary ZIP -> human review
 ```
 
-**Product** = engineering assurance; **software** = the `cora` CLI and verifiers; **repository** = Git source, contracts and CI. None proves target-product readiness.
+**For CORA:** **Product** = engineering assurance; **software** = the `cora` CLI and verifiers; **repository** = Git source, contracts and CI. None proves target-product readiness. [Component ownership](docs/ARCHITECTURE.md#three-non-equivalent-boundaries).
 
-**Recommended use:** review an authorized Git change. **Audience and conditions:** CTOs, developers, reviewers and coding agents; Python 3.11+, Git and authorized execution tools. **Open source license:** [MIT](LICENSE).
+**Recommended use:** Git review. **Audience and conditions:** reviewers and agents; Python 3.11+, Git, authorization. **Open source license:** [MIT](LICENSE).
 
-**Current status:** experimental `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **Document status:** CURRENT. **Current scope:** Git source. **Operational use:** inspect commits. **Evidence:** Git and scoped tests. **Limits:** `BLOCKED_EXTERNAL`. Verify the exact checked-out Git revision. **Category:** engineering assurance.
+**Current status:** experimental `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **Document status:** CURRENT. **Current scope:** Git source. **Operational use:** inspect commits. **Evidence:** Git tests. **Limits:** `BLOCKED_EXTERNAL`. Verify the exact checked-out Git revision. **Category:** engineering assurance.
 
 ## First five minutes — choose your path
 
@@ -34,7 +44,7 @@ ChatGPT Project = canonical prompt + authorized attachments, not a runner
 | **B — CORA-ENGINE on a computer or with an authorized coding agent** | Use Python, Git and explicit permissions; run native tests and the local CLI at a named SHA. | Produce source-bound reports and a verified offline handoff. This does **not** approve a PR or prove the product works. |
 
 
-**Choose A:** Project chat without installation. **Choose B:** Git, Python and permission:
+**Choose A:** Project chat. **Choose B:** authorized Git and Python:
 
 ```sh
 python -m pip install -e .
@@ -47,7 +57,7 @@ Snapshots attest Git source, not target tests. [One-Run](#one-run--one-command-o
 
 ## Use CORA in a ChatGPT Project — beginner walkthrough
 
-**Path A — Project chat:** planning is `METHOD_ONLY` without a runner; a ZIP attachment cannot install or execute CORA.
+**Path A — Project chat:** no runner means `METHOD_ONLY`; a ZIP cannot execute CORA.
 
 **Start here:** this beta guide assumes **ChatGPT Pro or Edu**; Projects are available on other plans, so check permissions. CORA-ENGINE runs independently of ChatGPT.
 
@@ -57,7 +67,7 @@ Snapshots attest Git source, not target tests. [One-Run](#one-run--one-command-o
 4. **Backward plan and authorization:** ask for **backward requirements decomposition**, AND tests, falsifiable roadmap and reversible POST → SQLite → GET slice. In Project chat this is *a proposal*. A **write-capable coding tool**, such as Codex, needs authorization; a **separate Python runner** runs tests. CORA-METHOD guides you **without** executing CORA-ENGINE. Without an authorized runner, say `METHOD_ONLY` / `NOT_RUN`.
 5. **Verify, then continue:** commit, run target-native tests and One-Run at the **same SHA**. Use `--chat-step` and `--chat-bundle`; verify the ZIP and upload its latest copy to this Project chat. Read `iterations/000001/handoff.md`. ZIP is **not** automatic chat memory and **neither automatic chat capture nor authenticated review**. [Complete guide](docs/GETTING_STARTED.md#github-and-chatgpt-project-from-zero).
 
-**Verified offline cockpit (requires One-Run):**
+**Verified offline cockpit:**
 
 ```sh
 cora verify-process /tmp/cora-run.json --repo . --one-run \
@@ -65,15 +75,15 @@ cora verify-process /tmp/cora-run.json --repo . --one-run \
 ```
 
 - Open `/tmp/cora-cockpit.html`; navigate **Overview**, **DoD & evidence**, **Blockers**, **Choices**.
-- **EXPLAIN**, **REPLAN**, **PROPOSE_NEXT_CHECK** link to copyable prompts; no execution or automatic replanning.
-- **Start here:** read the [beginner cockpit and Path A/B recipe](docs/AGENT_ADOPTION.md#cockpit-for-beginners--same-path-a-and-path-b-no-third-engine); the buttons only suggest the next decision.
-- **OneShell replies:** the [six standard response regions](docs/AGENT_ADOPTION.md#oneshell-presentation-contract--adapted-from-ikant_edu) keep evidence and the next action visible; this is a Project instruction, not a native ChatGPT widget. After each real slice, re-falsify the roadmap.
+- **EXPLAIN**, **REPLAN**, **PROPOSE_NEXT_CHECK**: copyable prompts, not execution.
+- [Beginner cockpit and Path A/B](docs/AGENT_ADOPTION.md#cockpit-for-beginners--same-path-a-and-path-b-no-third-engine): buttons suggest decisions, not execution.
+- **OneShell replies:** the [six standard response regions](docs/AGENT_ADOPTION.md#oneshell-presentation-contract--adapted-from-ikant_edu) present evidence and next actions; this is a Project instruction, not native ChatGPT UI. Re-falsify the roadmap after each slice.
 - No runner/verified ZIP? Stay METHOD_ONLY; never invent PASS.
 
 
 ### Repository anatomy — one minute
 
-`README.md` explains; `docs/GETTING_STARTED.md` installs; `docs/AGENT_ADOPTION.md` owns the **single prompt**. [Architecture](docs/ARCHITECTURE.md#filesystem-anatomy-at-the-current-git-revision): `src/cora/` engine, `tests/` and `tools/` checks, `.cora/` and `schemas/` contracts, `.github/workflows/` CI, `examples/` samples. Existence is not execution.
+`README.md` explains; [setup](docs/GETTING_STARTED.md) installs; [adoption](docs/AGENT_ADOPTION.md) owns the **single prompt**. [Architecture](docs/ARCHITECTURE.md#filesystem-anatomy-at-the-current-git-revision) maps `src/cora/`, `tests/`, `tools/`, `.cora/`, `schemas/` and CI. Existence is not execution.
 
 ## Path B — authorized coding agent and local CORA-ENGINE
 
@@ -111,7 +121,7 @@ The [LEVEL / NILO experiment](docs/CONTINUOUS_DEVELOPMENT.md#level-demonstration
 | **Software** | Agent implements. |
 | **Repository** | Two Git identities and replay. |
 
-**CORA is not an eleventh engineering method.** Source and model tests are scoped evidence, not full behavioral proof. [Method crosswalk](docs/CONVERGENT_ASSURANCE.md#method-crosswalk--borrowed-perspectives-not-full-implementations).
+**CORA is not an eleventh engineering method.** Source/model checks are not product acceptance. [Method crosswalk](docs/CONVERGENT_ASSURANCE.md#method-crosswalk--borrowed-perspectives-not-full-implementations).
 
 ## One-Run — one command, one evidence dossier
 
@@ -121,19 +131,15 @@ cora process-run . --revision HEAD --process full --one-run --profile comprehens
 cora verify-process /tmp/cora-run.json --repo . --one-run --atlas-html /tmp/cora-run.html
 ```
 
-The dossier distinguishes `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTERNAL`. **The default does not execute arbitrary target tests**. Keep native test receipts separate. [Chat handoff](docs/AGENT_ADOPTION.md#portable-chatgpt-handoff-opt-in) uses `--chat-step` / `--chat-bundle`: a temporary, operator-produced ZIP of numbered steps, evidence gaps and handoffs, **not** automatic chat memory, a signature or approval.
+The dossier distinguishes `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTERNAL`. **The default does not execute arbitrary target tests**; native receipts remain separate. [Chat handoff](docs/AGENT_ADOPTION.md#portable-chatgpt-handoff-opt-in) uses `--chat-step` / `--chat-bundle` for a temporary operator-produced ZIP, **not** automatic memory, a signature or approval.
 
-**Change range:** `--change-base BASE_SHA` selects BASE→HEAD; default is one commit. PR metadata remains unverified.
+**Change range:** `--change-base BASE_SHA` selects BASE→HEAD (default: one commit); PR metadata remains unverified.
 
-**Gold pilots:** Teddy Node and ICTC HTTP/SQLite bounded; LUMEN and NILO unobserved. [Evidence](docs/GOLD_ASSURANCE.md).
-
-**Other repos:** `--portable-profile` inspects source; `--portable-parse-js` parses ESM. [Limits](docs/CONTINUOUS_DEVELOPMENT.md).
-
-**H-FORGE:** [source stage](docs/HOLISTIC_FORENSICS.md#h-forge-optional-experimental-profile); 77 bounded cases; consumers and acceptance unverified.
+**Gold pilots:** Teddy Node/ICTC HTTP/SQLite only; LUMEN/NILO unobserved. [Evidence](docs/GOLD_ASSURANCE.md).
 
 ## How CORA works
 
-**Standard engineering contract:** actor, outcome, owner, negative oracle, rollback and test trace. This **does not certify compliance** with ISO/IEC/IEEE 29148, ISO/IEC 25010 or NIST SSDF. [Worked contract](docs/GETTING_STARTED.md).
+**Standard engineering contract:** actor, outcome, owner, negative oracle, rollback and test trace. [Requirements](https://www.iso.org/standard/72089.html) (ISO/IEC/IEEE 29148:2018), [lifecycle](https://www.iso.org/standard/90219.html) (12207:2026), [product quality](https://www.iso.org/standard/78176.html) (25010:2023) and [secure development](https://csrc.nist.gov/pubs/sp/800/218/final) (NIST SSDF) inform these checks; this **does not certify compliance**. [Worked contract](docs/GETTING_STARTED.md).
 
 **Micro-example — three evidence planes:** **Product:** an issue survives restart and outsiders cannot close it. **Software:** UI/API behavior, durable database readback and access denial require **separate real observations**. **Repository:** bind test receipts and rollback to a named Git SHA; source PASS is not product acceptance.
 
@@ -197,12 +203,12 @@ The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) di
 
 ## Enterprise evaluation boundary
 
-**Evaluation boundary.** Independent usability, target-native behavior, rollback and host controls remain unqualified. [Formal three-boundary DoD](docs/DOD_RELEASE_READINESS.md) · [release](docs/RELEASE.md) · [governance](GOVERNANCE.md). `PASS_SCOPED` is not approval; `NOT_RUN` and `BLOCKED_EXTERNAL` remain open.
+**Evaluation boundary.** Usability, native behavior, rollback and host controls need independent evidence. [Formal three-boundary DoD](docs/DOD_RELEASE_READINESS.md) · [release](docs/RELEASE.md) · [governance](GOVERNANCE.md). `PASS_SCOPED` is not approval; `NOT_RUN` and `BLOCKED_EXTERNAL` remain open.
 
 ## Operating boundaries
 
-**External acceptance remains `BLOCKED_EXTERNAL`** without independent target, reviewer and host evidence. **GitHub workflow files alone do not prove** enforced rules. Absent imports do not prove `safe_deletion`; source CI does not authorize release.
+**External acceptance remains `BLOCKED_EXTERNAL`** without target, reviewer and host evidence. **GitHub workflow files alone do not prove** enforced rules; absent imports do not prove `safe_deletion`; CI does not authorize release.
 
 ## Engineering map
 
-**Product:** an iterative intent-to-evidence assurance workflow. **Software:** `cora-engine` and `cora-release-verification`. **Repository:** source, tests, CI and **historical ADRs**. [Index](docs/INDEX.md) identifies current document owners; original Git retains decision history.
+**Product:** an iterative intent-to-evidence assurance workflow. **Software:** `cora-engine` and `cora-release-verification`. **Repository:** source, tests, CI and **historical ADRs**. [Index](docs/INDEX.md) identifies document owners; Git retains history.

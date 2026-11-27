@@ -266,9 +266,9 @@ README_MULTISCALE_REQUIRED = {
 # All patterns encode affirmative *false* claims. Disclaimers such as
 # 'does not approve' must not trigger a false positive.
 README_MULTISCALE_FORGERIES = {
-    "GLOBAL_PRODUCT": r"\b(?:CI green|PASS_SCOPED|source receipt) (?:certifies|proves|approves) (?:target product|product acceptance|production readiness)\b",
-    "GLOBAL_SOFTWARE": r"\bCORA-ENGINE (?:autonomously implements|independently writes|automatically creates) (?:customer features|product features|application code)\b",
-    "GLOBAL_REPOSITORY": r"\bRepository CI (?:approves|authorizes|merges) (?:deployment|release|pull requests) automatically\b",
+    "GLOBAL_PRODUCT": r"\b(?:CI green|PASS_SCOPED|source receipt) (?:certifies|proves|approves) (?:target product|product acceptance|production readiness)\b|\bA Git commit proves product acceptance\b",
+    "GLOBAL_SOFTWARE": r"\bCORA-ENGINE (?:autonomously implements|independently writes|automatically creates) (?:customer features|product features|application code)\b|\bCommitted source equals running software\b",
+    "GLOBAL_REPOSITORY": r"\bRepository CI (?:approves|authorizes|merges) (?:deployment|release|pull requests) automatically\b|\bRepository source is the deployed runtime\b",
     "INTERMEDIATE_PRODUCT": r"\bA proposed user outcome (?:is|becomes|constitutes) (?:completed|verified|independent) product acceptance\b",
     "INTERMEDIATE_SOFTWARE": r"\bChatGPT Project (?:runs|executes|installs) CORA-ENGINE (?:inside the chat|on an uploaded ZIP|without a runner)\b",
     "INTERMEDIATE_REPOSITORY": r"\bCORA source ZIP (?:preserves|includes|proves) (?:full original Git history|actual Git ancestry|authenticated commit history)\b",
@@ -453,6 +453,11 @@ def verify_multichannel_intro(readme: str) -> list[str]:
     for label, terms in groups.items():
         if any(x not in intro for x in terms):
             errors.append("cto-intro-missing:" + label)
+    for name, marker in (("product", "| **Product** |"),
+                         ("software", "| **Software** |"),
+                         ("repository", "| **Repository** |")):
+        if marker not in intro:
+            errors.append("cto-intro-general-definition-missing:" + name)
     fence = chr(96) * 3
     if intro.count(fence + "text\n") != 1 or intro.count(fence + "\n") != 1:
         errors.append("cto-diagram-structure")
