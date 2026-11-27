@@ -6,7 +6,7 @@
 
 **CORA is not a coding agent** or runner. It can **produce reproducible pre/post-merge review reports** linking **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**. Execution, review and release remain external.
 
-**Why it matters:** a patch cannot prove a product outcome.
+**Why it matters:** patches cannot prove outcomes.
 
 ### Product, software and repository
 
@@ -203,7 +203,7 @@ The [final experimental DoD](.cora/contracts/dod/final-experimental-dod.json) di
 
 ## Enterprise evaluation boundary
 
-**Evaluation boundary.** Usability, native behavior, rollback and host controls need independent evidence. [Release DoD](docs/DOD_RELEASE_READINESS.md) · [release](docs/RELEASE.md) · [governance](GOVERNANCE.md). `PASS_SCOPED` is not approval; `NOT_RUN` and `BLOCKED_EXTERNAL` remain open.
+**Evaluation boundary.** Usability, native behavior, rollback and host controls need independent evidence. [Formal three-boundary DoD](docs/DOD_RELEASE_READINESS.md) · [release](docs/RELEASE.md) · [governance](GOVERNANCE.md). `PASS_SCOPED` is not approval; `NOT_RUN` and `BLOCKED_EXTERNAL` remain open.
 
 ## Operating boundaries
 
