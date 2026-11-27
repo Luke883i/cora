@@ -2,11 +2,11 @@
 
 **Engineering evidence for AI-assisted software changes.**
 
-**CORA is an agent-agnostic system for governing software development from intent to evidence.** It links outcomes to testable requirements, reversible changes and Git-bound evidence. CORA-METHOD guides the agent; the local Python 3.11+ engine checks specified source claims. **The scope of any PASS remains the explicitly executed checks**, not unobserved product behaviour.
+**CORA is an agent-agnostic system for governing software development from intent to evidence.** CORA-METHOD guides authorized agents through testable, reversible changes; the local Python 3.11+ engine checks source claims. **The scope of any PASS remains the explicitly executed checks**, not unobserved product behavior.
 
 **CORA is not a coding agent** or runner. It can **produce reproducible pre/post-merge review reports** linking **the proposed change**, **the source evidence**, **tests or counterexamples** and **the work still needed**. Execution, review and release remain external.
 
-**Why it matters:** patches cannot prove outcomes.
+**Why it matters:** patches cannot prove outcomes; unresolved risks remain.
 
 ### Product, software and repository
 
@@ -32,7 +32,7 @@ ChatGPT Project = canonical prompt + authorized attachments, not a runner
 
 **For CORA:** **Product** = engineering assurance; **software** = the `cora` CLI and verifiers; **repository** = Git source, contracts and CI. None proves target-product readiness. [Component ownership](docs/ARCHITECTURE.md#three-non-equivalent-boundaries).
 
-**Recommended use:** authorized Git review. **Audience and conditions:** reviewers and agents; Python 3.11+, Git and permission. **Open source license:** [MIT](LICENSE).
+**Recommended use:** Git review. **Audience and conditions:** reviewers and agents; Python 3.11+, Git, authorization. **Open source license:** [MIT](LICENSE).
 
 **Current status:** experimental `cora-audit 1.0.0a5`, **not a stable API or verified public release**. **Document status:** CURRENT. **Current scope:** Git source. **Operational use:** inspect commits. **Evidence:** Git tests. **Limits:** `BLOCKED_EXTERNAL`. Verify the exact checked-out Git revision. **Category:** engineering assurance.
 
