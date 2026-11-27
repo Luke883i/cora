@@ -259,6 +259,45 @@ class ProgressiveDocumentationTests(unittest.TestCase):
                 changed = src.replace(required[-1], "UNVERIFIED_OMISSION")
                 self.assertIn("readme-multiscale-omission:" + cell, check(changed))
 
+
+    def test_universal_scope_definitions_and_independent_negative_oracles(self):
+        """Source-level category boundaries; not proof of product or ISO conformance."""
+        doc = self.readme
+        self.assertIn("### Product, software and repository", doc)
+        intro = doc.split("### Product, software and repository", 1)[1].split(
+            "## First five minutes", 1)[0]
+        for item in (
+            "| **Product** | An offering or service",
+            "| **Software** | Executable code",
+            "| **Repository** | Version-controlled code",
+            "**Relationship:** requirements shape software",
+            "**For CORA:** **Product** = engineering assurance",
+            "[Component ownership](docs/ARCHITECTURE.md#three-non-equivalent-boundaries)",
+        ):
+            with self.subTest(item=item):
+                self.assertIn(item, intro)
+        for url in (
+            "https://www.iso.org/standard/72089.html",
+            "https://www.iso.org/standard/90219.html",
+            "https://www.iso.org/standard/78176.html",
+            "https://csrc.nist.gov/pubs/sp/800/218/final",
+        ):
+            with self.subTest(url=url):
+                self.assertIn(url, doc)
+        from tools.verify_documentation import verify_readme_multiscale_contract
+        self.assertEqual(verify_readme_multiscale_contract(doc), [])
+        false_claims = (
+            ("GLOBAL_PRODUCT", "A Git commit proves product acceptance."),
+            ("GLOBAL_SOFTWARE", "Committed source equals running software."),
+            ("GLOBAL_REPOSITORY", "Repository source is the deployed runtime."),
+        )
+        for boundary, false_claim in false_claims:
+            with self.subTest(boundary=boundary):
+                errors = verify_readme_multiscale_contract(doc + "\n" + false_claim)
+                self.assertIn("readme-multiscale-false-promotion:" + boundary, errors)
+        benign = doc.replace("| --- | --- |", "| :--- | :--- |", 1)
+        self.assertEqual(verify_readme_multiscale_contract(benign), [])
+
     def test_engineering_method_semantic_falsifiers(self):
         """Source citations and scientific/quantitative boundaries, not mere spellings."""
         self.assertEqual(DOC.verify_development_method_readme(self.readme), [])
