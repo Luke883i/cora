@@ -57,7 +57,7 @@ Snapshots attest Git source, not target tests. [One-Run](#one-run--one-command-o
 
 ## Use CORA in a ChatGPT Project — beginner walkthrough
 
-**Path A — Project chat:** planning is `METHOD_ONLY` without a runner; a ZIP attachment cannot install or execute CORA.
+**Path A — Project chat:** no runner means `METHOD_ONLY`; a ZIP cannot execute CORA.
 
 **Start here:** this beta guide assumes **ChatGPT Pro or Edu**; Projects are available on other plans, so check permissions. CORA-ENGINE runs independently of ChatGPT.
 
@@ -75,8 +75,8 @@ cora verify-process /tmp/cora-run.json --repo . --one-run \
 ```
 
 - Open `/tmp/cora-cockpit.html`; navigate **Overview**, **DoD & evidence**, **Blockers**, **Choices**.
-- **EXPLAIN**, **REPLAN**, **PROPOSE_NEXT_CHECK** link to copyable prompts; no execution or automatic replanning.
-- **Start here:** read the [beginner cockpit and Path A/B recipe](docs/AGENT_ADOPTION.md#cockpit-for-beginners--same-path-a-and-path-b-no-third-engine); the buttons only suggest the next decision.
+- **EXPLAIN**, **REPLAN**, **PROPOSE_NEXT_CHECK**: copyable prompts, not execution.
+- [Beginner cockpit and Path A/B](docs/AGENT_ADOPTION.md#cockpit-for-beginners--same-path-a-and-path-b-no-third-engine): buttons suggest decisions, not execution.
 - **OneShell replies:** the [six standard response regions](docs/AGENT_ADOPTION.md#oneshell-presentation-contract--adapted-from-ikant_edu) present evidence and next actions; this is a Project instruction, not native ChatGPT UI. Re-falsify the roadmap after each slice.
 - No runner/verified ZIP? Stay METHOD_ONLY; never invent PASS.
 
@@ -131,7 +131,7 @@ cora process-run . --revision HEAD --process full --one-run --profile comprehens
 cora verify-process /tmp/cora-run.json --repo . --one-run --atlas-html /tmp/cora-run.html
 ```
 
-The dossier distinguishes `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTERNAL`. **The default does not execute arbitrary target tests**. Keep native test receipts separate. [Chat handoff](docs/AGENT_ADOPTION.md#portable-chatgpt-handoff-opt-in) uses `--chat-step` / `--chat-bundle`: a temporary, operator-produced ZIP of numbered steps, evidence gaps and handoffs, **not** automatic chat memory, a signature or approval.
+The dossier distinguishes `PASS_SCOPED`, `NOT_RUN`, `REFUTED` and `BLOCKED_EXTERNAL`. **The default does not execute arbitrary target tests**; native receipts remain separate. [Chat handoff](docs/AGENT_ADOPTION.md#portable-chatgpt-handoff-opt-in) uses `--chat-step` / `--chat-bundle` for a temporary operator-produced ZIP, **not** automatic memory, a signature or approval.
 
 **Change range:** `--change-base BASE_SHA` selects BASE→HEAD (default: one commit); PR metadata remains unverified.
 
